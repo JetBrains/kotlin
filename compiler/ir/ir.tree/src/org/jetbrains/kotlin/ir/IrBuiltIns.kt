@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * (but specific to the frontend)
  */
 abstract class IrBuiltIns {
+    abstract val symbolFinder: SymbolFinder
     abstract val languageVersionSettings: LanguageVersionSettings
 
     abstract val irFactory: IrFactory
@@ -177,37 +179,7 @@ abstract class IrBuiltIns {
     abstract fun suspendFunctionN(arity: Int): IrClass
     abstract fun kSuspendFunctionN(arity: Int): IrClass
 
-    // TODO: drop variants from segments, add helper from whole fqn
-    abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>
-    abstract fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol>
-    abstract fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol>
-    abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
-    abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
-
-    fun topLevelClass(fqName: FqName): IrClassSymbol = findClass(fqName.shortName(), fqName.parent()) ?: error("No class ${fqName} found")
-    fun topLevelClass(classId: ClassId): IrClassSymbol = findClass(classId.shortClassName, classId.packageFqName) ?: error("No class $classId found")
-    fun topLevelClass(packageName: FqName, name: String): IrClassSymbol = findClass(Name.identifier(name), packageName) ?: error("No class ${packageName}.${name} found")
-    fun topLevelProperties(packageName: FqName, name: String): Iterable<IrPropertySymbol> = findProperties(Name.identifier(name), packageName)
-    inline fun topLevelProperty(packageName: FqName, name: String, condition: (IrPropertySymbol) -> Boolean = { true }): IrPropertySymbol {
-        val elements = topLevelProperties(packageName, name).filter(condition)
-        require(elements.isNotEmpty()) { "No property ${packageName}.$name found corresponding given condition"}
-        require(elements.size == 1) { "Several properties ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}" }
-        return elements.single()
-    }
-    fun topLevelFunctions(packageName: FqName, name: String): Iterable<IrSimpleFunctionSymbol> = findFunctions(Name.identifier(name), packageName)
-    inline fun topLevelFunction(packageName: FqName, name: String, condition: (IrFunctionSymbol) -> Boolean = { true }): IrSimpleFunctionSymbol {
-        val elements = topLevelFunctions(packageName, name).filter(condition)
-        require(elements.isNotEmpty()) { "No function ${packageName}.$name found corresponding given condition"}
-        require(elements.size == 1) { "Several functions ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}" }
-        return elements.single()
-    }
-
-    abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
-    // KT-73194: Consider moving here also functions from SymbolLookupUtils
-
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
-
-    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
 
     abstract fun getNonBuiltInFunctionsByExtensionReceiver(
         name: Name, vararg packageNameSegments: String
@@ -257,4 +229,60 @@ object BuiltInOperatorNames {
     const val ANDAND = "ANDAND"
     const val OROR = "OROR"
     const val CHECK_NOT_NULL = "CHECK_NOT_NULL"
+}
+
+// KT-73194: TODO: From SymbolLookupUtils, merge similar frontend-dependent functionality for finding symbols and discovering their internals.
+abstract class SymbolFinder {
+    // TODO: drop variants from segments, add helper from whole fqn
+    abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>
+    abstract fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol>
+    abstract fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol>
+    abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
+    abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
+
+    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
+
+    fun topLevelClass(fqName: FqName): IrClassSymbol =
+        findClass(fqName.shortName(), fqName.parent()) ?: error("No class ${fqName} found")
+
+    fun topLevelClass(classId: ClassId): IrClassSymbol =
+        findClass(classId.shortClassName, classId.packageFqName) ?: error("No class $classId found")
+
+    fun topLevelClass(packageName: FqName, name: String): IrClassSymbol =
+        findClass(Name.identifier(name), packageName) ?: error("No class ${packageName}.${name} found")
+
+    fun topLevelProperties(packageName: FqName, name: String): Iterable<IrPropertySymbol> =
+        findProperties(Name.identifier(name), packageName)
+
+    inline fun topLevelProperty(packageName: FqName, name: String, condition: (IrPropertySymbol) -> Boolean = { true }): IrPropertySymbol {
+        val elements = topLevelProperties(packageName, name).filter(condition)
+        require(elements.isNotEmpty()) { "No property ${packageName}.$name found corresponding given condition" }
+        require(elements.size == 1) {
+            "Several properties ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}"
+        }
+        return elements.single()
+    }
+
+    fun topLevelFunctions(packageName: FqName, name: String): Iterable<IrSimpleFunctionSymbol> =
+        findFunctions(Name.identifier(name), packageName)
+
+    inline fun topLevelFunction(
+        packageName: FqName,
+        name: String,
+        condition: (IrFunctionSymbol) -> Boolean = { true },
+    ): IrSimpleFunctionSymbol {
+        val elements = topLevelFunctions(packageName, name).filter(condition)
+        require(elements.isNotEmpty()) { "No function ${packageName}.$name found corresponding given condition" }
+        require(elements.size == 1) {
+            "Several functions ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}"
+        }
+        return elements.single()
+    }
+
+    inline fun findTopLevelPropertyGetter(packageName: FqName, name: String, predicate: (IrPropertySymbol) -> Boolean = { true }) =
+        findGetter(topLevelProperty(packageName, name, predicate))
+            ?: irError("Cannot find getter for $packageName.$name")
+
+    abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
+    // KT-73194: Consider moving here also functions from SymbolLookupUtils
 }

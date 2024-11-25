@@ -1184,6 +1184,8 @@ class IrValidatorTest {
 }
 
 private object TestIrBuiltins : IrBuiltIns() {
+    override val symbolFinder by lazy { missingBuiltIn() }
+
     private val builtinsPackage = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("kotlin"))
 
     override val languageVersionSettings: LanguageVersionSettings
@@ -1406,31 +1408,7 @@ private object TestIrBuiltins : IrBuiltIns() {
         missingBuiltIn()
     }
 
-    override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> {
-        missingBuiltIn()
-    }
-
-    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> {
-        missingBuiltIn()
-    }
-
-    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> {
-        missingBuiltIn()
-    }
-
-    override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? {
-        missingBuiltIn()
-    }
-
-    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
-        missingBuiltIn()
-    }
-
     override fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol {
-        missingBuiltIn()
-    }
-
-    override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> {
         missingBuiltIn()
     }
 
@@ -1488,8 +1466,4 @@ private object TestIrBuiltins : IrBuiltIns() {
     }
 
     private fun missingBuiltIn(): Nothing = fail("Missing built-in")
-
-    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? {
-        missingBuiltIn()
-    }
 }

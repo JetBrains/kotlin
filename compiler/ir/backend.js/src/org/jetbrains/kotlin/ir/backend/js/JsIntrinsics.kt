@@ -27,8 +27,8 @@ import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
-
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
+    val symbolFinder = irBuiltIns.symbolFinder
 
     // Modes
     val jsIsEs6 = getInternalFunction("jsIsEs6")
@@ -212,7 +212,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
 
-    private val _rangeUntilFunctions = irBuiltIns.findFunctions(Name.identifier("until"), "kotlin", "ranges")
+    private val _rangeUntilFunctions = symbolFinder.findFunctions(Name.identifier("until"), "kotlin", "ranges")
     val rangeUntilFunctions by lazy(LazyThreadSafetyMode.NONE) {
         _rangeUntilFunctions
             .filter { it.owner.extensionReceiverParameter != null && it.owner.valueParameters.size == 1 }
@@ -222,14 +222,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val longClassSymbol = irBuiltIns.longClass
 
     val promiseClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) {
-        irBuiltIns.topLevelClass(JsStandardClassIds.Promise)
+        symbolFinder.topLevelClass(JsStandardClassIds.Promise)
     }
 
     val longToDouble: IrSimpleFunctionSymbol =
-        irBuiltIns.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_DOUBLE).single()
+        symbolFinder.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_DOUBLE).single()
 
     val longToFloat: IrSimpleFunctionSymbol =
-        irBuiltIns.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_FLOAT).single()
+        symbolFinder.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_FLOAT).single()
 
     val longCompareToLong: IrSimpleFunction = longClassSymbol.owner.findDeclaration<IrSimpleFunction> {
         it.name == Name.identifier("compareTo") && it.valueParameters[0].type.isLong()
@@ -243,13 +243,13 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val anyClassSymbol = irBuiltIns.anyClass
     val anyConstructorSymbol = anyClassSymbol.constructors.single()
 
-    val jsObjectClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.JsObject)
+    val jsObjectClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.JsObject)
     val jsObjectConstructorSymbol by lazy(LazyThreadSafetyMode.NONE) { jsObjectClassSymbol.constructors.single() }
 
-    val uByteClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { irBuiltIns.topLevelClass(StandardClassIds.UByte) }
-    val uShortClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { irBuiltIns.topLevelClass(StandardClassIds.UShort) }
-    val uIntClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { irBuiltIns.topLevelClass(StandardClassIds.UInt) }
-    val uLongClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { irBuiltIns.topLevelClass(StandardClassIds.ULong) }
+    val uByteClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { symbolFinder.topLevelClass(StandardClassIds.UByte) }
+    val uShortClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { symbolFinder.topLevelClass(StandardClassIds.UShort) }
+    val uIntClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { symbolFinder.topLevelClass(StandardClassIds.UInt) }
+    val uLongClassSymbol: IrClassSymbol by lazy(LazyThreadSafetyMode.NONE) { symbolFinder.topLevelClass(StandardClassIds.ULong) }
 
     val unreachable = getInternalFunction("unreachable")
 
@@ -293,10 +293,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
         override val getKClass: IrSimpleFunctionSymbol = getInternalInRootPackage("getKClass")!!
         override val getKClassFromExpression: IrSimpleFunctionSymbol = getInternalInRootPackage("getKClassFromExpression")!!
         override val kTypeClass: IrClassSymbol =
-            irBuiltIns.findClass(StandardClassIds.KType.shortClassName, StandardClassIds.KType.packageFqName)!!
+            symbolFinder.findClass(StandardClassIds.KType.shortClassName, StandardClassIds.KType.packageFqName)!!
     }
 
-    val primitiveClassesObject: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.BASE_REFLECT_JS_INTERNAL_PACKAGE, "PrimitiveClasses")
+    val primitiveClassesObject: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.BASE_REFLECT_JS_INTERNAL_PACKAGE, "PrimitiveClasses")
 
     internal val reflectionSymbols: JsReflectionSymbols = JsReflectionSymbols()
 
@@ -334,10 +334,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val jsCall = getInternalFunction("jsCall")
     val jsBind = getInternalFunction("jsBind")
 
-    val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsOutlinedFunction)
-    val jsNameAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsName)
-    val jsExportAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsExport)
-    val jsGeneratorAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsGenerator)
+    val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsOutlinedFunction)
+    val jsNameAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsName)
+    val jsExportAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsExport)
+    val jsGeneratorAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsGenerator)
 
     val jsExportIgnoreAnnotationSymbol by lazy(LazyThreadSafetyMode.NONE) {
         jsExportAnnotationSymbol.owner
@@ -347,9 +347,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
         }
     }
 
-    val jsImplicitExportAnnotationSymbol: IrClassSymbol = irBuiltIns.topLevelClass(JsStandardClassIds.Annotations.JsImplicitExport)
+    val jsImplicitExportAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsImplicitExport)
 
-    val charSequenceClassSymbol = irBuiltIns.topLevelClass(StandardClassIds.CharSequence)
+    val charSequenceClassSymbol = symbolFinder.topLevelClass(StandardClassIds.CharSequence)
     val charSequenceLengthPropertyGetterSymbol by lazy(LazyThreadSafetyMode.NONE) {
         with(charSequenceClassSymbol.owner.declarations) {
             filterIsInstance<IrProperty>().firstOrNull { it.name.asString() == "length" }?.getter
@@ -397,23 +397,23 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     // Helpers:
     private fun getInternalFunction(name: String): IrSimpleFunctionSymbol =
-        irBuiltIns.findFunctions(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE).single()
+        symbolFinder.findFunctions(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE).single()
 
     private fun getInternalCollectionFunction(name: String): IrSimpleFunctionSymbol =
-        irBuiltIns.findFunctions(Name.identifier(name), StandardClassIds.BASE_COLLECTIONS_PACKAGE).single()
+        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_COLLECTIONS_PACKAGE).single()
 
     private fun getInternalProperty(name: String): IrPropertySymbol =
-        irBuiltIns.findProperties(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE).single()
+        symbolFinder.findProperties(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE).single()
 
     private fun getInternalInRootPackage(name: String): IrSimpleFunctionSymbol? =
-        irBuiltIns.findFunctions(Name.identifier(name), FqName.ROOT).singleOrNull()
+        symbolFinder.findFunctions(Name.identifier(name), FqName.ROOT).singleOrNull()
 
     private fun getCoroutineIntrinsic(name: String): Iterable<IrSimpleFunctionSymbol> =
-        irBuiltIns.findFunctions(Name.identifier(name), StandardClassIds.BASE_COROUTINES_INTRINSICS_PACKAGE)
+        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_COROUTINES_INTRINSICS_PACKAGE)
 
     private fun getFunctionInEnumPackage(name: String): IrSimpleFunctionSymbol =
-        irBuiltIns.findFunctions(Name.identifier(name), StandardClassIds.BASE_ENUMS_PACKAGE).single()
+        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_ENUMS_PACKAGE).single()
 
     private fun getFunctionInKotlinPackage(name: String): IrSimpleFunctionSymbol =
-        irBuiltIns.findFunctions(Name.identifier(name), StandardClassIds.BASE_KOTLIN_PACKAGE).single()
+        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_KOTLIN_PACKAGE).single()
 }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.SymbolFinder
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -49,6 +50,7 @@ class IrBuiltInsOverFir(
     private val c: Fir2IrComponents,
     private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer
 ) : IrBuiltIns() {
+    override val symbolFinder: SymbolFinder = SymbolFinderOverFir(c.builtins)
 
     // ------------------------------------- basic stuff -------------------------------------
 
@@ -524,35 +526,6 @@ class IrBuiltInsOverFir(
 
     // ------------------------------------- functions -------------------------------------
 
-    override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> {
-        return fir2irBuiltins.findFunctions(FqName.fromSegments(packageNameSegments.asList()), name)
-    }
-
-    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> {
-        return fir2irBuiltins.findFunctions(packageFqName, name)
-    }
-
-    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> {
-        return fir2irBuiltins.findProperties(packageFqName, name)
-    }
-
-    override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? {
-        return loadClassSafe(FqName.fromSegments(packageNameSegments.asList()), name)
-    }
-
-    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
-        return loadClassSafe(packageFqName, name)
-    }
-
-    private fun loadClassSafe(packageName: FqName, identifier: Name): IrClassSymbol? {
-        return fir2irBuiltins.loadClassSafe(ClassId(packageName, identifier))
-    }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> {
-        return builtInClass.functions.filter { it.owner.name == name }.asIterable()
-    }
-
     // This function should not be called from fir2ir code
     @UnsafeDuringIrConstructionAPI
     override fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
@@ -660,8 +633,40 @@ class IrBuiltInsOverFir(
             )
         }
     }
+}
+
+@OptIn(Fir2IrBuiltInsInternals::class)
+class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContainer) : SymbolFinder() {
+    override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> {
+        return fir2irBuiltins.findFunctions(FqName.fromSegments(packageNameSegments.asList()), name)
+    }
+
+    override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> {
+        return fir2irBuiltins.findFunctions(packageFqName, name)
+    }
+
+    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> {
+        return fir2irBuiltins.findProperties(packageFqName, name)
+    }
+
+    private fun loadClassSafe(packageName: FqName, identifier: Name): IrClassSymbol? {
+        return fir2irBuiltins.loadClassSafe(ClassId(packageName, identifier))
+    }
+
+    override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? {
+        return loadClassSafe(FqName.fromSegments(packageNameSegments.asList()), name)
+    }
+
+    override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? {
+        return loadClassSafe(packageFqName, name)
+    }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
         property.owner.getter?.symbol
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> {
+        return builtInClass.functions.filter { it.owner.name == name }.asIterable()
+    }
 }

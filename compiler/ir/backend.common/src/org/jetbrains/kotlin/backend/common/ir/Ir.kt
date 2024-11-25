@@ -31,9 +31,10 @@ abstract class Ir<out T : LoweringContext>(val context: T) {
 }
 
 open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
+    val symbolFinder = irBuiltIns.symbolFinder
 
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
-        irBuiltIns.findClass(name, *packageNameSegments)
+        symbolFinder.findClass(name, *packageNameSegments)
             ?: error("Class '$name' not found in package '${packageNameSegments.joinToString(".")}'")
 
     val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
@@ -46,23 +47,23 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
         type to iteratorClass
     }
 
-    val asserts = irBuiltIns.findFunctions(Name.identifier("assert"), "kotlin")
+    val asserts = symbolFinder.findFunctions(Name.identifier("assert"), "kotlin")
 
     private fun progression(name: String) = getClass(Name.identifier(name), "kotlin", "ranges")
-    private fun progressionOrNull(name: String) = irBuiltIns.findClass(Name.identifier(name), "kotlin", "ranges")
+    private fun progressionOrNull(name: String) = symbolFinder.findClass(Name.identifier(name), "kotlin", "ranges")
 
     // The "...OrNull" variants are used for the classes below because the minimal stdlib used in tests do not include those classes.
     // It was not feasible to add them to the JS reduced runtime because all its transitive dependencies also need to be
     // added, which would include a lot of the full stdlib.
-    val uByte = irBuiltIns.findClass(Name.identifier("UByte"), "kotlin")
-    val uShort = irBuiltIns.findClass(Name.identifier("UShort"), "kotlin")
-    val uInt = irBuiltIns.findClass(Name.identifier("UInt"), "kotlin")
-    val uLong = irBuiltIns.findClass(Name.identifier("ULong"), "kotlin")
+    val uByte = symbolFinder.findClass(Name.identifier("UByte"), "kotlin")
+    val uShort = symbolFinder.findClass(Name.identifier("UShort"), "kotlin")
+    val uInt = symbolFinder.findClass(Name.identifier("UInt"), "kotlin")
+    val uLong = symbolFinder.findClass(Name.identifier("ULong"), "kotlin")
     val uIntProgression = progressionOrNull("UIntProgression")
     val uLongProgression = progressionOrNull("ULongProgression")
     val uIntRange = progressionOrNull("UIntRange")
     val uLongRange = progressionOrNull("ULongRange")
-    val sequence = irBuiltIns.findClass(Name.identifier("Sequence"), "kotlin", "sequences")
+    val sequence = symbolFinder.findClass(Name.identifier("Sequence"), "kotlin", "sequences")
 
     val charProgression = progression("CharProgression")
     val intProgression = progression("IntProgression")

@@ -180,7 +180,7 @@ open class JvmIrCodegenFactory(
         // Built-ins deduplication must be enabled immediately so that there is no chance for duplicate built-in symbols to occur. For
         // example, the creation of `IrPluginContextImpl` might already lead to duplicate built-in symbols via `BuiltinSymbolsBase`.
         if (symbolTable is SymbolTableWithBuiltInsDeduplication) {
-            (psi2irContext.irBuiltIns as? IrBuiltInsOverDescriptors)?.let { symbolTable.bindIrBuiltIns(it) }
+            (psi2irContext.irBuiltIns as? IrBuiltInsOverDescriptors)?.let { symbolTable.bindSymbolFinder(it.symbolFinder) }
         }
 
         val pluginExtensions = IrGenerationExtension.getInstances(input.project)
