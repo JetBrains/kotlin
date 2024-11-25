@@ -55716,6 +55716,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
     }
 
     @Test
+    @TestMetadata("smartcastToProjectedType.kt")
+    public void testSmartcastToProjectedType() {
+      runTest("compiler/testData/codegen/box/smartCasts/smartcastToProjectedType.kt");
+    }
+
+    @Test
     @TestMetadata("smartcastToStarType.kt")
     public void testSmartcastToStarType() {
       runTest("compiler/testData/codegen/box/smartCasts/smartcastToStarType.kt");
