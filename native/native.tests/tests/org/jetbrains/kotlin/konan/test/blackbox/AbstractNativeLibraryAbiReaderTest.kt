@@ -1,135 +1,89 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.konan.test.blackbox.support.Location
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.MODULE
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExistingDependency
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.parseModule
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.library.abi.*
-import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler.Companion.abiDumpFileExtension
-import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives
-import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES
-import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES
-import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS
-import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
-import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
-import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser.ParsedDirective
-import org.jetbrains.kotlin.test.utils.withExtension
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.jetbrains.kotlin.konan.test.ClassicFrontend2NativeIrConverter
+import org.jetbrains.kotlin.konan.test.ClassicNativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
+import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
+import org.jetbrains.kotlin.library.abi.AbstractLibraryAbiReaderTest
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.model.BackendFacade
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
+import org.jetbrains.kotlin.test.model.FrontendFacade
+import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.junit.jupiter.api.Tag
-import java.io.File
 
 @Tag("klib")
-@OptIn(ExperimentalLibraryAbiReader::class)
-abstract class AbstractNativeLibraryAbiReaderTest : AbstractNativeSimpleTest() {
-    fun runTest(localPath: String) {
-        val (sourceFile, dumpFiles) = computeTestFiles(localPath)
-        val (moduleName, filters) = parseDirectives(sourceFile)
+abstract class AbstractNativeLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
+    AbstractLibraryAbiReaderTest<FrontendOutput>(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
 
-        val customDependencies: List<ExistingDependency<TestCompilationArtifact.KLIB>> =
-            produceCustomDependencies(sourceFile).map(TestCompilationArtifact.KLIB::asLibraryDependency)
-
-        val library = compileToLibrary(
-            testCase = generateTestCaseWithSingleFile(
-                sourceFile = sourceFile,
-                moduleName = moduleName,
-                freeCompilerArgs = TestCompilerArgs("-Xcontext-receivers")
-            ),
-            dependencies = customDependencies.toTypedArray()
-        ).resultingArtifact.klibFile
-
-        val libraryAbi = LibraryAbiReader.readAbiInfo(library, filters)
-
-        dumpFiles.entries.forEach { (signatureVersion, dumpFile) ->
-            val abiDump = LibraryAbiRenderer.render(
-                libraryAbi,
-                AbiRenderingSettings(signatureVersion)
-            )
-
-            assertEqualsToFile(dumpFile, abiDump)
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        defaultDirectives {
+            // Kotlin/Native does not have "minimal" stdlib(like other backends do), so full stdlib is needed to resolve
+            // `Any`, `String`, `println`, etc.
+            +ConfigurationDirectives.WITH_STDLIB
         }
-    }
-
-    internal open fun produceCustomDependencies(sourceFile: File): List<TestCompilationArtifact.KLIB> = emptyList()
-
-    companion object {
-        private fun computeTestFiles(localPath: String): Pair<File, Map<AbiSignatureVersion, File>> {
-            val sourceFile = getAbsoluteFile(localPath)
-            assertEquals("kt", sourceFile.extension) { "Invalid source file: $sourceFile" }
-            assertTrue(sourceFile.isFile) { "Source file does not exist: $sourceFile" }
-
-            return sourceFile to AbiSignatureVersion.allSupportedByAbiReader.associateWith { signatureVersion ->
-                val dumpFileExtension = abiDumpFileExtension(signatureVersion.versionNumber)
-                val dumpFile = sourceFile.withReplacedExtensionOrNull("kt", dumpFileExtension)!!
-                assertTrue(dumpFile.isFile) { "Dump file does not exist: $dumpFile" }
-                dumpFile
-            }
-        }
-
-        internal data class FromDirectives(val moduleName: String, val filters: List<AbiReadingFilter>)
-
-        internal fun parseDirectives(sourceFile: File): FromDirectives {
-            val directivesParser = RegisteredDirectivesParser(
-                ComposedDirectivesContainer(KlibAbiDumpDirectives, TestDirectives),
-                JUnit5Assertions
-            )
-            sourceFile.forEachLine(action = directivesParser::parse)
-
-            val registeredDirectives = directivesParser.build()
-
-            val moduleName = parseModule(
-                ParsedDirective(MODULE, registeredDirectives[MODULE]),
-                Location(sourceFile)
-            ).name
-
-            val excludedPackages = registeredDirectives[KLIB_ABI_DUMP_EXCLUDED_PACKAGES]
-            val excludedClasses = registeredDirectives[KLIB_ABI_DUMP_EXCLUDED_CLASSES]
-            val nonPublicMarkers = registeredDirectives[KLIB_ABI_DUMP_NON_PUBLIC_MARKERS]
-
-            return FromDirectives(
-                moduleName = moduleName,
-                filters = listOfNotNull(
-                    excludedPackages.ifNotEmpty(AbiReadingFilter::ExcludedPackages),
-                    excludedClasses.ifNotEmpty(AbiReadingFilter::ExcludedClasses),
-                    nonPublicMarkers.ifNotEmpty(AbiReadingFilter::NonPublicMarkerAnnotations)
-                )
-            )
-        }
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::NativeEnvironmentConfigurator,
+        )
+        super.configure(builder)
     }
 }
 
-abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeLibraryAbiReaderTest() {
-    override fun produceCustomDependencies(sourceFile: File): List<TestCompilationArtifact.KLIB> {
-        val targets: KotlinNativeTargets = testRunSettings.get()
+open class AbstractFirNativeLibraryAbiReaderTest : AbstractNativeLibraryAbiReaderTest<FirOutputArtifact>() {
+    final override val frontend: FrontendKind<*>
+        get() = FrontendKinds.FIR
 
-        assumeTrue(targets.hostTarget.family.isAppleFamily) // ObjC tests can run only on Apple targets.
+    final override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirFrontendFacade
 
-        val defFile = sourceFile.withExtension(".def")
-        assertTrue(defFile.isFile) { "Def file does not exist: $defFile" }
+    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrNativeResultsConverter
 
-        return listOf(
-            cinteropToLibrary(
-                targets = targets,
-                defFile = defFile,
-                outputDir = buildDir,
-                freeCompilerArgs = TestCompilerArgs.EMPTY
-            ).assertSuccess().resultingArtifact
-        )
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+        get() = ::FirNativeKlibSerializerFacade
+
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        defaultDirectives {
+            LANGUAGE with "+ContextReceivers"
+        }
+        configureFirParser(FirParser.LightTree)
+        super.configure(builder)
     }
+}
+
+open class AbstractClassicNativeLibraryAbiReaderTest : AbstractNativeLibraryAbiReaderTest<ClassicFrontendOutputArtifact>() {
+    final override val frontend: FrontendKind<*>
+        get() = FrontendKinds.ClassicFrontend
+
+    final override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+
+    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
+        get() = ::ClassicFrontend2NativeIrConverter
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+        get() = ::ClassicNativeKlibSerializerFacade
 }

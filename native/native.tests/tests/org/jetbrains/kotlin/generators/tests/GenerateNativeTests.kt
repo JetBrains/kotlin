@@ -292,23 +292,18 @@ fun main() {
 
         generateTestGroupSuiteWithJUnit5 {
             testGroup("native/native.tests/tests-gen", "compiler/testData/klib/dump-abi/content") {
-                testClass<AbstractNativeLibraryAbiReaderTest>(
-                    suiteTestClassName = "NativeLibraryAbiReaderTest"
+                testClass<AbstractClassicNativeLibraryAbiReaderTest>(
+                    suiteTestClassName = "ClassicNativeLibraryAbiReaderTestGenerated"
                 ) {
-                    model(
-                        targetBackend = TargetBackend.NATIVE,
-                        // TODO: drop this workaround after disabling context parameters (receivers) language feature for K1
-                        skipTestAllFilesCheck = true,
-                        skipSpecificFile = { it.name.endsWith("_with_context_parameters.kt") },
-                    )
+                    model()
                 }
-                testClass<AbstractNativeLibraryAbiReaderTest>(
-                    suiteTestClassName = "FirNativeLibraryAbiReaderTest",
+                testClass<AbstractFirNativeLibraryAbiReaderTest>(
+                    suiteTestClassName = "FirNativeLibraryAbiReaderTestGenerated",
                     annotations = listOf(
                         *frontendFir()
                     )
                 ) {
-                    model(targetBackend = TargetBackend.NATIVE)
+                    model()
                 }
             }
 
