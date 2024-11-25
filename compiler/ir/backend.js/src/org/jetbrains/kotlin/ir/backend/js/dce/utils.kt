@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.io.File
@@ -19,7 +19,7 @@ internal fun IrDeclaration.fqNameForDceDump(): String {
     // TODO: sanitize names
     val fqn = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
     val signature = when (this is IrFunction) {
-        true -> this.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.dumpKotlinLike() }
+        true -> this.nonDispatchParameters.joinToString(prefix = "(", postfix = ")") { it.type.dumpKotlinLike() }
         else -> ""
     }
     val synthetic = when (this.origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) {
