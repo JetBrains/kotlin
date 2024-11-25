@@ -265,6 +265,31 @@ fun main() {
             }
         }
 
+        // LitmusKt tests.
+        testGroup("native/native.tests/litmus-tests/tests-gen", "native/native.tests/litmus-tests/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "LitmusKtTestsGenerated",
+                annotations = listOf(
+                    litmusktNative(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    forceHostTarget(),
+                )
+            ) {
+                model("standalone")
+            }
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirLitmusKtTestsGenerated",
+                annotations = listOf(
+                    litmusktNative(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    forceHostTarget(),
+                    *frontendFir(),
+                )
+            ) {
+                model("standalone")
+            }
+        }
+
         generateTestGroupSuiteWithJUnit5 {
             testGroup("native/native.tests/tests-gen", "compiler/testData/klib/dump-abi/content") {
                 testClass<AbstractNativeLibraryAbiReaderTest>(
@@ -528,6 +553,7 @@ private fun atomicfuNative() = arrayOf(
     annotation(Tag::class.java, "atomicfu-native"),
     annotation(EnforcedHostTarget::class.java), // TODO(KT-65977): Make atomicfu tests run on all targets.
 )
+private fun litmusktNative() = annotation(Tag::class.java, "litmuskt-native")
 private fun standalone() = arrayOf(
     annotation(Tag::class.java, "standalone"),
     annotation(
