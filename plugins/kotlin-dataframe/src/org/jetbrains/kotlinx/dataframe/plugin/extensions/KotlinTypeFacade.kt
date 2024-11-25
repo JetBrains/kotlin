@@ -27,8 +27,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 
-interface KotlinTypeFacade {
-    val session: FirSession
+interface KotlinTypeFacade : SessionContext {
     val resolutionPath: String? get() = null
     val cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>
     val schemasDirectory: String?
@@ -97,6 +96,14 @@ interface KotlinTypeFacade {
         }
         return Marker(argument)
     }
+}
+
+interface SessionContext {
+    val session: FirSession
+}
+
+fun SessionContext(session: FirSession) = object : SessionContext {
+    override val session: FirSession = session
 }
 
 private val List = "List".collectionsId()

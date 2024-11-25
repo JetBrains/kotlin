@@ -6,6 +6,13 @@
 package org.jetbrains.kotlinx.dataframe.plugin.utils
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -72,3 +79,10 @@ private fun KClass<*>.classId(): ClassId {
     val className = fqName.substringAfterLast(".")
     return ClassId(FqName(packageFqName), Name.identifier(className))
 }
+
+fun ConeKotlinType.isDataFrame(session: FirSession) =
+    isSubtypeOf(ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID), arrayOf(ConeStarProjection), isNullable = false), session)
+
+fun ConeKotlinType.isGroupBy(session: FirSession) = fullyExpandedClassId(session) == Names.GROUP_BY_CLASS_ID
+
+fun ConeKotlinType.isDataRow(session: FirSession) = fullyExpandedClassId(session) == Names.DATA_ROW_CLASS_ID

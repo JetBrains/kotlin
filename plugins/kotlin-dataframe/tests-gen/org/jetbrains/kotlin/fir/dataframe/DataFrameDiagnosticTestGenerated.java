@@ -33,6 +33,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
   }
 
   @Test
+  @TestMetadata("schemaInfo.kt")
+  public void testSchemaInfo() {
+    runTest("testData/diagnostics/schemaInfo.kt");
+  }
+
+  @Test
   @TestMetadata("selectDuringTyping.kt")
   public void testSelectDuringTyping() {
     runTest("testData/diagnostics/selectDuringTyping.kt");
