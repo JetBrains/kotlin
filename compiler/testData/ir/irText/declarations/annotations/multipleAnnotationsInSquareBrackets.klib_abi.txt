@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open annotation class /A1 : kotlin/Annotation { // /A1|null[0]
+    constructor <init>() // /A1.<init>|<init>(){}[0]
+}
+open annotation class /A2 : kotlin/Annotation { // /A2|null[0]
+    constructor <init>() // /A2.<init>|<init>(){}[0]
+}
+open annotation class /A3 : kotlin/Annotation { // /A3|null[0]
+    constructor <init>() // /A3.<init>|<init>(){}[0]
+}
+final fun /test() // /test|test(){}[0]

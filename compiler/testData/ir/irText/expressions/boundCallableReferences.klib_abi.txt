@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val bar // /A.bar|{}bar[0]
+        final fun <get-bar>(): kotlin/Int // /A.bar.<get-bar>|<get-bar>(){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final fun foo() // /A.foo|foo(){}[0]
+}
+final val /test1 // /test1|{}test1[0]
+    final fun <get-test1>(): kotlin.reflect/KFunction0<kotlin/Unit> // /test1.<get-test1>|<get-test1>(){}[0]
+final val /test2 // /test2|{}test2[0]
+    final fun <get-test2>(): kotlin.reflect/KProperty0<kotlin/Int> // /test2.<get-test2>|<get-test2>(){}[0]
+final val /test3 // /test3|{}test3[0]
+    final fun <get-test3>(): kotlin.reflect/KFunction0<kotlin/Unit> // /test3.<get-test3>|<get-test3>(){}[0]
+final fun (/A)./qux() // /qux|qux@A(){}[0]

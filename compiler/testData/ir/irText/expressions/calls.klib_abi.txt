@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /bar(kotlin/Int): kotlin/Int // /bar|bar(kotlin.Int){}[0]
+final fun (kotlin/Int)./ext1(): kotlin/Int // /ext1|ext1@kotlin.Int(){}[0]
+final fun (kotlin/Int)./ext2(kotlin/Int): kotlin/Int // /ext2|ext2@kotlin.Int(kotlin.Int){}[0]
+final fun (kotlin/Int)./ext3(kotlin/Int): kotlin/Int // /ext3|ext3@kotlin.Int(kotlin.Int){}[0]
+final fun /foo(kotlin/Int, kotlin/Int): kotlin/Int // /foo|foo(kotlin.Int;kotlin.Int){}[0]
+final fun /qux(kotlin/Int): kotlin/Int // /qux|qux(kotlin.Int){}[0]

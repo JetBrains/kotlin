@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Test1 { // /Test1|null[0]
+    constructor <init>() // /Test1.<init>|<init>(){}[0]
+    final object Companion // /Test1.Companion|null[0]
+}
+final class /Test2 { // /Test2|null[0]
+    constructor <init>() // /Test2.<init>|<init>(){}[0]
+    final object Named // /Test2.Named|null[0]
+}

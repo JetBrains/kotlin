@@ -1,0 +1,41 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class ann/ARG { // ann/ARG|null[0]
+    constructor <init>() // ann/ARG.<init>|<init>(){}[0]
+}
+final class <#A: kotlin/Any?> ann/C : ann/I<#A> { // ann/C|null[0]
+    constructor <init>() // ann/C.<init>|<init>(){}[0]
+}
+final class ann/CC { // ann/CC|null[0]
+    constructor <init>() // ann/CC.<init>|<init>(){}[0]
+}
+abstract interface <#A: kotlin/Any?> ann/I // ann/I|null[0]
+open annotation class <#A: kotlin/Any?> ann/Test1 : kotlin/Annotation { // ann/Test1|null[0]
+    final val x // ann/Test1.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // ann/Test1.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // ann/Test1.<init>|<init>(kotlin.Int){}[0]
+}
+open annotation class <#A: kotlin/Any, #B: kotlin/Any?> ann/Test2 : kotlin/Annotation { // ann/Test2|null[0]
+    final val x // ann/Test2.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // ann/Test2.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int = ...) // ann/Test2.<init>|<init>(kotlin.Int){}[0]
+}
+open annotation class <#A: kotlin/Any?, #B: ann/I<#A>> ann/Test3 : kotlin/Annotation { // ann/Test3|null[0]
+    final val x // ann/Test3.x|{}x[0]
+        final fun <get-x>(): ann/Test1<ann/I<#B>> // ann/Test3.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(ann/Test1<ann/I<#B>> = ...) // ann/Test3.<init>|<init>(ann.Test1<ann.I<1:1>>){}[0]
+}
+open annotation class ann/Test4 : kotlin/Annotation { // ann/Test4|null[0]
+    final val x // ann/Test4.x|{}x[0]
+        final fun <get-x>(): kotlin/Array<ann/Test3<kotlin/Int, ann/C<kotlin/Int>>> // ann/Test4.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Array<ann/Test3<kotlin/Int, ann/C<kotlin/Int>>>) // ann/Test4.<init>|<init>(kotlin.Array<ann.Test3<kotlin.Int,ann.C<kotlin.Int>>>){}[0]
+}
+open annotation class <#A: kotlin/Any?> ann/Test5 : kotlin/Annotation { // ann/Test5|null[0]
+    final val xs // ann/Test5.xs|{}xs[0]
+        final fun <get-xs>(): kotlin/Array<out ann/Test3<#A, ann/C<#A>>> // ann/Test5.xs.<get-xs>|<get-xs>(){}[0]
+    constructor <init>(kotlin/Array<out ann/Test3<#A, ann/C<#A>>>...) // ann/Test5.<init>|<init>(kotlin.Array<out|ann.Test3<1:0,ann.C<1:0>>>...){}[0]
+}

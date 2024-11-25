@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class <#A: kotlin/Any?> /CFoo { // /CFoo|null[0]
+    constructor <init>() // /CFoo.<init>|<init>(){}[0]
+    final fun foo(#A) // /CFoo.foo|foo(1:0){}[0]
+}
+abstract interface /IBar { // /IBar|null[0]
+    abstract val bar // /IBar.bar|{}bar[0]
+        abstract fun <get-bar>(): kotlin/Int // /IBar.bar.<get-bar>|<get-bar>(){}[0]
+}
+abstract interface /IFooStr { // /IFooStr|null[0]
+    abstract fun foo(kotlin/String) // /IFooStr.foo|foo(kotlin.String){}[0]
+}
+final class /Test1 : /CFoo<kotlin/String>, /IBar, /IFooStr { // /Test1|null[0]
+    final val bar // /Test1.bar|{}bar[0]
+        final fun <get-bar>(): kotlin/Int // /Test1.bar.<get-bar>|<get-bar>(){}[0]
+    constructor <init>() // /Test1.<init>|<init>(){}[0]
+}

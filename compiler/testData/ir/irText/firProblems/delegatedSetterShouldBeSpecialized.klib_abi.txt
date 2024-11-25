@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /MyClass { // /MyClass|null[0]
+    final var delegatedToTopLevel // /MyClass.delegatedToTopLevel|{}delegatedToTopLevel[0]
+        final fun <get-delegatedToTopLevel>(): kotlin/Int // /MyClass.delegatedToTopLevel.<get-delegatedToTopLevel>|<get-delegatedToTopLevel>(){}[0]
+        final fun <set-delegatedToTopLevel>(kotlin/Int) // /MyClass.delegatedToTopLevel.<set-delegatedToTopLevel>|<set-delegatedToTopLevel>(kotlin.Int){}[0]
+    constructor <init>() // /MyClass.<init>|<init>(){}[0]
+}
+final var /topLevelInt // /topLevelInt|{}topLevelInt[0]
+    final fun <get-topLevelInt>(): kotlin/Int // /topLevelInt.<get-topLevelInt>|<get-topLevelInt>(){}[0]
+    final fun <set-topLevelInt>(kotlin/Int) // /topLevelInt.<set-topLevelInt>|<set-topLevelInt>(kotlin.Int){}[0]

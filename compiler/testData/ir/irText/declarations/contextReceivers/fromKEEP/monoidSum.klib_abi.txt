@@ -1,0 +1,25 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /IntMonoid : /Monoid<kotlin/Int> { // /IntMonoid|null[0]
+    final val unit // /IntMonoid.unit|{}unit[0]
+        final fun <get-unit>(): kotlin/Int // /IntMonoid.unit.<get-unit>|<get-unit>(){}[0]
+    final fun (kotlin/Int).combine(kotlin/Int): kotlin/Int // /IntMonoid.combine|combine@kotlin.Int(kotlin.Int){}[0]
+}
+abstract interface <#A: kotlin/Any?> /Monoid : /Semigroup<#A> { // /Monoid|null[0]
+    abstract val unit // /Monoid.unit|{}unit[0]
+        abstract fun <get-unit>(): #A // /Monoid.unit.<get-unit>|<get-unit>(){}[0]
+}
+abstract interface <#A: kotlin/Any?> /Semigroup { // /Semigroup|null[0]
+    abstract fun (#A).combine(#A): #A // /Semigroup.combine|combine@1:0(1:0){}[0]
+}
+final object /StringMonoid : /Monoid<kotlin/String> { // /StringMonoid|null[0]
+    final val unit // /StringMonoid.unit|{}unit[0]
+        final fun <get-unit>(): kotlin/String // /StringMonoid.unit.<get-unit>|<get-unit>(){}[0]
+    final fun (kotlin/String).combine(kotlin/String): kotlin/String // /StringMonoid.combine|combine@kotlin.String(kotlin.String){}[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun <#A: kotlin/Any?> context(kotlin.collections/List<#A>) (kotlin.collections/List<#A>)./sum(): #A // /sum|sum!Monoid<0:0>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}[0]

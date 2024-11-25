@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open annotation class /Binary : kotlin/Annotation { // /Binary|null[0]
+    constructor <init>() // /Binary.<init>|<init>(){}[0]
+}
+open annotation class /Runtime : kotlin/Annotation { // /Runtime|null[0]
+    constructor <init>() // /Runtime.<init>|<init>(){}[0]
+}
+open annotation class /Source : kotlin/Annotation { // /Source|null[0]
+    constructor <init>() // /Source.<init>|<init>(){}[0]
+}
+final fun /binary() // /binary|binary(){}[0]
+final fun /runtime() // /runtime|runtime(){}[0]
+final fun /source() // /source|source(){}[0]

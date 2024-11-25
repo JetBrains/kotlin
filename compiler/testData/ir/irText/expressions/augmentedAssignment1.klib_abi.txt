@@ -1,0 +1,11 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final var /p // /p|{}p[0]
+    final fun <get-p>(): kotlin/Int // /p.<get-p>|<get-p>(){}[0]
+    final fun <set-p>(kotlin/Int) // /p.<set-p>|<set-p>(kotlin.Int){}[0]
+final fun /testProperty() // /testProperty|testProperty(){}[0]
+final fun /testVariable() // /testVariable|testVariable(){}[0]

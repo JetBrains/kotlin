@@ -1,0 +1,20 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /CInt32VarX : /CPointed { // /CInt32VarX|null[0]
+    constructor <init>() // /CInt32VarX.<init>|<init>(){}[0]
+}
+abstract interface /CPointed // /CPointed|null[0]
+final class /IdType : /CPointed { // /IdType|null[0]
+    final val value // /IdType.value|{}value[0]
+        final fun <get-value>(): kotlin/Int // /IdType.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(kotlin/Int) // /IdType.<init>|<init>(kotlin.Int){}[0]
+}
+final var /value // /value|@CInt32VarX<0:0>{0§<kotlin.Int>}value[0]
+    final fun <#A1: kotlin/Int> (/CInt32VarX<#A1>).<get-value>(): #A1 // /value.<get-value>|<get-value>@CInt32VarX<0:0>(){0§<kotlin.Int>}[0]
+    final fun <#A1: kotlin/Int> (/CInt32VarX<#A1>).<set-value>(#A1) // /value.<set-value>|<set-value>@CInt32VarX<0:0>(0:0){0§<kotlin.Int>}[0]
+final fun /foo(/IdType, /CInt32VarX<kotlin/Int>) // /foo|foo(IdType;CInt32VarX<kotlin.Int>){}[0]
+final inline fun <#A: reified /CPointed> (/CPointed)./reinterpret(): #A // /reinterpret|reinterpret@CPointed(){0§<CPointed>}[0]

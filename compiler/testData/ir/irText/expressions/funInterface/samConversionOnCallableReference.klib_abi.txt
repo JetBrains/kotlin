@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract fun interface /KRunnable { // /KRunnable|null[0]
+    abstract fun run() // /KRunnable.run|run(){}[0]
+}
+final fun /foo0() // /foo0|foo0(){}[0]
+final fun /foo1(kotlin/IntArray...): kotlin/Int // /foo1|foo1(kotlin.IntArray...){}[0]
+final fun /testSamConstructor(): /KRunnable // /testSamConstructor|testSamConstructor(){}[0]
+final fun /testSamConversion() // /testSamConversion|testSamConversion(){}[0]
+final fun /testSamConversionOnAdapted() // /testSamConversionOnAdapted|testSamConversionOnAdapted(){}[0]
+final fun /testSamCosntructorOnAdapted(): /KRunnable // /testSamCosntructorOnAdapted|testSamCosntructorOnAdapted(){}[0]
+final fun /use(/KRunnable) // /use|use(KRunnable){}[0]

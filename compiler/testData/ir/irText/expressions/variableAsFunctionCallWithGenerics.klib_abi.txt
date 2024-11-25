@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /gk // /gk|@0:0{0§<kotlin.CharSequence>}gk[0]
+    final fun <#A1: kotlin/CharSequence> (#A1).<get-gk>(): kotlin/Function0<#A1> // /gk.<get-gk>|<get-gk>@0:0(){0§<kotlin.CharSequence>}[0]
+final val /kt26531Val // /kt26531Val|@0:0{0§<kotlin.Any?>}kt26531Val[0]
+    final fun <#A1: kotlin/Any?> (#A1).<get-kt26531Val>(): kotlin/Function0<#A1> // /kt26531Val.<get-kt26531Val>|<get-kt26531Val>@0:0(){0§<kotlin.Any?>}[0]
+final fun /kt26531(): kotlin/Int // /kt26531|kt26531(){}[0]
+final fun /testGeneric1(kotlin/String): kotlin/String // /testGeneric1|testGeneric1(kotlin.String){}[0]

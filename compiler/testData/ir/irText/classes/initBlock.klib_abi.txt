@@ -1,0 +1,26 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Test1 { // /Test1|null[0]
+    constructor <init>() // /Test1.<init>|<init>(){}[0]
+}
+final class /Test2 { // /Test2|null[0]
+    final val x // /Test2.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /Test2.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // /Test2.<init>|<init>(kotlin.Int){}[0]
+}
+final class /Test3 { // /Test3|null[0]
+    constructor <init>() // /Test3.<init>|<init>(){}[0]
+}
+final class /Test4 { // /Test4|null[0]
+    constructor <init>() // /Test4.<init>|<init>(){}[0]
+}
+final class /Test5 { // /Test5|null[0]
+    constructor <init>() // /Test5.<init>|<init>(){}[0]
+    final inner class TestInner { // /Test5.TestInner|null[0]
+        constructor <init>() // /Test5.TestInner.<init>|<init>(){}[0]
+    }
+}

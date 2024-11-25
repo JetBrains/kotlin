@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Outer { // /Outer|null[0]
+    constructor <init>() // /Outer.<init>|<init>(){}[0]
+    final fun foo() // /Outer.foo|foo(){}[0]
+    final inner class Inner { // /Outer.Inner|null[0]
+        constructor <init>() // /Outer.Inner.<init>|<init>(){}[0]
+        final fun test() // /Outer.Inner.test|test(){}[0]
+        final inner class Inner2 { // /Outer.Inner.Inner2|null[0]
+            constructor <init>() // /Outer.Inner.Inner2.<init>|<init>(){}[0]
+            final fun test2() // /Outer.Inner.Inner2.test2|test2(){}[0]
+            final fun (/Outer).test3() // /Outer.Inner.Inner2.test3|test3@Outer(){}[0]
+        }
+    }
+}

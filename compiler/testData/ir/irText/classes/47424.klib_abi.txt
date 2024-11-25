@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface com.example/Aa // com.example/Aa|null[0]
+abstract interface <#A: com.example/Ab<#A>> com.example/Ab : com.example/Aa // com.example/Ab|null[0]
+abstract interface com.example/Ba // com.example/Ba|null[0]
+abstract interface <#A: com.example/Bb<#A>> com.example/Bb : com.example/Ab<#A>, com.example/Ba // com.example/Bb|null[0]
+abstract interface com.example/C : com.example/Ca, com.example/Cb // com.example/C|null[0]
+abstract interface com.example/Ca { // com.example/Ca|null[0]
+    abstract val b // com.example/Ca.b|{}b[0]
+        abstract fun <get-b>(): com.example/Ba // com.example/Ca.b.<get-b>|<get-b>(){}[0]
+}
+abstract interface com.example/Cb { // com.example/Cb|null[0]
+    abstract val b // com.example/Cb.b|{}b[0]
+        abstract fun <get-b>(): com.example/Bb<*> // com.example/Cb.b.<get-b>|<get-b>(){}[0]
+}

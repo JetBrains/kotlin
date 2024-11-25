@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open annotation class /A : kotlin/Annotation { // /A|null[0]
+    final val x // /A.x|{}x[0]
+        final fun <get-x>(): kotlin/String // /A.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/String) // /A.<init>|<init>(kotlin.String){}[0]
+}
+final fun /foo(kotlin.collections/Map<kotlin/String, kotlin/Int>) // /foo|foo(kotlin.collections.Map<kotlin.String,kotlin.Int>){}[0]

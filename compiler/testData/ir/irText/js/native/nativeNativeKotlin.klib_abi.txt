@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class foo/A { // foo/A|null[0]
+    constructor <init>() // foo/A.<init>|<init>(){}[0]
+    final fun foo(): kotlin/String // foo/A.foo|foo(){}[0]
+}
+open class foo/B : foo/A { // foo/B|null[0]
+    constructor <init>() // foo/B.<init>|<init>(){}[0]
+    final fun bar(): kotlin/String // foo/B.bar|bar(){}[0]
+}
+final class foo/C : foo/B { // foo/C|null[0]
+    constructor <init>() // foo/C.<init>|<init>(){}[0]
+}
+final fun foo/box(): kotlin/String // foo/box|box(){}[0]

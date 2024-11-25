@@ -1,0 +1,20 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /MyContainer { // /MyContainer|null[0]
+    final var s // /MyContainer.s|{}s[0]
+        final fun <get-s>(): kotlin/String // /MyContainer.s.<get-s>|<get-s>(){}[0]
+        final fun <set-s>(kotlin/String) // /MyContainer.s.<set-s>|<set-s>(kotlin.String){}[0]
+    constructor <init>(kotlin/String) // /MyContainer.<init>|<init>(kotlin.String){}[0]
+    final fun component1(): kotlin/String // /MyContainer.component1|component1(){}[0]
+    final fun copy(kotlin/String = ...): /MyContainer // /MyContainer.copy|copy(kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /MyContainer.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /MyContainer.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /MyContainer.toString|toString(){}[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun context(/MyContainer) (/MyContainer)./get(kotlin/Int): kotlin/String? // /get|get!kotlin.Int@MyContainer(kotlin.Int){}[0]
+final fun context(/MyContainer) (/MyContainer)./set(kotlin/Int, kotlin/String) // /set|set!kotlin.Int@MyContainer(kotlin.Int;kotlin.String){}[0]

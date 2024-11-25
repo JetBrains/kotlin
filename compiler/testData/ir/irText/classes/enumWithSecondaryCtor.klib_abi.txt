@@ -1,0 +1,36 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final enum class /Test0 : kotlin/Enum</Test0> { // /Test0|null[0]
+    final val entries // /Test0.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</Test0> // /Test0.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val x // /Test0.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /Test0.x.<get-x>|<get-x>(){}[0]
+    final fun valueOf(kotlin/String): /Test0 // /Test0.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</Test0> // /Test0.values|values#static(){}[0]
+    enum entry ZERO // /Test0.ZERO|null[0]
+}
+final enum class /Test1 : kotlin/Enum</Test1> { // /Test1|null[0]
+    final val entries // /Test1.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</Test1> // /Test1.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val x // /Test1.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /Test1.x.<get-x>|<get-x>(){}[0]
+    final fun valueOf(kotlin/String): /Test1 // /Test1.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</Test1> // /Test1.values|values#static(){}[0]
+    enum entry ONE // /Test1.ONE|null[0]
+    enum entry ZERO // /Test1.ZERO|null[0]
+}
+abstract enum class /Test2 : kotlin/Enum</Test2> { // /Test2|null[0]
+    final val entries // /Test2.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</Test2> // /Test2.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val x // /Test2.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /Test2.x.<get-x>|<get-x>(){}[0]
+    abstract fun foo() // /Test2.foo|foo(){}[0]
+    final fun valueOf(kotlin/String): /Test2 // /Test2.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</Test2> // /Test2.values|values#static(){}[0]
+    enum entry ONE // /Test2.ONE|null[0]
+    enum entry ZERO // /Test2.ZERO|null[0]
+}

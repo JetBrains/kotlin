@@ -1,0 +1,30 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /btest1(kotlin/Byte, kotlin/Byte): kotlin/Boolean // /btest1|btest1(kotlin.Byte;kotlin.Byte){}[0]
+final fun /btest2(kotlin/Byte, kotlin/Byte): kotlin/Boolean // /btest2|btest2(kotlin.Byte;kotlin.Byte){}[0]
+final fun /btest3(kotlin/Byte, kotlin/Byte): kotlin/Boolean // /btest3|btest3(kotlin.Byte;kotlin.Byte){}[0]
+final fun /btest4(kotlin/Byte, kotlin/Byte): kotlin/Boolean // /btest4|btest4(kotlin.Byte;kotlin.Byte){}[0]
+final fun /dtest1(kotlin/Double, kotlin/Double): kotlin/Boolean // /dtest1|dtest1(kotlin.Double;kotlin.Double){}[0]
+final fun /dtest2(kotlin/Double, kotlin/Double): kotlin/Boolean // /dtest2|dtest2(kotlin.Double;kotlin.Double){}[0]
+final fun /dtest3(kotlin/Double, kotlin/Double): kotlin/Boolean // /dtest3|dtest3(kotlin.Double;kotlin.Double){}[0]
+final fun /dtest4(kotlin/Double, kotlin/Double): kotlin/Boolean // /dtest4|dtest4(kotlin.Double;kotlin.Double){}[0]
+final fun /ftest1(kotlin/Float, kotlin/Float): kotlin/Boolean // /ftest1|ftest1(kotlin.Float;kotlin.Float){}[0]
+final fun /ftest2(kotlin/Float, kotlin/Float): kotlin/Boolean // /ftest2|ftest2(kotlin.Float;kotlin.Float){}[0]
+final fun /ftest3(kotlin/Float, kotlin/Float): kotlin/Boolean // /ftest3|ftest3(kotlin.Float;kotlin.Float){}[0]
+final fun /ftest4(kotlin/Float, kotlin/Float): kotlin/Boolean // /ftest4|ftest4(kotlin.Float;kotlin.Float){}[0]
+final fun /itest1(kotlin/Int, kotlin/Int): kotlin/Boolean // /itest1|itest1(kotlin.Int;kotlin.Int){}[0]
+final fun /itest2(kotlin/Int, kotlin/Int): kotlin/Boolean // /itest2|itest2(kotlin.Int;kotlin.Int){}[0]
+final fun /itest3(kotlin/Int, kotlin/Int): kotlin/Boolean // /itest3|itest3(kotlin.Int;kotlin.Int){}[0]
+final fun /itest4(kotlin/Int, kotlin/Int): kotlin/Boolean // /itest4|itest4(kotlin.Int;kotlin.Int){}[0]
+final fun /ltest1(kotlin/Long, kotlin/Long): kotlin/Boolean // /ltest1|ltest1(kotlin.Long;kotlin.Long){}[0]
+final fun /ltest2(kotlin/Long, kotlin/Long): kotlin/Boolean // /ltest2|ltest2(kotlin.Long;kotlin.Long){}[0]
+final fun /ltest3(kotlin/Long, kotlin/Long): kotlin/Boolean // /ltest3|ltest3(kotlin.Long;kotlin.Long){}[0]
+final fun /ltest4(kotlin/Long, kotlin/Long): kotlin/Boolean // /ltest4|ltest4(kotlin.Long;kotlin.Long){}[0]
+final fun /stest1(kotlin/Short, kotlin/Short): kotlin/Boolean // /stest1|stest1(kotlin.Short;kotlin.Short){}[0]
+final fun /stest2(kotlin/Short, kotlin/Short): kotlin/Boolean // /stest2|stest2(kotlin.Short;kotlin.Short){}[0]
+final fun /stest3(kotlin/Short, kotlin/Short): kotlin/Boolean // /stest3|stest3(kotlin.Short;kotlin.Short){}[0]
+final fun /stest4(kotlin/Short, kotlin/Short): kotlin/Boolean // /stest4|stest4(kotlin.Short;kotlin.Short){}[0]

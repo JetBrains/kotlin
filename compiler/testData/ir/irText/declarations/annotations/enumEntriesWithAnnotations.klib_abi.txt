@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open annotation class /TestAnn : kotlin/Annotation { // /TestAnn|null[0]
+    final val x // /TestAnn.x|{}x[0]
+        final fun <get-x>(): kotlin/String // /TestAnn.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/String) // /TestAnn.<init>|<init>(kotlin.String){}[0]
+}
+open enum class /TestEnum : kotlin/Enum</TestEnum> { // /TestEnum|null[0]
+    final val entries // /TestEnum.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</TestEnum> // /TestEnum.entries.<get-entries>|<get-entries>#static(){}[0]
+    final fun valueOf(kotlin/String): /TestEnum // /TestEnum.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</TestEnum> // /TestEnum.values|values#static(){}[0]
+    enum entry ENTRY1 // /TestEnum.ENTRY1|null[0]
+    enum entry ENTRY2 // /TestEnum.ENTRY2|null[0]
+}

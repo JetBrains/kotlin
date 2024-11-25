@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /View { // /View|null[0]
+    final val coefficient // /View.coefficient|{}coefficient[0]
+        final fun <get-coefficient>(): kotlin/Int // /View.coefficient.<get-coefficient>|<get-coefficient>(){}[0]
+    constructor <init>() // /View.<init>|<init>(){}[0]
+}
+final val /dp // /dp|@kotlin.Int{}dp[0]
+    final fun context(kotlin/Int) (kotlin/Int).<get-dp>(): kotlin/Int // /dp.<get-dp>|<get-dp>!View@kotlin.Int(){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]

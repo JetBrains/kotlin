@@ -1,0 +1,28 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open annotation class kotlin.internal/ImplicitIntegerCoercion : kotlin/Annotation { // kotlin.internal/ImplicitIntegerCoercion|null[0]
+    constructor <init>() // kotlin.internal/ImplicitIntegerCoercion.<init>|<init>(){}[0]
+}
+final const val /BIGGER_THAN_UBYTE // /BIGGER_THAN_UBYTE|{}BIGGER_THAN_UBYTE[0]
+    final fun <get-BIGGER_THAN_UBYTE>(): kotlin/Int // /BIGGER_THAN_UBYTE.<get-BIGGER_THAN_UBYTE>|<get-BIGGER_THAN_UBYTE>(){}[0]
+final const val /EXPLICIT_INT // /EXPLICIT_INT|{}EXPLICIT_INT[0]
+    final fun <get-EXPLICIT_INT>(): kotlin/Int // /EXPLICIT_INT.<get-EXPLICIT_INT>|<get-EXPLICIT_INT>(){}[0]
+final const val /IMPLICIT_INT // /IMPLICIT_INT|{}IMPLICIT_INT[0]
+    final fun <get-IMPLICIT_INT>(): kotlin/Int // /IMPLICIT_INT.<get-IMPLICIT_INT>|<get-IMPLICIT_INT>(){}[0]
+final const val /LONG_CONST // /LONG_CONST|{}LONG_CONST[0]
+    final fun <get-LONG_CONST>(): kotlin/Long // /LONG_CONST.<get-LONG_CONST>|<get-LONG_CONST>(){}[0]
+final val /NON_CONST // /NON_CONST|{}NON_CONST[0]
+    final fun <get-NON_CONST>(): kotlin/Int // /NON_CONST.<get-NON_CONST>|<get-NON_CONST>(){}[0]
+final const val /UINT_CONST // /UINT_CONST|{}UINT_CONST[0]
+    final fun <get-UINT_CONST>(): kotlin/UInt // /UINT_CONST.<get-UINT_CONST>|<get-UINT_CONST>(){}[0]
+final fun /takeLong(kotlin/Long) // /takeLong|takeLong(kotlin.Long){}[0]
+final fun /takeUByte(kotlin/UByte) // /takeUByte|takeUByte(kotlin.UByte){}[0]
+final fun /takeUBytes(kotlin/UByteArray...) // /takeUBytes|takeUBytes(kotlin.UByteArray...){}[0]
+final fun /takeUInt(kotlin/UInt) // /takeUInt|takeUInt(kotlin.UInt){}[0]
+final fun /takeULong(kotlin/ULong) // /takeULong|takeULong(kotlin.ULong){}[0]
+final fun /takeUShort(kotlin/UShort) // /takeUShort|takeUShort(kotlin.UShort){}[0]
+final fun /test() // /test|test(){}[0]

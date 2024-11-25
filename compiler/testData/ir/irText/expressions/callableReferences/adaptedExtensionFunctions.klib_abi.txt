@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+}
+final fun (/C)./extensionBoth(kotlin/Int, kotlin/String = ..., kotlin/Array<out kotlin/String>...) // /extensionBoth|extensionBoth@C(kotlin.Int;kotlin.String;kotlin.Array<out|kotlin.String>...){}[0]
+final fun (/C)./extensionDefault(kotlin/Int, kotlin/String = ...) // /extensionDefault|extensionDefault@C(kotlin.Int;kotlin.String){}[0]
+final fun (/C)./extensionVararg(kotlin/Int, kotlin/Array<out kotlin/String>...) // /extensionVararg|extensionVararg@C(kotlin.Int;kotlin.Array<out|kotlin.String>...){}[0]
+final fun /testExtensionBoth() // /testExtensionBoth|testExtensionBoth(){}[0]
+final fun /testExtensionDefault() // /testExtensionDefault|testExtensionDefault(){}[0]
+final fun /testExtensionVararg() // /testExtensionVararg|testExtensionVararg(){}[0]
+final fun /use(kotlin/Function2</C, kotlin/Int, kotlin/Unit>) // /use|use(kotlin.Function2<C,kotlin.Int,kotlin.Unit>){}[0]

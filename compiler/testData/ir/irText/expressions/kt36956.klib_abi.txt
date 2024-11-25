@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /A { // /A|null[0]
+    constructor <init>(#A) // /A.<init>|<init>(1:0){}[0]
+    final fun get(kotlin/Int): #A // /A.get|get(kotlin.Int){}[0]
+    final fun set(kotlin/Int, #A) // /A.set|set(kotlin.Int;1:0){}[0]
+}
+final val /aFloat // /aFloat|{}aFloat[0]
+    final fun <get-aFloat>(): /A<kotlin/Float> // /aFloat.<get-aFloat>|<get-aFloat>(){}[0]
+final val /aInt // /aInt|{}aInt[0]
+    final fun <get-aInt>(): kotlin/Float // /aInt.<get-aInt>|<get-aInt>(){}[0]

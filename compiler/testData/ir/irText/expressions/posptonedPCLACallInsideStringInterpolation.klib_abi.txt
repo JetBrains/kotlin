@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /Controller { // /Controller|null[0]
+    constructor <init>() // /Controller.<init>|<init>(){}[0]
+    final fun yield(#A) // /Controller.yield|yield(1:0){}[0]
+}
+final fun /bar(kotlin/String) // /bar|bar(kotlin.String){}[0]
+final fun /foo() // /foo|foo(){}[0]
+final fun <#A: kotlin/Any?> /generate(kotlin/Function1</Controller<#A>, kotlin/Unit>) // /generate|generate(kotlin.Function1<Controller<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /id(#A): #A // /id|id(0:0){0§<kotlin.Any?>}[0]

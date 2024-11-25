@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /C { // /C|null[0]
+    final var x // /C.x|{}x[0]
+        final fun <get-x>(): #A // /C.x.<get-x>|<get-x>(){}[0]
+        final fun <set-x>(#A) // /C.x.<set-x>|<set-x>(1:0){}[0]
+    constructor <init>(#A) // /C.<init>|<init>(1:0){}[0]
+}
+final var /y // /y|@C<0:0>{0§<kotlin.Any?>}y[0]
+    final fun <#A1: kotlin/Any?> (/C<#A1>).<get-y>(): #A1 // /y.<get-y>|<get-y>@C<0:0>(){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> (/C<#A1>).<set-y>(#A1) // /y.<set-y>|<set-y>@C<0:0>(0:0){0§<kotlin.Any?>}[0]
+final fun /test1() // /test1|test1(){}[0]
+final fun /test2(kotlin/Any) // /test2|test2(kotlin.Any){}[0]
+final fun /use(kotlin.reflect/KMutableProperty<kotlin/String>) // /use|use(kotlin.reflect.KMutableProperty<kotlin.String>){}[0]

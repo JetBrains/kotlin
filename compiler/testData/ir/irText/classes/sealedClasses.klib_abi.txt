@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+sealed class /Expr { // /Expr|null[0]
+    final class Const : /Expr { // /Expr.Const|null[0]
+        final val number // /Expr.Const.number|{}number[0]
+            final fun <get-number>(): kotlin/Double // /Expr.Const.number.<get-number>|<get-number>(){}[0]
+        constructor <init>(kotlin/Double) // /Expr.Const.<init>|<init>(kotlin.Double){}[0]
+    }
+    final object NotANumber : /Expr // /Expr.NotANumber|null[0]
+    final class Sum : /Expr { // /Expr.Sum|null[0]
+        final val e1 // /Expr.Sum.e1|{}e1[0]
+            final fun <get-e1>(): /Expr // /Expr.Sum.e1.<get-e1>|<get-e1>(){}[0]
+        final val e2 // /Expr.Sum.e2|{}e2[0]
+            final fun <get-e2>(): /Expr // /Expr.Sum.e2.<get-e2>|<get-e2>(){}[0]
+        constructor <init>(/Expr, /Expr) // /Expr.Sum.<init>|<init>(Expr;Expr){}[0]
+    }
+}

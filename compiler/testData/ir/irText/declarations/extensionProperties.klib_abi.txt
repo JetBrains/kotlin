@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Host { // /Host|null[0]
+    final val test3 // /Host.test3|@kotlin.String{}test3[0]
+        final fun (kotlin/String).<get-test3>(): kotlin/Int // /Host.test3.<get-test3>|<get-test3>@kotlin.String(){}[0]
+    final var test4 // /Host.test4|@kotlin.String{}test4[0]
+        final fun (kotlin/String).<get-test4>(): kotlin/Int // /Host.test4.<get-test4>|<get-test4>@kotlin.String(){}[0]
+        final fun (kotlin/String).<set-test4>(kotlin/Int) // /Host.test4.<set-test4>|<set-test4>@kotlin.String(kotlin.Int){}[0]
+    constructor <init>() // /Host.<init>|<init>(){}[0]
+}
+final val /test1 // /test1|@kotlin.String{}test1[0]
+    final fun (kotlin/String).<get-test1>(): kotlin/Int // /test1.<get-test1>|<get-test1>@kotlin.String(){}[0]
+final var /test2 // /test2|@kotlin.String{}test2[0]
+    final fun (kotlin/String).<get-test2>(): kotlin/Int // /test2.<get-test2>|<get-test2>@kotlin.String(){}[0]
+    final fun (kotlin/String).<set-test2>(kotlin/Int) // /test2.<set-test2>|<set-test2>@kotlin.String(kotlin.Int){}[0]

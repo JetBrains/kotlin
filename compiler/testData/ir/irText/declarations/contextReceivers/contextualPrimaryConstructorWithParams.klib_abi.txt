@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /O { // /O|null[0]
+    final val o // /O.o|{}o[0]
+        final fun <get-o>(): kotlin/String // /O.o.<get-o>|<get-o>(){}[0]
+    constructor <init>(kotlin/String) // /O.<init>|<init>(kotlin.String){}[0]
+}
+final class /OK { // /OK|null[0]
+    final val k // /OK.k|{}k[0]
+        final fun <get-k>(): kotlin/String // /OK.k.<get-k>|<get-k>(){}[0]
+    final val result // /OK.result|{}result[0]
+        final fun <get-result>(): kotlin/String // /OK.result.<get-result>|<get-result>(){}[0]
+    constructor context(/O) <init>(kotlin/String) // /OK.<init>|<init>!O(kotlin.String){}[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]

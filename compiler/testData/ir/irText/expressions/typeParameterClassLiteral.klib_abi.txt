@@ -1,0 +1,17 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Host { // /Host|null[0]
+    final val classRefGenericMemberExtVal // /Host.classRefGenericMemberExtVal|@0:0{0§<kotlin.Any>}classRefGenericMemberExtVal[0]
+        final inline fun <#A2: reified kotlin/Any> (#A2).<get-classRefGenericMemberExtVal>(): kotlin.reflect/KClass<#A2> // /Host.classRefGenericMemberExtVal.<get-classRefGenericMemberExtVal>|<get-classRefGenericMemberExtVal>@0:0(){0§<kotlin.Any>}[0]
+    constructor <init>() // /Host.<init>|<init>(){}[0]
+    final inline fun <#A1: reified kotlin/Any> (kotlin/Any).classRefGenericMemberExtFun(): kotlin.reflect/KClass<#A1> // /Host.classRefGenericMemberExtFun|classRefGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any>}[0]
+    final inline fun <#A1: reified kotlin/Any> classRefGenericMemberFun(): kotlin.reflect/KClass<#A1> // /Host.classRefGenericMemberFun|classRefGenericMemberFun(){0§<kotlin.Any>}[0]
+}
+final val /classRefExtVal // /classRefExtVal|@0:0{0§<kotlin.Any>}classRefExtVal[0]
+    final inline fun <#A1: reified kotlin/Any> (#A1).<get-classRefExtVal>(): kotlin.reflect/KClass<#A1> // /classRefExtVal.<get-classRefExtVal>|<get-classRefExtVal>@0:0(){0§<kotlin.Any>}[0]
+final inline fun <#A: reified kotlin/Any> (kotlin/Any)./classRefExtFun(): kotlin.reflect/KClass<#A> // /classRefExtFun|classRefExtFun@kotlin.Any(){0§<kotlin.Any>}[0]
+final inline fun <#A: reified kotlin/Any> /classRefFun(): kotlin.reflect/KClass<#A> // /classRefFun|classRefFun(){0§<kotlin.Any>}[0]

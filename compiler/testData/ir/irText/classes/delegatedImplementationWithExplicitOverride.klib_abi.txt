@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C : /IFooBar { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    final fun bar() // /C.bar|bar(){}[0]
+    final fun foo() // /C.foo|foo(){}[0]
+}
+final object /FooBarImpl : /IFooBar { // /FooBarImpl|null[0]
+    final fun bar() // /FooBarImpl.bar|bar(){}[0]
+    final fun foo() // /FooBarImpl.foo|foo(){}[0]
+}
+abstract interface /IFooBar { // /IFooBar|null[0]
+    abstract fun bar() // /IFooBar.bar|bar(){}[0]
+    abstract fun foo() // /IFooBar.foo|foo(){}[0]
+}

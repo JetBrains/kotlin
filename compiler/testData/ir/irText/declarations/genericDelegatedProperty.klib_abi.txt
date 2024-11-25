@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /C { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+}
+final object /Delegate { // /Delegate|null[0]
+    final fun getValue(kotlin/Any?, kotlin/Any?): kotlin/Int // /Delegate.getValue|getValue(kotlin.Any?;kotlin.Any?){}[0]
+    final fun setValue(kotlin/Any?, kotlin/Any?, kotlin/Int) // /Delegate.setValue|setValue(kotlin.Any?;kotlin.Any?;kotlin.Int){}[0]
+}
+final var /genericDelegatedProperty // /genericDelegatedProperty|@C<0:0>{0§<kotlin.Any?>}genericDelegatedProperty[0]
+    final fun <#A1: kotlin/Any?> (/C<#A1>).<get-genericDelegatedProperty>(): kotlin/Int // /genericDelegatedProperty.<get-genericDelegatedProperty>|<get-genericDelegatedProperty>@C<0:0>(){0§<kotlin.Any?>}[0]
+    final fun <#A1: kotlin/Any?> (/C<#A1>).<set-genericDelegatedProperty>(kotlin/Int) // /genericDelegatedProperty.<set-genericDelegatedProperty>|<set-genericDelegatedProperty>@C<0:0>(kotlin.Int){0§<kotlin.Any?>}[0]

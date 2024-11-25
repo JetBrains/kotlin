@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /Test { // /Test|null[0]
+    final val x // /Test.x|{}x[0]
+        final fun <get-x>(): #A // /Test.x.<get-x>|<get-x>(){}[0]
+    final val y // /Test.y|{}y[0]
+        final fun <get-y>(): kotlin/String // /Test.y.<get-y>|<get-y>(){}[0]
+    constructor <init>(#A, kotlin/String = ...) // /Test.<init>|<init>(1:0;kotlin.String){}[0]
+    final fun component1(): #A // /Test.component1|component1(){}[0]
+    final fun component2(): kotlin/String // /Test.component2|component2(){}[0]
+    final fun copy(#A = ..., kotlin/String = ...): /Test<#A> // /Test.copy|copy(1:0;kotlin.String){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Test.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Test.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Test.toString|toString(){}[0]
+}

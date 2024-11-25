@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Z { // /Z|null[0]
+    constructor <init>() // /Z.<init>|<init>(){}[0]
+    final fun test2() // /Z.test2|test2(){}[0]
+    final object Companion { // /Z.Companion|null[0]
+        final fun test() // /Z.Companion.test|test(){}[0]
+    }
+}

@@ -1,0 +1,34 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Counter { // /Counter|null[0]
+    final var i // /Counter.i|{}i[0]
+        final fun <get-i>(): kotlin/Int // /Counter.i.<get-i>|<get-i>(){}[0]
+        final fun <set-i>(kotlin/Int) // /Counter.i.<set-i>|<set-i>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int = ...) // /Counter.<init>|<init>(kotlin.Int){}[0]
+    final fun component1(): kotlin/Int // /Counter.component1|component1(){}[0]
+    final fun copy(kotlin/Int = ...): /Counter // /Counter.copy|copy(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Counter.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Counter.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Counter.toString|toString(){}[0]
+}
+final class /CounterConfig { // /CounterConfig|null[0]
+    final val max // /CounterConfig.max|{}max[0]
+        final fun <get-max>(): kotlin/Int // /CounterConfig.max.<get-max>|<get-max>(){}[0]
+    constructor <init>(kotlin/Int = ...) // /CounterConfig.<init>|<init>(kotlin.Int){}[0]
+    final fun component1(): kotlin/Int // /CounterConfig.component1|component1(){}[0]
+    final fun copy(kotlin/Int = ...): /CounterConfig // /CounterConfig.copy|copy(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /CounterConfig.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /CounterConfig.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /CounterConfig.toString|toString(){}[0]
+}
+final class /CounterIterator : kotlin.collections/Iterator<kotlin/Int> { // /CounterIterator|null[0]
+    constructor context(/CounterConfig) <init>(/Counter) // /CounterIterator.<init>|<init>!CounterConfig(Counter){}[0]
+    final fun hasNext(): kotlin/Boolean // /CounterIterator.hasNext|hasNext(){}[0]
+    final fun next(): kotlin/Int // /CounterIterator.next|next(){}[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun context(/Counter) (/Counter)./iterator(): /CounterIterator // /iterator|iterator!CounterConfig@Counter(){}[0]

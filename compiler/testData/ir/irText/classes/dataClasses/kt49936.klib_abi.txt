@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val x // /A.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /A.x.<get-x>|<get-x>(){}[0]
+    final val x // /A.x|@kotlin.String{}x[0]
+        final fun (kotlin/String).<get-x>(): kotlin/String // /A.x.<get-x>|<get-x>@kotlin.String(){}[0]
+    constructor <init>(kotlin/Int) // /A.<init>|<init>(kotlin.Int){}[0]
+    final fun component1(): kotlin/Int // /A.component1|component1(){}[0]
+    final fun copy(kotlin/Int = ...): /A // /A.copy|copy(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /A.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /A.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /A.toString|toString(){}[0]
+}

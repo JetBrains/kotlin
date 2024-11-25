@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /ok // /ok|{}ok[0]
+    final fun <get-ok>(): kotlin/String // /ok.<get-ok>|<get-ok>(){}[0]
+final val /ok2 // /ok2|{}ok2[0]
+    final fun <get-ok2>(): kotlin/String // /ok2.<get-ok2>|<get-ok2>(){}[0]
+final val /ok3 // /ok3|{}ok3[0]
+    final fun <get-ok3>(): kotlin/String // /ok3.<get-ok3>|<get-ok3>(){}[0]
+final val /okext // /okext|@kotlin.String{}okext[0]
+    final fun (kotlin/String).<get-okext>(): kotlin/String // /okext.<get-okext>|<get-okext>@kotlin.String(){}[0]
+final fun /test1(): kotlin/String // /test1|test1(){}[0]
+final fun /test2(kotlin/String): kotlin/String // /test2|test2(kotlin.String){}[0]
+final fun /test3(): kotlin/String // /test3|test3(){}[0]
+final fun /test4(): kotlin/String // /test4|test4(){}[0]
+final fun (kotlin/String)./test5(): kotlin/String // /test5|test5@kotlin.String(){}[0]

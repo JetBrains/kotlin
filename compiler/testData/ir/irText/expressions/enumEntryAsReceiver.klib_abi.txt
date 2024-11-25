@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract enum class /X : kotlin/Enum</X> { // /X|null[0]
+    final val entries // /X.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</X> // /X.entries.<get-entries>|<get-entries>#static(){}[0]
+    abstract val value // /X.value|{}value[0]
+        abstract fun <get-value>(): kotlin/Function0<kotlin/String> // /X.value.<get-value>|<get-value>(){}[0]
+    final fun valueOf(kotlin/String): /X // /X.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</X> // /X.values|values#static(){}[0]
+    enum entry B // /X.B|null[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]

@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /Host { // /Host|null[0]
+    final fun importedObjectMemberWithVarargs(kotlin/IntArray...): kotlin/String // /Host.importedObjectMemberWithVarargs|importedObjectMemberWithVarargs(kotlin.IntArray...){}[0]
+}
+final fun /coerceToUnit(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /coerceToUnit|coerceToUnit(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /fnWithDefault(kotlin/Int, kotlin/Int = ...): kotlin/String // /fnWithDefault|fnWithDefault(kotlin.Int;kotlin.Int){}[0]
+final fun /fnWithDefaults(kotlin/Int = ..., kotlin/Int = ...): kotlin/String // /fnWithDefaults|fnWithDefaults(kotlin.Int;kotlin.Int){}[0]
+final fun /fnWithVarargs(kotlin/IntArray...): kotlin/String // /fnWithVarargs|fnWithVarargs(kotlin.IntArray...){}[0]
+final fun /testCoercionToUnit() // /testCoercionToUnit|testCoercionToUnit(){}[0]
+final fun /testDefault(): kotlin/String // /testDefault|testDefault(){}[0]
+final fun /testDefault0(): kotlin/String // /testDefault0|testDefault0(){}[0]
+final fun /testImportedObjectMember(): kotlin/String // /testImportedObjectMember|testImportedObjectMember(){}[0]
+final fun /testVararg(): kotlin/String // /testVararg|testVararg(){}[0]
+final fun /testVararg0(): kotlin/String // /testVararg0|testVararg0(){}[0]
+final fun /use(kotlin/Function1<kotlin/Int, kotlin/String>): kotlin/String // /use|use(kotlin.Function1<kotlin.Int,kotlin.String>){}[0]
+final fun /use0(kotlin/Function0<kotlin/String>): kotlin/String // /use0|use0(kotlin.Function0<kotlin.String>){}[0]

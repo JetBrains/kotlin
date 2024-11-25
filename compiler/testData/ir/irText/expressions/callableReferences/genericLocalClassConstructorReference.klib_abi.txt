@@ -1,0 +1,20 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class <#A: kotlin/Any?> /L { // /L|null[0]
+    final val ll // /L.ll|{}ll[0]
+        final fun <get-ll>(): #A // /L.ll.<get-ll>|<get-ll>(){}[0]
+    constructor <init>(#A) // /L.<init>|<init>(1:0){}[0]
+}
+final class <#A: kotlin/Any?> /Rec { // /Rec|null[0]
+    final val rt // /Rec.rt|{}rt[0]
+        final fun <get-rt>(): #A // /Rec.rt.<get-rt>|<get-rt>(){}[0]
+    constructor <init>(#A) // /Rec.<init>|<init>(1:0){}[0]
+}
+final val /p // /p|@Rec<0:0>{0§<kotlin.Any?>}p[0]
+    final fun <#A1: kotlin/Any?> (/Rec<#A1>).<get-p>(): /L<#A1> // /p.<get-p>|<get-p>@Rec<0:0>(){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> (/Rec<#A>)./fn(): /L<#A> // /fn|fn@Rec<0:0>(){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> /foo2(#A, #B, kotlin/Function2<#A, #B, #C>): #C // /foo2|foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}[0]

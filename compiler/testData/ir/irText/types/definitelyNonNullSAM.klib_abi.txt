@@ -1,0 +1,32 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class <#A: kotlin/Any?> /AC : /I1<#A>, /I2<#A> { // /AC|null[0]
+    open val sam // /AC.sam|{}sam[0]
+        open fun <get-sam>(): /FIn<#A> // /AC.sam.<get-sam>|<get-sam>(){}[0]
+    constructor <init>() // /AC.<init>|<init>(){}[0]
+}
+abstract class <#A: kotlin/Any?> /AD : /AC<#A!!> { // /AD|null[0]
+    open val l // /AD.l|{}l[0]
+        open fun <get-l>(): kotlin/Function1<#A!!, kotlin/Unit> // /AD.l.<get-l>|<get-l>(){}[0]
+    constructor <init>() // /AD.<init>|<init>(){}[0]
+}
+abstract fun interface <#A: in kotlin/Any?> /FIn { // /FIn|null[0]
+    abstract fun f(#A) // /FIn.f|f(1:0){}[0]
+}
+abstract interface <#A: in kotlin/Any?> /I1 { // /I1|null[0]
+    abstract val l // /I1.l|{}l[0]
+        abstract fun <get-l>(): kotlin/Function1<#A, kotlin/Unit> // /I1.l.<get-l>|<get-l>(){}[0]
+}
+abstract interface <#A: in kotlin/Any?> /I2 { // /I2|null[0]
+    abstract val sam // /I2.sam|{}sam[0]
+        abstract fun <get-sam>(): /FIn<#A> // /I2.sam.<get-sam>|<get-sam>(){}[0]
+}
+final class <#A: kotlin/Any?> /Test { // /Test|null[0]
+    constructor <init>() // /Test.<init>|<init>(){}[0]
+    final fun foo(): /FIn<#A!!> // /Test.foo|foo(){}[0]
+}
+final fun <#A: kotlin/Any?> /bar() // /bar|bar(){0§<kotlin.Any?>}[0]
