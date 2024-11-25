@@ -42,8 +42,6 @@ object FirExpressionWithErrorTypeChecker : FirBasicExpressionChecker(MppCheckerK
         // Filter non-error types from the beginning
         val type = expression.resolvedType
         if (type !is ConeErrorType) return
-        // Handled separately in ErrorNodeDiagnosticCollectorComponent
-        if (expression is FirVarargArgumentsExpression) return
         // Block always takes its type from somewhere else
         if (expression is FirBlock) return
         // Inherits error from its selector

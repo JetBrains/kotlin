@@ -176,13 +176,6 @@ class ErrorNodeDiagnosticCollectorComponent(
         reportFirDiagnostic(diagnostic, source, data)
     }
 
-    override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: CheckerContext) {
-        val elementType = varargArgumentsExpression.coneElementTypeOrNull ?: return
-        if (elementType is ConeErrorType) {
-            reportFirDiagnostic(elementType.diagnostic, varargArgumentsExpression.source, data)
-        }
-    }
-
     private fun reportFirDiagnostic(
         diagnostic: ConeDiagnostic,
         source: KtSourceElement?,
