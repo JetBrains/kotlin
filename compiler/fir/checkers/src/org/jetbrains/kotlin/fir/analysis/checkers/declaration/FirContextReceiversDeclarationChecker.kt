@@ -62,36 +62,32 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
         }
 
         if (contextParametersEnabled) {
-            if (declaration is FirClass) {
-                reporter.reportOn(
+            when (declaration) {
+                is FirClass -> reporter.reportOn(
                     source,
                     FirErrors.UNSUPPORTED,
                     "Context parameters on classes are unsupported.",
                     context
                 )
-            } else if (declaration is FirConstructor) {
-                reporter.reportOn(
+                is FirConstructor -> reporter.reportOn(
                     source,
                     FirErrors.UNSUPPORTED,
                     "Context parameters on constructors are unsupported.",
                     context
                 )
-            } else if (declaration.isDelegationOperator()) {
-                reporter.reportOn(
+                is FirCallableDeclaration if declaration.isDelegationOperator() -> reporter.reportOn(
                     source,
                     FirErrors.UNSUPPORTED,
                     "Context parameters on delegation operators are unsupported.",
                     context
                 )
-            } else if (declaration is FirProperty && declaration.delegate != null) {
-                reporter.reportOn(
+                is FirProperty if declaration.delegate != null -> reporter.reportOn(
                     source,
                     FirErrors.UNSUPPORTED,
                     "Context parameters on delegated properties are unsupported.",
                     context
                 )
-            } else {
-                for (parameter in contextParameters) {
+                else -> for (parameter in contextParameters) {
                     if (parameter.isLegacyContextReceiver()) {
                         reporter.reportOn(parameter.source, FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME, context)
                     }
@@ -115,8 +111,8 @@ object FirContextReceiversDeclarationChecker : FirBasicDeclarationChecker(MppChe
         }
     }
 
-    private fun FirDeclaration.isDelegationOperator(): Boolean {
-        return this is FirCallableDeclaration && this.isOperator && this.nameOrSpecialName in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS
+    private fun FirCallableDeclaration.isDelegationOperator(): Boolean {
+        return this.isOperator && this.nameOrSpecialName in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS
     }
 
     private fun FirDeclaration.getContextParameters(): List<FirValueParameter> {
