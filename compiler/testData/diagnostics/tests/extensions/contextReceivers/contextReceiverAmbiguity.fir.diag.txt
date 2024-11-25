@@ -1,8 +1,8 @@
-/contextReceiverAmbiguity.fir.kt:(141,148): warning: Experimental context receivers are deprecated and will be superseded by context parameters. Please don't use context receivers. You can either pass parameters explicitly or use members with extensions.
+/contextReceiverAmbiguity.fir.kt:(141,148): warning: Experimental context receivers are deprecated and will be superseded by context parameters. Please do not use context receivers. You can either pass parameters explicitly or use members with extensions.
 
 See new context parameters proposal: https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md. During the transition period, neither context receivers nor context parameters will be supported. This warning will become an error in future releases.
 
-/contextReceiverAmbiguity.fir.kt:(187,194): warning: Experimental context receivers are deprecated and will be superseded by context parameters. Please don't use context receivers. You can either pass parameters explicitly or use members with extensions.
+/contextReceiverAmbiguity.fir.kt:(187,194): warning: Experimental context receivers are deprecated and will be superseded by context parameters. Please do not use context receivers. You can either pass parameters explicitly or use members with extensions.
 
 See new context parameters proposal: https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md. During the transition period, neither context receivers nor context parameters will be supported. This warning will become an error in future releases.
 

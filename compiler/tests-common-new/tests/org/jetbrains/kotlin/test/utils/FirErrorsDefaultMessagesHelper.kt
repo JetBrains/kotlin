@@ -123,4 +123,8 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: AbstractKt
         )
     )
 
+    checkRule(
+        """\b(?:must|ca|is|wo|do)n''?t\b""".toRegex(RegexOption.IGNORE_CASE),
+        "uses contraction",
+    )
 }

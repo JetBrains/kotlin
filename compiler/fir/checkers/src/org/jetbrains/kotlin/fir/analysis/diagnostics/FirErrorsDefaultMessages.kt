@@ -905,7 +905,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INNER_ON_TOP_LEVEL_SCRIPT_CLASS, "Top-level script class cannot be inner.")
         map.put(
             ERROR_SUPPRESSION,
-            "This code uses error suppression for ''{0}''. While it might compile and work, the compiler behavior is UNSPECIFIED and WON''T BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue",
+            "This code uses error suppression for ''{0}''. While it might compile and work, the compiler behavior is UNSPECIFIED and WILL NOT BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue",
             TO_STRING
         )
         map.put(MISSING_CONSTRUCTOR_KEYWORD, "Use the 'constructor' keyword after the modifiers of the primary constructor.")
@@ -1491,7 +1491,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CONTEXT_RECEIVERS_DEPRECATED,
             "Experimental context receivers are deprecated and will be superseded by context parameters. " +
-                    "Please don't use context receivers. You can either pass parameters explicitly or use members with extensions.\n\n" +
+                    "Please do not use context receivers. You can either pass parameters explicitly or use members with extensions.\n\n" +
                     "See new context parameters proposal: https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md. " +
                     "During the transition period, neither context receivers nor context parameters will be supported. " +
                     "This warning will become an error in future releases."
@@ -1564,7 +1564,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NO_TYPE_ARGUMENTS_ON_RHS,
-            "$wrongNumberOfTypeArguments. Use {1} if you don''t intend to pass type arguments.",
+            "$wrongNumberOfTypeArguments. Use {1} if you do not intend to pass type arguments.",
             null,
             RENDER_CLASS_OR_OBJECT_NAME_QUOTED
         )
@@ -1718,8 +1718,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(IMPLICIT_NOTHING_RETURN_TYPE, "Return type 'Nothing' needs to be specified explicitly.")
         map.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "Property type 'Nothing' needs to be specified explicitly.")
 
-        map.put(ABBREVIATED_NOTHING_RETURN_TYPE, "'Nothing' return type can't be specified with type alias.")
-        map.put(ABBREVIATED_NOTHING_PROPERTY_TYPE, "'Nothing' property type can't be specified with type alias.")
+        map.put(ABBREVIATED_NOTHING_RETURN_TYPE, "'Nothing' return type cannot be specified with type alias.")
+        map.put(ABBREVIATED_NOTHING_PROPERTY_TYPE, "'Nothing' property type cannot be specified with type alias.")
 
         map.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds.")
 
@@ -2771,7 +2771,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE,
             "This ''copy'' usage exposes the non-public primary constructor of a ''data class''. " +
                     "The ''copy'' will change its visibility in future versions of Kotlin. " +
-                    "The public-API inline {0} won''t be able to access non-public-API ''copy''. " +
+                    "The public-API inline {0} will not be able to access non-public-API ''copy''. " +
                     "See https://youtrack.jetbrains.com/issue/KT-11914",
             SYMBOL_KIND,
         )

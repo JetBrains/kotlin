@@ -82,11 +82,11 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM,
-            "Can''t access ''{0}'' marked with @JsModule annotation from non-modular project.", FirDiagnosticRenderers.SYMBOL
+            "Cannot access ''{0}'' marked with @JsModule annotation from non-modular project.", FirDiagnosticRenderers.SYMBOL
         )
         map.put(
             CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM,
-            "Can''t access ''{0}'' marked with @JsNonModule annotation from modular project.", FirDiagnosticRenderers.SYMBOL
+            "Cannot access ''{0}'' marked with @JsNonModule annotation from modular project.", FirDiagnosticRenderers.SYMBOL
         )
         map.put(
             WRONG_MULTIPLE_INHERITANCE,
