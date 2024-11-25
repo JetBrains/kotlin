@@ -34148,6 +34148,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     public void testNothingValueException() {
       runTest("compiler/testData/codegen/box/nothingValue/nothingValueException.kt");
     }
+
+    @TestMetadata("toStringOnNothing.kt")
+    public void testToStringOnNothing() {
+      runTest("compiler/testData/codegen/box/nothingValue/toStringOnNothing.kt");
+    }
   }
 
   @TestMetadata("compiler/testData/codegen/box/nullCheckOptimization")
