@@ -31,7 +31,7 @@ class JvmModule(
     defaultStrategyConfig,
     additionalCompilationArguments,
 ) {
-    override fun compileImpl(
+    override fun compileImpl(// check tests here
         strategyConfig: CompilerExecutionStrategyConfiguration,
         compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
         kotlinLogger: TestKotlinLogger,
