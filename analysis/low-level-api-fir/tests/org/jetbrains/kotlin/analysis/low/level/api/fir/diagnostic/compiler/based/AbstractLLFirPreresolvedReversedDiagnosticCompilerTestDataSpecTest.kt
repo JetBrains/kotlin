@@ -17,12 +17,12 @@ abstract class AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataSpecTes
         with(builder) {
             baseFirDiagnosticTestConfiguration(
                 frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder),
+                testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
             )
 
             baseFirSpecDiagnosticTestConfigurationForIde()
             useAfterAnalysisCheckers(::LLFirOnlyReversedTestSuppressor)
             useMetaTestConfigurators(::ReversedDiagnosticsConfigurator)
-            useAfterAnalysisCheckers(::ReversedFirIdenticalChecker)
         }
     }
 }
