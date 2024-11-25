@@ -1765,7 +1765,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left-hand side of a class literal.")
-        map.put(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Type in a class literal must not be nullable.")
+        map.put(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Type in a class literal cannot be nullable.")
         map.put(
             EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
             "Expression in class literal has nullable type ''{0}''. Use ''!!'' to make the type non-nullable.",
@@ -2806,7 +2806,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NULLABLE_INLINE_PARAMETER,
-            "Inline parameter ''{0}'' of ''{1}'' must not be nullable. Add ''noinline'' modifier to the parameter declaration or make its type not nullable.",
+            "Inline parameter ''{0}'' of ''{1}'' cannot be nullable. Add ''noinline'' modifier to the parameter declaration or make its type not nullable.",
             SYMBOL,
             SYMBOL
         )

@@ -125,7 +125,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE, "Only 0, 1 or 2 parameters are supported here.")
         map.put(PROPERTY_MUST_BE_VAR, "''@{0}'' property must be var.", TO_STRING)
-        map.put(MUST_NOT_HAVE_EXTENSION_RECEIVER, "''{0}'' must not have extension receiver.", TO_STRING)
+        map.put(MUST_NOT_HAVE_EXTENSION_RECEIVER, "''{0}'' cannot have extension receiver.", TO_STRING)
         map.put(
             MUST_BE_OBJC_OBJECT_TYPE,
             "Unexpected {0}: ''{1}''\nOnly Objective-C object types are supported here.",

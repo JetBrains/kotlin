@@ -101,7 +101,7 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
 
         map.put(
             PROPERTY_WONT_BE_SERIALIZED,
-            "Property won't be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning."
+            "Property will not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning."
         )
 
         map.put(
