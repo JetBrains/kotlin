@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.nonDispatchArguments
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 
 class ReflectionCallsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
@@ -23,9 +25,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
 
         return IrDynamicOperatorExpressionImpl(call.startOffset, call.endOffset, call.type, IrDynamicOperator.INVOKE).apply {
             receiver = reference
-            for (i in 0 until call.valueArgumentsCount) {
-                arguments += call.getValueArgument(i)!!
-            }
+            arguments.assignFrom(call.nonDispatchArguments) { it!! }
         }
     }
 
