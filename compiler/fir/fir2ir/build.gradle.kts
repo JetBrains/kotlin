@@ -36,6 +36,7 @@ dependencies {
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":core:descriptors.jvm"))
     testRuntimeOnly(project(":compiler:fir:fir2ir:jvm-backend"))
+    testRuntimeOnly(project(":kotlin-util-klib-abi"))
     testRuntimeOnly(project(":generators"))
 
     testCompileOnly(intellijCore())

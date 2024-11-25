@@ -129,7 +129,9 @@ fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.u
 
 fun TestConfigurationBuilder.klibSteps(klibFacades: KlibFacades, includeAllDumpHandlers: Boolean) = klibFacades.run {
     facadeStep(serializerFacade)
-    klibArtifactsHandlersStep()
+    klibArtifactsHandlersStep {
+        useHandlers(KlibAbiDumpHandler::withOnlyDefaultSignatureVersion)
+    }
     facadeStep(deserializerFacade)
 }
 
