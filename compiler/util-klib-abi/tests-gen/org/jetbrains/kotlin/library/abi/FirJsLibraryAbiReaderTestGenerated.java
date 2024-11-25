@@ -31,6 +31,12 @@ public class FirJsLibraryAbiReaderTestGenerated extends AbstractFirJsLibraryAbiR
   }
 
   @Test
+  @TestMetadata("callables_with_context_parameters.kt")
+  public void testCallables_with_context_parameters() {
+    runTest("compiler/testData/klib/dump-abi/content/callables_with_context_parameters.kt");
+  }
+
+  @Test
   @TestMetadata("classifiers.kt")
   public void testClassifiers() {
     runTest("compiler/testData/klib/dump-abi/content/classifiers.kt");
@@ -130,6 +136,12 @@ public class FirJsLibraryAbiReaderTestGenerated extends AbstractFirJsLibraryAbiR
   @TestMetadata("value_parameters.kt")
   public void testValue_parameters() {
     runTest("compiler/testData/klib/dump-abi/content/value_parameters.kt");
+  }
+
+  @Test
+  @TestMetadata("value_parameters_with_context_parameters.kt")
+  public void testValue_parameters_with_context_parameters() {
+    runTest("compiler/testData/klib/dump-abi/content/value_parameters_with_context_parameters.kt");
   }
 
   @Test

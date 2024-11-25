@@ -1,4 +1,3 @@
-// LANGUAGE: +ContextReceivers
 // MODULE: callables_library
 
 package callables.test
@@ -14,28 +13,6 @@ fun Int.regularFun(): String = ""
 fun Long.regularFun(): String = ""
 fun Number.regularFun(): String = ""
 
-context(Int) fun regularFun(): String = ""
-context(Int) fun regularFun(p1: Number): String = ""
-context(Int) fun regularFun(p1: Int): String = ""
-context(Int) fun regularFun(p1: Int, p2: Long): String = ""
-context(Int) fun regularFun(p1: Number, p2: Long): String = ""
-context(Int) fun regularFun(p1: Int, p2: Number): String = ""
-context(Int) fun regularFun(p1: Number, p2: Number): String = ""
-context(Int) fun Int.regularFun(): String = ""
-context(Int) fun Long.regularFun(): String = ""
-context(Int) fun Number.regularFun(): String = ""
-
-context(Int, Long) fun regularFun(): String = ""
-context(Int, Long) fun regularFun(p1: Number): String = ""
-context(Int, Long) fun regularFun(p1: Int): String = ""
-context(Int, Long) fun regularFun(p1: Int, p2: Long): String = ""
-context(Int, Long) fun regularFun(p1: Number, p2: Long): String = ""
-context(Int, Long) fun regularFun(p1: Int, p2: Number): String = ""
-context(Int, Long) fun regularFun(p1: Number, p2: Number): String = ""
-context(Int, Long) fun Int.regularFun(): String = ""
-context(Int, Long) fun Long.regularFun(): String = ""
-context(Int, Long) fun Number.regularFun(): String = ""
-
 class FunctionContainer {
     fun regularFun(): String = ""
     fun regularFun(p1: Number): String = ""
@@ -47,28 +24,6 @@ class FunctionContainer {
     fun Int.regularFun(): String = ""
     fun Long.regularFun(): String = ""
     fun Number.regularFun(): String = ""
-
-    context(Int) fun regularFun(): String = ""
-    context(Int) fun regularFun(p1: Number): String = ""
-    context(Int) fun regularFun(p1: Int): String = ""
-    context(Int) fun regularFun(p1: Int, p2: Long): String = ""
-    context(Int) fun regularFun(p1: Number, p2: Long): String = ""
-    context(Int) fun regularFun(p1: Int, p2: Number): String = ""
-    context(Int) fun regularFun(p1: Number, p2: Number): String = ""
-    context(Int) fun Int.regularFun(): String = ""
-    context(Int) fun Long.regularFun(): String = ""
-    context(Int) fun Number.regularFun(): String = ""
-
-    context(Int, Long) fun regularFun(): String = ""
-    context(Int, Long) fun regularFun(p1: Number): String = ""
-    context(Int, Long) fun regularFun(p1: Int): String = ""
-    context(Int, Long) fun regularFun(p1: Int, p2: Long): String = ""
-    context(Int, Long) fun regularFun(p1: Number, p2: Long): String = ""
-    context(Int, Long) fun regularFun(p1: Int, p2: Number): String = ""
-    context(Int, Long) fun regularFun(p1: Number, p2: Number): String = ""
-    context(Int, Long) fun Int.regularFun(): String = ""
-    context(Int, Long) fun Long.regularFun(): String = ""
-    context(Int, Long) fun Number.regularFun(): String = ""
 }
 
 suspend fun suspendFun(value: Int, block: (Int) -> String): String = ""
