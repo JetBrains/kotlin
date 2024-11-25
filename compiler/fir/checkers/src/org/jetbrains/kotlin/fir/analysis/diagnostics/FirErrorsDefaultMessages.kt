@@ -2973,7 +2973,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             PRE_RELEASE_CLASS,
-            "{0} is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.",
+            "{0} was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler.",
             STRING
         )
         map.put(
