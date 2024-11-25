@@ -26,7 +26,7 @@ import java.util.UUID
  * This interface is not intended to be implemented by the API consumers. An instance of [CompilationService] is expected to be obtained from [loadImplementation].
  */
 @ExperimentalBuildToolsApi
-public interface CompilationService {
+public interface CompilationService { // main entry point
     /**
      * Calculates JVM classpath snapshot for [classpathEntry] used for detecting changes in incremental compilation with specified [granularity].
      *
