@@ -65,6 +65,7 @@ class FirDataFrameExtensionRegistrar(
     private val path: String?,
     val schemasDirectory: String?,
     val isTest: Boolean,
+    val dumpSchemas: Boolean,
 ) : FirExtensionRegistrar() {
     @OptIn(FirExtensionApiInternals::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
@@ -76,7 +77,7 @@ class FirDataFrameExtensionRegistrar(
         +::TokenGenerator
         +::DataRowSchemaSupertype
         +{ it: FirSession ->
-            ExpressionAnalysisAdditionalChecker(it, jsonCache(it), schemasDirectory, isTest)
+            ExpressionAnalysisAdditionalChecker(it, jsonCache(it), schemasDirectory, isTest, dumpSchemas)
         }
     }
 
@@ -93,7 +94,9 @@ class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val schemasDirectory = configuration.get(SCHEMAS)
         val path = configuration.get(PATH)
-        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(path, schemasDirectory, isTest = false))
+        FirExtensionRegistrarAdapter.registerExtension(
+            FirDataFrameExtensionRegistrar(path, schemasDirectory, isTest = false, dumpSchemas = true)
+        )
         IrGenerationExtension.registerExtension(IrBodyFiller(path, schemasDirectory))
     }
 

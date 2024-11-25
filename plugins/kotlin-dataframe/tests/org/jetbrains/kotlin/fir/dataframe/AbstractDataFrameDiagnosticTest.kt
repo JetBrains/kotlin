@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
+import org.jetbrains.kotlin.fir.dataframe.services.Directives
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.fir.dataframe.services.TemporaryDirectoryManagerImplFixed
@@ -54,6 +55,7 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
         }
 
+        useDirectives(Directives)
         useConfigurators(
             ::DataFramePluginAnnotationsProvider,
             ::ExperimentalExtensionRegistrarConfigurator

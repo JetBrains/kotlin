@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.diagnostics.AbstractSourceElementPositioningStrategy
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1DelegateProvider
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -13,18 +19,24 @@ import org.jetbrains.kotlin.diagnostics.warning1
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.flatten
-import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
@@ -38,18 +50,34 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.type
+import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.flatten
+import org.jetbrains.kotlinx.dataframe.plugin.pluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
+import org.jetbrains.kotlinx.dataframe.plugin.utils.isDataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.utils.isDataRow
+import org.jetbrains.kotlinx.dataframe.plugin.utils.isGroupBy
 
 class ExpressionAnalysisAdditionalChecker(
     session: FirSession,
     cache: FirCache<String, PluginDataFrameSchema, KotlinTypeFacade>,
     schemasDirectory: String?,
     isTest: Boolean,
+    dumpSchemas: Boolean
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(Checker(cache, schemasDirectory, isTest))
+        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOfNotNull(
+            Checker(cache, schemasDirectory, isTest), FunctionCallSchemaReporter.takeIf { dumpSchemas }
+        )
+        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOfNotNull(
+            PropertyAccessSchemaReporter.takeIf { dumpSchemas }
+        )
+    }
+    override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
+        override val propertyCheckers: Set<FirPropertyChecker> = setOfNotNull(PropertySchemaReporter.takeIf { dumpSchemas })
+        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOfNotNull(FunctionDeclarationSchemaReporter.takeIf { dumpSchemas })
     }
 }
 
@@ -131,4 +159,106 @@ private class Checker(
             }
         }
     }
+}
+
+private data object PropertySchemaReporter : FirPropertyChecker(mppKind = MppCheckerKind.Common) {
+    val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+
+    override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+        context.sessionContext {
+            declaration.returnTypeRef.coneType.let { type ->
+                reportSchema(reporter, declaration.source, SCHEMA, type, context)
+            }
+        }
+    }
+}
+
+private data object FunctionCallSchemaReporter : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
+    val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+
+    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (expression.calleeReference.name in setOf(Name.identifier("let"), Name.identifier("run"))) return
+        val initializer = expression.resolvedType
+        context.sessionContext {
+            reportSchema(reporter, expression.source, SCHEMA, initializer, context)
+        }
+    }
+}
+
+private data object PropertyAccessSchemaReporter : FirPropertyAccessExpressionChecker(mppKind = MppCheckerKind.Common) {
+    val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+
+    override fun check(
+        expression: FirPropertyAccessExpression,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        val initializer = expression.resolvedType
+        context.sessionContext {
+            reportSchema(reporter, expression.source, SCHEMA, initializer, context)
+        }
+    }
+}
+
+private data object FunctionDeclarationSchemaReporter : FirSimpleFunctionChecker(mppKind = MppCheckerKind.Common) {
+    val SCHEMA by info1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+
+    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        val type = declaration.returnTypeRef.coneType
+        context.sessionContext {
+            reportSchema(reporter, declaration.source, SCHEMA, type, context)
+        }
+    }
+}
+
+private fun SessionContext.reportSchema(
+    reporter: DiagnosticReporter,
+    source: KtSourceElement?,
+    factory: KtDiagnosticFactory1<String>,
+    type: ConeKotlinType,
+    context: CheckerContext,
+) {
+    val expandedType = type.fullyExpandedType(session)
+    var schema: PluginDataFrameSchema? = null
+    when {
+        expandedType.isDataFrame(session) -> {
+            schema = expandedType.typeArguments.getOrNull(0)?.let {
+                pluginDataFrameSchema(it)
+            }
+        }
+
+        expandedType.isDataRow(session) -> {
+            schema = expandedType.typeArguments.getOrNull(0)?.let {
+                pluginDataFrameSchema(it)
+            }
+        }
+
+        expandedType.isGroupBy(session) -> {
+            val keys = expandedType.typeArguments.getOrNull(0)
+            val grouped = expandedType.typeArguments.getOrNull(1)
+            if (keys != null && grouped != null) {
+                val keysSchema = pluginDataFrameSchema(keys)
+                val groupedSchema = pluginDataFrameSchema(grouped)
+                schema = PluginDataFrameSchema(
+                    listOf(
+                        SimpleColumnGroup("keys", keysSchema.columns()),
+                        SimpleFrameColumn("groups", groupedSchema.columns())
+                    )
+                )
+            }
+        }
+    }
+    if (schema != null && source != null) {
+        reporter.reportOn(source, factory, "\n" + schema.toString(), context)
+    }
+}
+
+fun CheckerContext.sessionContext(f: SessionContext.() -> Unit) {
+    SessionContext(session).f()
+}
+
+inline fun <reified P : PsiElement, A> info1(
+    positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
+): DiagnosticFactory1DelegateProvider<A> {
+    return DiagnosticFactory1DelegateProvider(Severity.INFO, positioningStrategy, P::class)
 }

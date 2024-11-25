@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.isNullable
+import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TypeApproximation
@@ -32,16 +33,17 @@ fun PluginDataFrameSchema.add(name: String, type: ConeKotlinType, context: Kotli
 }
 
 private fun List<SimpleCol>.asString(indent: String = ""): String {
+    if (isEmpty()) return "$indent<empty compile time schema>"
     return joinToString("\n") {
         val col = when (it) {
             is SimpleFrameColumn -> {
-                "${it.name}*\n" + it.columns().asString("$indent   ")
+                "${it.name}: *\n" + it.columns().asString("$indent ")
             }
             is SimpleColumnGroup -> {
-                "${it.name}\n" + it.columns().asString("$indent   ")
+                "${it.name}:\n" + it.columns().asString("$indent ")
             }
             is SimpleDataColumn -> {
-                "${it.name}: ${it.type}"
+                "${it.name}: ${it.type.type.renderReadable()}"
             }
         }
         "$indent$col"
