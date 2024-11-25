@@ -148,10 +148,7 @@ open class DeepCopyIrTreeWithSymbols(
             typeParameters = declaration.typeParameters.memoryOptimizedMap { it.transform() }
             returnType = declaration.returnType.remapType()
             body = declaration.body?.transform()
-            valueParameters = declaration.valueParameters.memoryOptimizedMap { it.transform() }
-            dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
-            extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
-            contextReceiverParametersCount = declaration.contextReceiverParametersCount
+            parameters = declaration.parameters.memoryOptimizedMap { it.transform() }
         }
 
     override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
@@ -305,10 +302,7 @@ open class DeepCopyIrTreeWithSymbols(
             overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap { symbolRemapper.getReferencedSimpleFunction(it) }
             correspondingPropertySymbol = declaration.correspondingPropertySymbol?.let(symbolRemapper::getReferencedProperty)
             processAttributes(declaration)
-            valueParameters = declaration.valueParameters.memoryOptimizedMap { it.transform() }
-            dispatchReceiverParameter = declaration.dispatchReceiverParameter?.transform()
-            extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
-            contextReceiverParametersCount = declaration.contextReceiverParametersCount
+            parameters = declaration.parameters.memoryOptimizedMap { it.transform() }
         }
 
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =

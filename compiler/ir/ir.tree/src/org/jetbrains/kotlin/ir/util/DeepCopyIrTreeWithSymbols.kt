@@ -55,10 +55,8 @@ abstract class IrDeepCopyBase : IrElementTransformerVoid() {
     }
 
     protected fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
-        dispatchReceiver = original.dispatchReceiver?.transform()
-        extensionReceiver = original.extensionReceiver?.transform()
-        for (i in 0 until original.valueArgumentsCount) {
-            putValueArgument(i, original.getValueArgument(i)?.transform())
+        for ((i, arg) in original.arguments.withIndex()) {
+            arguments[i] = arg?.transform()
         }
     }
 }
