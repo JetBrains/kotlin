@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -231,7 +233,6 @@ object BuiltInOperatorNames {
     const val CHECK_NOT_NULL = "CHECK_NOT_NULL"
 }
 
-// KT-73194: TODO: From SymbolLookupUtils, merge similar frontend-dependent functionality for finding symbols and discovering their internals.
 abstract class SymbolFinder {
     // TODO: drop variants from segments, add helper from whole fqn
     abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>
@@ -284,5 +285,26 @@ abstract class SymbolFinder {
             ?: irError("Cannot find getter for $packageName.$name")
 
     abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
-    // KT-73194: Consider moving here also functions from SymbolLookupUtils
+
+    abstract fun findMemberFunction(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol?
+    abstract fun findMemberProperty(clazz: IrClassSymbol, name: Name): IrPropertySymbol?
+    abstract fun findMemberPropertyGetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol?
+    abstract fun findPrimaryConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
+    abstract fun findNoParametersConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
+    abstract fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol?
+
+    abstract fun getName(clazz: IrClassSymbol): Name
+    abstract fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean
+    abstract fun isExtensionReceiverClass(function: IrFunctionSymbol, expected: IrClassSymbol?): Boolean
+    abstract fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean?
+    abstract fun getValueParametersCount(function: IrFunctionSymbol): Int
+    abstract fun getTypeParametersCount(function: IrFunctionSymbol): Int
+    abstract fun isTypeParameterUpperBoundClass(property: IrPropertySymbol, index: Int, expected: IrClassSymbol): Boolean
+    abstract fun isValueParameterClass(function: IrFunctionSymbol, index: Int, expected: IrClassSymbol?): Boolean
+    abstract fun isReturnClass(function: IrFunctionSymbol, expected: IrClassSymbol): Boolean
+    abstract fun isValueParameterTypeArgumentClass(function: IrFunctionSymbol, index: Int, argumentIndex: Int, expected: IrClassSymbol?): Boolean
+    abstract fun isValueParameterNullable(function: IrFunctionSymbol, index: Int): Boolean?
+    abstract fun isExpect(function: IrFunctionSymbol): Boolean
+    abstract fun isSuspend(functionSymbol: IrFunctionSymbol): Boolean
+    abstract fun getVisibility(function: IrFunctionSymbol): DescriptorVisibility
 }

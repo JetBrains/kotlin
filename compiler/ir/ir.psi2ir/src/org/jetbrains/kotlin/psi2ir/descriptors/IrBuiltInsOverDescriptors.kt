@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -689,5 +690,84 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
 
     private fun PropertyDescriptor.toIrSymbol(): IrPropertySymbol {
         return symbolTable.descriptorExtension.referenceProperty(this)
+    }
+
+    override fun findMemberFunction(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol? =
+        // inspired by: irBuiltIns.findBuiltInClassMemberFunctions(this, name).singleOrNull()
+        clazz.descriptor.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+            .singleOrNull()
+            ?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+
+    override fun findMemberProperty(clazz: IrClassSymbol, name: Name): IrPropertySymbol? =
+        clazz.descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
+            .singleOrNull()
+            ?.let { symbolTable.descriptorExtension.referenceProperty(it) }
+
+    override fun findMemberPropertyGetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol? =
+        clazz.descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
+            .singleOrNull()
+            ?.getter
+            ?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+
+    override fun getName(clazz: IrClassSymbol) = clazz.descriptor.name
+    override fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean {
+        return property.descriptor.extensionReceiverParameter?.type?.let { TypeUtils.getClassDescriptor(it) } == expected?.descriptor
+    }
+
+    override fun isExtensionReceiverClass(function: IrFunctionSymbol, expected: IrClassSymbol?): Boolean {
+        return function.descriptor.extensionReceiverParameter?.type?.let { TypeUtils.getClassDescriptor(it) } == expected?.descriptor
+    }
+
+    override fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean? {
+        return function.descriptor.extensionReceiverParameter?.type?.isMarkedNullable
+    }
+
+    override fun getValueParametersCount(function: IrFunctionSymbol): Int = function.descriptor.valueParameters.size
+
+    override fun getTypeParametersCount(function: IrFunctionSymbol): Int = function.descriptor.typeParameters.size
+
+    private fun match(type: KotlinType?, symbol: IrClassSymbol?) =
+        if (type == null)
+            symbol == null
+        else
+            TypeUtils.getClassDescriptor(type) == symbol?.descriptor
+
+    override fun isTypeParameterUpperBoundClass(property: IrPropertySymbol, index: Int, expected: IrClassSymbol): Boolean {
+        return property.descriptor.typeParameters.getOrNull(index)?.upperBounds?.any { match(it, expected) } ?: false
+    }
+
+    override fun isValueParameterClass(function: IrFunctionSymbol, index: Int, expected: IrClassSymbol?): Boolean {
+        return match(function.descriptor.valueParameters.getOrNull(index)?.type, expected)
+    }
+
+    override fun isReturnClass(function: IrFunctionSymbol, expected: IrClassSymbol): Boolean {
+        return match(function.descriptor.returnType, expected)
+    }
+
+    override fun isValueParameterTypeArgumentClass(function: IrFunctionSymbol, index: Int, argumentIndex: Int, expected: IrClassSymbol?): Boolean {
+        return match(function.descriptor.valueParameters.getOrNull(index)?.type?.arguments?.getOrNull(argumentIndex)?.type, expected)
+    }
+
+    override fun isValueParameterNullable(function: IrFunctionSymbol, index: Int): Boolean? {
+        return function.descriptor.valueParameters.getOrNull(index)?.type?.isMarkedNullable
+    }
+
+    override fun isExpect(function: IrFunctionSymbol): Boolean = function.descriptor.isExpect
+
+    override fun isSuspend(functionSymbol: IrFunctionSymbol): Boolean = functionSymbol.descriptor.isSuspend
+    override fun getVisibility(function: IrFunctionSymbol): DescriptorVisibility = function.descriptor.visibility
+
+    override fun findPrimaryConstructor(clazz: IrClassSymbol) = clazz.descriptor.unsubstitutedPrimaryConstructor?.let {
+        symbolTable.descriptorExtension.referenceConstructor(it)
+    }
+    override fun findNoParametersConstructor(clazz: IrClassSymbol) = clazz.descriptor.constructors.singleOrNull {
+        it.valueParameters.size == 0
+    }?.let { symbolTable.descriptorExtension.referenceConstructor(it) }
+
+    override fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol? {
+        val classDescriptor = clazz.descriptor.defaultType.memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
+        return classDescriptor?.let {
+            symbolTable.descriptorExtension.referenceClass(it)
+        }
     }
 }
