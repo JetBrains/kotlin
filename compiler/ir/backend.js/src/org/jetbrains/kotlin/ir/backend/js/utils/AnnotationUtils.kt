@@ -27,16 +27,15 @@ object JsAnnotations {
     val jsNativeGetter = FqName("kotlin.js.nativeGetter")
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
     val jsNativeInvoke = FqName("kotlin.js.nativeInvoke")
-    val jsFunFqn = FqName("kotlin.js.JsFun")
     val JsPolyfillFqn = FqName("kotlin.js.JsPolyfill")
     val jsGeneratorFqn = FqName("kotlin.js.JsGenerator")
 }
 
 fun IrConstructorCall.getSingleConstStringArgument() =
-    (getValueArgument(0) as IrConst).value as String
+    (arguments[0] as IrConst).value as String
 
 fun IrConstructorCall.getSingleConstBooleanArgument() =
-    (getValueArgument(0) as IrConst).value as Boolean
+    (arguments[0] as IrConst).value as Boolean
 
 fun IrAnnotationContainer.getJsModule(): String? =
     getAnnotation(JsAnnotations.jsModuleFqn)?.getSingleConstStringArgument()
@@ -117,6 +116,6 @@ val IrClass.isAssociatedObjectAnnotatedAnnotation: Boolean
 
 fun IrConstructorCall.associatedObject(): IrClass? {
     if (!symbol.owner.constructedClass.isAssociatedObjectAnnotatedAnnotation) return null
-    val klass = ((getValueArgument(0) as? IrClassReference)?.symbol as? IrClassSymbol)?.owner ?: return null
+    val klass = ((arguments[0] as? IrClassReference)?.symbol as? IrClassSymbol)?.owner ?: return null
     return if (klass.isObject) klass else null
 }
