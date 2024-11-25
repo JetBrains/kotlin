@@ -70,7 +70,7 @@ abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.F
 
         facadeStep(backendFacade)
         klibArtifactsHandlersStep {
-            useHandlers(::KlibAbiDumpHandler)
+            useHandlers(KlibAbiDumpHandler::withAllSupportedSignatureVersions)
         }
     }
 }

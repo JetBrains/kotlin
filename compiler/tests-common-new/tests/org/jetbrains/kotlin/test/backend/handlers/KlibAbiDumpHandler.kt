@@ -19,8 +19,23 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 
+/**
+ * Dumps KLIB ABI in the format of [LibraryAbiReader].
+ *
+ * Instead of calling [KlibAbiDumpHandler]'s constructor, which is private, please use either of these functions:
+ * - [withAllSupportedSignatureVersions] to generate dump files for all currently supported versions of signatures.
+ *   See [KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS] for the list of such.
+ * - [withOnlyDefaultSignatureVersion] to generate dump files only for the current "default" signature version,
+ *   which corresponds to [DEFAULT_ABI_SIGNATURE_VERSION].
+ *
+ * @property dumpedSignatureVersions The versions of IR signatures to be rendered in each dump file (a dump file
+ * per a signature version).
+ */
 @OptIn(ExperimentalLibraryAbiReader::class)
-class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
+class KlibAbiDumpHandler private constructor(
+    testServices: TestServices,
+    dumpedSignatureVersions: Set<KotlinIrSignatureVersion>,
+) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
     testServices,
     ArtifactKinds.KLib,
     failureDisablesNextSteps = true,
@@ -28,7 +43,11 @@ class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<Bin
 ) {
     override val directiveContainers get() = listOf(KlibAbiDumpDirectives)
 
-    private val dumpers = KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.map { irSignatureVersion ->
+    init {
+        check(dumpedSignatureVersions.isNotEmpty()) { "At least one signature version must be specified" }
+    }
+
+    private val dumpers = dumpedSignatureVersions.map { irSignatureVersion ->
         AbiSignatureVersions.resolveByVersionNumber(irSignatureVersion.number) to MultiModuleInfoDumper()
     }
 
@@ -63,10 +82,18 @@ class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<Bin
     }
 
     companion object {
-        const val DEFAULT_ABI_SIGNATURE_VERSION = 2
+        private val DEFAULT_ABI_SIGNATURE_VERSION: KotlinIrSignatureVersion = KotlinIrSignatureVersion.V2
+
+        /** Create a [KlibAbiDumpHandler] that would generate dump files for all currently supported versions of signatures. */
+        fun withAllSupportedSignatureVersions(testServices: TestServices): KlibAbiDumpHandler =
+            KlibAbiDumpHandler(testServices, dumpedSignatureVersions = KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS)
+
+        /** Create a [KlibAbiDumpHandler] that would generate dump files only for the current "default" versions of signatures. */
+        fun withOnlyDefaultSignatureVersion(testServices: TestServices): KlibAbiDumpHandler =
+            KlibAbiDumpHandler(testServices, dumpedSignatureVersions = setOf(DEFAULT_ABI_SIGNATURE_VERSION))
 
         fun abiDumpFileExtension(abiSignatureVersion: Int): String {
-            val suffix = if (abiSignatureVersion == DEFAULT_ABI_SIGNATURE_VERSION) "" else "sig_v$abiSignatureVersion."
+            val suffix = if (abiSignatureVersion == DEFAULT_ABI_SIGNATURE_VERSION.number) "" else "sig_v$abiSignatureVersion."
             return "${suffix}klib_abi.txt"
         }
     }
