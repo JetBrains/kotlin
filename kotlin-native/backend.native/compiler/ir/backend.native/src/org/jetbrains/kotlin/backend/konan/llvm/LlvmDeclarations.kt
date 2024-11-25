@@ -454,12 +454,17 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
         if (!declaration.isReal) return
 
-        val llvmFunction = if (declaration.isExternal) {
+        val llvmFunction = if (declaration.isExternal || (generationState.shouldOptimize() && !generationState.llvmModuleSpecification.containsDeclaration(declaration))) {
             if (declaration.isTypedIntrinsic || declaration.isObjCBridgeBased()
                     // All call-sites to external accessors to interop properties
                     // are lowered by InteropLowering.
                     || (declaration.isAccessor && declaration.isFromCInteropLibrary())
                     || declaration.annotations.hasAnnotation(RuntimeNames.cCall)) return
+
+            if (generationState.shouldOptimize() && !declaration.isExported()) {
+                declaration.metadata = null
+                return
+            }
 
             val proto = LlvmFunctionProto(declaration, declaration.computeSymbolName(), this, LLVMLinkage.LLVMExternalLinkage)
             llvm.externalFunction(proto)
