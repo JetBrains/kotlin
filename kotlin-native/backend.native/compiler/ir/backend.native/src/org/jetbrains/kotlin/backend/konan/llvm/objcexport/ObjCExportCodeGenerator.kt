@@ -543,7 +543,7 @@ internal class ObjCExportCodeGenerator(
         val impProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false)).toProto(
                 name = "",
                 origin = null,
-                linkage = LLVMLinkage.LLVMInternalLinkage
+                linkage = LLVMLinkage.LLVMExternalLinkage
         )
         val imp = generateFunctionNoRuntime(codegen, impProto) {
             unreachable()
@@ -763,7 +763,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
 ): LlvmCallable {
     val functionType = objCFunctionType(generationState, methodBridge)
     val functionName = "objc2kotlin_$suffix"
-    val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage)) {
+    val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMExternalLinkage)) {
         if (debugInfo) {
             this.setupBridgeDebugInfo()
         }
@@ -1039,7 +1039,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
     val functionType = LlvmFunctionSignature(irFunction, codegen)
     val functionName = "kotlin2objc_${baseIrFunction.computeSymbolName()}"
-    val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage)).generate {
+    val result = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMExternalLinkage)).generate {
         var errorOutPtr: LLVMValueRef? = null
 
         val parameters = irFunction.allParameters.mapIndexed { index, parameterDescriptor ->
@@ -1670,7 +1670,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
 
     val functionType = objCFunctionType(generationState, methodBridge)
     val functionName = "objc2kotlin_$suffix"
-    val imp = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMInternalLinkage)) {
+    val imp = functionGenerator(functionType.toProto(functionName, null, LLVMLinkage.LLVMExternalLinkage)) {
         switchToRunnable = true
     }.generate {
         block()
