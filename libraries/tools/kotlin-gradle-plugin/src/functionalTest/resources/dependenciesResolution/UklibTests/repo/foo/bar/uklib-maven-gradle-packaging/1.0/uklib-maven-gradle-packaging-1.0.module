@@ -1,0 +1,436 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "foo.bar",
+    "module": "uklib-maven-gradle-packaging",
+    "version": "1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.10"
+    }
+  },
+  "variants": [
+    {
+      "name": "metadataApiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.platform.type": "common"
+      },
+      "dependencies": [
+      ],
+      "files": [
+        {
+          "name": "uklib-maven-gradle-packaging-metadata-1.0.jar",
+          "url": "uklib-maven-gradle-packaging-1.0.jar",
+          "size": 7281,
+          "sha512": "90d4d266884bd8515c4edcc01411a3e92538d5b3559097da8433e79beacb779ff869dc0653afcc596918dfd1b96801947b2105e02476ccf0057856e44b4441f5",
+          "sha256": "a8f3ac8782d46f751bce385cbd9a52e436108e4de3fd938412dcc39b866815b3",
+          "sha1": "eaa1d038e3e4c3519141bdd4631090c3c0374423",
+          "md5": "bd383bd1d2ed29ff6371798b7ac36990"
+        }
+      ]
+    },
+    {
+      "name": "metadataSourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.platform.type": "common"
+      },
+      "files": [
+        {
+          "name": "uklib-maven-gradle-packaging-kotlin-1.0-sources.jar",
+          "url": "uklib-maven-gradle-packaging-1.0-sources.jar",
+          "size": 701,
+          "sha512": "9196477fa6ba546e9064eec1a8884a3a1842ee45f5d955cd119bd2f509f6501c00edfb5d3eb01113591f9abf02fbc355c934f6518db27c838fa5082bc11c5c22",
+          "sha256": "be0a3e7b970835c29d41376d30f0c12f1caa0e3287ba8104754700c89e88593e",
+          "sha1": "5cc36000e5870498303205c0f0d2e5bc90b27f15",
+          "md5": "6edb37351c5910c56d408e1c204bb3c0"
+        }
+      ]
+    },
+    {
+      "name": "iosArm64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-iosarm64/1.0/uklib-maven-gradle-packaging-iosarm64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-iosarm64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "iosArm64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-iosarm64/1.0/uklib-maven-gradle-packaging-iosarm64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-iosarm64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "iosArm64MetadataElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-iosarm64/1.0/uklib-maven-gradle-packaging-iosarm64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-iosarm64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "iosX64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-iosx64/1.0/uklib-maven-gradle-packaging-iosx64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-iosx64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "iosX64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-iosx64/1.0/uklib-maven-gradle-packaging-iosx64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-iosx64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "iosX64MetadataElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-iosx64/1.0/uklib-maven-gradle-packaging-iosx64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-iosx64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "jsApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.js.compiler": "ir",
+        "org.jetbrains.kotlin.platform.type": "js"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-js/1.0/uklib-maven-gradle-packaging-js-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-js",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "jsRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.js.compiler": "ir",
+        "org.jetbrains.kotlin.platform.type": "js"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-js/1.0/uklib-maven-gradle-packaging-js-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-js",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "jsSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.js.compiler": "ir",
+        "org.jetbrains.kotlin.platform.type": "js"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-js/1.0/uklib-maven-gradle-packaging-js-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-js",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "jvmApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-jvm/1.0/uklib-maven-gradle-packaging-jvm-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-jvm",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "jvmRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-jvm/1.0/uklib-maven-gradle-packaging-jvm-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-jvm",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "jvmSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-jvm/1.0/uklib-maven-gradle-packaging-jvm-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-jvm",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "linuxArm64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "linux_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-linuxarm64/1.0/uklib-maven-gradle-packaging-linuxarm64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-linuxarm64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "linuxArm64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "linux_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-linuxarm64/1.0/uklib-maven-gradle-packaging-linuxarm64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-linuxarm64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "linuxX64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "linux_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-linuxx64/1.0/uklib-maven-gradle-packaging-linuxx64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-linuxx64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "linuxX64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "linux_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-linuxx64/1.0/uklib-maven-gradle-packaging-linuxx64-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-linuxx64",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "wasmJsApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.platform.type": "wasm",
+        "org.jetbrains.kotlin.wasm.target": "js"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-wasm-js/1.0/uklib-maven-gradle-packaging-wasm-js-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-wasm-js",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "wasmJsRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.platform.type": "wasm",
+        "org.jetbrains.kotlin.wasm.target": "js"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-wasm-js/1.0/uklib-maven-gradle-packaging-wasm-js-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-wasm-js",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "wasmJsSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.platform.type": "wasm",
+        "org.jetbrains.kotlin.wasm.target": "js"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-wasm-js/1.0/uklib-maven-gradle-packaging-wasm-js-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-wasm-js",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "wasmWasiApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.platform.type": "wasm",
+        "org.jetbrains.kotlin.wasm.target": "wasi"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-wasm-wasi/1.0/uklib-maven-gradle-packaging-wasm-wasi-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-wasm-wasi",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "wasmWasiRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.platform.type": "wasm",
+        "org.jetbrains.kotlin.wasm.target": "wasi"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-wasm-wasi/1.0/uklib-maven-gradle-packaging-wasm-wasi-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-wasm-wasi",
+        "version": "1.0"
+      }
+    },
+    {
+      "name": "wasmWasiSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.platform.type": "wasm",
+        "org.jetbrains.kotlin.wasm.target": "wasi"
+      },
+      "available-at": {
+        "url": "../../uklib-maven-gradle-packaging-wasm-wasi/1.0/uklib-maven-gradle-packaging-wasm-wasi-1.0.module",
+        "group": "foo.bar",
+        "module": "uklib-maven-gradle-packaging-wasm-wasi",
+        "version": "1.0"
+      }
+    }
+  ]
+}

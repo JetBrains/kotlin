@@ -1,0 +1,88 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "url": "../../uklib-maven-gradle-packaging/1.0/uklib-maven-gradle-packaging-1.0.module",
+    "group": "foo.bar",
+    "module": "uklib-maven-gradle-packaging",
+    "version": "1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.10"
+    }
+  },
+  "variants": [
+    {
+      "name": "jvmApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+      ],
+      "files": [
+        {
+          "name": "uklib-maven-gradle-packaging-jvm-1.0.jar",
+          "url": "uklib-maven-gradle-packaging-jvm-1.0.jar",
+          "size": 458,
+          "sha512": "05b5066330d0588c05386a404b0dddd0de6dba19be44001f11122fa720271ec6f9fb50e02923de85e0782bf1fbfe096a18ad7cfdba190981bed287f7383e2fff",
+          "sha256": "34014219fc6e09454f9a235ea08a6194a15070d5092452d8616bf60635c17d3e",
+          "sha1": "b031512e6b7062799387515f3e6bee6fa7f413ab",
+          "md5": "7010ab8b2484087eea70a11881db24ac"
+        }
+      ]
+    },
+    {
+      "name": "jvmRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+      ],
+      "files": [
+        {
+          "name": "uklib-maven-gradle-packaging-jvm-1.0.jar",
+          "url": "uklib-maven-gradle-packaging-jvm-1.0.jar",
+          "size": 458,
+          "sha512": "05b5066330d0588c05386a404b0dddd0de6dba19be44001f11122fa720271ec6f9fb50e02923de85e0782bf1fbfe096a18ad7cfdba190981bed287f7383e2fff",
+          "sha256": "34014219fc6e09454f9a235ea08a6194a15070d5092452d8616bf60635c17d3e",
+          "sha1": "b031512e6b7062799387515f3e6bee6fa7f413ab",
+          "md5": "7010ab8b2484087eea70a11881db24ac"
+        }
+      ]
+    },
+    {
+      "name": "jvmSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "uklib-maven-gradle-packaging-jvm-1.0-sources.jar",
+          "url": "uklib-maven-gradle-packaging-jvm-1.0-sources.jar",
+          "size": 479,
+          "sha512": "686fd77f21ca2150e77e98fe3abb42871bc5ed26bb27e9be865c5aebe28bba09bb08dd4b1c5d127cce6b8d7eeefbfb64c86214ae3d332e7cfc70b32497358cd1",
+          "sha256": "30af047fb16af81c8e78a5626ba0e0eb2d2afe7f7ea6bba0c823229bdfbdb0a2",
+          "sha1": "2e05b1f02fbb2bbe1edd8e1d92a8912d2c0b6670",
+          "md5": "f45f3fa2a7276ddd0cd618d7217d8884"
+        }
+      ]
+    }
+  ]
+}
