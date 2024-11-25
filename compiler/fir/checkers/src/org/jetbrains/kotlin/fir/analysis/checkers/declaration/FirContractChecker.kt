@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirIgnoredContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -61,9 +63,10 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 checkDiagnosticsFromFirBuilder(contractDescription.diagnostic, contractDescription.source, context, reporter)
             }
             is FirIgnoredContractDescription -> {}
-            else -> errorWithAttachment("Unexpected contract description kind: ${contractDescription::class.simpleName}") {
-                withFirEntry("declaration", declaration)
-            }
+            is FirRawContractDescription, is FirLegacyRawContractDescription ->
+                errorWithAttachment("Unexpected contract description kind: ${contractDescription::class.simpleName}") {
+                    withFirEntry("declaration", declaration)
+                }
         }
     }
 
