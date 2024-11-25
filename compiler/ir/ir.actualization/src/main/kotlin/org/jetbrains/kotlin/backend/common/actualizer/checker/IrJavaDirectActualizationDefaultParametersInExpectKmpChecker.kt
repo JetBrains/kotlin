@@ -29,7 +29,7 @@ internal object IrJavaDirectActualizationDefaultParametersInExpectKmpChecker : I
             // 2. All fake-overrides that exist in the expect declarations automatically exist in the actual declaration.
             //    And we do check fake overrides in the actual declaration in IrJavaDirectActualizationDefaultParametersInActualKmpChecker
             if (actual.hasAnnotation(StandardClassIds.Annotations.KotlinActual)) {
-                for (parameter in expect.valueParameters) {
+                for (parameter in expect.parameters) {
                     if (parameter.hasDefaultValue()) {
                         diagnosticsReporter.reportJavaDirectActualizationDefaultParametersInExpectFunction(
                             expectFunction = expect,

@@ -212,12 +212,6 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
         val constructorSymbol = symbolRemapper.getReferencedConstructor(expression.symbol)
 
-        // This is a hack to allow actualizing annotation constructors without parameters with constructors with default arguments.
-        // Without it, attempting to call such a constructor in common code will result in either a backend exception or in linkage error.
-        // See KT-67488 for details.
-        val valueArgumentsCount =
-            if (constructorSymbol.isBound) constructorSymbol.owner.valueParameters.size else expression.valueArgumentsCount
-
         return IrConstructorCallImpl(
             expression.startOffset,
             expression.endOffset,

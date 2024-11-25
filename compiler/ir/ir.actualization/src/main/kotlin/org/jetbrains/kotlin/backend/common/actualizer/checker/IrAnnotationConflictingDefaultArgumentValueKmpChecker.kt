@@ -23,8 +23,8 @@ internal object IrAnnotationConflictingDefaultArgumentValueKmpChecker : IrExpect
             val expectClass = expectSymbol.owner.parentAsClass
             if (expectClass.kind != ClassKind.ANNOTATION_CLASS) continue
 
-            val expectValueParams = expectSymbol.owner.valueParameters
-            val actualValueParams = actualSymbol.owner.valueParameters
+            val expectValueParams = expectSymbol.owner.parameters
+            val actualValueParams = actualSymbol.owner.parameters
             if (expectValueParams.size != actualValueParams.size) continue
 
             for ((expectParam, actualParam) in expectValueParams.zip(actualValueParams)) {

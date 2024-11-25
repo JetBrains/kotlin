@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
@@ -47,7 +48,7 @@ private fun checkDefaultParametersInActualRecursive(
             //  (as it's done for Kotlin-to-Kotlin actualization), but since IR doesn't build fake-overrides in expect classes,
             //  it's currently not possible to check what fake-overrides existed in the expect declaration
             is IrFunction -> {
-                for (parameter in member.valueParameters) {
+                for (parameter in member.parameters) {
                     if (!parameter.hasDefaultValue() || actual.isAnnotationClass) continue
                     diagnosticsReporter.reportJavaDirectActualizationDefaultParametersInActualFunction(
                         actualFunction = member,

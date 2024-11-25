@@ -28,7 +28,7 @@ internal class FunctionDefaultParametersActualizer(
     }
 
     private fun actualize(expectFunction: IrFunction, actualFunction: IrFunction) {
-        expectFunction.valueParameters.zip(actualFunction.valueParameters).forEach { (expectParameter, actualParameter) ->
+        expectFunction.parameters.zip(actualFunction.parameters).forEach { (expectParameter, actualParameter) ->
             val expectDefaultValue = expectParameter.defaultValue
             if (actualParameter.defaultValue == null && expectDefaultValue != null) {
                 actualParameter.defaultValue = expectDefaultValue.deepCopyWithSymbols(actualFunction).transform(visitor, null)

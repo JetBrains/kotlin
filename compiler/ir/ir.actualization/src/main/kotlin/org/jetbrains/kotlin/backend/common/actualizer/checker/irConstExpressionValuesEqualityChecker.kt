@@ -38,12 +38,12 @@ internal fun IrExpectActualMatchingContext.areIrExpressionConstValuesEqual(
         }
 
         a is IrConstructorCall && b is IrConstructorCall -> {
-            equalBy(a, b) { it.valueArgumentsCount } &&
+            equalBy(a, b) { it.arguments.size } &&
                     areCompatibleExpectActualTypes(a.type, b.type) &&
-                    (0..<a.valueArgumentsCount).all { i ->
+                    a.arguments.zip(b.arguments).all { (argA, argB) ->
                         areIrExpressionConstValuesEqual(
-                            a.getValueArgument(i),
-                            b.getValueArgument(i),
+                            argA,
+                            argB,
                             collectionArgumentsCompatibilityCheckStrategy
                         )
                     }

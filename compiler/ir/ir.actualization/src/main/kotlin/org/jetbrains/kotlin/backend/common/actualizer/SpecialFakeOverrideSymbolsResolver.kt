@@ -260,7 +260,7 @@ class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
                 expression.startOffset, expression.endOffset,
                 symbol = actualFieldSymbol,
                 receiver = expression.dispatchReceiver,
-                value = expression.getValueArgument(0)!!,
+                value = expression.arguments[originalAccessorSymbol.owner.parameters.indexOfFirst{ it.kind == IrParameterKind.Regular }]!!,
                 type = expression.type,
                 origin = expression.origin,
                 superQualifierSymbol = expression.superQualifierSymbol

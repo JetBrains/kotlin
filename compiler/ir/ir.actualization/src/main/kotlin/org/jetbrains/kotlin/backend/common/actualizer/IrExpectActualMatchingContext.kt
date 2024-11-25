@@ -279,8 +279,8 @@ internal abstract class IrExpectActualMatchingContext(
 
     override val CallableSymbolMarker.extensionReceiverType: IrType?
         get() = when (this) {
-            is IrFunctionSymbol -> owner.extensionReceiverParameter?.type
-            is IrPropertySymbol -> owner.getter?.extensionReceiverParameter?.type
+            is IrFunctionSymbol -> owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type
+            is IrPropertySymbol -> owner.getter?.parameters?.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type
             else -> null
         }
 
@@ -320,8 +320,9 @@ internal abstract class IrExpectActualMatchingContext(
         }
 
     override val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
-        get() = asIr().valueParameters.map { it.symbol }
-
+        get() = asIr().parameters
+            .filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+            .map { it.symbol }
     override val ValueParameterSymbolMarker.isVararg: Boolean
         get() = asIr().isVararg
     override val ValueParameterSymbolMarker.isNoinline: Boolean
