@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
@@ -26,8 +27,11 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
     private val valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion =
         context.intrinsics.startCoroutineUninterceptedOrReturnGeneratorVersion.groupPerValueParamSize()
 
+    private val IrSimpleFunctionSymbol.regularParamCount: Int
+        get() = owner.parameters.count { it.kind == IrParameterKind.Regular }
+
     private fun Set<IrSimpleFunctionSymbol>.groupPerValueParamSize(): Map<Int, IrSimpleFunctionSymbol> {
-        return associateBy { it.owner.valueParameters.size }
+        return associateBy { it.regularParamCount }
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -40,10 +44,13 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
                 val reference = expression as IrCallableReference<IrSimpleFunctionSymbol>
 
                 when (val symbol = reference.symbol) {
-                    in context.intrinsics.createCoroutineUnintercepted ->
-                        reference.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.owner.valueParameters.size)
-                    in context.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion ->
-                        reference.symbol = valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion.getValue(symbol.owner.valueParameters.size)
+                    in context.intrinsics.createCoroutineUnintercepted -> {
+                        reference.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.regularParamCount)
+                    }
+                    in context.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion -> {
+                        reference.symbol =
+                            valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion.getValue(symbol.regularParamCount)
+                    }
                 }
 
                 return super.visitCallableReference(reference)
@@ -51,10 +58,13 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
 
             override fun visitCall(expression: IrCall): IrExpression {
                 when (val symbol = expression.symbol) {
-                    in context.intrinsics.createCoroutineUnintercepted ->
-                        expression.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.owner.valueParameters.size)
-                    in context.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion ->
-                        expression.symbol = valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion.getValue(symbol.owner.valueParameters.size)
+                    in context.intrinsics.createCoroutineUnintercepted -> {
+                        expression.symbol = valueParamSizeToItsCreateCoroutineUnintercepted.getValue(symbol.regularParamCount)
+                    }
+                    in context.intrinsics.startCoroutineUninterceptedOrReturnNonGeneratorVersion -> {
+                        expression.symbol =
+                            valueParamSizeToItsStartCoroutineUninterceptedOrReturnGeneratorVersion.getValue(symbol.regularParamCount)
+                    }
                 }
                 return super.visitCall(expression)
             }
