@@ -24,7 +24,6 @@ dependencies {
     testImplementation(project(":core:compiler.common.native"))
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(project(":native:swift:swift-export-standalone"))
-    testImplementation(projectTests(":kotlin-util-klib-abi")) // TODO (KTI-2066): remove this dependency together with moving `AbstractNativeLibraryAbiReaderTest` out of the :native:native.tests module
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
