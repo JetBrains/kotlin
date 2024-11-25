@@ -482,11 +482,12 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     }
                 }
             } else {
-                if (!context.config.producePerFileCache)
+                if (!context.config.producePerFileCache && !context.shouldOptimize())
                     "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
                 else {
                     val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
-                            ?: (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
+                            ?: (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)?.filePath
+                            ?: generationState.llvmModuleName
                     declaration.computePrivateSymbolName(containerName)
                 }
             }
