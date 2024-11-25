@@ -20,20 +20,9 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class NativeLibraryAbiReaderTest extends AbstractNativeLibraryAbiReaderTest {
   @Test
-  public void testAllFilesPresentInContent() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/dump-abi/content"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-  }
-
-  @Test
   @TestMetadata("callables.kt")
   public void testCallables() {
     runTest("compiler/testData/klib/dump-abi/content/callables.kt");
-  }
-
-  @Test
-  @TestMetadata("callables_with_context_parameters.kt")
-  public void testCallables_with_context_parameters() {
-    runTest("compiler/testData/klib/dump-abi/content/callables_with_context_parameters.kt");
   }
 
   @Test
@@ -130,12 +119,6 @@ public class NativeLibraryAbiReaderTest extends AbstractNativeLibraryAbiReaderTe
   @TestMetadata("value_parameters.kt")
   public void testValue_parameters() {
     runTest("compiler/testData/klib/dump-abi/content/value_parameters.kt");
-  }
-
-  @Test
-  @TestMetadata("value_parameters_with_context_parameters.kt")
-  public void testValue_parameters_with_context_parameters() {
-    runTest("compiler/testData/klib/dump-abi/content/value_parameters_with_context_parameters.kt");
   }
 
   @Test

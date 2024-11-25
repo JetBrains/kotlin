@@ -1,4 +1,5 @@
-// LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K1: ANY
+// ^^^ Context parameters aren't going to be supported in K1.
 // MODULE: callables_with_context_parameters
 
 package callables_with_context_parameters.test

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -117,7 +118,10 @@ open class AbstractFirJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<Fi
         get() = ::FirJsKlibSerializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) {
-        builder.configureFirParser(FirParser.Psi)
+        builder.configureFirParser(FirParser.LightTree)
+        builder.defaultDirectives {
+            LANGUAGE with "+ContextReceivers"
+        }
         super.configure(builder)
     }
 }

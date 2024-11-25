@@ -295,7 +295,12 @@ fun main() {
                 testClass<AbstractNativeLibraryAbiReaderTest>(
                     suiteTestClassName = "NativeLibraryAbiReaderTest"
                 ) {
-                    model(targetBackend = TargetBackend.NATIVE)
+                    model(
+                        targetBackend = TargetBackend.NATIVE,
+                        // TODO: drop this workaround after disabling context parameters (receivers) language feature for K1
+                        skipTestAllFilesCheck = true,
+                        skipSpecificFile = { it.name.endsWith("_with_context_parameters.kt") },
+                    )
                 }
                 testClass<AbstractNativeLibraryAbiReaderTest>(
                     suiteTestClassName = "FirNativeLibraryAbiReaderTest",

@@ -1,4 +1,5 @@
-// LANGUAGE: +ContextReceivers
+// IGNORE_BACKEND_K1: ANY
+// ^^^ Context parameters aren't going to be supported in K1.
 // MODULE: value_parameters_with_context_parameters_library
 
 package value_parameters_with_context_parameters.test
