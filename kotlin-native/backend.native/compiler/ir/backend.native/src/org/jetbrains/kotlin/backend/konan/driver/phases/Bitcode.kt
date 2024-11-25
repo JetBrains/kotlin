@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
+import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
 import org.jetbrains.kotlin.backend.konan.insertAliasToEntryPoint
+import org.jetbrains.kotlin.backend.konan.llvm.llvmLinkModules2
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
@@ -122,6 +124,14 @@ internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<Nativ
         name = "LinkBitcodeDependencies",
         postactions = getDefaultLlvmModuleActions(),
         op = { context, input -> linkBitcodeDependencies(context, input) }
+)
+
+internal val LinkBitcodeModulesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, List<LLVMModuleRef>>(
+        name = "LinkBitcodeModules",
+        postactions = getDefaultLlvmModuleActions(),
+        op = { context, input ->
+            input.forEach { llvmLinkModules2(context, context.llvmModule, it) }
+        }
 )
 
 internal val VerifyBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LLVMModuleRef>(

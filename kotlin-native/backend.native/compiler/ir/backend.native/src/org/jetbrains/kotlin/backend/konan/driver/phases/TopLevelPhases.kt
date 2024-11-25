@@ -155,10 +155,17 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
                 val subfragments = splitFragment(fragment)
 
-                val objectFiles = subfragments.map {
-                    backendEngine.useContext(it.generationState(generationState)) { generationStateEngine ->
-                        val bitcodeFile = tempFiles.create(generationStateEngine.context.llvmModuleName, "${it.name}.bc").javaFile()
-                        val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, "${it.name}.o").javaFile()
+                val bitcodeFile1 = tempFiles.create(generationState.llvmModuleName, "pre.bc").javaFile()
+                val objectFile1 = tempFiles.create(File(outputFiles.nativeBinaryFile).name, "pre.o").javaFile()
+                val bitcodeFile2 = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
+                val objectFile2 = tempFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
+
+                val generationStates = subfragments.map { it.generationState(generationState) }
+                val objectFiles = mutableListOf<java.io.File>()
+
+                generationStates.forEachIndexed { index, generationState ->
+                    newEngine(generationState) { generationStateEngine ->
+                        val it = subfragments[index]
                         val cExportFiles = if (config.produceCInterface) {
                             CExportFiles(
                                     cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
@@ -168,9 +175,20 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                             )
                         } else null
                         // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                        generationStateEngine.compileModule(it.module, it.files, fragment.irModule.files, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
-                        objectFile
+                        generationStateEngine.runBackendCodegen(it.module, it.files, fragment.irModule.files, backendContext.irBuiltIns, cExportFiles)
+                        if (index == generationStates.size - 2) {
+                            generationStateEngine.runPhase(LinkBitcodeModulesPhase, generationStates.dropLast(2).map { it.llvmModule })
+                            generationStateEngine.compileModule(bitcodeFile1, objectFile1)
+                            objectFiles.add(objectFile1)
+                        }
+                        if (index == generationStates.size - 1) {
+                            generationStateEngine.compileModule(bitcodeFile2, objectFile2)
+                            objectFiles.add(objectFile2)
+                        }
                     }
+                }
+                generationStates.forEach {
+                    it.dispose()
                 }
 
                 val moduleCompilationOutput = ModuleCompilationOutput(objectFiles, generationState.dependenciesTracker.collectResult())
@@ -325,15 +343,9 @@ internal data class ModuleCompilationOutput(
  * 3. Serializes it to a bitcode file.
  */
 internal fun PhaseEngine<NativeGenerationState>.compileModule(
-        module: IrModuleFragment?,
-        files: List<IrFile>,
-        allFiles: List<IrFile>,
-        irBuiltIns: IrBuiltIns,
         bitcodeFile: java.io.File,
         objectFile: java.io.File,
-        cExportFiles: CExportFiles?
 ) {
-    runBackendCodegen(module, files, allFiles, irBuiltIns, cExportFiles)
     val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
         runPhase(CheckExternalCallsPhase)
