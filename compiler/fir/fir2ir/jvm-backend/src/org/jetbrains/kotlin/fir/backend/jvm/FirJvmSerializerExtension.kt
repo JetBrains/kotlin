@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
@@ -52,7 +50,6 @@ open class FirJvmSerializerExtension(
     override val session: FirSession,
     private val bindings: JvmSerializationBindings,
     private val localDelegatedProperties: List<FirProperty>,
-    private val approximator: AbstractTypeApproximator,
     override val scopeSession: ScopeSession,
     private val globalBindings: JvmSerializationBindings,
     private val useTypeTable: Boolean,
@@ -80,7 +77,6 @@ open class FirJvmSerializerExtension(
         session,
         bindings,
         localDelegatedProperties,
-        approximator,
         components.scopeSession,
         state.globalSerializationBindings,
         state.config.useTypeTableInSerializer,
@@ -106,7 +102,9 @@ open class FirJvmSerializerExtension(
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }
-        writeLocalProperties(proto, JvmProtoBuf.classLocalVariable)
+        for (localVariable in localDelegatedProperties) {
+            proto.addExtension(JvmProtoBuf.classLocalVariable, childSerializer.propertyProto(localVariable)?.build() ?: continue)
+        }
         writeVersionRequirementForJvmDefaultIfNeeded(klass, proto, versionRequirementTable)
 
         if (jvmDefaultMode.isEnabled && klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
@@ -132,7 +130,9 @@ open class FirJvmSerializerExtension(
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }
-        writeLocalProperties(proto, JvmProtoBuf.classLocalVariable)
+        for (localVariable in localDelegatedProperties) {
+            proto.addExtension(JvmProtoBuf.classLocalVariable, childSerializer.propertyProto(localVariable)?.build() ?: continue)
+        }
     }
 
     // Interfaces which have @JvmDefault members somewhere in the hierarchy need the compiler 1.2.40+
@@ -157,25 +157,17 @@ open class FirJvmSerializerExtension(
         }
     }
 
-    override fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
+    override fun serializePackage(
+        packageFqName: FqName,
+        proto: ProtoBuf.Package.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: FirElementSerializer
+    ) {
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.packageModuleName, stringTable.getStringIndex(moduleName))
         }
-        writeLocalProperties(proto, JvmProtoBuf.packageLocalVariable)
-    }
-
-    @Suppress("Reformat")
-    private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>
-    > writeLocalProperties(
-        proto: BuilderType,
-        extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
-    ) {
-        val languageVersionSettings = session.languageVersionSettings
         for (localVariable in localDelegatedProperties) {
-            val serializer = FirElementSerializer.createForLambda(session, scopeSession,this, approximator, languageVersionSettings)
-            proto.addExtension(extension, serializer.propertyProto(localVariable)?.build() ?: continue)
+            proto.addExtension(JvmProtoBuf.packageLocalVariable, childSerializer.propertyProto(localVariable)?.build() ?: continue)
         }
     }
 

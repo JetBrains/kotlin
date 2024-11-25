@@ -31,7 +31,12 @@ abstract class FirSerializerExtensionBase(
 ) : FirSerializerExtension() {
     final override val stringTable: FirElementAwareSerializableStringTable = FirElementAwareSerializableStringTable()
 
-    override fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
+    override fun serializePackage(
+        packageFqName: FqName,
+        proto: ProtoBuf.Package.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: FirElementSerializer
+    ) {
         proto.setExtension(protocol.packageFqName, stringTable.getPackageFqNameIndex(packageFqName))
     }
 

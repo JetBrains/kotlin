@@ -140,7 +140,6 @@ internal class KaFirMetadataCalculator(
             firSession,
             bindings,
             localDelegatedProperties = emptyList(),
-            firSession.typeApproximator,
             scopeSession,
             JvmSerializationBindings(),
             useTypeTable = true,
