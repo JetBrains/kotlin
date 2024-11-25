@@ -57308,6 +57308,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("smartcastToProjectedType.kt")
+    public void testSmartcastToProjectedType() {
+      runTest("compiler/testData/codegen/box/smartCasts/smartcastToProjectedType.kt");
+    }
+
+    @Test
     @TestMetadata("smartcastToStarType.kt")
     public void testSmartcastToStarType() {
       runTest("compiler/testData/codegen/box/smartCasts/smartcastToStarType.kt");
