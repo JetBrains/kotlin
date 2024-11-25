@@ -516,7 +516,7 @@ internal class CodeGeneratorVisitor(
         // Create static object of class InitNode.
         val initNode = LLVMConstNamedStruct(kNodeInitType, argList, 2)!!
         // Create global variable with init record data.
-        return codegen.staticData.placeGlobal("init_node", constPointer(initNode), isExported = false).llvmGlobal
+        return codegen.staticData.placeGlobal("${generationState.llvmModuleName}_init_node", constPointer(initNode), isExported = false).llvmGlobal
     }
 
     //-------------------------------------------------------------------------//
