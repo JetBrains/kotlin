@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -64,10 +65,50 @@ private abstract class BaseInteropIrTransformer(
         private val generationState: NativeGenerationState
 ) : IrBuildingTransformer(generationState.context) {
 
-    protected inline fun <T> generateWithStubs(element: IrElement? = null, block: KotlinStubs.() -> T): T =
-            createKotlinStubs(element).block()
+    protected inline fun <T : IrDeclaration> generateDeclarationWithStubs(
+            owner: IrDeclarationContainer,
+            element: IrElement? = null,
+            block: KotlinStubs.() -> T
+    ): T {
+        val addedDeclarations = mutableListOf<IrDeclaration>()
+        val result = createKotlinStubs(element) {
+            it.parent = owner
+            addedDeclarations += it
+        }.block()
+        addedDeclarations.forEach {
+            it.transform(this@BaseInteropIrTransformer, null)
+            owner.declarations.add(it)
+        }
+        return result
+    }
 
-    protected fun createKotlinStubs(element: IrElement?): KotlinStubs {
+    protected inline fun generateWithStubs(
+            parent: IrDeclarationParent,
+            element: IrElement? = null,
+            block: KotlinStubs.() -> IrExpression
+    ): IrExpression {
+        val addedDeclarations = mutableListOf<IrDeclaration>()
+        val result = createKotlinStubs(element) {
+            it.parent = parent
+            addedDeclarations += it
+        }.block()
+        return if (addedDeclarations.isEmpty())
+            result
+        else IrBlockImpl(
+                startOffset = element?.startOffset ?: UNDEFINED_OFFSET,
+                endOffset = element?.endOffset ?: UNDEFINED_OFFSET,
+                type = result.type,
+        ).apply {
+            addedDeclarations.forEach {
+                it.transform(this@BaseInteropIrTransformer, null)
+                (it as? IrDeclarationWithVisibility)?.visibility = DescriptorVisibilities.LOCAL
+                statements += it
+            }
+            statements += result
+        }
+    }
+
+    private fun createKotlinStubs(element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
         val location = if (element != null) {
             element.getCompilerMessageLocation(irFile)
         } else {
@@ -101,7 +142,7 @@ private abstract class BaseInteropIrTransformer(
                 get() = klib?.manifestProperties?.getProperty("language") ?: "C"
 
             override fun addKotlin(declaration: IrDeclaration) {
-                addTopLevel(declaration)
+                addKotlin(declaration)
             }
 
             override fun addC(lines: List<String>) {
@@ -129,7 +170,6 @@ private abstract class BaseInteropIrTransformer(
             renderCompilerError(irFile, element, message)
 
     protected abstract val irFile: IrFile
-    protected abstract fun addTopLevel(declaration: IrDeclaration)
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -141,17 +181,11 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     lateinit var currentFile: IrFile
 
     private val eagerTopLevelInitializers = mutableListOf<IrExpression>()
-    private val newTopLevelDeclarations = mutableListOf<IrDeclaration>()
 
     private var topLevelInitializersCounter = 0
 
     override val irFile: IrFile
         get() = currentFile
-
-    override fun addTopLevel(declaration: IrDeclaration) {
-        declaration.parent = currentFile
-        newTopLevelDeclarations += declaration
-    }
 
     override fun lower(irFile: IrFile) {
         currentFile = irFile
@@ -159,9 +193,6 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 
         eagerTopLevelInitializers.forEach { irFile.addTopLevelInitializer(it, context, threadLocal = false, eager = true) }
         eagerTopLevelInitializers.clear()
-
-        irFile.addChildren(newTopLevelDeclarations)
-        newTopLevelDeclarations.clear()
     }
 
     private fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean, eager: Boolean) {
@@ -570,7 +601,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             arguments: List<IrExpression?>,
             call: IrFunctionAccessExpression,
             method: IrSimpleFunction
-    ): IrExpression = generateWithStubs(call) {
+    ): IrExpression = generateWithStubs(this.parent, call) {
         if (method.parent !is IrClass) {
             // Category-provided.
             generationState.dependenciesTracker.add(method)
@@ -735,6 +766,10 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                     element.acceptChildrenVoid(this)
                 }
 
+                override fun visitDeclaration(declaration: IrDeclarationBase) {
+                    // Skip local declarations.
+                }
+
                 override fun visitCall(expression: IrCall) {
                     super.visitCall(expression)
 
@@ -786,18 +821,6 @@ private class InteropLoweringPart2(val generationState: NativeGenerationState) :
     override fun lower(irFile: IrFile) {
         val transformer = InteropTransformer(generationState, irFile)
         irFile.transformChildrenVoid(transformer)
-
-        while (transformer.newTopLevelDeclarations.isNotEmpty()) {
-            val newTopLevelDeclarations = transformer.newTopLevelDeclarations.toList()
-            transformer.newTopLevelDeclarations.clear()
-
-            // Assuming these declarations contain only new IR (i.e. existing lowered IR has not been moved there).
-            // TODO: make this more reliable.
-            val loweredNewTopLevelDeclarations =
-                    newTopLevelDeclarations.map { it.transform(transformer, null) as IrDeclaration }
-
-            irFile.addChildren(loweredNewTopLevelDeclarations)
-        }
     }
 }
 
@@ -808,14 +831,7 @@ private class InteropTransformer(
 ) : BaseInteropIrTransformer(generationState) {
     private val context = generationState.context
 
-    val newTopLevelDeclarations = mutableListOf<IrDeclaration>()
-
     val symbols = context.ir.symbols
-
-    override fun addTopLevel(declaration: IrDeclaration) {
-        declaration.parent = irFile
-        newTopLevelDeclarations += declaration
-    }
 
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
@@ -828,7 +844,7 @@ private class InteropTransformer(
                         null
                     } else {
                         uniq += selector
-                        generateWithStubs(it.owner) {
+                        generateDeclarationWithStubs(declaration, it.owner) {
                             generateCFunctionAndFakeKotlinExternalFunction(
                                     function,
                                     it.owner,
@@ -845,7 +861,7 @@ private class InteropTransformer(
     }
 
     private fun generateCFunctionPointer(function: IrSimpleFunction, expression: IrExpression): IrExpression =
-            generateWithStubs { generateCFunctionPointer(function, function, expression) }
+            generateWithStubs(builder.parent) { generateCFunctionPointer(function, function, expression) }
 
     // ?.foo() part
     fun IrBuilderWithScope.irSafeCall(extensionReceiverExpression: IrExpression, typeArguments: List<IrTypeArgument>, callee: IrSimpleFunctionSymbol): IrExpression =
@@ -1043,7 +1059,7 @@ private class InteropTransformer(
         val exceptionMode = ForeignExceptionMode.byValue(
                 function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
-        return generateWithStubs(expression) { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
+        return generateWithStubs(builder.parent, expression) { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -1123,7 +1139,7 @@ private class InteropTransformer(
                     }
                 }
                 IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
-                    val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(0)!!)
+                    val (irFunction, irCallableReference) = unwrapStaticFunctionArgument(expression.getValueArgument(0)!!)
 
                     require(irCallableReference != null && irCallableReference.symbol is IrSimpleFunctionSymbol) { renderCompilerError(expression) }
 
@@ -1139,10 +1155,16 @@ private class InteropTransformer(
                                 typeArgument.isMarkedNullable == signatureType.isMarkedNullable) { renderCompilerError(expression) }
                     }
 
-                    generateCFunctionPointer(target as IrSimpleFunction, expression)
+                    val pointer = generateCFunctionPointer(target as IrSimpleFunction, expression)
+                    if (irFunction == null)
+                        pointer
+                    else builder.irBlock {
+                        +irFunction
+                        +pointer
+                    }
                 }
                 IntrinsicType.INTEROP_FUNPTR_INVOKE -> {
-                    generateWithStubs { generateCCall(expression, builder, isInvoke = true) }
+                    generateWithStubs(builder.parent) { generateCCall(expression, builder, isInvoke = true) }
                 }
                 IntrinsicType.INTEROP_SIGN_EXTEND, IntrinsicType.INTEROP_NARROW -> {
 
@@ -1205,7 +1227,7 @@ private class InteropTransformer(
                     }
                 }
                 IntrinsicType.WORKER_EXECUTE -> {
-                    val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
+                    val (irFunction, irCallableReference) = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
 
                     require(irCallableReference != null) { renderCompilerError(expression) }
 
@@ -1215,11 +1237,17 @@ private class InteropTransformer(
                             symbols.executeImpl.owner.valueParameters[3].type,
                             targetSymbol)
 
-                    builder.irCall(symbols.executeImpl).apply {
+                    val executeImplCall = builder.irCall(symbols.executeImpl).apply {
                         putValueArgument(0, expression.dispatchReceiver)
                         putValueArgument(1, expression.getValueArgument(0))
                         putValueArgument(2, expression.getValueArgument(1))
                         putValueArgument(3, jobPointer)
+                    }
+                    if (irFunction == null)
+                        executeImplCall
+                    else builder.irBlock {
+                        +irFunction
+                        +executeImplCall
                     }
                 }
                 else -> expression
@@ -1400,9 +1428,9 @@ private class InteropTransformer(
         }
     }
 
-    private fun unwrapStaticFunctionArgument(argument: IrExpression): IrRawFunctionReference? {
+    private fun unwrapStaticFunctionArgument(argument: IrExpression): Pair<IrFunction?, IrRawFunctionReference?> {
         if (argument is IrRawFunctionReference) {
-            return argument
+            return Pair(null, argument)
         }
 
         // Otherwise check whether it is a lambda:
@@ -1410,23 +1438,24 @@ private class InteropTransformer(
         // 1. It is a container with two statements and expected origin:
 
         if (argument !is IrContainerExpression || argument.statements.size != 2) {
-            return null
+            return Pair(null, null)
         }
         if (argument.origin != IrStatementOrigin.LAMBDA && argument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION) {
-            return null
+            return Pair(null, null)
         }
 
-        // 2. First statement is an empty container (created during local functions lowering):
+        // 2. First statement is a function:
 
         val firstStatement = argument.statements.first()
 
-        if (firstStatement !is IrContainerExpression || firstStatement.statements.size != 0) {
-            return null
+        if (firstStatement !is IrFunction || (firstStatement.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                        && firstStatement.origin != IrDeclarationOrigin.LOCAL_FUNCTION)) {
+            return Pair(null, null)
         }
 
         // 3. Second statement is IrCallableReference:
 
-        return argument.statements.last() as? IrRawFunctionReference
+        return Pair(firstStatement, argument.statements.last() as? IrRawFunctionReference)
     }
 
     val IrValueParameter.isDispatchReceiver: Boolean
