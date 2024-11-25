@@ -818,7 +818,7 @@ abstract class AbstractComposeLowering(
 
     private fun IrClass.getMetadataStabilityGetterFun(): IrSimpleFunctionSymbol? {
         val suitableFunctions = context.referenceFunctions(CallableId(this.packageFqName!!, uniqueStabilityGetterName()))
-        return suitableFunctions.singleOrNull()
+        return suitableFunctions.firstOrNull()
     }
 
     private fun IrClass.getRuntimeStabilityValue(): IrExpression? {
