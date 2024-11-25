@@ -32,12 +32,12 @@ internal class JpsCompilerServicesFacadeImpl(
     port: Int = SOCKET_ANY_FREE_PORT
 ) : CompilerCallbackServicesFacadeServer(
     env.services[IncrementalCompilationComponents::class.java],
-    env.services[LookupTracker::class.java],
-    env.services[CompilationCanceledStatus::class.java],
+    env.services[LookupTracker::class.java], // 1
+    env.services[CompilationCanceledStatus::class.java], // 4?
     env.services[ExpectActualTracker::class.java],
-    env.services[InlineConstTracker::class.java],
+    env.services[InlineConstTracker::class.java], // 3
     env.services[EnumWhenTracker::class.java],
-    env.services[ImportTracker::class.java],
+    env.services[ImportTracker::class.java], // 2
     env.services[IncrementalResultsConsumer::class.java],
     env.services[IncrementalDataProvider::class.java],
     port

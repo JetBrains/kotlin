@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import java.io.File
+import java.net.URLClassLoader
+import java.util.UUID
 
 /**
  * A facade for invoking compilation and related stuff (such as [calculateClasspathSnapshot]) in Kotlin compiler.
@@ -65,6 +67,51 @@ public interface CompilationService {
         arguments: List<String>,
     ): CompilationResult
 
+    interface BtaLookupTracker {
+        fun report(lookups: List<String>)
+    }
+
+    //disable internal IC and provide callbacks
+    public fun compileDumbJvm(
+        projectId: ProjectId,
+        dirtySources: List<File>, // files to be compield provided by JPS
+        strategyConfig: CompilerExecutionStrategyConfiguration,
+        compilationConfig: JvmCompilationConfiguration,
+        sources: List<File>,
+        arguments: List<String>,
+        tracker: BtaLookupTracker?,
+        tracker2: BtaLookupTracker?,
+    )
+
+    fun foo() {
+        val kotlinVersion = "2.0.0"
+        val classpath = resolve("kotlin-build-tools-impl", kotlinVersion) // => list of jar files
+        val parentClassloader = SharedApiClassesClassLoader() // load BTA interfaces to JPS process
+        val classloader = URLClassLoader(classpath, parentClassloader)
+        val compilationService: CompilationService = loadImplementation(classloader)
+        val tracker = object : BtaLookupTracker {
+            override fun report(lookups: List<String>) {
+                println(lookups) // check classloader clash
+            }
+        }
+
+//        compilationService.compileDumbJvm(ProjectId.ProjectUUID(""), null, null, null, null, tracker)
+
+        // do non-inc compile
+        compilationService.compileJvm(
+            projectId = ProjectId.ProjectUUID(uuid = UUID.randomUUID()),
+            strategyConfig = compilationService.makeCompilerExecutionStrategyConfiguration().apply {
+                useInProcessStrategy()
+                useDaemonStrategy(listOf("-Xmx2G"))
+            },
+            compilationConfig = compilationService.makeJvmCompilationConfiguration().apply {
+                // useIncrementalCompilation() // now - disabled IC
+            },
+            sources = emptyList(),
+            arguments = listOf("-d", "target/classes")
+        )
+    }
+// with 2.1.0 BTA -- compiler: 1.9.20, 2.0.0, 2.1.0, 2.1.20
     /**
      * A finalization function that must be called when all the modules of the project are compiled.
      *
