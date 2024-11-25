@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- This module was also published with a richer model, Gradle metadata,  -->
+  <!-- which should be used instead. Do not delete the following line which  -->
+  <!-- is to indicate to Gradle or any Gradle module metadata file consumer  -->
+  <!-- that they should prefer consuming it instead. -->
+  <!-- do_not_remove: published-with-gradle-metadata -->
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>foo.bar</groupId>
+  <artifactId>uklib-maven-gradle-packaging-wasm-js</artifactId>
+  <version>1.0</version>
+  <packaging>klib</packaging>
+  <dependencies>
+<!--    <dependency>-->
+<!--      <groupId>org.jetbrains.kotlin</groupId>-->
+<!--      <artifactId>kotlin-stdlib-wasm-js</artifactId>-->
+<!--      <version>2.1.0-RC2</version>-->
+<!--      <scope>compile</scope>-->
+<!--    </dependency>-->
+  </dependencies>
+</project>
