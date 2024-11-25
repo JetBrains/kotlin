@@ -255,6 +255,18 @@ public class TieredFir2IrJvmLightTreeTestGenerated extends AbstractTieredFir2IrJ
       }
 
       @Test
+      @TestMetadata("missingActualOnlySubclassIsNotActualized.kt")
+      public void testMissingActualOnlySubclassIsNotActualized() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/missingActualOnlySubclassIsNotActualized.kt");
+      }
+
+      @Test
+      @TestMetadata("missingActualWithFunctionCallInPlatformModule.kt")
+      public void testMissingActualWithFunctionCallInPlatformModule() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/missingActualWithFunctionCallInPlatformModule.kt");
+      }
+
+      @Test
       @TestMetadata("nestedClassViaActualTypealiasIncompatibilities.kt")
       public void testNestedClassViaActualTypealiasIncompatibilities() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/nestedClassViaActualTypealiasIncompatibilities.kt");

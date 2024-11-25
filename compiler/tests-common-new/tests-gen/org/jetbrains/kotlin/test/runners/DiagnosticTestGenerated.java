@@ -28017,6 +28017,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("missingActualOnlySubclassIsNotActualized.kt")
+      public void testMissingActualOnlySubclassIsNotActualized() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/missingActualOnlySubclassIsNotActualized.kt");
+      }
+
+      @Test
+      @TestMetadata("missingActualWithFunctionCallInPlatformModule.kt")
+      public void testMissingActualWithFunctionCallInPlatformModule() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/missingActualWithFunctionCallInPlatformModule.kt");
+      }
+
+      @Test
       @TestMetadata("modifierApplicability.kt")
       public void testModifierApplicability() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/modifierApplicability.kt");
