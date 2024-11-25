@@ -290,7 +290,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             }
         }
 
-        if (!generationState.llvmModuleSpecification.containsDeclaration(declaration)) {
+        if (generationState.shouldOptimize() && !generationState.llvmModuleSpecification.containsDeclaration(declaration)) {
             importGlobal(typeInfoSymbolName, runtime.typeInfoType, declaration)
             typeInfoGlobal = staticData.getGlobal(typeInfoSymbolName)!!
             typeInfoPtr = typeInfoGlobal.pointer
@@ -359,7 +359,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
     private fun createUniqueDeclarations(
             irClass: IrClass, typeInfoPtr: ConstPointer, bodyType: LLVMTypeRef) {
-        if (!generationState.llvmModuleSpecification.containsDeclaration(irClass)) {
+        if (generationState.shouldOptimize() && !generationState.llvmModuleSpecification.containsDeclaration(irClass)) {
             val uniqueKind = when {
                 irClass.isUnit() -> UniqueKind.UNIT
                 irClass.isKotlinArray() -> UniqueKind.EMPTY_ARRAY
@@ -434,7 +434,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
             val alignmnet = declaration.requiredAlignment(llvm)
-            val storage = if (!generationState.llvmModuleSpecification.containsDeclaration(declaration)) {
+            val storage = if (generationState.shouldOptimize() && !generationState.llvmModuleSpecification.containsDeclaration(declaration)) {
                 if (declaration.storageKind == FieldStorageKind.THREAD_LOCAL)
                     null
                 else
