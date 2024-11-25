@@ -87,8 +87,10 @@ class MuteInInvocationInterceptor : InvocationInterceptor {
         if (testClass != null &&
             testMethod != null
         ) {
-            val mutedTest = getMutedTest(testClass, testMethod.name)
-            if (mutedTest != null &&
+            System.err.println("Expected failure: ${extensionContext.displayName}")
+            throw Exception("Expected failure")
+            /*val mutedTest = getMutedTest(testClass, testMethod.name)
+            if (mutedTest != null //&&
                 isPresentedInDatabaseWithoutFailMarker(mutedTest)
             ) {
                 if (!mutedTest.isFlaky) {
@@ -105,9 +107,9 @@ class MuteInInvocationInterceptor : InvocationInterceptor {
                     invocation.proceed()
                     return
                 }
-            }
+            }*/
         }
-
+        System.err.println("CRISTIAN WTF")
         invocation.proceed()
     }
 }
