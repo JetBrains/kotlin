@@ -1114,7 +1114,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes.")
         map.put(
             ILLEGAL_KOTLIN_VERSION_STRING_VALUE,
-            "Invalid value in version annotation (should be 'major.minor' or 'major.minor.patch')."
+            "Invalid value in version annotation (must be 'major.minor' or 'major.minor.patch')."
         )
         map.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}.", NULLABLE_STRING)
         map.put(
@@ -1123,7 +1123,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS,
-            "'DeprecatedSinceKotlin' annotation should have at least one argument."
+            "'DeprecatedSinceKotlin' annotation must have at least one argument."
         )
         map.put(
             DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED,
@@ -2941,7 +2941,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ASSIGNED_VALUE_IS_NEVER_READ, "Assigned value is never read.")
         map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initializer is redundant.")
         map.put(VARIABLE_NEVER_READ, "Variable is never read.")
-        map.put(UNUSED_ANONYMOUS_PARAMETER, "Parameter ''{0}'' is never used, could be renamed to ''_''.", SYMBOL)
+        map.put(UNUSED_ANONYMOUS_PARAMETER, "Parameter ''{0}'' is never used, consider renaming it to ''_''.", SYMBOL)
         map.put(UNUSED_EXPRESSION, "Expression is unused.")
         map.put(UNUSED_LAMBDA_EXPRESSION, "Lambda expression is never invoked. To create a scoped block, use 'run { ... }'.")
 

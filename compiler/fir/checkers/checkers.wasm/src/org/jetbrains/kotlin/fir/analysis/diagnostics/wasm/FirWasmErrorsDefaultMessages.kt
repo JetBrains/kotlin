@@ -70,7 +70,7 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             JSCODE_WRONG_CONTEXT,
-            "Calls to 'js(code)' should be a single expression inside a top-level function body or a property initializer in Kotlin/Wasm."
+            "Calls to 'js(code)' must be a single expression inside a top-level function body or a property initializer in Kotlin/Wasm."
         )
         map.put(
             JSCODE_UNSUPPORTED_FUNCTION_KIND,
@@ -79,7 +79,7 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JSCODE_INVALID_PARAMETER_NAME,
-            "Parameters passed to 'js(code)' should have a valid JavaScript name."
+            "Parameters passed to 'js(code)' must have a valid JavaScript name."
         )
 
         map.put(NESTED_WASM_EXPORT, "Only top-level functions can be exported with '@WasmExport'.")
@@ -104,7 +104,7 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION, "Only top-level functions can be external.")
-        map.put(WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT, "External functions should be annotated with '@WasmImport'.")
+        map.put(WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT, "External functions must be annotated with '@WasmImport'.")
 
         map.put(ASSOCIATED_OBJECT_INVALID_BINDING, "Invalid associated object binding.")
     }

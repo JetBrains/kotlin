@@ -51,7 +51,7 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("Parcelize").also { map ->
         map.put(
             PARCELABLE_SHOULD_BE_CLASS,
-            "'Parcelable' should be a class."
+            "'Parcelable' must be a class."
         )
 
         map.put(
@@ -61,22 +61,22 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
 
         map.put(
             PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS,
-            "'Parcelable' should not be a 'enum class'."
+            "'Parcelable' cannot be an 'enum class'."
         )
 
         map.put(
             PARCELABLE_SHOULD_BE_INSTANTIABLE,
-            "'Parcelable' should not be an 'abstract' class."
+            "'Parcelable' cannot be an abstract class."
         )
 
         map.put(
             PARCELABLE_CANT_BE_INNER_CLASS,
-            "'Parcelable' can't be an inner class."
+            "'Parcelable' cannot be an inner class."
         )
 
         map.put(
             PARCELABLE_CANT_BE_LOCAL_CLASS,
-            "'Parcelable' can't be a local class."
+            "'Parcelable' cannot be a local class."
         )
 
         map.put(
@@ -86,7 +86,7 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
 
         map.put(
             PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR,
-            "'Parcelable' should have a primary constructor."
+            "'Parcelable' must have a primary constructor."
         )
 
         map.put(
@@ -96,12 +96,12 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
 
         map.put(
             PARCELABLE_CONSTRUCTOR_PARAMETER_SHOULD_BE_VAL_OR_VAR,
-            "'Parcelable' constructor parameter should be 'val' or 'var'."
+            "'Parcelable' constructor parameter must be 'val' or 'var'."
         )
 
         map.put(
             PROPERTY_WONT_BE_SERIALIZED,
-            "Property would not be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning."
+            "Property won't be serialized into a 'Parcel'. Add '@IgnoredOnParcel' annotation to remove the warning."
         )
 
         map.put(
@@ -129,7 +129,7 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
 
         map.put(
             PARCELER_SHOULD_BE_OBJECT,
-            "Parceler should be an object."
+            "Parceler must be an object."
         )
 
         map.put(
@@ -151,7 +151,7 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
 
         map.put(
             CLASS_SHOULD_BE_PARCELIZE,
-            "{0} should be annotated with ''@Parcelize''.",
+            "{0} must be annotated with ''@Parcelize''.",
             RENDER_CLASS_OR_OBJECT_QUOTED
         )
 
