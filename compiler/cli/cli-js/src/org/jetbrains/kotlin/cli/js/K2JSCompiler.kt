@@ -490,6 +490,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 wasmModuleMetadataCache,
                 irFactory,
                 allowIncompleteImplementations = arguments.irDce,
+                skipCommentInstructions = !arguments.wasmGenerateWat,
             )
             val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
@@ -804,7 +805,8 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             WasmICContext(
                 allowIncompleteImplementations = false,
                 skipLocalNames = !arguments.wasmDebug,
-                safeFragmentTags = arguments.preserveIcOrder
+                safeFragmentTags = arguments.preserveIcOrder,
+                skipCommentInstructions = !arguments.wasmGenerateWat
             )
         } else {
             JsICContext(

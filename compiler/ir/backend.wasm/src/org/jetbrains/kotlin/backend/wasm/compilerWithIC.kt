@@ -28,6 +28,7 @@ open class WasmCompilerWithIC(
     configuration: CompilerConfiguration,
     private val allowIncompleteImplementations: Boolean,
     private val safeFragmentTags: Boolean,
+    private val skipCommentInstructions: Boolean,
 ) : IrCompilerICInterface {
     val context: WasmBackendContext
     private val idSignatureRetriever: IdSignatureRetriever
@@ -65,7 +66,8 @@ open class WasmCompilerWithIC(
                 idSignatureRetriever,
                 wasmModuleMetadataCache,
                 allowIncompleteImplementations,
-                if (safeFragmentTags) "${irFile.module.name.asString()}${irFile.path}" else null
+                if (safeFragmentTags) "${irFile.module.name.asString()}${irFile.path}" else null,
+                skipCommentInstructions = skipCommentInstructions,
             )
         )
     }
@@ -93,7 +95,14 @@ class WasmCompilerWithICForTesting(
     configuration: CompilerConfiguration,
     allowIncompleteImplementations: Boolean,
     safeFragmentTags: Boolean = false,
-) : WasmCompilerWithIC(mainModule, irBuiltIns, configuration, allowIncompleteImplementations, safeFragmentTags) {
+) : WasmCompilerWithIC(
+    mainModule,
+    irBuiltIns,
+    configuration,
+    allowIncompleteImplementations,
+    safeFragmentTags,
+    skipCommentInstructions = false
+) {
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
         val testFile = dirtyFiles.firstOrNull { file ->
             file.declarations.any { declaration -> declaration is IrFunction && declaration.name.asString() == "box" }

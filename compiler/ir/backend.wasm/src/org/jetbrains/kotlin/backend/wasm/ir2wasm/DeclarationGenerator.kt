@@ -33,6 +33,7 @@ class DeclarationGenerator(
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val allowIncompleteImplementations: Boolean,
+    private val skipCommentInstructions: Boolean,
 ) : IrElementVisitorVoid {
 
     // Shortcuts
@@ -130,7 +131,8 @@ class DeclarationGenerator(
             function,
             backendContext,
             wasmFileCodegenContext,
-            wasmModuleTypeTransformer
+            wasmModuleTypeTransformer,
+            skipCommentInstructions
         )
 
         for (irParameter in irParameters) {
@@ -434,7 +436,7 @@ class DeclarationGenerator(
         val wasmType = wasmModuleTypeTransformer.transformType(declaration.type)
 
         val initBody = mutableListOf<WasmInstr>()
-        val wasmExpressionGenerator = WasmExpressionBuilder(initBody)
+        val wasmExpressionGenerator = WasmExpressionBuilder(initBody, skipCommentInstructions = skipCommentInstructions)
 
         val initValue: IrExpression? = declaration.initializer?.expression
         if (initValue != null) {
@@ -453,7 +455,8 @@ class DeclarationGenerator(
                     stubFunction,
                     backendContext,
                     wasmFileCodegenContext,
-                    wasmModuleTypeTransformer
+                    wasmModuleTypeTransformer,
+                    skipCommentInstructions,
                 )
                 val bodyGenerator = BodyGenerator(
                     backendContext,
