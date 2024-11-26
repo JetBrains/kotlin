@@ -21,7 +21,8 @@ import java.util.*
 open class WasmICContext(
     protected val allowIncompleteImplementations: Boolean,
     protected val skipLocalNames: Boolean = false,
-    private val safeFragmentTags: Boolean
+    private val safeFragmentTags: Boolean,
+    private val skipCommentInstructions: Boolean,
 ) : PlatformDependentICContext {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
@@ -31,7 +32,14 @@ open class WasmICContext(
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration
     ): IrCompilerICInterface =
-        WasmCompilerWithIC(mainModule, irBuiltIns, configuration, allowIncompleteImplementations, safeFragmentTags)
+        WasmCompilerWithIC(
+            mainModule = mainModule,
+            irBuiltIns = irBuiltIns,
+            configuration = configuration,
+            allowIncompleteImplementations = allowIncompleteImplementations,
+            safeFragmentTags = safeFragmentTags,
+            skipCommentInstructions = skipCommentInstructions
+        )
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
         WasmSrcFileArtifact(fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames)
@@ -50,7 +58,7 @@ class WasmICContextForTesting(
     allowIncompleteImplementations: Boolean,
     skipLocalNames: Boolean = false,
     safeFragmentTags: Boolean = false,
-) : WasmICContext(allowIncompleteImplementations, skipLocalNames, safeFragmentTags) {
+) : WasmICContext(allowIncompleteImplementations, skipLocalNames, safeFragmentTags, skipCommentInstructions = false) {
     override fun createCompiler(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,

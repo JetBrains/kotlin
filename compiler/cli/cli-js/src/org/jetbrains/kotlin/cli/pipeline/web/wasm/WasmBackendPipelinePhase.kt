@@ -157,12 +157,15 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
 
         dumpDeclarationIrSizesIfNeed(dceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
 
+        val generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false)
+
         val wasmModuleMetadataCache = WasmModuleMetadataCache(backendContext)
         val codeGenerator = WasmModuleFragmentGenerator(
             backendContext,
             wasmModuleMetadataCache,
             irFactory,
             allowIncompleteImplementations = dce,
+            skipCommentInstructions = !generateWat,
         )
         val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
@@ -173,7 +176,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             typeScriptFragment = typeScriptFragment,
             baseFileName = outputName,
             emitNameSection = wasmDebug,
-            generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
+            generateWat = generateWat,
             generateDwarf = generateDwarf,
             generateSourceMaps = generateSourceMaps,
             useDebuggerCustomFormatters = useDebuggerCustomFormatters

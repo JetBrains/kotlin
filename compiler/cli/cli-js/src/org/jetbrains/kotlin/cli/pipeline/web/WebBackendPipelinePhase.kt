@@ -72,7 +72,8 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact>(
                         configuration.wasmCompilation -> IcCachesConfigurationData.Wasm(
                             configuration.includes!!,
                             wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
-                            preserveIcOrder = configuration.preserveIcOrder
+                            preserveIcOrder = configuration.preserveIcOrder,
+                            generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
                         )
                         else -> IcCachesConfigurationData.Js(
                             configuration.includes!!,

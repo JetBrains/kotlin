@@ -15,6 +15,7 @@ class WasmModuleFragmentGenerator(
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val idSignatureRetriever: IdSignatureRetriever,
     private val allowIncompleteImplementations: Boolean,
+    private val skipCommentInstructions: Boolean,
 ) {
     fun generateModuleAsSingleFileFragment(irModuleFragment: IrModuleFragment): WasmCompiledFileFragment {
         val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
@@ -29,6 +30,7 @@ class WasmModuleFragmentGenerator(
                 allowIncompleteImplementations,
                 wasmFileCodegenContext,
                 wasmModuleTypeTransformer,
+                skipCommentInstructions,
             )
         }
         return wasmFileFragment
@@ -42,6 +44,7 @@ internal fun compileIrFile(
     wasmModuleMetadataCache: WasmModuleMetadataCache,
     allowIncompleteImplementations: Boolean,
     fragmentTag: String?,
+    skipCommentInstructions: Boolean,
 ): WasmCompiledFileFragment {
     val wasmFileFragment = WasmCompiledFileFragment(fragmentTag)
     val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
@@ -53,6 +56,7 @@ internal fun compileIrFile(
         allowIncompleteImplementations,
         wasmFileCodegenContext,
         wasmModuleTypeTransformer,
+        skipCommentInstructions,
     )
     return wasmFileFragment
 }
@@ -64,6 +68,7 @@ private fun compileIrFile(
     allowIncompleteImplementations: Boolean,
     wasmFileCodegenContext: WasmFileCodegenContext,
     wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    skipCommentInstructions: Boolean,
 ) {
     val generator = DeclarationGenerator(
         backendContext,
@@ -71,6 +76,7 @@ private fun compileIrFile(
         wasmModuleTypeTransformer,
         wasmModuleMetadataCache,
         allowIncompleteImplementations,
+        skipCommentInstructions,
     )
     for (irDeclaration in irFile.declarations) {
         irDeclaration.acceptVoid(generator)
