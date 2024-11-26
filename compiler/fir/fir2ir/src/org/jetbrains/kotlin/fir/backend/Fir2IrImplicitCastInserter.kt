@@ -318,7 +318,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         selector: FirQualifiedAccessExpression,
         typeOrigin: ConversionTypeOrigin,
     ): IrExpression? {
-        val receiverExpressionType = receiver.resolvedType as? ConeIntersectionType ?: return null
+        val receiverExpressionType = receiver.resolvedType.lowerBoundIfFlexible() as? ConeIntersectionType ?: return null
         val referencedDeclaration = selector.calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative(c)?.fir
 
         val receiverType = with(selector) {
