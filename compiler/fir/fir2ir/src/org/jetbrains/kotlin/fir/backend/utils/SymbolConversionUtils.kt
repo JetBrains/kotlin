@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
@@ -135,10 +137,13 @@ private fun Fir2IrComponents.toIrSymbol(
         }
         // Member fake override or bound callable reference
         dispatchReceiver != null -> {
-            val callSiteDispatchReceiverType = when (dispatchReceiver) {
-                is FirSmartCastExpression -> dispatchReceiver.smartcastTypeWithoutNullableNothing?.coneType ?: dispatchReceiver.resolvedType
-                else -> dispatchReceiver.resolvedType
+            fun findReceiverType(receiver: FirExpression): ConeKotlinType = when (receiver) {
+                is FirSmartCastExpression -> receiver.smartcastTypeWithoutNullableNothing?.coneType ?: receiver.resolvedType
+                is FirCheckNotNullCall if receiver.resolvedType.isNothing -> findReceiverType(receiver.argument)
+                else -> receiver.resolvedType
             }
+
+            val callSiteDispatchReceiverType = findReceiverType(dispatchReceiver)
             val declarationSiteDispatchReceiverType = symbol.dispatchReceiverType
             val type = if (callSiteDispatchReceiverType is ConeDynamicType && declarationSiteDispatchReceiverType != null) {
                 declarationSiteDispatchReceiverType
