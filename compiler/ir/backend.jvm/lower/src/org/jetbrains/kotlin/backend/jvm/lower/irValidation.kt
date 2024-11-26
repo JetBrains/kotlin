@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringPhas
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -31,6 +32,19 @@ internal class JvmIrValidationBeforeLoweringPhase(
             checkCrossFileFieldUsage = false,
             checkAllKotlinFieldsArePrivate = false,
         )
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override fun IrValidationContext.additionalValidation(irModule: IrModuleFragment, phaseName: String) {
+        val unboundSymbols = context.symbolTable.descriptorExtension.allUnboundSymbols
+        if (unboundSymbols.isNotEmpty()) {
+            reportIrValidationError(
+                null,
+                irModule,
+                "No unbound symbols should remain at this stage",
+                phaseName,
+            )
+        }
+    }
 }
 
 @PhaseDescription(name = "JvmValidateIrAfterLowering")
