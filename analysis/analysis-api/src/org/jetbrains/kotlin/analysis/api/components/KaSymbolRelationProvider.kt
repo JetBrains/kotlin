@@ -53,42 +53,69 @@ public interface KaSymbolRelationProvider {
     public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
 
     /**
-     * Returns the original [KaConstructorSymbol] for type-aliased constructor, or `null` otherwise.
+     * Returns the original [KaConstructorSymbol] for a [type-aliased constructor][KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR], or `null`
+     * otherwise.
      *
-     * Note: currently this property is marked as experimental, because we might join
-     * it with [fakeOverrideOriginal] property in the future.
-     *
-     * @see KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR
+     * Currently, this property is marked as experimental because it might be joined with [fakeOverrideOriginal] in the future.
      */
     @KaExperimentalApi
     public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
 
-
     /**
-     * A list of **all** explicitly declared symbols that are overridden by symbol
+     * A list of **all** explicitly declared symbols that are overridden by the callable symbol.
      *
-     * E.g., if we have `A.foo` overrides `B.foo` overrides `C.foo`, all two super declarations `B.foo`, `C.foo` will be returned
+     * The function doesn't return fake declarations, as it unwraps substituted overridden symbols implicitly
+     * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE]
+     * and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]).
      *
-     * Unwraps substituted overridden symbols
-     * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE] and
-     * [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]),
-     * so such fake declaration won't be returned.
+     * #### Example
+     *
+     * ```kotlin
+     * abstract class C {
+     *     open fun foo() { ... }
+     * }
+     *
+     * abstract class B : C() {
+     *     override fun foo() { ... }
+     * }
+     *
+     * class A : B() {
+     *     override fun foo() { ... }
+     * }
+     * ```
+     *
+     * For `A.foo`, [allOverriddenSymbols] returns both overridden super-declarations, `B.foo` and `C.foo`.
      *
      * @see directlyOverriddenSymbols
      */
     public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
 
     /**
-     * A list of explicitly declared symbols which are **directly** overridden by symbol
-     **
-     * E.g., if we have `A.foo` overrides `B.foo` overrides `C.foo`, only declarations directly overridden `B.foo` will be returned
+     * A list of explicitly declared symbols which are **directly** overridden by the callable symbol.
      *
-     * Unwraps substituted overridden symbols
-     * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE] and
-     * [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]),
-     * so such fake declaration won't be returned.
+     * The function doesn't return fake declarations, as it unwraps substituted overridden symbols implicitly
+     * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE]
+     * and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]).
      *
-     *  @see allOverriddenSymbols
+     * #### Example
+     *
+     * ```kotlin
+     * abstract class C {
+     *     open fun foo() { ... }
+     * }
+     *
+     * abstract class B : C() {
+     *     override fun foo() { ... }
+     * }
+     *
+     * class A : B() {
+     *     override fun foo() { ... }
+     * }
+     * ```
+     *
+     * For `A.foo`, [directlyOverriddenSymbols] returns only the directly overridden super-declaration, `B.foo`.
+     *
+     * @see allOverriddenSymbols
      */
     public val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
 
@@ -107,9 +134,9 @@ public interface KaSymbolRelationProvider {
     public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean
 
     /**
-     * The list of all overridden symbols for the given intersection override callable.
+     * If the given callable is an intersection override, returns the list of all overridden symbols. Otherwise, returns an empty list.
      *
-     * Example:
+     * #### Example
      *
      * ```kotlin
      * interface Foo<T> {
@@ -123,8 +150,10 @@ public interface KaSymbolRelationProvider {
      * interface Both : Foo<String>, Bar
      * ```
      *
-     * The `Both` interface contains an automatically generated intersection override for `foo()`.
-     * For it, [intersectionOverriddenSymbols] will return a list of two *unsubstituted* symbols: `Foo.foo(T)` and `Bar.foo(Int)`.
+     * The `Both` interface contains an automatically generated intersection override for `foo()`. For it, [intersectionOverriddenSymbols]
+     * returns a list of two *unsubstituted* symbols: `Foo.foo(T)` and `Bar.foo(Int)`.
+     *
+     * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
      */
     public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
 
@@ -138,14 +167,14 @@ public interface KaSymbolRelationProvider {
     /**
      * Unwraps fake override [KaCallableSymbol]s until an original declared symbol is uncovered.
      *
-     * In a class scope, a symbol may be derived from symbols declared in super classes. For example, consider
+     * In a class scope, a symbol may be derived from symbols declared in super classes. For example, consider the following:
      *
      * ```
-     * public interface  A<T> {
-     *   public fun foo(t:T)
+     * public interface A<T> {
+     *   public fun foo(t: T)
      * }
      *
-     * public interface  B: A<String> {
+     * public interface B : A<String> {
      * }
      * ```
      *
@@ -153,8 +182,12 @@ public interface KaSymbolRelationProvider {
      * in `A` that takes the type parameter `T` (fake override). Given such a fake override symbol, [fakeOverrideOriginal] recovers the
      * original declared symbol.
      *
-     * Such situation can also happen for intersection symbols (in case of multiple super types containing symbols with identical signature
-     * after specialization) and delegation.
+     * Such a situation can also happen for intersection symbols (in case of multiple supertypes containing symbols with an identical
+     * signature after specialization) and delegation.
+     *
+     * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
+     * @see KaSymbolOrigin.SUBSTITUTION_OVERRIDE
+     * @see KaSymbolOrigin.DELEGATED
      */
     public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
 

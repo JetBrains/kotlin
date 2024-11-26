@@ -11,23 +11,36 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.CallableId
 
-
+/**
+ * [KaCallableSymbol] represents callable declarations, such as functions and properties.
+ */
 @OptIn(KaExperimentalApi::class)
-public sealed class KaCallableSymbol :
-    KaDeclarationSymbol,
-    KaContextReceiversOwner {
+public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOwner {
     /**
-     * The callable's [CallableId] if it exists, or `null` otherwise (e.g. when the callable is local).
+     * The callable's [CallableId] if it exists, or `null` if the declaration is local.
      */
     public abstract val callableId: CallableId?
 
+    /**
+     * The callable's return type. For properties, [returnType] is the type of the property.
+     */
     public abstract val returnType: KaType
 
+    /**
+     * The [receiver parameter][KaReceiverParameterSymbol] of the callable, or `null` if the callable is not an extension.
+     */
     public abstract val receiverParameter: KaReceiverParameterSymbol?
+
+    /**
+     * Whether the callable is an [extension function or property](https://kotlinlang.org/docs/extensions.html).
+     */
     public abstract val isExtension: Boolean
 
     abstract override fun createPointer(): KaSymbolPointer<KaCallableSymbol>
 }
 
+/**
+ * The [receiver parameter][KaCallableSymbol.receiverParameter]'s type, or `null` if the callable is not an extension.
+ */
 public val KaCallableSymbol.receiverType: KaType?
     get() = receiverParameter?.returnType
