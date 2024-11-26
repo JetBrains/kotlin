@@ -475,12 +475,12 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     inner class ValueArgumentsList : ArrayList<IrExpression?>() {
         operator fun get(parameter: IrValueParameter): IrExpression? {
             checkIndexingByParameter(parameter)
-            return this[parameter.index]
+            return this[parameter.indexInParameters]
         }
 
         operator fun set(parameter: IrValueParameter, value: IrExpression?): IrExpression? {
             checkIndexingByParameter(parameter)
-            return this.set(parameter.index, value)
+            return this.set(parameter.indexInParameters, value)
         }
 
         private fun checkIndexingByParameter(parameter: IrValueParameter) {
