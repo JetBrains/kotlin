@@ -211,11 +211,13 @@ class Merger(
 
         val classModels = mutableMapOf<JsName, JsIrIcClassModel>()
         val initializerBlock = JsCompositeBlock()
+        val eagerInitializerBlock = JsCompositeBlock()
 
         fragments.forEach {
             moduleBody += it.declarations.statements
             classModels += it.classes
-            initializerBlock.statements += it.initializers.statements + it.eagerInitializers.statements
+            initializerBlock.statements += it.initializers.statements
+            eagerInitializerBlock.statements += it.eagerInitializers.statements
             polyfillDeclarationBlock.statements += it.polyfills.statements
         }
 
@@ -224,6 +226,7 @@ class Merger(
 
         moduleBody.addWithComment("block: post-declaration", postDeclarationBlock.statements)
         moduleBody.addWithComment("block: init", initializerBlock.statements)
+        moduleBody.addWithComment("block: eager init", eagerInitializerBlock.statements)
 
         // Merge test function invocations
         JsTestFunctionTransformer.generateTestFunctionCall(fragments.asTestFunctionContainers())?.let {
