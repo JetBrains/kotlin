@@ -38,7 +38,7 @@ internal sealed class KaFirNamedClassSymbolBase<P : PsiElement> : KaNamedClassSy
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol> = withValidityAssertion {
         if (this is KaFirKtBasedSymbol<*, *>) {
-            psiBasedSymbolPointerOfTypeIfSource<KaNamedClassSymbol>(analysisSession.project)?.let { return it }
+            psiBasedSymbolPointerOfTypeIfSource<KaNamedClassSymbol>()?.let { return it }
         }
 
         when (val symbolKind = location) {

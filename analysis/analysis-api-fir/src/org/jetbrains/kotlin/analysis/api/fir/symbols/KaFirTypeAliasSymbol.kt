@@ -90,7 +90,7 @@ internal class KaFirTypeAliasSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override fun createPointer(): KaSymbolPointer<KaTypeAliasSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaTypeAliasSymbol>(analysisSession.project)?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaTypeAliasSymbol>()?.let { return it }
 
         when (val symbolKind = location) {
             KaSymbolLocation.LOCAL ->

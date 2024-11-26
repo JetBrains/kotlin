@@ -39,7 +39,7 @@ internal class KaFirFileSymbol private constructor(
     override val psi: PsiElement? get() = withValidityAssertion { backingPsi }
 
     override fun createPointer(): KaSymbolPointer<KaFileSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource(analysisSession.project)
+        psiBasedSymbolPointerOfTypeIfSource()
             ?: TODO("Creating pointers for not PSI-backed files or files from a library is not supported yet")
     }
 

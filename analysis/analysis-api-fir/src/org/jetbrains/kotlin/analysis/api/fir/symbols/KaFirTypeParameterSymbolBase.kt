@@ -32,7 +32,7 @@ internal sealed class KaFirTypeParameterSymbolBase<P : PsiElement> : KaTypeParam
 
     override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol> = withValidityAssertion {
         if (this is KaFirKtBasedSymbol<*, *>) {
-            psiBasedSymbolPointerOfTypeIfSource<KaTypeParameterSymbol>(analysisSession.project)?.let { return it }
+            psiBasedSymbolPointerOfTypeIfSource<KaTypeParameterSymbol>()?.let { return it }
         }
 
         val containingDeclarationSymbol = firSymbol.containingDeclarationSymbol

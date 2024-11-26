@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.codeInsight.PsiEquivalenceUtil
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
@@ -220,7 +219,7 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
  * Another potential issue: the library PSI may represent both [KaSymbolOrigin.SOURCE] and as [KaSymbolOrigin.LIBRARY],
  * so it is not so simple to distinguish between them to restore the correct symbol.
  */
-internal inline fun <reified S : KaSymbol> KaFirKtBasedSymbol<*, *>.psiBasedSymbolPointerOfTypeIfSource(project: Project): KaSymbolPointer<S>? {
+internal inline fun <reified S : KaSymbol> KaFirKtBasedSymbol<*, *>.psiBasedSymbolPointerOfTypeIfSource(): KaSymbolPointer<S>? {
     return ifSource {
         backingPsi?.let {
             KaPsiSymbolPointerCreator.symbolPointerOfType(it, this as? S)
