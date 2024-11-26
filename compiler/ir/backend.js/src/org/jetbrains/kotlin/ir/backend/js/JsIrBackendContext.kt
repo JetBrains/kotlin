@@ -132,6 +132,8 @@ class JsIrBackendContext(
 
     override val internalPackageFqn = JsStandardClassIds.BASE_JS_PACKAGE
 
+    override val sharedVariablesManager = JsSharedVariablesManager(this.irBuiltIns, this.dynamicType, this.intrinsics)
+
     private val operatorMap = referenceOperators()
 
     private fun primitivesWithImplicitCompanionObject(): List<Name> {

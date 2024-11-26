@@ -143,7 +143,7 @@ private val arrayConstructorPhase = makeIrModulePhase(
 )
 
 private val sharedVariablesLoweringPhase = makeIrModulePhase(
-    { context: WasmBackendContext -> SharedVariablesLowering(WasmSharedVariablesManager(context.wasmSymbols)) },
+    ::SharedVariablesLowering,
     name = "SharedVariablesLowering",
     prerequisite = setOf(lateinitPhase)
 )
