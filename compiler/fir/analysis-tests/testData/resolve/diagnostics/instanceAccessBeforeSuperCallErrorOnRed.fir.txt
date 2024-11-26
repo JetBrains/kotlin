@@ -1,0 +1,14 @@
+FILE: instanceAccessBeforeSuperCallErrorOnRed.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Any|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(): R|Foo| {
+            this<R|Foo|>(fun <anonymous>(data: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+                ^ Unit
+            }
+            .R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): kotlin/Function1.invoke>#|(R|Foo|this@R|/Foo|))
+        }
+
+    }

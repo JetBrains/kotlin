@@ -28499,6 +28499,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
+      @TestMetadata("instanceAccessBeforeSuperCallErrorOnRed.kt")
+      public void testInstanceAccessBeforeSuperCallErrorOnRed() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/instanceAccessBeforeSuperCallErrorOnRed.kt");
+      }
+
+      @Test
       @TestMetadata("interfaceWithSuperclass.kt")
       public void testInterfaceWithSuperclass() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/interfaceWithSuperclass.kt");
