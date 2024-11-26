@@ -199,8 +199,8 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
     }
 
     protected val stdlibExternalDocumentationLink: ExternalDocumentationLinkImpl = ExternalDocumentationLinkImpl(
-        URL("https://kotlinlang.org/api/latest/jvm/stdlib/"),
-        URL("https://kotlinlang.org/api/latest/jvm/stdlib/package-list")
+        URL("https://kotlinlang.org/api/core/"),
+        URL("https://kotlinlang.org/api/core/package-list")
     )
 
     public companion object {

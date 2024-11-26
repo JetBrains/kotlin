@@ -134,7 +134,7 @@ class SampleRewriterTest {
             sampleFile("/samples/_sampleUtils.kt", fqPackageName = "samples") {
                 +sampleUtilsKT
             }
-            // the sample is from https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/is-not-empty.html
+            // the sample is from https://kotlinlang.org/api/core/kotlin.collections/is-not-empty.html
             sampleFile("/samples/collections/collections.kt", fqPackageName = "samples.collections") {
                 +"""
                     import samples.*
@@ -192,7 +192,7 @@ class SampleRewriterTest {
             sampleFile("/samples/_sampleUtils.kt", fqPackageName = "samples") {
                 +sampleUtilsKT
             }
-            // the sample is from https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/indices.html
+            // the sample is from https://kotlinlang.org/api/core/kotlin.collections/indices.html
             sampleFile("/samples/collections/collections.kt", fqPackageName = "samples.collections") {
                 +"""
                     import samples.*
@@ -253,7 +253,7 @@ class SampleRewriterTest {
             sampleFile("/samples/_sampleUtils.kt", fqPackageName = "samples") {
                 +sampleUtilsKT
             }
-            // the sample is from https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/last.html
+            // the sample is from https://kotlinlang.org/api/core/kotlin.collections/last.html
             sampleFile("/samples/collections/collections.kt", fqPackageName = "samples.collections") {
                 +"""
                     import samples.*
@@ -323,7 +323,7 @@ class SampleRewriterTest {
             sampleFile("/samples/_sampleUtils.kt", fqPackageName = "samples") {
                 +sampleUtilsKT
             }
-            // the sample is from https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/element-at.html
+            // the sample is from https://kotlinlang.org/api/core/kotlin.collections/element-at.html
             sampleFile("/samples/collections/collections.kt", fqPackageName = "samples.collections") {
                 +"""
                     import samples.*
