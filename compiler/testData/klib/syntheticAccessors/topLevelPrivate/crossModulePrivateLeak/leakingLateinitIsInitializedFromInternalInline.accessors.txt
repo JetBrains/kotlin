@@ -23,15 +23,13 @@ private inline fun doInitializeAndReadOK(): String
 private lateinit var o: String?
     /* TARGET declaration */ private /* static field */ field o: String?
     /* TARGET declaration */ private fun <get-o>(): String
-        val tmp: String? = #o
-            /* TARGET use-site */ #o
+        /* TARGET use-site */ #o
     /* TARGET declaration */ private fun <set-o>(<set-?>: String)
         /* TARGET use-site */ #o = <set-?>
 public lateinit var k: String?
     /* TARGET declaration */ private /* static field */ field k: String?
     public fun <get-k>(): String
-        val tmp: String? = #k
-            /* TARGET use-site */ #k
+        /* TARGET use-site */ #k
     public fun <set-k>(<set-?>: String)
         /* TARGET use-site */ #k = <set-?>
 /* ACCESSOR declaration */ public fun access$<get-o>$tOKKt(): String
