@@ -34,6 +34,8 @@ fun wrapWithMuteInDatabase(testClass: Class<*>, methodName: String, f: () -> Uni
     val mutedTest = getMutedTest(testClass, methodName)
     val testKey = testKey(testClass, methodName)
 
+    return { throw Exception("JUnit4 Expected failure") }
+    /*
     if (isMutedInDatabase(testClass, methodName)) {
         return {
             System.err.println(mutedMessage(testClass, methodName))
@@ -49,6 +51,7 @@ fun wrapWithMuteInDatabase(testClass: Class<*>, methodName: String, f: () -> Uni
     } else {
         return f
     }
+    */
 }
 
 fun invertMutedTestResultWithLog(f: () -> Unit, testKey: String) {
