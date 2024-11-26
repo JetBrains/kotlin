@@ -62,7 +62,7 @@ public class SirParentProviderImpl(
                 extensionForPackage
             }
         } else {
-            (with(sirSession) { parentSymbol.sirDeclaration() } as? SirDeclarationContainer)
+            (with(sirSession) { parentSymbol.sirDeclarations().firstOrNull() } as? SirDeclarationContainer)
                 ?: error("the found declaration is not parent")
         }
     }

@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
 import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.impl.nodes.SirTrampolineVariable
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -67,7 +65,7 @@ private class SirClassFromKtSymbol(
                         ktSymbol.containingModule.sirModule().updateImport(SirImport(KotlinRuntimeModule.name))
                     }
                 } else {
-                    (it.sirDeclaration() as? SirNamedDeclaration)
+                    (it.sirDeclarations().firstOrNull() as? SirNamedDeclaration)
                         ?.also { ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name)) }
                         ?.let { SirNominalType(it) }
                 }

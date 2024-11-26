@@ -52,7 +52,8 @@ public interface SirSession :
 
     override fun KaDeclarationSymbol.sirDeclarationName(): String = with(declarationNamer) { this@sirDeclarationName.sirDeclarationName() }
 
-    override fun KaDeclarationSymbol.sirDeclaration(): SirDeclaration = with(declarationProvider) { this@sirDeclaration.sirDeclaration() }
+    override fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration> =
+        with(declarationProvider) { this@sirDeclarations.sirDeclarations() }
 
     override fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationParent =
         with(parentProvider) { this@getSirParent.getSirParent(ktAnalysisSession) }
@@ -69,7 +70,14 @@ public interface SirSession :
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
     ): SirType =
-        with(typeProvider) { this@translateType.translateType(ktAnalysisSession, reportErrorType, reportUnsupportedType, processTypeImports) }
+        with(typeProvider) {
+            this@translateType.translateType(
+                ktAnalysisSession,
+                reportErrorType,
+                reportUnsupportedType,
+                processTypeImports
+            )
+        }
 
     override fun KaDeclarationSymbol.sirVisibility(ktAnalysisSession: KaSession): SirVisibility? =
         with(visibilityChecker) { this@sirVisibility.sirVisibility(ktAnalysisSession) }
@@ -98,7 +106,7 @@ public interface SirDeclarationNamer {
  * A single entry point to create a lazy wrapper around the given [KaDeclarationSymbol].
  */
 public interface SirDeclarationProvider {
-    public fun KaDeclarationSymbol.sirDeclaration(): SirDeclaration
+    public fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration>
 }
 
 /**

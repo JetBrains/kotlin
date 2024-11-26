@@ -5,7 +5,6 @@
 
 package org.jetbrains.sir.lightclasses
 
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -19,8 +18,8 @@ public class SirDeclarationFromKtSymbolProvider(
     private val sirSession: SirSession,
 ) : SirDeclarationProvider {
 
-    override fun KaDeclarationSymbol.sirDeclaration(): SirDeclaration {
-        return when (val ktSymbol = this@sirDeclaration) {
+    public override fun KaDeclarationSymbol.sirDeclarations(): List<SirDeclaration> = listOf(
+        when (val ktSymbol = this@sirDeclarations) {
             is KaNamedClassSymbol -> {
                 createSirClassFromKtSymbol(
                     ktSymbol = ktSymbol,
@@ -54,7 +53,7 @@ public class SirDeclarationFromKtSymbolProvider(
             }
             else -> TODO("encountered unknown symbol type - $ktSymbol. Error system should be reworked KT-65980")
         }
-    }
+    )
 
     private fun KaVariableSymbol.toSirVariable(): SirAbstractVariableFromKtSymbol = when (this) {
         is KaEnumEntrySymbol -> SirEnumCaseFromKtSymbol(

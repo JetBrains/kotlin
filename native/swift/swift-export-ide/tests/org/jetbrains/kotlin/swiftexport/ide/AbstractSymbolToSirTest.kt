@@ -24,11 +24,15 @@ abstract class AbstractSymbolToSirTest : AbstractAnalysisApiBasedTest() {
             .expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(mainFile).symbol
         val actual: String = withSirSession {
             kaDeclaration
-                .sirDeclaration()
+                .sirDeclarations()
                 .print(into = kaDeclaration.containingModule.sirModule())
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
+}
+
+private fun List<SirDeclaration>.print(into: SirModule): String = fold("") { acc, el ->
+    acc + el.print(into)
 }
 
 private fun SirDeclaration.print(into: SirModule): String = SirAsSwiftSourcesPrinter.print(
