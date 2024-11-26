@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.common
 
-import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -37,12 +36,3 @@ fun PhaseEngine<PreSerializationLoweringContext>.runPreSerializationLoweringPhas
         configuration,
     )
 )
-
-@JvmName("runPreSerializationLoweringPhasesWithNewEngine")
-fun <Context : LoggingContext> PhaseEngine<Context>.runPreSerializationLoweringPhases(
-    fir2IrActualizedResult: Fir2IrActualizedResult,
-    loweringProvider: PreSerializationLoweringPhasesProvider<PreSerializationLoweringContext>,
-    configuration: CompilerConfiguration,
-): Fir2IrActualizedResult = newEngine(PreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration)) { engine ->
-    engine.runPreSerializationLoweringPhases(fir2IrActualizedResult, loweringProvider, configuration)
-}

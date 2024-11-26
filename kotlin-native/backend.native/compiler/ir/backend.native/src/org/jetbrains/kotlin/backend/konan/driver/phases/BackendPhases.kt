@@ -91,14 +91,18 @@ private object NativePreSerializationLoweringPhasesProvider : PreSerializationLo
         get() = KonanManglerIr
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput =
-        fir2IrOutput.copy(
-                fir2irActualizedResult = runPreSerializationLoweringPhases(
+internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
+    val loweringContext = PreSerializationLoweringContext(fir2IrOutput.fir2irActualizedResult.irBuiltIns, environment.configuration)
+    return fir2IrOutput.copy(
+            fir2irActualizedResult = newEngine(loweringContext) { engine ->
+                engine.runPreSerializationLoweringPhases(
                         fir2IrOutput.fir2irActualizedResult,
                         NativePreSerializationLoweringPhasesProvider,
                         environment.configuration
                 )
-        )
+            }
+    )
+}
 
 internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "addEntryPoint",
