@@ -124,6 +124,7 @@ idea {
                 "dokka-integration-tests/gradle/src/testExampleProjects/expectedData",
                 "dokka-integration-tests/gradle/projects/it-android/expectedData",
                 "dokka-integration-tests/gradle/projects/it-android-compose/expectedData",
+                "dokka-integration-tests/gradle/projects/it-kotlin-multiplatform/expectedData",
             )
         )
     }
