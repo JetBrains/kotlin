@@ -82,7 +82,7 @@ fun TestDokkaConfiguration.toDokkaConfiguration(projectDir: File): DokkaConfigur
         override val suppressInheritedMembers: Boolean
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val finalizeCoroutines: Boolean
-            get() = throw NotImplementedError("Not expected to be used by analysis modules")
+            get() = false
     }
 }
 
