@@ -67,12 +67,10 @@ internal fun removeUnreachableInstructions(input: Sequence<WasmInstr>): Sequence
 }
 
 internal fun removeInstructionPriorUnreachable(input: Sequence<WasmInstr>): Sequence<WasmInstr> {
-    val inputIterator = input.iterator()
     var firstInstruction: WasmInstr? = null
 
     return sequence {
-        while (inputIterator.hasNext()) {
-            val instruction = inputIterator.next()
+        for (instruction in input) {
             if (instruction.operator.opcode == WASM_OP_PSEUDO_OPCODE) {
                 yield(instruction)
                 continue
@@ -105,13 +103,11 @@ internal fun removeInstructionPriorUnreachable(input: Sequence<WasmInstr>): Sequ
 }
 
 internal fun removeInstructionPriorDrop(input: Sequence<WasmInstr>): Sequence<WasmInstr> {
-    val inputIterator = input.iterator()
     var firstInstruction: WasmInstr? = null
     var secondInstruction: WasmInstr? = null
 
     return sequence {
-        while (inputIterator.hasNext()) {
-            val instruction = inputIterator.next()
+        for (instruction in input) {
             if (instruction.operator.opcode == WASM_OP_PSEUDO_OPCODE) {
                 yield(instruction)
                 continue
@@ -153,13 +149,10 @@ internal fun removeInstructionPriorDrop(input: Sequence<WasmInstr>): Sequence<Wa
 }
 
 internal fun mergeSetAndGetIntoTee(input: Sequence<WasmInstr>): Sequence<WasmInstr> {
-    val inputIterator = input.iterator()
     var firstInstruction: WasmInstr? = null
 
     return sequence {
-        while (inputIterator.hasNext()) {
-            val instruction = inputIterator.next()
-
+        for (instruction in input) {
             if (instruction.operator.opcode == WASM_OP_PSEUDO_OPCODE) {
                 yield(instruction)
                 continue
