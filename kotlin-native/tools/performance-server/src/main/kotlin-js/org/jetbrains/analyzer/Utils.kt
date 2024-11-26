@@ -5,8 +5,6 @@
 
 package org.jetbrains.analyzer
 
-import org.w3c.xhr.*
-import kotlinx.browser.*
 import kotlin.js.*
 
 actual fun readFile(fileName: String): String {

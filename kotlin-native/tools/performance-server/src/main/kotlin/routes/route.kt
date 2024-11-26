@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.w3c.xhr.*
 import kotlin.js.json
 import kotlin.js.Date
 import kotlin.js.Promise
