@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.isReifiedTypeParameter
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
-import org.jetbrains.kotlin.backend.konan.ir.KonanSharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.NativeForLoopsLowering
@@ -163,7 +162,7 @@ private val lateinitPhase = createFileLoweringPhase(
 )
 
 private val sharedVariablesPhase = createFileLoweringPhase(
-        { context: KonanBackendContext -> SharedVariablesLowering(KonanSharedVariablesManager(context.irBuiltIns, context.ir.symbols)) },
+        ::SharedVariablesLowering,
         name = "SharedVariables",
         prerequisite = setOf(lateinitPhase)
 )
