@@ -30389,6 +30389,18 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       public void testBuilderInferenceFromStdlib() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/builderInferenceFromStdlib.kt");
       }
+
+      @Test
+      @TestMetadata("subAtomAlreadyInitialized.kt")
+      public void testSubAtomAlreadyInitialized() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/subAtomAlreadyInitialized.kt");
+      }
+
+      @Test
+      @TestMetadata("subAtomAlreadyInitialized2.kt")
+      public void testSubAtomAlreadyInitialized2() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/subAtomAlreadyInitialized2.kt");
+      }
     }
 
     @Nested

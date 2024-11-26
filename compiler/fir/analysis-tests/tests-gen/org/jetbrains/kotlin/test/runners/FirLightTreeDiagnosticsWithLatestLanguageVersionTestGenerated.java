@@ -6829,6 +6829,18 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/plusAssignWithLambdaInRhs.kt");
       }
 
+      @Test
+      @TestMetadata("subAtomAlreadyInitialized.kt")
+      public void testSubAtomAlreadyInitialized() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/subAtomAlreadyInitialized.kt");
+      }
+
+      @Test
+      @TestMetadata("subAtomAlreadyInitialized2.kt")
+      public void testSubAtomAlreadyInitialized2() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/subAtomAlreadyInitialized2.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems")
       @TestDataPath("$PROJECT_ROOT")
