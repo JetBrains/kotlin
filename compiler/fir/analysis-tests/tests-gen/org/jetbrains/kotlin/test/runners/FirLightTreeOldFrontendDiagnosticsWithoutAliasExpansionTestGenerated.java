@@ -1540,6 +1540,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       }
 
       @Test
+      @TestMetadata("innerClassTypeAliasConstructorReference.kt")
+      public void testInnerClassTypeAliasConstructorReference() {
+        runTest("compiler/testData/diagnostics/tests/typealias/innerClassTypeAliasConstructorReference.kt");
+      }
+
+      @Test
       @TestMetadata("innerTypeAliasAsType.kt")
       public void testInnerTypeAliasAsType() {
         runTest("compiler/testData/diagnostics/tests/typealias/innerTypeAliasAsType.kt");

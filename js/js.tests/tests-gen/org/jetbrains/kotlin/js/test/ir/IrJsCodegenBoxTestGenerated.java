@@ -30768,30 +30768,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
-    @TestMetadata("eagerInitializationGlobal1.kt")
-    public void testEagerInitializationGlobal1() {
-      runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal1.kt");
-    }
-
-    @Test
-    @TestMetadata("eagerInitializationGlobal2.kt")
-    public void testEagerInitializationGlobal2() {
-      runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal2.kt");
-    }
-
-    @Test
-    @TestMetadata("eagerInitializationGlobal3.kt")
-    public void testEagerInitializationGlobal3() {
-      runTest("compiler/testData/codegen/box/properties/eagerInitializationGlobal3.kt");
-    }
-
-    @Test
-    @TestMetadata("eagerInitializationWithSimpleObject.kt")
-    public void testEagerInitializationWithSimpleObject() {
-      runTest("compiler/testData/codegen/box/properties/eagerInitializationWithSimpleObject.kt");
-    }
-
-    @Test
     @TestMetadata("field.kt")
     public void testField() {
       runTest("compiler/testData/codegen/box/properties/field.kt");
