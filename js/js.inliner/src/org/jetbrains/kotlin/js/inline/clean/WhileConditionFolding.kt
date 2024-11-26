@@ -27,8 +27,8 @@ class WhileConditionFolding(val body: JsBlock) {
             override fun visitLabel(x: JsLabel) {
                 val innerStatement = x.statement
                 when (innerStatement) {
-                    is JsWhile -> process(innerStatement, x.name)
                     is JsDoWhile -> process(innerStatement, x.name)
+                    is JsWhile -> process(innerStatement, x.name)
                     else -> super.visitLabel(x)
                 }
             }
