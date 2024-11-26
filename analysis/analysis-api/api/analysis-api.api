@@ -1033,15 +1033,6 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaPropertySymbol
 	public abstract fun isStatic ()Z
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaPsiBasedSymbolPointerCreator {
-	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/symbols/KaPsiBasedSymbolPointerCreator$Companion;
-	public fun <init> ()V
-}
-
-public final class org/jetbrains/kotlin/analysis/api/symbols/KaPsiBasedSymbolPointerCreator$Companion {
-	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaPsiBasedSymbolPointerCreator;
-}
-
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaParameterSymbol {
 	public fun <init> ()V
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
