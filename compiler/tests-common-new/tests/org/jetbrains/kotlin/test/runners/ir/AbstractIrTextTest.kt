@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.HandlersStepBuilder
 import org.jetbrains.kotlin.test.builders.*
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -115,7 +114,6 @@ fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.u
         ::IrTextDumpHandler.bind(isDeserializedInput),
         ::IrTreeVerifierHandler,
         ::IrPrettyKotlinDumpHandler,
-        ::IrMangledNameAndSignatureDumpHandler,
     )
     if (includeAllDumpHandlers) {
         useHandlers(
@@ -159,7 +157,6 @@ fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConf
     defaultDirectives {
         +DUMP_IR
         +DUMP_KT_IR
-        +DUMP_SIGNATURES
         +LINK_VIA_SIGNATURES_K1
         +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         DIAGNOSTICS with "-warnings"

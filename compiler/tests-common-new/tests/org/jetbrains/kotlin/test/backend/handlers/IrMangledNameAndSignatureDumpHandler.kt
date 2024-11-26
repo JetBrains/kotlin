@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.MUTE_SIGNATURE_COMPARISON_K2
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SIGNATURE_DUMP_FOR_K2
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -49,6 +50,11 @@ import java.io.FileNotFoundException
 private const val CHECK_MARKER = "// CHECK"
 
 /**
+ * Note: This handler has a limited usage.
+ * -  It does not make sense for Kotlin/JVM with exception for a special experimental mode in K1
+ *  where the linkage is performed by signatures. See also [LINK_VIA_SIGNATURES_K1].
+ * - For KLIB-based backends, it has been superseded by [KlibAbiDumpHandler].
+ *
  * Prints a mangled name and an [IdSignature] for each declaration and compares the result with
  * an expected output in a `*.sig.kt.txt` file located next to the test file.
  *
