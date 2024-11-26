@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.types.varargElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
-import java.lang.ref.WeakReference
 
 internal class KaFirValueParameterSymbol private constructor(
     override val backingPsi: KtParameter?,
@@ -117,7 +116,7 @@ internal class KaFirValueParameterSymbol private constructor(
             ownerPointer = analysisSession.createOwnerPointer(this),
             name = name,
             index = (ownerSymbol.firSymbol.fir as FirFunction).valueParameters.indexOf(firSymbol.fir),
-            cachedSymbol = WeakReference(this)
+            originalSymbol = this
         )
     }
 

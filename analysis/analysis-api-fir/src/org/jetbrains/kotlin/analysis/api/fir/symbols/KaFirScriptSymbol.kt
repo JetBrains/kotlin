@@ -56,7 +56,7 @@ internal class KaFirScriptSymbol private constructor(
                 withFirSymbolEntry("firScript", firSymbol)
             }
 
-            KaFirScriptSymbolPointer(file.createPointer(), WeakReference(this@KaFirScriptSymbol))
+            KaFirScriptSymbolPointer(file.createPointer(), this@KaFirScriptSymbol)
         }
     }
 

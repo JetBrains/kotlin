@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.FqName
-import java.lang.ref.WeakReference
 
 internal class KaFirPackageSymbol(
     override val fqName: FqName,
@@ -37,7 +36,7 @@ internal class KaFirPackageSymbol(
         get() = withValidityAssertion { KaSymbolOrigin.SOURCE } // TODO
 
     override fun createPointer(): KaSymbolPointer<KaPackageSymbol> = withValidityAssertion {
-        KaFirPackageSymbolPointer(fqName, WeakReference(this))
+        KaFirPackageSymbolPointer(fqName, this)
     }
 
     override fun equals(other: Any?): Boolean = this === other || other is KaFirPackageSymbol && other.fqName == fqName

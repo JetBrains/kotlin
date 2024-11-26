@@ -223,7 +223,7 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
 internal inline fun <reified S : KaSymbol> KaFirKtBasedSymbol<*, *>.psiBasedSymbolPointerOfTypeIfSource(project: Project): KaSymbolPointer<S>? {
     return ifSource {
         backingPsi?.let {
-            KaPsiSymbolPointerCreator.symbolPointerOfType(it)
+            KaPsiSymbolPointerCreator.symbolPointerOfType(it, this as? S)
         }
     }
 }

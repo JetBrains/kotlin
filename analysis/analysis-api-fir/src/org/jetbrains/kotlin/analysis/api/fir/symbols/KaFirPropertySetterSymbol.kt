@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import java.lang.ref.WeakReference
 
 internal class KaFirPropertySetterSymbol(
     val owningKaProperty: KaFirKotlinPropertySymbol<KtProperty>,
@@ -155,7 +154,7 @@ internal class KaFirPropertySetterSymbol(
 
     override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaPropertySetterSymbol>(analysisSession.project)
-            ?: KaBasePropertySetterSymbolPointer(owningKaProperty.createPointer(), WeakReference(this))
+            ?: KaBasePropertySetterSymbolPointer(owningKaProperty.createPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean = psiOrSymbolEquals(other)

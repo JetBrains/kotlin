@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
-import java.lang.ref.WeakReference
 
 internal class KaFe10DescConstructorSymbol(
     override val descriptor: ConstructorDescriptor,
@@ -67,7 +66,7 @@ internal class KaFe10DescConstructorSymbol(
         val callableId = descriptor.callableIdIfNotLocal
         if (callableId != null) {
             val signature = descriptor.getSymbolPointerSignature()
-            return KaFe10DescFunctionSymbolPointer(callableId, signature, WeakReference(this))
+            return KaFe10DescFunctionSymbolPointer(callableId, signature, this)
         }
 
         return KaFe10NeverRestoringSymbolPointer()

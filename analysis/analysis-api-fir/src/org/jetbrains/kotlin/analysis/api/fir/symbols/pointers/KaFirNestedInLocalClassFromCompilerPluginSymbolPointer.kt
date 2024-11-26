@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
-import java.lang.ref.WeakReference
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -29,8 +28,8 @@ internal class KaFirNestedInLocalClassFromCompilerPluginSymbolPointer(
     private val containingClassPointer: KaSymbolPointer<KaNamedClassSymbol>,
     private val name: Name,
     private val compilerPluginOrigin: GeneratedDeclarationKey,
-    override var cachedSymbol: WeakReference<KaNamedClassSymbol>?,
-) : KaBaseSymbolPointer<KaNamedClassSymbol>() {
+    originalSymbol: KaNamedClassSymbol? = null,
+) : KaBaseSymbolPointer<KaNamedClassSymbol>(originalSymbol) {
 
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaNamedClassSymbol? {

@@ -18,13 +18,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.Name
-import java.lang.ref.WeakReference
 
 internal class KaFirEnumEntrySymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaClassSymbol>,
     private val name: Name,
-    override var cachedSymbol: WeakReference<KaEnumEntrySymbol>?,
-) : KaBaseSymbolPointer<KaEnumEntrySymbol>() {
+    originalSymbol: KaEnumEntrySymbol? = null,
+) : KaBaseSymbolPointer<KaEnumEntrySymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaEnumEntrySymbol? {
         require(analysisSession is KaFirSession)

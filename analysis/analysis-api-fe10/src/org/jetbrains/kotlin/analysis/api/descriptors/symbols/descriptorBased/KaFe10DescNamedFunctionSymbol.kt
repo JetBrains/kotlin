@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import java.lang.ref.WeakReference
 
 internal class KaFe10DescNamedFunctionSymbol private constructor(
     override val descriptor: FunctionDescriptor,
@@ -138,7 +137,7 @@ internal class KaFe10DescNamedFunctionSymbol private constructor(
         val callableId = descriptor.callableIdIfNotLocal
         if (callableId != null) {
             val signature = descriptor.getSymbolPointerSignature()
-            return KaFe10DescFunctionSymbolPointer(callableId, signature, WeakReference(this))
+            return KaFe10DescFunctionSymbolPointer(callableId, signature, this)
         }
 
         return KaFe10NeverRestoringSymbolPointer()

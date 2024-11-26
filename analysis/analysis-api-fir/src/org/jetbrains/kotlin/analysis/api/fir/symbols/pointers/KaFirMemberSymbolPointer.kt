@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
     private val ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val isStatic: Boolean = false,
-) : KaBaseSymbolPointer<S>() {
+    originalSymbol: S?
+) : KaBaseSymbolPointer<S>(originalSymbol) {
     @KaImplementationDetail
     final override fun restoreIfNotCached(analysisSession: KaSession): S? {
         require(analysisSession is KaFirSession)

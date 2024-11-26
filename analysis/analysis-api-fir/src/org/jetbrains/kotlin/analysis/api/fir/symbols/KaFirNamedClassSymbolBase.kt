@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
-import java.lang.ref.WeakReference
 
 /**
  * [KaFirNamedClassSymbolBase] provides shared equality and hash code implementations for FIR-based named class or object symbols so
@@ -74,14 +73,14 @@ internal sealed class KaFirNamedClassSymbolBase<P : PsiElement> : KaNamedClassSy
                         container.createPointer(),
                         name,
                         firOrigin.key,
-                        WeakReference(this)
+                        this
                     )
                 } else {
-                    KaFirClassLikeSymbolPointer(classId, KaNamedClassSymbol::class, WeakReference(this))
+                    KaFirClassLikeSymbolPointer(classId, KaNamedClassSymbol::class, this)
                 }
             }
             KaSymbolLocation.TOP_LEVEL ->
-                KaFirClassLikeSymbolPointer(classId!!, KaNamedClassSymbol::class, WeakReference(this))
+                KaFirClassLikeSymbolPointer(classId!!, KaNamedClassSymbol::class, this)
 
             else -> throw KaUnsupportedSymbolLocation(this::class, symbolKind)
         }

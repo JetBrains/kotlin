@@ -17,12 +17,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirScript
-import java.lang.ref.WeakReference
 
 internal class KaFirResultPropertySymbolPointer(
     private val scriptPointer: KaSymbolPointer<KaScriptSymbol>,
-    override var cachedSymbol: WeakReference<KaKotlinPropertySymbol>?
-) : KaBaseSymbolPointer<KaKotlinPropertySymbol>() {
+    originalSymbol: KaKotlinPropertySymbol? = null
+) : KaBaseSymbolPointer<KaKotlinPropertySymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol? {
         require(analysisSession is KaFirSession)

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.lang.ref.WeakReference
 
 internal class KaFe10DescNamedClassSymbol(
     override val descriptor: ClassDescriptor,
@@ -99,7 +98,7 @@ internal class KaFe10DescNamedClassSymbol(
 
         val classId = descriptor.classId
         if (classId != null) {
-            return KaFe10DescNamedClassSymbolPointer(classId, WeakReference(this))
+            return KaFe10DescNamedClassSymbolPointer(classId, this)
         }
 
         return KaFe10NeverRestoringSymbolPointer()
