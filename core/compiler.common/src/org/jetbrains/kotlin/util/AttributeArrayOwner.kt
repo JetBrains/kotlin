@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.util
 import kotlin.reflect.KClass
 
 /**
+ * Write access ([registerComponent]/[removeComponent]) is thread **unsafe**.
+ * Read access is thread **safe** only if there is no concurrent [removeComponent].
+ *
  * [AttributeArrayOwner] based on different implementations of [ArrayMap] and switches them
  *   depending on array map fullness
  * [AttributeArrayOwner] can be used in classes with many instances,
@@ -51,8 +54,11 @@ abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
                     arrayMap = OneElementArrayMap(value, id)
                     return
                 } else {
-                    arrayMap = ArrayMapImpl()
-                    arrayMap[map.index] = map.value
+                    val newMap = ArrayMapImpl<T>()
+                    newMap[map.index] = map.value
+
+                    // the assigned map must have the old value to avoid problems in the concurrent scenario
+                    arrayMap = newMap
                 }
             }
         }
