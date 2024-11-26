@@ -5,7 +5,41 @@
 
 package org.jetbrains.kotlin.name
 
-// NB: with className == null we are at top level
+/**
+ * A callable ID identifies a Kotlin callable, such as a function or property. When [className] is `null`, the ID represents a top-level
+ * callable.
+ *
+ * In case of overloads, multiple callables may share the same [CallableId].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * package one.two
+ *
+ * fun foo() {
+ *     fun loc() { }
+ * }
+ *
+ * class A {
+ *     val bar: String = "bar"
+ *
+ *     class B {
+ *          fun nes() { }
+ *     }
+ * }
+ *
+ * fun overloaded(value: Int) { }
+ * fun overloaded(value: String) { }
+ * ```
+ *
+ * Callable IDs for the callables above:
+ *
+ * - `foo`: `one/two/foo`
+ * - `loc`: `<local>/loc` (see [SpecialNames.LOCAL])
+ * - `bar`: `one/two/A.bar`
+ * - `nes`: `one/two/A.B.nes`
+ * - `overloaded`: `one/two/overloaded` for *both* `overloaded(value: Int)` and `overloaded(value: String)`
+ */
 class CallableId private constructor(
     val packageName: FqName,
     val className: FqName?,
@@ -23,8 +57,8 @@ class CallableId private constructor(
     }
 
     /**
-     * Return `true` if corresponding declaration is itself local or it is a member of local class
-     * Otherwise, returns `false`
+     * Returns `true` if the corresponding callable declaration is itself local, or if it is a member of a local class.
+     * Otherwise, returns `false`.
      */
     val isLocal: Boolean
         get() = packageName == PACKAGE_FQ_NAME_FOR_LOCAL || classId?.isLocal == true
