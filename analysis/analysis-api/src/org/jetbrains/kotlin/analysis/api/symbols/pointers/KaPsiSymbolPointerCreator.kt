@@ -16,18 +16,21 @@ import kotlin.reflect.KClass
 public interface KaPsiSymbolPointerCreator {
     /**
      * Returns `KaPsiSymbolPointer` for the given [element].
+     * The [originalSymbol], when provided, must be a symbol calculated for [element]
      */
     @KaExperimentalApi
-    public fun symbolPointer(element: KtElement): KaSymbolPointer<KaSymbol>
+    public fun symbolPointer(element: KtElement, originalSymbol: KaSymbol? = null): KaSymbolPointer<KaSymbol>
 
     /**
      * Returns `KaPsiSymbolPointer` for the given [element].
-     * The restored symbol should be an instance of [expectedType].
+     * The [originalSymbol], when provided, must be a symbol calculated for [element]
+     * The restored symbol must be an instance of [expectedType].
      */
     @KaExperimentalApi
     public fun <S : KaSymbol> symbolPointerOfType(
         element: KtElement,
         expectedType: KClass<S>,
+        originalSymbol: S? = null
     ): KaSymbolPointer<S>
 
     public companion object {
@@ -41,23 +44,27 @@ public interface KaPsiSymbolPointerCreator {
 
         /**
          * Returns `KaPsiSymbolPointer` for the given [element].
-         * The restored symbol should be an instance of [expectedType].
+         * The [originalSymbol], when provided, must be a symbol calculated for [element]
+         * The restored symbol must be an instance of [expectedType].
          */
         @KaExperimentalApi
         public fun <S : KaSymbol> symbolPointerOfType(
             element: KtElement,
             expectedType: KClass<S>,
+            originalSymbol: S? = null
         ): KaSymbolPointer<S> =
-            getInstance(element.project).symbolPointerOfType(element, expectedType)
+            getInstance(element.project).symbolPointerOfType(element, expectedType, originalSymbol)
 
 
         /**
          * Returns `KaPsiSymbolPointer` for the given [element].
+         * The [originalSymbol], when provided, must be a symbol calculated for [element]
          */
         @KaExperimentalApi
         public inline fun <reified S : KaSymbol> symbolPointerOfType(
             element: KtElement,
+            originalSymbol: S? = null
         ): KaSymbolPointer<S> =
-            symbolPointerOfType(element, S::class)
+            symbolPointerOfType(element, S::class, originalSymbol)
     }
 }

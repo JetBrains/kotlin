@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.source.getPsi
-import java.lang.ref.WeakReference
 
 internal class KaFe10DescSyntheticFieldSymbol(
     val descriptor: SyntheticFieldDescriptor,
@@ -49,7 +48,7 @@ internal class KaFe10DescSyntheticFieldSymbol(
         if (accessorPsi is KtPropertyAccessor) {
             val accessorPointer = KaPsiBasedSymbolPointer.createForSymbolFromPsi<KaPropertyAccessorSymbol>(accessorPsi)
             if (accessorPointer != null) {
-                return KaFe10DescSyntheticFieldSymbolPointer(accessorPointer, WeakReference(this))
+                return KaFe10DescSyntheticFieldSymbolPointer(accessorPointer, this)
             }
         }
 

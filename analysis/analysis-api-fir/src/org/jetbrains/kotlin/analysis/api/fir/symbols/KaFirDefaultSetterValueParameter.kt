@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import java.lang.ref.WeakReference
 
 /**
  * Represents a default value parameter for [KaFirDefaultPropertySetterSymbol] without explicitly
@@ -78,7 +77,7 @@ internal class KaFirDefaultSetterValueParameter(
         }
 
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
-        KaBaseValueParameterFromDefaultSetterSymbolPointer(owningKaSetter.owningKaProperty.createPointer(), WeakReference(this))
+        KaBaseValueParameterFromDefaultSetterSymbolPointer(owningKaSetter.owningKaProperty.createPointer(), this)
     }
 
     override val origin: KaSymbolOrigin

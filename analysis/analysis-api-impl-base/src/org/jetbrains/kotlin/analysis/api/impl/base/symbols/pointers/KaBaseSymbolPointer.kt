@@ -10,8 +10,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import java.lang.ref.WeakReference
 
-abstract class KaBaseSymbolPointer<out S : KaSymbol> : KaSymbolPointer<S>() {
-    override fun restoreSymbol(analysisSession: KaSession): S? {
+abstract class KaBaseSymbolPointer<out S : KaSymbol>(originalSymbol: S? = null) : KaSymbolPointer<S>() {
+    /**
+     * Most of the pointers are derived from [KaBaseSymbolPointer] and support weak symbol cache.
+     * This means that if the original symbol the pointer is created from is not garbage-collected and still valid on restore,
+     * then the [cachedSymbol] will be immediately returned.
+     * Otherwise, the new symbol is built from data stored in the pointer, which takes a bit more resources.
+     * After each successful build-from-scratch operation, the cached reference is updated and points to the newly constructed symbol.
+     */
+    final override fun restoreSymbol(analysisSession: KaSession): S? {
         val cached = cachedSymbol?.get()
         val lifetimeToken = cached?.token
         if (lifetimeToken?.isValid() == true && lifetimeToken.isAccessible()) {
@@ -25,7 +32,7 @@ abstract class KaBaseSymbolPointer<out S : KaSymbol> : KaSymbolPointer<S>() {
         }
     }
 
-    protected abstract var cachedSymbol: WeakReference<@UnsafeVariance S>?
+    private var cachedSymbol: WeakReference<@UnsafeVariance S>? = originalSymbol?.let { WeakReference(it) }
 
     protected abstract fun restoreIfNotCached(analysisSession: KaSession): S?
 }

@@ -18,12 +18,11 @@ import org.jetbrains.kotlin.load.java.sam.JvmSamConversionOracle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.sam.createSamConstructorFunction
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
-import java.lang.ref.WeakReference
 
 internal class KaFe10DescSamConstructorSymbolPointer(
     private val classId: ClassId,
-    override var cachedSymbol: WeakReference<KaSamConstructorSymbol>?
-) : KaBaseSymbolPointer<KaSamConstructorSymbol>() {
+    originalSymbol: KaSamConstructorSymbol? = null
+) : KaBaseSymbolPointer<KaSamConstructorSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaSamConstructorSymbol? {
         check(analysisSession is KaFe10Session)

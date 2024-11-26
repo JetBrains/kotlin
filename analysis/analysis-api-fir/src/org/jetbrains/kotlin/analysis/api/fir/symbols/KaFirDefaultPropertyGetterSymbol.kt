@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
-import java.lang.ref.WeakReference
 
 /**
  * Represents the default property getter for [KaFirKotlinPropertyKtParameterBasedSymbol] and [KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol].
@@ -132,7 +131,7 @@ internal class KaFirDefaultPropertyGetterSymbol(
         get() = withValidityAssertion { owningKaProperty.origin }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
-        KaBasePropertyGetterSymbolPointer(owningKaProperty.createPointer(), WeakReference(this))
+        KaBasePropertyGetterSymbolPointer(owningKaProperty.createPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean = this === other ||

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import java.lang.ref.WeakReference
 
 internal class KaFirSyntheticJavaPropertySymbol(
     override val firSymbol: FirSyntheticPropertySymbol,
@@ -98,7 +97,7 @@ internal class KaFirSyntheticJavaPropertySymbol(
             ownerPointer = analysisSession.createOwnerPointer(this),
             propertyName = name,
             isSynthetic = firSymbol is SyntheticSymbol,
-            cachedSymbol = WeakReference(this)
+            originalSymbol = this
         )
     }
 

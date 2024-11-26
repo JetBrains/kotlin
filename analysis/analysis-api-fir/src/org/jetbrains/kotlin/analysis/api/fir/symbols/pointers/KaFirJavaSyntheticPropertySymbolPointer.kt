@@ -19,14 +19,13 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
-import java.lang.ref.WeakReference
 
 internal class KaFirJavaSyntheticPropertySymbolPointer(
     ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val propertyName: Name,
     private val isSynthetic: Boolean,
-    override var cachedSymbol: WeakReference<KaSyntheticJavaPropertySymbol>?,
-) : KaFirMemberSymbolPointer<KaSyntheticJavaPropertySymbol>(ownerPointer) {
+    originalSymbol: KaSyntheticJavaPropertySymbol? = null,
+) : KaFirMemberSymbolPointer<KaSyntheticJavaPropertySymbol>(ownerPointer, originalSymbol = originalSymbol) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,
         firSession: FirSession,

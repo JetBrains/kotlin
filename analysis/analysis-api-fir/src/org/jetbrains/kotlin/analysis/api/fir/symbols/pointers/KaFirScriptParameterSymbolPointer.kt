@@ -16,13 +16,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.name.Name
-import java.lang.ref.WeakReference
 
 internal class KaFirScriptParameterSymbolPointer(
     private val parameterName: Name,
     private val scriptPointer: KaSymbolPointer<KaScriptSymbol>,
-    override var cachedSymbol: WeakReference<KaLocalVariableSymbol>?,
-) : KaBaseSymbolPointer<KaLocalVariableSymbol>() {
+    originalSymbol: KaLocalVariableSymbol? = null
+) : KaBaseSymbolPointer<KaLocalVariableSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaLocalVariableSymbol? {
         require(analysisSession is KaFirSession)

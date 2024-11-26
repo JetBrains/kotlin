@@ -20,13 +20,12 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import java.lang.ref.WeakReference
 
 internal class KaFe10DescFunctionSymbolPointer<T : KaFunctionSymbol>(
     private val callableId: CallableId,
     private val signature: String,
-    override var cachedSymbol: WeakReference<T>?
-) : KaBaseSymbolPointer<T>() {
+    originalSymbol: T? = null
+) : KaBaseSymbolPointer<T>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): T? {
         check(analysisSession is KaFe10Session)

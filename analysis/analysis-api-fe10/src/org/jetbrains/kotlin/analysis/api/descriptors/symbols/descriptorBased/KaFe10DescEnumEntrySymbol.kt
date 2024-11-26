@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import java.lang.ref.WeakReference
 
 internal class KaFe10DescEnumEntrySymbol(
     override val descriptor: ClassDescriptor,
@@ -62,7 +61,7 @@ internal class KaFe10DescEnumEntrySymbol(
 
         val enumClassId = enumDescriptor.classId
         if (enumClassId != null) {
-            return KaFe10DescEnumEntrySymbolPointer(enumClassId, descriptor.name, WeakReference(this))
+            return KaFe10DescEnumEntrySymbolPointer(enumClassId, descriptor.name, this)
         }
 
         return KaFe10NeverRestoringSymbolPointer()

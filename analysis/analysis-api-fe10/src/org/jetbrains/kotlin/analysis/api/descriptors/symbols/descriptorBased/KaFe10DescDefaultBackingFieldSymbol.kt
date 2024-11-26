@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.FieldDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import java.lang.ref.WeakReference
 
 internal class KaFe10DescDefaultBackingFieldSymbol(
     private val fieldDescriptor: FieldDescriptor?,
@@ -30,7 +29,7 @@ internal class KaFe10DescDefaultBackingFieldSymbol(
 ) : KaBackingFieldSymbol(), KaFe10Symbol {
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromSource<KaPropertySymbol>(owningProperty)
-            ?.let { KaFe10PsiDefaultBackingFieldSymbolPointer(it, WeakReference(this)) }
+            ?.let { KaFe10PsiDefaultBackingFieldSymbolPointer(it, this) }
             ?: KaFe10NeverRestoringSymbolPointer()
     }
 

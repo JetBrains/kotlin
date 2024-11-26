@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import java.lang.ref.WeakReference
 
 internal class KaFirBackingFieldSymbolPointer(
     private val propertySymbolPointer: KaSymbolPointer<KaKotlinPropertySymbol>,
-    override var cachedSymbol: WeakReference<KaBackingFieldSymbol>?,
-) : KaBaseSymbolPointer<KaBackingFieldSymbol>() {
+    originalSymbol: KaBackingFieldSymbol? = null,
+) : KaBaseSymbolPointer<KaBackingFieldSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaBackingFieldSymbol? {
         require(analysisSession is KaFirSession)

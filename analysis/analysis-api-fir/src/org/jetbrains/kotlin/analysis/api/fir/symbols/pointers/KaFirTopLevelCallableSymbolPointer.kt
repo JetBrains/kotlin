@@ -18,8 +18,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.CallableId
 
 internal abstract class KaTopLevelCallableSymbolPointer<S : KaCallableSymbol>(
-    private val callableId: CallableId
-) : KaBaseSymbolPointer<S>() {
+    private val callableId: CallableId,
+    originalSymbol: S?
+) : KaBaseSymbolPointer<S>(originalSymbol) {
     @KaImplementationDetail
     final override fun restoreIfNotCached(analysisSession: KaSession): S? {
         require(analysisSession is KaFirSession)

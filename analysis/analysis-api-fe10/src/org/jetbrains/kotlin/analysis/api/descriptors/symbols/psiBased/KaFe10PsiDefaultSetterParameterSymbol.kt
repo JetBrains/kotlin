@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.BindingContext
-import java.lang.ref.WeakReference
 
 internal class KaFe10PsiDefaultSetterParameterSymbol(
     private val accessorPsi: KtPropertyAccessor,
@@ -80,7 +79,7 @@ internal class KaFe10PsiDefaultSetterParameterSymbol(
     override fun createPointer(): KaSymbolPointer<KaValueParameterSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromPsi<KaPropertySetterSymbol>(accessorPsi)
             ?.let {
-                KaFe10PsiDefaultSetterParameterSymbolPointer(it, WeakReference(this))
+                KaFe10PsiDefaultSetterParameterSymbolPointer(it, this)
             } ?: KaFe10NeverRestoringSymbolPointer()
     }
 

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
-import java.lang.ref.WeakReference
 
 internal class KaFe10PsiDefaultBackingFieldSymbol(
     private val propertyPsi: KtProperty,
@@ -41,7 +40,7 @@ internal class KaFe10PsiDefaultBackingFieldSymbol(
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         KaPsiBasedSymbolPointer.createForSymbolFromPsi<KaPropertySymbol>(propertyPsi)
             ?.let {
-                KaFe10PsiDefaultBackingFieldSymbolPointer(it, WeakReference(this))
+                KaFe10PsiDefaultBackingFieldSymbolPointer(it, this)
             } ?: KaFe10NeverRestoringSymbolPointer()
     }
 
