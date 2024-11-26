@@ -38,7 +38,7 @@ fun testFlexible1() {
     true -> a()
     else -> b()
   }
-  v.ff()
+  v /*as I */.ff()
 }
 
 fun testFlexible2(a: A, b: B) {
@@ -46,7 +46,7 @@ fun testFlexible2(a: A, b: B) {
     true -> id<@FlexibleNullability A?>(x = a)
     else -> id<@FlexibleNullability B?>(x = b)
   }
-  v.ff()
+  v /*as I */.ff()
 }
 
 fun testIntersection(a: A, b: B) {
