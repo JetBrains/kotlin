@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isInlineFunWithReifiedParameter
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * Replaces callable reference to an inline function with reified parameter with a callable reference to a new non-inline function
  * with substituted types.
  */
+@PhaseDescription("WrapInlineDeclarationsWithReifiedTypeParametersLowering")
 class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: LoweringContext) : BodyLoweringPass {
     private val irFactory
         get() = context.irFactory
