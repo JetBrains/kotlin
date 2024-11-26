@@ -305,6 +305,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
 
         if (!failed) {
+            compareCachedSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
             compareRestoredSymbols(restoredPointers, testServices, ktFile, disablePsiBasedLogic, analyzeContext)
         }
 
@@ -316,6 +317,29 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         )
 
         fail("Redundant // ${directiveToIgnore.name} directive")
+    }
+
+    private fun compareCachedSymbols(
+        pointers: List<KaSymbolPointer<*>>,
+        testServices: TestServices,
+        ktFile: KtFile,
+        disablePsiBasedLogic: Boolean,
+        analyzeContext: KtElement?,
+    ) {
+        if (pointers.isEmpty()) return
+
+        analyseForTest(analyzeContext ?: ktFile) {
+            pointers.forEach { pointer ->
+                val firstRestore =
+                    restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
+                val secondRestore =
+                    restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
+                testServices.assertions.assertTrue(firstRestore === secondRestore) {
+                    "${pointer::class} does not support symbol caching"
+                }
+            }
+        }
+
     }
 
     private fun compareRestoredSymbols(
