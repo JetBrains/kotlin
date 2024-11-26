@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -41,8 +40,8 @@ open class LateinitLowering(
     private val loweringContext: LoweringContext,
     private val uninitializedPropertyAccessExceptionThrower: UninitializedPropertyAccessExceptionThrower,
 ) : FileLoweringPass, IrElementTransformerVoid() {
-    constructor(backendContext: CommonBackendContext) :
-            this(backendContext, UninitializedPropertyAccessExceptionThrower(backendContext.ir.symbols))
+    constructor(loweringContext: LoweringContext) :
+            this(loweringContext, UninitializedPropertyAccessExceptionThrower(loweringContext.ir.symbols))
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
