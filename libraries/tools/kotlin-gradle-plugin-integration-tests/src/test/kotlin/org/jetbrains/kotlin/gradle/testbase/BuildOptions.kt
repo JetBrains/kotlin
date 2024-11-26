@@ -52,6 +52,7 @@ data class BuildOptions(
     val usePreciseOutputsBackup: Boolean? = null,
     val keepIncrementalCompilationCachesInMemory: Boolean? = null,
     val enableUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
+    val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
     val useDaemonFallbackStrategy: Boolean = false,
     val useParsableDiagnosticsFormatting: Boolean = true,
     val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
@@ -255,6 +256,10 @@ data class BuildOptions(
 
         if (enableUnsafeIncrementalCompilationForMultiplatform != null) {
             arguments.add("-Pkotlin.internal.incremental.enableUnsafeOptimizationsForMultiplatform=$enableUnsafeIncrementalCompilationForMultiplatform")
+        }
+
+        if (enableMonotonousIncrementalCompileSetExpansion != null) {
+            arguments.add("-Pkotlin.internal.incremental.enableMonotonousCompileSetExpansion=$enableMonotonousIncrementalCompileSetExpansion")
         }
 
         arguments.add("-Pkotlin.daemon.useFallbackStrategy=$useDaemonFallbackStrategy")

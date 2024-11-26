@@ -530,6 +530,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableUnsafeOptimizationsForMultiplatform: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION) ?: false
 
+    /**
+     * Context: assume that incremental compilation of a.kt makes b.kt dirty (for example, because some function needs to be re-inlined)
+     *
+     * Without monotonous expansion: a.kt might be compiled on one step, and b.kt on the next step
+     * With monotonous expansion: if a.kt is compiled on one step, both a.kt and b.kt are compiled on the next step
+     */
+    val enableMonotonousIncrementalCompileSetExpansion: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION) ?: true
+
     val enableKlibsCrossCompilation: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: false
 
@@ -730,6 +739,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_COMPILER_ARGUMENTS_LOG_LEVEL = property("$KOTLIN_INTERNAL_NAMESPACE.compiler.arguments.log.level")
         val KOTLIN_UNSAFE_MULTIPLATFORM_INCREMENTAL_COMPILATION =
             property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableUnsafeOptimizationsForMultiplatform")
+        val KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION = property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableMonotonousCompileSetExpansion")
         val KOTLIN_KLIBS_KT64115_WORKAROUND_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.enableWorkaroundForKT64115")
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")
         val KOTLIN_USE_NON_PACKED_KLIBS = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.non-packed")
