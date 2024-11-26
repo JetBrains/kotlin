@@ -24,7 +24,8 @@ import java.lang.ref.WeakReference
 
 internal class KaFe10DescFunctionSymbolPointer<T : KaFunctionSymbol>(
     private val callableId: CallableId,
-    private val signature: String, override var cachedSymbol: WeakReference<T>?
+    private val signature: String,
+    override var cachedSymbol: WeakReference<T>?
 ) : KaBaseSymbolPointer<T>() {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): T? {
