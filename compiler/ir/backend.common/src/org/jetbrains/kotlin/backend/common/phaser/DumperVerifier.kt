@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.validateIr
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -164,4 +164,4 @@ fun <Data, Context : ErrorReportingContext> getIrDumper(): Action<Data, Context>
  *
  * Types are not checked in the IR during validation. But we may (and probably should) reconsider.
  */
-val DEFAULT_IR_ACTIONS: Set<Action<IrElement, CommonBackendContext>> = setOf(getIrDumper(), getIrValidator(checkTypes = false))
+val DEFAULT_IR_ACTIONS: Set<Action<IrElement, LoweringContext>> = setOf(getIrDumper(), getIrValidator(checkTypes = false))

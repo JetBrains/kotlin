@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfigurationService
@@ -22,7 +22,7 @@ annotation class PhaseDescription(
     val prerequisite: Array<KClass<out FileLoweringPass>> = [],
 )
 
-fun <Context : CommonBackendContext> createFilePhases(
+fun <Context : LoweringContext> createFilePhases(
     vararg phases: ((Context) -> FileLoweringPass)?
 ): List<SimpleNamedCompilerPhase<Context, IrFile, IrFile>> {
     val createdPhases = hashSetOf<Class<out FileLoweringPass>>()
@@ -33,7 +33,7 @@ fun <Context : CommonBackendContext> createFilePhases(
     }
 }
 
-fun <Context : CommonBackendContext> createModulePhases(
+fun <Context : LoweringContext> createModulePhases(
     vararg phases: ((Context) -> ModuleLoweringPass)?
 ): List<SimpleNamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment>> {
     val createdPhases = hashSetOf<Class<out ModuleLoweringPass>>()
@@ -44,13 +44,13 @@ fun <Context : CommonBackendContext> createModulePhases(
     }
 }
 
-fun <Context : CommonBackendContext> buildModuleLoweringsPhase(
+fun <Context : LoweringContext> buildModuleLoweringsPhase(
     vararg phases: ((Context) -> ModuleLoweringPass)?
 ): CompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
     createModulePhases(*phases)
         .fold(noopPhase(), CompilerPhase<Context, IrModuleFragment, IrModuleFragment>::then)
 
-private fun <Context : CommonBackendContext, T> noopPhase(): CompilerPhase<Context, T, T> =
+private fun <Context : LoweringContext, T> noopPhase(): CompilerPhase<Context, T, T> =
     object : CompilerPhase<Context, T, T> {
         override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<T>, context: Context, input: T): T = input
     }
@@ -71,7 +71,7 @@ private inline fun <ReturnType, reified FunctionType : Function<ReturnType>>
     } as Class<out ReturnType>
 }
 
-private fun <Context : CommonBackendContext> createFilePhase(
+private fun <Context : LoweringContext> createFilePhase(
     loweringClass: Class<*>,
     previouslyCreatedPhases: Set<Class<out FileLoweringPass>>,
     createLoweringPass: (Context) -> FileLoweringPass,
@@ -91,7 +91,7 @@ private fun <Context : CommonBackendContext> createFilePhase(
     )
 }
 
-private fun <Context : CommonBackendContext> createModulePhase(
+private fun <Context : LoweringContext> createModulePhase(
     loweringClass: Class<*>,
     previouslyCreatedPhases: Set<Class<out ModuleLoweringPass>>,
     createLoweringPass: (Context) -> ModuleLoweringPass,
