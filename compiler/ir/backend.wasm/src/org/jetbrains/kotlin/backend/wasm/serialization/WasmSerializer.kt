@@ -526,33 +526,28 @@ class WasmSerializer(outputStream: OutputStream) {
     }
 
     private fun serializeConstantDataCharArray(constantDataCharArray: ConstantDataCharArray) {
-        serializeString(constantDataCharArray.name)
         serializeList(constantDataCharArray.value) { serializeWasmSymbolReadOnly(it) { b.writeUInt32(it.code.toUInt()) } }
     }
 
     private fun serializeConstantDataCharField(constantDataCharField: ConstantDataCharField) {
-        serializeString(constantDataCharField.name)
         serializeWasmSymbolReadOnly(constantDataCharField.value) { b.writeUInt32(it.code.toUInt()) }
     }
 
     private fun serializeConstantDataIntArray(constantDataIntArray: ConstantDataIntArray) {
-        serializeString(constantDataIntArray.name)
         serializeList(constantDataIntArray.value) { serializeWasmSymbolReadOnly(it) { b.writeUInt32(it.toUInt()) } }
     }
 
     private fun serializeConstantDataIntField(constantDataIntField: ConstantDataIntField) {
-        serializeString(constantDataIntField.name)
         serializeWasmSymbolReadOnly(constantDataIntField.value) { b.writeUInt32(it.toUInt()) }
     }
 
     private fun serializeConstantDataIntegerArray(constantDataIntegerArray: ConstantDataIntegerArray) {
-        serializeString(constantDataIntegerArray.name)
         serializeList(constantDataIntegerArray.value) { b.writeUInt64(it.toULong()) }
         b.writeUInt32(constantDataIntegerArray.integerSize.toUInt())
     }
 
     private fun serializeConstantDataStruct(constantDataStruct: ConstantDataStruct) {
-        serializeString(constantDataStruct.name)
+//        serializeString(constantDataStruct.name)
         serializeList(constantDataStruct.elements, ::serializeConstantDataElement)
     }
 

@@ -399,45 +399,37 @@ class DeclarationGenerator(
         val (simpleNameAddress, simpleNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(simpleName)
 
         val typeInfo = ConstantDataStruct(
-            name = "TypeInfo",
             elements = listOf(
-                ConstantDataIntField("TypePackageNameLength", qualifier.length),
-                ConstantDataIntField("TypePackageNameId", packageNamePoolId),
-                ConstantDataIntField("TypePackageNamePtr", packageNameAddress),
-                ConstantDataIntField("TypeNameLength", simpleName.length),
-                ConstantDataIntField("TypeNameId", simpleNamePoolId),
-                ConstantDataIntField("TypeNamePtr", simpleNameAddress)
+                ConstantDataIntField(qualifier.length),
+                ConstantDataIntField(packageNamePoolId),
+                ConstantDataIntField(packageNameAddress),
+                ConstantDataIntField(simpleName.length),
+                ConstantDataIntField(simpleNamePoolId),
+                ConstantDataIntField(simpleNameAddress)
             )
         )
 
         val superClass = klass.getSuperClass(backendContext.irBuiltIns)
         val superTypeId = superClass?.let {
-            ConstantDataIntField("SuperTypeId", wasmFileCodegenContext.referenceTypeId(it.symbol))
-        } ?: ConstantDataIntField("SuperTypeId", -1)
+            ConstantDataIntField(wasmFileCodegenContext.referenceTypeId(it.symbol))
+        } ?: ConstantDataIntField(-1)
 
         val typeInfoContent = mutableListOf(typeInfo, superTypeId)
         if (!klass.isAbstractOrSealed) {
             typeInfoContent.add(interfaceTable(classMetadata))
         }
 
-        return ConstantDataStruct(
-            name = "Class TypeInfo: ${klass.fqNameWhenAvailable} ",
-            elements = typeInfoContent
-        )
+        return ConstantDataStruct(elements = typeInfoContent)
     }
 
     private fun interfaceTable(classMetadata: ClassMetadata): ConstantDataStruct {
         val interfaces = classMetadata.interfaces
-        val size = ConstantDataIntField("size", interfaces.size)
+        val size = ConstantDataIntField(interfaces.size)
         val interfaceIds = ConstantDataIntArray(
-            "interfaceIds",
             interfaces.map { wasmFileCodegenContext.referenceTypeId(it.symbol) },
         )
 
-        return ConstantDataStruct(
-            name = "Class interface table: ${classMetadata.klass.fqNameWhenAvailable} ",
-            elements = listOf(size, interfaceIds)
-        )
+        return ConstantDataStruct(elements = listOf(size, interfaceIds))
     }
 
 

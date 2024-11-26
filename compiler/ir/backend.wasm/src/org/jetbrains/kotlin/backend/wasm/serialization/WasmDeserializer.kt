@@ -507,40 +507,34 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         }
 
     private fun deserializeConstantDataCharArray(): ConstantDataCharArray {
-        val name = deserializeString()
         val value = deserializeList { deserializeSymbol { Char(deserializeInt()) } }
-        return ConstantDataCharArray(name, value)
+        return ConstantDataCharArray(value)
     }
 
     private fun deserializeConstantDataCharField(): ConstantDataCharField {
-        val name = deserializeString()
         val value = deserializeSymbol { Char(deserializeInt()) }
-        return ConstantDataCharField(name, value)
+        return ConstantDataCharField(value)
     }
 
     private fun deserializeConstantDataIntArray(): ConstantDataIntArray {
-        val name = deserializeString()
         val value = deserializeList { deserializeSymbol(::deserializeInt) }
-        return ConstantDataIntArray(name, value)
+        return ConstantDataIntArray(value)
     }
 
     private fun deserializeConstantDataIntField(): ConstantDataIntField {
-        val name = deserializeString()
         val value = deserializeSymbol(::deserializeInt)
-        return ConstantDataIntField(name, value)
+        return ConstantDataIntField(value)
     }
 
     private fun deserializeConstantDataIntegerArray(): ConstantDataIntegerArray {
-        val name = deserializeString()
         val value = deserializeList { b.readUInt64().toLong() }
         val integerSize = deserializeInt()
-        return ConstantDataIntegerArray(name, value, integerSize)
+        return ConstantDataIntegerArray(value, integerSize)
     }
 
     private fun deserializeConstantDataStruct(): ConstantDataStruct {
-        val name = deserializeString()
         val value = deserializeList(::deserializeConstantDataElement)
-        return ConstantDataStruct(name, value)
+        return ConstantDataStruct(value)
     }
 
     private fun deserializeJsCodeSnippet(): WasmCompiledModuleFragment.JsCodeSnippet {
