@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
-import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -23,7 +22,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
  * A context that is used to pass data to the second stage compiler lowerings
  * (those that are executed after deserializing IR from KLIBs, or any lowering in the JVM backend).
  */
-interface CommonBackendContext : LoweringContext, LoggingContext, BackendContextHolder {
+interface CommonBackendContext : LoweringContext, BackendContextHolder {
     val typeSystem: IrTypeSystemContext
 
     override val heldBackendContext: CommonBackendContext
