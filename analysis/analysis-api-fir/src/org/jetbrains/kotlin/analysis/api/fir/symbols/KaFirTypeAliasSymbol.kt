@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -47,7 +46,7 @@ internal class KaFirTypeAliasSymbol private constructor(
     )
 
     constructor(symbol: FirTypeAliasSymbol, session: KaFirSession) : this(
-        backingPsi = symbol.fir.realPsi as? KtTypeAlias,
+        backingPsi = symbol.backingPsiIfApplicable as? KtTypeAlias,
         lazyFirSymbol = lazyOf(symbol),
         analysisSession = session,
     )

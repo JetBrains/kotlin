@@ -44,7 +44,7 @@ internal class KaFirValueParameterSymbol private constructor(
     )
 
     constructor(symbol: FirValueParameterSymbol, session: KaFirSession) : this(
-        backingPsi = symbol.fir.realPsi as? KtParameter,
+        backingPsi = symbol.backingPsiIfApplicable as? KtParameter,
         lazyFirSymbol = lazyOf(symbol),
         analysisSession = session,
     )

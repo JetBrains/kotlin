@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -46,7 +45,7 @@ internal class KaFirConstructorSymbol private constructor(
     )
 
     constructor(symbol: FirConstructorSymbol, session: KaFirSession) : this(
-        backingPsi = symbol.fir.realPsi as? KtConstructor<*>,
+        backingPsi = symbol.backingPsiIfApplicable as? KtConstructor<*>,
         lazyFirSymbol = lazyOf(symbol),
         analysisSession = session,
     )

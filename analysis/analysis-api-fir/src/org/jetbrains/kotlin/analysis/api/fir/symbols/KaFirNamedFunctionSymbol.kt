@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -55,7 +54,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
     )
 
     constructor(symbol: FirNamedFunctionSymbol, session: KaFirSession) : this(
-        backingPsi = symbol.fir.realPsi as? KtNamedFunction,
+        backingPsi = symbol.backingPsiIfApplicable as? KtNamedFunction,
         lazyFirSymbol = lazyOf(symbol),
         analysisSession = session,
     )

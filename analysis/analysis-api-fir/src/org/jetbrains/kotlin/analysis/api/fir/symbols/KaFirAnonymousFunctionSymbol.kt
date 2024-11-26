@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.psi.KtFunction
@@ -48,7 +47,7 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
     )
 
     constructor(symbol: FirAnonymousFunctionSymbol, session: KaFirSession) : this(
-        backingPsi = symbol.fir.realPsi as? KtFunction,
+        backingPsi = symbol.backingPsiIfApplicable as? KtFunction,
         lazyFirSymbol = lazyOf(symbol),
         analysisSession = session,
     )

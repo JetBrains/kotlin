@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -66,6 +67,9 @@ internal interface KaFirPsiSymbol<out P : PsiElement, out S : FirBasedSymbol<*>>
 
     override val firSymbol: S get() = lazyFirSymbol.value
 }
+
+internal val FirBasedSymbol<*>.backingPsiIfApplicable: PsiElement?
+    get() = fir.realPsi
 
 internal interface KaFirKtBasedSymbol<out P : KtElement, out S : FirBasedSymbol<*>> : KaFirPsiSymbol<P, S> {
     override val origin: KaSymbolOrigin get() = withValidityAssertion { psiOrSymbolOrigin() }
@@ -193,7 +197,7 @@ internal fun <P : KtElement> KaFirPsiSymbol<P, *>.psiOrSymbolOrigin(): KaSymbolO
 private val KtElement.cameFromKotlinLibrary: Boolean get() = containingKtFile.isCompiled
 
 /**
- * Executes [action] if the [backingPsi] exists and came from a source file.
+ * Executes [action] if the [KaFirPsiSymbol.backingPsi] exists and came from a source file.
  */
 @OptIn(ExperimentalContracts::class)
 internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
@@ -205,7 +209,7 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
 }
 
 /**
- * Potentially, we may use [backingPsi] to create [KaPsiBasedSymbolPointer] for library elements as well,
+ * Potentially, we may use [KaFirKtBasedSymbol.backingPsi] to create [KaPsiBasedSymbolPointer] for library elements as well,
  * but it triggers AST tree calculation.
  *
  * Another potential issue: the library PSI may represent both [KaSymbolOrigin.SOURCE] and as [KaSymbolOrigin.LIBRARY],

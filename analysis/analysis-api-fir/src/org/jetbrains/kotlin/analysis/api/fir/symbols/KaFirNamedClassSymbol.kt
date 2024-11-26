@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -56,7 +55,7 @@ internal class KaFirNamedClassSymbol private constructor(
     )
 
     constructor(symbol: FirRegularClassSymbol, session: KaFirSession) : this(
-        backingPsi = symbol.fir.realPsi as? KtClassOrObject,
+        backingPsi = symbol.backingPsiIfApplicable as? KtClassOrObject,
         lazyFirSymbol = lazyOf(symbol),
         analysisSession = session,
     )

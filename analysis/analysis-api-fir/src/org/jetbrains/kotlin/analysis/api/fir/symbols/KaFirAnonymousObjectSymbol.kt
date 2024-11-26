@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
@@ -34,7 +33,7 @@ internal open class KaFirAnonymousObjectSymbol private constructor(
     )
 
     constructor(symbol: FirAnonymousObjectSymbol, session: KaFirSession) : this(
-        backingPsi = symbol.fir.realPsi as? KtObjectDeclaration,
+        backingPsi = symbol.backingPsiIfApplicable as? KtObjectDeclaration,
         lazyFirSymbol = lazyOf(symbol),
         analysisSession = session,
     )

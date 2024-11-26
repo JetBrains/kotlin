@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirScriptSymbolP
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
@@ -31,7 +30,7 @@ internal class KaFirScriptSymbol private constructor(
     )
 
     constructor(symbol: FirScriptSymbol, session: KaFirSession) : this(
-        backingPsi = symbol.fir.realPsi as? KtScript,
+        backingPsi = symbol.backingPsiIfApplicable as? KtScript,
         lazyFirSymbol = lazyOf(symbol),
         analysisSession = session,
     )
