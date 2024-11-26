@@ -71,6 +71,21 @@ public class JavaAnalysisPlugin : DokkaPlugin() {
         DocCommentFinder(logger, docCommentFactory)
     }
 
+    // TODO #3936(https://youtrack.jetbrains.com/issue/KT-71862) use an endpoint from AA
+    /**
+     * Disposes global resources which would persist after unloading Analysis API (Symbols analysis) and IJ platform classes.
+     *
+     * **Important:** Once this function has been called, Analysis API *and* IntelliJ platform classes should not be used anymore. The classes
+     * should either be unloaded or the whole program should be shut down.
+     *
+     * Note: Disposing of resources, including threads, allows unloading Dokka's class loader.
+     */
+    @InternalDokkaApi
+    public fun disposeGlobalStandaloneApplicationServices() {
+        @Suppress("UnstableApiUsage")
+        com.intellij.util.concurrency.AppExecutorUtil.shutdownApplicationScheduledExecutorService()
+    }
+
     internal val javaDocCommentCreator by extending {
         docCommentCreators providing { JavaDocCommentCreator() }
     }
