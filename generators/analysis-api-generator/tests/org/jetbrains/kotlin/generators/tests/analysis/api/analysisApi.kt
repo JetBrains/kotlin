@@ -222,10 +222,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
                 symbolsModel(it, "symbolRestoreFromDifferentModule")
             }
 
-            test<AbstractSymbolFromPointerWithCacheTest> {
-                model(it, "symbolFromPointerWithCache")
-            }
-
             test<AbstractMultiModuleSymbolByPsiTest> {
                 symbolsModel(it, "multiModuleSymbolByPsi")
             }
