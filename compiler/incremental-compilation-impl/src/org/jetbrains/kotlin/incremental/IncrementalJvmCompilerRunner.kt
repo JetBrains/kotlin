@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ProgramSymbolSet
 import org.jetbrains.kotlin.incremental.classpathDiff.shrinkAndSaveClasspathSnapshot
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
