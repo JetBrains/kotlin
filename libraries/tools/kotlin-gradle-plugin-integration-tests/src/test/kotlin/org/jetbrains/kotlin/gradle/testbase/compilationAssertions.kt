@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.util.runProcess
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.test.asserter
 
 private val kotlinSrcRegex by lazy { Regex("\\[KOTLIN] compile iteration: ([^\\r\\n]*)") }
 
@@ -27,6 +28,18 @@ fun extractCompiledKotlinFiles(output: String): List<Path> {
     return kotlinSrcRegex.findAll(output).asIterable()
         .flatMap { matchResult -> matchResult.groups[1]!!.value.split(", ") }
         .toPaths()
+}
+
+/**
+ * Extracts the list of compiled .kt files from the build output. Results are grouped by compilation step.
+ *
+ * The returned paths are relative to the project directory.
+ *
+ * Note: Log level of output must be set to [LogLevel.DEBUG].
+ */
+fun extractAllKotlinCompileIterations(output: String) : List<List<Path>> {
+    return kotlinSrcRegex.findAll(output).asIterable()
+        .map { matchResult -> matchResult.groups[1]!!.value.split(", ").toPaths() }
 }
 
 /**
@@ -208,4 +221,32 @@ fun BuildResult.assertCompiledKotlinTestSourcesAreHandledByKapt(
         getOutputForTask("$taskPath:compileTestKotlin"),
         errorMessageSuffix = " in task 'compileTestKotlin'"
     )
+}
+
+/**
+ * Asserts the contents of each incremental compilation step. Each element of [sourcesPerStep] defines a single step.
+ *
+ * Example:
+ * assertKotlinCompilationSteps(listOf(aKtPath), listOf(aKtPath, bKtPath))
+ * - asserts that there were two compilation steps, first one compiled a.kt, and the second one
+ *   compiled a.kt and b.kt.
+ *
+ * Normal assertions such as [assertCompiledKotlinSources] flatMap all compiled sources into a single set,
+ * and in some test scenarios it loses valuable information.
+ */
+fun BuildResult.assertKotlinCompilationSteps(
+    vararg sourcesPerStep: Iterable<Path>
+) {
+    val actualSourcesPerStep = extractAllKotlinCompileIterations(output)
+
+    asserter.assertEquals(
+        "Logged compilation steps don't match the assertion: ",
+        sourcesPerStep.count(),
+        actualSourcesPerStep.count()
+    )
+    val zippedSteps = sourcesPerStep.zip(actualSourcesPerStep)
+    for (i in zippedSteps.indices) {
+        val (expected, actual) = zippedSteps[i]
+        assertSameFiles(expected, actual, "Error in compilationStep[$i]:")
+    }
 }

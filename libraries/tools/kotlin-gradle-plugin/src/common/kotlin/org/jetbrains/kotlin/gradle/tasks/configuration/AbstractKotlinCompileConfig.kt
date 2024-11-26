@@ -84,6 +84,9 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.enableUnsafeIncrementalCompilationForMultiplatform
                 .convention(propertiesProvider.enableUnsafeOptimizationsForMultiplatform)
                 .finalizeValueOnRead()
+            task.enableMonotonousIncrementalCompileSetExpansion
+                .convention(propertiesProvider.enableMonotonousIncrementalCompileSetExpansion)
+                .finalizeValueOnRead()
             task.buildFinishedListenerService.value(buildFinishedListenerService).disallowChanges()
             task.buildIdService.value(buildIdService).disallowChanges()
 

@@ -580,6 +580,14 @@ abstract class IncrementalCompilerRunner<
                 if (!compiledInThisIterationSet.containsAll(forceToRecompileFiles)) {
                     addAll(forceToRecompileFiles)
                 }
+                if (icFeatures.enableMonotonousIncrementalCompileSetExpansion) {
+                    if (dirtySources.isNotEmpty()) {
+                        // At this point we have determined that some new source files need to be recompiled,
+                        // and we can add previously compiled files to the dirtySources set for logical consistency.
+                        // (Take note that outer loop triggers compilation steps while there are not-yet-recompiled affected files.)
+                        addAll(compiledInThisIterationSet)
+                    }
+                }
             }
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)

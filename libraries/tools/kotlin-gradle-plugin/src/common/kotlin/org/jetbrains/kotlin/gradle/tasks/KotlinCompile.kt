@@ -466,10 +466,13 @@ abstract class KotlinCompile @Inject constructor(
         super.setSource(*sources)
     }
 
-    // override incremental compilation features, while withAbiSnapshot is JVM-only
+    // jvm-specific incremental compilation features
     override fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return super.makeIncrementalCompilationFeatures().copy(
+            /* Disabled on JVM in favor of classpath snapshot machinery */
             withAbiSnapshot = false,
+            /* Enabling this for JVM only because it's the main target which relies on multi-step compilations */
+            enableMonotonousIncrementalCompileSetExpansion = enableMonotonousIncrementalCompileSetExpansion.get(),
         )
     }
 
