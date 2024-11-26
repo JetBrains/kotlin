@@ -20,10 +20,7 @@ import org.jetbrains.dokka.analysis.kotlin.symbols.services.*
 import org.jetbrains.dokka.analysis.kotlin.symbols.services.KotlinDocumentableSourceLanguageParser
 import org.jetbrains.dokka.analysis.kotlin.symbols.services.SymbolExternalDocumentablesProvider
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.DefaultSymbolToDocumentableTranslator
-import org.jetbrains.dokka.plugability.DokkaPlugin
-import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
-import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
-import org.jetbrains.dokka.plugability.querySingle
+import org.jetbrains.dokka.plugability.*
 import org.jetbrains.dokka.renderers.PostAction
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 
@@ -42,7 +39,14 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
     }
 
     internal val disposeKotlinAnalysisPostAction by extending {
-        CoreExtensions.postActions with PostAction { querySingle { kotlinAnalysis }.close() }
+        CoreExtensions.postActions providing { context ->
+            PostAction {
+                querySingle { kotlinAnalysis }.close()
+                if (context.configuration.finalizeCoroutines)
+                    // TODO #3936(https://youtrack.jetbrains.com/issue/KT-71862)  use an endpoint from AA
+                    javaAnalysisPlugin.disposeGlobalStandaloneApplicationServices()
+            }
+        }
     }
 
     internal val symbolToDocumentableTranslator by extending {

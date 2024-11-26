@@ -147,17 +147,22 @@ public interface DokkaConfiguration : Serializable {
     /**
      * Whether coroutines dispatchers should be shutdown after
      * generating documentation via [DokkaGenerator.generate].
+     * Additionally, whether the Analysis API and IJ platform global
+     * services should be shutdown.
      *
-     * It effectively stops all background threads associated with
+     * If this is enabled, Coroutines *and* the Analysis API *and* IntelliJ
+     * platform classes should no longer be used after the documentation is generated once.
+     *
+     * For example, it effectively stops all background threads associated with
      * coroutines in order to make classes unloadable by the JVM,
      * and rejects all new tasks with [RejectedExecutionException]
      *
-     * This is primarily useful for multi-module builds where coroutines
+     * This is primarily useful for multi-module builds where global services
      * can be shut down after each module's partial task to avoid
      * possible memory leaks.
      *
      * However, this can lead to problems in specific lifecycles where
-     * coroutines are shared and will be reused after documentation generation,
+     * global services are shared and will be reused after documentation generation,
      * and closing it down will leave the build in an inoperable state.
      * One such example is unit tests, for which finalization should be disabled.
      */
