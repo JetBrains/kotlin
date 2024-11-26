@@ -133,5 +133,5 @@ internal fun PhaseContext.fir2Ir(
 private fun PhaseContext.createKonanSymbols(
         irBuiltIns: IrBuiltIns,
 ): KonanSymbols {
-    return KonanSymbols(this, SymbolOverIrLookupUtils(), irBuiltIns)
+    return KonanSymbols(this, SymbolOverIrLookupUtils(), irBuiltIns, this.config.configuration)
 }

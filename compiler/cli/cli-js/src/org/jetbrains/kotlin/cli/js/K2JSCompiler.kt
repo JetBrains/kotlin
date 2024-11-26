@@ -426,7 +426,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             val transformedResult = PhaseEngine(
                 phaseConfig,
                 PhaserState(),
-                PreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
+                JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
             ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)
 
             serializeFirKlib(
