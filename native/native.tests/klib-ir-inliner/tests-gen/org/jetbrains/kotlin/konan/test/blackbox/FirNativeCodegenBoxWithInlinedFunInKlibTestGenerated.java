@@ -20900,6 +20900,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("correctOrder3.kt")
+      public void testCorrectOrder3() {
+        runTest("compiler/testData/codegen/box/initializers/correctOrder3.kt");
+      }
+
+      @Test
       @TestMetadata("initializers0.kt")
       public void testInitializers0() {
         runTest("compiler/testData/codegen/box/initializers/initializers0.kt");

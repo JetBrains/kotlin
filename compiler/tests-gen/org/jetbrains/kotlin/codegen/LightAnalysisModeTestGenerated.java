@@ -21565,6 +21565,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/initializers/correctOrder2.kt");
     }
 
+    @TestMetadata("correctOrder3.kt")
+    public void testCorrectOrder3() {
+      runTest("compiler/testData/codegen/box/initializers/correctOrder3.kt");
+    }
+
     @TestMetadata("initializers0.kt")
     public void testInitializers0() {
       runTest("compiler/testData/codegen/box/initializers/initializers0.kt");
