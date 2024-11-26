@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnota
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
@@ -222,7 +223,7 @@ internal inline fun <R> KaFirPsiSymbol<*, *>.ifSource(action: () -> R): R? {
 internal inline fun <reified S : KaSymbol> KaFirKtBasedSymbol<*, *>.psiBasedSymbolPointerOfTypeIfSource(project: Project): KaSymbolPointer<S>? {
     return ifSource {
         backingPsi?.let {
-            KaPsiBasedSymbolPointerCreator.getInstance(project).symbolPointerOfType(it)
+            KaPsiSymbolPointerCreator.symbolPointerOfType(it)
         }
     }
 }

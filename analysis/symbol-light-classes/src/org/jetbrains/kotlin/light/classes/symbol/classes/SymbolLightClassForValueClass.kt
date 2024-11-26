@@ -11,6 +11,7 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -23,8 +24,7 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
         ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classSymbolPointer = KaPsiBasedSymbolPointerCreator.getInstance(ktModule.project)
-            .symbolPointerOfType(classOrObject),
+        classSymbolPointer = KaPsiSymbolPointerCreator.symbolPointerOfType(classOrObject),
         ktModule = ktModule,
         manager = classOrObject.manager,
     ) {
