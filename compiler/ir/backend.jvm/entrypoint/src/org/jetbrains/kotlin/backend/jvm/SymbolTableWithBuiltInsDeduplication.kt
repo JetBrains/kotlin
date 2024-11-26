@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.containingPackage
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -73,10 +72,5 @@ class SymbolTableWithBuiltInsDeduplication(
 
             return super.referenceClass(declaration)
         }
-    }
-
-    private fun SymbolFinderOverDescriptors.findBuiltInClassDescriptor(descriptor: ClassDescriptor): ClassDescriptor? {
-        val packageFqName = descriptor.containingPackage() ?: return null
-        return findClassDescriptor(descriptor.name, packageFqName)
     }
 }

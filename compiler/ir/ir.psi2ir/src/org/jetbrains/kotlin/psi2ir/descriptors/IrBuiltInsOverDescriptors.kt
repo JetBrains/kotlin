@@ -680,6 +680,11 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
             NoLookupLocation.FROM_BACKEND
         ) as? ClassDescriptor
 
+    fun findBuiltInClassDescriptor(descriptor: ClassDescriptor): ClassDescriptor? {
+        val packageFqName = descriptor.containingPackage() ?: return null
+        return findClassDescriptor(descriptor.name, packageFqName)
+    }
+
     private fun ClassDescriptor.toIrSymbol(): IrClassSymbol {
         return symbolTable.descriptorExtension.referenceClass(this)
     }
