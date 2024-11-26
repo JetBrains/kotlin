@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.name.Name
 open class KtExpressionWithLabel(node: ASTNode) : KtExpressionImpl(node) {
 
     fun getTargetLabel(): KtSimpleNameExpression? {
-        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-        return labelQualifier?.findChildByType(KtNodeTypes.LABEL) as? KtSimpleNameExpression
+        return labelQualifier?.findChildByType(KtNodeTypes.LABEL)
     }
 
     val labelQualifier: KtContainerNode?

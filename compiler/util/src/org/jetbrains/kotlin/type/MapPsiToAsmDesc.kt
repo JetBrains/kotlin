@@ -28,12 +28,10 @@ object MapPsiToAsmDesc {
         is PsiArrayType -> "[" + typeDesc(type.componentType)
 
         is PsiClassType -> {
-            @Suppress("REDUNDANT_ELSE_IN_WHEN") // K2 warning suppression, TODO: KT-62472
             when (val resolved = type.resolve()) {
                 is PsiTypeParameter -> resolved.superTypes.firstOrNull()?.let { typeDesc(it) } ?: "Ljava/lang/Object;"
                 is PsiClass -> classDesc(resolved)
                 null -> unknownSignature()
-                else -> error("Resolved to unexpected $resolved of class ${resolved::class.java}")
             }
 
         }

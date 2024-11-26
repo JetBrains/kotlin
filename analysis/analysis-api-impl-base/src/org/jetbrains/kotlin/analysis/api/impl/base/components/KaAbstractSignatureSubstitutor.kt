@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
-import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 
 @KaImplementationDetail
 abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponent<T>(), KaSignatureSubstitutor {
@@ -31,20 +30,16 @@ abstract class KaAbstractSignatureSubstitutor<T : KaSession> : KaSessionComponen
     }
 
     override fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> = withValidityAssertion {
-        @Suppress("REDUNDANT_ELSE_IN_WHEN") // K2 warning suppression, TODO: KT-62472
         when (this) {
             is KaFunctionSymbol -> substitute(substitutor)
             is KaVariableSymbol -> substitute(substitutor)
-            else -> unexpectedElementError("symbol", this)
         }
     }
 
     override fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> = withValidityAssertion {
-        @Suppress("REDUNDANT_ELSE_IN_WHEN") // K2 warning suppression, TODO: KT-62472
         return when (this) {
             is KaFunctionSymbol -> asSignature()
             is KaVariableSymbol -> asSignature()
-            else -> unexpectedElementError("symbol", this)
         }
     }
 }

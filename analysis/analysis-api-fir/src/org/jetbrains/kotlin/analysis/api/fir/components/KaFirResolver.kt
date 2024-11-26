@@ -697,8 +697,6 @@ internal class KaFirResolver(
                 )
             }
             is FirPropertyAccessExpression, is FirCallableReferenceAccess -> {
-                @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
-                require(fir is FirQualifiedAccessExpression)
                 when (partiallyAppliedSymbol.symbol) {
                     is KaVariableSymbol -> {
                         @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
@@ -736,9 +734,8 @@ internal class KaFirResolver(
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                 KaBaseSimpleFunctionCall(
                     partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-                    @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
                     argumentMappingWithoutExtensionReceiver
-                        ?.createArgumentMapping(partiallyAppliedSymbol.signature as KaFunctionSignature<*>)
+                        ?.createArgumentMapping(partiallyAppliedSymbol.signature)
                         ?: emptyMap(),
                     typeArgumentsMapping,
                     isImplicitInvoke

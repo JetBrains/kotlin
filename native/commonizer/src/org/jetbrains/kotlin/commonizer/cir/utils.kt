@@ -11,7 +11,6 @@ fun <T : CirSimpleType> T.makeNullable(): T {
     if (isMarkedNullable)
         return this
 
-    @Suppress("REDUNDANT_ELSE_IN_WHEN") // K2 warning suppression, TODO: KT-62472
     val result = when (this) {
         is CirClassType -> CirClassType.createInterned(
             classId = classifierId,
@@ -29,7 +28,6 @@ fun <T : CirSimpleType> T.makeNullable(): T {
             index = index,
             isMarkedNullable = true
         )
-        else -> error("Unsupported type: $this")
     }
 
     @Suppress("UNCHECKED_CAST")

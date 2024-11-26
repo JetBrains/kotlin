@@ -211,8 +211,7 @@ internal class LLFirImplicitBodyTargetResolver(
             else -> throwUnexpectedFirElementError(target)
         }
 
-        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-        (target as FirDeclaration).forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
+        target.forEachDeclarationWhichCanHavePostponedSymbols(::publishPostponedSymbols)
     }
 
     private fun publishPostponedSymbols(target: FirCallableDeclaration) {

@@ -954,8 +954,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         }
         require(operation == FirOperation.ASSIGN)
 
-        @Suppress("SENSELESS_COMPARISON") // K2 warning suppression, TODO: KT-62472
-        if (this?.elementType == SAFE_ACCESS_EXPRESSION && this != null) {
+        if (this?.elementType == SAFE_ACCESS_EXPRESSION) {
             val safeCallNonAssignment = convert() as? FirSafeCallExpression
             if (safeCallNonAssignment != null) {
                 return putAssignmentToSafeCall(safeCallNonAssignment, baseSource, rhsExpression, annotations)

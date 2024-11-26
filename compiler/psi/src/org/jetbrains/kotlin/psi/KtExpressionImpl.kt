@@ -34,8 +34,7 @@ abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpressi
             if (newElement is KtExpression) {
                 when (parent) {
                     is KtExpression, is KtValueArgument -> {
-                        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-                        if (KtPsiUtil.areParenthesesNecessary(newElement, expression, parent as KtElement)) {
+                        if (KtPsiUtil.areParenthesesNecessary(newElement, expression, parent)) {
                             val factory = KtPsiFactory(expression.project)
                             return rawReplaceHandler(factory.createExpressionByPattern("($0)", newElement, reformat = reformat))
                         }

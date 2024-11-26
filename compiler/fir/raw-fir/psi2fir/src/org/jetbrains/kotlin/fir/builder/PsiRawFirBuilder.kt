@@ -2915,17 +2915,11 @@ open class PsiRawFirBuilder(
                 fun PsiElement.getLastChildExpression() = children.asList().asReversed().firstIsInstanceOrNull<KtExpression>()
 
                 return when (parent) {
-//                  todo KT-62472 Replace with the following when K2 is used in TeamCity
-//                    is KtBlockExpression, is KtTryExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
-                    is KtBlockExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
-                    is KtTryExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
+                    is KtBlockExpression, is KtTryExpression -> parent.getLastChildExpression() == this && parent.usedAsExpression
                     is KtCatchClause -> (parent.parent as? KtTryExpression)?.usedAsExpression == true
                     is KtClassInitializer, is KtScriptInitializer, is KtSecondaryConstructor, is KtFunctionLiteral, is KtFinallySection -> false
                     is KtDotQualifiedExpression -> parent.firstChild == this
-//                  todo KT-62472 Replace with the following when K2 is used in TeamCity
-//                    is KtFunction, is KtPropertyAccessor -> parent.hasBody() && !parent.hasBlockBody()
-                    is KtFunction -> parent.hasBody() && !parent.hasBlockBody()
-                    is KtPropertyAccessor -> parent.hasBody() && !parent.hasBlockBody()
+                    is KtFunction, is KtPropertyAccessor -> parent.hasBody() && !parent.hasBlockBody()
                     is KtContainerNodeForControlStructureBody -> when (parent.parent.elementType) {
                         KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> false
                         else -> true

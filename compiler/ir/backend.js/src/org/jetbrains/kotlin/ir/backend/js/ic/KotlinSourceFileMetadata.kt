@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFile.Companion.fromSources
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.protobuf.CodedInputStream
@@ -84,7 +84,6 @@ open class KotlinSourceFileMap<out T>(files: Map<KotlinLibraryFile, Map<KotlinSo
     operator fun get(libFile: KotlinLibraryFile, sourceFile: KotlinSourceFile): T? = get(libFile)?.get(sourceFile)
 }
 
-@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
 class KotlinSourceFileMutableMap<T>(
     private val files: MutableMap<KotlinLibraryFile, MutableMap<KotlinSourceFile, T>> = hashMapOf(),
 ) : KotlinSourceFileMap<T>(files) {

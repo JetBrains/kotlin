@@ -22,13 +22,6 @@ object ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker : 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
         val (actual, expect) = matchActualWithNonFinalExpect(declaration, descriptor, context) ?: return
-
-        // The explicit casts won't be necessary when we start compiling kotlin with K2. K1 doesn't build CFG properly
-        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-        declaration as KtClassLikeDeclaration
-        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-        descriptor as ClassifierDescriptorWithTypeParameters
-
         checkExpectActualScopeDiff(expect, actual, context, declaration, descriptor)
     }
 }
@@ -76,11 +69,6 @@ internal fun matchActualWithNonFinalExpect(
 
     // Common supertype of KtTypeAlias and KtClassOrObject is KtClassLikeDeclaration.
     // Common supertype of TypeAliasDescriptor and ClassDescriptor is ClassifierDescriptorWithTypeParameters.
-    // The explicit casts won't be necessary when we start compiling kotlin with K2.
-    @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-    declaration as KtClassLikeDeclaration
-    @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-    descriptor as ClassifierDescriptorWithTypeParameters
 
     if (!descriptor.isActual) return null
 

@@ -261,8 +261,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                     var cursor = irFunction.parentAsClass.parent
                     while (cursor is IrClass) {
                         if (cursor == param.parent) return true
-                        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
-                        cursor = (cursor as IrClass).parent
+                        cursor = cursor.parent
                     }
                     return false
                 }

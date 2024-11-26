@@ -158,7 +158,7 @@ abstract class KtLightMethodImpl protected constructor(
 
     override fun getBody() = null
 
-    @Suppress("OVERRIDE_DEPRECATION") // K2 warning suppression, TODO: KT-62472
+    @Deprecated("Deprecated in Java")
     abstract override fun findDeepestSuperMethod(): PsiMethod?
 
     abstract override fun findDeepestSuperMethods(): Array<out PsiMethod>

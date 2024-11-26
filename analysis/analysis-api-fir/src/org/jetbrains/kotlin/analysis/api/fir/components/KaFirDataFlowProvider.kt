@@ -269,9 +269,6 @@ internal class KaFirDataFlowProvider(
             }
         }
 
-        @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
-        require(firDefaultStatement is FirExpression)
-
         val defaultStatementFromFir = firDefaultStatement.psi as? KtExpression ?: return null
 
         if (!PsiTreeUtil.isAncestor(defaultStatementFromFir, defaultStatement.deparenthesize(), false)) {

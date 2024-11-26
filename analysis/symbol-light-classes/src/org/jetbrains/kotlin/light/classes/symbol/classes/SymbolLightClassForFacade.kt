@@ -90,8 +90,7 @@ internal class SymbolLightClassForFacade(
                         if (callableSymbol !is KaNamedFunctionSymbol && callableSymbol !is KaKotlinPropertySymbol) continue
 
                         // We shouldn't materialize expect declarations
-                        @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
-                        if (callableSymbol is KaDeclarationSymbol && callableSymbol.isExpect) continue
+                        if (callableSymbol.isExpect) continue
                         if ((callableSymbol as? KaAnnotatedSymbol)?.hasInlineOnlyAnnotation() == true) continue
                         if (multiFileClass && callableSymbol.toPsiVisibilityForMember() == PsiModifier.PRIVATE) continue
                         if (hasTypeForValueClassInSignature(callableSymbol = callableSymbol, ignoreReturnType = true)) continue
