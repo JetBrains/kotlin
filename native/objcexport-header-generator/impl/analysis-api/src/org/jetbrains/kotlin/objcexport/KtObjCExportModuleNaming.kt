@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.shortName
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.util.DummyLogger
+import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
 import org.jetbrains.kotlin.konan.file.File as KonanFile
@@ -46,15 +47,17 @@ fun KtObjCExportModuleNaming(implementations: List<KtObjCExportModuleNaming>): K
 }
 
 internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
+    @OptIn(KaExperimentalApi::class)
     override fun KaSession.getModuleName(module: KaModule): String? {
-        /*
+        /**
         In this implementation, we're actually looking into the klib file, trying to resolve
         the contained manifest to get the 'shortName' or 'uniqueName'.
 
         This information is theoretically available already (as also used by the Analysis Api), but not yet accessible.
          */
         if (module !is KaLibraryModule) return null
-        val binaryRoot = module.binaryRoots.singleOrNull() ?: return null
+        val binaryRoot = module.getBinaryRoot() ?: return null
+
         if (!binaryRoot.isDirectory() && binaryRoot.extension != "klib") return null
         val library = runCatching { ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) }
             .getOrElse { error -> error.printStackTrace(); return null } ?: return null
@@ -81,4 +84,16 @@ internal class KtCompositeObjCExportModuleNaming(private val implementations: Li
             }
         }
     }
+}
+
+/**
+ * The same result can be achieved with calling [KaLibraryModule.binaryRoots.singleOrNull]
+ * But it may throw [UnsupportedOperationException] when virtual file is not synced with actual one.
+ * See [com.intellij.openapi.vfs.VirtualFile.toNioPath]
+ */
+@OptIn(KaExperimentalApi::class)
+private fun KaLibraryModule.getBinaryRoot(): Path? {
+    return binaryVirtualFiles.map { file ->
+        file.fileSystem.getNioPath(file)
+    }.singleOrNull()
 }
