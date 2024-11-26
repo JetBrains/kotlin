@@ -16,9 +16,6 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractE
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -227,7 +224,7 @@ public class DebugSymbolRenderer(
             }
         }
 
-        if (symbol !in currentSymbolStack && (renderSymbolsFully || symbol is KaBackingFieldSymbol || symbol is KaPropertyAccessorSymbol || symbol is KaParameterSymbol)) {
+        if (symbol !in currentSymbolStack && (renderSymbolsFully || symbol is KaBackingFieldSymbol || symbol is KaPropertyAccessorSymbol || symbol is KaParameterSymbol || symbol is KaTypeParameterSymbol)) {
             renderSymbol(symbol, printer, currentSymbolStack)
             return
         }

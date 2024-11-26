@@ -40,7 +40,22 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(outerAndInnerTypeAlias.kt)

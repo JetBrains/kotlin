@@ -364,7 +364,19 @@ scopes:
           annotations: []
           type: TypeParam
         typeParameters: [
-          KaTypeParameterSymbol(TypeParam)
+          KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: LOCAL
+            modality: FINAL
+            name: TypeParam
+            origin: SOURCE
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
         ]
         valueParameters: [
           KaValueParameterSymbol:

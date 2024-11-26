@@ -57,8 +57,38 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T)
-    KaTypeParameterSymbol(U)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: U
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
@@ -116,7 +146,22 @@ KaNamedClassSymbol:
       type: X<kotlin/String, T>
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
@@ -198,8 +243,41 @@ KaNamedClassSymbol:
       type: Y<kotlin/Pair<T, R>>
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T)
-    KaTypeParameterSymbol(R)
+    KaTypeParameterSymbol:
+      annotations: [
+        org/jetbrains/annotations/NotNull()
+          psi: KtAnnotationEntry
+      ]
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: R
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(classWithTypeParamsAndSupertypes.kt)

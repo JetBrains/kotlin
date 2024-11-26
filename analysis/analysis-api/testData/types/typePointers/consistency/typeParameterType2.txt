@@ -5,4 +5,16 @@ KaTypeParameterType:
   annotations: []
   name: T
   nullability: NON_NULLABLE
-  symbol: KaTypeParameterSymbol(T)
+  symbol: KaTypeParameterSymbol:
+    annotations: []
+    compilerVisibility: Local
+    isActual: false
+    isExpect: false
+    isReified: false
+    location: CLASS
+    modality: FINAL
+    name: T
+    origin: SOURCE
+    upperBounds: []
+    variance: IN_VARIANCE
+    visibility: LOCAL

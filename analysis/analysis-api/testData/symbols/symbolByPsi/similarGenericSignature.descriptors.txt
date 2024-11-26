@@ -79,7 +79,27 @@ KaNamedFunctionSymbol:
     annotations: []
     type: J
   typeParameters: [
-    KaTypeParameterSymbol(J)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: J
+      origin: SOURCE
+      upperBounds: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: A
+      ]
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
@@ -163,7 +183,22 @@ KaNamedFunctionSymbol:
     annotations: []
     type: T
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(similarGenericSignature.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: [
     KaValueParameterSymbol:

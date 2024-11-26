@@ -61,7 +61,19 @@ scopes:
             type: test/BaseInterface
         ]
         typeParameters: [
-          KaTypeParameterSymbol(T)
+          KaTypeParameterSymbol:
+            annotations: []
+            compilerVisibility: Local
+            isActual: false
+            isExpect: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: T
+            origin: SOURCE
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
         ]
         visibility: PUBLIC
       KaNamedClassSymbol:

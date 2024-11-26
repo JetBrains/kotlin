@@ -61,7 +61,22 @@ KaNamedFunctionSymbol:
     ]
     type: kotlin/collections/List<kotlin/collections/List<@R|BaseAnnotation|()  T>>?
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAliasAsAnnotation.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: []
   visibility: PUBLIC

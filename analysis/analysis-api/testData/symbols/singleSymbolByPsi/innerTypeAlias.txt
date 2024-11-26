@@ -36,8 +36,38 @@ KaTypeAliasSymbol:
   name: MyAlias
   origin: SOURCE
   typeParameters: [
-    KaTypeParameterSymbol(C)
-    KaTypeParameterSymbol(D)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: C
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(innerTypeAlias.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: D
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(innerTypeAlias.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(innerTypeAlias.kt)

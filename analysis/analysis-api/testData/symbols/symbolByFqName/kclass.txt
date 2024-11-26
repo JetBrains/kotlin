@@ -31,7 +31,27 @@ KaNamedClassSymbol:
       type: kotlin/reflect/KClassifier
   ]
   typeParameters: [
-    KaTypeParameterSymbol(T)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: T
+      origin: LIBRARY
+      upperBounds: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Any
+      ]
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null

@@ -99,7 +99,19 @@ KaNamedFunctionSymbol:
     ]
     type: kotlin/collections/Map<X, kotlin/collections/Map<Y, O>>
   typeParameters: [
-    KaTypeParameterSymbol(Y)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: Y
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
   ]
   valueParameters: [
     KaValueParameterSymbol:

@@ -44,7 +44,22 @@ KaNamedFunctionSymbol:
     typeArguments: []
     type: kotlin/Unit
   typeParameters: [
-    KaTypeParameterSymbol(X)
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: X
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
