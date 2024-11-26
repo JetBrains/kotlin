@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.test.HandlersStepBuilder
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -128,7 +130,7 @@ fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.u
 fun TestConfigurationBuilder.klibSteps(klibFacades: KlibFacades, includeAllDumpHandlers: Boolean) = klibFacades.run {
     facadeStep(serializerFacade)
     klibArtifactsHandlersStep {
-        useHandlers(KlibAbiDumpHandler::withOnlyDefaultSignatureVersion)
+        useHandlers(::KlibAbiDumpHandler)
     }
     facadeStep(deserializerFacade)
 }
@@ -160,6 +162,7 @@ fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConf
         +LINK_VIA_SIGNATURES_K1
         +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         DIAGNOSTICS with "-warnings"
+        DUMP_KLIB_ABI with KlibAbiDumpMode.DEFAULT
     }
 
     useAfterAnalysisCheckers(
