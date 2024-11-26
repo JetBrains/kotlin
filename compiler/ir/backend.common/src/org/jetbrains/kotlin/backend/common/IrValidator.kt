@@ -42,6 +42,7 @@ data class IrValidatorConfig(
     val checkAllKotlinFieldsArePrivate: Boolean = false,
     val checkVisibilities: Boolean = false,
     val checkVarargTypes: Boolean = false,
+    val checkUnboundSymbols: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
 
@@ -179,6 +180,7 @@ private class IrFileValidator(
 
     override fun visitElement(element: IrElement) {
         checkTreeConsistency(element)
+        checkUnboundSymbol(element)
         var block = { element.acceptChildrenVoid(this) }
         for (contextUpdater in contextUpdaters) {
             val currentBlock = block
@@ -341,6 +343,14 @@ private class IrFileValidator(
             // The IR tree is completely messed up if it includes one element twice. It may not be a tree at all, there may be cycles.
             // Give up early to avoid stack overflow.
             throw DuplicateIrNodeError(element)
+        }
+    }
+
+    private fun checkUnboundSymbol(element: IrElement) {
+        if (element is IrSymbolOwner && config.checkUnboundSymbols) {
+            if (!element.symbol.isBound) {
+                context.error(element, "Unbound symbol ${element.symbol}")
+            }
         }
     }
 }

@@ -30,6 +30,7 @@ internal class JvmIrValidationBeforeLoweringPhase(
             checkProperties = true,
             checkCrossFileFieldUsage = false,
             checkAllKotlinFieldsArePrivate = false,
+            checkUnboundSymbols = true
         )
 }
 
