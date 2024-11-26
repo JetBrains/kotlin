@@ -140,7 +140,18 @@ abstract class IrBasedCallableDescriptor<T : IrDeclaration>(owner: T) : Callable
 open class IrBasedValueParameterDescriptor(owner: IrValueParameter) : ValueParameterDescriptor,
     IrBasedCallableDescriptor<IrValueParameter>(owner) {
 
-    override val index get() = owner.indexInOldValueParameters
+    override val index: Int
+        get() {
+            if (owner.indexInParameters == -1)
+                return -1
+            val function = owner._parent as? IrFunction
+                ?: return -1
+
+            // Find index in imaginary list that contains only Regular and Context parameters.
+            return function.parameters
+                .subList(0, owner.indexInParameters)
+                .count { it.kind == IrParameterKind.Context || it.kind == IrParameterKind.Regular }
+        }
     override val isCrossinline get() = owner.isCrossinline
     override val isNoinline get() = owner.isNoinline
     override val varargElementType get() = owner.varargElementType?.toIrBasedKotlinType()
@@ -205,11 +216,10 @@ open class IrBasedReceiverParameterDescriptor(owner: IrValueParameter) : Receive
     }
 }
 
-fun IrValueParameter.toIrBasedDescriptor() =
-    if (indexInOldValueParameters < 0)
-        IrBasedReceiverParameterDescriptor(this)
-    else
-        IrBasedValueParameterDescriptor(this)
+fun IrValueParameter.toIrBasedDescriptor() = when (kind) {
+    IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver -> IrBasedReceiverParameterDescriptor(this)
+    IrParameterKind.Context, IrParameterKind.Regular -> IrBasedValueParameterDescriptor(this)
+}
 
 open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParameterDescriptor,
     IrBasedDeclarationDescriptor<IrTypeParameter>(owner) {
