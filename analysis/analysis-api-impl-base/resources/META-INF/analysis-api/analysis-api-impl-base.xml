@@ -52,8 +52,8 @@
     <applicationService serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher" />
 
     <projectService
-        serviceInterface="org.jetbrains.kotlin.analysis.api.symbols.KaPsiBasedSymbolPointerCreator"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.symbols.KaBasePsiBasedSymbolPointerCreator"
+        serviceInterface="org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointerCreator"
     />
 
 

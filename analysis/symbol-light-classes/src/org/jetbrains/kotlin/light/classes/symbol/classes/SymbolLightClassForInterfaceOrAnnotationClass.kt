@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPsiBasedSymbolPointerCreator
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
@@ -45,8 +45,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classSymbolPointer = KaPsiBasedSymbolPointerCreator.getInstance(ktModule.project)
-            .symbolPointerOfType(classOrObject),
+        classSymbolPointer = KaPsiSymbolPointerCreator.symbolPointerOfType(classOrObject),
         ktModule = ktModule,
         manager = classOrObject.manager,
     ) {
