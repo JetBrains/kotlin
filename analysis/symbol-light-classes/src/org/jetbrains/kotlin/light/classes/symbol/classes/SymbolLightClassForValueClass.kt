@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject {
+    @OptIn(KaImplementationDetail::class)
     constructor(
         classOrObject: KtClassOrObject,
         ktModule: KaModule,

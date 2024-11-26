@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.analysis.api.symbols.pointers
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtElement
 import kotlin.reflect.KClass
 
 @KaExperimentalApi
+@KaImplementationDetail
 public interface KaPsiSymbolPointerCreator {
     /**
      * Returns `KaPsiSymbolPointer` for the given [element].
@@ -33,6 +35,8 @@ public interface KaPsiSymbolPointerCreator {
         originalSymbol: S? = null
     ): KaSymbolPointer<S>
 
+    @KaExperimentalApi
+    @KaImplementationDetail
     public companion object {
         private fun getInstance(project: Project): KaPsiSymbolPointerCreator = project.service()
 

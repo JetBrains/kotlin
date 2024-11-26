@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -52,6 +53,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
     }
 
+    @OptIn(KaImplementationDetail::class)
     constructor(
         classOrObject: KtClassOrObject,
         ktModule: KaModule,

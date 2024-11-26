@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiSymbolPointerCreator
@@ -34,6 +35,7 @@ internal class SymbolLightFieldForEnumEntry(
             action(enumEntry.symbol)
         }
 
+    @OptIn(KaImplementationDetail::class)
     private val _modifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
