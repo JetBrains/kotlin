@@ -25,7 +25,7 @@ internal fun WasmOp.isBlockEnd(): Boolean = this == WasmOp.END
  *     - at least, an API user has to think about what to pass a location
  *     - it's not taken from some context-like thing implicitly, so you will not get it implicitly from a wrong context/scope.
  */
-class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
+class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipCommentInstructions: Boolean = false) {
     private var _numberOfNestedBlocks = 0
 
     fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate) {
@@ -281,15 +281,25 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
     }
 
     inline fun commentPreviousInstr(text: () -> String) {
-        buildInstr(WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR, SourceLocation.NoLocation("Pseudo-instruction"), WasmImmediate.ConstString(text()))
+        if (!skipCommentInstructions) {
+            buildInstr(
+                WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR,
+                SourceLocation.NoLocation("Pseudo-instruction"),
+                WasmImmediate.ConstString(text())
+            )
+        }
     }
 
     inline fun commentGroupStart(text: () -> String) {
-        buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_START, SourceLocation.NoLocation("Pseudo-instruction"), WasmImmediate.ConstString(text()))
+        if (!skipCommentInstructions) {
+            buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_START, SourceLocation.NoLocation("Pseudo-instruction"), WasmImmediate.ConstString(text()))
+        }
     }
 
     fun commentGroupEnd() {
-        buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_END, SourceLocation.NoLocation("Pseudo-instruction"))
+        if (!skipCommentInstructions) {
+            buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_END, SourceLocation.NoLocation("Pseudo-instruction"))
+        }
     }
 }
 
