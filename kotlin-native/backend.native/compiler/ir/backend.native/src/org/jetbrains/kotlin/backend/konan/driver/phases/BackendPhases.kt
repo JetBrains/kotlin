@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
@@ -82,9 +82,9 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
     runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
 }
 
-private object NativePreSerializationLoweringPhasesProvider : PreSerializationLoweringPhasesProvider<PreSerializationLoweringContext>() {
+private object NativePreSerializationLoweringPhasesProvider : PreSerializationLoweringPhasesProvider<NativePreSerializationLoweringContext>() {
 
-    override val klibAssertionWrapperLowering: ((PreSerializationLoweringContext) -> FileLoweringPass)?
+    override val klibAssertionWrapperLowering: ((NativePreSerializationLoweringContext) -> FileLoweringPass)?
         get() = null // TODO(KT-71415): Return the actual lowering here
 
     override val irMangler: KotlinMangler.IrMangler
@@ -92,7 +92,7 @@ private object NativePreSerializationLoweringPhasesProvider : PreSerializationLo
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runIrInliner(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
-    val loweringContext = PreSerializationLoweringContext(fir2IrOutput.fir2irActualizedResult.irBuiltIns, environment.configuration)
+    val loweringContext = NativePreSerializationLoweringContext(fir2IrOutput.fir2irActualizedResult.irBuiltIns, environment.configuration)
     return fir2IrOutput.copy(
             fir2irActualizedResult = newEngine(loweringContext) { engine ->
                 engine.runPreSerializationLoweringPhases(

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
 import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringContext
 import org.jetbrains.kotlin.ir.backend.js.JsPreSerializationLoweringPhasesProvider
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -124,7 +125,7 @@ abstract class FirAbstractInvalidationTest(
         val transformedResult = PhaseEngine(
             PhaseConfig(),
             PhaserState(),
-            PreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
+            JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
         ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)
 
         serializeFirKlib(
