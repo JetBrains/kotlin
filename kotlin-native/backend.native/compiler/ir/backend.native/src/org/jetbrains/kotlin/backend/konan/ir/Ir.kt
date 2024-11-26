@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -35,6 +36,7 @@ internal interface SymbolLookupUtils {
 // This is what Context collects about IR.
 internal class KonanIr(override val symbols: KonanSymbols): Ir()
 
+@OptIn(InternalSymbolFinderAPI::class)
 internal class KonanSymbols(
         context: PhaseContext,
         val lookup: SymbolLookupUtils,

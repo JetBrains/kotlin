@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.SymbolFinder
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -49,7 +50,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-@OptIn(Fir2IrBuiltInsInternals::class)
+@OptIn(Fir2IrBuiltInsInternals::class, InternalSymbolFinderAPI::class)
 class IrBuiltInsOverFir(
     private val c: Fir2IrComponents,
     private val syntheticSymbolsContainer: Fir2IrSyntheticIrBuiltinsSymbolsContainer
@@ -640,6 +641,7 @@ class IrBuiltInsOverFir(
 }
 
 @OptIn(Fir2IrBuiltInsInternals::class, UnsafeDuringIrConstructionAPI::class)
+@InternalSymbolFinderAPI
 class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContainer) : SymbolFinder() {
     override fun findFunctions(name: Name, vararg packageNameSegments: String): Iterable<IrSimpleFunctionSymbol> {
         return fir2irBuiltins.findFunctions(FqName.fromSegments(packageNameSegments.asList()), name)

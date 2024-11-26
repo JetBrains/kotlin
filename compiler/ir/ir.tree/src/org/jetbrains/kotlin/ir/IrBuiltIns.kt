@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
  * Symbols for builtins that are available without any context and are not specific to any backend
  * (but specific to the frontend)
  */
+@OptIn(InternalSymbolFinderAPI::class)
 abstract class IrBuiltIns {
     abstract val symbolFinder: SymbolFinder
     abstract val languageVersionSettings: LanguageVersionSettings
@@ -233,6 +234,11 @@ object BuiltInOperatorNames {
     const val CHECK_NOT_NULL = "CHECK_NOT_NULL"
 }
 
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@Target(AnnotationTarget.CLASS)
+annotation class InternalSymbolFinderAPI
+
+@InternalSymbolFinderAPI
 abstract class SymbolFinder {
     // TODO: drop variants from segments, add helper from whole fqn
     abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>

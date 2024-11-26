@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -29,6 +30,7 @@ abstract class Ir {
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
 
+@OptIn(InternalSymbolFinderAPI::class)
 open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     val symbolFinder = irBuiltIns.symbolFinder
 

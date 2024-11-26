@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.SymbolFinder
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -74,7 +75,7 @@ interface JsCommonBackendContext : CommonBackendContext {
     val bodilessBuiltInsPackageFragment: IrPackageFragment
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class, InternalSymbolFinderAPI::class)
 class JsCommonCoroutineSymbols(
     symbolFinder: SymbolFinder,
 ) {

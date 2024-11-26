@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -34,8 +35,10 @@ class SymbolTableWithBuiltInsDeduplication(
      * As long as [SymbolFinder] aren't bound, the symbol table will operate like [SymbolTable], as the initialization of built-ins requires
      * a symbol table.
      */
+    @OptIn(InternalSymbolFinderAPI::class)
     private var symbolFinder: SymbolFinderOverDescriptors? = null
 
+    @OptIn(InternalSymbolFinderAPI::class)
     fun bindSymbolFinder(symbolFinder: SymbolFinderOverDescriptors) {
         if (this.symbolFinder == null) {
             this.symbolFinder = symbolFinder
@@ -57,6 +60,7 @@ class SymbolTableWithBuiltInsDeduplication(
          * will create a symbol in such a case (via `super.referenceClass`) and [org.jetbrains.kotlin.ir.util.DeclarationStubGenerator] will
          * create a stub for the symbol if [referenceClass] was invoked from the stub generator.
          */
+        @OptIn(InternalSymbolFinderAPI::class)  // KT-73430: Consider not using `findBuiltInClassDescriptor()` here
         @ObsoleteDescriptorBasedAPI
         override fun referenceClass(declaration: ClassDescriptor): IrClassSymbol {
             val symbolFinder = this@SymbolTableWithBuiltInsDeduplication.symbolFinder ?: return super.referenceClass(declaration)

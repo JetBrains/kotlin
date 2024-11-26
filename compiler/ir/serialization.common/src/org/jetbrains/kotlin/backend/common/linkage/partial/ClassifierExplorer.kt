@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -46,6 +47,7 @@ internal class ClassifierExplorer(
         )
     }
 
+    @OptIn(InternalSymbolFinderAPI::class)  // KT-73430: Consider pre-finding these symbols and storing them into Symbols
     private val permittedAnnotationParameterSymbols: Set<IrClassSymbol> by lazy {
         buildSet {
             this += permittedAnnotationArrayParameterSymbols
