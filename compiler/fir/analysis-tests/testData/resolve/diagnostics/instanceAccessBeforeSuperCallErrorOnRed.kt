@@ -2,5 +2,5 @@
 // ISSUE: KT-72246
 
 class Foo(a: Any) {
-    constructor(): this({ data: Int -> }()
+    constructor(): this(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>{ data: Int -> }()<!><!SYNTAX!><!>
 }
