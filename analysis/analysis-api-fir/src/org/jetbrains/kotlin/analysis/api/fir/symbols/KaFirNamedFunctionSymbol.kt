@@ -194,7 +194,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
 
     override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaNamedFunctionSymbol>(analysisSession.project)?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaNamedFunctionSymbol>()?.let { return it }
 
         when (val kind = location) {
             KaSymbolLocation.TOP_LEVEL -> KaFirTopLevelFunctionSymbolPointer(

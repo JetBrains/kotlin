@@ -131,7 +131,7 @@ internal class KaFirPropertyGetterSymbol(
         get() = withValidityAssertion { null }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaPropertyGetterSymbol>(analysisSession.project)
+        psiBasedSymbolPointerOfTypeIfSource<KaPropertyGetterSymbol>()
             ?: KaBasePropertyGetterSymbolPointer(propertySymbolPointer = owningKaProperty.createPointer(), originalSymbol = this)
     }
 

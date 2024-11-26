@@ -49,7 +49,7 @@ internal open class KaFirAnonymousObjectSymbol private constructor(
         get() = withValidityAssertion { createSuperTypes() }
 
     override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaAnonymousObjectSymbol>(analysisSession.project)?.let { return it }
+        psiBasedSymbolPointerOfTypeIfSource<KaAnonymousObjectSymbol>()?.let { return it }
 
         throw KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)
     }

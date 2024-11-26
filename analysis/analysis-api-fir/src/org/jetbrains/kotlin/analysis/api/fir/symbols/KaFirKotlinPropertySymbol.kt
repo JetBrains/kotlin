@@ -123,7 +123,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
 
     override fun createPointer(): KaSymbolPointer<KaKotlinPropertySymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaVariableSymbol>(analysisSession.project)?.let {
+        psiBasedSymbolPointerOfTypeIfSource<KaVariableSymbol>()?.let {
             return KaFirPsiBasedPropertySymbolPointer(it, this)
         }
 

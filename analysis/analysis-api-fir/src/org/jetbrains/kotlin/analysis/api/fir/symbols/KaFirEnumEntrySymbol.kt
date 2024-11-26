@@ -84,7 +84,7 @@ internal class KaFirEnumEntrySymbol private constructor(
         }
 
     override fun createPointer(): KaSymbolPointer<KaEnumEntrySymbol> = withValidityAssertion {
-        psiBasedSymbolPointerOfTypeIfSource<KaEnumEntrySymbol>(analysisSession.project)
+        psiBasedSymbolPointerOfTypeIfSource<KaEnumEntrySymbol>()
             ?: KaFirEnumEntrySymbolPointer(analysisSession.createOwnerPointer(this), name, this)
     }
 
