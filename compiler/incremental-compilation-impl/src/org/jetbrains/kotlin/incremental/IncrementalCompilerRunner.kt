@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesCachedHistory
+import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
@@ -81,9 +83,10 @@ abstract class IncrementalCompilerRunner<
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
-    private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
     private val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
+    private val dirtyFilesCachedHistory = DirtyFilesCachedHistory(workingDir)
+
     protected open val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 
     /**
@@ -368,11 +371,7 @@ abstract class IncrementalCompilerRunner<
     protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: DeterminableFiles.Known) {
         dirtyFiles.add(changedFiles.modified, "was modified since last time")
         dirtyFiles.add(changedFiles.removed, "was removed since last time")
-
-        if (dirtySourcesSinceLastTimeFile.exists()) {
-            val files = dirtySourcesSinceLastTimeFile.readLines().map(::File)
-            dirtyFiles.add(files, "was not compiled last time")
-        }
+        dirtyFiles.add(dirtyFilesCachedHistory.read(), "was not compiled last time")
     }
 
     protected sealed class CompilationMode {
@@ -523,8 +522,7 @@ abstract class IncrementalCompilerRunner<
 
             dirtySources.addAll(compiledSources)
             allDirtySources.addAll(dirtySources)
-            val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.normalize().absolutePath }
-            transaction.writeText(dirtySourcesSinceLastTimeFile.toPath(), text)
+            dirtyFilesCachedHistory.store(transaction, allDirtySources)
 
             val generatedFiles = outputItemsCollector.outputs.map {
                 it.toGeneratedFile(metadataVersionFromLanguageVersion)
@@ -545,7 +543,7 @@ abstract class IncrementalCompilerRunner<
 
             if (exitCode != ExitCode.OK) break
 
-            transaction.deleteFile(dirtySourcesSinceLastTimeFile.toPath())
+            dirtyFilesCachedHistory.clear(withTransaction = transaction)
 
             val changesCollector = ChangesCollector()
             reporter.measure(GradleBuildTime.IC_UPDATE_CACHES) {
