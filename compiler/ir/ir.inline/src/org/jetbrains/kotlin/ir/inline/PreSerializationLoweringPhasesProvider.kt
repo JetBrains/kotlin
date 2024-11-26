@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -43,8 +44,8 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
     }
 
     // TODO: The commented out lowerings must be copied here from the second compilation stage in scope of KT-71415
-    fun lowerings(): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
-        SameTypeNamedCompilerPhase(
+    fun lowerings(): SameTypeNamedCompilerPhase<Context, IrModuleFragment> {
+        return SameTypeNamedCompilerPhase(
             name = "PreSerializationLowerings",
             actions = DEFAULT_IR_ACTIONS,
             nlevels = 1,
@@ -55,9 +56,7 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
                 createFilePhases(
                     klibAssertionWrapperLowering, // Only on Native
                     jsCodeOutliningLowering, // Only on JS
-//                  ::NullableFieldsForLateinitCreationLowering,
-//                  ::NullableFieldsDeclarationLowering,
-//                  ::LateinitUsageLowering,
+                    ::LateinitLowering,
 //                  ::SharedVariablesLowering,
 //                  ::OuterThisInInlineFunctionsSpecialAccessorLowering,
 //                  ::LocalClassesInInlineLambdasLowering,
@@ -80,4 +79,5 @@ abstract class PreSerializationLoweringPhasesProvider<Context : LoweringContext>
 //              validateIrAfterInliningAllFunctions
             )
         )
+    }
 }
