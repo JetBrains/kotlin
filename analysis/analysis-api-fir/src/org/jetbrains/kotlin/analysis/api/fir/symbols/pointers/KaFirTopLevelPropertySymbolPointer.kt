@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.name.CallableId
 import java.lang.ref.WeakReference
 
 internal class KaFirTopLevelPropertySymbolPointer(
-    callableId: CallableId, private val signature: FirCallableSignature,
+    callableId: CallableId,
+    private val signature: FirCallableSignature,
     override var cachedSymbol: WeakReference<KaKotlinPropertySymbol>?
 ) :
     KaTopLevelCallableSymbolPointer<KaKotlinPropertySymbol>(callableId) {

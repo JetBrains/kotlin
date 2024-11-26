@@ -29,7 +29,8 @@ import kotlin.reflect.KClass
 @KaImplementationDetail
 class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
     private val psiPointer: SmartPsiElementPointer<out KtElement>,
-    private val expectedClass: KClass<S>, override var cachedSymbol: WeakReference<S>?,
+    private val expectedClass: KClass<S>,
+    override var cachedSymbol: WeakReference<S>?,
 ) : KaBaseSymbolPointer<S>() {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): S? {
