@@ -21,7 +21,7 @@ abstract class KaBaseSymbolPointer<out S : KaSymbol>(originalSymbol: S? = null) 
     final override fun restoreSymbol(analysisSession: KaSession): S? {
         val cached = cachedSymbol?.get()
         val lifetimeToken = cached?.token
-        if (lifetimeToken?.isValid() == true && lifetimeToken.isAccessible()) {
+        if (lifetimeToken == analysisSession.token) {
             return cached
         } else {
             cachedSymbol = null

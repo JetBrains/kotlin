@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -58,6 +59,7 @@ internal class SymbolLightClassForFacade(
 
     private val firstFileInFacade: KtFile get() = files.first()
 
+    @OptIn(KaImplementationDetail::class)
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
