@@ -560,7 +560,7 @@ class WasmCompiledModuleFragment(
                     currentStringId = stringAddressAndId.size
                     stringAddressAndId[string] = currentStringAddress to currentStringId
 
-                    val constData = ConstantDataCharArray("string_literal", string.toCharArray())
+                    val constData = ConstantDataCharArray(string.toCharArray())
                     stringDataSectionBytes += constData.toBytes().toList()
                     stringDataSectionStart += constData.sizeInBytes
                 } else {
@@ -593,7 +593,7 @@ class WasmCompiledModuleFragment(
                     WasmI64 -> LONG_SIZE_BYTES
                     else -> TODO("type ${constantArraySegment.second} is not implemented")
                 }
-                val constData = ConstantDataIntegerArray("constant_array", constantArraySegment.first, integerSize)
+                val constData = ConstantDataIntegerArray(constantArraySegment.first, integerSize)
                 data.add(WasmData(WasmDataMode.Passive, constData.toBytes()))
             }
         }
