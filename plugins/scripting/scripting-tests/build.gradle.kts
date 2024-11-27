@@ -32,6 +32,8 @@ sourceSets {
     }
 }
 
+optInToDeprecatedCompilerApi()
+
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
     workingDir = rootDir

@@ -47,6 +47,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
             )
     )
 }
+optInToDeprecatedCompilerApi()
 
 sourceSets {
     "main" { projectDefault() }

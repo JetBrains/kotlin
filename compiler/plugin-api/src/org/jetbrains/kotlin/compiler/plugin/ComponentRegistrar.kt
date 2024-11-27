@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.compiler.plugin
 
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
     level = DeprecationLevel.WARNING
 )
 @ExperimentalCompilerApi
+@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_0_0)
 interface ComponentRegistrar {
     companion object {
         @Suppress("DEPRECATION")

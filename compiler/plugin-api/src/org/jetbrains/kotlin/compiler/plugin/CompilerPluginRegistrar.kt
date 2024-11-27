@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.compiler.plugin
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
 @ExperimentalCompilerApi
+@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_0_0)
 abstract class CompilerPluginRegistrar {
     companion object {
         val COMPILER_PLUGIN_REGISTRARS: CompilerConfigurationKey<MutableList<CompilerPluginRegistrar>> =

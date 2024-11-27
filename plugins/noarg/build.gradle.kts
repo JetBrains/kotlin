@@ -43,6 +43,7 @@ sourceSets {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 publish()
 

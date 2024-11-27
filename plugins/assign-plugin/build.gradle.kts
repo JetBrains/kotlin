@@ -32,6 +32,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 sourceSets {
     "main" { none() }

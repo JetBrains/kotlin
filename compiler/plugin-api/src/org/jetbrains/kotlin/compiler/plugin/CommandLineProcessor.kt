@@ -16,11 +16,14 @@
 
 package org.jetbrains.kotlin.compiler.plugin
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 @ExperimentalCompilerApi
 @JvmDefaultWithCompatibility
+@DeprecatedCompilerApi(CompilerVersionOfApiDeprecation._2_0_0)
 interface CommandLineProcessor {
     val pluginId: String
     val pluginOptions: Collection<AbstractCliOption>

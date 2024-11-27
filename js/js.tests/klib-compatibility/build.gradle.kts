@@ -35,6 +35,7 @@ val releasedCompilerDist: TaskProvider<Sync> by tasks.registering(Sync::class) {
 val generationRoot = projectDir.resolve("tests-gen")
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 sourceSets {
     "main" { }

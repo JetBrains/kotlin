@@ -91,6 +91,7 @@ dependencies {
 val generationRoot = projectDir.resolve("tests-gen")
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 sourceSets {
     "main" { }

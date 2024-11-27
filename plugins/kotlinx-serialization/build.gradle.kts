@@ -64,6 +64,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 sourceSets {
     "main" { none() }
@@ -74,6 +75,7 @@ sourceSets {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 publish {
     artifactId = artifactId.replace("kotlinx-", "kotlin-")
