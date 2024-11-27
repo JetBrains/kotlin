@@ -5,4 +5,5 @@ Classifier names:
   NestedSuperClass
 
 Callable names:
+  field
   hello

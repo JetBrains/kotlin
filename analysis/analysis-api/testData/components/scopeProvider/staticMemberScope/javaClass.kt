@@ -25,6 +25,8 @@ public abstract class SuperClass implements SuperInterface {
         return getRandomNumber();
     }
 
+    public int superField = 1;
+
     // Both static callables will be included in JavaClass's static member scope, because Kotlin propagates static methods from
     // super-classes to sub-classes, just like Java. So `JavaClass.superBar()` will be a valid call in Kotlin and Java.
     public static int superFoo = 5;
@@ -45,6 +47,8 @@ public class JavaClass extends SuperClass {
     public static String bar() {
         return "bar";
     }
+
+    public int field = 1;
 
     public void hello() {
         System.out.println("hello");

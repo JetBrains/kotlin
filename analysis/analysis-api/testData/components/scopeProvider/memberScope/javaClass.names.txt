@@ -8,6 +8,7 @@ Callable names:
   <init>
   bar
   equals
+  field
   foo
   getActualRandomNumber
   getRandomNumber
@@ -15,5 +16,6 @@ Callable names:
   hello
   method
   superBar
+  superField
   superFoo
   toString

@@ -4,5 +4,6 @@ Classifier names:
 
 Callable names:
   bar
+  field
   foo
   hello

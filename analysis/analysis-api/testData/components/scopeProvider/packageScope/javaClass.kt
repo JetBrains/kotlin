@@ -24,6 +24,8 @@ public abstract class SuperClass implements SuperInterface {
         return getRandomNumber();
     }
 
+    public int superField = 1;
+
     public static int superFoo = 5;
 
     public static String superBar() {
@@ -44,6 +46,8 @@ public class JavaClass extends SuperClass {
     public static String bar() {
         return "bar";
     }
+
+    public int field = 1;
 
     public void hello() {
         System.out.println("hello");

@@ -1,8 +1,10 @@
+var field: kotlin.Int
+
 open fun bar(): kotlin.String!
 
-open fun hello()
-
 var foo: kotlin.Int
+
+open fun hello()
 
 open inner class InnerClass
 

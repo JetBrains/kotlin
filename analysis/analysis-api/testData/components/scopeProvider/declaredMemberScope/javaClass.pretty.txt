@@ -1,3 +1,5 @@
+var field: kotlin.Int
+
 open fun hello()
 
 open inner class InnerClass

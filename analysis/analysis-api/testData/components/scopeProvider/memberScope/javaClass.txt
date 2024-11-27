@@ -1,3 +1,32 @@
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /JavaClass.field
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: false
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: field
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.hello
@@ -127,6 +156,35 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /SuperClass.superField
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: false
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: superField
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: SuperClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: SuperClass
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
