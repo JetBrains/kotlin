@@ -1,10 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-72740
-// FIR_PARSER: Psi
+// IGNORE_PHASE_VERIFICATION: code inside annotations
+// COMPARE_WITH_LIGHT_TREE
 annotation class Anno(val s: String)
 
 @Anno("Use 'AAA' instead"
-open class MyClass : Any() {
+<!UNRESOLVED_REFERENCE!>open<!> <!EXPRESSION_EXPECTED{PSI}!>class MyClass : Any() {
     val foo = 24
 
     @Anno("str")
@@ -12,10 +13,10 @@ open class MyClass : Any() {
 
     }
 
-    companion object {
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION{PSI}!>companion<!> object {
         @Anno("something")
         fun getSomething(a: Int = 24) {
 
         }
     }
-}
+}<!><!SYNTAX, SYNTAX!><!>

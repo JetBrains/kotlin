@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-72740
-// FIR_PARSER: Psi
-
+// IGNORE_PHASE_VERIFICATION: code inside annotations
+// COMPARE_WITH_LIGHT_TREE
 annotation class Anno(val s: String)
 
 @Deprecated("Use 'AAA' instead"

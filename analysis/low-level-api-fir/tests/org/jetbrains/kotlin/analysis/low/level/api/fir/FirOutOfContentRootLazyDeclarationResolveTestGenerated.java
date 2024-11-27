@@ -1228,6 +1228,30 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     public void testAnonymousObjectInInvalidPosition() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/anonymousObjectInInvalidPosition.kt");
     }
+
+    @Test
+    @TestMetadata("classLevelDanglingAnnotationWithNestedDeclarations.kt")
+    public void testClassLevelDanglingAnnotationWithNestedDeclarations() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/classLevelDanglingAnnotationWithNestedDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt")
+    public void testClassLevelDeprecatedDanglingAnnotationWithNestedDeclarations() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationWithNestedDeclarations.kt")
+    public void testDanglingAnnotationWithNestedDeclarations() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationWithNestedDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("deprecatedDanglingAnnotationWithNestedDeclarations.kt")
+    public void testDeprecatedDanglingAnnotationWithNestedDeclarations() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/deprecatedDanglingAnnotationWithNestedDeclarations.kt");
+    }
   }
 
   @Nested

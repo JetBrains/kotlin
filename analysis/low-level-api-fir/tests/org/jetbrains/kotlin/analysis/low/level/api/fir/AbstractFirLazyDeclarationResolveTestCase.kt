@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
@@ -56,6 +57,14 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
             file to fun(phase: FirResolvePhase) {
                 file.lazyResolveToPhaseByDirective(phase, testServices)
+            }
+        }
+        Directives.RESOLVE_DANGLING_MODIFIER in testServices.moduleStructure.allDirectives -> {
+            val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
+            val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+            val danglingModifier = file.declarations.last() as FirDanglingModifierList
+            danglingModifier to fun(phase: FirResolvePhase) {
+                danglingModifier.lazyResolveToPhaseByDirective(phase, testServices)
             }
         }
         else -> {
@@ -193,6 +202,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
         val RESOLVE_PROPERTY_PART by enumDirective<PropertyPart>("Choose getter/setter/backing field in the case of property")
         val RESOLVE_SCRIPT by directive("Resolve script instead of declaration at caret")
         val RESOLVE_FILE by directive("Resolve file instead of declaration at caret")
+        val RESOLVE_DANGLING_MODIFIER by directive("Resolve a file dangling modifier list instead of declaration at caret")
 
         val LAZY_MODE by enumDirective<LazyResolveMode>("Describes which lazy resolution call should be used")
     }

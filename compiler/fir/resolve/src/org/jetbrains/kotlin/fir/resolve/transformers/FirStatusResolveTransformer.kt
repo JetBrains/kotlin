@@ -247,6 +247,11 @@ abstract class AbstractFirStatusResolveTransformer(
         }
     }
 
+    override fun transformDanglingModifierList(
+        danglingModifierList: FirDanglingModifierList,
+        data: FirResolvedDeclarationStatus?,
+    ): FirDanglingModifierList = danglingModifierList
+
     override fun transformTypeAlias(
         typeAlias: FirTypeAlias,
         data: FirResolvedDeclarationStatus?
