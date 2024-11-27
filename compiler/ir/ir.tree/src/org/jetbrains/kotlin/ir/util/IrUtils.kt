@@ -875,9 +875,12 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map
 }
 
 fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
-    copyReceiverParametersFrom(from, substitutionMap)
-    valueParameters = valueParameters memoryOptimizedPlus from.valueParameters.map {
-        it.copyTo(this, type = it.type.substitute(substitutionMap))
+    parameters = parameters memoryOptimizedPlus from.parameters.map {
+        it.copyTo(
+            this,
+            type = it.type.substitute(substitutionMap),
+            varargElementType = it.varargElementType?.substitute(substitutionMap),
+        )
     }
 }
 
