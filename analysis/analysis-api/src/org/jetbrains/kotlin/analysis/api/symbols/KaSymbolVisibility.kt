@@ -11,13 +11,18 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 
 /**
- * See [the official Kotlin documentation](https://kotlinlang.org/docs/visibility-modifiers.html),
- * [Calling Java from Kotlin](https://kotlinlang.org/docs/java-interop.html)
- * and [Calling Kotlin from Java](https://kotlinlang.org/docs/java-to-kotlin-interop.html) for more details.
+ * The [visibility](https://kotlinlang.org/docs/visibility-modifiers.html) of a [KaSymbol]. As symbols can represent both Kotlin and Java
+ * declarations, [KaSymbolVisibility] covers both visibility definitions.
+ *
+ * In addition, the following articles contain information about how visibility is affected by Kotlin and Java interoperability:
+ *
+ * - [Calling Java from Kotlin](https://kotlinlang.org/docs/java-interop.html)
+ * - [Calling Kotlin from Java](https://kotlinlang.org/docs/java-to-kotlin-interop.html#visibility)
  */
 public enum class KaSymbolVisibility {
     /**
-     * A default visibility in Kotlin which means that your declarations will be visible everywhere.
+     * A *public* declaration is visible everywhere. This is the default visibility in Kotlin.
+     *
      * ```kotlin
      * fun publicFunction() {} // public
      * ```
@@ -25,22 +30,23 @@ public enum class KaSymbolVisibility {
     PUBLIC,
 
     /**
-     * The same as [PRIVATE], but will be also visible in subclasses.
+     * A *protected* declaration is visible inside its containing declaration and all its members, as well as in subclasses.
      *
      * ```kotlin
      * abstract class BaseClass { // public
-     *   protected abstract doSmth() // protected
+     *     protected abstract doSmth() // protected
      *
-     *   fun publicApi() { // public
-     *     doSmth()
-     *   }
+     *     fun publicApi() { // public
+     *         doSmth()
+     *     }
      * }
      * ```
      */
     PROTECTED,
 
     /**
-     * A declaration with this visibility will be visible everywhere in the same module.
+     * An *internal* declaration is visible everywhere in the same module. If the declaration is a class member, the class must also be
+     * visible for the internal member to be visible.
      *
      * ```kotlin
      * internal fun internalFunction() {} // internal
@@ -49,58 +55,62 @@ public enum class KaSymbolVisibility {
     INTERNAL,
 
     /**
-     * Represents Java protected visibility.
+     * A *package-protected* Java declaration is visible in its class, package, and in all subclasses (even outside the package).
      *
-     * Unlike Kotlin, `protected` visibility in Java allow usages not only from inherited classes, but also
-     * from other classes in the same package.
-     * Effectively, it is a union of [PROTECTED] and [PACKAGE_PRIVATE].
+     * Unlike Kotlin, `protected` visibility in Java allows usages not only from inherited classes, but also from other classes in the same
+     * package. Effectively, it is a union of [PROTECTED] and [PACKAGE_PRIVATE].
      *
      * ```java
      * public class JavaClass { // public
-     *   protected void packageProtectedMember() { // package-protected
-     *   }
+     *     protected void packageProtectedMember() { // package-protected
+     *     }
      *
-     *   protected static void packageProtectedStaticMember() { // package-protected
-     *   }
+     *     protected static void packageProtectedStaticMember() { // package-protected
+     *     }
      * }
      * ```
      */
     PACKAGE_PROTECTED,
 
     /**
-     * Represents Java package-private visibility.
-     * This is a default visibility in Java.
+     * A *package-private* Java declaration is visible in its class and package. This is the default visibility in Java.
+     *
      * ```java
      * class JavaClass { // package-private
-     *   void foo() { // package-private
-     *   }
+     *     void foo() { // package-private
+     *     }
      * }
      * ```
      */
     PACKAGE_PRIVATE,
 
     /**
-     * A declaration with this visibility will be visible inside this declaration and all its members.
+     * A *private* declaration is visible inside its containing declaration and all its members, or inside the whole file if the declaration
+     * is top-level.
      *
      * ```kotlin
-     * private fun privateFunction() {}
+     * private fun privateFunction() {} // private (visible in the file)
+     *
+     * class Foo {
+     *     private fun privateMember() {} // private (visible in `Foo`)
+     * }
      * ```
      */
     PRIVATE,
 
     /**
-     * Local declarations have this visibility.
+     * The visibility of local declarations.
      *
      * ```kotlin
      * fun publicFunction() { // public
-     *   val localProperty = 0 // local
-     *   fun localFunction() { } // local
+     *     val localProperty = 0 // local
+     *     fun localFunction() { } // local
      * }
      */
     LOCAL,
 
     /**
-     * This visibility may appear in the case of error code, there it is impossible to infer the proper one.
+     * An unknown visibility, for example in the case of erroneous code where it is impossible to infer the proper visibility.
      */
     UNKNOWN,
 }

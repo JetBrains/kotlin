@@ -65,18 +65,14 @@ public enum class KaSymbolLocation {
 /**
  * Indicates whether a [KaSymbol] is at the top level.
  *
- * A symbol is considered top level if it is not a part of other symbols.
- *
- * @return `true` if the symbol is top level, `false` otherwise.
+ * A symbol is considered top-level if it is not a part of other symbols.
  *
  * @see KaSymbolLocation.TOP_LEVEL
  */
 public val KaSymbol.isTopLevel: Boolean get() = location == KaSymbolLocation.TOP_LEVEL
 
 /**
- * Represents whether a symbol is defined locally within a body.
- *
- * @return `true` if the symbol is defined locally within a body, `false` otherwise.
+ * Indicates whether a symbol is defined locally within a body.
  *
  * @see KaSymbolLocation.LOCAL
  */

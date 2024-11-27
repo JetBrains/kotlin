@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.Name
  * "Semantic" refers to the meaning of code and relationships between declarations from the compiler's standpoint, as opposed to a purely
  * syntactic representation.
  *
+ * @see KaSymbolProvider
  * @see org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
  */
 public interface KaSymbol : KaLifetimeOwner {
@@ -59,13 +60,13 @@ public interface KaSymbol : KaLifetimeOwner {
 }
 
 /**
- * Returns the name of the [KaSymbol] if it has it.
+ * Returns the name of the [KaSymbol] if it has one.
  */
 public val KaSymbol.name: Name?
     get() = if (this is KaNamedSymbol) name else null
 
 /**
- * Get symbol [PsiElement] if its type is [PSI], otherwise throws ClassCastException
+ * Returns the symbol's [PsiElement] if its type is [PSI], and otherwise throws a [ClassCastException].
  *
  * @see KaSymbol.psi
  */
@@ -73,7 +74,7 @@ public inline fun <reified PSI : PsiElement> KaSymbol.psi(): PSI =
     psi as PSI
 
 /**
- * Get symbol [PsiElement] if its type is [PSI], otherwise null
+ * Returns the symbol's [PsiElement] if its type is [PSI], or `null` otherwise.
  *
  * @see KaSymbol.psi
  */
@@ -81,7 +82,8 @@ public inline fun <reified PSI : PsiElement> KaSymbol.psiSafe(): PSI? =
     psi as? PSI
 
 /**
- * Get symbol [PsiElement]. **null** if its [KaSymbol.origin] !is [KaSymbolOrigin.SOURCE]. throws **ClassCastException** if its type !is [PSI]
+ * Returns the symbol's [PsiElement]. Returns `null` if its [KaSymbol.origin] is not [KaSymbolOrigin.SOURCE]. Throws a [ClassCastException]
+ * if its type is not [PSI].
  *
  * @see KaSymbol.psi
  */
@@ -93,8 +95,8 @@ public inline fun <reified PSI : PsiElement> KaSymbol.sourcePsi(): PSI? {
 }
 
 /**
- * Get symbol [PsiElement] if its type is [PSI] and [KaSymbol.origin] is [KaSymbolOrigin.SOURCE] or [KaSymbolOrigin.JAVA_SOURCE],
- * otherwise null
+ * Returns the symbol's [PsiElement] if its type is [PSI] and [KaSymbol.origin] is [KaSymbolOrigin.SOURCE] or [KaSymbolOrigin.JAVA_SOURCE],
+ * and `null` otherwise.
  *
  * @see KaSymbol.psiSafe
  */

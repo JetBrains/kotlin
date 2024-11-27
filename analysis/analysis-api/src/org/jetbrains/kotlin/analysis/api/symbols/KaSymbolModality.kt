@@ -6,21 +6,19 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 /**
- * See [the official Kotlin documentation](https://kotlinlang.org/docs/inheritance.html) about inheritance.
+ * A symbol's modality defines its ability to be [inherited](https://kotlinlang.org/docs/inheritance.html).
  */
 public enum class KaSymbolModality {
     /**
-     * Default modality declarations in Kotlin.
-     *
-     * A declaration with an implementation which cannot be overridden.
+     * A declaration with an implementation that cannot be overridden. This is the default modality in Kotlin.
      */
     FINAL,
 
     /**
-     * Sealed classes and interfaces provide controlled inheritance of your class hierarchies.
-     * All direct subclasses of a sealed class are known at compile time.
+     * A declaration which can be overridden according to the rules of [sealed classes and interfaces](https://kotlinlang.org/docs/sealed-classes.html).
      *
-     * See more details in [the official Kotlin documentation](https://kotlinlang.org/docs/sealed-classes.html).
+     * Sealed classes and interfaces provide controlled inheritance of class hierarchies. All direct subclasses of a sealed class are known
+     * at compile time.
      */
     SEALED,
 
@@ -30,7 +28,7 @@ public enum class KaSymbolModality {
     OPEN,
 
     /**
-     * A declaration without an implementation.
+     * A declaration without an implementation. It can be overridden, and *must be* overridden in non-abstract classes.
      */
     ABSTRACT;
 }
