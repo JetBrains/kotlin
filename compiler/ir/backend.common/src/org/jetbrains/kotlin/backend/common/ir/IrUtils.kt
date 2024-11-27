@@ -71,11 +71,11 @@ fun IrExpression?.isPure(
                                 operator == IrTypeOperator.NOT_INSTANCEOF
                         ) && argument.isPure(anyVariable, checkFields, symbols)
             is IrCall -> if (symbols?.isSideEffectFree(this) == true) {
-                for (i in 0 until valueArgumentsCount) {
-                    val valueArgument = getValueArgument(i)
-                    if (!valueArgument.isPure(anyVariable, checkFields, symbols)) return false
-                }
-                true
+                arguments.zip(symbol.owner.parameters)
+                    .none { (argument, parameter) ->
+                        parameter.kind in listOf(IrParameterKind.Regular, IrParameterKind.Context) &&
+                                !argument.isPure(anyVariable, checkFields, symbols)
+                    }
             } else false
             is IrGetObjectValue -> type.isUnit()
             is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, symbols) == true }
