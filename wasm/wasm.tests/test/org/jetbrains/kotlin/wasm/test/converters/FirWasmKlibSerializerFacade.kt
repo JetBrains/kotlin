@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_IR_SERIALIZATION
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_GENERATING_KLIB
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.getAllWasmDependenciesPaths
@@ -42,7 +42,7 @@ class FirWasmKlibSerializerFacade(
     constructor(testServices: TestServices) : this(testServices, firstTimeCompilation = true)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
-        return module.backendKind == inputKind && SKIP_IR_SERIALIZATION !in module.directives
+        return module.backendKind == inputKind && SKIP_GENERATING_KLIB !in module.directives
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {

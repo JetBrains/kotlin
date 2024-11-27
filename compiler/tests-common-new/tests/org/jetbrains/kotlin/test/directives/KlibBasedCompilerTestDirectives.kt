@@ -53,9 +53,9 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
         "Ignore failures in checking synthetic accessors for the specified backend"
     )
 
-    val SKIP_IR_SERIALIZATION by directive(
+    val SKIP_GENERATING_KLIB by directive(
         description = """
-        Skips serializing IR to KLIB when running tests
+        Skips generating KLIB when running tests
         """
     )
 
