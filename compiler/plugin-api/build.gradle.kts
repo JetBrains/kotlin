@@ -16,3 +16,4 @@ sourceSets {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()

@@ -26,3 +26,5 @@ kotlin {
         optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
     }
 }
+
+optInToDeprecatedCompilerApi()

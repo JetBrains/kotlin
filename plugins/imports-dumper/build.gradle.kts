@@ -35,5 +35,6 @@ projectTest {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 runtimeJar()

@@ -17,3 +17,4 @@ sourceSets {
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+optInToDeprecatedCompilerApi()

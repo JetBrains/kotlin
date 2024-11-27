@@ -23,3 +23,5 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+
+optInToDeprecatedCompilerApi()

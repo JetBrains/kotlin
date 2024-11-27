@@ -30,4 +30,6 @@ sourceSets {
     "test" { none() }
 }
 
+optInToDeprecatedCompilerApi()
+
 generatedDiagnosticContainersAndCheckerComponents()

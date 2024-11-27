@@ -51,6 +51,7 @@ sourceSets {
 
 allprojects {
     optInToExperimentalCompilerApi()
+    optInToDeprecatedCompilerApi()
 }
 
 testsJar {}

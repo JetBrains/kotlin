@@ -19,6 +19,7 @@ dependencies {
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+optInToDeprecatedCompilerApi()
 optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {

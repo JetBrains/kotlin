@@ -24,6 +24,7 @@ sourceSets {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 runtimeJar()
 javadocJar()

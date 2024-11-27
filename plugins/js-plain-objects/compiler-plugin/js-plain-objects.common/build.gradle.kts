@@ -19,3 +19,5 @@ sourceSets {
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+optInToDeprecatedCompilerApi()

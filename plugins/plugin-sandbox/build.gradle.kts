@@ -50,6 +50,7 @@ dependencies {
 
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
+optInToDeprecatedCompilerApi()
 
 val generationRoot = projectDir.resolve("tests-gen")
 

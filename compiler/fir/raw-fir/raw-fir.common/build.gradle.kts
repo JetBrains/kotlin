@@ -30,6 +30,8 @@ sourceSets {
     "test" { none() }
 }
 
+optInToDeprecatedCompilerApi()
+
 projectTest(parallel = true) {
     workingDir = rootDir
 }

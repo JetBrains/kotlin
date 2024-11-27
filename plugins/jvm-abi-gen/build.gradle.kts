@@ -46,6 +46,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 publish()
 

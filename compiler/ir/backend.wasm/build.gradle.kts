@@ -24,6 +24,7 @@ dependencies {
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+optInToDeprecatedCompilerApi()
 
 sourceSets {
     "main" { projectDefault() }

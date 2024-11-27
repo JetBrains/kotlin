@@ -32,3 +32,5 @@ sourceSets {
     }
     "test" {}
 }
+
+optInToDeprecatedCompilerApi()

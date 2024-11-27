@@ -1,3 +1,5 @@
+import gradle.kotlin.dsl.accessors._285dcef16d8875fee0ec91e18e07daf9.compileOnly
+import gradle.kotlin.dsl.accessors._8d28df2fbe5a2d02ed0bc7944f2596df.compileClasspath
 import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
@@ -119,6 +121,20 @@ val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject
 val modulesWithRequiredExplicitTypes = rootProject.extra["firAllCompilerModules"] as Array<String>
 
 fun Project.configureKotlinCompilationOptions() {
+    /*this.afterEvaluate {
+        tasks.withType<KotlinJvmCompile>().configureEach {
+            val theModules = project.configurations.findByName("compileClasspath")
+                ?.resolvedConfiguration?.firstLevelModuleDependencies?.filter { it.moduleGroup == "org.jetbrains.kotlin" && it.name == "util" }
+                ?: emptyList()
+            if (theModules.isNotEmpty()) {
+                println("${project.name} -> ${theModules.joinToString(", ") { it.moduleGroup + " " + it.moduleName + " " + it.name + " " + it.module }}")
+                compilerOptions {
+                    optIn.add("org.jetbrains.kotlin.DeprecatedCompilerApi")
+                }
+            }
+        }
+    }*/
+
     plugins.withType<KotlinBasePluginWrapper> {
         val commonCompilerArgs = listOfNotNull(
             "-opt-in=kotlin.RequiresOptIn",

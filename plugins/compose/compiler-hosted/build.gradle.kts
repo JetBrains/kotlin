@@ -67,6 +67,7 @@ dependencies {
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+optInToDeprecatedCompilerApi()
 optInToObsoleteDescriptorBasedAPI()
 
 kotlin {

@@ -86,6 +86,7 @@ dependencies {
 
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
+optInToDeprecatedCompilerApi()
 
 sourceSets {
     "main" { }

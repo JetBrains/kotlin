@@ -125,3 +125,5 @@ tasks.register("analysisLowLevelApiFirAllTests") {
         )
     }
 }
+
+optInToDeprecatedCompilerApi()

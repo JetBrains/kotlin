@@ -18,6 +18,8 @@ sourceSets {
     "test" { none() }
 }
 
+optInToDeprecatedCompilerApi()
+
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")

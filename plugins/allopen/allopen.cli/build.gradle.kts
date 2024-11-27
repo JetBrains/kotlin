@@ -25,6 +25,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 sourceSets {
     "main" { projectDefault() }

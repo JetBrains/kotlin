@@ -52,6 +52,7 @@ dependencies {
 }
 
 optInToObsoleteDescriptorBasedAPI()
+optInToDeprecatedCompilerApi()
 
 val generationRoot = projectDir.resolve("tests-gen")
 

@@ -27,6 +27,7 @@ sourceSets {
 }
 
 optInToExperimentalCompilerApi()
+optInToDeprecatedCompilerApi()
 
 tasks.getByName<Jar>("jar") {
     //excludes unused bunch files

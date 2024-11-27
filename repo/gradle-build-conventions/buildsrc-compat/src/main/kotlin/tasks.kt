@@ -363,6 +363,11 @@ fun Project.optInToExperimentalCompilerApi() {
     optInTo("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }
 
+fun Project.optInToDeprecatedCompilerApi() {
+    optInTo("org.jetbrains.kotlin.DeprecatedCompilerApi")
+    optInTo("org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi")
+}
+
 fun Project.optInToUnsafeDuringIrConstructionAPI() {
     optInTo("org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI")
 }

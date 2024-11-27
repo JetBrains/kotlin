@@ -37,6 +37,7 @@ dependencies {
 }
 
 optInToUnsafeDuringIrConstructionAPI()
+optInToDeprecatedCompilerApi()
 
 sourceSets {
     "main" { none() }
