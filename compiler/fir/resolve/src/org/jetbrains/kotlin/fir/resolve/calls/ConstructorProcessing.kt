@@ -31,22 +31,27 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
-internal enum class ConstructorFilter(val acceptInner: Boolean, val acceptNested: Boolean) {
-    OnlyInner(acceptInner = true, acceptNested = false),
-    OnlyNested(acceptInner = false, acceptNested = true),
-    Both(acceptInner = true, acceptNested = true);
+internal enum class ConstructorFilter {
+    OnlyInner,
+    OnlyNested,
+    Both;
 
     fun accepts(memberDeclaration: FirMemberDeclaration, session: FirSession): Boolean {
-        return when (memberDeclaration.isInner || memberDeclaration.isInnerRhsIfTypealias(session)) {
-            true -> acceptInner
-            false -> acceptNested
+        return when (this) {
+            Both -> true
+            OnlyInner -> memberDeclaration.isInner(session)
+            OnlyNested -> !memberDeclaration.isInner(session)
         }
     }
 
-    private fun FirMemberDeclaration.isInnerRhsIfTypealias(session: FirSession): Boolean {
-        if (this !is FirTypeAlias) return false
-        lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-        return fullyExpandedClass(session)?.isInner == true
+    private fun FirMemberDeclaration.isInner(session: FirSession): Boolean {
+        return if (isInner) {
+            true
+        } else {
+            if (this !is FirTypeAlias) return false
+            lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+            fullyExpandedClass(session)?.isInner == true
+        }
     }
 }
 
