@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
+import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.defaultDumpIrTreeOptions
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -82,9 +84,12 @@ class SerializedIrDumpHandler(
 
         private val PRE_SERIALIZATION_DUMP_SANITIZER = IrDumpSanitizer.composite(
             FilterOutSealedSubclasses,
+            RemoveExternalFlagInRenderedSymbolOfIrDeclarationReference,
         )
 
-        private val POST_DESERIALIZATION_DUMP_SANITIZER = IrDumpSanitizer.composite(/* to be added */)
+        private val POST_DESERIALIZATION_DUMP_SANITIZER = IrDumpSanitizer.composite(
+            RemoveExternalFlagInRenderedSymbolOfIrDeclarationReference,
+        )
     }
 }
 
@@ -123,4 +128,55 @@ private object FilterOutSealedSubclasses : IrDumpSanitizer {
     }
 
     private const val SEALED_SUBCLASSES_CLAUSE = "sealedSubclasses:"
+}
+
+/**
+ * The text of every rendered [IrDeclarationReference] expression contains some details about the referenced symbol and
+ * its "owner" declaration. As a part of this text, there are declaration flags, one of which can be the "external" flag.
+ * This flag is rendered if the declaration is marked as "external" (see [IrPossiblyExternalDeclaration.isExternal]).
+ *
+ * However, there is a difference in how K1 and K2 compilers propagate "external"-ness to declarations in metadata, and
+ * how such declarations are later represented in the form of LazyIr and Fir2LazyIr. This makes it difficult to compare
+ * this flag 1-to-1 in the IR that was before serialization and the deserialized IR.
+ *
+ * We know that there are two strict rules that allow correctly handling "external" flag in the compiler:
+ * 1.Language permits `external` keyword only for top-level declarations. So, any top-level declaration must have this flag
+ *   written in metadata and subsequently in IR proto.
+ * 2.Whenever the compiler needs to check "external"-ness of a declaration, it should check the effective "external"-ness
+ *   (i.e., taking into account containing declarations, if any).
+ *
+ * Given this, it makes sense to filter out any mentioning of this flag in IR expressions that may refer to symbols
+ * bound to LazyIr/Fir2LazyIr declarations.
+ */
+private object RemoveExternalFlagInRenderedSymbolOfIrDeclarationReference : IrDumpSanitizer {
+    override fun sanitize(testData: String) = testData.lineSequence().map { line ->
+        line.replace(IR_DECLARATION_REFERENCE_WITH_RENDERED_SYMBOL_REGEX) { match ->
+            val groupWithFlags = match.groups[2]!!
+
+            val prefix = line.substring(0, groupWithFlags.range.start)
+            val suffix = line.substring(groupWithFlags.range.endInclusive + 1)
+
+            val filteredFlags = groupWithFlags.value
+                .removeSurrounding("[", "] ")
+                .split(",")
+                .filter { it != "external" }
+                .takeIf(List<*>::isNotEmpty)
+                ?.joinToString(",", prefix = "[", postfix = "] ")
+                .orEmpty()
+
+            prefix + filteredFlags + suffix
+        }
+    }.joinToString("\n")
+
+    private val IR_DECLARATION_REFERENCE_PREFIXES = listOf(
+        "CALL",                         // IrCall
+        "CONSTRUCTOR_CALL",             // IrConstructorCall
+        "DELEGATING_CONSTRUCTOR_CALL",  // IrDelegatingConstructorCall
+        "PROPERTY_REFERENCE",           // IrPropertyReference
+        "FUNCTION_REFERENCE",           // IrFunctionReference
+        "CLASS_REFERENCE",              // IrClassReference
+        "GET_OBJECT",                   // IrGetObjectValue
+    ).joinToString("|", prefix = "(", postfix = ")")
+
+    private val IR_DECLARATION_REFERENCE_WITH_RENDERED_SYMBOL_REGEX = Regex(".* $IR_DECLARATION_REFERENCE_PREFIXES .*(\\[[a-z,]+] ).*")
 }

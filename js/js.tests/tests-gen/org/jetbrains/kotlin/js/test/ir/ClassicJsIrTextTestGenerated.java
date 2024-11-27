@@ -3130,6 +3130,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
       }
 
       @Test
+      @TestMetadata("external.kt")
+      public void testExternal() {
+        runTest("compiler/testData/ir/irText/js/external/external.kt");
+      }
+
+      @Test
       @TestMetadata("kt38765.kt")
       public void testKt38765() {
         runTest("compiler/testData/ir/irText/js/external/kt38765.kt");
