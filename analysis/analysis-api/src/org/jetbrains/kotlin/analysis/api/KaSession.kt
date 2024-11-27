@@ -89,21 +89,40 @@ public interface KaSession : KaLifetimeOwner,
     KaDataFlowProvider,
     KaSourceProvider
 {
+    /**
+     * The [KaModule] from whose perspective the analysis is performed. The use-site module defines the resolution scope of the [KaSession],
+     * which signifies *where* symbols are located (such as sources, dependencies, and so on) and *which* symbols can be found in the first
+     * place.
+     */
     public val useSiteModule: KaModule
 
+    /**
+     * The [KaSession] of the current analysis context.
+     */
     public val useSiteSession: KaSession
         get() = this
 
+    /**
+     * Returns the restored [KaSymbol] (possibly a new symbol instance) if the pointer is still valid, or `null` otherwise.
+     */
     public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? = withValidityAssertion {
         @OptIn(KaImplementationDetail::class)
         restoreSymbol(useSiteSession)
     }
 
+    /**
+     * Returns the restored [KaType] (possibly a new type instance) if the pointer is still valid, or `null` otherwise.
+     */
     public fun <T : KaType> KaTypePointer<T>.restore(): T? = withValidityAssertion {
         @OptIn(KaImplementationDetail::class)
         restore(useSiteSession)
     }
 }
 
+/**
+ * Returns a [KaModule] for a given [element] in the context of the session's use-site module.
+ *
+ * @see KaModuleProvider.getModule
+ */
 public fun KaSession.getModule(element: PsiElement): KaModule =
     KaModuleProvider.getModule(useSiteModule.project, element, useSiteModule)
