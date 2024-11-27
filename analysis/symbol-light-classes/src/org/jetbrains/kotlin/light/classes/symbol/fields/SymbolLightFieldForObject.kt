@@ -100,7 +100,6 @@ internal class SymbolLightFieldForObject private constructor(
                 .asPsiType(
                     this@SymbolLightFieldForObject,
                     allowErrorTypes = true,
-                    forceValueClassResolution = false,
                     allowNonJvmPlatforms = true,
                 )
         } ?: nonExistentType()

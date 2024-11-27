@@ -43,9 +43,6 @@ public interface KaJavaInteroperabilityComponent {
      *
      * @param preserveAnnotations if **true** the result [PsiType] will have converted annotations from the original [type][this]
      *
-     * @param forceValueClassResolution if **false** and underlying [TypeMappingMode.needInlineClassWrapping] is **false** then
-     * the result doesn't guarantee that a value class will be unwrapped.
-     *
      * @param allowNonJvmPlatforms if **true** the resulting type is computed even for non-JVM modules. The flag provides no validity
      * guarantees – the returned type may be unresolvable from Java, or `null`.
      */
@@ -57,7 +54,6 @@ public interface KaJavaInteroperabilityComponent {
         isAnnotationMethod: Boolean = false,
         suppressWildcards: Boolean? = null,
         preserveAnnotations: Boolean = true,
-        forceValueClassResolution: Boolean = true,
         allowNonJvmPlatforms: Boolean = false,
     ): PsiType?
 

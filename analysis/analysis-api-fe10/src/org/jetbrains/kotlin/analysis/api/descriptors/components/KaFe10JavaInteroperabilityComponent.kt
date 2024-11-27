@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiType
-import com.intellij.psi.PsiTypeElement
-import com.intellij.psi.SyntheticElement
+import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
@@ -23,11 +18,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.KaFe10JvmTypeMapperContext
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.annotateByKotlinType
@@ -35,11 +26,7 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
-import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.has
@@ -51,12 +38,8 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.types.DefinitelyNotNullType
-import org.jetbrains.kotlin.types.FlexibleType
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.updateArgumentModeFromAnnotations
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFe10JavaInteroperabilityComponent(
@@ -71,7 +54,6 @@ internal class KaFe10JavaInteroperabilityComponent(
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
         preserveAnnotations: Boolean,
-        forceValueClassResolution: Boolean,
         allowNonJvmPlatforms: Boolean,
     ): PsiType? = withValidityAssertion {
         val kotlinType = (this as KaFe10Type).fe10Type

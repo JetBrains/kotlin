@@ -47,9 +47,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
@@ -60,9 +58,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
@@ -108,7 +104,6 @@ internal class KaFirJavaInteroperabilityComponent(
         isAnnotationMethod: Boolean,
         suppressWildcards: Boolean?,
         preserveAnnotations: Boolean,
-        forceValueClassResolution: Boolean,
         allowNonJvmPlatforms: Boolean,
     ): PsiType? = withValidityAssertion {
         val coneType = this.coneType
@@ -125,7 +120,6 @@ internal class KaFirJavaInteroperabilityComponent(
             mode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards),
             useSitePosition = useSitePosition,
             allowErrorTypes = allowErrorTypes,
-            forceValueClassResolution = forceValueClassResolution,
         ) ?: return null
 
         val psiType = typeElement.type
@@ -144,19 +138,10 @@ internal class KaFirJavaInteroperabilityComponent(
         mode: TypeMappingMode,
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
-        forceValueClassResolution: Boolean,
     ): PsiTypeElement? {
         if (this !is RigidTypeMarker) return null
 
         if (!allowErrorTypes && (this is ConeErrorType)) return null
-
-        if (forceValueClassResolution && !mode.needInlineClassWrapping) {
-            this.classLikeLookupTagIfAny
-                ?.toSymbol(rootModuleSession)
-                ?.takeIf(FirClassLikeSymbol<*>::isInline)
-                ?.lazyResolveToPhase(FirResolvePhase.STATUS)
-        }
-
         val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
 
         //TODO Check thread safety

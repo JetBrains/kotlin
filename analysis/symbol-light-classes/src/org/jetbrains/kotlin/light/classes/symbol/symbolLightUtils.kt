@@ -46,7 +46,6 @@ internal fun KaSession.mapType(
         useSitePosition = psiContext,
         allowErrorTypes = true,
         mode = mode,
-        forceValueClassResolution = false,
         allowNonJvmPlatforms = true,
     )
 

@@ -114,7 +114,6 @@ internal fun KaSession.computeThrowsList(
                         allowErrorTypes = true,
                         KaTypeMappingMode.DEFAULT,
                         containingClass.isAnnotationType,
-                        forceValueClassResolution = false,
                         allowNonJvmPlatforms = true,
                     )
                     (psiType as? PsiClassType)?.let {

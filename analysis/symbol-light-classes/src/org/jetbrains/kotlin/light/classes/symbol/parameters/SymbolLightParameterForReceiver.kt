@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAnnotationsMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
-import org.jetbrains.kotlin.light.classes.symbol.methods.canHaveValueClassInSignature
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
@@ -98,7 +97,6 @@ internal class SymbolLightParameterForReceiver private constructor(
                 allowErrorTypes = true,
                 getTypeMappingMode(ktType),
                 suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
-                forceValueClassResolution = method.canHaveValueClassInSignature(),
                 allowNonJvmPlatforms = true,
             )
 

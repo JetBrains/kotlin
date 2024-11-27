@@ -27,7 +27,6 @@ internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration
                 containingDeclaration,
                 allowErrorTypes = true,
                 getTypeMappingMode(ktType),
-                forceValueClassResolution = false,
                 allowNonJvmPlatforms = true,
             ) ?: nonExistentType()
         }
