@@ -4060,6 +4060,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("nestedTypeAliasWithInnerRHS.kt")
+      public void testNestedTypeAliasWithInnerRHS() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasWithInnerRHS.kt");
+      }
+
+      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");

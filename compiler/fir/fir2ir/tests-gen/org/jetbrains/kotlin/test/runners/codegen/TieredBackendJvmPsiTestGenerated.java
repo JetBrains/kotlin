@@ -24546,6 +24546,12 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
     @TestDataPath("$PROJECT_ROOT")
     public class NestedTypeAliases {
       @Test
+      @TestMetadata("nestedTypeAliasWithInnerRHS.kt")
+      public void testNestedTypeAliasWithInnerRHS() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/nestedTypeAliasWithInnerRHS.kt");
+      }
+
+      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/simple.kt");
