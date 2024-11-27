@@ -144,6 +144,11 @@ public class K2KotlinpTestGenerated extends AbstractK2KotlinpTest {
     runTest("libraries/tools/kotlinp/jvm/testData/TypeParameters.kt");
   }
 
+  @TestMetadata("UseTypeTable.kt")
+  public void testUseTypeTable() {
+    runTest("libraries/tools/kotlinp/jvm/testData/UseTypeTable.kt");
+  }
+
   @TestMetadata("ValueClass.kt")
   public void testValueClass() {
     runTest("libraries/tools/kotlinp/jvm/testData/ValueClass.kt");

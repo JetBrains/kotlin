@@ -214,6 +214,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir implements
         if (InTextDirectivesUtils.isDirectiveDefined(content, "JVM_ANNOTATIONS")) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.jvmAnnotationsForTests());
         }
+
+        if (InTextDirectivesUtils.isDirectiveDefined(content, "USE_TYPE_TABLE")) {
+            configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
+        }
     }
 
     protected boolean usePsiClassFilesReading() {
