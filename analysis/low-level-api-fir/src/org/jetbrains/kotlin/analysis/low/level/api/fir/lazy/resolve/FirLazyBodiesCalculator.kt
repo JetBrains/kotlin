@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEnt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
+import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
@@ -658,22 +659,13 @@ private fun calculateAnnotationCallIfNeeded(annotation: FirAnnotation, session: 
 
 private object FirAllLazyBodiesCalculatorTransformer : FirLazyBodiesCalculatorTransformer() {
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E {
-        if (element is FirFile || element is FirScript || element is FirRegularClass) {
-            val newList = data.add(element as FirDeclaration)
-            element.forEachDeclaration {
-                it.transformSingle(this, newList)
-            }
-
-            element.transformChildren(this, newList)
-        }
-
-        return element
+        return recursiveTransformation(element, data)
     }
 }
 
 private object FirTargetLazyBodiesCalculatorTransformer : FirLazyBodiesCalculatorTransformer()
 
-private abstract class FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentList<FirDeclaration>>() {
+private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentList<FirDeclaration>>() {
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E = element
 
     override fun transformField(field: FirField, data: PersistentList<FirDeclaration>): FirStatement {
@@ -723,10 +715,6 @@ private abstract class FirLazyBodiesCalculatorTransformer : FirTransformer<Persi
         return property
     }
 
-    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: PersistentList<FirDeclaration>): FirStatement {
-        return propertyAccessor.also { transformProperty(it.propertySymbol.fir, data) }
-    }
-
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: PersistentList<FirDeclaration>): FirStatement {
         if (enumEntry.initializer is FirLazyExpression) {
             val designation = FirDesignation(data, enumEntry)
@@ -737,7 +725,8 @@ private abstract class FirLazyBodiesCalculatorTransformer : FirTransformer<Persi
     }
 
     override fun transformAnonymousInitializer(
-        anonymousInitializer: FirAnonymousInitializer, data: PersistentList<FirDeclaration>,
+        anonymousInitializer: FirAnonymousInitializer,
+        data: PersistentList<FirDeclaration>,
     ): FirAnonymousInitializer {
         if (anonymousInitializer.body is FirLazyBlock) {
             val designation = FirDesignation(data, anonymousInitializer)
@@ -755,4 +744,20 @@ private abstract class FirLazyBodiesCalculatorTransformer : FirTransformer<Persi
 
         return codeFragment
     }
+}
+
+private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recursiveTransformation(
+    element: E,
+    data: PersistentList<FirDeclaration>,
+): E {
+    if (element is FirFile || element is FirScript || element is FirRegularClass) {
+        val newList = data.add(element as FirDeclaration)
+        element.forEachDeclaration {
+            it.transformSingle(this, newList)
+        }
+
+        element.transformChildren(this, newList)
+    }
+
+    return element
 }
