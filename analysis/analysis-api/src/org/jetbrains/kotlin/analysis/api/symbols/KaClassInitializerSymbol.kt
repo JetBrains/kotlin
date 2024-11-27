@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 
-
+/**
+ * [KaClassInitializerSymbol] represents an [anonymous initializer declaration](https://kotlinlang.org/docs/reference/grammar.html#anonymousInitializer)
+ * in a class body.
+ */
 public abstract class KaClassInitializerSymbol : KaDeclarationSymbol {
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }

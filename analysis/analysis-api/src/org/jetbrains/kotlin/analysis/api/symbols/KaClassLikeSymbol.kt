@@ -34,6 +34,9 @@ public sealed class KaClassifierSymbol : KaDeclarationSymbol {
     public abstract val name: Name?
 }
 
+/**
+ * The name of the [KaClassifierSymbol], or [SpecialNames.ANONYMOUS] if it's an anonymous object.
+ */
 public val KaClassifierSymbol.nameOrAnonymous: Name
     get() = name ?: SpecialNames.ANONYMOUS
 
@@ -41,8 +44,6 @@ public val KaClassifierSymbol.nameOrAnonymous: Name
  * [KaTypeParameterSymbol] represents a type parameter of a class, function, property, or type alias.
  */
 public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbol {
-    abstract override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol>
-
     /**
      * A list of [upper bounds](https://kotlinlang.org/docs/generics.html#upper-bounds) declared for the type parameter.
      *
@@ -75,6 +76,8 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
 
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
+
+    abstract override fun createPointer(): KaSymbolPointer<KaTypeParameterSymbol>
 }
 
 /**
@@ -221,13 +224,95 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
     abstract override fun createPointer(): KaSymbolPointer<KaNamedClassSymbol>
 }
 
+/**
+ * The kind of class represented by a [KaClassSymbol].
+ */
 public enum class KaClassKind {
+    /**
+     * A [regular class](https://kotlinlang.org/docs/classes.html) declaration:
+     *
+     * ```kotlin
+     * class Person { }
+     * ```
+     *
+     * @see KaNamedClassSymbol
+     */
     CLASS,
+
+    /**
+     * An [enum class](https://kotlinlang.org/docs/enum-classes.html) declaration:
+     *
+     * ```kotlin
+     * enum class Direction {
+     *     NORTH, SOUTH, WEST, EAST
+     * }
+     * ```
+     *
+     * @see KaNamedClassSymbol
+     */
     ENUM_CLASS,
+
+    /**
+     * An [annotation class](https://kotlinlang.org/docs/annotations.html) declaration:
+     *
+     * ```kotlin
+     * annotation class Fancy
+     * ```
+     *
+     * @see KaNamedClassSymbol
+     */
     ANNOTATION_CLASS,
+
+    /**
+     * An [object](https://kotlinlang.org/docs/object-declarations.html#object-declarations-overview) declaration:
+     *
+     * ```kotlin
+     * object Application { }
+     * ```
+     *
+     * @see KaNamedClassSymbol
+     */
     OBJECT,
+
+    /**
+     * A [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) declaration:
+     *
+     * ```
+     * class MyClass {
+     *     companion object Factory {
+     *         fun create(): MyClass = MyClass()
+     *     }
+     * }
+     * ```
+     *
+     * @see KaNamedClassSymbol
+     */
     COMPANION_OBJECT,
+
+    /**
+     * An [interface](https://kotlinlang.org/docs/interfaces.html) declaration:
+     *
+     * ```kotlin
+     * interface Named {
+     *     val name: String
+     * }
+     * ```
+     *
+     * @see KaNamedClassSymbol
+     */
     INTERFACE,
+
+    /**
+     * An [anonymous object](https://kotlinlang.org/docs/object-declarations.html#object-expressions):
+     *
+     * ```kotlin
+     * val runnable = object : Runnable {
+     *  *     override fun run() {}
+     *  * }
+     * ```
+     *
+     * @see KaAnonymousObjectSymbol
+     */
     ANONYMOUS_OBJECT;
 
     public val isObject: Boolean get() = this == OBJECT || this == COMPANION_OBJECT || this == ANONYMOUS_OBJECT

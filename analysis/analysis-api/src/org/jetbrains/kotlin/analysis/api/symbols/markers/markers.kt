@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
 
 /**
+ * A [KaSymbol] with a [name].
+ *
  * @see org.jetbrains.kotlin.analysis.api.symbols.name
  */
 public interface KaNamedSymbol : KaSymbol {
@@ -35,8 +37,10 @@ public interface KaNamedSymbol : KaSymbol {
 }
 
 /**
- * Shouldn't be used as a type.
- * Consider using [typeParameters] directly from required class or [org.jetbrains.kotlin.analysis.api.symbols.typeParameters]
+ * A [KaSymbol] with [typeParameters].
+ *
+ * This class is an implementation detail and should not be used directly as a type. Consider using [typeParameters] directly from the
+ * symbol, or [org.jetbrains.kotlin.analysis.api.symbols.typeParameters] for [KaDeclarationSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol]s.
  *
  * @see org.jetbrains.kotlin.analysis.api.symbols.typeParameters
  */
