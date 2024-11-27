@@ -47,7 +47,6 @@ class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
     private val outerType: ConeClassLikeType?,
-    private val abbreviation: ConeClassLikeType = typeAliasSymbol.defaultType(),
 ) : FirScope() {
     private val aliasedTypeExpansionGloballyEnabled: Boolean = typeAliasSymbol
         .moduleData
@@ -99,7 +98,7 @@ class TypeAliasConstructorsSubstitutingScope(
 
                     if (aliasedTypeExpansionGloballyEnabled) {
                         returnTypeRef = returnTypeRef.withReplacedConeType(
-                            returnTypeRef.coneType.withAbbreviation(AbbreviatedTypeAttribute(abbreviation))
+                            returnTypeRef.coneType.withAbbreviation(AbbreviatedTypeAttribute(typeAliasSymbol.defaultType()))
                         )
                     }
                 }.apply {
@@ -117,7 +116,7 @@ class TypeAliasConstructorsSubstitutingScope(
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): TypeAliasConstructorsSubstitutingScope? {
         return delegatingScope.withReplacedSessionOrNull(newSession, newScopeSession)?.let {
-            TypeAliasConstructorsSubstitutingScope(typeAliasSymbol, it, outerType, abbreviation)
+            TypeAliasConstructorsSubstitutingScope(typeAliasSymbol, it, outerType)
         }
     }
 }
