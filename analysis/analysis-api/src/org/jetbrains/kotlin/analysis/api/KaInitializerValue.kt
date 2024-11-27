@@ -10,31 +10,34 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
- * Value representing some property or variable initializer
+ * A value of a property or variable initializer.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol.initializer
  */
 @KaExperimentalApi
 public sealed class KaInitializerValue {
     /**
-     * [com.intellij.psi.PsiElement] of initializer. May be null if property/variable came from non-source file.
+     * The [KtExpression] backing the initializer. It may be `null` if the property/variable comes from a non-source file.
      */
     public abstract val initializerPsi: KtExpression?
 }
 
 /**
- * Initializer value which can be evaluated to constant. E.g, string value, number, null literal.
- *
- * For more info about constant values please see [official Kotlin documentation](https://kotlinlang.org/docs/properties.html#compile-time-constants]).
+ * An initializer value which can be evaluated to a [compile-time constant](https://kotlinlang.org/docs/properties.html#compile-time-constants),
+ * such as a string value, number, or `null` literal.
  */
 @KaExperimentalApi
 public class KaConstantInitializerValue(
     public val constant: KaConstantValue,
-    override val initializerPsi: KtExpression?
+    override val initializerPsi: KtExpression?,
 ) : KaInitializerValue()
 
 /**
- * Property initializer which cannot be represented as Kotlin const value.
+ * An initializer value which cannot be represented as a [compile-time constant](https://kotlinlang.org/docs/properties.html#compile-time-constants).
  *
- * See [KaConstantInitializerValue] for more info.
+ * The Analysis API is unable to evaluate the expression statically and thus cannot provide a [KaConstantValue] for the initializer.
+ *
+ * @see KaConstantInitializerValue
  */
 @KaExperimentalApi
 public class KaNonConstantInitializerValue(
@@ -42,11 +45,12 @@ public class KaNonConstantInitializerValue(
 ) : KaInitializerValue()
 
 /**
- * Initializer of property of annotation, which can not be which cannot be represented as Kotlin const value,
- *   but can be represented as [KaAnnotationValue]
+ * An initializer value of a property of an annotation, which cannot be represented as a
+ * [compile-time constant](https://kotlinlang.org/docs/properties.html#compile-time-constants), but can be represented as
+ * a [KaAnnotationValue].
  */
 @KaExperimentalApi
 public class KaConstantValueForAnnotation(
     public val annotationValue: KaAnnotationValue,
-    override val initializerPsi: KtExpression?
+    override val initializerPsi: KtExpression?,
 ) : KaInitializerValue()

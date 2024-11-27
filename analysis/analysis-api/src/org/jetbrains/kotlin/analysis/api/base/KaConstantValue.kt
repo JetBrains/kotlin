@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.base
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
- * Represents a constant value.
- * Can be used as a `const val` initializer or as an annotation argument.
+ * Represents a [compile-time constant](https://kotlinlang.org/docs/properties.html#compile-time-constants) value. It can be used as a
+ * `const val` initializer or as an annotation argument.
  *
  * [KaConstantValue] can also represent evaluated values. Such as, the `1 + 2` can be represented as an [IntValue] with a value `3`.
  *
