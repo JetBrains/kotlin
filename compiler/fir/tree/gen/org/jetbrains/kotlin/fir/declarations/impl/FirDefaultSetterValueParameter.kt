@@ -38,7 +38,6 @@ internal class FirDefaultSetterValueParameter(
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override var deprecationsProvider: DeprecationsProvider,
-    override val containerSource: DeserializedContainerSource?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirValueParameterSymbol,
     override val containingDeclarationSymbol: FirBasedSymbol<*>,
@@ -47,6 +46,8 @@ internal class FirDefaultSetterValueParameter(
         get() = emptyList()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override val receiverParameter: FirReceiverParameter?
+        get() = null
+    override val containerSource: DeserializedContainerSource?
         get() = null
     override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = null

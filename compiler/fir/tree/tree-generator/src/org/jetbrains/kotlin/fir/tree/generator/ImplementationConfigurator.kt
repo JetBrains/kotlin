@@ -588,7 +588,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         fun AbstractImplementationConfigurator<Implementation, Element, Field>.ImplementationContext.configureCommonValueParameter() {
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
-            defaultNull("getter", "setter", "initializer", "delegate", "receiverParameter", "dispatchReceiverType", "backingField", withGetter = true)
+            defaultNull(
+                "getter", "setter", "initializer", "delegate", "receiverParameter", "dispatchReceiverType", "backingField", "containerSource",
+                withGetter = true
+            )
             defaultEmptyList("contextReceivers", withGetter = true)
         }
 

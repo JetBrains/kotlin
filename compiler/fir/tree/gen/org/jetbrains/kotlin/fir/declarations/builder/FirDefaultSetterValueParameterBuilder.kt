@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @FirBuilderDsl
 class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
@@ -33,7 +32,6 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
-    var containerSource: DeserializedContainerSource? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirValueParameterSymbol
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
@@ -47,7 +45,6 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             attributes,
             returnTypeRef,
             deprecationsProvider,
-            containerSource,
             annotations.toMutableOrEmpty(),
             symbol,
             containingDeclarationSymbol,

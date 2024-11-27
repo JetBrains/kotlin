@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @FirBuilderDsl
 open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
@@ -35,7 +34,6 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     open lateinit var returnTypeRef: FirTypeRef
     open var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
-    open var containerSource: DeserializedContainerSource? = null
     open lateinit var name: Name
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     open lateinit var symbol: FirValueParameterSymbol
@@ -55,7 +53,6 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             attributes,
             returnTypeRef,
             deprecationsProvider,
-            containerSource,
             name,
             annotations.toMutableOrEmpty(),
             symbol,
@@ -91,7 +88,6 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.containerSource = original.containerSource
     copyBuilder.name = original.name
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.defaultValue = original.defaultValue
