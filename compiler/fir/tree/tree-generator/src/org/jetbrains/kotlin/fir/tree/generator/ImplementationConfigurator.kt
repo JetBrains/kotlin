@@ -320,7 +320,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
             publicImplementation()
 
-            defaultNull("receiverParameter", "delegate", "getter", "setter", withGetter = true)
+            defaultNull("receiverParameter", "delegate", "getter", "setter", "containerSource", "backingField", withGetter = true)
+            defaultEmptyList("contextReceivers", "typeParameters", withGetter = true)
         }
 
         impl(enumEntry) {

@@ -34,17 +34,13 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    open val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override lateinit var status: FirDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
-    override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
     override lateinit var name: Name
     override var initializer: FirExpression? = null
     override var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    override var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     open lateinit var symbol: FirFieldSymbol
 
@@ -56,17 +52,13 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
             moduleData,
             origin,
             attributes,
-            typeParameters,
             status,
             returnTypeRef,
             deprecationsProvider,
-            containerSource,
             dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
             name,
             initializer,
             isVar,
-            backingField,
             annotations.toMutableOrEmpty(),
             symbol,
         )
@@ -79,6 +71,16 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
         set(_) {
             throw IllegalStateException()
         }
+
+    @Deprecated("Modification of 'containerSource' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
+    override var containerSource: DeserializedContainerSource?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'contextReceivers' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
+    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
 
     @Deprecated("Modification of 'delegate' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var delegate: FirExpression?
@@ -96,6 +98,13 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
 
     @Deprecated("Modification of 'setter' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var setter: FirPropertyAccessor?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'backingField' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
+    override var backingField: FirBackingField?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()
@@ -121,17 +130,13 @@ inline fun buildFieldCopy(original: FirField, init: FirFieldBuilder.() -> Unit):
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
     copyBuilder.name = original.name
     copyBuilder.initializer = original.initializer
     copyBuilder.isVar = original.isVar
-    copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
     return copyBuilder.apply(init).build()
 }

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -42,7 +41,6 @@ class FirJavaField @FirImplementationDetail constructor(
     private val originalStatus: FirResolvedDeclarationStatusImpl,
     override val isVar: Boolean,
     private val annotationList: FirJavaAnnotationList,
-    override val typeParameters: MutableList<FirTypeParameterRef>,
     lazyInitializer: Lazy<FirExpression?>,
     lazyHasConstantInitializer: Lazy<Boolean>,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
@@ -88,6 +86,9 @@ class FirJavaField @FirImplementationDetail constructor(
             transformStatus(it, this@FirJavaField, containingClassSymbol, isLocal = false)
         }
     }
+
+    override val typeParameters: List<FirTypeParameterRef>
+        get() = emptyList()
 
     override val contextReceivers: List<FirValueParameter>
         get() = emptyList()
@@ -157,7 +158,6 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -214,7 +214,6 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             status as FirResolvedDeclarationStatusImpl,
             isVar,
             annotationList,
-            typeParameters,
             lazyInitializer ?: lazyOf(initializer),
             lazyHasConstantInitializer,
             dispatchReceiverType,
