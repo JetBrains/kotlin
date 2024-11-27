@@ -10,6 +10,12 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * A [KaScope] provides access to the declarations contained in a specific [declaration][org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol],
+ * file, or package, such as classes, type aliases, functions, properties, and constructors.
+ *
+ * To retrieve a scope for a particular declaration, use the various functions available in [KaScopeProvider][org.jetbrains.kotlin.analysis.api.components.KaScopeProvider].
+ */
 @OptIn(KaExperimentalApi::class)
 public interface KaScope : KaScopeLike {
     /**
