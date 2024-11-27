@@ -61,13 +61,19 @@ object FirUnusedExpressionChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         override fun visitElement(element: FirElement, data: UsageState) {
             if (element is FirDeclaration) return // The checker handles nested declarations.
 
-            if (data == UsageState.Unused && element is FirExpression && !element.hasSideEffect()) {
+            val source = element.source
+            if (
+                data == UsageState.Unused &&
+                element is FirExpression &&
+                source != null &&
+                !element.hasSideEffect()
+            ) {
                 val factory = when {
                     element is FirAnonymousFunctionExpression && element.anonymousFunction.isLambda
                         -> FirErrors.UNUSED_LAMBDA_EXPRESSION
                     else -> FirErrors.UNUSED_EXPRESSION
                 }
-                reporter.reportOn(element.source, factory, context)
+                reporter.reportOn(source, factory, context)
                 return
             }
 

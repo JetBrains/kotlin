@@ -175,5 +175,15 @@ class Dispatch {
         i -= 1
         i *= 1
         i /= 1
+
+        val ints = IntArray(1)
+        ++ints[0]
+        --ints[0]
+        ints[0]++
+        ints[0]--
+        ints[0] += 1
+        ints[0] -= 1
+        ints[0] *= 1
+        ints[0] /= 1
     }
 }
