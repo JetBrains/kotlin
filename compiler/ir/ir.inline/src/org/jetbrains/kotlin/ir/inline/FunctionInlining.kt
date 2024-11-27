@@ -179,8 +179,8 @@ open class FunctionInlining(
 
         withinScope(actualCallee) {
             actualCallee.body?.transformChildrenVoid()
-            actualCallee.valueParameters.forEachIndexed { index, param ->
-                if (expression.getValueArgument(index) == null) {
+            actualCallee.parameters.forEachIndexed { index, param ->
+                if (expression.arguments[index] == null) {
                     // Default values can recursively reference [callee] - transform only needed.
                     param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, null)
                 }
