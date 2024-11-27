@@ -6,27 +6,19 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object KlibIrInlinerTestDirectives : SimpleDirectivesContainer() {
+    // TODO: to be dropped in KT-70295
     val ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING by directive(
-        description = """
-        Check for visibility violation when validating IR after inlining.
-        Equivalent to passing the '-Xverify-ir-visibility-after-inlining' CLI flag.
-        
-        This directive is opt-in rather than opt-out (like ${CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS})
-        because right now most test pass with visibility checks enabled before lowering, but enabling these checks
-        after inlining by default will cause some tests to fail, because some lowerings that are run before inlining
-        generate calls to internal intrinsics (KT-70295).
-        """.trimIndent()
-    )
-
-    val KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY by directive(
         """
-            Narrow the visibility of generated synthetic accessors to _internal_" +
-            if such accessors are only used in inline functions that are not a part of public ABI
-            Equivalent to passing the '-Xsynthetic-accessors-with-narrowed-visibility' CLI flag.
+            Check for visibility violation when validating IR after inlining.
+            Equivalent to passing the '-Xverify-ir-visibility-after-inlining' CLI flag.
+            
+            This directive is opt-in rather than opt-out (like ${CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS})
+            because right now most test pass with visibility checks enabled before lowering, but enabling these checks
+            after inlining by default will cause some tests to fail, because some lowerings that are run before inlining
+            generate calls to internal intrinsics (KT-70295).
         """.trimIndent()
     )
 
@@ -38,6 +30,16 @@ object KlibIrInlinerTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    // TODO: to be dropped in KT-69941
+    val KLIB_SYNTHETIC_ACCESSORS_WITH_NARROWED_VISIBILITY by directive(
+        """
+            Narrow the visibility of generated synthetic accessors to _internal_" +
+            if such accessors are only used in inline functions that are not a part of public ABI
+            Equivalent to passing the '-Xsynthetic-accessors-with-narrowed-visibility' CLI flag.
+        """.trimIndent()
+    )
+
+    // TODO: to be dropped in KT-69941
     val IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS by directive(
         """
             Normally, there should be different dumps of synthetic accessors generated with and without
@@ -47,9 +49,14 @@ object KlibIrInlinerTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val IGNORE_SYNTHETIC_ACCESSORS_CHECKS by enumDirective<TargetBackend>(
+        "Ignore failures in checking synthetic accessors for the specified backend"
+    )
+
     val SKIP_UNBOUND_IR_SERIALIZATION by directive(
         """
-            This is a directive to skip some test data files in unbound IR serialization tests.
+            This is a directive to skip some test data files in unbound IR serialization tests
+            (see `AbstractNativeUnboundIrSerializationTest` and generated subclasses).
             
             Some tests are known to have call sites of local fake overrides inside inline functions.
             Currently, serialization of such call sites is not supported. It should be supported in KT-72296.
@@ -57,10 +64,5 @@ object KlibIrInlinerTestDirectives : SimpleDirectivesContainer() {
             Other tests use exposure of private types from internal inline functions. This is already a compiler
             warning in 2.1.0 (KT-69681), but soon will become a compiler error (KT-70916).
         """.trimIndent()
-    )
-
-    val IGNORE_SYNTHETIC_ACCESSORS_CHECKS by enumDirective<TargetBackend>(
-        description = "Ignore failures of checking correctness of synthetic accessors",
-        applicability = Global
     )
 }
