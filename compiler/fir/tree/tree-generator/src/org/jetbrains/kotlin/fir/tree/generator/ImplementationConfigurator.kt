@@ -326,7 +326,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(enumEntry) {
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
-            defaultNull("receiverParameter", "delegate", "getter", "setter", withGetter = true)
+            defaultNull(
+                "receiverParameter", "delegate", "getter", "setter", "containerSource", "dispatchReceiverType", "backingField",
+                withGetter = true
+            )
+            defaultEmptyList("contextReceivers", "typeParameters", withGetter = true)
         }
 
         impl(namedArgumentExpression) {

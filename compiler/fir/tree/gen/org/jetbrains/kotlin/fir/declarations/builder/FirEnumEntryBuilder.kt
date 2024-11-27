@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @FirBuilderDsl
 class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
@@ -33,16 +31,11 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     lateinit var status: FirDeclarationStatus
     lateinit var returnTypeRef: FirTypeRef
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
-    var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeSimpleKotlinType? = null
-    val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
     lateinit var name: Name
     var initializer: FirExpression? = null
-    var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirEnumEntrySymbol
 
@@ -53,16 +46,11 @@ class FirEnumEntryBuilder : FirAnnotationContainerBuilder {
             moduleData,
             origin,
             attributes,
-            typeParameters,
             status,
             returnTypeRef,
             deprecationsProvider,
-            containerSource,
-            dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
             name,
             initializer,
-            backingField,
             annotations.toMutableOrEmpty(),
             symbol,
         )
@@ -89,16 +77,11 @@ inline fun buildEnumEntryCopy(original: FirEnumEntry, init: FirEnumEntryBuilder.
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.containerSource = original.containerSource
-    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
     copyBuilder.name = original.name
     copyBuilder.initializer = original.initializer
-    copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
     return copyBuilder.apply(init).build()
 }

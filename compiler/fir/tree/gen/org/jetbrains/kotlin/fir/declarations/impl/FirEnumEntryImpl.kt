@@ -34,21 +34,24 @@ internal class FirEnumEntryImpl(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
-    override val typeParameters: MutableList<FirTypeParameterRef>,
     override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var deprecationsProvider: DeprecationsProvider,
-    override val containerSource: DeserializedContainerSource?,
-    override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override var contextReceivers: MutableOrEmptyList<FirValueParameter>,
     override val name: Name,
     override var initializer: FirExpression?,
-    override var backingField: FirBackingField?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirEnumEntrySymbol,
 ) : FirEnumEntry() {
+    override val typeParameters: List<FirTypeParameterRef>
+        get() = emptyList()
     override val receiverParameter: FirReceiverParameter?
         get() = null
+    override val containerSource: DeserializedContainerSource?
+        get() = null
+    override val dispatchReceiverType: ConeSimpleKotlinType?
+        get() = null
+    override val contextReceivers: List<FirValueParameter>
+        get() = emptyList()
     override val delegate: FirExpression?
         get() = null
     override val isVar: Boolean
@@ -59,6 +62,8 @@ internal class FirEnumEntryImpl(
         get() = null
     override val setter: FirPropertyAccessor?
         get() = null
+    override val backingField: FirBackingField?
+        get() = null
 
     init {
         symbol.bind(this)
@@ -66,28 +71,21 @@ internal class FirEnumEntryImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
         initializer?.accept(visitor, data)
-        backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
-        transformContextReceivers(transformer, data)
         transformInitializer(transformer, data)
-        transformBackingField(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -106,7 +104,6 @@ internal class FirEnumEntryImpl(
     }
 
     override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        contextReceivers.transformInplace(transformer, data)
         return this
     }
 
@@ -128,7 +125,6 @@ internal class FirEnumEntryImpl(
     }
 
     override fun <D> transformBackingField(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
-        backingField = backingField?.transform(transformer, data)
         return this
     }
 
@@ -156,9 +152,7 @@ internal class FirEnumEntryImpl(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {
-        contextReceivers = newContextReceivers.toMutableOrEmpty()
-    }
+    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {}
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
         initializer = newInitializer
