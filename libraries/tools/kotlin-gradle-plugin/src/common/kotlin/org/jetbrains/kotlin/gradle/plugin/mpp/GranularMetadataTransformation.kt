@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.*
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
+import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.gradle.artifacts.uklibStateAttribute
+import org.jetbrains.kotlin.gradle.artifacts.uklibStateUnzipped
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -24,6 +28,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.utils.keysToMap
+import java.io.File
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -67,7 +73,8 @@ internal sealed class MetadataDependencyResolution(
 
     class ChooseVisibleSourceSets internal constructor(
         dependency: ResolvedComponentResult,
-        val projectStructureMetadata: KotlinProjectStructureMetadata,
+        // FIXME: Why do we even have this?
+        val projectStructureMetadata: KotlinProjectStructureMetadata?,
         val allVisibleSourceSetNames: Set<String>,
         val visibleSourceSetNamesExcludingDependsOn: Set<String>,
         val visibleTransitiveDependencies: Set<ResolvedDependencyResult>,
@@ -109,6 +116,8 @@ internal class GranularMetadataTransformation(
         val objects: ObjectFactory,
         val kotlinKmpProjectIsolationEnabled: Boolean,
         val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
+        // FIXME: ???
+        val sourceSetTargetMembership: Set<String>,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet) : this(
             build = project.currentBuild,
@@ -123,7 +132,13 @@ internal class GranularMetadataTransformation(
             objects = project.objects,
             kotlinKmpProjectIsolationEnabled = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled,
             sourceSetMetadataLocationsOfProjectDependencies = project.kotlinSecondaryVariantsDataSharing
-                .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration)
+                .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration),
+            sourceSetTargetMembership = kotlinSourceSet.internal.compilations
+                .map { it.target }
+                .filter { it !is KotlinMetadataTarget }
+                // FIXME: See uklibFromKGPModel
+                .map { it.targetName }
+                .toSet()
         )
     }
 
@@ -226,16 +241,169 @@ internal class GranularMetadataTransformation(
         val module = dependency.selected
         val moduleId = module.id
 
-        val compositeMetadataArtifact = params
+        val artifact = params
             .resolvedMetadataConfiguration
             .getArtifacts(dependency)
-            .singleOrNull()
-            // Make sure that resolved metadata artifact is actually Multiplatform one
-            ?.takeIf { it.variant.attributes.containsMultiplatformMetadataAttributes }
+            // FIXME: Check this is correct?
+            .singleOrNull() ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
         // expected only Composite Metadata Klib, but if dependency got resolved into platform variant
         // when a source set is a leaf, then we might get multiple artifacts in such a case we must return KeepOriginal
-            ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
 
+        // Make sure that resolved metadata artifact is actually Multiplatform one
+        if (artifact.variant.attributes.containsMultiplatformMetadataAttributes) {
+            return processPSMDependency(
+                artifact,
+                dependency,
+                module,
+                moduleId,
+                sourceSetsVisibleInParents
+            )
+        } else if (artifact.variant.attributes.getAttribute(uklibStateAttribute) == uklibStateUnzipped) {
+            return processUklibDependency(
+                artifact,
+                dependency,
+                module,
+                moduleId,
+                sourceSetsVisibleInParents,
+
+                sourceSetName = params.sourceSetName,
+                targetMembership = params.sourceSetTargetMembership,
+            )
+        } else {
+            return MetadataDependencyResolution.KeepOriginalDependency(module)
+        }
+    }
+
+    private fun processUklibDependency(
+        compositeMetadataArtifact: ResolvedArtifactResult,
+        dependency: ResolvedDependencyResult,
+        module: ResolvedComponentResult,
+        moduleId: ComponentIdentifier,
+        // FIXME: ???
+        sourceSetsVisibleInParents: Set<String>,
+
+        sourceSetName: String,
+        targetMembership: Set<String>,
+    ): MetadataDependencyResolution {
+        val uklibDependency = Uklib.deserializeFromDirectory(
+            compositeMetadataArtifact.file,
+        )
+
+        val fragment = Fragment(sourceSetName, targetMembership)
+        val canSee: Fragment<String>.(Fragment<String>) -> Boolean = { attributes.isSubsetOf(it.attributes) }
+
+        val visibleFragments = uklibDependency.module.fragments.filter {
+            fragment.canSee(it)
+                    // FIXME: ??
+                    && it.identifier !in sourceSetsVisibleInParents
+        }.sortedWith(
+            object : Comparator<Fragment<String>> {
+                override fun compare(left: Fragment<String>, right: Fragment<String>): Int {
+                    if (left.canSee(right)) {
+                        return -1
+                    } else if (right.canSee(left)) {
+                        return 1
+                    } else if (left == right) {
+                        return 0
+                    } else {
+                        return left.identifier.compareTo(right.identifier)
+                    }
+                }
+            }
+        )
+
+        val moduleVersion = dependency.selected.moduleVersion!!
+
+        return MetadataDependencyResolution.ChooseVisibleSourceSets(
+            dependency = dependency.selected,
+            projectStructureMetadata = null,
+            // FIXME: Don't filter this
+            allVisibleSourceSetNames = visibleFragments.map { it.identifier }.toSet(),
+            // FIXME: Only filter this, but for some reason this doesn't work???
+            visibleSourceSetNamesExcludingDependsOn = visibleFragments.map { it.identifier }.toSet(),
+
+            // 26.11.2024 - This is likely only used to walk further dependencies, so we want all of them
+            visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toSet(),
+            metadataProvider = ArtifactMetadataProvider(
+                object : CompositeMetadataArtifact {
+
+                    override val moduleDependencyIdentifier: ModuleDependencyIdentifier
+                        get() = ModuleDependencyIdentifier(moduleVersion.group, moduleVersion.name)
+                    override val moduleDependencyVersion: String
+                        get() = moduleVersion.version
+
+                    override fun open(): CompositeMetadataArtifactContent {
+                        val backrefArtifact = this
+                        return object : CompositeMetadataArtifactContent {
+                            val backrefContent = this
+                            private val fragmentSourceSets: Map<String, CompositeMetadataArtifactContent.SourceSetContent> = visibleFragments.keysToMap { fragment ->
+                                object : CompositeMetadataArtifactContent.SourceSetContent {
+                                    override val containingArtifactContent: CompositeMetadataArtifactContent
+                                        get() = backrefContent
+                                    override val sourceSetName: String
+                                        get() = fragment.identifier
+                                    override val metadataBinary: CompositeMetadataArtifactContent.MetadataBinary?
+                                        // FIXME: ???
+                                        get()  {
+                                            val backref = this
+                                            return object : CompositeMetadataArtifactContent.MetadataBinary {
+                                                override val containingSourceSetContent: CompositeMetadataArtifactContent.SourceSetContent
+                                                    get() = backref
+                                                override val archiveExtension: String
+                                                    get() = ""
+                                                // This needs to be unique per fragment
+                                                override val relativeFile: File
+                                                    get() = File("uklib-${moduleVersion.group}-${moduleVersion.name}-${moduleVersion.version}-${fragment.identifier}")
+                                                override val checksum: String
+                                                    // FIXME: Why does this even exist?
+                                                    get() = ""
+
+                                                override fun copyTo(file: File): Boolean {
+                                                    return uklibDependency.fragmentToArtifact[fragment.identifier]!!.copyRecursively(
+                                                        file,
+                                                        overwrite = true,
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    override val cinteropMetadataBinaries: List<CompositeMetadataArtifactContent.CInteropMetadataBinary>
+                                        get() = emptyList()
+
+                                }
+                            }.mapKeys { it.key.identifier }
+
+                            override val containingArtifact: CompositeMetadataArtifact
+                                get() = backrefArtifact
+                            override val sourceSets: List<CompositeMetadataArtifactContent.SourceSetContent>
+                                get() = fragmentSourceSets.values.toList()
+
+                            override fun getSourceSet(name: String): CompositeMetadataArtifactContent.SourceSetContent {
+                                return fragmentSourceSets[name]!!
+                            }
+
+                            override fun findSourceSet(name: String): CompositeMetadataArtifactContent.SourceSetContent? {
+                                return fragmentSourceSets[name]
+                            }
+
+                            override fun close() {
+                                // ???
+                            }
+                        }
+                    }
+
+                    override fun exists(): Boolean = true
+                }
+            )
+        )
+    }
+
+    private fun processPSMDependency(
+        compositeMetadataArtifact: ResolvedArtifactResult,
+        dependency: ResolvedDependencyResult,
+        module: ResolvedComponentResult,
+        moduleId: ComponentIdentifier,
+        sourceSetsVisibleInParents: Set<String>,
+    ): MetadataDependencyResolution {
         logger.debug("Transform composite metadata artifact: '${compositeMetadataArtifact.file}'")
 
         val mppDependencyMetadataExtractor =

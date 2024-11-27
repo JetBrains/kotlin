@@ -164,11 +164,28 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 is ModuleComponentIdentifier -> {
-                    IdeaKotlinResolvedBinaryDependency(
-                        coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
-                        binaryType = binaryType,
-                        classpath = IdeaKotlinClasspath(artifact.file),
-                    )
+                    // FIXME: Где-то тут разламывается AS интеграция из-за того что совпадает id?
+                    if (artifact.variant.attributes.getAttribute(uklibStateAttribute) == uklibStateUnzipped) {
+                        val platform = artifact.variant.attributes.getAttribute(uklibPlatformAttribute)
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(
+                                group = componentId.group,
+                                module = componentId.module,
+                                version = componentId.version,
+                                sourceSetName = platform,
+                                capabilities = artifact.variant.capabilities.map(::IdeaKotlinBinaryCapability).toSet(),
+                                attributes = IdeaKotlinBinaryAttributes(artifact.variant.attributes)
+                            ),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    } else {
+                        IdeaKotlinResolvedBinaryDependency(
+                            coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
+                            binaryType = binaryType,
+                            classpath = IdeaKotlinClasspath(artifact.file),
+                        )
+                    }
                 }
 
                 is LibraryBinaryIdentifier -> {

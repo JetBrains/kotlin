@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureResourcesPublicationAttributes
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.setAttribute
@@ -70,6 +71,30 @@ private suspend fun Project.setupConsumption() {
     val metadataTarget = multiplatformExtension.awaitMetadataTarget()
     val targets = multiplatformExtension.awaitTargets()
     AfterFinaliseCompilations.await()
+
+    sourceSets.configureEach {
+        with(it.internal.resolvableMetadataConfiguration) {
+            attributes {
+                when (project.kotlinPropertiesProvider.uklibResolutionStrategy) {
+                    UklibResolutionStrategy.PreferUklibVariant -> it.attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_UKLIB))
+                    UklibResolutionStrategy.PreferPlatformSpecificVariant -> {
+                        /* rely on the default + compatibility rule */
+                    }
+                }
+                it.attribute(uklibStateAttribute, uklibStateUnzipped)
+                it.attribute(uklibPlatformAttribute, KotlinPlatformType.common.name)
+            }
+        }
+    }
+    // FIXME: Drop this transform and use the unzip transform instead
+    dependencies.registerTransform(UnzippedUklibToMetadataCompilationTransform::class.java) {
+        it.from
+            .attribute(uklibStateAttribute, uklibStateUnzipped)
+            .attribute(uklibPlatformAttribute, uklibPlatformUnknown)
+        it.to
+            .attribute(uklibStateAttribute, uklibStateUnzipped)
+            .attribute(uklibPlatformAttribute, KotlinPlatformType.common.name)
+    }
 
     targets.configureEach { target ->
         if (target is KotlinMetadataTarget) return@configureEach
@@ -185,14 +210,29 @@ abstract class UklibUnzipTransform @Inject constructor(
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
+        // FIXME: 25.11.2024 - When resolving a jar with uklib packaging Gradle comes here with the jar
         val input = inputArtifact.get().asFile
-        val outputDir = outputs.dir("unzipped_uklib_${input.name}")
-        if (parameters.performUnzip.get()) {
-            fileOperations.copy {
-                it.from(archiveOperations.zipTree(inputArtifact.get().asFile))
-                it.into(outputDir)
+        if (input.extension == "uklib") {
+            val outputDir = outputs.dir("unzipped_uklib_${input.name}")
+            // FIXME: 13.11.2024 - Throw this away because this is not really testable with UT?
+            if (parameters.performUnzip.get()) {
+                fileOperations.copy {
+                    it.from(archiveOperations.zipTree(inputArtifact.get().asFile))
+                    it.into(outputDir)
+                }
             }
         }
+    }
+}
+
+abstract class UnzippedUklibToMetadataCompilationTransform @Inject constructor() : TransformAction<UnzippedUklibToMetadataCompilationTransform.Parameters> {
+    interface Parameters : TransformParameters {}
+
+    @get:InputArtifact
+    abstract val inputArtifact: Provider<FileSystemLocation>
+
+    override fun transform(outputs: TransformOutputs) {
+        outputs.dir(inputArtifact.get().asFile)
     }
 }
 
