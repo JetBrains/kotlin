@@ -53,6 +53,12 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
         "Ignore failures in checking synthetic accessors for the specified backend"
     )
 
+    val SKIP_IR_SERIALIZATION by directive(
+        description = """
+        Skips serializing IR to KLIB when running tests
+        """
+    )
+
     val SKIP_UNBOUND_IR_SERIALIZATION by directive(
         """
             This is a directive to skip some test data files in unbound IR serialization tests

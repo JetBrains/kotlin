@@ -177,12 +177,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Ignores failures of signature dump comparison for tests with the $DUMP_SIGNATURES directive if the test uses the K2 frontend and the specified backend."
     )
 
-    val SKIP_IR_SERIALIZATION by directive(
-        description = """
-        Skips serializing IR to KLIB when running tests
-        """
-    )
-
     val SKIP_DESERIALIZED_IR_TEXT_DUMP by directive(
         description = """
         Skips ${IrTextDumpHandler::class}, when running a test against the deserialized IR
