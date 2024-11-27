@@ -20,15 +20,15 @@ public interface KaTypeCreator {
      * A generic class type can be built by providing type arguments using the [init] block.
      * The caller is supposed to provide the correct number of type arguments for the class.
      *
-     * Example:
+     * For Kotlin built-in types, consider using the overload that accepts a [KaClassLikeSymbol] instead:
+     * `buildClassType(builtinTypes.string)`.
+     *
+     *  #### Example
+     *
      * ```kotlin
      * buildClassType(ClassId.fromString("kotlin/collections/List")) {
      *     argument(buildClassType(ClassId.fromString("kotlin/String")))
      * }
-     *
-     * For the Kotlin built-in types, consider using the overload that accepts a [KaClassLikeSymbol] instead:
-     * ```kotlin
-     * buildClassType(builtinTypes.string)
      * ```
      */
     public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType
@@ -39,7 +39,8 @@ public interface KaTypeCreator {
      * A generic class type can be built by providing type arguments using the [init] block.
      * The caller is supposed to provide the correct number of type arguments for the class.
      *
-     * Example:
+     * #### Example
+     *
      * ```kotlin
      * buildClassType(builtinTypes.string)
      * ```

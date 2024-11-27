@@ -25,7 +25,8 @@ public interface KaTypePointer<out T : KaType> {
 }
 
 /**
- * [KaType] represents a concrete Kotlin type, such as `Int`, `Foo` for a class `Foo`, or `Bar<String>` for a class `Bar<T>`.
+ * [KaType] represents a concrete Kotlin type, such as `Int`, `Foo` for a class `Foo`, or `Bar<String>` for a class `Bar<T>`. It provides
+ * information about type structure, nullability, and annotations.
  *
  * The represented type may either be valid, or a [KaErrorType]. In that case, [KaErrorType] and the more specific [KaClassErrorType]
  * provide additional information about the nature of the type error, such as an [error message][KaErrorType.errorMessage].
@@ -41,8 +42,18 @@ public interface KaTypePointer<out T : KaType> {
  * most likely want semantic equality in such cases. A possible alternative would be to use a hash map, but with a post-processing step of
  * comparing the map's keys with [semanticallyEquals][org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.semanticallyEquals]
  * to uncover additional equal types.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
+ * @see org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker
+ * @see org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
  */
 public interface KaType : KaLifetimeOwner, KaAnnotated {
+    /**
+     * The type's [nullability][KaTypeNullability].
+     *
+     * Instead of being applied as a separate wrapper for [KaType]s (e.g. `KaNullableType` to represent a type `?`), type nullability is an
+     * attribute of each [KaType].
+     */
     public val nullability: KaTypeNullability
 
     /**
@@ -121,6 +132,11 @@ public enum class KaTypeNullability(public val isNullable: Boolean) {
     }
 }
 
+/**
+ * [KaErrorType] represents a type that failed to resolve correctly.
+ *
+ * The more specific [KaClassErrorType] has additional information available to work with.
+ */
 public interface KaErrorType : KaType {
     @KaNonPublicApi
     public val errorMessage: String
@@ -132,64 +148,192 @@ public interface KaErrorType : KaType {
     public override fun createPointer(): KaTypePointer<KaErrorType>
 }
 
+/**
+ * [KaClassType] represents a generic class type or a function type.
+ *
+ * In Kotlin, function types are class types. This is why the Analysis API differentiates between [function types][KaFunctionType] and
+ * [*usual* class types][KaUsualClassType], which encompass all non-function class types.
+ */
 public sealed class KaClassType : KaType {
+    /**
+     * The [ClassId] of the class.
+     */
     public abstract val classId: ClassId
+
+    /**
+     * The class symbol which this class type is an instance of.
+     */
     public abstract val symbol: KaClassLikeSymbol
+
+    /**
+     * The type arguments of the class type.
+     *
+     * Type arguments should not be confused with the [symbol]'s type parameters (for some subtypes of [KaClassLikeSymbol]).
+     */
     public abstract val typeArguments: List<KaTypeProjection>
 
+    /**
+     * The list of [KaResolvedClassTypeQualifier]s describing the segments of the class type.
+     *
+     * @see KaClassTypeQualifier
+     */
     public abstract val qualifiers: List<KaResolvedClassTypeQualifier>
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaClassType>
 }
 
+/**
+ * [KaFunctionType] represents a Kotlin [function type](https://kotlinlang.org/docs/lambdas.html#function-types), such as `(String) -> Int`
+ * or `suspend () -> List<Any>`.
+ */
 @OptIn(KaExperimentalApi::class)
 public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
-    public abstract val isSuspend: Boolean
-    public abstract val isReflectType: Boolean
+    /**
+     * The [extension receiver](https://kotlinlang.org/docs/extensions.html) type, or `null` if the function type is not an extension
+     * function type.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * Foo.(Bar, String, String) -> Int
+     * ```
+     *
+     * The function type above has the following receiver type: `Foo`.
+     */
+    public abstract val receiverType: KaType?
+
+    /**
+     * Whether the function type is an extension function type.
+     *
+     * @see receiverType
+     */
+    public abstract val hasReceiver: Boolean
+
+    /**
+     * The function's parameter types, *excluding* receiver types and context receivers.
+     *
+     * This should not be confused with [typeArguments], which also include the function's return type, or the [symbol]'s type parameters.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * Foo.(Bar, String, String) -> Int
+     * ```
+     *
+     * The function type above has the following parameter types: `Bar`, `String`, `String`.
+     */
+    public abstract val parameterTypes: List<KaType>
+
+    /**
+     * The function's arity, i.e. the number of [*parameter types*][parameterTypes].
+     */
     public abstract val arity: Int
 
+    /**
+     * The function's return type.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * Foo.(Bar, String, String) -> Int
+     * ```
+     *
+     * The function type above has the following return type: `Int`.
+     */
+    public abstract val returnType: KaType
+
+    /**
+     * Whether the function is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions).
+     */
+    public abstract val isSuspend: Boolean
+
+    /**
+     * Whether the type is a [reflection function type](https://kotlinlang.org/docs/reflection.html#function-references).
+     */
+    public abstract val isReflectType: Boolean
+
+    /**
+     * Whether the function type has context receiver parameters.
+     */
     @KaExperimentalApi
     public abstract val hasContextReceivers: Boolean
-    public abstract val receiverType: KaType?
-    public abstract val hasReceiver: Boolean
-    public abstract val parameterTypes: List<KaType>
-    public abstract val returnType: KaType
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaFunctionType>
 }
 
+/**
+ * [KaUsualClassType] represents a generic class type, such as `String` or `List<Int>`.
+ */
 public abstract class KaUsualClassType : KaClassType() {
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaUsualClassType>
 }
 
+/**
+ * [KaClassErrorType] represents a class type that failed to resolve correctly.
+ */
 public abstract class KaClassErrorType : KaErrorType {
+    /**
+     * The list of [KaClassTypeQualifier]s describing the segments of the class error type.
+     *
+     * Depending on the kind of error, some or all qualifiers may be [KaResolvedClassTypeQualifier]s, which allow retrieving additional
+     * information about the type despite the error. For example, a type error may be "invalid number of type arguments," but the qualifier
+     * will be resolved regardless.
+     */
     public abstract val qualifiers: List<KaClassTypeQualifier>
 
+    /**
+     * A list of candidate class symbols that were considered when resolving the type, despite the ultimate type error.
+     */
     public abstract val candidateSymbols: Collection<KaClassLikeSymbol>
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaClassErrorType>
 }
 
+/**
+ * [KaTypeParameterType] represents a type parameter type, such as `T` in the declaration `class Box<T>(val element: T)`.
+ *
+ * In that sense, [KaTypeParameterType] is a type used in *unsubstituted* positions to represent an application of a type parameter.
+ */
 public abstract class KaTypeParameterType : KaType {
+    /**
+     * The type parameter's simple name.
+     */
     public abstract val name: Name
+
+    /**
+     * The [KaTypeParameterSymbol] which this type is an instance of.
+     */
     public abstract val symbol: KaTypeParameterSymbol
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaTypeParameterType>
 }
 
+/**
+ * [KaCapturedType] represents a [captured type](https://kotlinlang.org/spec/type-system.html#type-capturing).
+ */
 public abstract class KaCapturedType : KaType {
+    /**
+     * The source type argument of the captured type.
+     */
     public abstract val projection: KaTypeProjection
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaCapturedType>
 }
 
+/**
+ * [KaDefinitelyNotNullType] represents a [definitely not-null type](https://kotlinlang.org/docs/generics.html#definitely-non-nullable-types),
+ * such as `T & Any` for a type parameter `T`.
+ */
 public abstract class KaDefinitelyNotNullType : KaType {
+    /**
+     * The nullable upper bound of the type.
+     */
     public abstract val original: KaType
 
     final override val nullability: KaTypeNullability get() = withValidityAssertion { KaTypeNullability.NON_NULLABLE }
@@ -199,17 +343,36 @@ public abstract class KaDefinitelyNotNullType : KaType {
 }
 
 /**
- * A flexible type's [abbreviation] is always `null`, as only [lowerBound] and [upperBound] may actually be expanded types.
+ * [KaFlexibleType] represents a [flexible type](https://kotlinlang.org/spec/type-system.html#flexible-types) (or a so-called
+ * [platform type](https://kotlinlang.org/docs/java-interop.html#null-safety-and-platform-types)), a range of types from the [lowerBound] to
+ * the [upperBound] (both inclusive).
+ *
+ * A flexible type's [abbreviation] is always `null`, as only [lowerBound] and [upperBound] can actually be expanded types.
  */
 public abstract class KaFlexibleType : KaType {
+    /**
+     * The lower bound, such as `String` in `String!`.
+     */
     public abstract val lowerBound: KaType
+
+    /**
+     * The upper bound, such as `String?` in `String!`.
+     */
     public abstract val upperBound: KaType
 
     @KaExperimentalApi
     public abstract override fun createPointer(): KaTypePointer<KaFlexibleType>
 }
 
+/**
+ * [KaIntersectionType] represents an [intersection type](https://kotlinlang.org/spec/type-system.html#intersection-types), such as `A & B`.
+ * Intersection types cannot be denoted in Kotlin code, but can result from some compiler operations, such as
+ * [smart casts](https://kotlinlang.org/spec/type-inference.html#smart-casts).
+ */
 public abstract class KaIntersectionType : KaType {
+    /**
+     * A list of individual types participating in the intersection.
+     */
     public abstract val conjuncts: List<KaType>
 
     @KaExperimentalApi
@@ -217,10 +380,11 @@ public abstract class KaIntersectionType : KaType {
 }
 
 /**
- * A special dynamic type, which is used to support interoperability with dynamically typed libraries, platforms or languages.
+ * [KaDynamicType] represents a [dynamic type](https://kotlinlang.org/docs/dynamic-type.html), which is used to support interoperability
+ * with dynamically typed libraries, platforms, or languages.
  *
- * Although this can be viewed as a flexible type (kotlin.Nothing..kotlin.Any?), a platform may assign special meaning to the
- * values of dynamic type, and handle differently from the regular flexible type.
+ * Although this can be viewed as a flexible type (`kotlin.Nothing..kotlin.Any?`), a platform may assign special meaning to the values of a
+ * dynamic type, and handle it differently from the regular flexible type.
  */
 public abstract class KaDynamicType : KaType {
     @KaExperimentalApi
