@@ -116,7 +116,7 @@ fun CommonBackendContext.createArrayOfExpression(
         typeArgumentsCount = 1,
     ).apply {
         putTypeArgument(0, arrayElementType)
-        putValueArgument(0, arg0)
+        arguments[0] = arg0
     }
 }
 
