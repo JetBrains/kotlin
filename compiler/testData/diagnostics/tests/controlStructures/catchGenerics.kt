@@ -25,3 +25,10 @@ inline fun <reified E : Exception, R> tryCatch(lazy: () -> R, failure: (E) -> R)
 fun <T : Throwable> tryCatch() {
     try { } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>e: T<!>) { }
 }
+
+fun <T : Nothing?> test1() {
+    try {
+        throw Exception()
+    } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>x: T & Any<!>) {
+    }
+}
