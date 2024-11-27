@@ -67,7 +67,7 @@ object CheckExtensionReceiver : ResolutionStage() {
             }
         }
 
-        val expectedReceiverType = candidate.getExpectedReceiverType() ?: return
+        val expectedReceiverType = candidate.symbol.getExpectedReceiverType() ?: return
         val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType)
 
         // Probably, we should add an assertion here since we check consistency on the level of scope tower levels
@@ -117,11 +117,6 @@ object CheckExtensionReceiver : ResolutionStage() {
         candidate.chosenExtensionReceiver = atom
 
         sink.yieldIfNeed()
-    }
-
-    private fun Candidate.getExpectedReceiverType(): ConeKotlinType? {
-        val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
-        return callableSymbol.fir.receiverParameter?.typeRef?.coneType
     }
 }
 

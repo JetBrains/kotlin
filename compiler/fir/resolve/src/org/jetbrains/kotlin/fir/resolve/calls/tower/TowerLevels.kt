@@ -469,8 +469,9 @@ internal class ScopeTowerLevel(
         }
 
         val receiverExpected = withHideMembersOnly || areThereExtensionReceiverOptions()
-        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
-        if (candidateReceiverTypeRef == null == receiverExpected) return
+        val receiverParameterApplicable = candidate.getExpectedReceiverType() != null
+
+        if (receiverParameterApplicable != receiverExpected) return
 
         val dispatchReceiverValue = dispatchReceiverValue(candidate, callInfo)
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
