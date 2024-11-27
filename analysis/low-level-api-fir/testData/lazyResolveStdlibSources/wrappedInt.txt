@@ -531,7 +531,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
             internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
                 internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
 
-            internal final const [ResolvedTo(CONTRACTS)] val IS_NOTHING_TYPE: <implicit> = IntegerLiteral(1).shl#(IntegerLiteral(2))
+            internal final const [ResolvedTo(CONTRACTS)] val IS_NOTHING_TYPE: <implicit> = LAZY_EXPRESSION
                 internal [ResolvedTo(CONTRACTS)] [ContainingClassKey=Companion] get(): <implicit>
 
         }

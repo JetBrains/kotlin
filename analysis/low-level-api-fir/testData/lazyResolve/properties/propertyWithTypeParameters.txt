@@ -41,30 +41,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
     public final [ResolvedTo(CONTRACTS)] val <[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K> [ResolvedTo(CONTRACTS)] R|T|.resolveMe: R|K|
-        public [ResolvedTo(CONTRACTS)] get(): R|K| {
-            ^ TODO#()
-        }
+        public [ResolvedTo(CONTRACTS)] get(): R|K| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K> [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.resolveMe: R|K|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|K| {
-            ^ TODO#()
-        }
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|K| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] val <[ResolvedTo(CONSTANT_EVALUATION)] T : R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] K> [ResolvedTo(CONSTANT_EVALUATION)] R|T|.resolveMe: R|K|
-        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|K| {
-            ^ TODO#()
-        }
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|K| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] K> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.resolveMe: R|K|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|K| {
-            ^ TODO#()
-        }
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|K| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt

@@ -67,12 +67,12 @@ FILE: [ResolvedTo(IMPORTS)] constPropertyWithExplicitTypeAndInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] var simple: Int = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): Int
         public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
-    public final const [ResolvedTo(CONTRACTS)] val withConstInitializer: R|kotlin/Int| = IntegerLiteral(1).plus#(IntegerLiteral(5)).plus#(simple#)
+    public final const [ResolvedTo(CONTRACTS)] val withConstInitializer: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] constPropertyWithExplicitTypeAndInitializer.kt
-    public final const [ResolvedTo(CONTRACTS)] var simple: R|kotlin/Int| = IntegerLiteral(24)
+    public final const [ResolvedTo(CONTRACTS)] var simple: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
         public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit|
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)

@@ -163,12 +163,9 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun bar(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/Pair>| {
-            ^bar Null(null)!!
-        }
+        public final [ResolvedTo(CONTRACTS)] fun bar(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/Pair>| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> withLambda([ResolvedTo(CONTRACTS)] lambda: R|(util/Pair) -> T|): R|T| {
-        }
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> withLambda([ResolvedTo(CONTRACTS)] lambda: R|(util/Pair) -> T|): R|T| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol util/bar, FirConstructorSymbol util/Pair.Pair]] fun foo(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| {
             ^foo R|util/withLambda|<R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<util/Pair, T>] withLambda@fun <anonymous>([ResolvedTo(RAW_FIR)] <unused var>: R|util/Pair|): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| <inline=NoInline>  {

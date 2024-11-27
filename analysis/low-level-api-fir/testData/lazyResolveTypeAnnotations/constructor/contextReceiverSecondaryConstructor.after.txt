@@ -21,7 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverSecondaryConstructor.kt
         }
 
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): R|Foo| {
-            this<R|Foo|>()
+            LAZY_this<R|Foo|>
         }
 
     }

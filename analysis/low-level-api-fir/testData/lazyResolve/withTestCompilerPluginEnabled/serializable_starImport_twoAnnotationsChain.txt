@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] val generatedMethodReference: <implicit> = Serializer#::serializeFirstTarget#
+    public final [ResolvedTo(CONTRACTS)] val generatedMethodReference: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
 IMPLICIT_TYPES_BODY_RESOLVE:

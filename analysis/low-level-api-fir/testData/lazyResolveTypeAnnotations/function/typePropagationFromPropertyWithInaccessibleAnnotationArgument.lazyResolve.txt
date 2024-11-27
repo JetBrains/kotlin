@@ -212,12 +212,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(CONTRACTS)] val propertyToResolve: R|kotlin/String|
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/String| {
-            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                <strcat>(String( (), it#, String()))
-            }
-            ) } ?: String()
-        }
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/String| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(RAW_FIR)] declaration.kt
@@ -241,12 +236,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
-            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                <strcat>(String( (), it#, String()))
-            }
-            ) } ?: String()
-        }
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(RAW_FIR)] declaration.kt
@@ -270,12 +260,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] val propertyToResolve: R|kotlin/String|
-        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
-            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                <strcat>(String( (), it#, String()))
-            }
-            ) } ?: String()
-        }
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(RAW_FIR)] declaration.kt
@@ -299,12 +284,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val propertyToResolve: R|kotlin/String|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
-            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                <strcat>(String( (), it#, String()))
-            }
-            ) } ?: String()
-        }
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] declaration.kt
@@ -324,9 +304,7 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = R|/privateConstant|)  kotlin/collections/List<@R|Anno|(message = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(message = R|/regularConstant|)  kotlin/Int>>?|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(message = R|/privateConstant|)  kotlin/collections/List<@R|Anno|(message = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(message = R|/regularConstant|)  kotlin/Int>>?| {
-            ^ Null(null)
-        }
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(message = R|/privateConstant|)  kotlin/collections/List<@R|Anno|(message = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(message = R|/regularConstant|)  kotlin/Int>>?| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|

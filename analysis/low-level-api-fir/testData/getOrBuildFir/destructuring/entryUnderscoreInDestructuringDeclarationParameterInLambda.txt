@@ -25,8 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] entryUnderscoreInDestructuringDeclarationParameterIn
         public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|kotlin/Int| = this@R|/X|.R|/X.a|, [ResolvedTo(STATUS)] b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun x([ResolvedTo(CONTRACTS)] action: R|(X) -> kotlin/Unit|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun x([ResolvedTo(CONTRACTS)] action: R|(X) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
         R|/x|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<X, kotlin/Unit>] x@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] <destruct>: R|X|): R|kotlin/Unit| <inline=NoInline>  {
             [ResolvedTo(BODY_RESOLVE)] lval <unused var>: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component1|()

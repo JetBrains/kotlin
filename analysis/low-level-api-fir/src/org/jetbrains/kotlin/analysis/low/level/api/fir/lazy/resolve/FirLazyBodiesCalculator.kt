@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
@@ -47,6 +50,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 internal object FirLazyBodiesCalculator {
     fun calculateBodies(designation: FirDesignation) {
@@ -56,8 +61,16 @@ internal object FirLazyBodiesCalculator {
         )
     }
 
+    fun calculateContracts(designation: FirDesignation) {
+        designation.target.transformSingle(
+            FirTargetLazyContractsCalculatorTransformer,
+            designation.path.toPersistentList(),
+        )
+    }
+
     @TestOnly
     fun calculateAllLazyExpressionsInFile(firFile: FirFile) {
+        firFile.transformSingle(FirAllLazyContractsCalculatorTransformer, persistentListOf())
         firFile.accept(RecursiveLazyAnnotationCalculatorVisitor, firFile.moduleData.session)
         firFile.transformSingle(FirAllLazyBodiesCalculatorTransformer, persistentListOf())
     }
@@ -109,22 +122,28 @@ private fun replaceLazyValueParameters(target: FirFunction, copy: FirFunction) {
     }
 }
 
-private fun replaceLazyBody(target: FirFunction, copy: FirFunction) {
-    if (target.body is FirLazyBlock) {
-        target.replaceBody(copy.body)
-    }
-}
+/**
+ * @param isContractResolved is **false** during [FirResolvePhase.CONTRACTS]
+ * and **true** for the following phases.
+ * **true** flag assumes that the declaration already passes the [FirResolvePhase.CONTRACTS] phase,
+ * so it is possible to depend on [FirContractDescriptionOwner.contractDescription].
+ *
+ * Raw body may have false-positive contracts, so the final decision will be made only during the [FirResolvePhase.CONTRACTS] phase.
+ * In the case of a false positive the redundant [FirContractCallBlock] should be unwrapped to allow the body be processed
+ * correctly by other transformers and checkers.
+ */
+private fun replaceLazyBody(target: FirFunction, copy: FirFunction, isContractResolved: Boolean = true) {
+    if (target.body !is FirLazyBlock) return
 
-private fun replaceLazyContractDescription(target: FirContractDescriptionOwner, copy: FirContractDescriptionOwner) {
-    val shouldReplace = when (val currentContractDescription = target.contractDescription) {
-        is FirRawContractDescription -> currentContractDescription.rawEffects.any { it is FirLazyExpression }
-        null -> copy.contractDescription != null
-        else -> false
+    val newBody = copy.body
+    if (isContractResolved && target is FirContractDescriptionOwner) {
+        val newContractBlock = newBody?.statements?.firstOrNull() as? FirContractCallBlock
+        if (newContractBlock != null && target.contractDescription !is FirResolvedContractDescription) {
+            newBody.replaceFirstStatement<FirStatement> { newContractBlock.call }
+        }
     }
 
-    if (shouldReplace) {
-        target.replaceContractDescription(copy.contractDescription)
-    }
+    target.replaceBody(newBody)
 }
 
 private fun replaceLazyDelegatedConstructor(target: FirConstructor, copy: FirConstructor) {
@@ -160,13 +179,14 @@ private fun replaceLazyDelegate(target: FirVariable, copy: FirVariable) {
     }
 }
 
+private val FirCallableDeclaration.originalPsi: PsiElement? get() = unwrapFakeOverridesOrDelegated().psi
+
 private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
     val simpleFunction = designation.target as FirSimpleFunction
     require(needCalculatingLazyBodyForFunction(simpleFunction))
 
-    val newSimpleFunction = revive<FirSimpleFunction>(designation, simpleFunction.unwrapFakeOverridesOrDelegated().psi)
+    val newSimpleFunction = revive<FirSimpleFunction>(designation, simpleFunction.originalPsi)
 
-    replaceLazyContractDescription(simpleFunction, newSimpleFunction)
     replaceLazyBody(simpleFunction, newSimpleFunction)
     replaceLazyValueParameters(simpleFunction, newSimpleFunction)
 }
@@ -177,7 +197,6 @@ private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
 
     val newConstructor = revive<FirConstructor>(designation)
 
-    replaceLazyContractDescription(constructor, newConstructor)
     replaceLazyBody(constructor, newConstructor)
     replaceLazyDelegatedConstructor(constructor, newConstructor)
     replaceLazyValueParameters(constructor, newConstructor)
@@ -191,18 +210,16 @@ private fun calculateLazyBodyForProperty(designation: FirDesignation) {
         return
     }
 
-    val recreatedProperty = revive<FirProperty>(designation, firProperty.unwrapFakeOverridesOrDelegated().psi)
+    val recreatedProperty = revive<FirProperty>(designation, firProperty.originalPsi)
 
     firProperty.getter?.let { getter ->
         val recreatedGetter = recreatedProperty.getter!!
-        replaceLazyContractDescription(getter, recreatedGetter)
         replaceLazyBody(getter, recreatedGetter)
         rebindDelegatedAccessorBody(newTarget = getter, oldTarget = recreatedGetter)
     }
 
     firProperty.setter?.let { setter ->
         val recreatedSetter = recreatedProperty.setter!!
-        replaceLazyContractDescription(setter, recreatedSetter)
         replaceLazyBody(setter, recreatedSetter)
         rebindDelegatedAccessorBody(newTarget = setter, oldTarget = recreatedSetter)
     }
@@ -600,19 +617,8 @@ private fun calculateLazyBodiesForField(designation: FirDesignation) {
     field.replaceInitializer(newField.initializer)
 }
 
-private fun needCalculatingLazyBodyForContractDescriptionOwner(firContractOwner: FirContractDescriptionOwner): Boolean {
-    val contractDescription = firContractOwner.contractDescription
-    if (contractDescription is FirRawContractDescription) {
-        return contractDescription.rawEffects.any { it is FirLazyExpression }
-    }
-
-    return false
-}
-
 private fun needCalculatingLazyBodyForFunction(firFunction: FirFunction): Boolean {
-    return (firFunction.body is FirLazyBlock
-            || firFunction.valueParameters.any { it.defaultValue is FirLazyExpression })
-            || (firFunction is FirContractDescriptionOwner && needCalculatingLazyBodyForContractDescriptionOwner(firFunction))
+    return firFunction.body is FirLazyBlock || firFunction.valueParameters.any { it.defaultValue is FirLazyExpression }
 }
 
 private fun needCalculatingLazyBodyForProperty(firProperty: FirProperty): Boolean =
@@ -760,4 +766,116 @@ private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recu
     }
 
     return element
+}
+
+@OptIn(ExperimentalContracts::class)
+private fun needCalculatingLazyContractsForFunction(function: FirFunction): Boolean {
+    contract {
+        returns(true) implies (function is FirContractDescriptionOwner)
+    }
+
+    if (function !is FirContractDescriptionOwner) return false
+
+    val contractDescription = function.contractDescription
+    return when (contractDescription) {
+        is FirRawContractDescription -> contractDescription.rawEffects.any { it is FirLazyExpression }
+
+        // Q: Why is it null?
+        // A: There is an ambiguity between `null` and `FirLegacyRawContractDescription` as during PSI2FIR phase we cannot check the body
+        // to set up the description properly.
+        // So, potentially, all functions without `FirRawContractDescription` may have a contract.
+        null, is FirLegacyRawContractDescription -> function.body is FirLazyBlock
+
+        is FirErrorContractDescription, is FirResolvedContractDescription -> errorWithAttachment("Unexpected contract description type: ${contractDescription::class.simpleName}") {
+            withFirEntry("function", function)
+        }
+    }
+}
+
+private fun needCalculatingLazyContractsForProperty(property: FirProperty): Boolean {
+    return property.getter?.let(::needCalculatingLazyContractsForFunction) == true ||
+            property.setter?.let(::needCalculatingLazyContractsForFunction) == true
+}
+
+private object FirAllLazyContractsCalculatorTransformer : FirLazyContractsCalculatorTransformer() {
+    override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E {
+        return recursiveTransformation(element, data)
+    }
+}
+
+private fun calculateLazyContractsForFunction(designation: FirDesignation) {
+    val function = designation.target as FirFunction
+    require(needCalculatingLazyContractsForFunction(function))
+
+    val newFunction = revive<FirFunction>(designation, function.originalPsi)
+    requireWithAttachment(newFunction is FirContractDescriptionOwner, { "Unexpected function type: ${newFunction::class.simpleName}" }) {
+        withFirEntry("originalFunction", function)
+        withFirEntry("newFunction", newFunction)
+    }
+
+    replaceLazyContracts(target = function, copy = newFunction)
+}
+
+private fun calculateLazyContractsForProperty(designation: FirDesignation) {
+    val property = designation.target as FirProperty
+    require(needCalculatingLazyContractsForProperty(property))
+
+    val newProperty = revive<FirProperty>(designation, property.originalPsi)
+    property.getter?.let { getter ->
+        val newGetter = newProperty.getter!!
+        replaceLazyContracts(target = getter, copy = newGetter)
+    }
+
+    property.setter?.let { setter ->
+        val newSetter = newProperty.setter!!
+        replaceLazyContracts(target = setter, copy = newSetter)
+    }
+}
+
+private fun <F> replaceLazyContracts(target: F, copy: F) where F : FirFunction, F : FirContractDescriptionOwner {
+    val contractDescription = copy.contractDescription
+    target.replaceContractDescription(contractDescription)
+
+    if (contractDescription is FirLegacyRawContractDescription) {
+        replaceLazyBody(target = target, copy = copy, isContractResolved = false)
+    }
+}
+
+private object FirTargetLazyContractsCalculatorTransformer : FirLazyContractsCalculatorTransformer()
+
+private sealed class FirLazyContractsCalculatorTransformer : FirTransformer<PersistentList<FirDeclaration>>() {
+    override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E = element
+
+    override fun transformSimpleFunction(
+        simpleFunction: FirSimpleFunction,
+        data: PersistentList<FirDeclaration>,
+    ): FirSimpleFunction {
+        if (needCalculatingLazyContractsForFunction(simpleFunction)) {
+            val designation = FirDesignation(data, simpleFunction)
+            calculateLazyContractsForFunction(designation)
+        }
+
+        return simpleFunction
+    }
+
+    override fun transformConstructor(
+        constructor: FirConstructor,
+        data: PersistentList<FirDeclaration>,
+    ): FirConstructor {
+        if (needCalculatingLazyContractsForFunction(constructor)) {
+            val designation = FirDesignation(data, constructor)
+            calculateLazyContractsForFunction(designation)
+        }
+
+        return constructor
+    }
+
+    override fun transformProperty(property: FirProperty, data: PersistentList<FirDeclaration>): FirProperty {
+        if (needCalculatingLazyContractsForProperty(property)) {
+            val designation = FirDesignation(data, property)
+            calculateLazyContractsForProperty(designation)
+        }
+
+        return property
+    }
 }

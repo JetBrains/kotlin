@@ -12,8 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedWholeCall.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun y([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(CONTRACTS)] fun y([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {

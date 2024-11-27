@@ -137,8 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] resolveMe> ddd(): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -154,8 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -171,8 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] resolveMe> ddd(): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -188,8 +185,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe> ddd(): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 

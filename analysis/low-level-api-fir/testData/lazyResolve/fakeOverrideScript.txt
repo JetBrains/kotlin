@@ -364,16 +364,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] fun expression([ResolvedTo(CONTRACTS)] expression: R|IrConst<*>|): R|kotlin/Unit| {
-            when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
-                ($subj$ is Kind.Null) ->  {
-                    kind#.valueOf#(expression#)
-                }
-                else ->  {
-                }
-            }
-
-        }
+        public final [ResolvedTo(CONTRACTS)] fun expression([ResolvedTo(CONTRACTS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -418,16 +409,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun expression([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
-            when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
-                ($subj$ is Kind.Null) ->  {
-                    kind#.valueOf#(expression#)
-                }
-                else ->  {
-                }
-            }
-
-        }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun expression([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -472,16 +454,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun expression([ResolvedTo(CONSTANT_EVALUATION)] expression: R|IrConst<*>|): R|kotlin/Unit| {
-            when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
-                ($subj$ is Kind.Null) ->  {
-                    kind#.valueOf#(expression#)
-                }
-                else ->  {
-                }
-            }
-
-        }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun expression([ResolvedTo(CONSTANT_EVALUATION)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
@@ -526,16 +499,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expression([ResolvedTo(ANNOTATION_ARGUMENTS)] expression: R|IrConst<*>|): R|kotlin/Unit| {
-            when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
-                ($subj$ is Kind.Null) ->  {
-                    kind#.valueOf#(expression#)
-                }
-                else ->  {
-                }
-            }
-
-        }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expression([ResolvedTo(ANNOTATION_ARGUMENTS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public sealed [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-fakeOverrideScript.kts>] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {

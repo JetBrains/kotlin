@@ -30,5 +30,4 @@ FILE: [ResolvedTo(IMPORTS)] afterIf.kt
 
         R|<local>/obj|.R|kotlin/Any.hashCode|()
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }

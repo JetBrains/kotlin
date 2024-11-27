@@ -76,9 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeUnavailable.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            private final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
-                ^explicitType IntegerLiteral(1)
-            }
+            private final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
             private final const [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>

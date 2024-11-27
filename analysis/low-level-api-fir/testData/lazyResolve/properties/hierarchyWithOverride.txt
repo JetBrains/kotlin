@@ -281,7 +281,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
         public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public open override [ResolvedTo(CONTRACTS)] val str: <implicit> = String()
+        public open override [ResolvedTo(CONTRACTS)] val str: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Usage] get(): <implicit>
 
     }

@@ -7,6 +7,4 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnReturnType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <reified [ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Number|> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/String|.collectOfType([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): <ERROR TYPE REF: Symbol not found for Sequence> {
-        ^collectOfType IntegerLiteral(4)
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <reified [ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Number|> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/String|.collectOfType([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): <ERROR TYPE REF: Symbol not found for Sequence> { LAZY_BLOCK }

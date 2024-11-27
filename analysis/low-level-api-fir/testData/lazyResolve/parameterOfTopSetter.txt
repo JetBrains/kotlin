@@ -48,35 +48,27 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
-    public final [ResolvedTo(CONTRACTS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [ResolvedTo(CONTRACTS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
-        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var x: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [ResolvedTo(CONSTANT_EVALUATION)] var x: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
-        public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt

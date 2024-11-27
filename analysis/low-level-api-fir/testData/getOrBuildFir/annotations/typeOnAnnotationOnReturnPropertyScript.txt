@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReturnPropertyScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val i: R|@R|Anno|(s = String(ab))  kotlin/Int| = IntegerLiteral(1)
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val i: R|@R|Anno|(s = String(ab))  kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(s = String(ab))  kotlin/Int|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnReturnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {

@@ -11,8 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] statementAnnotation.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|kotlin/Suppress|[Types](names = vararg(String())) R|/foo|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|

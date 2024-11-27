@@ -113,8 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): String
 
     }
-    @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
-    }
+    @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
@@ -127,8 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): String
 
     }
-    @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-    }
+    @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
@@ -141,8 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): String
 
     }
-    @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
-    }
+    @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
@@ -155,8 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
     }
-    @R|Foo<kotlin/Int>|[Types](s = String()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
-    }
+    @R|Foo<kotlin/Int>|[Types](s = String()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt

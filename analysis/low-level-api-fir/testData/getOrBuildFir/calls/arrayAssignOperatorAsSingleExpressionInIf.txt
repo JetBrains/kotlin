@@ -12,8 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] arrayAssignOperatorAsSingleExpressionInIf.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit| {
-        }
+        public final operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun usageFoo([ResolvedTo(BODY_RESOLVE)] flag: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {

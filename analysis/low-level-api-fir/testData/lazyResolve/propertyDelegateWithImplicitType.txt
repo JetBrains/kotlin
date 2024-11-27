@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
-        @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONTRACTS)] var resolveMe: <implicit> = explicitType#()
+        @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONTRACTS)] var resolveMe: <implicit> = LAZY_EXPRESSION
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Interface] get(): <implicit>
             @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Interface] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
 
@@ -126,9 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-        public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| {
-            ^explicitType Null(null)
-        }
+        public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
         @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
@@ -162,9 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-        public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| {
-            ^explicitType Null(null)
-        }
+        public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
         @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONSTANT_EVALUATION)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
@@ -198,9 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-        public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| {
-            ^explicitType Null(null)
-        }
+        public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
         @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
             @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
@@ -234,9 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-        public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| {
-            ^explicitType Null(null)
-        }
+        public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
         @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
             @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] get(): R|kotlin/String?|

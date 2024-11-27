@@ -168,22 +168,23 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             // to a normal call.
             if (resolvedContractCall.toResolvedCallableSymbol()?.callableId != FirContractsDslNames.CONTRACT) {
                 if (hasBodyContract) {
-                    owner.body.replaceFirstStatement<FirContractCallBlock> { resolvedContractCall }
+                    owner.body.replaceFirstStatement<FirContractCallBlock> { contractDescription.contractCall }
                 }
+
                 owner.replaceContractDescription(newContractDescription = null)
                 dataFlowAnalyzer.exitContractDescription()
                 return owner
             }
 
             val argument = resolvedContractCall.arguments.singleOrNull() as? FirAnonymousFunctionExpression
-                ?: return transformOwnerOfErrorContract(owner, contractDescription)
+                ?: return transformOwnerOfErrorContract(owner, contractDescription, hasBodyContract)
 
             if (!argument.anonymousFunction.isLambda) {
-                return transformOwnerOfErrorContract(owner, contractDescription)
+                return transformOwnerOfErrorContract(owner, contractDescription, hasBodyContract)
             }
 
             val lambdaBody = argument.anonymousFunction.body
-                ?: return transformOwnerOfErrorContract(owner, contractDescription)
+                ?: return transformOwnerOfErrorContract(owner, contractDescription, hasBodyContract)
 
             val resolvedContractDescription = buildResolvedContractDescription {
                 val effectExtractor = ConeEffectExtractor(session, owner, valueParameters)
@@ -362,7 +363,8 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
 
         private fun <T : FirContractDescriptionOwner> transformOwnerOfErrorContract(
             owner: T,
-            description: FirLegacyRawContractDescription
+            description: FirLegacyRawContractDescription,
+            hasBodyContract: Boolean,
         ): T {
             owner.replaceContractDescription(
                 buildErrorContractDescription {
@@ -370,6 +372,12 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                     diagnostic = description.diagnostic
                 }
             )
+
+            // Error contract should be unwrapped to properly resolve it later
+            if (hasBodyContract) {
+                owner.body.replaceFirstStatement<FirContractCallBlock> { description.contractCall }
+            }
+
             dataFlowAnalyzer.exitContractDescription()
             return owner
         }

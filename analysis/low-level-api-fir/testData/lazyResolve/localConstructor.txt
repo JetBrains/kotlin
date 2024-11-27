@@ -108,9 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
-        ^magic Null(null)!!
-    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
             LAZY_super<R|kotlin/Any|>
@@ -143,9 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
-        ^magic Null(null)!!
-    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
             LAZY_super<R|kotlin/Any|>
@@ -178,9 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
-        ^magic Null(null)!!
-    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
             LAZY_super<R|kotlin/Any|>
@@ -213,9 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
-        ^magic Null(null)!!
-    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
     public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
             LAZY_super<R|kotlin/Any|>

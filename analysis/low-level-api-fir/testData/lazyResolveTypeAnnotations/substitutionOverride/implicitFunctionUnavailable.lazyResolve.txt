@@ -151,9 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailable.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Symbol not found for T>>?| {
-                ^explicitType Null(null)
-            }
+            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Symbol not found for T>>?| { LAZY_BLOCK }
 
             public final const [ResolvedTo(STATUS)] val constant: <implicit> = LAZY_EXPRESSION
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
@@ -195,9 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailable.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Symbol not found for T>>?| {
-                ^explicitType Null(null)
-            }
+            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Symbol not found for T>>?| { LAZY_BLOCK }
 
             public final const [ResolvedTo(STATUS)] val constant: <implicit> = LAZY_EXPRESSION
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
@@ -239,9 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailable.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  ERROR CLASS: Symbol not found for T>>?| {
-                ^explicitType Null(null)
-            }
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  ERROR CLASS: Symbol not found for T>>?| { LAZY_BLOCK }
 
             public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/String|
@@ -283,9 +277,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailable.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  ERROR CLASS: Symbol not found for T>>?| {
-                ^explicitType Null(null)
-            }
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  ERROR CLASS: Symbol not found for T>>?| { LAZY_BLOCK }
 
             public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/String|

@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall5.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/String| = String()
+        public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/String| = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): R|kotlin/String|
 
     }

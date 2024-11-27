@@ -29,8 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverInjection_wrongScope.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface B : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> injectAlgebra(): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> injectAlgebra(): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun test_1([ResolvedTo(BODY_RESOLVE)] flag: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] a1: R|A|, [ResolvedTo(BODY_RESOLVE)] a2: R|A|): R|kotlin/Unit| {
         when () {
             R|<local>/flag| ->  {

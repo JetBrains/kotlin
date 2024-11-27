@@ -158,9 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
     public final [ResolvedTo(CONTRACTS)] val <[ResolvedTo(CONTRACTS)] T : R|One|, R|@R|Anno|(LAZY_EXPRESSION)  Two|> [ResolvedTo(CONTRACTS)] R|T|.foo: <implicit>
-        public [ResolvedTo(CONTRACTS)] get(): <implicit> {
-            ^ this#
-        }
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt

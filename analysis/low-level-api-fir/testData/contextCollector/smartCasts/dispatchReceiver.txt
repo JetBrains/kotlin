@@ -49,5 +49,4 @@ FILE: [ResolvedTo(IMPORTS)] dispatchReceiver.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Bar|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Bar|): R|kotlin/Unit| { LAZY_BLOCK }

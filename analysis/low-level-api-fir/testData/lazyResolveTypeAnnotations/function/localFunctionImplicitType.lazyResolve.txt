@@ -149,16 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionImplicitType.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONTRACTS)] fun func(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
-            ^explicitType IntegerLiteral(0)
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> {
-            ^implicitType explicitType#()
-        }
-
-    }
+    public final [ResolvedTo(CONTRACTS)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionImplicitType.kt
@@ -175,16 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionImplicitType.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun func(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
-            ^explicitType IntegerLiteral(0)
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> {
-            ^implicitType explicitType#()
-        }
-
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionImplicitType.kt
@@ -201,16 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionImplicitType.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun func(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
-            ^explicitType IntegerLiteral(0)
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> {
-            ^implicitType explicitType#()
-        }
-
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionImplicitType.kt
@@ -227,16 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionImplicitType.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun func(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
-            ^explicitType IntegerLiteral(0)
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> {
-            ^implicitType explicitType#()
-        }
-
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionImplicitType.kt

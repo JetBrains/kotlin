@@ -105,8 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
             LAZY_super<R|org/example/Top|>
         }
 
-        public open override [ResolvedTo(CONTRACTS)] fun middle(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(CONTRACTS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -148,8 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
             LAZY_super<R|org/example/Top|>
         }
 
-        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun middle(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -191,8 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
             LAZY_super<R|org/example/Top|>
         }
 
-        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun middle(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -234,8 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
             LAZY_super<R|org/example/Top|>
         }
 
-        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun middle(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

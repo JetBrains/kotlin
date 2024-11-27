@@ -120,8 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -135,8 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -150,8 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -165,8 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

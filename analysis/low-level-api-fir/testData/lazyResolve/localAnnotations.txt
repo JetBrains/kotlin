@@ -32,131 +32,19 @@ FILE: [ResolvedTo(IMPORTS)] localAnnotations.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localAnnotations.kt
-    public final [ResolvedTo(CONTRACTS)] fun localAnnotation(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local1 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local1] constructor(): R|<local>/Local1| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local2 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local2] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] a: Int): R|<local>/Local2| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local2] get(): Int
-
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local3 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local3] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] a: Int = IntegerLiteral(1)): R|<local>/Local3| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local3] get(): Int
-
-        }
-
-    }
+    public final [ResolvedTo(CONTRACTS)] fun localAnnotation(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localAnnotations.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun localAnnotation(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local1 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local1] constructor(): R|<local>/Local1| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local2 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local2] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] a: Int): R|<local>/Local2| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local2] get(): Int
-
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local3 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local3] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] a: Int = IntegerLiteral(1)): R|<local>/Local3| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local3] get(): Int
-
-        }
-
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun localAnnotation(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localAnnotations.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun localAnnotation(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local1 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local1] constructor(): R|<local>/Local1| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local2 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local2] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] a: Int): R|<local>/Local2| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local2] get(): Int
-
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local3 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local3] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] a: Int = IntegerLiteral(1)): R|<local>/Local3| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local3] get(): Int
-
-        }
-
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun localAnnotation(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localAnnotations.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun localAnnotation(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local1 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local1] constructor(): R|<local>/Local1| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local2 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local2] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] a: Int): R|<local>/Local2| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local2] get(): Int
-
-        }
-
-        local final? [ResolvedTo(RAW_FIR)] annotation class Local3 : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local3] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] a: Int = IntegerLiteral(1)): R|<local>/Local3| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local3] get(): Int
-
-        }
-
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun localAnnotation(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localAnnotations.kt

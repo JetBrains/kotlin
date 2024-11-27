@@ -303,8 +303,8 @@ FILE: [ResolvedTo(IMPORTS)] entryInScriptDestructuringDeclarationMutable.kts
 
         }
 
-        [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = X#(IntegerLiteral(1), IntegerLiteral(2))
-        public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = R|<local>/<destruct>|.component1#()
+        [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] var a: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
             public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit|
 

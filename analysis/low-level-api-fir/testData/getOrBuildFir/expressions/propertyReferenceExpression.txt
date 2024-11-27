@@ -12,8 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyReferenceExpression.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public? final? [ResolvedTo(RAW_FIR)] val y: A = LAZY_EXPRESSION

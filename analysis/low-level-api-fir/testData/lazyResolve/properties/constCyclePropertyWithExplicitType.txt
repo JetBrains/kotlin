@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
-    public final const [ResolvedTo(CONTRACTS)] val withCycle1: R|kotlin/Int| = IntegerLiteral(1).plus#(withCycle2#)
+    public final const [ResolvedTo(CONTRACTS)] val withCycle1: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
     public? final? const [ResolvedTo(RAW_FIR)] val withCycle2: Int = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): Int
@@ -83,7 +83,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] constCyclePropertyWithExplicitType.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withCycle1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(R|/withCycle2|)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final const [ResolvedTo(CONTRACTS)] val withCycle2: R|kotlin/Int| = IntegerLiteral(2).plus#(withCycle3#)
+    public final const [ResolvedTo(CONTRACTS)] val withCycle2: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
     public? final? const [ResolvedTo(RAW_FIR)] val withCycle3: Int = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): Int

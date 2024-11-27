@@ -325,8 +325,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
             ^getValue Int(42)
         }
 
-        public final operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
+        public final operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

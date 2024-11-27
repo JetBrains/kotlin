@@ -77,12 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
     }
     public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
-    public final [ResolvedTo(CONTRACTS)] fun usage(): R|kotlin/Unit| {
-        Alias#<>(<L> = [ResolvedTo(RAW_FIR)] Alias@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            String(OK)
-        }
-        )
-    }
+    public final [ResolvedTo(CONTRACTS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
@@ -91,12 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
     }
     public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
-        Alias#<>(<L> = [ResolvedTo(RAW_FIR)] Alias@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            String(OK)
-        }
-        )
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
@@ -105,12 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
     }
     public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage(): R|kotlin/Unit| {
-        Alias#<>(<L> = [ResolvedTo(RAW_FIR)] Alias@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            String(OK)
-        }
-        )
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
@@ -119,12 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
     }
     public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TT> = Box<TT>
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage(): R|kotlin/Unit| {
-        Alias#<>(<L> = [ResolvedTo(RAW_FIR)] Alias@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            String(OK)
-        }
-        )
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt

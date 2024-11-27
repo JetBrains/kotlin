@@ -149,12 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunction.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONTRACTS)] fun func(): R|kotlin/Unit| {
-        @Anno[Unresolved](<strcat>(String(function ), prop#)) local final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound type ), prop#)) String>, @Anno[Unresolved](<strcat>(String(constraint type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested constraint type ), prop#)) Int>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) Int>>.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>> = IntegerLiteral(1)): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
-            ^function IntegerLiteral(1)
-        }
-
-    }
+    public final [ResolvedTo(CONTRACTS)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunction.kt
@@ -171,12 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunction.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun func(): R|kotlin/Unit| {
-        @Anno[Unresolved](<strcat>(String(function ), prop#)) local final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound type ), prop#)) String>, @Anno[Unresolved](<strcat>(String(constraint type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested constraint type ), prop#)) Int>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) Int>>.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>> = IntegerLiteral(1)): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
-            ^function IntegerLiteral(1)
-        }
-
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localFunction.kt
@@ -193,12 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunction.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun func(): R|kotlin/Unit| {
-        @Anno[Unresolved](<strcat>(String(function ), prop#)) local final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound type ), prop#)) String>, @Anno[Unresolved](<strcat>(String(constraint type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested constraint type ), prop#)) Int>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) Int>>.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>> = IntegerLiteral(1)): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
-            ^function IntegerLiteral(1)
-        }
-
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunction.kt
@@ -215,12 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunction.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun func(): R|kotlin/Unit| {
-        @Anno[Unresolved](<strcat>(String(function ), prop#)) local final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound type ), prop#)) String>, @Anno[Unresolved](<strcat>(String(constraint type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested constraint type ), prop#)) Int>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) Int>>.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>> = IntegerLiteral(1)): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
-            ^function IntegerLiteral(1)
-        }
-
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunction.kt

@@ -32,23 +32,19 @@ FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(CONTRACTS)] fun test([ResolvedTo(CONTRACTS)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun test([ResolvedTo(CONTRACTS)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun test([ResolvedTo(CONSTANT_EVALUATION)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun test([ResolvedTo(CONSTANT_EVALUATION)] action: R|(@R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(LAZY_EXPRESSION)  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] action: R|(@R|kotlin/ParameterName|(name = String(intParam))  kotlin/Int, kotlin/String, @R|kotlin/ParameterName|(name = String(longParam))  kotlin/Long) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] explicitParameterName.kt

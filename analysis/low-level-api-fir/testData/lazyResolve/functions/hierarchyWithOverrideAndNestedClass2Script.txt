@@ -693,8 +693,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2Script.kts
                     LAZY_super<R|OuterClass.NestedClass|>
                 }
 
-                public open override [ResolvedTo(CONTRACTS)] fun bar([ResolvedTo(CONTRACTS)] s: R|kotlin/String|): R|kotlin/Unit| {
-                }
+                public open override [ResolvedTo(CONTRACTS)] fun bar([ResolvedTo(CONTRACTS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -772,8 +771,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2Script.kts
                     LAZY_super<R|OuterClass.NestedClass|>
                 }
 
-                public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun bar([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
-                }
+                public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun bar([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -851,8 +849,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2Script.kts
                     LAZY_super<R|OuterClass.NestedClass|>
                 }
 
-                public open override [ResolvedTo(CONSTANT_EVALUATION)] fun bar([ResolvedTo(CONSTANT_EVALUATION)] s: R|kotlin/String|): R|kotlin/Unit| {
-                }
+                public open override [ResolvedTo(CONSTANT_EVALUATION)] fun bar([ResolvedTo(CONSTANT_EVALUATION)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -930,8 +927,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2Script.kts
                     LAZY_super<R|OuterClass.NestedClass|>
                 }
 
-                public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| {
-                }
+                public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 

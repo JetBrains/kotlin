@@ -166,38 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun check(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
-                    ^bar B#().foo#()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] class B : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
-                        super<R|kotlin/Any|>()
-                    }
-
-                    public? final? [ResolvedTo(RAW_FIR)] fun foo(): @Anno[Unresolved](<getClass>(C#)) List<@Anno[Unresolved](<getClass>(C#)) Collection<@Anno[Unresolved](<getClass>(C#)) String>>? {
-                        ^foo Null(null)
-                    }
-
-                    local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : R|kotlin/Any| {
-                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
-                            super<R|kotlin/Any|>()
-                        }
-
-                    }
-
-                }
-
-            }
-
-            [ResolvedTo(RAW_FIR)] lval a: <implicit> = A#().bar#()
-        }
+        public final [ResolvedTo(CONTRACTS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -216,38 +185,7 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun check(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
-                    ^bar B#().foo#()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] class B : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
-                        super<R|kotlin/Any|>()
-                    }
-
-                    public? final? [ResolvedTo(RAW_FIR)] fun foo(): @Anno[Unresolved](<getClass>(C#)) List<@Anno[Unresolved](<getClass>(C#)) Collection<@Anno[Unresolved](<getClass>(C#)) String>>? {
-                        ^foo Null(null)
-                    }
-
-                    local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : R|kotlin/Any| {
-                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
-                            super<R|kotlin/Any|>()
-                        }
-
-                    }
-
-                }
-
-            }
-
-            [ResolvedTo(RAW_FIR)] lval a: <implicit> = A#().bar#()
-        }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONSTANT_EVALUATION:
@@ -266,38 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun check(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
-                    ^bar B#().foo#()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] class B : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
-                        super<R|kotlin/Any|>()
-                    }
-
-                    public? final? [ResolvedTo(RAW_FIR)] fun foo(): @Anno[Unresolved](<getClass>(C#)) List<@Anno[Unresolved](<getClass>(C#)) Collection<@Anno[Unresolved](<getClass>(C#)) String>>? {
-                        ^foo Null(null)
-                    }
-
-                    local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : R|kotlin/Any| {
-                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
-                            super<R|kotlin/Any|>()
-                        }
-
-                    }
-
-                }
-
-            }
-
-            [ResolvedTo(RAW_FIR)] lval a: <implicit> = A#().bar#()
-        }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ANNOTATION_ARGUMENTS:
@@ -316,38 +223,7 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableScript.kts
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun check(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
-                    ^bar B#().foo#()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] class B : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
-                        super<R|kotlin/Any|>()
-                    }
-
-                    public? final? [ResolvedTo(RAW_FIR)] fun foo(): @Anno[Unresolved](<getClass>(C#)) List<@Anno[Unresolved](<getClass>(C#)) Collection<@Anno[Unresolved](<getClass>(C#)) String>>? {
-                        ^foo Null(null)
-                    }
-
-                    local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : R|kotlin/Any| {
-                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
-                            super<R|kotlin/Any|>()
-                        }
-
-                    }
-
-                }
-
-            }
-
-            [ResolvedTo(RAW_FIR)] lval a: <implicit> = A#().bar#()
-        }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 BODY_RESOLVE:

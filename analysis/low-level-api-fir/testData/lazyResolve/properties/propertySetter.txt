@@ -48,10 +48,9 @@ FILE: [ResolvedTo(IMPORTS)] propertySetter.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertySetter.kt
-    public final [ResolvedTo(CONTRACTS)] var prop: <implicit> = IntegerLiteral(42)
+    public final [ResolvedTo(CONTRACTS)] var prop: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
-        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit| {
-        }
+        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertySetter.kt

@@ -309,9 +309,7 @@ FILE: [ResolvedTo(IMPORTS)] initWithAnnotation.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun anotherFun(): R|kotlin/String| {
-        ^anotherFun String(str)
-    }
+    public final [ResolvedTo(CONTRACTS)] fun anotherFun(): R|kotlin/String| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun funInsideInit(): R|kotlin/String| {
         ^funInsideInit R|low/anotherFun|()
     }

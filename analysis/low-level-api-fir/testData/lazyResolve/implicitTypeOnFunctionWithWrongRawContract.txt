@@ -68,9 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithWrongRawContract.kt
         [R|Contract description]
          <
         >
-     {
-        ^foo bool#
-    }
+     { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithWrongRawContract.kt

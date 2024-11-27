@@ -24,5 +24,4 @@ FILE: [ResolvedTo(IMPORTS)] extensionFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.test(): R|kotlin/Unit| {
         R|/consume|(this@R|/test|)
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }

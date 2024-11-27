@@ -694,7 +694,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public final [ResolvedTo(CONTRACTS)] val st: R|kotlin/String| = IntegerLiteral(1)
+            public final [ResolvedTo(CONTRACTS)] val st: R|kotlin/String| = LAZY_EXPRESSION
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=OuterClass] get(): R|kotlin/String|
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class SimpleNestedClass : R|kotlin/Any| {
@@ -775,7 +775,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val st: R|kotlin/String| = IntegerLiteral(1)
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val st: R|kotlin/String| = LAZY_EXPRESSION
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=OuterClass] get(): R|kotlin/String|
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class SimpleNestedClass : R|kotlin/Any| {
@@ -856,7 +856,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public final [ResolvedTo(CONSTANT_EVALUATION)] val st: R|kotlin/String| = IntegerLiteral(1)
+            public final [ResolvedTo(CONSTANT_EVALUATION)] val st: R|kotlin/String| = LAZY_EXPRESSION
                 public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=OuterClass] get(): R|kotlin/String|
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class SimpleNestedClass : R|kotlin/Any| {
@@ -937,7 +937,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val st: R|kotlin/String| = IntegerLiteral(1)
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val st: R|kotlin/String| = LAZY_EXPRESSION
                 public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=OuterClass] get(): R|kotlin/String|
 
             public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class SimpleNestedClass : R|kotlin/Any| {

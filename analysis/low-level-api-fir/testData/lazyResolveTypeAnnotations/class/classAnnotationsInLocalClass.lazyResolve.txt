@@ -167,26 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] classAnnotationsInLocalClass.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval localProp: <implicit> = IntegerLiteral(1)
-        @Anno[Unresolved](<strcat>(String(class ), localProp#)) local final? [ResolvedTo(RAW_FIR)] class OriginalClass<@Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>> : @Anno[Unresolved](<strcat>(String(super type ), localProp#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), localProp#)) Int>> {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor<@Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>>(): R|<local>/OriginalClass<T>| {
-                super<@Anno[Unresolved](<strcat>(String(super type ), localProp#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), localProp#)) Int>>>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
-
-            @Anno[Unresolved](<strcat>(String(class ), prop#)) local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] class InnerClass<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) Int>, @Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] Outer(T) : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>> : @Anno[Unresolved](<strcat>(String(super type ), prop#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), prop#)) Int>> {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InnerClass] constructor<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) Int>>(): R|<local>/OriginalClass.InnerClass<T, T>| {
-                    super<@Anno[Unresolved](<strcat>(String(super type ), prop#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), prop#)) Int>>>()
-                }
-
-            }
-
-        }
-
-    }
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classAnnotationsInLocalClass.kt
@@ -205,26 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] classAnnotationsInLocalClass.kt
         }
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval localProp: <implicit> = IntegerLiteral(1)
-        @Anno[Unresolved](<strcat>(String(class ), localProp#)) local final? [ResolvedTo(RAW_FIR)] class OriginalClass<@Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>> : @Anno[Unresolved](<strcat>(String(super type ), localProp#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), localProp#)) Int>> {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor<@Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>>(): R|<local>/OriginalClass<T>| {
-                super<@Anno[Unresolved](<strcat>(String(super type ), localProp#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), localProp#)) Int>>>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
-
-            @Anno[Unresolved](<strcat>(String(class ), prop#)) local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] class InnerClass<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) Int>, @Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] Outer(T) : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>> : @Anno[Unresolved](<strcat>(String(super type ), prop#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), prop#)) Int>> {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InnerClass] constructor<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) Int>>(): R|<local>/OriginalClass.InnerClass<T, T>| {
-                    super<@Anno[Unresolved](<strcat>(String(super type ), prop#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), prop#)) Int>>>()
-                }
-
-            }
-
-        }
-
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] classAnnotationsInLocalClass.kt
@@ -243,26 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] classAnnotationsInLocalClass.kt
         }
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval localProp: <implicit> = IntegerLiteral(1)
-        @Anno[Unresolved](<strcat>(String(class ), localProp#)) local final? [ResolvedTo(RAW_FIR)] class OriginalClass<@Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>> : @Anno[Unresolved](<strcat>(String(super type ), localProp#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), localProp#)) Int>> {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor<@Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>>(): R|<local>/OriginalClass<T>| {
-                super<@Anno[Unresolved](<strcat>(String(super type ), localProp#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), localProp#)) Int>>>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
-
-            @Anno[Unresolved](<strcat>(String(class ), prop#)) local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] class InnerClass<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) Int>, @Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] Outer(T) : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>> : @Anno[Unresolved](<strcat>(String(super type ), prop#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), prop#)) Int>> {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InnerClass] constructor<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) Int>>(): R|<local>/OriginalClass.InnerClass<T, T>| {
-                    super<@Anno[Unresolved](<strcat>(String(super type ), prop#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), prop#)) Int>>>()
-                }
-
-            }
-
-        }
-
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] classAnnotationsInLocalClass.kt
@@ -281,26 +224,7 @@ FILE: [ResolvedTo(IMPORTS)] classAnnotationsInLocalClass.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval localProp: <implicit> = IntegerLiteral(1)
-        @Anno[Unresolved](<strcat>(String(class ), localProp#)) local final? [ResolvedTo(RAW_FIR)] class OriginalClass<@Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>> : @Anno[Unresolved](<strcat>(String(super type ), localProp#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), localProp#)) Int>> {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor<@Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>>(): R|<local>/OriginalClass<T>| {
-                super<@Anno[Unresolved](<strcat>(String(super type ), localProp#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), localProp#)) Int>>>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
-
-            @Anno[Unresolved](<strcat>(String(class ), prop#)) local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] class InnerClass<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) Int>, @Anno[Unresolved](<strcat>(String(type param ), localProp#)) [ResolvedTo(RAW_FIR)] Outer(T) : @Anno[Unresolved](<strcat>(String(bound ), localProp#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), localProp#)) Int>> : @Anno[Unresolved](<strcat>(String(super type ), prop#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), prop#)) Int>> {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InnerClass] constructor<@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) Int>>(): R|<local>/OriginalClass.InnerClass<T, T>| {
-                    super<@Anno[Unresolved](<strcat>(String(super type ), prop#)) A<@Anno[Unresolved](<strcat>(String(nested super type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested super type ), prop#)) Int>>>()
-                }
-
-            }
-
-        }
-
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classAnnotationsInLocalClass.kt

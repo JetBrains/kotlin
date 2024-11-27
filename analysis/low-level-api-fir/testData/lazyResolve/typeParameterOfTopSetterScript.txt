@@ -85,9 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] val <[ResolvedTo(CONTRACTS)] Type> [ResolvedTo(CONTRACTS)] R|Type|.x: R|kotlin/Int|
-            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
-                ^ IntegerLiteral(42)
-            }
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -97,9 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type> [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|Type|.x: R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
-                ^ IntegerLiteral(42)
-            }
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
 CONSTANT_EVALUATION:
@@ -109,9 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] val <[ResolvedTo(CONSTANT_EVALUATION)] Type> [ResolvedTo(CONSTANT_EVALUATION)] R|Type|.x: R|kotlin/Int|
-            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| {
-                ^ IntegerLiteral(42)
-            }
+            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
 ANNOTATION_ARGUMENTS:
@@ -121,9 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] Type> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|Type|.x: R|kotlin/Int|
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
-                ^ IntegerLiteral(42)
-            }
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
 BODY_RESOLVE:

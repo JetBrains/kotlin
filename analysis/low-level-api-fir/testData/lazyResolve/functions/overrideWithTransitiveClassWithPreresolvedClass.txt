@@ -345,8 +345,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
             LAZY_super<R|JobNode|>
         }
 
-        public open override operator [ResolvedTo(CONTRACTS)] fun invoke([ResolvedTo(CONTRACTS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
-        }
+        public open override operator [ResolvedTo(CONTRACTS)] fun invoke([ResolvedTo(CONTRACTS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -385,8 +384,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
             LAZY_super<R|JobNode|>
         }
 
-        public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun invoke([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
-        }
+        public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun invoke([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -425,8 +423,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
             LAZY_super<R|JobNode|>
         }
 
-        public open override operator [ResolvedTo(CONSTANT_EVALUATION)] fun invoke([ResolvedTo(CONSTANT_EVALUATION)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
-        }
+        public open override operator [ResolvedTo(CONSTANT_EVALUATION)] fun invoke([ResolvedTo(CONSTANT_EVALUATION)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -465,8 +462,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
             LAZY_super<R|JobNode|>
         }
 
-        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun invoke([ResolvedTo(ANNOTATION_ARGUMENTS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
-        }
+        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun invoke([ResolvedTo(ANNOTATION_ARGUMENTS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

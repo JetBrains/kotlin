@@ -164,9 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(CONTRACTS)] val [ResolvedTo(CONTRACTS)] R|kotlin/collections/List<kotlin/Int>|.bar: <implicit>
-        public [ResolvedTo(CONTRACTS)] get(): <implicit> {
-            ^ foo#
-        }
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
     context([ResolvedTo(RAW_FIR)] List<@Anno[Unresolved](LAZY_EXPRESSION) Int>)
     public? final? [ResolvedTo(RAW_FIR)] val foo: <implicit>
         public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }

@@ -157,11 +157,8 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun typeWithAnnotation(): @Anno[Unresolved](LAZY_EXPRESSION) String { LAZY_BLOCK }
     public final [ResolvedTo(CONTRACTS)] var resolveMe: <implicit>
-        public [ResolvedTo(CONTRACTS)] get(): <implicit> {
-            ^ typeWithAnnotation#()
-        }
-        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit| {
-        }
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
+        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
@@ -176,9 +173,7 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
-        ^typeWithAnnotation String()
-    }
+    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /typeWithAnnotation]] var resolveMe: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
             ^ R|/typeWithAnnotation|()
@@ -199,9 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
-        ^typeWithAnnotation String()
-    }
+    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
     public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /typeWithAnnotation]] var resolveMe: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
             ^ R|/typeWithAnnotation|()
@@ -222,9 +215,7 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val value: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun typeWithAnnotation(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
-        ^typeWithAnnotation String()
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun typeWithAnnotation(): R|@R|Anno|(number = R|/value|)  kotlin/String| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|@R|Anno|(number = R|/value|)  kotlin/String|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
             ^ R|/typeWithAnnotation|()
@@ -245,9 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val value: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun typeWithAnnotation(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
-        ^typeWithAnnotation String()
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun typeWithAnnotation(): R|@R|Anno|(number = R|/value|)  kotlin/String| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: R|@R|Anno|(number = R|/value|)  kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(number = R|/value|)  kotlin/String| {
             ^ R|/typeWithAnnotation|()

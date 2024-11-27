@@ -9,5 +9,4 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     package usage
 
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun testJavaNestedClass([ResolvedTo(ANNOTATION_ARGUMENTS)] alignment: R|issue/pack/RowIcon.RClass|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun testJavaNestedClass([ResolvedTo(ANNOTATION_ARGUMENTS)] alignment: R|issue/pack/RowIcon.RClass|): R|kotlin/Unit| { LAZY_BLOCK }

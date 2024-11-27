@@ -85,9 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] val prop: <implicit>
-            public [ResolvedTo(CONTRACTS)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:

@@ -193,8 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
         private [ResolvedTo(RAW_FIR)] get(): <implicit>
     internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /withType]] fun implicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
@@ -216,8 +215,7 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
         private [ResolvedTo(RAW_FIR)] get(): <implicit>
     internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /withType]] fun implicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>| {
@@ -239,8 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
         private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     internal final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val internalConstant: R|kotlin/Int| = Int(1)
         internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
@@ -262,8 +259,7 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
         private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     internal final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val internalConstant: R|kotlin/Int| = Int(1)
         internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] usafe.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {

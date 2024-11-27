@@ -255,9 +255,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSite.kt
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| {
-            ^createP2 P2#()
-        }
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| { LAZY_BLOCK }
 
     }
 
@@ -286,9 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSite.kt
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| {
-            ^createP2 P2#()
-        }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| { LAZY_BLOCK }
 
     }
 
@@ -317,9 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSite.kt
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| {
-            ^createP2 P2#()
-        }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] T2> createP2(): R|@R|Anno|(LAZY_EXPRESSION)  P1.P2<@R|Anno|(LAZY_EXPRESSION)  T2, T1>| { LAZY_BLOCK }
 
     }
 
@@ -348,9 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSite.kt
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T2> createP2(): R|@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>| {
-            ^createP2 P2#()
-        }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T2> createP2(): R|@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>| { LAZY_BLOCK }
 
     }
 

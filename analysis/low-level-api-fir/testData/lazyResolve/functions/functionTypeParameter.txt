@@ -32,23 +32,19 @@ FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] TYPE> foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] TYPE> foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] TYPE> foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] TYPE> foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] TYPE> foo([ResolvedTo(CONSTANT_EVALUATION)] a: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] TYPE> foo([ResolvedTo(CONSTANT_EVALUATION)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] TYPE> foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] TYPE> foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionTypeParameter.kt

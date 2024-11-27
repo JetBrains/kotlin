@@ -129,8 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
             LAZY_super<R|org/example/Foo|>
         }
 
-        public open override [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -145,8 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
             LAZY_super<R|org/example/Foo|>
         }
 
-        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun bar(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -161,8 +159,7 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
             LAZY_super<R|org/example/Foo|>
         }
 
-        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun bar(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -177,8 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
             LAZY_super<R|org/example/Foo|>
         }
 
-        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

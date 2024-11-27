@@ -30,9 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 CONTRACTS:
 TARGET: public open override [<synthetic> CONTRACTS] var something: R|kotlin/String|
-    public [<synthetic> ResolvedTo(CONTRACTS)] get(): R|kotlin/String| {
-        ^getSomething String(42)
-    }
+    public [<synthetic> ResolvedTo(CONTRACTS)] get(): R|kotlin/String| { LAZY_BLOCK }
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -41,17 +39,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|BaseKotlin|>
         }
 
-        public open override [ResolvedTo(CONTRACTS)] fun getSomething(): R|kotlin/String| {
-            ^getSomething String(42)
-        }
+        public open override [ResolvedTo(CONTRACTS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] var something: R|kotlin/String|
-    public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
-        ^getSomething String(42)
-    }
+    public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| { LAZY_BLOCK }
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -60,17 +54,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|BaseKotlin|>
         }
 
-        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
-            ^getSomething String(42)
-        }
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
 CONSTANT_EVALUATION:
 TARGET: public open override [<synthetic> CONSTANT_EVALUATION] var something: R|kotlin/String|
-    public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
-        ^getSomething String(42)
-    }
+    public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| { LAZY_BLOCK }
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -79,17 +69,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|BaseKotlin|>
         }
 
-        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun getSomething(): R|kotlin/String| {
-            ^getSomething String(42)
-        }
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
 ANNOTATION_ARGUMENTS:
 TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] var something: R|kotlin/String|
-    public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
-        ^getSomething String(42)
-    }
+    public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| { LAZY_BLOCK }
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
@@ -98,9 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|BaseKotlin|>
         }
 
-        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| {
-            ^getSomething String(42)
-        }
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
     }
 

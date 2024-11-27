@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnTypeAlias.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnTypeAlias.kt
-    public final [ResolvedTo(CONTRACTS)] val myAlias: <implicit> = @Anno[Unresolved](Foo#) Foo#
+    public final [ResolvedTo(CONTRACTS)] val myAlias: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
 IMPLICIT_TYPES_BODY_RESOLVE:

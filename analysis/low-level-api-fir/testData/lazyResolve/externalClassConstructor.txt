@@ -93,7 +93,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Date] constructor([ResolvedTo(CONTRACTS)] year: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] monthIndex: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] date: R|kotlin/Int| = IntegerLiteral(1)): R|one/Date|
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Date] constructor([ResolvedTo(CONTRACTS)] year: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] monthIndex: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] date: R|kotlin/Int| = LAZY_EXPRESSION): R|one/Date|
 
     }
 
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Date] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] year: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] monthIndex: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] date: R|kotlin/Int| = IntegerLiteral(1)): R|one/Date|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Date] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] year: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] monthIndex: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] date: R|kotlin/Int| = LAZY_EXPRESSION): R|one/Date|
 
     }
 
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Date] constructor([ResolvedTo(CONSTANT_EVALUATION)] year: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] monthIndex: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] date: R|kotlin/Int| = IntegerLiteral(1)): R|one/Date|
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Date] constructor([ResolvedTo(CONSTANT_EVALUATION)] year: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] monthIndex: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] date: R|kotlin/Int| = LAZY_EXPRESSION): R|one/Date|
 
     }
 
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Date] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] year: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] monthIndex: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] date: R|kotlin/Int| = IntegerLiteral(1)): R|one/Date|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Date] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] year: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] monthIndex: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] date: R|kotlin/Int| = LAZY_EXPRESSION): R|one/Date|
 
     }
 

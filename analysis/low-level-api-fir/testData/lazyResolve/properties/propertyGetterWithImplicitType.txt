@@ -41,9 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitType.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitType.kt
     public final [ResolvedTo(CONTRACTS)] val prop: <implicit>
-        public [ResolvedTo(CONTRACTS)] get(): <implicit> {
-            ^ IntegerLiteral(42)
-        }
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitType.kt

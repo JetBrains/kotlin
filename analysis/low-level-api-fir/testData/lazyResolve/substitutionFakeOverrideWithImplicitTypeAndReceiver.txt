@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiver.
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] val [ResolvedTo(CONTRACTS)] R|T|.property: <implicit> = foo#()
+        public final [ResolvedTo(CONTRACTS)] val [ResolvedTo(CONTRACTS)] R|T|.property: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AbstractClass] get(): <implicit>
 
         public abstract [ResolvedTo(STATUS)] fun foo(): R|T|

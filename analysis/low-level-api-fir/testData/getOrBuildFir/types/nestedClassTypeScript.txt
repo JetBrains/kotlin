@@ -30,7 +30,6 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassTypeScript.kts
                 LAZY_super<R|Foo|>
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun create(): R|Foo.Nested| {
-            }
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun create(): R|Foo.Nested| { LAZY_BLOCK }
 
         }

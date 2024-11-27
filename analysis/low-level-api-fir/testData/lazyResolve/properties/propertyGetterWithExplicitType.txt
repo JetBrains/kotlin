@@ -41,30 +41,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt
     public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/Int|
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
-            ^ IntegerLiteral(42)
-        }
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
-            ^ IntegerLiteral(42)
-        }
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] val prop: R|kotlin/Int|
-        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| {
-            ^ IntegerLiteral(42)
-        }
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Int|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
-            ^ IntegerLiteral(42)
-        }
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt

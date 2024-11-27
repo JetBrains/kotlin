@@ -462,7 +462,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] val property: <implicit> = left#
+        public final [ResolvedTo(CONTRACTS)] val property: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
 

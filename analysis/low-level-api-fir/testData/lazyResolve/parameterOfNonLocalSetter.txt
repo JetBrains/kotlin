@@ -109,11 +109,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(CONTRACTS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] set([ResolvedTo(CONTRACTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] set([ResolvedTo(CONTRACTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -124,11 +122,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=X] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=X] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -139,11 +135,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(CONSTANT_EVALUATION)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=X] set([ResolvedTo(CONSTANT_EVALUATION)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=X] set([ResolvedTo(CONSTANT_EVALUATION)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -154,11 +148,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

@@ -140,27 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun doo(): <implicit> {
-                ^doo foo#()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-                ^foo bar#()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun baz(): <implicit> {
-                ^baz foo#()
-            }
-
-        }
-
-    }
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
@@ -176,27 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun doo(): <implicit> {
-                ^doo foo#()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-                ^foo bar#()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun baz(): <implicit> {
-                ^baz foo#()
-            }
-
-        }
-
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
@@ -212,27 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun doo(): <implicit> {
-                ^doo foo#()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-                ^foo bar#()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun baz(): <implicit> {
-                ^baz foo#()
-            }
-
-        }
-
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
@@ -248,27 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
-        local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
-                super<R|kotlin/Any|>()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun doo(): <implicit> {
-                ^doo foo#()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-                ^foo bar#()
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun baz(): <implicit> {
-                ^baz foo#()
-            }
-
-        }
-
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
@@ -283,9 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunction.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
-        ^bar Null(null)
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {

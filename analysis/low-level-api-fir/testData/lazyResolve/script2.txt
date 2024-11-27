@@ -522,8 +522,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] x: R|kotlin/Int|): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] x: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int?| = Int(1)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int?|

@@ -7,6 +7,4 @@ R|kotlin/collections/List<kotlin/Int>|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] unresolvedTypeConsturctorResolvedTypeArgument.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): <ERROR TYPE REF: Symbol not found for UNRESOLVED> {
-        ^x IntegerLiteral(1)
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): <ERROR TYPE REF: Symbol not found for UNRESOLVED> { LAZY_BLOCK }

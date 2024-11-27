@@ -35,8 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceWithAnnotation.kt
         public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|@R|foo/Anno|(position = <strcat>(String(foo param type ), R|foo/constant|))  foo/Arg|): R|@R|foo/Anno|(position = <strcat>(String(foo return type ), R|foo/constant|))  foo/Arg|
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun testMe([ResolvedTo(CONTRACTS)] f: R|@R|foo/Anno|(LAZY_EXPRESSION)  foo/Foo|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun testMe([ResolvedTo(CONTRACTS)] f: R|@R|foo/Anno|(LAZY_EXPRESSION)  foo/Foo|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         R|foo/testMe|(<L> = SAM([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@R|foo/Anno|(LAZY_EXPRESSION)  foo/Foo] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|@R|foo/Anno|(position = <strcat>(String(foo param type ), R|foo/constant|))  foo/Arg|): R|@R|foo/Anno|(position = <strcat>(String(foo return type ), R|foo/constant|))  foo/Arg| <inline=NoInline>  {
             ^ R|<local>/b|

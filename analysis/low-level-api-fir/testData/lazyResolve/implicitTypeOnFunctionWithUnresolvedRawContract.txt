@@ -64,56 +64,34 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithUnresolvedRawContract.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithUnresolvedRawContract.kt
-    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] bool: R|kotlin/Boolean|): <implicit> {
-        ^foo bool#
-    }
+    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] bool: R|kotlin/Boolean|): <implicit> { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithUnresolvedRawContract.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
-        [Contract description] <
-            returns#().implies#(bool#)
-        >
-     {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean| {
         ^foo R|<local>/bool|
     }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithUnresolvedRawContract.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
-        [Contract description] <
-            returns#().implies#(bool#)
-        >
-     {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] bool: R|kotlin/Boolean|): R|kotlin/Boolean| {
         ^foo R|<local>/bool|
     }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithUnresolvedRawContract.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
-        [Contract description] <
-            returns#().implies#(bool#)
-        >
-     {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] bool: R|kotlin/Boolean|): R|kotlin/Boolean| {
         ^foo R|<local>/bool|
     }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithUnresolvedRawContract.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
-        [Contract description] <
-            <Unresolved name: returns>#().<Unresolved name: implies>#(R|<local>/bool|)
-        >
-     {
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean| {
         ^foo R|<local>/bool|
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeOnFunctionWithUnresolvedRawContract.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
-        [Contract description] <
-            <Unresolved name: returns>#().<Unresolved name: implies>#(R|<local>/bool|)
-        >
-     {
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] bool: R|kotlin/Boolean|): R|kotlin/Boolean| {
         ^foo R|<local>/bool|
     }

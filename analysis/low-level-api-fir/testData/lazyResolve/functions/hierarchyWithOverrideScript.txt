@@ -317,8 +317,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -354,8 +353,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -391,8 +389,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -428,8 +425,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 

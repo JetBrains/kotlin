@@ -7,6 +7,4 @@ R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] wholeType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>| {
-        ^x IntegerLiteral(1)
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>| { LAZY_BLOCK }

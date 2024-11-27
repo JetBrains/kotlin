@@ -21,14 +21,11 @@ FILE: [ResolvedTo(IMPORTS)] setOperatorScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val n: R|kotlin/Int| = R|<local>/n|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] a: R|test/B|): R|kotlin/Unit| {
-            }
+            public final operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] a: R|test/B|): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public final operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|test/B| {
-            }
+            public final operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|test/B| { LAZY_BLOCK }
 
-            public final operator [ResolvedTo(CONTRACTS)] fun inc(): R|test/B| {
-            }
+            public final operator [ResolvedTo(CONTRACTS)] fun inc(): R|test/B| { LAZY_BLOCK }
 
         }
 

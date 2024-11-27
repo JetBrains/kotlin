@@ -701,7 +701,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
                 public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final [ResolvedTo(CONTRACTS)] val myProp: <implicit> = IntegerLiteral(1)
+                private final [ResolvedTo(CONTRACTS)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(CONTRACTS)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }

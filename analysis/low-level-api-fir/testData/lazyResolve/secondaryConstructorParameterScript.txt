@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
                 public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor([ResolvedTo(CONTRACTS)] str: R|kotlin/String|): R|A| {
-                this<R|A|>(str#.myToInt#(), str#)
+                LAZY_this<R|A|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -238,7 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
                 public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] str: R|kotlin/String|): R|A| {
-                this<R|A|>(str#.myToInt#(), str#)
+                LAZY_this<R|A|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
                 public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] constructor([ResolvedTo(CONSTANT_EVALUATION)] str: R|kotlin/String|): R|A| {
-                this<R|A|>(str#.myToInt#(), str#)
+                LAZY_this<R|A|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
                 public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] str: R|kotlin/String|): R|A| {
-                this<R|A|>(str#.myToInt#(), str#)
+                LAZY_this<R|A|>
             }
 
             public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
@@ -320,9 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|kotlin/String|.myToInt(): R|kotlin/Int| {
-            ^myToInt IntegerLiteral(42)
-        }
+        public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|kotlin/String|.myToInt(): R|kotlin/Int| { LAZY_BLOCK }
 
 
 FILE RAW TO BODY:

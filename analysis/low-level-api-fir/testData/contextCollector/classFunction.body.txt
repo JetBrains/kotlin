@@ -30,7 +30,6 @@ FILE: [ResolvedTo(IMPORTS)] classFunction.kt
             this@R|/Foo|.R|/Foo.bar|(R|<local>/n|)
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun bar([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any?|): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(CONTRACTS)] fun bar([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any?|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }

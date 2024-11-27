@@ -32,95 +32,19 @@ FILE: [ResolvedTo(IMPORTS)] ambiguousLocalEnum.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] ambiguousLocalEnum.kt
-    public final [ResolvedTo(CONTRACTS)] fun someFun(): R|kotlin/String| {
-        local final? [ResolvedTo(RAW_FIR)] enum class EnumClass : R|kotlin/Enum<<local>/EnumClass>| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|<local>/EnumClass| {
-                super<R|kotlin/Enum<<local>/EnumClass>|>()
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry EnumClass: R|<local>/EnumClass|
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<<local>/EnumClass>| {
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|<local>/EnumClass| {
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-
-        }
-
-        ^someFun EnumClass#.EnumClass#.toString#()
-    }
+    public final [ResolvedTo(CONTRACTS)] fun someFun(): R|kotlin/String| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] ambiguousLocalEnum.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun someFun(): R|kotlin/String| {
-        local final? [ResolvedTo(RAW_FIR)] enum class EnumClass : R|kotlin/Enum<<local>/EnumClass>| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|<local>/EnumClass| {
-                super<R|kotlin/Enum<<local>/EnumClass>|>()
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry EnumClass: R|<local>/EnumClass|
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<<local>/EnumClass>| {
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|<local>/EnumClass| {
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-
-        }
-
-        ^someFun EnumClass#.EnumClass#.toString#()
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun someFun(): R|kotlin/String| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] ambiguousLocalEnum.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun someFun(): R|kotlin/String| {
-        local final? [ResolvedTo(RAW_FIR)] enum class EnumClass : R|kotlin/Enum<<local>/EnumClass>| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|<local>/EnumClass| {
-                super<R|kotlin/Enum<<local>/EnumClass>|>()
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry EnumClass: R|<local>/EnumClass|
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<<local>/EnumClass>| {
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|<local>/EnumClass| {
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-
-        }
-
-        ^someFun EnumClass#.EnumClass#.toString#()
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun someFun(): R|kotlin/String| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] ambiguousLocalEnum.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun someFun(): R|kotlin/String| {
-        local final? [ResolvedTo(RAW_FIR)] enum class EnumClass : R|kotlin/Enum<<local>/EnumClass>| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|<local>/EnumClass| {
-                super<R|kotlin/Enum<<local>/EnumClass>|>()
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry EnumClass: R|<local>/EnumClass|
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<<local>/EnumClass>| {
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|<local>/EnumClass| {
-            }
-
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<<local>/EnumClass>|
-
-        }
-
-        ^someFun EnumClass#.EnumClass#.toString#()
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun someFun(): R|kotlin/String| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] ambiguousLocalEnum.kt

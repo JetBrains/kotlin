@@ -85,9 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeUnavailableScript.kts
                 private final const [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
 
-                private final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
-                    ^explicitType IntegerLiteral(1)
-                }
+                private final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
             }
 

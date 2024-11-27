@@ -11,7 +11,7 @@ fun passLambdaValue(l: ContractBuilder.() -> Unit) {
 }
 
 fun passAnonymousFunction(x: Boolean) {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract(fun ContractBuilder.() {
+    <!ERROR_IN_CONTRACT_DESCRIPTION!><!CONTRACT_NOT_ALLOWED!>contract<!>(fun ContractBuilder.() {
         returns() implies x
     })<!>
 }

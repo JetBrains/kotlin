@@ -42,8 +42,5 @@ FILE: [ResolvedTo(IMPORTS)] extensionLambdas.kt
         }
         )
     }
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> block([ResolvedTo(CONTRACTS)] reciever: R|T|, [ResolvedTo(CONTRACTS)] block: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
-        receiver#.block#()
-    }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] num: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> block([ResolvedTo(CONTRACTS)] reciever: R|T|, [ResolvedTo(CONTRACTS)] block: R|T.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] num: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

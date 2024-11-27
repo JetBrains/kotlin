@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] get(): R|kotlin/Int|
 
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor(): R|WithErrorSecondaryConstructor| {
-            this<R|WithErrorSecondaryConstructor|>(IntegerLiteral(0))
+            LAZY_this<R|WithErrorSecondaryConstructor|>
         }
 
     }
@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] get(): R|kotlin/Int|
 
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor(): R|WithErrorSecondaryConstructor| {
-            this<R|WithErrorSecondaryConstructor|>(IntegerLiteral(0))
+            LAZY_this<R|WithErrorSecondaryConstructor|>
         }
 
     }
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] get(): R|kotlin/Int|
 
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor(): R|WithErrorSecondaryConstructor| {
-            this<R|WithErrorSecondaryConstructor|>(IntegerLiteral(0))
+            LAZY_this<R|WithErrorSecondaryConstructor|>
         }
 
     }
@@ -185,7 +185,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] get(): R|kotlin/Int|
 
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor(): R|WithErrorSecondaryConstructor| {
-            this<R|WithErrorSecondaryConstructor|>(IntegerLiteral(0))
+            LAZY_this<R|WithErrorSecondaryConstructor|>
         }
 
     }

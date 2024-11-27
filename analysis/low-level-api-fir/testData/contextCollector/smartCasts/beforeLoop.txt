@@ -32,5 +32,4 @@ FILE: [ResolvedTo(IMPORTS)] beforeLoop.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] node: R|Node|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] node: R|Node|): R|kotlin/Unit| { LAZY_BLOCK }

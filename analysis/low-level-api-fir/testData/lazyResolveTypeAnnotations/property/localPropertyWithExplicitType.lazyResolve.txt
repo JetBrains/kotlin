@@ -131,11 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun ttt(): R|kotlin/Unit| {
-        @Anno[Unresolved](<strcat>(String(property ), prop#)) [ResolvedTo(RAW_FIR)] lvar <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) String>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) <ERROR TYPE REF: Incomplete code>>.variableToResolve: @Anno[Unresolved](<strcat>(String(return type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>>
-        @Anno[Unresolved](<strcat>(String(getter ), prop#)) get#() = String(str)
-        @Anno[Unresolved](<strcat>(String(setter ), prop#)) set#(@Anno[Unresolved](<strcat>(String(setter parameter ), prop#)) value#) = Unit#
-    }
+    public final [ResolvedTo(CONTRACTS)] fun ttt(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
@@ -150,11 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun ttt(): R|kotlin/Unit| {
-        @Anno[Unresolved](<strcat>(String(property ), prop#)) [ResolvedTo(RAW_FIR)] lvar <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) String>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) <ERROR TYPE REF: Incomplete code>>.variableToResolve: @Anno[Unresolved](<strcat>(String(return type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>>
-        @Anno[Unresolved](<strcat>(String(getter ), prop#)) get#() = String(str)
-        @Anno[Unresolved](<strcat>(String(setter ), prop#)) set#(@Anno[Unresolved](<strcat>(String(setter parameter ), prop#)) value#) = Unit#
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun ttt(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
@@ -169,11 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun ttt(): R|kotlin/Unit| {
-        @Anno[Unresolved](<strcat>(String(property ), prop#)) [ResolvedTo(RAW_FIR)] lvar <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) String>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) <ERROR TYPE REF: Incomplete code>>.variableToResolve: @Anno[Unresolved](<strcat>(String(return type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>>
-        @Anno[Unresolved](<strcat>(String(getter ), prop#)) get#() = String(str)
-        @Anno[Unresolved](<strcat>(String(setter ), prop#)) set#(@Anno[Unresolved](<strcat>(String(setter parameter ), prop#)) value#) = Unit#
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun ttt(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
@@ -188,11 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun ttt(): R|kotlin/Unit| {
-        @Anno[Unresolved](<strcat>(String(property ), prop#)) [ResolvedTo(RAW_FIR)] lvar <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) String>> [ResolvedTo(RAW_FIR)] @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) <ERROR TYPE REF: Incomplete code>>.variableToResolve: @Anno[Unresolved](<strcat>(String(return type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>>
-        @Anno[Unresolved](<strcat>(String(getter ), prop#)) get#() = String(str)
-        @Anno[Unresolved](<strcat>(String(setter ), prop#)) set#(@Anno[Unresolved](<strcat>(String(setter parameter ), prop#)) value#) = Unit#
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun ttt(): R|kotlin/Unit| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithExplicitType.kt

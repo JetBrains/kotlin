@@ -11,5 +11,4 @@ FILE: [ResolvedTo(IMPORTS)] javaClassLiteral.kt
         [ResolvedTo(BODY_RESOLVE)] lval anyClass: R|kotlin/Any| = R|kotlin/Any.Any|()
         R|/funOne|(ERROR_EXPR(Incorrect selector expression)R|<local>/anyClass|)
     }
-    public final [ResolvedTo(CONTRACTS)] fun funOne([ResolvedTo(CONTRACTS)] x: R|kotlin/Any|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun funOne([ResolvedTo(CONTRACTS)] x: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }

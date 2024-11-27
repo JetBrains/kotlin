@@ -304,16 +304,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    public final [ResolvedTo(CONTRACTS)] fun expression([ResolvedTo(CONTRACTS)] expression: R|IrConst<*>|): R|kotlin/Unit| {
-        when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
-            ($subj$ is Kind.Null) ->  {
-                kind#.valueOf#(expression#)
-            }
-            else ->  {
-            }
-        }
-
-    }
+    public final [ResolvedTo(CONTRACTS)] fun expression([ResolvedTo(CONTRACTS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
     public sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
             LAZY_super<R|kotlin/Any|>
@@ -351,16 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun expression([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
-        when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
-            ($subj$ is Kind.Null) ->  {
-                kind#.valueOf#(expression#)
-            }
-            else ->  {
-            }
-        }
-
-    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun expression([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
     public sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
             LAZY_super<R|kotlin/Any|>
@@ -398,16 +380,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] fun expression([ResolvedTo(CONSTANT_EVALUATION)] expression: R|IrConst<*>|): R|kotlin/Unit| {
-        when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
-            ($subj$ is Kind.Null) ->  {
-                kind#.valueOf#(expression#)
-            }
-            else ->  {
-            }
-        }
-
-    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun expression([ResolvedTo(CONSTANT_EVALUATION)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
     public sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
             LAZY_super<R|kotlin/Any|>
@@ -445,16 +418,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expression([ResolvedTo(ANNOTATION_ARGUMENTS)] expression: R|IrConst<*>|): R|kotlin/Unit| {
-        when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
-            ($subj$ is Kind.Null) ->  {
-                kind#.valueOf#(expression#)
-            }
-            else ->  {
-            }
-        }
-
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expression([ResolvedTo(ANNOTATION_ARGUMENTS)] expression: R|IrConst<*>|): R|kotlin/Unit| { LAZY_BLOCK }
     public sealed [ResolvedTo(RAW_FIR)] class Kind<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Kind] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Kind.asString] asString: String): R|Kind<T>| {
             LAZY_super<R|kotlin/Any|>

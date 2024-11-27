@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.blockGuard
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkContractDescriptionIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.contractDescriptionGuard
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isCallableWithSpecialBody
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.expressions.builder.buildLazyBlock
 import org.jetbrains.kotlin.fir.isCopyCreatedInScope
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -60,17 +64,18 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
             is FirSimpleFunction -> {
                 // There is no sense to try to transform functions without a block body and without a raw contract
                 if (target.returnTypeRef !is FirImplicitTypeRef || target.contractDescription is FirRawContractDescription) {
-                    resolve(target, ContractStateKeepers.SIMPLE_FUNCTION)
+                    resolveContracts(target, ContractStateKeepers.SIMPLE_FUNCTION)
                 }
             }
 
-            is FirConstructor -> resolve(target, ContractStateKeepers.CONSTRUCTOR)
+            is FirConstructor -> resolveContracts(target, ContractStateKeepers.CONSTRUCTOR)
             is FirProperty -> {
                 // Property with delegate can't have any contracts
                 if (target.delegate == null) {
-                    resolve(target, ContractStateKeepers.PROPERTY)
+                    resolveContracts(target, ContractStateKeepers.PROPERTY)
                 }
             }
+
             is FirRegularClass,
             is FirTypeAlias,
             is FirVariable,
@@ -80,7 +85,7 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
             is FirScript,
             is FirCodeFragment,
             is FirDanglingModifierList,
-            -> {
+                -> {
                 // No contracts here
                 check(target !is FirContractDescriptionOwner) {
                     "Unexpected contract description owner: $target (${target.javaClass.name})"
@@ -89,11 +94,54 @@ private class LLFirContractsTargetResolver(target: LLFirResolveTarget) : LLFirAb
             else -> throwUnexpectedFirElementError(target)
         }
     }
+
+    private fun <T> resolveContracts(
+        target: T,
+        keeper: StateKeeper<T, FirDesignation>,
+    ) where T : FirElementWithResolveState {
+        val firDesignation = FirDesignation(containingDeclarations, target)
+        resolveWithKeeper(target, firDesignation, keeper, { FirLazyBodiesCalculator.calculateContracts(firDesignation) }) {
+            rawResolve(target)
+            dropRedundantContractDescription(target)
+        }
+    }
+
+    private fun dropRedundantContractDescription(target: FirElementWithResolveState) {
+        when (target) {
+            is FirSimpleFunction, is FirConstructor -> dropRedundantContractDescriptionForFunction(target)
+            is FirProperty -> {
+                target.getter?.let(::dropRedundantContractDescriptionForFunction)
+                target.setter?.let(::dropRedundantContractDescriptionForFunction)
+            }
+        }
+    }
+
+    /**
+     * For [org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription] there is no way to understand if we have it or not
+     * without calculation a body.
+     * And even after that we still may have a case when the transformer can realize after resolution that `contract` call is not a
+     * contract, but some another call.
+     *
+     * In this case we can safely drop the calculated body as it is unnecessary and anyway will be recreated on next phases.
+     */
+    private fun <T> dropRedundantContractDescriptionForFunction(target: T) where T : FirFunction, T : FirContractDescriptionOwner {
+        val contractDescription = target.contractDescription
+        // Declarations with initial [FirRawContractDescription] doesn't require to drop body as they don't calculate it
+        if (contractDescription is FirResolvedContractDescription) return
+
+        if (target.body != null && !isCallableWithSpecialBody(target)) {
+            target.replaceBody(buildLazyBlock())
+        }
+    }
 }
 
 private object ContractStateKeepers {
     private val CONTRACT_DESCRIPTION_OWNER: StateKeeper<FirContractDescriptionOwner, FirDesignation> = stateKeeper { builder, _, _ ->
-        builder.add(FirContractDescriptionOwner::contractDescription, FirContractDescriptionOwner::replaceContractDescription)
+        builder.add(
+            FirContractDescriptionOwner::contractDescription,
+            FirContractDescriptionOwner::replaceContractDescription,
+            ::contractDescriptionGuard,
+        )
     }
 
     private val BODY_OWNER: StateKeeper<FirFunction, FirDesignation> = stateKeeper { builder, declaration, _ ->

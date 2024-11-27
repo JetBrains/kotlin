@@ -32,5 +32,4 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionExpression.kt
 
         R|<local>/local|(Int(5))
     }
-    public final [ResolvedTo(CONTRACTS)] fun call([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any?|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun call([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any?|): R|kotlin/Unit| { LAZY_BLOCK }

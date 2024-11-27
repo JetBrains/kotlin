@@ -149,9 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(CONTRACTS)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(CONTRACTS)] val foo: R|kotlin/Int|
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
-            ^ IntegerLiteral(0)
-        }
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
@@ -168,9 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: R|kotlin/Int|
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
-            ^ IntegerLiteral(0)
-        }
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
@@ -187,9 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     context([ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(CONSTANT_EVALUATION)] val foo: R|kotlin/Int|
-        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| {
-            ^ IntegerLiteral(0)
-        }
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
@@ -206,9 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
     context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val foo: R|kotlin/Int|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
-            ^ IntegerLiteral(0)
-        }
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt

@@ -31,8 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 CONTRACTS:
 TARGET: public open [<synthetic> CONTRACTS] var something: R|kotlin/String|
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public [<synthetic> ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] s: R|kotlin/String|): R|kotlin/Unit| {
-    }
+    public [<synthetic> ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
@@ -40,16 +39,14 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|BaseKotlin|>
         }
 
-        public open override [ResolvedTo(CONTRACTS)] fun setSomething([ResolvedTo(CONTRACTS)] s: R|kotlin/String|): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(CONTRACTS)] fun setSomething([ResolvedTo(CONTRACTS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public open [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] var something: R|kotlin/String|
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
-    }
+    public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
@@ -57,16 +54,14 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|BaseKotlin|>
         }
 
-        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun setSomething([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun setSomething([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
 CONSTANT_EVALUATION:
 TARGET: public open [<synthetic> CONSTANT_EVALUATION] var something: R|kotlin/String|
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] s: R|kotlin/String|): R|kotlin/Unit| {
-    }
+    public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
@@ -74,16 +69,14 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|BaseKotlin|>
         }
 
-        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun setSomething([ResolvedTo(CONSTANT_EVALUATION)] s: R|kotlin/String|): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun setSomething([ResolvedTo(CONSTANT_EVALUATION)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
 ANNOTATION_ARGUMENTS:
 TARGET: public open [<synthetic> ANNOTATION_ARGUMENTS] var something: R|kotlin/String|
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| {
-    }
+    public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
@@ -91,8 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             LAZY_super<R|BaseKotlin|>
         }
 
-        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun setSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun setSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

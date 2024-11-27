@@ -7,8 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnFunctionParameter.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun t([ResolvedTo(ANNOTATION_ARGUMENTS)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun t([ResolvedTo(ANNOTATION_ARGUMENTS)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit| { LAZY_BLOCK }
     public open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>

@@ -289,7 +289,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagationScript.
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] val resolveMe: <implicit> = incorrectProperty#
+        public final [ResolvedTo(CONTRACTS)] val resolveMe: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>

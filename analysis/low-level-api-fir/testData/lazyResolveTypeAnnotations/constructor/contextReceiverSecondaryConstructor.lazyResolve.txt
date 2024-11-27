@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverSecondaryConstructor.kt
         }
 
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] constructor([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|Foo| {
-            this<R|Foo|>()
+            LAZY_this<R|Foo|>
         }
 
     }
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverSecondaryConstructor.kt
         }
 
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] i: R|kotlin/Int|): R|Foo| {
-            this<R|Foo|>()
+            LAZY_this<R|Foo|>
         }
 
     }
@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverSecondaryConstructor.kt
         }
 
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Foo] constructor([ResolvedTo(CONSTANT_EVALUATION)] i: R|kotlin/Int|): R|Foo| {
-            this<R|Foo|>()
+            LAZY_this<R|Foo|>
         }
 
     }
@@ -293,7 +293,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverSecondaryConstructor.kt
         }
 
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): R|Foo| {
-            this<R|Foo|>()
+            LAZY_this<R|Foo|>
         }
 
     }

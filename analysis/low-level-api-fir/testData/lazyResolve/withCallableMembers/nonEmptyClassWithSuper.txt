@@ -253,11 +253,10 @@ FILE: [ResolvedTo(IMPORTS)] nonEmptyClassWithSuper.kt
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(CONTRACTS)] val property: R|kotlin/Int| = IntegerLiteral(4)
+        public open override [ResolvedTo(CONTRACTS)] val property: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=EmptyClass] get(): R|kotlin/Int|
 
-        public open override [ResolvedTo(CONTRACTS)] fun baseFunction(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(CONTRACTS)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
@@ -285,11 +284,10 @@ FILE: [ResolvedTo(IMPORTS)] nonEmptyClassWithSuper.kt
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|kotlin/Int| = IntegerLiteral(4)
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=EmptyClass] get(): R|kotlin/Int|
 
-        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
@@ -317,11 +315,10 @@ FILE: [ResolvedTo(IMPORTS)] nonEmptyClassWithSuper.kt
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(CONSTANT_EVALUATION)] val property: R|kotlin/Int| = IntegerLiteral(4)
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] val property: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=EmptyClass] get(): R|kotlin/Int|
 
-        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun baseFunction(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
@@ -349,11 +346,10 @@ FILE: [ResolvedTo(IMPORTS)] nonEmptyClassWithSuper.kt
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|kotlin/Int| = IntegerLiteral(4)
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=EmptyClass] get(): R|kotlin/Int|
 
-        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun baseFunction(): R|kotlin/Unit| {
-        }
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {

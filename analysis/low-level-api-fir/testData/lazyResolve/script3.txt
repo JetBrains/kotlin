@@ -475,8 +475,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun build([ResolvedTo(CONTRACTS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(CONTRACTS)] fun build([ResolvedTo(CONTRACTS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(BODY_RESOLVE)] var unusedVariable: R|kotlin/Int| = Int(4)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

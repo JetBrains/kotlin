@@ -19,5 +19,4 @@ FILE: [ResolvedTo(IMPORTS)] secondStatementCall.kts
             R|/bar|()
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

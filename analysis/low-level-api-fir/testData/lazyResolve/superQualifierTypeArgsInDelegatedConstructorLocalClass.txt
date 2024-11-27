@@ -201,15 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorLocalCla
             LAZY_super<<implicit>>
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun test(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class LocalClass : A<D> {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
-                    super<A<D>>(super<B>.f#())
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(CONTRACTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -232,15 +224,7 @@ FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorLocalCla
             LAZY_super<<implicit>>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class LocalClass : A<D> {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
-                    super<A<D>>(super<B>.f#())
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -263,15 +247,7 @@ FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorLocalCla
             LAZY_super<<implicit>>
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun test(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class LocalClass : A<D> {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
-                    super<A<D>>(super<B>.f#())
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -294,15 +270,7 @@ FILE: [ResolvedTo(IMPORTS)] superQualifierTypeArgsInDelegatedConstructorLocalCla
             LAZY_super<<implicit>>
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class LocalClass : A<D> {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
-                    super<A<D>>(super<B>.f#())
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

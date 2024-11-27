@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderF
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForScript
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -461,20 +460,6 @@ private fun StateKeeperScope<FirFunction, FirDesignation>.preserveContractBlock(
         }
 
         return
-    }
-
-    // The old body starts with a contract-like call (but it's not a proper contract definition)
-    if (oldFirstStatement is FirFunctionCall && oldFirstStatement.calleeReference.name == FirContractsDslNames.CONTRACT.callableName) {
-        builder.postProcess {
-            val newBody = function.body
-            if (newBody != null && newBody.statements.isNotEmpty()) {
-                val newFirstStatement = newBody.statements.first()
-                if (newFirstStatement is FirContractCallBlock) {
-                    // We already know that the function doesn't have a contract, so we can safely unwrap the contract block
-                    newBody.replaceFirstStatement<FirContractCallBlock> { newFirstStatement.call }
-                }
-            }
-        }
     }
 }
 

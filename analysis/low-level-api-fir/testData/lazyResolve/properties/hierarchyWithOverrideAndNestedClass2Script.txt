@@ -710,7 +710,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2Script.kts
 
                 public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                public open override [ResolvedTo(CONTRACTS)] val isBoo: <implicit> = Boolean(true)
+                public open override [ResolvedTo(CONTRACTS)] val isBoo: <implicit> = LAZY_EXPRESSION
                     public [ResolvedTo(CONTRACTS)] [ContainingClassKey=NestedClass] get(): <implicit>
 
             }

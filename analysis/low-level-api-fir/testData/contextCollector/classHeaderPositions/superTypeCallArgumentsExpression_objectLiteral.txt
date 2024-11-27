@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsExpression_objectLiteral.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] val property: R|test/Base.Nested| = Base#.Nested#()
+    public final [ResolvedTo(CONTRACTS)] val property: R|test/Base.Nested| = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): R|test/Base.Nested|
     public final [ResolvedTo(BODY_RESOLVE)] val child: R|test/Base| = object : R|test/Base| {
         private [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/<anonymous>| {

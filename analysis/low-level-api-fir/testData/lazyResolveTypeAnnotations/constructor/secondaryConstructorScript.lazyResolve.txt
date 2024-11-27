@@ -281,9 +281,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         }
 
         public final [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-                super<<implicit>>()
-            }
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
 
@@ -315,9 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-                super<<implicit>>()
-            }
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
 
@@ -349,9 +345,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         }
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
-            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-                super<<implicit>>()
-            }
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
 
@@ -383,9 +377,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-secondaryConstructorScript.kts>] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type call ), R|util/prop|))  util/AbstractClass<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  kotlin/Int>>| {
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
-                super<<implicit>>()
-            }
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| { LAZY_BLOCK }
 
         }
 

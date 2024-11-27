@@ -76,9 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| {
-            ^explicitType Null(null)
-        }
+        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.resolveMe(): R|T?| {
             ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
@@ -101,9 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| {
-            ^explicitType Null(null)
-        }
+        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] fun [ResolvedTo(CONSTANT_EVALUATION)] R|T|.resolveMe(): R|T?| {
             ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
@@ -126,9 +122,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| {
-            ^explicitType Null(null)
-        }
+        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.resolveMe(): R|T?| {
             ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
@@ -151,9 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideFunctionWithImplicitType.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| {
-            ^explicitType Null(null)
-        }
+        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.resolveMe(): R|T?| {
             ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()

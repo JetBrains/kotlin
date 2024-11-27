@@ -11,5 +11,4 @@ FILE: [ResolvedTo(IMPORTS)] annotationApplicationCallExpressionScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/Suppress|[Types](names = vararg(String())) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|kotlin/Unit| {
-        }
+        @R|kotlin/Suppress|[Types](names = vararg(String())) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|kotlin/Unit| { LAZY_BLOCK }
