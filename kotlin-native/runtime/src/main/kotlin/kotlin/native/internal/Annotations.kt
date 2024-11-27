@@ -59,13 +59,6 @@ internal annotation class NoReorderFields
 @PublishedApi
 internal annotation class ExportTypeInfo(val name: String)
 
-/**
- * If a lambda shall be carefully lowered by the compiler.
- */
-@Target(AnnotationTarget.VALUE_PARAMETER)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class VolatileLambda
-
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class TypedIntrinsic(val kind: String)
