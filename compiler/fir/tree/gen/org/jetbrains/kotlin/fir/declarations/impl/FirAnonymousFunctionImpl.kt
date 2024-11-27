@@ -42,7 +42,6 @@ internal class FirAnonymousFunctionImpl(
     override var returnTypeRef: FirTypeRef,
     override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
-    override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextReceivers: MutableOrEmptyList<FirValueParameter>,
     override var controlFlowGraphReference: FirControlFlowGraphReference?,
@@ -58,6 +57,8 @@ internal class FirAnonymousFunctionImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
+    override val containerSource: DeserializedContainerSource?
+        get() = null
 
     init {
         symbol.bind(this)

@@ -413,6 +413,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(anonymousFunction) {
+            defaultNull("containerSource", withGetter = true)
         }
 
         noImpl(anonymousFunctionExpression)
