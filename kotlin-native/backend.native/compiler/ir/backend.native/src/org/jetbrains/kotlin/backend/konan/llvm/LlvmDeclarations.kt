@@ -344,7 +344,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             null
         }
 
-        val writableTypeInfoGlobal = generateWritableTypeInfoForClass(declaration)
+        val writableTypeInfoGlobal = if (generationState.llvmModuleSpecification.containsDeclaration(declaration)) generateWritableTypeInfoForClass(declaration) else null
 
         return ClassLlvmDeclarations(
                 ObjectBodyType(bodyType, objectFieldIndices),
