@@ -9,9 +9,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLe
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -335,6 +338,16 @@ internal class KaFirSymbolRelationProvider(
             } ?: errorWithAttachment("Cannot retrieve constructed class for KaSamConstructorSymbol") {
                 withSymbolAttachment("KaSamConstructorSymbol", analysisSession, this@constructedClass)
             }
+        }
+
+    @KaExperimentalApi
+    override val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
+        get() = withValidityAssertion {
+            require(this is KaFirConstructorSymbol)
+
+            val originalConstructor = firSymbol.originalConstructorIfTypeAlias ?: return null
+
+            analysisSession.firSymbolBuilder.functionBuilder.buildConstructorSymbol(originalConstructor.symbol)
         }
 
     private val overridesProvider = KaFirSymbolDeclarationOverridesProvider(analysisSessionProvider)

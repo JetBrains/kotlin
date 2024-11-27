@@ -200,6 +200,10 @@ internal class KaFe10SymbolRelationProvider(
             (getDescriptor() as SamConstructorDescriptor).baseDescriptorForSynthetic.toKaClassSymbol(analysisContext)
         }
 
+    @KaExperimentalApi
+    override val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
+        get() = withValidityAssertion { null }
+
     private val overridesProvider = KaFe10SymbolDeclarationOverridesProvider(analysisSessionProvider)
 
     override val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>

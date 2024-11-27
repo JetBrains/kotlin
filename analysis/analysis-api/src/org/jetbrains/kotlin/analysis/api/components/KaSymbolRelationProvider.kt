@@ -51,6 +51,17 @@ public interface KaSymbolRelationProvider {
      */
     public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
 
+    /**
+     * Returns the original [KaConstructorSymbol] for type-aliased constructor, or `null` otherwise.
+     *
+     * Note: currently this property is marked as experimental, because we might join
+     * it with [fakeOverrideOriginal] property in the future.
+     *
+     * @see KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR
+     */
+    @KaExperimentalApi
+    public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
+
 
     /**
      * A list of **all** explicitly declared symbols that are overridden by symbol
