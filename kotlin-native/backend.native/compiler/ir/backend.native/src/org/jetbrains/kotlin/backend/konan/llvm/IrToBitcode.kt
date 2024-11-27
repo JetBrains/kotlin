@@ -733,7 +733,7 @@ internal class CodeGeneratorVisitor(
             llvm.initializersGenerationState.fileGlobalInitStates.getOrPut(container) {
                 codegen.addGlobal("state_global$${container.initVariableSuffix}", llvm.intptrType, false).also {
                     LLVMSetInitializer(it, llvm.intptr(FILE_NOT_INITIALIZED))
-//                    LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+                    LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
                 }
             }
 
@@ -888,7 +888,7 @@ internal class CodeGeneratorVisitor(
                     else -> evaluateExpression(initializer)
                 })
                 // (Cannot do this before the global is initialized).
-//                LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMInternalLinkage)
+                LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMInternalLinkage)
             }
             llvm.initializersGenerationState.scopeState.topLevelFields.add(declaration)
         }

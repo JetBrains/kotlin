@@ -31,9 +31,9 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
                 // Globals created with this API are *not* thread local.
                 val llvmGlobal = LLVMAddGlobal(module, type, name)!!
 
-//                if (!isExported) {
-//                    LLVMSetLinkage(llvmGlobal, LLVMLinkage.LLVMInternalLinkage)
-//                }
+                if (!isExported) {
+                    LLVMSetLinkage(llvmGlobal, LLVMLinkage.LLVMInternalLinkage)
+                }
 
                 return llvmGlobal
             }

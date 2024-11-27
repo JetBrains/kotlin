@@ -42,7 +42,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             LlvmFunctionSignature(invokeMethod, codegen).toProto(
                     "invokeFunction${bridge.nameSuffix}",
                     null,
-                    LLVMLinkage.LLVMExternalLinkage
+                    LLVMLinkage.LLVMInternalLinkage
             )
     ).generate {
         val thisRef = param(0)
@@ -99,7 +99,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     )
     val functionSig = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(codegen.kObjHeaderPtrPtr)))
     return functionGenerator(
-            functionSig.toProto("convertBlock${bridge.nameSuffix}", null, LLVMLinkage.LLVMExternalLinkage)
+            functionSig.toProto("convertBlock${bridge.nameSuffix}", null, LLVMLinkage.LLVMInternalLinkage)
     ).generate {
         val blockPtr = param(0)
         ifThen(icmpEq(blockPtr, llvm.kNullInt8Ptr)) {
@@ -179,7 +179,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
     ).toProto(
             "blockDisposeHelper",
             null,
-            LLVMLinkage.LLVMExternalLinkage
+            LLVMLinkage.LLVMInternalLinkage
     )
 
     private val disposeHelper = generateFunction(
@@ -200,7 +200,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
     ).toProto(
             "blockCopyHelper",
             null,
-            LLVMLinkage.LLVMExternalLinkage
+            LLVMLinkage.LLVMInternalLinkage
     )
 
     private val copyHelper = generateFunction(
@@ -269,7 +269,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             invokeName: String,
             genBody: ObjCExportFunctionGenerationContext.(LLVMValueRef, List<LLVMValueRef>) -> Unit
     ): ConstPointer {
-        val result = functionGenerator(blockType.toBlockInvokeLlvmType(llvm).toProto(invokeName, null, LLVMLinkage.LLVMExternalLinkage)) {
+        val result = functionGenerator(blockType.toBlockInvokeLlvmType(llvm).toProto(invokeName, null, LLVMLinkage.LLVMInternalLinkage)) {
             switchToRunnable = true
         }.generate {
             val blockPtr = bitcast(pointerType(blockLiteralType), param(0))
@@ -328,7 +328,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
                         LlvmRetType(llvm.int8PtrType, isObjectType = false),
                         listOf(LlvmParamType(codegen.kObjHeaderPtr))
                 ).toProto(
-                        convertName, null, LLVMLinkage.LLVMExternalLinkage
+                        convertName, null, LLVMLinkage.LLVMInternalLinkage
                 )
         ).generate {
             val kotlinRef = param(0)

@@ -252,8 +252,8 @@ internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, 
 
 internal fun ContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, alignment: Int, isExported: Boolean): AddressAccess {
     return GlobalAddressAccess(LLVMAddGlobal(llvm.module, type, name)!!.also {
-//        if (!isExported)
-//            LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+        if (!isExported)
+            LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
         LLVMSetAlignment(it, alignment)
     })
 }
