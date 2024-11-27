@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.artifacts.ArtifactCollection
+import org.gradle.api.artifacts.ArtifactView
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolveException
 import org.gradle.api.artifacts.ResolvedConfiguration
@@ -28,15 +29,24 @@ internal class LazyResolvedConfiguration private constructor(
     private val artifactCollection: ArtifactCollection,
     private val configurationName: String,
 ) {
+
     /**
      * Creates [LazyResolvedConfiguration] from given [configuration].
+     * The underlying ArtifactView can be configured with [configureArtifactView] or [configureArtifactViewAttributes]
      */
-    constructor(configuration: Configuration, configureArtifactViewAttributes: (AttributeContainer) -> Unit = {}) : this(
+    constructor(
+        configuration: Configuration,
+        configureArtifactView: ArtifactView.ViewConfiguration.() -> Unit = {},
+        configureArtifactViewAttributes: (AttributeContainer) -> Unit = {},
+    ) : this(
         // Calling resolutionResult doesn't actually trigger resolution. But accessing its root ResolvedComponentResult
         // via ResolutionResult::root does. ResolutionResult can't be serialised for Configuration Cache
         // but ResolvedComponentResult can. Wrapping it in `lazy` makes it resolve upon serialisation.
         resolvedComponentsRootProvider = configuration.incoming.resolutionResult.let { rr -> lazy { rr.root } },
-        artifactCollection = configuration.lazyArtifactCollection(configureArtifactViewAttributes),
+        artifactCollection = configuration.lazyArtifactCollection {
+            attributes(configureArtifactViewAttributes)
+            configureArtifactView()
+        },
         configurationName = configuration.name
     )
 
@@ -76,10 +86,10 @@ internal class LazyResolvedConfiguration private constructor(
     override fun toString(): String = "LazyResolvedConfiguration(configuration='$configurationName')"
 }
 
-private fun Configuration.lazyArtifactCollection(configureAttributes: AttributeContainer.() -> Unit): ArtifactCollection =
+private fun Configuration.lazyArtifactCollection(configureArtifactView: ArtifactView.ViewConfiguration.() -> Unit): ArtifactCollection =
     incoming.artifactView { view ->
         view.isLenient = true
-        configureAttributes.invoke(view.attributes)
+        view.configureArtifactView()
     }.artifacts
 
 internal tailrec fun ResolvedVariantResult.lastExternalVariantOrSelf(): ResolvedVariantResult {

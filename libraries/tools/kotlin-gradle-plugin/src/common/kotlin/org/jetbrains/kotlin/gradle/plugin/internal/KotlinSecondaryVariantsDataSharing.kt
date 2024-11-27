@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -94,10 +95,12 @@ internal class KotlinSecondaryVariantsDataSharing(
         key: String,
         incomingConfiguration: Configuration,
         clazz: Class<T>,
+        componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
     ): KotlinProjectSharedDataProvider<T> {
-        val lazyResolvedConfiguration = LazyResolvedConfiguration(incomingConfiguration) { attributes ->
+        val lazyResolvedConfiguration = LazyResolvedConfiguration(incomingConfiguration, configureArtifactView = {
             attributes.configureAttributes(key)
-        }
+            if (componentFilter != null) this.componentFilter(componentFilter)
+        })
         return KotlinProjectSharedDataProvider(key, lazyResolvedConfiguration, clazz)
     }
 

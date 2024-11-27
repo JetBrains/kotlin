@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
@@ -52,9 +53,13 @@ internal class SourceSetMetadataLocations(
     val locations: Collection<File> get() = locationBySourceSetName.values
 }
 
-
-
 internal fun KotlinSecondaryVariantsDataSharing.consumeCommonSourceSetMetadataLocations(
-    from: Configuration
-): KotlinProjectSharedDataProvider<SourceSetMetadataLocations> =
-    consume(SOURCE_SETS_METADATA_LOCATIONS_KEY, from, SourceSetMetadataLocations::class.java)
+    from: Configuration,
+    keepProjectDependencies: Boolean = true,
+): KotlinProjectSharedDataProvider<SourceSetMetadataLocations> = consume(
+    SOURCE_SETS_METADATA_LOCATIONS_KEY,
+    from,
+    SourceSetMetadataLocations::class.java
+) { componentId ->
+    keepProjectDependencies || componentId !is ProjectComponentIdentifier
+}
