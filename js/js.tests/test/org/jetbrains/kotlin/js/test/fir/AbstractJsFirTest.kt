@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.*
-import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -241,7 +241,7 @@ abstract class AbstractFirJsKlibSyntheticAccessorTest(
     testGroupOutputDirPrefix,
 ) {
     override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForJsBlackBoxCodegenTest(IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
+        commonConfigurationForJsBlackBoxCodegenTest(IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS)
         defaultDirectives {
             +KlibIrInlinerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
             +KlibIrInlinerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS

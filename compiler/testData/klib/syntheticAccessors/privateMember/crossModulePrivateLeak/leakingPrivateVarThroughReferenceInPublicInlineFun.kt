@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: ANY
 // ^^^ Muted because accessor for function/constructor/property references are not generated. To be fixed in KT-69797.
-// IGNORE_SYNTHETIC_ACCESSORS_CHECKS: ANY
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: ANY
 // ^^^ error: public-API inline function cannot access non-public-API function.
 
 // MODULE: lib

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
-import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS
+import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotNull
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -32,9 +32,9 @@ import kotlin.test.assertEquals
 
 // TODO(KT-64570): Migrate these tests to the Compiler Core test infrastructure as soon as we move IR inlining
 //   to the first compilation stage.
-// Then, check for `IGNORE_SYNTHETIC_ACCESSORS_CHECKS` should be replaced with configuration like in AbstractFirJsKlibSyntheticAccessorTest:
+// Then, check for `IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS` should be replaced with configuration like in AbstractFirJsKlibSyntheticAccessorTest:
 //         useAfterAnalysisCheckers(
-//            ::BlackBoxCodegenSuppressor.bind(KlibIrInlinerTestDirectives.IGNORE_SYNTHETIC_ACCESSORS_CHECKS)
+//            ::BlackBoxCodegenSuppressor.bind(KlibIrInlinerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS)
 //        )
 @ExtendWith(KlibSyntheticAccessorTestSupport::class)
 abstract class AbstractNativeKlibSyntheticAccessorTest(
@@ -58,7 +58,7 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
         val absoluteTestFile = getAbsoluteFile(testDataFilePath)
         val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
 
-        val isMuted = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.NATIVE, absoluteTestFile, true, "$IGNORE_SYNTHETIC_ACCESSORS_CHECKS:")
+        val isMuted = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.NATIVE, absoluteTestFile, true, "$IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS:")
 
         val testRunOrFailure = runCatching { testRunProvider.getSingleTestRun(testCaseId, testRunSettings) }
         testRunOrFailure.exceptionOrNull()?.let { exception ->
@@ -96,7 +96,7 @@ abstract class AbstractNativeKlibSyntheticAccessorTest(
 
         if (isMuted) {
             fail {
-                "Test passed unexpectedly: $testDataFilePath. Please remove ${TargetBackend.NATIVE.name} from values of test directive `${IGNORE_SYNTHETIC_ACCESSORS_CHECKS.name}`"
+                "Test passed unexpectedly: $testDataFilePath. Please remove ${TargetBackend.NATIVE.name} from values of test directive `${IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS.name}`"
             }
         }
     }

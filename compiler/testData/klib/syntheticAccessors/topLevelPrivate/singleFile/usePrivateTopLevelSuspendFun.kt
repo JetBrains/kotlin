@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// IGNORE_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR
 // ^^^ To be fixed in KT-72883: org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl cannot be cast to org.jetbrains.kotlin.ir.expressions.IrBlockBody
 // WITH_COROUTINES
 // WITH_STDLIB

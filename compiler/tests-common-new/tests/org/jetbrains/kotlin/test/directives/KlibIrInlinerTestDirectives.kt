@@ -49,7 +49,7 @@ object KlibIrInlinerTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val IGNORE_SYNTHETIC_ACCESSORS_CHECKS by enumDirective<TargetBackend>(
+    val IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS by enumDirective<TargetBackend>(
         "Ignore failures in checking synthetic accessors for the specified backend"
     )
 
