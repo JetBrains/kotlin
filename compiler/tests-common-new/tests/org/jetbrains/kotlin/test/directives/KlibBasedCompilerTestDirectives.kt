@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.directives
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
-object KlibIrInlinerTestDirectives : SimpleDirectivesContainer() {
+object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
     // TODO: to be dropped in KT-70295
     val ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING by directive(
         """

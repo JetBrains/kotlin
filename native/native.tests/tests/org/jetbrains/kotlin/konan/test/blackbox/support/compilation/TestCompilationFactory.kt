@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
-import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -164,7 +164,7 @@ class TestCompilationFactory {
         val fileCheckStage = testCases.map { it.fileCheckStage }.singleOrNull()
         if (fileCheckStage != null)
             require(testCases.size == 1) { "FILECHECK-enabled test must be standalone" }
-        val hasSyntheticAccessorsDump = KlibIrInlinerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS in settings.get<RegisteredDirectives>()
+        val hasSyntheticAccessorsDump = KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS in settings.get<RegisteredDirectives>()
         val executableArtifact = Executable(settings.artifactFileForExecutable(rootModules), fileCheckStage, hasSyntheticAccessorsDump)
 
         val (

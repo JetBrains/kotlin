@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.*
@@ -131,7 +129,7 @@ private class UnboundIrSerializationHandler(testServices: TestServices) : KlibAr
     private var functionsUnderTestCounter = 0
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
-        if (KlibIrInlinerTestDirectives.SKIP_UNBOUND_IR_SERIALIZATION in module.directives)
+        if (KlibBasedCompilerTestDirectives.SKIP_UNBOUND_IR_SERIALIZATION in module.directives)
             return
 
         val ir = testServices.dependencyProvider.getArtifact(module, BackendKinds.IrBackend)

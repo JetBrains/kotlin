@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.NativeTestInsta
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ThreadStateChecker
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
-import org.jetbrains.kotlin.test.directives.KlibIrInlinerTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -31,8 +31,8 @@ class KlibSyntheticAccessorTestSupport : BeforeEachCallback {
         val nativeTestInstances = computeKlibSyntheticAccessorTestInstances()
         val settings = createTestRunSettings(nativeTestInstances) {
             with(RegisteredDirectivesBuilder()) {
-                +KlibIrInlinerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
-                +KlibIrInlinerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
+                +KlibBasedCompilerTestDirectives.ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING
+                +KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
 
                 TestDirectives.FREE_COMPILER_ARGS with listOfNotNull(
                     // Don't run LLVM, stop after the last IR lowering.
