@@ -124,6 +124,7 @@ class KonanSymbols(
     val interopWcstr = findTopLevelPropertyGetter(InteropFqNames.packageName, InteropFqNames.wcstrPropertyName, string)
     val interopMemScope = interopClass(InteropFqNames.memScopeName)
     val interopCValue = interopClass(InteropFqNames.cValueName)
+    val interopCValues = interopClass(InteropFqNames.cValuesName)
     val interopCValuesRef = interopClass(InteropFqNames.cValuesRefName)
     val interopCValueWrite = interopFunction(InteropFqNames.cValueWriteFunName) {
         symbolFinder.isExtensionReceiverClass(it, interopCValue)

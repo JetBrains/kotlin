@@ -5,7 +5,6 @@
 @file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.concurrent
 
-import kotlin.native.internal.VolatileLambda
 import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.ref.*
@@ -113,7 +112,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      */
     @Suppress("UNUSED_PARAMETER")
     @TypedIntrinsic(IntrinsicType.WORKER_EXECUTE)
-    public fun <T1, T2> execute(mode: TransferMode, producer: () -> T1, @VolatileLambda job: (T1) -> T2): Future<T2> =
+    public fun <T1, T2> execute(mode: TransferMode, producer: () -> T1, job: (T1) -> T2): Future<T2> =
             /*
              * This function is a magical operation, handled by lowering in the compiler, and replaced with call to
              *   executeImpl(worker, mode, producer, job)

@@ -41,6 +41,7 @@ external internal fun waitForAnyFuture(versionToken: Int, millis: Int): Boolean
 @ObsoleteWorkersApi
 external internal fun versionToken(): Int
 
+@PublishedApi
 @ExportForCompiler
 @ObsoleteWorkersApi
 internal fun executeImpl(worker: Worker, mode: TransferMode, producer: () -> Any?,

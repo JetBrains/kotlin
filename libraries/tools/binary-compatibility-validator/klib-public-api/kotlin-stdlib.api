@@ -12342,6 +12342,9 @@ final fun (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/allocArrayOf(kotli
 final fun (kotlinx.cinterop/NativePointed).kotlinx.cinterop/getRawPointer(): kotlin.native.internal/NativePtr // kotlinx.cinterop/getRawPointer|getRawPointer@kotlinx.cinterop.NativePointed(){}[0]
 
 // Targets: [native]
+final fun (kotlinx.cinterop/ObjCObjectBase).kotlinx.cinterop/superInitCheck(kotlinx.cinterop/ObjCObject?) // kotlinx.cinterop/superInitCheck|superInitCheck@kotlinx.cinterop.ObjCObjectBase(kotlinx.cinterop.ObjCObject?){}[0]
+
+// Targets: [native]
 final fun (kotlinx.cinterop/Pinned<kotlin/ByteArray>).kotlinx.cinterop/addressOf(kotlin/Int): kotlinx.cinterop/CPointer<kotlinx.cinterop/ByteVarOf<kotlin/Byte>> // kotlinx.cinterop/addressOf|addressOf@kotlinx.cinterop.Pinned<kotlin.ByteArray>(kotlin.Int){}[0]
 
 // Targets: [native]
@@ -12744,6 +12747,9 @@ final fun <#A: kotlinx.cinterop/CVariable> kotlinx.cinterop/typeOf(): kotlinx.ci
 final fun <#A: kotlinx.cinterop/NativePointed> kotlinx.cinterop/interpretNullablePointed(kotlin.native.internal/NativePtr): #A? // kotlinx.cinterop/interpretNullablePointed|interpretNullablePointed(kotlin.native.internal.NativePtr){0§<kotlinx.cinterop.NativePointed>}[0]
 
 // Targets: [native]
+final fun <#A: kotlinx.cinterop/ObjCObject> kotlinx.cinterop/getObjCClass(): kotlin.native.internal/NativePtr // kotlinx.cinterop/getObjCClass|getObjCClass(){0§<kotlinx.cinterop.ObjCObject>}[0]
+
+// Targets: [native]
 final fun <#A: kotlinx.cinterop/ObjCObjectBase> (#A).kotlinx.cinterop/initBy(#A): #A // kotlinx.cinterop/initBy|initBy@0:0(0:0){0§<kotlinx.cinterop.ObjCObjectBase>}[0]
 
 // Targets: [native]
@@ -12763,6 +12769,9 @@ final fun kotlin.native.concurrent/consumeFuture(kotlin/Int): kotlin/Any? // kot
 
 // Targets: [native]
 final fun kotlin.native.concurrent/detachObjectGraphInternal(kotlin/Int, kotlin/Function0<kotlin/Any?>): kotlin.native.internal/NativePtr // kotlin.native.concurrent/detachObjectGraphInternal|detachObjectGraphInternal(kotlin.Int;kotlin.Function0<kotlin.Any?>){}[0]
+
+// Targets: [native]
+final fun kotlin.native.concurrent/executeImpl(kotlin.native.concurrent/Worker, kotlin.native.concurrent/TransferMode, kotlin/Function0<kotlin/Any?>, kotlinx.cinterop/CPointer<kotlinx.cinterop/CFunction<*>>): kotlin.native.concurrent/Future<kotlin/Any?> // kotlin.native.concurrent/executeImpl|executeImpl(kotlin.native.concurrent.Worker;kotlin.native.concurrent.TransferMode;kotlin.Function0<kotlin.Any?>;kotlinx.cinterop.CPointer<kotlinx.cinterop.CFunction<*>>){}[0]
 
 // Targets: [native]
 final fun kotlin.native.concurrent/waitWorkerTermination(kotlin.native.concurrent/Worker) // kotlin.native.concurrent/waitWorkerTermination|waitWorkerTermination(kotlin.native.concurrent.Worker){}[0]
@@ -13231,6 +13240,9 @@ final fun kotlinx.cinterop/CreateKStringFromNSString(kotlin.native.internal/Nati
 
 // Targets: [native]
 final fun kotlinx.cinterop/CreateNSStringFromKString(kotlin/String?): kotlin.native.internal/NativePtr // kotlinx.cinterop/CreateNSStringFromKString|CreateNSStringFromKString(kotlin.String?){}[0]
+
+// Targets: [native]
+final fun kotlinx.cinterop/allocObjCObject(kotlin.native.internal/NativePtr): kotlin.native.internal/NativePtr // kotlinx.cinterop/allocObjCObject|allocObjCObject(kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
 final fun kotlinx.cinterop/bitsToDouble(kotlin/Long): kotlin/Double // kotlinx.cinterop/bitsToDouble|bitsToDouble(kotlin.Long){}[0]
