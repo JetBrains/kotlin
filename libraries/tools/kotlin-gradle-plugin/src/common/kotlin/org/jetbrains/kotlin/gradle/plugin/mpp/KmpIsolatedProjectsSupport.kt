@@ -15,7 +15,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
  *
  * The support modes are:
  *
- * - [ENABLE]: Explicitly enable support for Isolated Projects.
+ * - [ENABLE] (default mode): Explicitly enable support for Isolated Projects.
  * When Isolated Project support is enabled Kotlin Gradle Plugin will apply changes to its model to be compatible with Isolated Projects.
  * Please note that Isolated Projects still should be enabled on Gradle side.
  * Use this mode if you want to prepare your build scripts for migration to Isolated Projects friendly model.
@@ -23,7 +23,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
  * - [DISABLE]: Explicitly disable support for Isolated Projects. This mode keeps the Kotlin Multiplatform Gradle Plugin Model as it is.
  * Please note, in this mode Kotlin Gradle Plugin can't work with Isolated Projects.
  *
- * - [AUTO] (default mode): Automatically enables support for Isolated Projects feature when it is enabled on Gradle side.
+ * - [AUTO]: Automatically enables support for Isolated Projects feature when it is enabled on Gradle side.
  *
  * @since 2.1
  */
