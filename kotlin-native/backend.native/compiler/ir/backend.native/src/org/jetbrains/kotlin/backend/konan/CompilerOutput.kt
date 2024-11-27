@@ -93,7 +93,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
                 libraries.flatMap { it.bitcodePaths }.filter { it.isBitcode }
             }
 
-    val nativeLibraries = config.nativeLibraries + config.launcherNativeLibraries
+    val nativeLibraries = config.nativeLibraries.takeIf { (!generationState.shouldOptimize() || generationState.producedLlvmModuleContainsStdlib) }.orEmpty() + config.launcherNativeLibraries
             .takeIf { config.produce == CompilerOutputKind.PROGRAM && (!generationState.shouldOptimize() || generationState.producedLlvmModuleContainsStdlib) }.orEmpty()
     val additionalBitcodeFilesToLink = generationState.llvm.additionalProducedBitcodeFiles
     val exceptionsSupportNativeLibrary = listOf(config.exceptionsSupportNativeLibrary)
@@ -103,7 +103,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val additionalBitcodeFiles = nativeLibraries +
             generatedBitcodeFiles +
             additionalBitcodeFilesToLink +
-            bitcodeLibraries +
+            bitcodeLibraries.takeIf { (!generationState.shouldOptimize() || generationState.producedLlvmModuleContainsStdlib) }.orEmpty() +
             exceptionsSupportNativeLibrary +
             xcTestRunnerNativeLibrary
 
