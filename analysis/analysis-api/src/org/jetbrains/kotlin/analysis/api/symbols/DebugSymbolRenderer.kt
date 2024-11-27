@@ -350,7 +350,7 @@ public class DebugSymbolRenderer(
             is KaTypeProjection -> renderTypeProjection(value, printer, currentSymbolStack)
             is KaClassTypeQualifier -> renderTypeQualifier(value, printer, currentSymbolStack)
             is KaAnnotationValue -> renderAnnotationValue(value, printer)
-            is KaContractEffectDeclaration -> Context(this@KaSession, printer, this@DebugSymbolRenderer)
+            is KaContractEffectDeclaration -> Context(this@renderValue, printer, this@DebugSymbolRenderer)
                 .renderKaContractEffectDeclaration(value, endWithNewLine = false)
             is KaNamedAnnotationValue -> renderNamedConstantValue(value, printer, currentSymbolStack)
             is KaInitializerValue -> renderKtInitializerValue(value, printer)

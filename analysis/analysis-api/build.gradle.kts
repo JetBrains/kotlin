@@ -49,10 +49,6 @@ apiValidation {
     )
 }
 
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
-}
-
 testsJar()
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
