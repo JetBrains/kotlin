@@ -367,7 +367,7 @@ class KotlinCoreEnvironment private constructor(
         )
     }
 
-    private val applicationEnvironment: CoreApplicationEnvironment
+     val applicationEnvironment: CoreApplicationEnvironment
         get() = projectEnvironment.environment
 
     val project: Project

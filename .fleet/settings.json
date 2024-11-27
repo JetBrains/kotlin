@@ -1,5 +1,5 @@
 {
-    "backend.maxHeapSizeMb": 2602,
+    "backend.maxHeapSizeMb": 4553,
 
     // https://youtrack.jetbrains.com/issue/FL-22276
     // Fleet cannot handle nested maven projects until FL-22276

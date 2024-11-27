@@ -50,7 +50,7 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.DescriptorSerializerPlugin"
                         interface="org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"
                         area="IDEA_PROJECT"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.defaultErrorMessages"
-                        interface="org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages.Extension"/>
+        <!--<extensionPoint qualifiedName="org.jetbrains.kotlin.defaultErrorMessages"-->
+        <!--                interface="org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages.Extension"/>-->
     </extensionPoints>
 </idea-plugin>

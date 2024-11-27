@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment

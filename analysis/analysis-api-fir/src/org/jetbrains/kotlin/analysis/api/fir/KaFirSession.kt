@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * for more information.
  */
 @Suppress("AnalysisApiMissingLifetimeCheck")
-internal class KaFirSession
+public class KaFirSession
 private constructor(
     val project: Project,
     val firResolveSession: LLFirResolveSession,
