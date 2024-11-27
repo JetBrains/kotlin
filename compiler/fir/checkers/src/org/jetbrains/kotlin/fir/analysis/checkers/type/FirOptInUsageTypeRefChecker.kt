@@ -32,7 +32,7 @@ object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
         val delegatedTypeRef = typeRef.delegatedTypeRef
         if (source?.kind !is KtRealSourceElementKind) return
         // ConeClassLikeType filters out all delegatedTypeRefs from here
-        val expandedTypealiasType = typeRef.coneType.fullyExpandedType(context.session) as? ConeClassLikeType ?: return
+        val expandedTypealiasType = typeRef.coneType.fullyExpandedType(context.session).lowerBoundIfFlexible() as? ConeClassLikeType ?: return
         val coneType = expandedTypealiasType.abbreviatedTypeOrSelf as? ConeClassLikeType ?: return
         val symbol = coneType.toSymbol(context.session) ?: return
 

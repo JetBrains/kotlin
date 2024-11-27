@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.name.ClassId
 
 // ----------------------------------------------- lookup tag -----------------------------------------------
@@ -83,7 +84,7 @@ fun ConeClassLikeType.toSymbol(session: FirSession): FirClassLikeSymbol<*>? {
 }
 
 fun ConeKotlinType.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
-    return (this as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
+    return (this.lowerBoundIfFlexible() as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
 }
 
 fun ConeKotlinType.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? {
@@ -101,7 +102,7 @@ fun ConeKotlinType.toTypeParameterSymbol(session: FirSession): FirTypeParameterS
 // ----------------------------------------------- cone type (with expansion) -----------------------------------------------
 
 fun ConeKotlinType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
-    return (this as? ConeClassLikeType)?.toClassSymbol(session)
+    return (this.lowerBoundIfFlexible() as? ConeClassLikeType)?.toClassSymbol(session)
 }
 
 fun ConeClassLikeType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
@@ -109,7 +110,7 @@ fun ConeClassLikeType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
 }
 
 fun ConeKotlinType.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
-    return (this as? ConeClassLikeType)?.toRegularClassSymbol(session)
+    return (this.lowerBoundIfFlexible() as? ConeClassLikeType)?.toRegularClassSymbol(session)
 }
 
 /**

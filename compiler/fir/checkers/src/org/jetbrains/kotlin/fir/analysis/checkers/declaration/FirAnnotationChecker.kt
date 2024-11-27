@@ -128,30 +128,30 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 propertySymbol.resolvedReceiverTypeRef == null && propertySymbol.resolvedContextParameters.isEmpty()
 
         val (hint, type) = when (annotation.useSiteTarget) {
-            FIELD -> "fields" to ((declaration as? FirBackingField)?.returnTypeRef ?: return)
+            FIELD -> "fields" to ((declaration as? FirBackingField)?.returnTypeRef?.coneType ?: return)
             PROPERTY_DELEGATE_FIELD -> "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.resolvedType
                 ?: return)
-            RECEIVER -> "receivers" to ((declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef ?: return)
+            RECEIVER -> "receivers" to ((declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef?.coneType ?: return)
             FILE, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, CONSTRUCTOR_PARAMETER, SETTER_PARAMETER, null -> when {
                 declaration is FirProperty && !declaration.isLocal -> {
                     val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
                     when {
                         declaration.fromPrimaryConstructor == true && allowedAnnotationTargets.contains(KotlinTarget.VALUE_PARAMETER) -> return // handled in FirValueParameter case
                         allowedAnnotationTargets.contains(KotlinTarget.PROPERTY) -> return
-                        allowedAnnotationTargets.contains(KotlinTarget.FIELD) -> "fields" to declaration.returnTypeRef
+                        allowedAnnotationTargets.contains(KotlinTarget.FIELD) -> "fields" to declaration.returnTypeRef.coneType
                         else -> return
                     }
                 }
-                declaration is FirField -> "fields" to declaration.returnTypeRef
-                declaration is FirValueParameter -> "parameters" to declaration.returnTypeRef
-                declaration is FirVariable -> "variables" to declaration.returnTypeRef
+                declaration is FirField -> "fields" to declaration.returnTypeRef.coneType
+                declaration is FirValueParameter -> "parameters" to declaration.returnTypeRef.coneType
+                declaration is FirVariable -> "variables" to declaration.returnTypeRef.coneType
                 declaration is FirPropertyAccessor && declaration.isGetter && declaration.hasNoReceivers() ->
-                    "getters" to declaration.returnTypeRef
+                    "getters" to declaration.returnTypeRef.coneType
 
                 else -> return
             }
         }
-        reportIfMfvc(context, reporter, annotation, hint, type as? ConeKotlinType ?: (type as FirTypeRef).coneType)
+        reportIfMfvc(context, reporter, annotation, hint, type)
     }
 
     private fun checkAnnotationTarget(

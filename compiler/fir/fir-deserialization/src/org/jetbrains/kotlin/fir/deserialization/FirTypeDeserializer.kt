@@ -266,7 +266,10 @@ class FirTypeDeserializer(
             return true
         }
 
-        val continuationType = arguments.getOrNull(arguments.lastIndex - 1) as? ConeClassLikeType ?: return null
+        val continuationType = arguments.getOrNull(arguments.lastIndex - 1)
+            ?.type
+            ?.lowerBoundIfFlexible() as? ConeClassLikeType
+            ?: return null
         if (!continuationType.isContinuation()) return ConeClassLikeTypeImpl(functionTypeConstructor, arguments, isNullable, attributes)
         val suspendReturnType = continuationType.typeArguments.single()
         val valueParameters = arguments.dropLast(2)

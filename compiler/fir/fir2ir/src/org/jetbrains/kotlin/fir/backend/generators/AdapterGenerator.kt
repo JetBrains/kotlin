@@ -617,7 +617,10 @@ internal class AdapterGenerator(
         expectedFunctionalType: ConeClassLikeType,
         argumentType: ConeKotlinType
     ): IrSimpleFunctionSymbol? {
-        val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionalType) ?: return null
+        val argumentTypeWithInvoke = argumentType
+            .findSubtypeOfBasicFunctionType(session, expectedFunctionalType)
+            ?.lowerBoundIfFlexible()
+            ?: return null
 
         return if (argumentTypeWithInvoke.isSomeFunctionType(session)) {
             (argumentTypeWithInvoke as? ConeClassLikeType)?.findBaseInvokeSymbol(session, scopeSession)

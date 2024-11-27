@@ -37,7 +37,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         val count = minOf(typeArguments.size, typeParameters.size)
         val varargParameter = (callableSymbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.singleOrNull { it.isVararg }
         val varargElementType = varargParameter?.resolvedReturnType?.arrayElementType()
-        val varargTypeParameter = (varargElementType as? ConeTypeParameterType?)?.lookupTag?.typeParameterSymbol
+        val varargTypeParameter = (varargElementType?.lowerBoundIfFlexible() as? ConeTypeParameterType?)?.lookupTag?.typeParameterSymbol
         for (index in 0 until count) {
             val typeArgumentProjection = typeArguments.elementAt(index)
             val source = typeArgumentProjection.source ?: calleeReference.source ?: continue

@@ -56,13 +56,13 @@ val ConeKotlinType.isMarkedNullable: Boolean
 val ConeKotlinType.hasFlexibleMarkedNullability: Boolean
     get() = this is ConeFlexibleType && lowerBound.isMarkedNullable != upperBound.isMarkedNullable
 
-val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.lookupTag?.classId
+val ConeKotlinType.classId: ClassId? get() = (this.lowerBoundIfFlexible() as? ConeClassLikeType)?.lookupTag?.classId
 
 val ConeKotlinType.lookupTagIfAny: ConeClassifierLookupTag?
-    get() = (this as? ConeLookupTagBasedType)?.lookupTag
+    get() = (this.lowerBoundIfFlexible() as? ConeLookupTagBasedType)?.lookupTag
 
 val ConeKotlinType.classLikeLookupTagIfAny: ConeClassLikeLookupTag?
-    get() = (this as? ConeClassLikeType)?.lookupTag
+    get() = (this.lowerBoundIfFlexible() as? ConeClassLikeType)?.lookupTag
 
 /**
  * Recursively visits each [ConeKotlinType] inside (including itself) and performs the given action.

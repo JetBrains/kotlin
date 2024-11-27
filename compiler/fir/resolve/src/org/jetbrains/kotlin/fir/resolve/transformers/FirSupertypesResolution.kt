@@ -570,7 +570,7 @@ open class FirSupertypeResolverVisitor(
 
             if (resolveRecursively) {
                 fun visitNestedTypeAliases(type: ConeTypeProjection) {
-                    val typeToCheck = type.type as? ConeClassLikeType ?: return
+                    val typeToCheck = type.type?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return
                     val symbol = typeToCheck.lookupTag.toSymbol(session)
                     if (symbol is FirTypeAliasSymbol) {
                         visitTypeAlias(symbol.fir, null)
@@ -775,7 +775,7 @@ open class SupertypeComputationSession {
                         if (type in visitedTypes) return
                         visitedTypes += type
                         for (typeArgument in type.typeArguments) {
-                            val typeToCheck = typeArgument.type as? ConeClassLikeType ?: continue
+                            val typeToCheck = typeArgument.type?.lowerBoundIfFlexible() as? ConeClassLikeType ?: continue
                             checkIsInLoop(
                                 typeToCheck.lookupTag.toSymbol(session)?.fir,
                                 wasSubtypingInvolved, areTypeArgumentsCurrentlyInvolved,

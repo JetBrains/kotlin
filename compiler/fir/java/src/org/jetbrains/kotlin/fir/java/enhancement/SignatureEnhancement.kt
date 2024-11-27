@@ -1023,7 +1023,7 @@ private class EnhancementSignatureParts(
         get() = (this as ConeKotlinType).typeAnnotations
 
     override val KotlinTypeMarker.fqNameUnsafe: FqNameUnsafe?
-        get() = (this as? ConeClassLikeType)?.lookupTag?.classId?.asSingleFqName()?.toUnsafe()
+        get() = (this as? ConeKotlinType)?.classId?.asSingleFqName()?.toUnsafe()
 
     override val KotlinTypeMarker.enhancedForWarnings: KotlinTypeMarker?
         get() = (this as ConeKotlinType).enhancedTypeForWarning

@@ -112,7 +112,7 @@ fun FirExpression.isStableSmartcast(): Boolean {
 private val FirTypeRef.lookupTagBasedOrNull: ConeLookupTagBasedType?
     get() = when (this) {
         is FirImplicitBuiltinTypeRef -> coneType
-        is FirResolvedTypeRef -> coneType as? ConeLookupTagBasedType
+        is FirResolvedTypeRef -> coneType.lowerBoundIfFlexible() as? ConeLookupTagBasedType
         else -> null
     }
 

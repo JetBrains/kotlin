@@ -32,7 +32,7 @@ fun checkUpperBoundViolated(
     reporter: DiagnosticReporter,
     isIgnoreTypeParameters: Boolean = false
 ) {
-    val type = typeRef?.coneType as? ConeClassLikeType ?: return
+    val type = typeRef?.coneType?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return
     checkUpperBoundViolated(typeRef, type, context, reporter, isIgnoreTypeParameters)
 }
 

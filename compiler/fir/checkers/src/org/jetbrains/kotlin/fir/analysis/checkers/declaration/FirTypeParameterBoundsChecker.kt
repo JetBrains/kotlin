@@ -76,7 +76,10 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         if (containingDeclaration is FirProperty && containingDeclaration.isOverride) return
 
         declaration.symbol.resolvedBounds.forEach { bound ->
-            if (!bound.coneType.canHaveSubtypesAccordingToK1(context.session)) {
+            val boundType = bound.coneType
+            // DYNAMIC_UPPER_BOUND will be reported separately
+            if (boundType is ConeDynamicType) return@forEach
+            if (!boundType.canHaveSubtypesAccordingToK1(context.session)) {
                 reporter.reportOn(bound.source, FirErrors.FINAL_UPPER_BOUND, bound.coneType, context)
             }
         }

@@ -55,6 +55,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
 
             val expandedSupertype = superTypeRef.coneType.fullyExpandedType(context.session)
             val originalSupertype = expandedSupertype.abbreviatedTypeOrSelf
+            val supertypeIsDynamic = originalSupertype is ConeDynamicType
             if (!nullableSupertypeReported && originalSupertype.isMarkedNullable) {
                 reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE, context)
                 nullableSupertypeReported = true
@@ -80,13 +81,15 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
                     } else {
                         classAppeared = true
                     }
-                    if (!interfaceWithSuperclassReported) {
+                    // DYNAMIC_SUPERTYPE will be reported separately
+                    if (!interfaceWithSuperclassReported && !supertypeIsDynamic) {
                         reporter.reportOn(superTypeRef.source, FirErrors.INTERFACE_WITH_SUPERCLASS, context)
                         interfaceWithSuperclassReported = true
                     }
                 }
                 val isObject = symbol.classKind == ClassKind.OBJECT
-                if (!finalSupertypeReported && !isObject && symbol.modality == Modality.FINAL) {
+                // DYNAMIC_SUPERTYPE will be reported separately
+                if (!finalSupertypeReported && !isObject && symbol.modality == Modality.FINAL && !supertypeIsDynamic) {
                     reporter.reportOn(superTypeRef.source, FirErrors.FINAL_SUPERTYPE, context)
                     finalSupertypeReported = true
                 }

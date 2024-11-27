@@ -65,8 +65,9 @@ class ErrorNodeDiagnosticCollectorComponent(
      * In this case, we don't need to report anything because the error will already be reported on the declaration site.
      */
     private fun FirErrorTypeRef.hasExpandedTypeAliasDeclarationSiteError(): Boolean {
-        if ((coneType as? ConeErrorType)?.diagnostic != this.diagnostic) return false
-        return coneType.abbreviatedType != null
+        val lowerBound = coneType.lowerBoundIfFlexible() as? ConeErrorType ?: return false
+        if (lowerBound.diagnostic != this.diagnostic) return false
+        return lowerBound.abbreviatedType != null
     }
 
     private fun FirExpression.hasDiagnostic(diagnostic: ConeDiagnostic): Boolean {
@@ -121,7 +122,7 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     private fun FirExpression?.cannotBeResolved(): Boolean {
-        return when (val diagnostic = (this?.resolvedType as? ConeErrorType)?.diagnostic) {
+        return when (val diagnostic = (this?.resolvedType?.lowerBoundIfFlexible() as? ConeErrorType)?.diagnostic) {
             is ConeUnresolvedNameError, is ConeInstanceAccessBeforeSuperCall, is ConeAmbiguousSuper -> true
             is ConeSimpleDiagnostic -> diagnostic.kind == DiagnosticKind.NotASupertype ||
                     diagnostic.kind == DiagnosticKind.SuperNotAvailable ||
