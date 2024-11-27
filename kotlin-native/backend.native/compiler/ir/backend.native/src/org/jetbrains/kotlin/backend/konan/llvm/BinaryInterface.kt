@@ -59,7 +59,7 @@ object KonanBinaryInterface {
     fun IrClass.privateTypeInfoSymbolName(containerName: String): String = typeInfoSymbolNameImpl(containerName)
 
     fun isExported(declaration: IrDeclaration) = exportChecker.run {
-        check(declaration, SpecialDeclarationType.REGULAR) || declaration.isPlatformSpecificExported()
+        check(declaration, SpecialDeclarationType.REGULAR) || declaration.isPlatformSpecificExported() || true
     }
 
     private fun withPrefix(prefix: String, mangle: String) = "$prefix:$mangle"
