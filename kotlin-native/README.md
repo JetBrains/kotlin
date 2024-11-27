@@ -27,6 +27,8 @@ More information can be found in the overviews of
 [Kotlin/Native](https://kotlinlang.org/docs/native-overview.html)
 and [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
 
+On macOS using Kotlin/Native requires Xcode 12.5 or newer.
+
 ## Contributing
 
 You can contribute to Kotlin/Native in many ways.
