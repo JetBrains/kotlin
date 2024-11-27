@@ -428,6 +428,15 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(backingField) {
             kind = OpenClass
+            defaultNull(
+                "receiverParameter", "delegate", "getter", "setter", "backingField", "dispatchReceiverType", "containerSource",
+                withGetter = true
+            )
+
+            defaultEmptyList(
+                "contextReceivers", "typeParameters",
+                withGetter = true
+            )
         }
 
         impl(whenSubjectExpression) {
