@@ -27,8 +27,6 @@ More information can be found in the overviews of
 [Kotlin/Native](https://kotlinlang.org/docs/native-overview.html)
 and [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
 
-On macOS Kotlin/Native requires Xcode 12.5 or newer.
-
 ## Contributing
 
 You can contribute to Kotlin/Native in many ways.
@@ -43,6 +41,7 @@ Prerequisites:
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
 *   macOS: Xcode 16.0 or newer
+    * If you have not used Xcode before, you may need to run `sudo xcode-select --switch /Applications/Xcode.app`
     * on `MacOS aarch64`, CInterop functionality is available only using aarch64 JDK builds, e.g.
 [Eclipse Temurin 17.0.5](https://github.com/adoptium/temurin17-binaries/releases) or
 [Azul Zulu JDK8](https://www.azul.com/downloads/?version=java-8-lts&os=macos&architecture=arm-64-bit&package=jdk)
