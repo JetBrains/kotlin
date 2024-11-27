@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -40,6 +39,10 @@ private object TypeAliasConstructorSubstitutorKey : FirDeclarationDataKey()
 
 var FirConstructor.typeAliasConstructorSubstitutor: ConeSubstitutor? by FirDeclarationDataRegistry.data(TypeAliasConstructorSubstitutorKey)
 
+private object TypeAliasOuterType : FirDeclarationDataKey()
+
+var FirConstructor.outerTypeIfTypeAlias: ConeClassLikeType? by FirDeclarationDataRegistry.data(TypeAliasOuterType)
+
 class TypeAliasConstructorsSubstitutingScope(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
@@ -58,7 +61,7 @@ class TypeAliasConstructorsSubstitutingScope(
 
             processor(
                 buildConstructorCopy(originalConstructorSymbol.fir) {
-                    // Typealiased constructors point to the typealias source 
+                    // Typealiased constructors point to the typealias source
                     // for the convenience of Analysis API
                     source = typeAliasSymbol.source
 
@@ -99,42 +102,13 @@ class TypeAliasConstructorsSubstitutingScope(
                             returnTypeRef.coneType.withAbbreviation(AbbreviatedTypeAttribute(abbreviation))
                         )
                     }
-
-                    if (outerType != null) {
-                        // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
-                        //
-                        //   class Outer {
-                        //     inner class Inner
-                        //   }
-                        //   typealias OI = Outer.Inner
-                        //   fun foo() { Outer().OI() }
-                        //
-                        // the chances are that `processor` belongs to [ScopeTowerLevel] (to resolve type aliases at top-level), which treats
-                        // the explicit receiver (`Outer()`) as an extension receiver, whereas the constructor of the nested class may regard
-                        // the same explicit receiver as a dispatch receiver (hence inconsistent receiver).
-                        // Here, we add a copy of the nested class constructor, along with the outer type as an extension receiver, so that it
-                        // can be seen as if resolving:
-                        //
-                        //   fun Outer.OI(): OI = ...
-                        //
-                        //
-                        receiverParameter = originalConstructorSymbol.fir.returnTypeRef.withReplacedConeType(outerType).let {
-                            buildReceiverParameter {
-                                typeRef = it
-                                symbol = FirReceiverParameterSymbol()
-                                moduleData = typeAliasSymbol.moduleData
-                                origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
-                                containingDeclarationSymbol = this@buildConstructorCopy.symbol
-                            }
-                        }
-                    }
-
                 }.apply {
                     originalConstructorIfTypeAlias = originalConstructorSymbol.fir
                     typeAliasForConstructor = typeAliasSymbol
                     if (delegatingScope is FirClassSubstitutionScope) {
                         typeAliasConstructorSubstitutor = delegatingScope.substitutor
                     }
+                    outerTypeIfTypeAlias = outerType
                 }.symbol
             )
         }

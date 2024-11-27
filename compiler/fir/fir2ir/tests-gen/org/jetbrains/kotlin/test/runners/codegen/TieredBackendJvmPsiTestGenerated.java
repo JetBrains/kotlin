@@ -18935,6 +18935,12 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       }
 
       @Test
+      @TestMetadata("innerClassTypeAliasConstructorReference.kt")
+      public void testInnerClassTypeAliasConstructorReference() {
+        runTest("compiler/testData/diagnostics/tests/typealias/innerClassTypeAliasConstructorReference.kt");
+      }
+
+      @Test
       @TestMetadata("intToLongApproximationThroughTypeAlias.kt")
       public void testIntToLongApproximationThroughTypeAlias() {
         runTest("compiler/testData/diagnostics/tests/typealias/intToLongApproximationThroughTypeAlias.kt");

@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -448,8 +450,9 @@ internal class ScopeBasedTowerLevel(
         }
 
         val receiverExpected = withHideMembersOnly || areThereExtensionReceiverOptions()
-        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
-        if (candidateReceiverTypeRef == null == receiverExpected) return
+        val receiverParameterApplicable = candidate.getExpectedReceiverType() != null
+
+        if (receiverParameterApplicable != receiverExpected) return
 
         val dispatchReceiverValue = dispatchReceiverValue(candidate, callInfo)
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
