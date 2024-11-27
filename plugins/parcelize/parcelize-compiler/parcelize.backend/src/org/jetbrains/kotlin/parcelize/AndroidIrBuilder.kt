@@ -28,50 +28,50 @@ class AndroidIrBuilder internal constructor(
 
     fun parcelReadParcelable(receiver: IrExpression, loader: IrExpression): IrExpression {
         return irCall(androidSymbols.parcelReadParcelable).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, loader)
+            arguments[0] = receiver
+            arguments[1] = loader
         }
     }
 
     fun parcelReadString(receiver: IrExpression): IrExpression {
         return irCall(androidSymbols.parcelReadString).apply {
-            dispatchReceiver = receiver
+            arguments[0] = receiver
         }
     }
 
     fun parcelWriteInt(receiver: IrExpression, value: IrExpression): IrExpression {
         return irCall(androidSymbols.parcelWriteInt).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, value)
+            arguments[0] = receiver
+            arguments[1] = value
         }
     }
 
     fun parcelWriteParcelable(receiver: IrExpression, p: IrExpression, parcelableFlags: IrExpression): IrExpression {
         return irCall(androidSymbols.parcelWriteParcelable).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, p)
-            putValueArgument(1, parcelableFlags)
+            arguments[0] = receiver
+            arguments[1] = p
+            arguments[2] = parcelableFlags
         }
     }
 
     fun parcelWriteString(receiver: IrExpression, value: IrExpression): IrExpression {
         return irCall(androidSymbols.parcelWriteString).apply {
-            dispatchReceiver = receiver
-            putValueArgument(0, value)
+            arguments[0] = receiver
+            arguments[1] = value
         }
     }
 
     fun textUtilsWriteToParcel(cs: IrExpression, p: IrExpression, parcelableFlags: IrExpression): IrExpression {
         return irCall(androidSymbols.textUtilsWriteToParcel).apply {
-            putValueArgument(0, cs)
-            putValueArgument(1, p)
-            putValueArgument(2, parcelableFlags)
+            arguments[0] = cs
+            arguments[1] = p
+            arguments[2] = parcelableFlags
         }
     }
 
     fun classGetClassLoader(receiver: IrExpression): IrExpression {
         return irCall(androidSymbols.classGetClassLoader).apply {
-            dispatchReceiver = receiver
+            arguments[0] = receiver
         }
     }
 
@@ -83,7 +83,7 @@ class AndroidIrBuilder internal constructor(
         return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, toType, androidSymbols.unsafeCoerceIntrinsic).apply {
             putTypeArgument(0, fromType)
             putTypeArgument(1, toType)
-            putValueArgument(0, value)
+            arguments[0] = value
         }
     }
 }

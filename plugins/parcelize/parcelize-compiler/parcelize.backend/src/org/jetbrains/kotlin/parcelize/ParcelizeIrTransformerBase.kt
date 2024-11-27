@@ -80,10 +80,10 @@ abstract class ParcelizeIrTransformerBase(
                         }
                         else -> {
                             +irCall(writeToParcel).apply {
-                                dispatchReceiver = irGet(receiverParameter)
                                 superQualifierSymbol = irClass.superClass?.symbol
-                                putValueArgument(0, irGet(parcelParameter))
-                                putValueArgument(1, irGet(flagsParameter))
+                                arguments[0] = irGet(receiverParameter)
+                                arguments[1] = irGet(parcelParameter)
+                                arguments[2] = irGet(flagsParameter)
                             }
                         }
                     }
@@ -170,7 +170,7 @@ abstract class ParcelizeIrTransformerBase(
                             parcelerNewArray(parcelerObject, sizeParameter)
                                 ?: irCall(context.irBuiltIns.arrayOfNulls, arrayType).apply {
                                     putTypeArgument(0, arrayType)
-                                    putValueArgument(0, irGet(sizeParameter))
+                                    arguments[0] = irGet(sizeParameter)
                                 }
                         )
                     }
@@ -191,22 +191,20 @@ abstract class ParcelizeIrTransformerBase(
                                         parcelerCreate(parcelerObject, parcelParameter)
 
                                    // just to handle empty parcel case, we need some arguments other than marker to use the constructor
-                                    experimentalCodeGeneration && inheritanceConstructor != null && inheritanceConstructor.valueParameters.size > 1 -> {
+                                    experimentalCodeGeneration && inheritanceConstructor != null && inheritanceConstructor.parameters.size > 1 -> {
                                         val constructorArguments = declaration.inheritanceConstructorArguments()
                                         irCall(inheritanceConstructor).apply {
                                             constructorArguments.forEachIndexed { index, property ->
-                                                putValueArgument(index, readParcelWith(property.parceler, parcelParameter))
+                                                arguments[index] = readParcelWith(property.parceler, parcelParameter)
                                             }
-                                            putValueArgument(
-                                                constructorArguments.size, irGetObject(androidSymbols.directInitializerMarker)
-                                            )
+                                            arguments[constructorArguments.size] = irGetObject(androidSymbols.directInitializerMarker)
                                         }
                                     }
 
                                     parcelableProperties.isNotEmpty() ->
                                         irCall(declaration.primaryConstructor!!).apply {
                                             for (property in parcelableProperties) {
-                                                putValueArgument(property.index, readParcelWith(property.parceler, parcelParameter))
+                                                arguments[property.index] = readParcelWith(property.parceler, parcelParameter)
                                             }
                                         }
 
@@ -247,7 +245,7 @@ abstract class ParcelizeIrTransformerBase(
 
             val constructor = primaryConstructor ?: return emptyList()
             val topLevelScope = getParcelerScope()
-            return constructor.valueParameters.mapIndexedNotNull { index, parameter ->
+            return constructor.parameters.mapIndexedNotNull { index, parameter ->
                 val property = properties.firstOrNull { it.name == parameter.name }
                 if (property == null || property.hasAnyAnnotation(IGNORED_ON_PARCEL_FQ_NAMES)) {
                     return@mapIndexedNotNull null
@@ -306,9 +304,9 @@ abstract class ParcelizeIrTransformerBase(
                 if (superClassConstructor != null) {
                     +irDelegatingConstructorCall(superClassConstructor).apply {
                         for (index in superCallArguments.indices) {
-                            putValueArgument(index, irGet(constructor.valueParameters[index]))
+                            arguments[index] = irGet(constructor.parameters[index])
                         }
-                        putValueArgument(superCallArguments.size, irGet(constructor.valueParameters[markerValueArgumentIndex]))
+                        arguments[superCallArguments.size] = irGet(constructor.parameters[markerValueArgumentIndex])
                     }
                 } else {
                     val constructorToCall = superClass.primaryConstructor ?: superClass.defaultConstructor
@@ -316,13 +314,13 @@ abstract class ParcelizeIrTransformerBase(
                     require(constructorToCall.isPrimary || superCallArguments.isEmpty())
                     +irDelegatingConstructorCall(constructorToCall).apply {
                         for (i in superCallArguments.indices) {
-                            putValueArgument(i, irGet(constructor.valueParameters[i]))
+                            arguments[i] = irGet(constructor.parameters[i])
                         }
                     }
                 }
                 parcelableProperties.forEachIndexed { index, property ->
                     +irSetField(
-                        irGet(irClass.thisReceiver!!), property.field, irGet(constructor.valueParameters[index + superCallArguments.size])
+                        irGet(irClass.thisReceiver!!), property.field, irGet(constructor.parameters[index + superCallArguments.size])
                     )
                 }
                 +IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, context.irBuiltIns.unitType)

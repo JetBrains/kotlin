@@ -252,14 +252,10 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                 val listSerializer = IrListParcelSerializer(classifier, elementType, getChild(elementType))
                 val actualSerializer =
                     when (classifierFqName) {
-                        in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES -> IrExtensionFunctionOnReadCallingSerializer(
-                            delegated = listSerializer,
-                            converterExtensionFunction = symbols.kotlinIterableToPersistentListExtension
-                        )
-                        in BuiltinParcelableTypes.IMMUTABLE_SET_FQNAMES -> IrExtensionFunctionOnReadCallingSerializer(
-                            delegated = listSerializer,
-                            converterExtensionFunction = symbols.kotlinIterableToPersistentSetExtension
-                        )
+                        in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES ->
+                            listSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension)
+                        in BuiltinParcelableTypes.IMMUTABLE_SET_FQNAMES ->
+                            listSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentSetExtension)
                         else -> listSerializer
                     }
 
@@ -276,14 +272,10 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                     IrMapParcelSerializer(classifier, keyType, valueType, getChild(keyType), getChild(valueType))
 
                 val actualSerializer =
-                    if (classifierFqName in BuiltinParcelableTypes.IMMUTABLE_MAP_FQNAMES) {
-                        IrExtensionFunctionOnReadCallingSerializer(
-                            mapSerializer,
-                            symbols.kotlinMapToPersistentMapExtension
-                        )
-                    } else {
+                    if (classifierFqName in BuiltinParcelableTypes.IMMUTABLE_MAP_FQNAMES)
+                        mapSerializer.withDeserializationPostprocessing(symbols.kotlinMapToPersistentMapExtension)
+                    else
                         mapSerializer
-                    }
                 return wrapNullableSerializerIfNeeded(irType, actualSerializer)
             }
         }
@@ -358,19 +350,13 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private val stringArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArray, symbols.parcelWriteStringArray)
     private val stringListSerializer = IrSimpleParcelSerializer(symbols.parcelCreateStringArrayList, symbols.parcelWriteStringList)
     private val stringPersistentListSerializer by lazy {
-        IrExtensionFunctionOnReadCallingSerializer(
-            delegated = stringListSerializer,
-            converterExtensionFunction = symbols.kotlinIterableToPersistentListExtension,
-        )
+        stringListSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension)
     }
     private val iBinderSerializer = IrSimpleParcelSerializer(symbols.parcelReadStrongBinder, symbols.parcelWriteStrongBinder)
     private val iBinderArraySerializer = IrSimpleParcelSerializer(symbols.parcelCreateBinderArray, symbols.parcelWriteBinderArray)
     private val iBinderListSerializer = IrSimpleParcelSerializer(symbols.parcelCreateBinderArrayList, symbols.parcelWriteBinderList)
     private val iBinderPersistentListSerializer by lazy {
-        IrExtensionFunctionOnReadCallingSerializer(
-            delegated = iBinderListSerializer,
-            converterExtensionFunction = symbols.kotlinIterableToPersistentListExtension,
-        )
+        iBinderListSerializer.withDeserializationPostprocessing(symbols.kotlinIterableToPersistentListExtension)
     }
     private val serializableSerializer = IrSimpleParcelSerializer(symbols.parcelReadSerializable, symbols.parcelWriteSerializable)
     private val stringSerializer = IrSimpleParcelSerializer(symbols.parcelReadString, symbols.parcelWriteString)
