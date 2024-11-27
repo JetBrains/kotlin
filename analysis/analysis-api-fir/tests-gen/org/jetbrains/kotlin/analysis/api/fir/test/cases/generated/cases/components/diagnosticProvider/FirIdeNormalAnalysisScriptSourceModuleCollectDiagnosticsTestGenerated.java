@@ -46,6 +46,18 @@ public class FirIdeNormalAnalysisScriptSourceModuleCollectDiagnosticsTestGenerat
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
+  @Test
+  @TestMetadata("contractsScript.kts")
+  public void testContractsScript() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contractsScript.kts");
+  }
+
+  @Test
+  @TestMetadata("unresolvedContractsScript.kts")
+  public void testUnresolvedContractsScript() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedContractsScript.kts");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
   @TestDataPath("$PROJECT_ROOT")

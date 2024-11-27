@@ -53,6 +53,12 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
   }
 
   @Test
+  @TestMetadata("contracts.kt")
+  public void testContracts() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/contracts.kt");
+  }
+
+  @Test
   @TestMetadata("danglingAnnotationInMiddle.kt")
   public void testDanglingAnnotationInMiddle() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/danglingAnnotationInMiddle.kt");
@@ -212,6 +218,12 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
   @TestMetadata("unresolvedAnnotationsOnPropertyFromParameter.kt")
   public void testUnresolvedAnnotationsOnPropertyFromParameter() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedAnnotationsOnPropertyFromParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("unresolvedContracts.kt")
+  public void testUnresolvedContracts() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedContracts.kt");
   }
 
   @Test
