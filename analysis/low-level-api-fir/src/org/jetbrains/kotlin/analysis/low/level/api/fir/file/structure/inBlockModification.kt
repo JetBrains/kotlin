@@ -56,12 +56,12 @@ private fun FirFunction.invalidateBody(body: FirBlock): FirResolvePhase? {
     val newPhase = phaseWithoutBody
 
     decreasePhase(newPhase)
-    replaceBody(buildLazyBlock())
-    replaceControlFlowGraphReference(newControlFlowGraphReference = null)
-
-    if (this is FirContractDescriptionOwner) {
+    if (this is FirContractDescriptionOwner && hasLegacyContract) {
         replaceContractDescription(newContractDescription = null)
     }
+
+    replaceBody(buildLazyBlock())
+    replaceControlFlowGraphReference(newControlFlowGraphReference = null)
 
     return newPhase
 }
@@ -142,7 +142,8 @@ private fun FirCodeFragment.inBodyInvalidation(): Boolean {
     return true
 }
 
-private fun FirProperty.invalidateInitializer(): PropertyExpressionState = replaceWithLazyExpressionIfNeeded(::initializer, ::replaceInitializer)
+private fun FirProperty.invalidateInitializer(): PropertyExpressionState =
+    replaceWithLazyExpressionIfNeeded(::initializer, ::replaceInitializer)
 
 private fun FirProperty.invalidateDelegate(): PropertyExpressionState = replaceWithLazyExpressionIfNeeded(::delegate, ::replaceDelegate)
 
@@ -167,7 +168,7 @@ private inline fun replaceWithLazyExpressionIfNeeded(
 
 private val FirDeclaration.phaseWithoutBody: FirResolvePhase
     get() {
-        val phaseBeforeBody = if (contractShouldBeResolved) {
+        val phaseBeforeBody = if (hasLegacyContract) {
             FirResolvePhase.CONTRACTS.previous
         } else {
             FirResolvePhase.BODY_RESOLVE.previous
@@ -176,7 +177,7 @@ private val FirDeclaration.phaseWithoutBody: FirResolvePhase
         return minOf(phaseBeforeBody, resolvePhase)
     }
 
-private val FirDeclaration.contractShouldBeResolved: Boolean
+private val FirDeclaration.hasLegacyContract: Boolean
     get() = this is FirFunction && body?.statements?.firstOrNull() is FirContractCallBlock
 
 private fun FirDeclaration.decreasePhase(newPhase: FirResolvePhase) {
