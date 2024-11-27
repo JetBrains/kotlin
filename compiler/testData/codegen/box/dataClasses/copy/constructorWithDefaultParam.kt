@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 data class A(val a: Int = 1, val b: String = "$a") {}
 
 fun box() : String {

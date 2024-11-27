@@ -212,9 +212,9 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                 val paramType = irFunction.valueParameters[i].type
                 // The JVM backend doesn't introduce new variables, and hence may have incompatible types here.
                 val value = if (!paramType.isNullable() && variable.type.isNullable()) {
-                    irImplicitCast(irGet(variable), paramType)
+                    irImplicitCast(irGet(variable, origin = IrStatementOrigin.DEFAULT_VALUE), paramType)
                 } else {
-                    irGet(variable)
+                    irGet(variable, origin = IrStatementOrigin.DEFAULT_VALUE)
                 }
                 putValueArgument(i, value)
             }

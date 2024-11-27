@@ -155,6 +155,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? {
         val function = symbol.owner
         val name = function.name.asString()
+        if (function.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER || name == "copy\$default") return DataCopy
         val byName = intrinsicsMap[name] ?: return null
         val receiverFqName = function.computeExtensionReceiverFqName()
         val byReceiver = byName[receiverFqName] ?: return null
