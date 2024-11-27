@@ -631,7 +631,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return intersectionType.withUpperBound(secondCandidate)
     }
 
-    override fun KotlinTypeMarker.getUpperBoundForApproximationOfIntersectionType(): KotlinTypeMarker? {
+    override fun RigidTypeMarker.getUpperBoundForApproximationOfIntersectionType(): KotlinTypeMarker? {
         return (this as? ConeIntersectionType)?.upperBoundForApproximation
     }
 
