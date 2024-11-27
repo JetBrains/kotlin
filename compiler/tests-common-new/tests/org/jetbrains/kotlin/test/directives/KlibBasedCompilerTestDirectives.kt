@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
@@ -70,5 +71,11 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
             Other tests use exposure of private types from internal inline functions. This is already a compiler
             warning in 2.1.0 (KT-69681), but soon will become a compiler error (KT-70916).
         """.trimIndent()
+    )
+
+    val SKIP_DESERIALIZED_IR_TEXT_DUMP by directive(
+        description = """
+        Skips ${SerializedIrDumpHandler::class}, when running a test against the deserialized IR
+        """
     )
 }

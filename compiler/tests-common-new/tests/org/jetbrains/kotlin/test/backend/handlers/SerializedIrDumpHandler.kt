@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.defaultDumpIrTreeOptions
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_DESERIALIZED_IR_TEXT_DUMP
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -41,7 +42,7 @@ class SerializedIrDumpHandler(
     private val dumper = MultiModuleInfoDumper()
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives) // TODO: extract and rename SKIP_DESERIALIZED_IR_TEXT_DUMP from CodegenTestDirectives
+        get() = listOf(KlibBasedCompilerTestDirectives)
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (module.isSkipped) return
@@ -74,8 +75,7 @@ class SerializedIrDumpHandler(
 
     companion object {
         private val TestModule.isSkipped: Boolean
-            // TODO: extract and rename SKIP_DESERIALIZED_IR_TEXT_DUMP from CodegenTestDirectives
-            get() = CodegenTestDirectives.SKIP_DESERIALIZED_IR_TEXT_DUMP in directives
+            get() = SKIP_DESERIALIZED_IR_TEXT_DUMP in directives
 
         private val TestServices.dumpFile: File
             get() = temporaryDirectoryManager.rootDir.resolve("ir_pre_serialization_dump.txt")
