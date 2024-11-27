@@ -40,9 +40,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var deprecationsProvider: DeprecationsProvider,
-    override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override var contextReceivers: MutableOrEmptyList<FirValueParameter>,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
     override var contractDescription: FirContractDescription?,
@@ -50,13 +48,18 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override val propertySymbol: FirPropertySymbol,
     override val isGetter: Boolean,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirPropertyAccessor() {
     override val receiverParameter: FirReceiverParameter?
         get() = null
+    override val containerSource: DeserializedContainerSource?
+        get() = null
+    override val contextReceivers: List<FirValueParameter>
+        get() = emptyList()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val isSetter: Boolean
         get() = !isGetter
+    override val typeParameters: List<FirTypeParameter>
+        get() = emptyList()
 
     init {
         symbol.bind(this)
@@ -66,25 +69,21 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         contractDescription?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        typeParameters.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
-        transformContextReceivers(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
         transformContractDescription(transformer, data)
         transformAnnotations(transformer, data)
-        transformTypeParameters(transformer, data)
         return this
     }
 
@@ -103,7 +102,6 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        contextReceivers.transformInplace(transformer, data)
         return this
     }
 
@@ -128,7 +126,6 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -146,9 +143,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {
-        contextReceivers = newContextReceivers.toMutableOrEmpty()
-    }
+    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {}
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference

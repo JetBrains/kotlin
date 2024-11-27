@@ -418,10 +418,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(anonymousFunctionExpression)
 
         impl(propertyAccessor) {
-            default("receiverParameter") {
-                value = "null"
-                withGetter = true
-            }
+            defaultNull("receiverParameter", "containerSource", withGetter = true)
+            defaultEmptyList("contextReceivers", "typeParameters", withGetter = true)
             default("isSetter") {
                 value = "!isGetter"
                 withGetter = true

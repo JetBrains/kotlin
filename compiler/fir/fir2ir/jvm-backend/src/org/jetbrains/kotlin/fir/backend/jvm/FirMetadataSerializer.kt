@@ -268,7 +268,6 @@ private fun FirPropertyAccessor.copyToFreeAccessor(
             }
         }
         annotations += accessor.annotations
-        typeParameters += typeParameterSet
     }
 }
 

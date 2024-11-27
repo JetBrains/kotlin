@@ -58,9 +58,7 @@ abstract class FirDefaultPropertyAccessor(
     },
     propertyTypeRef,
     deprecationsProvider = UnresolvedDeprecationProvider,
-    containerSource = null,
     dispatchReceiverType = null,
-    contextReceivers = MutableOrEmptyList.empty(),
     valueParameters,
     body = null,
     contractDescription = null,
@@ -68,7 +66,6 @@ abstract class FirDefaultPropertyAccessor(
     propertySymbol,
     isGetter,
     annotations = MutableOrEmptyList.empty(),
-    typeParameters = mutableListOf(),
 ) {
     override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = propertySymbol.dispatchReceiverType

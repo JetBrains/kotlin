@@ -38,9 +38,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     override lateinit var status: FirDeclarationStatus
     override lateinit var returnTypeRef: FirTypeRef
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
-    override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     var contractDescription: FirContractDescription? = null
@@ -48,7 +46,6 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     lateinit var propertySymbol: FirPropertySymbol
     var isGetter: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirPropertyAccessor {
@@ -61,9 +58,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
             status,
             returnTypeRef,
             deprecationsProvider,
-            containerSource,
             dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
             valueParameters,
             body,
             contractDescription,
@@ -71,10 +66,19 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
             propertySymbol,
             isGetter,
             annotations.toMutableOrEmpty(),
-            typeParameters,
         )
     }
 
+
+    @Deprecated("Modification of 'containerSource' has no impact for FirPropertyAccessorBuilder", level = DeprecationLevel.HIDDEN)
+    override var containerSource: DeserializedContainerSource?
+        get() = throw IllegalStateException()
+        set(_) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'contextReceivers' has no impact for FirPropertyAccessorBuilder", level = DeprecationLevel.HIDDEN)
+    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
 }
 
 @OptIn(ExperimentalContracts::class)
@@ -99,15 +103,12 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.body = original.body
     copyBuilder.contractDescription = original.contractDescription
     copyBuilder.propertySymbol = original.propertySymbol
     copyBuilder.isGetter = original.isGetter
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.typeParameters.addAll(original.typeParameters)
     return copyBuilder.apply(init).build()
 }
