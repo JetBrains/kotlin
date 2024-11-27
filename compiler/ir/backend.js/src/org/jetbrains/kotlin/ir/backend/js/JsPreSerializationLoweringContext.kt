@@ -10,11 +10,17 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.types.IrDynamicType
+import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
+import org.jetbrains.kotlin.types.Variance
 
 class JsPreSerializationLoweringContext(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration) {
+    val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
+    val intrinsics = JsIntrinsics(irBuiltIns)
+
     override val ir: Ir = object : Ir() {
         override val symbols: Symbols = JsSymbols(irBuiltIns, irFactory.stageController, JsIntrinsics(irBuiltIns))
     }
