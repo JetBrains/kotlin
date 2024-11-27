@@ -15,9 +15,17 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * [KaTypePointer] allows to point to a [KaType] and later retrieve it in another [KaSession]. A pointer is necessary because [KaType]s
+ * cannot be shared past the boundaries of the [KaSession] they were created in, as they are valid only there.
+ *
+ * @see KaSymbolPointer
+ * @see org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+ */
 @KaExperimentalApi
 public interface KaTypePointer<out T : KaType> {
     @KaImplementationDetail
@@ -122,9 +130,23 @@ public interface KaType : KaLifetimeOwner, KaAnnotated {
     public fun createPointer(): KaTypePointer<KaType>
 }
 
+/**
+ * The [nullability](https://kotlinlang.org/docs/null-safety.html#nullable-types-and-non-nullable-types) of a [KaType].
+ */
 public enum class KaTypeNullability(public val isNullable: Boolean) {
+    /**
+     * The [KaType] is nullable, i.e. it can hold `null`.
+     */
     NULLABLE(true),
+
+    /**
+     * The [KaType] is not nullable, i.e. it cannot hold `null`.
+     */
     NON_NULLABLE(false),
+
+    /**
+     * The [KaType]'s nullability is not known, for example in some [flexible types][KaFlexibleType] and some [error types][KaErrorType].
+     */
     UNKNOWN(false);
 
     public companion object {
