@@ -48,8 +48,9 @@ public fun optional(): Nothing = throw RuntimeException("Do not call me!!!")
 public external fun <T : ObjCObjectBase> T.initBy(constructorCall: T): T
 
 @BetaInteropApi
+@PublishedApi
 @kotlin.native.internal.ExportForCompiler
-private fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
+internal fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
     if (superInitCallResult == null)
         throw RuntimeException("Super initialization failed")
 
@@ -153,8 +154,9 @@ internal annotation class ObjCMethodImp(val selector: String, val encoding: Stri
 @TypedIntrinsic(IntrinsicType.OBJC_GET_SELECTOR)
 internal external fun objCGetSelector(selector: String): COpaquePointer
 
+@PublishedApi
 @kotlin.native.internal.ExportForCompiler
-private fun allocObjCObject(clazz: NativePtr): NativePtr {
+internal fun allocObjCObject(clazz: NativePtr): NativePtr {
     val rawResult = objc_allocWithZone(clazz)
     if (rawResult == nativeNullPtr) {
         throw OutOfMemoryError("Unable to allocate Objective-C object")
@@ -165,9 +167,10 @@ private fun allocObjCObject(clazz: NativePtr): NativePtr {
     return rawResult
 }
 
+@PublishedApi
 @TypedIntrinsic(IntrinsicType.OBJC_GET_OBJC_CLASS)
 @kotlin.native.internal.ExportForCompiler
-private external fun <T : ObjCObject> getObjCClass(): NativePtr
+internal external fun <T : ObjCObject> getObjCClass(): NativePtr
 
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.OBJC_GET_MESSENGER)

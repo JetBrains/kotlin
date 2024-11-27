@@ -290,11 +290,6 @@ private val propertyReferencePhase = createFileLoweringPhase(
 )
 
 
-private val volatileLambdaPhase = createFileLoweringPhase(
-        lowering = ::VolatileLambdaLowering,
-        name = "VolatileLambdaLowering",
-)
-
 private val functionReferencePhase = createFileLoweringPhase(
         lowering = ::NativeFunctionReferenceLowering,
         name = "FunctionReference",
@@ -341,8 +336,8 @@ private val builtinOperatorPhase = createFileLoweringPhase(
  * The first phase of inlining (inline only private functions).
  */
 private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
-        lowering = { context: Context ->
-            NativeIrInliner(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS)
+        lowering = { generationState: NativeGenerationState ->
+            NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS)
         },
         name = "InlineOnlyPrivateFunctions",
 )
@@ -363,8 +358,8 @@ private val syntheticAccessorGenerationPhase = createFileLoweringPhase(
  * The second phase of inlining (inline all functions).
  */
 internal val inlineAllFunctionsPhase = createFileLoweringPhase(
-        lowering = { context: Context ->
-            NativeIrInliner(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
+        lowering = { generationState: NativeGenerationState ->
+            NativeIrInliner(generationState, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
         },
         name = "InlineAllFunctions",
 )
@@ -372,7 +367,18 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
 private val interopPhase = createFileLoweringPhase(
         lowering = ::InteropLowering,
         name = "Interop",
-        prerequisite = setOf(inlineAllFunctionsPhase, functionReferencePhase)
+)
+
+private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
+        lowering = ::SpecialInteropIntrinsicsLowering,
+        name = "SpecialInteropIntrinsics",
+        prerequisite = setOf(inlineAllFunctionsPhase)
+)
+
+internal val specialObjCValidationPhase = createFileLoweringPhase(
+        lowering = ::SpecialObjCValidationLowering,
+        name = "SpecialObjCValidation",
+        prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val varargPhase = createFileLoweringPhase(
@@ -542,19 +548,21 @@ internal val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
-    testProcessorPhase,
-    upgradeCallableReferencesPhase,
-    assertionWrapperPhase,
-    lateinitPhase,
-    sharedVariablesPhase,
-    extractLocalClassesFromInlineBodies,
-    arrayConstructorPhase,
-    inlineOnlyPrivateFunctionsPhase,
-    outerThisSpecialAccessorInInlineFunctionsPhase,
-    syntheticAccessorGenerationPhase,
+        interopPhase,
+        testProcessorPhase,
+        upgradeCallableReferencesPhase,
+        assertionWrapperPhase,
+        lateinitPhase,
+        sharedVariablesPhase,
+        extractLocalClassesFromInlineBodies,
+        arrayConstructorPhase,
+        inlineOnlyPrivateFunctionsPhase,
+        outerThisSpecialAccessorInInlineFunctionsPhase,
+        syntheticAccessorGenerationPhase,
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        specialInteropIntrinsicsPhase,
         dumpTestsPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
@@ -562,10 +570,8 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         volatilePhase,
         delegatedPropertyOptimizationPhase,
         propertyReferencePhase,
-        volatileLambdaPhase,
         functionReferencePhase,
         postInlinePhase,
-        interopPhase,
         contractsDslRemovePhase,
         annotationImplementationPhase,
         rangeContainsLoweringPhase,

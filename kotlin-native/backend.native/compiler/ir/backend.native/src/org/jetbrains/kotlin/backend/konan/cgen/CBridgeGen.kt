@@ -261,10 +261,6 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
             val initializer = variable.initializer
             require(initializer is IrVararg) { stubs.renderCompilerError(initializer) }
             block(variable, initializer.elements)
-        } else if (variable is IrValueParameter && NativeFunctionReferenceLowering.isLoweredFunctionReference(variable)) {
-            val location = variable.parent // Parameter itself has incorrect location.
-            val kind = if (this.isObjCMethod) "Objective-C methods" else "C functions"
-            stubs.throwCompilerError(location, "callable references to variadic $kind are not supported")
         } else {
             stubs.throwCompilerError(variable, "unexpected value declaration")
         }

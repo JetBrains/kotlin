@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
@@ -13,101 +12,20 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.name.SpecialNames
 
 // [NativeSuspendFunctionsLowering] checks annotation of an extension receiver parameter type.
 // Unfortunately, it can't be checked on invoke method of lambda/reference, as it can't
 // distinguish between extension receiver and first argument. So we just store it in attribute of invoke function
 var IrFunction.isRestrictedSuspensionInvokeMethod by irFlag<IrFunction>(followAttributeOwner = true)
-
-/**
- * Processing of `@VolatileLambda` annotation
- */
-internal class VolatileLambdaLowering(val generationState: NativeGenerationState) : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.transform(object : IrTransformer<IrDeclarationParent>() {
-            private val stack = mutableListOf<IrElement>()
-
-            override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {
-                stack.push(element)
-                val result = super.visitElement(element, data)
-                stack.pop()
-                return result
-            }
-
-            override fun visitExpression(expression: IrExpression, data: IrDeclarationParent): IrExpression {
-                stack.push(expression)
-                val result = super.visitExpression(expression, data)
-                stack.pop()
-                return result
-            }
-
-            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
-                stack.push(declaration)
-                val result = super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
-                stack.pop()
-                return result
-            }
-
-            override fun visitSpreadElement(spread: IrSpreadElement, data: IrDeclarationParent): IrSpreadElement {
-                stack.push(spread)
-                val result = super.visitSpreadElement(spread, data)
-                stack.pop()
-                return result
-            }
-
-            private val VOLATILE_LAMBDA_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "VolatileLambda"))
-
-            override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: IrDeclarationParent): IrExpression {
-                expression.transformChildren(this, data)
-                val irBuilder = generationState.context.createIrBuilder((data as IrSymbolOwner).symbol,
-                        expression.startOffset, expression.endOffset)
-                for (i in stack.size - 1 downTo 0) {
-                    val cur = stack[i]
-                    if (cur is IrBlock)
-                        continue
-                    if (cur !is IrCall)
-                        break
-                    val argument = if (i < stack.size - 1) stack[i + 1] else expression
-                    val parameter = cur.symbol.owner.parameters.singleOrNull { cur.arguments[it] === argument }
-                    if (parameter?.annotations?.findAnnotation(VOLATILE_LAMBDA_FQ_NAME) != null) {
-                        require(expression.boundValues.isEmpty()) {
-                            "@VolatileLambda argument's can't capture"
-                        }
-                        return irBuilder.irComposite(origin = IrStatementOrigin.LAMBDA) {
-                            +expression.invokeFunction
-                            +irRawFunctionReference(expression.type, expression.invokeFunction.symbol)
-                        }
-                    }
-                    break
-                }
-                return expression
-            }
-
-            override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
-                shouldNotBeCalled()
-            }
-        }, data = irFile)
-    }
-
-}
 
 internal class NativeFunctionReferenceLowering(val generationState: NativeGenerationState) : AbstractFunctionReferenceLowering<Context>(generationState.context) {
     companion object {

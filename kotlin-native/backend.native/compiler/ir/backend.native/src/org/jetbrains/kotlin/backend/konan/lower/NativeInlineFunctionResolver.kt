@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -25,9 +26,9 @@ import org.jetbrains.kotlin.library.isHeader
 private var IrFunction.wasLowered: Boolean? by irAttribute(followAttributeOwner = true)
 
 internal class NativeInlineFunctionResolver(
-        context: Context,
+        val generationState: NativeGenerationState,
         inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(context, inlineMode) {
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(generationState.context, inlineMode) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
@@ -49,6 +50,8 @@ internal class NativeInlineFunctionResolver(
     private fun lower(function: IrFunction) {
         val body = function.body ?: return
 
+        InteropLowering(generationState).lower(body, function)
+
         UpgradeCallableReferences(context).lower(function)
 
         NativeAssertionWrapperLowering(context).lower(function)
@@ -61,7 +64,7 @@ internal class NativeInlineFunctionResolver(
 
         ArrayConstructorLowering(context).lower(body, function)
 
-        NativeIrInliner(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
+        NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
         OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
     }
