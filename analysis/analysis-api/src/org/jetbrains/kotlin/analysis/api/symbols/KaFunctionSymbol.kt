@@ -56,6 +56,28 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol() {
     abstract override fun createPointer(): KaSymbolPointer<KaAnonymousFunctionSymbol>
 }
 
+/**
+ * [KaSamConstructorSymbol] represents constructors used to build instances of [SAM interfaces](https://kotlinlang.org/docs/fun-interfaces.html#sam-conversions).
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun interface IntPredicate {
+ *    fun accept(i: Int): Boolean
+ * }
+ *
+ * val isEven = IntPredicate { it % 2 == 0 }
+ * ```
+ *
+ * The expression `IntPredicate { it % 2 == 0 }` instantiates an object which implements `IntPredicate`. The function used to build this
+ * instance is the SAM constructor represented by [KaSamConstructorSymbol], with the following signature:
+ *
+ * ```kotlin
+ * fun IntPredicate(function: Function1<Int, Boolean>): IntPredicate
+ * ```
+ *
+ * @see KaSymbolOrigin.SAM_CONSTRUCTOR
+ */
 @OptIn(KaImplementationDetail::class)
 public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }

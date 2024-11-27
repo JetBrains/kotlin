@@ -48,7 +48,7 @@ public interface KaSymbolRelationProvider {
     public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
 
     /**
-     * Returns [KaClassLikeSymbol] of the corresponding SAM interface
+     * Returns the [KaClassLikeSymbol] of the corresponding SAM interface.
      */
     public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
 
