@@ -192,7 +192,9 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * Number of those arguments that correspond to [IrParameterKind.Context] and [IrParameterKind.Regular] parameters.
      *
      * ##### This is a deprecated API!
-     * Only use [arguments] instead. If you need to know the meaning of the arguments, reach out to the corresponding function's parameters.
+     * - If you want a number of _all_ arguments (which you should most of the time), use [arguments.size] instead.
+     * - If you want a number of a particular [IrParameterKind] of parameters, you have to reach out to the corresponding function.
+     *
      * A drop-in replacement:
      * ```
      * symbol.owner.parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
@@ -237,7 +239,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      *  call.arguments[1] = ...
      *  ```
      *
-     * In future, if we evaluate this property is not really useful (provides little win over just reaching to
+     * In future, if we evaluate [dispatchReceiver] is not really useful (provides little win over just reaching to
      * function.dispatchReceiverParameter and then using [arguments]), it will be deprecated.
      *
      * Details on the API migration: KT-68003
@@ -386,12 +388,13 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
 
     /**
-     * Gets one of arguments that correspond to [IrParameterKind.Context] or [IrParameterKind.Regular] parameters.
-     * This is, the index corresponds to the deprecated [IrFunction.valueParameters] list, and not [IrFunction.parameters], which also includes
+     * Gets one of the arguments that correspond to either [IrParameterKind.Context] or [IrParameterKind.Regular] parameters.
+     *
+     * This is, [index] corresponds to [IrFunction.valueParameters] list, and not [IrFunction.parameters], which also includes
      * receiver parameters.
      *
      * ##### This is a deprecated API!
-     * Only use [arguments] instead.
+     * Use [arguments] instead.
      *
      * E.g. for code
      * ```
@@ -402,7 +405,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * ```
      * call.arguments[parameter.indexInParameters]
      * ```
-     * If you need to know the meaning of the arguments, reach out to the corresponding function's parameters.
+     * If you need to know the [IrParameterKind] of the argument, reach out to the corresponding function's parameter.
      *
      * Details on the API migration: KT-68003
      */
@@ -415,11 +418,12 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     /**
      * Sets one of arguments that correspond to [IrParameterKind.Context] or [IrParameterKind.Regular] parameters.
-     * This is, the index corresponds to the deprecated [IrFunction.valueParameters] list, and not [IrFunction.parameters], which also includes
+     *
+     * This is, [index] corresponds to [IrFunction.valueParameters] list, and not [IrFunction.parameters], which also includes
      * receiver parameters.
      *
      * ##### This is a deprecated API!
-     * Only use [arguments] instead.
+     * Use [arguments] instead.
      *
      * E.g. for code
      * ```
@@ -430,7 +434,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
      * ```
      * call.arguments[parameter.indexInParameters] = ...
      * ```
-     * If you need to know the meaning of the arguments, reach out to the corresponding function's parameters.
+     * If you need to know the [IrParameterKind] of the arguments, reach out to the corresponding function's parameter.
      *
      * Details on the API migration: KT-68003
      */
