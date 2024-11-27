@@ -73,7 +73,7 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val SKIP_DESERIALIZED_IR_TEXT_DUMP by directive(
+    val SKIP_IR_DESERIALIZATION_CHECKS by directive(
         description = """
         Skips ${SerializedIrDumpHandler::class}, when running a test against the deserialized IR
         """
