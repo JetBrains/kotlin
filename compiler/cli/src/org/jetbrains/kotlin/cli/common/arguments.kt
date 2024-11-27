@@ -74,6 +74,9 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.USE_FIR, usesK2)
     put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
+
+    val annotationDefaultingMode = AnnotationDefaultingMode.fromString(arguments.annotationDefaulting, languageVersionSettings)
+    put(CommonConfigurationKeys.ANNOTATION_DEFAULTING_MODE, annotationDefaultingMode)
 }
 
 private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageCollector: MessageCollector) {

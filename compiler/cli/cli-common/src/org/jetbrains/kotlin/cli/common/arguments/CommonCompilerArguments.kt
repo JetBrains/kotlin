@@ -840,6 +840,21 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
+    @Argument(
+        value = "-Xannotation-defaulting",
+        valueDescription = "first-only|first-only-warn|param-property",
+        description = """constructor properties annotation targeting behavior:
+-Xassertions=first-only:      use the first of the following allowed targets: param, property, field;
+-Xassertions=first-only-warn: same as first-only, raise warnings in situations when both param and (either property or field) are allowed;
+-Xassertions=param-property:  use param target if applicable, also use the first of the following allowed targets: property, field;
+default: first-only-warn in language version 2.2+, first-only in 2.1 and before"""
+    )
+    var annotationDefaulting: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -876,6 +891,22 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
     open fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> =
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             configureCommonLanguageFeatures(this@CommonCompilerArguments)
+
+            // Non-automatic logic as it's more complex
+            when (AnnotationDefaultingMode.fromStringOrNull(annotationDefaulting)) {
+                null -> {}
+                AnnotationDefaultingMode.FIRST_ONLY -> {
+                    put(LanguageFeature.AnnotationDefaultingMigrationWarning, LanguageFeature.State.DISABLED)
+                    put(LanguageFeature.PropertyParamAnnotationDefaultingMode, LanguageFeature.State.DISABLED)
+                }
+                AnnotationDefaultingMode.FIRST_ONLY_WARN -> {
+                    put(LanguageFeature.AnnotationDefaultingMigrationWarning, LanguageFeature.State.ENABLED)
+                    put(LanguageFeature.PropertyParamAnnotationDefaultingMode, LanguageFeature.State.DISABLED)
+                }
+                AnnotationDefaultingMode.PARAM_PROPERTY -> {
+                    put(LanguageFeature.PropertyParamAnnotationDefaultingMode, LanguageFeature.State.ENABLED)
+                }
+            }
 
             if (progressiveMode) {
                 LanguageFeature.entries.filter { it.enabledInProgressiveMode }.forEach {

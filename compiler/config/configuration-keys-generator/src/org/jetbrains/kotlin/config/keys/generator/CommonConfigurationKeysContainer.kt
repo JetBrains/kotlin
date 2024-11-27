@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.AnnotationDefaultingMode
 import org.jetbrains.kotlin.config.HmppCliModuleStructure
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -54,4 +55,6 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val ENABLE_IR_VISIBILITY_CHECKS by key<Boolean>("Check pre-lowering IR for visibility violations")
     val ENABLE_IR_VARARG_TYPES_CHECKS by key<Boolean>("Check IR for vararg types mismatches")
     val PHASE_CONFIG by key<PhaseConfig>("phase configuration")
+
+    val ANNOTATION_DEFAULTING_MODE by key<AnnotationDefaultingMode>("Annotation targeting mode")
 }

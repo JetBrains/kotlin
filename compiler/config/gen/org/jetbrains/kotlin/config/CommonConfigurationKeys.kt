@@ -101,6 +101,9 @@ object CommonConfigurationKeys {
     @JvmField
     val PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfig>("phase configuration")
 
+    @JvmField
+    val ANNOTATION_DEFAULTING_MODE = CompilerConfigurationKey.create<AnnotationDefaultingMode>("Annotation targeting mode")
+
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
@@ -206,4 +209,8 @@ var CompilerConfiguration.enableIrVarargTypesChecks: Boolean
 var CompilerConfiguration.phaseConfig: PhaseConfig?
     get() = get(CommonConfigurationKeys.PHASE_CONFIG)
     set(value) { put(CommonConfigurationKeys.PHASE_CONFIG, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.annotationDefaultingMode: AnnotationDefaultingMode?
+    get() = get(CommonConfigurationKeys.ANNOTATION_DEFAULTING_MODE)
+    set(value) { put(CommonConfigurationKeys.ANNOTATION_DEFAULTING_MODE, requireNotNull(value) { "nullable values are not allowed" }) }
 
