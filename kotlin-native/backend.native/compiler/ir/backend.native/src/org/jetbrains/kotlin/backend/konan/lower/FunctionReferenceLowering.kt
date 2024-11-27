@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -70,35 +68,8 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
 
     override fun lower(irFile: IrFile) {
         irFile.transform(object : IrTransformer<IrDeclarationParent>() {
-            private val stack = mutableListOf<IrElement>()
-
-            override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {
-                stack.push(element)
-                val result = super.visitElement(element, data)
-                stack.pop()
-                return result
-            }
-
-            override fun visitExpression(expression: IrExpression, data: IrDeclarationParent): IrExpression {
-                stack.push(expression)
-                val result = super.visitExpression(expression, data)
-                stack.pop()
-                return result
-            }
-
-            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
-                stack.push(declaration)
-                val result = super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
-                stack.pop()
-                return result
-            }
-
-            override fun visitSpreadElement(spread: IrSpreadElement, data: IrDeclarationParent): IrSpreadElement {
-                stack.push(spread)
-                val result = super.visitSpreadElement(spread, data)
-                stack.pop()
-                return result
-            }
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent) =
+                    super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
 
             // Handle SAM conversions which wrap a function reference:
             //     class sam$n(private val receiver: R) : Interface { override fun method(...) = receiver.target(...) }
@@ -129,27 +100,6 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
                 expression.transformChildren(this, data)
 
-                for (i in stack.size - 1 downTo 0) {
-                    val cur = stack[i]
-                    if (cur is IrBlock)
-                        continue
-                    if (cur !is IrCall)
-                        break
-                    val argument = if (i < stack.size - 1) stack[i + 1] else expression
-                    val parameter = cur.symbol.owner.valueParameters.singleOrNull {
-                        cur.getValueArgument(it.indexInOldValueParameters) == argument
-                    }
-                    if (parameter?.annotations?.findAnnotation(VOLATILE_LAMBDA_FQ_NAME) != null) {
-                        return IrRawFunctionReferenceImpl(
-                                expression.startOffset,
-                                expression.endOffset,
-                                expression.type,
-                                expression.symbol
-                        )
-                    }
-                    break
-                }
-
                 if (!expression.type.isFunction() && !expression.type.isKFunction() &&
                         !expression.type.isKSuspendFunction() && !expression.type.isSuspendFunction()) {
                     // Not a subject of this lowering.
@@ -170,8 +120,6 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             }
         }, data = irFile)
     }
-
-    private val VOLATILE_LAMBDA_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "VolatileLambda"))
 
     private class FunctionReferenceBuilder(
             val irFile: IrFile,

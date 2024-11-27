@@ -387,7 +387,7 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
 private val interopPhase = createFileLoweringPhase(
         lowering = ::InteropLowering,
         name = "Interop",
-        prerequisite = setOf(inlineAllFunctionsPhase, functionReferencePhase)
+        prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val varargPhase = createFileLoweringPhase(
@@ -565,6 +565,7 @@ internal fun KonanConfig.getLoweringsUpToAndIncludingSyntheticAccessors(): Lower
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        interopPhase,
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
         assertionRemoverPhase,
@@ -575,7 +576,6 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         propertyReferencePhase,
         functionReferencePhase,
         postInlinePhase,
-        interopPhase,
         contractsDslRemovePhase,
         annotationImplementationPhase,
         rangeContainsLoweringPhase,
