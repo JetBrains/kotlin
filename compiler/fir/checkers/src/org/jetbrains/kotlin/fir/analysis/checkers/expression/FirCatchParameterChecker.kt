@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
+import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -37,8 +38,10 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
             }
 
             val coneType = catchParameter.returnTypeRef.coneType
-            if (coneType is ConeTypeParameterType) {
-                val isReified = coneType.lookupTag.typeParameterSymbol.isReified
+            if (coneType is ConeTypeParameterType || coneType is ConeDefinitelyNotNullType) {
+                val isReified = with(context.session.typeContext) {
+                    (coneType.originalIfDefinitelyNotNullable() as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol?.isReified == true
+                }
 
                 if (isReified) {
                     reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE, context)

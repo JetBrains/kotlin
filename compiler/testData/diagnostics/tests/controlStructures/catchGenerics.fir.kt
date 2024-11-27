@@ -29,6 +29,6 @@ fun <T : Throwable> tryCatch() {
 fun <T : Nothing?> test1() {
     try {
         throw Exception()
-    } catch (x: T & Any) {
+    } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>x: T & Any<!>) {
     }
 }
