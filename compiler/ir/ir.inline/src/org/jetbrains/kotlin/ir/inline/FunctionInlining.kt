@@ -487,10 +487,9 @@ open class FunctionInlining(
                         }
                         val parameterToSet = when (parameter) {
                             function.dispatchReceiverParameter -> inlinedFunction.dispatchReceiverParameter!!
-                            function.extensionReceiverParameter -> inlinedFunction.extensionReceiverParameter!!
-                            else -> inlinedFunction.valueParameters[parameter.indexInOldValueParameters]
+                            else -> inlinedFunction.parameters[parameter.indexInParameters]
                         }
-                        putArgument(parameterToSet, argument.doImplicitCastIfNeededTo(parameterToSet.type))
+                        arguments[parameterToSet] = argument.doImplicitCastIfNeededTo(parameterToSet.type)
                     }
                     assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
                     for (index in 0 until irFunctionReference.typeArgumentsCount)
