@@ -1,7 +1,6 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
 
 // FILE: Java1.java
 public interface Java1 {

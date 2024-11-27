@@ -1,10 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^^^ JVM K2 eagerly mangles all the functions with `main` name, which is not so in JVM K1. That's the difference that, however,
-//     does not cause problems when switching between K1 and K2 compilers, since signatures are not serialized in JARs.
-
 // FILE: a.kt
 fun main() {
     println("main()")

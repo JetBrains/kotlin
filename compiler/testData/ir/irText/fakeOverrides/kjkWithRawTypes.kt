@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM_IR
 // ISSUE: KT-66067
 // SCOPE_DUMP: A:foo
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
 // FILE: Java1.java
 public class Java1<T extends Number> {
     public void foo(T t) {

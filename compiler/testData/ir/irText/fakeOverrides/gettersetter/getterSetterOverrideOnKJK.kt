@@ -1,7 +1,5 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ ISSUE: KT-65679, KT-65801
 
 // FILE: Java1.java
 public class Java1 extends KotlinClass { }

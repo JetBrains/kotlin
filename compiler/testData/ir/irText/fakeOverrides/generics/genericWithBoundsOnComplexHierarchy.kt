@@ -1,7 +1,5 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ ISSUE: KT-66067, KT-59138
 
 // FILE: Java1.java
 public class Java1<T extends Number> {

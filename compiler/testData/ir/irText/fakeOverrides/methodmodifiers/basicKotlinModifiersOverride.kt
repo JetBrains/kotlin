@@ -1,7 +1,5 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ Difference in external
 
 // FILE: Java1.java
 

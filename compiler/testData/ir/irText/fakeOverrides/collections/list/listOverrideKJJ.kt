@@ -1,8 +1,6 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ ISSUE: KT-65219, KT-63914
 
 // FILE: Java1.java
 import java.util.ArrayList;

@@ -1,8 +1,6 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 // LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ ISSUE: KT-65679
 
 // FILE: Java1.java
 public class Java1 extends PublicVisibility { }

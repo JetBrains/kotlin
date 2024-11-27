@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
 
 // FILE: Java1.java
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,3 @@
-// ISSUE: KT-67772 K2: Metadata misses NoInfer annotation for unsafeCast result
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-
 // IGNORE_BACKEND: JS_IR
 // REASON: KT-69567 Missing source annotation @UnsafeVariance on `unsafeVariance ()` symbol usage in `main()`
 

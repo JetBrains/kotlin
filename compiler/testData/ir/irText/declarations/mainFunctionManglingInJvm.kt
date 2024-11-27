@@ -4,9 +4,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 
-// SEPARATE_SIGNATURE_DUMP_FOR_K2
-// ^ The main function has a different mangled name when it's computed from its K1 descriptor in K/JVM.
-
 // FILE: a.kt
 fun main() {
     println("main() in a.kt")
