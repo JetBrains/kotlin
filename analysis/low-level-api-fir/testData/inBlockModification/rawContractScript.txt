@@ -1,9 +1,10 @@
 BEFORE MODIFICATION:
 public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] arg: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] num: R|kotlin/Int?|, [ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
-    [Contract description] <
-        <Unresolved name: returns>#().<Unresolved name: implies>#((R|<local>/arg| is R|kotlin/String|)),
-        <Unresolved name: returns>#().<Unresolved name: implies>#(!=(R|<local>/num|, Null(null))),
-        <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> arg is kotlin/String
+        Returns(WILDCARD) -> num != null
+        CallsInPlace(block, EXACTLY_ONCE)
     >
  {
     <Unresolved name: require>#((R|<local>/arg| is R|kotlin/String|))
@@ -12,4 +13,11 @@ public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] arg: 
 }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(BODY_RESOLVE)] arg: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] num: R|kotlin/Int?|, [ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(BODY_RESOLVE)] arg: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] num: R|kotlin/Int?|, [ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> arg is kotlin/String
+        Returns(WILDCARD) -> num != null
+        CallsInPlace(block, EXACTLY_ONCE)
+    >
+ { LAZY_BLOCK }

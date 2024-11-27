@@ -336,6 +336,12 @@ public class ScriptInBlockModificationTestGenerated extends AbstractScriptInBloc
   }
 
   @Test
+  @TestMetadata("rawContractUnresolvedScript.kts")
+  public void testRawContractUnresolvedScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/rawContractUnresolvedScript.kts");
+  }
+
+  @Test
   @TestMetadata("statement.kts")
   public void testStatement() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/statement.kts");

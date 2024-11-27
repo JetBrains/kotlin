@@ -324,6 +324,12 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
   }
 
   @Test
+  @TestMetadata("rawContractUnresolved.kt")
+  public void testRawContractUnresolved() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/rawContractUnresolved.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelFunctionWithBodyWithoutTypeWithoutName.kt")
   public void testTopLevelFunctionWithBodyWithoutTypeWithoutName() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithBodyWithoutTypeWithoutName.kt");

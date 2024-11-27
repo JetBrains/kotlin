@@ -1,3 +1,6 @@
+// LANGUAGE: +ContractSyntaxV2
+import kotlin.contracts.*
+
 fun foo(arg: Any?, num: Int?, block: () -> Unit) contract [
     returns() implies (arg is String),
     returns() implies (num != null),
