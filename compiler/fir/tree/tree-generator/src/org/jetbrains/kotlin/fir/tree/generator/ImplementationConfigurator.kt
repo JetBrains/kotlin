@@ -398,7 +398,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(thisReceiverExpression) {
-            defaultNoReceivers()
+            defaultNull("explicitReceiver", "dispatchReceiver", "extensionReceiver", withGetter = true)
+            defaultEmptyList("contextReceiverArguments", withGetter = true)
         }
 
         impl(expression, "FirUnitExpression") {

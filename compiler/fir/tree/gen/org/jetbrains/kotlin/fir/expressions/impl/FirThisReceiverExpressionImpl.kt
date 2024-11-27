@@ -32,42 +32,30 @@ internal class FirThisReceiverExpressionImpl(
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var calleeReference: FirThisReference,
     override val isImplicit: Boolean,
 ) : FirThisReceiverExpression() {
-    override var explicitReceiver: FirExpression? = null
-    override var dispatchReceiver: FirExpression? = null
-    override var extensionReceiver: FirExpression? = null
+    override val contextReceiverArguments: List<FirExpression>
+        get() = emptyList()
+    override val explicitReceiver: FirExpression?
+        get() = null
+    override val dispatchReceiver: FirExpression?
+        get() = null
+    override val extensionReceiver: FirExpression?
+        get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        contextReceiverArguments.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
-        explicitReceiver?.accept(visitor, data)
-        if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver?.accept(visitor, data)
-        }
-        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver?.accept(visitor, data)
-        }
         calleeReference.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirThisReceiverExpressionImpl {
         transformAnnotations(transformer, data)
-        contextReceiverArguments.transformInplace(transformer, data)
         transformTypeArguments(transformer, data)
-        explicitReceiver = explicitReceiver?.transform(transformer, data)
-        if (dispatchReceiver !== explicitReceiver) {
-            dispatchReceiver = dispatchReceiver?.transform(transformer, data)
-        }
-        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
-            extensionReceiver = extensionReceiver?.transform(transformer, data)
-        }
         transformCalleeReference(transformer, data)
         return this
     }
@@ -83,7 +71,6 @@ internal class FirThisReceiverExpressionImpl(
     }
 
     override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirThisReceiverExpressionImpl {
-        explicitReceiver = explicitReceiver?.transform(transformer, data)
         return this
     }
 
@@ -100,25 +87,17 @@ internal class FirThisReceiverExpressionImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
-    }
+    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {}
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 
-    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
-        explicitReceiver = newExplicitReceiver
-    }
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {}
 
-    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {
-        dispatchReceiver = newDispatchReceiver
-    }
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {}
 
-    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?) {
-        extensionReceiver = newExtensionReceiver
-    }
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression?) {}
 
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {

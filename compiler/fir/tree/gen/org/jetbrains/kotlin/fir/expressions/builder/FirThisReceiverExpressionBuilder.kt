@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
@@ -40,7 +39,6 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fi
         return FirThisReceiverExpressionImpl(
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
-            contextReceiverArguments.toMutableOrEmpty(),
             typeArguments.toMutableOrEmpty(),
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
@@ -49,6 +47,9 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fi
         )
     }
 
+
+    @Deprecated("Modification of 'contextReceiverArguments' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
 
     @Deprecated("Modification of 'explicitReceiver' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var explicitReceiver: FirExpression?
@@ -88,7 +89,6 @@ inline fun buildThisReceiverExpressionCopy(original: FirThisReceiverExpression, 
     val copyBuilder = FirThisReceiverExpressionBuilder()
     copyBuilder.coneTypeOrNull = original.coneTypeOrNull
     copyBuilder.annotations.addAll(original.annotations)
-    copyBuilder.contextReceiverArguments.addAll(original.contextReceiverArguments)
     copyBuilder.typeArguments.addAll(original.typeArguments)
     copyBuilder.source = original.source
     copyBuilder.nonFatalDiagnostics.addAll(original.nonFatalDiagnostics)

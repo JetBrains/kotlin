@@ -17,10 +17,6 @@ abstract class AbstractFirTreeImplementationConfigurator :
 
     final override fun createImplementation(element: Element, name: String?) = Implementation(element, name)
 
-    protected fun ImplementationContext.defaultNoReceivers() {
-        defaultNull("explicitReceiver", "dispatchReceiver", "extensionReceiver")
-    }
-
     protected fun ImplementationContext.defaultBuiltInType(type: String) {
         default("coneTypeOrNull") {
             value = "StandardClassIds.$type.constructClassLikeType()"
