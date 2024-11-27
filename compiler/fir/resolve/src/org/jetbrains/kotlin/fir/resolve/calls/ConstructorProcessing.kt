@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -34,11 +36,17 @@ internal enum class ConstructorFilter(val acceptInner: Boolean, val acceptNested
     OnlyNested(acceptInner = false, acceptNested = true),
     Both(acceptInner = true, acceptNested = true);
 
-    fun accepts(memberDeclaration: FirMemberDeclaration): Boolean {
-        return when (memberDeclaration.isInner) {
+    fun accepts(memberDeclaration: FirMemberDeclaration, session: FirSession): Boolean {
+        return when (memberDeclaration.isInner || memberDeclaration.isInnerRhsIfTypealias(session)) {
             true -> acceptInner
             false -> acceptNested
         }
+    }
+
+    private fun FirMemberDeclaration.isInnerRhsIfTypealias(session: FirSession): Boolean {
+        if (this !is FirTypeAlias) return false
+        lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+        return fullyExpandedClass(session)?.isInner == true
     }
 }
 
@@ -95,7 +103,7 @@ private fun FirScope.getFirstClassifierOrNull(
     fun process(symbol: FirClassifierSymbol<*>, substitutor: ConeSubstitutor) {
         val classifierDeclaration = symbol.fir
         if (classifierDeclaration is FirClassLikeDeclaration) {
-            if (constructorFilter.accepts(classifierDeclaration)) {
+            if (constructorFilter.accepts(classifierDeclaration, session)) {
                 collector.processCandidate(symbol, substitutor)
             }
         }

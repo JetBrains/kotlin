@@ -19,7 +19,7 @@ class OuterSuccessor : Outer() {
 }
 
 fun bar() {
-    Outer().<!UNRESOLVED_REFERENCE!>NestedTA<!>()
-    OuterSuccessor().<!UNRESOLVED_REFERENCE!>NestedTA<!>()
+    Outer().NestedTA()
+    OuterSuccessor().NestedTA()
     Outer().OuterTA()
 }
