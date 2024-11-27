@@ -80,7 +80,15 @@ class TypeAliasConstructorsSubstitutingScope(
                         }
                     }
 
-                    // TODO: Copy context receivers?
+                    contextParameters.clear()
+                    originalConstructorSymbol.fir.contextParameters.mapTo(contextParameters) { originalContextReceiver ->
+                        buildValueParameterCopy(originalContextReceiver) {
+                            symbol = FirValueParameterSymbol(originalContextReceiver.name)
+                            moduleData = typeAliasSymbol.moduleData
+                            origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
+                            containingDeclarationSymbol = this@buildConstructorCopy.symbol
+                        }
+                    }
 
                     if (aliasedTypeExpansionGloballyEnabled) {
                         returnTypeRef = returnTypeRef.withReplacedConeType(
