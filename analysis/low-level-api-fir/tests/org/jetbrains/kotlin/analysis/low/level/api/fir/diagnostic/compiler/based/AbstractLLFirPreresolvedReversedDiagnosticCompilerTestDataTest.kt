@@ -35,7 +35,12 @@ abstract class AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest : 
 
 internal class ReversedDiagnosticsConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun transformTestDataPath(testDataFileName: String): String {
-        val reversedTestDataFileName = testDataFileName.replaceFirst(".", ".reversed.")
+        val separatorIndex = testDataFileName.lastIndexOf(File.separatorChar).takeIf { it != -1 } ?: 0
+        val dotSeparator = "."
+        val dotIndex = testDataFileName.indexOf(dotSeparator, separatorIndex)
+        if (dotIndex == -1) return testDataFileName
+
+        val reversedTestDataFileName = testDataFileName.replaceRange(dotIndex, dotIndex + dotSeparator.length, ".reversed.")
         return if (File(reversedTestDataFileName).exists()) reversedTestDataFileName else testDataFileName
     }
 }
