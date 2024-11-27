@@ -1,0 +1,305 @@
+CONSTRUCTOR:
+  KaSamConstructorSymbol:
+  annotations: []
+  callableId: /Predicate
+  compilerVisibility: Public
+  contextReceivers: []
+  hasStableParameterNames: true
+  isActual: false
+  isExpect: false
+  isExtension: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: Predicate
+  origin: SAM_CONSTRUCTOR
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: Predicate
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: Predicate
+        symbol: KaNamedClassSymbol(Predicate)
+        typeArguments: [
+          KaTypeParameterType:
+            abbreviation: null
+            annotations: []
+            name: A
+            nullability: NON_NULLABLE
+            symbol: KaTypeParameterSymbol:
+              annotations: []
+              compilerVisibility: Local
+              isActual: false
+              isExpect: false
+              isReified: false
+              location: CLASS
+              modality: FINAL
+              name: A
+              origin: SOURCE
+              upperBounds: []
+              variance: INVARIANT
+              visibility: LOCAL
+              getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+              getContainingModule: KaSourceModule "Sources of main"
+              deprecationStatus: null
+        ]
+    ]
+    symbol: KaNamedClassSymbol(Predicate)
+    typeArguments: [
+      KaTypeParameterType:
+        abbreviation: null
+        annotations: []
+        name: A
+        nullability: NON_NULLABLE
+        symbol: KaTypeParameterSymbol:
+          annotations: []
+          compilerVisibility: Local
+          isActual: false
+          isExpect: false
+          isReified: false
+          location: CLASS
+          modality: FINAL
+          name: A
+          origin: SOURCE
+          upperBounds: []
+          variance: INVARIANT
+          visibility: LOCAL
+          getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+          getContainingModule: KaSourceModule "Sources of main"
+          deprecationStatus: null
+    ]
+  typeParameters: [
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: A
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: function
+      origin: SAM_CONSTRUCTOR
+      receiverParameter: null
+      returnType: KaFunctionType:
+        abbreviation: null
+        annotations: []
+        arity: 1
+        classId: kotlin/Function1
+        contextReceivers: []
+        hasContextReceivers: false
+        hasReceiver: false
+        isReflectType: false
+        isSuspend: false
+        nullability: NON_NULLABLE
+        parameterTypes: [
+          KaTypeParameterType:
+            abbreviation: null
+            annotations: []
+            name: A
+            nullability: NON_NULLABLE
+            symbol: KaTypeParameterSymbol:
+              annotations: []
+              compilerVisibility: Local
+              isActual: false
+              isExpect: false
+              isReified: false
+              location: CLASS
+              modality: FINAL
+              name: A
+              origin: SOURCE
+              upperBounds: []
+              variance: INVARIANT
+              visibility: LOCAL
+              getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+              getContainingModule: KaSourceModule "Sources of main"
+              deprecationStatus: null
+        ]
+        qualifiers: [
+          qualifier:
+            name: Function1
+            symbol: KaNamedClassSymbol(kotlin/Function1)
+            typeArguments: [
+              KaTypeParameterType:
+                abbreviation: null
+                annotations: []
+                name: A
+                nullability: NON_NULLABLE
+                symbol: KaTypeParameterSymbol:
+                  annotations: []
+                  compilerVisibility: Local
+                  isActual: false
+                  isExpect: false
+                  isReified: false
+                  location: CLASS
+                  modality: FINAL
+                  name: A
+                  origin: SOURCE
+                  upperBounds: []
+                  variance: INVARIANT
+                  visibility: LOCAL
+                  getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+                  getContainingModule: KaSourceModule "Sources of main"
+                  deprecationStatus: null
+              KaUsualClassType:
+                abbreviation: null
+                annotations: []
+                classId: kotlin/Boolean
+                nullability: NON_NULLABLE
+                qualifiers: [
+                  qualifier:
+                    name: Boolean
+                    symbol: KaNamedClassSymbol(kotlin/Boolean)
+                    typeArguments: []
+                ]
+                symbol: KaNamedClassSymbol(kotlin/Boolean)
+                typeArguments: []
+            ]
+        ]
+        receiverType: null
+        returnType: KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Boolean
+          nullability: NON_NULLABLE
+          qualifiers: [
+            qualifier:
+              name: Boolean
+              symbol: KaNamedClassSymbol(kotlin/Boolean)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Boolean)
+          typeArguments: []
+        symbol: KaNamedClassSymbol(kotlin/Function1)
+        typeArguments: [
+          KaTypeParameterType:
+            abbreviation: null
+            annotations: []
+            name: A
+            nullability: NON_NULLABLE
+            symbol: KaTypeParameterSymbol:
+              annotations: []
+              compilerVisibility: Local
+              isActual: false
+              isExpect: false
+              isReified: false
+              location: CLASS
+              modality: FINAL
+              name: A
+              origin: SOURCE
+              upperBounds: []
+              variance: INVARIANT
+              visibility: LOCAL
+              getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+              getContainingModule: KaSourceModule "Sources of main"
+              deprecationStatus: null
+          KaUsualClassType:
+            abbreviation: null
+            annotations: []
+            classId: kotlin/Boolean
+            nullability: NON_NULLABLE
+            qualifiers: [
+              qualifier:
+                name: Boolean
+                symbol: KaNamedClassSymbol(kotlin/Boolean)
+                typeArguments: []
+            ]
+            symbol: KaNamedClassSymbol(kotlin/Boolean)
+            typeArguments: []
+        ]
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+      getContainingJvmClassName: SamClassWithTypeArgumentsKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+  getContainingJvmClassName: SamClassWithTypeArgumentsKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+CLASS:
+  KaNamedClassSymbol:
+  annotations: []
+  classId: Predicate
+  classKind: INTERFACE
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: true
+  isInline: false
+  isInner: false
+  location: TOP_LEVEL
+  modality: ABSTRACT
+  name: Predicate
+  origin: SOURCE
+  superTypes: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Any
+      nullability: NON_NULLABLE
+      qualifiers: [
+        qualifier:
+          name: Any
+          symbol: KaNamedClassSymbol(kotlin/Any)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Any)
+      typeArguments: []
+  ]
+  typeParameters: [
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: CLASS
+      modality: FINAL
+      name: A
+      origin: SOURCE
+      upperBounds: []
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(samClassWithTypeArguments.kt)
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null

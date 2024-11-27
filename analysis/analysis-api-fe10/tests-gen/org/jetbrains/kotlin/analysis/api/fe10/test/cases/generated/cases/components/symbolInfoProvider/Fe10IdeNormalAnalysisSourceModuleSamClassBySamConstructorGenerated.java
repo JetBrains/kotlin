@@ -50,4 +50,10 @@ public class Fe10IdeNormalAnalysisSourceModuleSamClassBySamConstructorGenerated 
   public void testSamClass() {
     runTest("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor/samClass.kt");
   }
+
+  @Test
+  @TestMetadata("samClassWithTypeArguments.kt")
+  public void testSamClassWithTypeArguments() {
+    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor/samClassWithTypeArguments.kt");
+  }
 }
