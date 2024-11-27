@@ -43799,6 +43799,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
     }
 
     @Test
+    @TestMetadata("eagerInitializationWithSimpleObject.kt")
+    public void testEagerInitializationWithSimpleObject() {
+      runTest("compiler/testData/codegen/box/properties/eagerInitializationWithSimpleObject.kt");
+    }
+
+    @Test
     @TestMetadata("field.kt")
     public void testField() {
       runTest("compiler/testData/codegen/box/properties/field.kt");
