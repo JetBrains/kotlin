@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 
 object FirContextReceiversLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
-    val CONTEXT_RECEIVER_MESSAGE: String = if (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_2) {
+    private val shouldSuggestContextParameters: Boolean = LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_2
+
+    val CONTEXT_RECEIVER_MESSAGE: String = if (shouldSuggestContextParameters) {
         """
             Experimental context receivers are superseded by context parameters.
             Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
@@ -39,7 +41,7 @@ object FirContextReceiversLanguageVersionSettingsChecker : FirLanguageVersionSet
                 "Experimental language features for context receivers and context parameters cannot be enabled at the same time. " +
                         "Remove the '-Xcontext-receivers' compiler argument."
             )
-        } else {
+        } else if (shouldSuggestContextParameters) {
             reporter.reportWarning(CONTEXT_RECEIVER_MESSAGE)
         }
     }

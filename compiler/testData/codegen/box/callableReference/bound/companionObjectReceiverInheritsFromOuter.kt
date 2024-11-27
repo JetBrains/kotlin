@@ -1,6 +1,4 @@
 // LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND_K2: NATIVE
-// ^Native uses the full compilation pipeline which leads to an error about deprecated context receivers
 // SKIP_NODE_JS
 
 open class A {

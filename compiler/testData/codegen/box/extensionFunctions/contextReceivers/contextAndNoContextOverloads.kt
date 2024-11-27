@@ -1,6 +1,4 @@
 // LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND_K2: NATIVE
-// ^Native uses the full compilation pipeline which leads to an error about deprecated context receivers
 // IGNORE_BACKEND_K1: JVM, JVM_IR, JS_IR, JS_IR_ES6, WASM
 // IGNORE_LIGHT_ANALYSIS
 // ISSUE: KT-52002
