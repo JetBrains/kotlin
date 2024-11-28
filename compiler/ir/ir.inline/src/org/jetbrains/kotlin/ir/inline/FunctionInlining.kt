@@ -634,46 +634,48 @@ open class FunctionInlining(
             }
 
             val parametersWithDefaultToArgument = mutableListOf<ParameterToArgument>()
-            for (parameter in callee.valueParameters) {
-                val argument = valueArguments[parameter.indexInOldValueParameters]
-                when {
-                    argument != null -> {
-                        parameterToArgument += ParameterToArgument(
-                            parameter = parameter,
-                            originalArgumentExpression = argument
-                        )
-                    }
+            callee.parameters
+                .filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+                .zip(valueArguments)
+                .forEach { (parameter, argument) ->
+                    when {
+                        argument != null -> {
+                            parameterToArgument += ParameterToArgument(
+                                parameter = parameter,
+                                originalArgumentExpression = argument
+                            )
+                        }
 
-                    // After ExpectDeclarationsRemoving pass default values from expect declarations
-                    // are represented correctly in IR.
-                    parameter.defaultValue != null -> {  // There is no argument - try default value.
-                        parametersWithDefaultToArgument += ParameterToArgument(
-                            parameter = parameter,
-                            originalArgumentExpression = parameter.defaultValue!!.expression,
-                            isDefaultArg = true
-                        )
-                    }
+                        // After ExpectDeclarationsRemoving pass default values from expect declarations
+                        // are represented correctly in IR.
+                        parameter.defaultValue != null -> {  // There is no argument - try default value.
+                            parametersWithDefaultToArgument += ParameterToArgument(
+                                parameter = parameter,
+                                originalArgumentExpression = parameter.defaultValue!!.expression,
+                                isDefaultArg = true
+                            )
+                        }
 
-                    parameter.varargElementType != null -> {
-                        val emptyArray = IrVarargImpl(
-                            startOffset = callSite.startOffset,
-                            endOffset = callSite.endOffset,
-                            type = parameter.type,
-                            varargElementType = parameter.varargElementType!!
-                        )
-                        parameterToArgument += ParameterToArgument(
-                            parameter = parameter,
-                            originalArgumentExpression = emptyArray
-                        )
-                    }
+                        parameter.varargElementType != null -> {
+                            val emptyArray = IrVarargImpl(
+                                startOffset = callSite.startOffset,
+                                endOffset = callSite.endOffset,
+                                type = parameter.type,
+                                varargElementType = parameter.varargElementType!!
+                            )
+                            parameterToArgument += ParameterToArgument(
+                                parameter = parameter,
+                                originalArgumentExpression = emptyArray
+                            )
+                        }
 
-                    else -> {
-                        val message = "Incomplete expression: call to ${callee.render()} " +
-                                "has no argument at index ${parameter.indexInOldValueParameters}"
-                        throw Error(message)
+                        else -> {
+                            val message = "Incomplete expression: call to ${callee.render()} " +
+                                    "has no argument at index ${parameter.indexInOldValueParameters}"
+                            throw Error(message)
+                        }
                     }
                 }
-            }
             // All arguments except default are evaluated at callsite,
             // but default arguments are evaluated inside callee.
             return parameterToArgument + parametersWithDefaultToArgument
