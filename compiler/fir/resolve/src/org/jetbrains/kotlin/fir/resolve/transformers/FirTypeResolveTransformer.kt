@@ -11,10 +11,12 @@ import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -570,14 +572,38 @@ open class FirTypeResolveTransformer(
                 null -> {
                     val allowedTargets = annotation.useSiteTargetsFromMetaAnnotation(session)
                     when {
-                        this is FirValueParameter -> CONSTRUCTOR_PARAMETER in allowedTargets
-                        this.source?.kind == KtFakeSourceElementKind.PropertyFromParameter && CONSTRUCTOR_PARAMETER in allowedTargets -> false
-                        this is FirProperty && backingField != null && annotationShouldBeMovedToField(allowedTargets) -> {
+                        // If parameter is allowed, we apply annotation to it in the first turn, independent of the targeting mode
+                        this is FirValueParameter -> {
+                            CONSTRUCTOR_PARAMETER in allowedTargets
+                        }
+                        this is FirProperty && this.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets -> {
+                            when {
+                                !session.languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode) -> {
+                                    false
+                                }
+                                // In the property-param mode,
+                                // we should apply annotation also to the property (or to the field) if it's allowed
+                                PROPERTY in allowedTargets -> true
+                                backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
+                                    backingFieldAnnotations += annotation
+                                    replaceBackingFieldAnnotations = true
+                                    false
+                                }
+                                else -> false
+                            }
+                        }
+                        // Otherwise (for a regular property or for a constructor property if annotation isn't applicable to parameter),
+                        // we simply choose between a property and a field
+                        this is FirProperty && backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
                             backingFieldAnnotations += annotation
                             replaceBackingFieldAnnotations = true
                             false
                         }
-                        else -> true
+                        // Here we can come with a regular (non-constructor) property without a backing field,
+                        // or with some other non-parameter variable
+                        else -> {
+                            true
+                        }
                     }
                 }
                 else -> true
@@ -588,6 +614,11 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    private fun annotationShouldBeMovedToField(allowedTargets: Set<AnnotationUseSiteTarget>): Boolean =
+    /**
+     * @param allowedTargets allowed use-site targets of a given property annotation
+     * @return true if the given annotation on a property (initially placed there during raw FIR building)
+     * is in fact inapplicable to properties, but applicable to fields.
+     */
+    private fun propertyAnnotationShouldBeMovedToField(allowedTargets: Set<AnnotationUseSiteTarget>): Boolean =
         (FIELD in allowedTargets || PROPERTY_DELEGATE_FIELD in allowedTargets) && PROPERTY !in allowedTargets
 }

@@ -25372,12 +25372,6 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
     }
 
     @Test
-    @TestMetadata("annotationUseSites.kt")
-    public void testAnnotationUseSites() {
-      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotationUseSites.kt");
-    }
-
-    @Test
     @TestMetadata("arrayFilterCapturedType.kt")
     public void testArrayFilterCapturedType() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/arrayFilterCapturedType.kt");
@@ -25687,6 +25681,17 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
     @TestMetadata("withInInitializer.kt")
     public void testWithInInitializer() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/withInInitializer.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+      @Test
+      @TestMetadata("annotationUseSites.kt")
+      public void testAnnotationUseSites() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationUseSites.kt");
+      }
     }
 
     @Nested

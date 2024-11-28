@@ -5705,12 +5705,6 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
     }
 
     @Test
-    @TestMetadata("annotationUseSites.kt")
-    public void testAnnotationUseSites() {
-      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotationUseSites.kt");
-    }
-
-    @Test
     @TestMetadata("arrayFilterCapturedType.kt")
     public void testArrayFilterCapturedType() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/arrayFilterCapturedType.kt");
@@ -6098,6 +6092,34 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
     @TestMetadata("withInInitializer.kt")
     public void testWithInInitializer() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/withInInitializer.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+      @Test
+      public void testAllFilesPresentInAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("annotationDefaultTargetFirstOnly.kt")
+      public void testAnnotationDefaultTargetFirstOnly() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetFirstOnly.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationDefaultTargetParamProperty.kt")
+      public void testAnnotationDefaultTargetParamProperty() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetParamProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationUseSites.kt")
+      public void testAnnotationUseSites() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationUseSites.kt");
+      }
     }
 
     @Nested
