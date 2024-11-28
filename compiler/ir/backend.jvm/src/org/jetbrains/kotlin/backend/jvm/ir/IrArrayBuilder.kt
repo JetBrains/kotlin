@@ -129,8 +129,8 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
 
             for (element in elements) {
                 +irCall(if (element.isSpread) addSpread else addElement).apply {
-                    dispatchReceiver = irGet(spreadBuilderVar)
-                    putValueArgument(0, coerce(element.expression, if (element.isSpread) unwrappedArrayType else elementType))
+                    arguments[0] = irGet(spreadBuilderVar)
+                    arguments[1] = coerce(element.expression, if (element.isSpread) unwrappedArrayType else elementType)
                 }
             }
 
