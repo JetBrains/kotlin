@@ -8,17 +8,17 @@ package org.jetbrains.kotlin.util
 import org.jetbrains.kotlin.konan.file.File
 import kotlin.system.measureTimeMillis
 
-private fun printMilliseconds(message: String, body: () -> Unit) {
+private fun printMilliseconds(message: String, body: () -> Any) {
     val time = measureTimeMillis(body)
     println("$message: $time ms")
 }
 
-fun profile(message: String, body: () -> Unit) = profileIf(
+fun profile(message: String, body: () -> Any) = profileIf(
     System.getProperty("konan.profile")?.equals("true") ?: false,
     message, body
 )
 
-private fun profileIf(condition: Boolean, message: String, body: () -> Unit) =
+private fun profileIf(condition: Boolean, message: String, body: () -> Any) =
     if (condition) printMilliseconds(message, body) else body()
 
 fun nTabs(amount: Int): String {

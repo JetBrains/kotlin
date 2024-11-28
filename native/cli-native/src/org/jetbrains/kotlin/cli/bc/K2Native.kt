@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
+import java.io.File
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
@@ -39,10 +40,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         K2NativeCompilerPerformanceManager()
     }
 
-    override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
-                           @NotNull configuration: CompilerConfiguration,
-                           @NotNull rootDisposable: Disposable,
-                           @Nullable paths: KotlinPaths?): ExitCode {
+    override fun doExecute(
+        @NotNull arguments: K2NativeCompilerArguments,
+        @NotNull configuration: CompilerConfiguration,
+        @NotNull rootDisposable: Disposable,
+        @Nullable paths: KotlinPaths?,
+    ): ExitCode {
 
         if (arguments.version) {
             println("Kotlin/Native: ${KotlinCompilerVersion.getVersion() ?: "SNAPSHOT"}")
@@ -50,7 +53,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         val pluginLoadResult =
-                PluginCliParser.loadPluginsSafe(arguments.pluginClasspaths, arguments.pluginOptions, arguments.pluginConfigurations, configuration)
+            PluginCliParser.loadPluginsSafe(
+                arguments.pluginClasspaths,
+                arguments.pluginOptions,
+                arguments.pluginConfigurations,
+                configuration
+            )
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
@@ -70,14 +78,16 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 return ExitCode.COMPILATION_ERROR
             }
 
-            configuration.report(ERROR, """
+            configuration.report(
+                ERROR, """
                 |Compilation failed: ${e.message}
 
                 | * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}
                 | * Compiler version: ${KotlinCompilerVersion.getVersion()}
                 | * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}
 
-                """.trimMargin())
+                """.trimMargin()
+            )
             throw e
         }
 
@@ -85,12 +95,14 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     }
 
     private fun prepareEnvironment(
-            arguments: K2NativeCompilerArguments,
-            configuration: CompilerConfiguration,
-            rootDisposable: Disposable
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable,
     ): KotlinCoreEnvironment {
-        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
-                configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForProduction(
+            rootDisposable,
+            configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES
+        )
 
         configuration.phaseConfig = createPhaseConfig(arguments)
 
@@ -127,16 +139,17 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     }
 
     private fun runKonanDriver(
-            configuration: CompilerConfiguration,
-            environment: KotlinCoreEnvironment,
-            rootDisposable: Disposable
+        configuration: CompilerConfiguration,
+        environment: KotlinCoreEnvironment,
+        rootDisposable: Disposable,
     ) {
         val konanDriver = KonanDriver(environment.project, environment, configuration, object : CompilationSpawner {
             override fun spawn(configuration: CompilerConfiguration) {
                 val spawnedArguments = K2NativeCompilerArguments()
                 parseCommandLineArguments(emptyList(), spawnedArguments)
                 val spawnedEnvironment = KotlinCoreEnvironment.createForProduction(
-                        rootDisposable, configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
+                    rootDisposable, configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES
+                )
 
                 runKonanDriver(configuration, spawnedEnvironment, rootDisposable)
             }
@@ -146,7 +159,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 parseCommandLineArguments(arguments, spawnedArguments)
                 val spawnedConfiguration = CompilerConfiguration()
 
-                spawnedConfiguration.messageCollector =  configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                spawnedConfiguration.messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                 spawnedConfiguration.performanceManager = configuration.performanceManager
                 spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
                 spawnedConfiguration.setupFromArguments(spawnedArguments)
@@ -192,9 +205,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     // It is executed before doExecute().
     override fun setupPlatformSpecificArgumentsAndServices(
-            configuration: CompilerConfiguration,
-            arguments: K2NativeCompilerArguments,
-            services: Services
+        configuration: CompilerConfiguration,
+        arguments: K2NativeCompilerArguments,
+        services: Services,
     ) {
         configuration.setupFromArguments(arguments)
     }
@@ -204,13 +217,15 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override fun executableScriptFileName() = "kotlinc-native"
 
     companion object {
-        @JvmStatic fun main(args: Array<String>) {
+        @JvmStatic
+        fun main(args: Array<String>) {
             profile("Total compiler main()") {
                 doMain(K2Native(), args)
             }
         }
 
-        @JvmStatic fun mainNoExit(args: Array<String>) {
+        @JvmStatic
+        fun mainNoExit(args: Array<String>) {
             profile("Total compiler main()") {
                 if (doMainNoExit(K2Native(), args) != ExitCode.OK) {
                     throw KonanCompilationException("Compilation finished with errors")
@@ -218,12 +233,23 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             }
         }
 
-        @JvmStatic fun mainNoExitWithRenderer(args: Array<String>, messageRenderer: MessageRenderer) {
+        @JvmStatic
+        fun mainNoExitWithRenderer(args: Array<String>, messageRenderer: MessageRenderer) {
             profile("Total compiler main()") {
                 if (doMainNoExit(K2Native(), args, messageRenderer) != ExitCode.OK) {
                     throw KonanCompilationException("Compilation finished with errors")
                 }
             }
+        }
+
+        @JvmStatic
+        fun mainWithPerformance(args: Array<String>, path: String) = profile("Total compiler main()") {
+            val k2Native = K2Native()
+            if (doMainNoExit(k2Native, args) != ExitCode.OK) {
+                throw KonanCompilationException("Compilation finished with errors")
+            }
+            k2Native.defaultPerformanceManager.dumpPerformanceReport(File(path))
+            k2Native.defaultPerformanceManager
         }
     }
 }
@@ -232,10 +258,11 @@ typealias BinaryOptionWithValue<T> = org.jetbrains.kotlin.backend.konan.BinaryOp
 
 @Suppress("unused")
 fun parseBinaryOptions(
-        arguments: K2NativeCompilerArguments,
-        configuration: CompilerConfiguration
+    arguments: K2NativeCompilerArguments,
+    configuration: CompilerConfiguration,
 ): List<BinaryOptionWithValue<*>> = org.jetbrains.kotlin.backend.konan.parseBinaryOptions(arguments, configuration)
 
 fun main(args: Array<String>) = K2Native.main(args)
+fun mainWithPerformance(path: String, arg: Array<String>) = K2Native.mainWithPerformance(arg, path)
 fun mainNoExitWithGradleRenderer(args: Array<String>) = K2Native.mainNoExitWithRenderer(args, MessageRenderer.GRADLE_STYLE)
 fun mainNoExitWithXcodeRenderer(args: Array<String>) = K2Native.mainNoExitWithRenderer(args, MessageRenderer.XCODE_STYLE)

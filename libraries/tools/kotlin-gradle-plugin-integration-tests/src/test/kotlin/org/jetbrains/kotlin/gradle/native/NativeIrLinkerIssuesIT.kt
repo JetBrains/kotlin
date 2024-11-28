@@ -210,6 +210,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         @TempDir tempDir: Path,
     ) {
+//        makeSnapshotTo("/Users/Nataliya.Valtman/Development/snapshotProject")
         buildConflictingLibrariesAndApplication(
             directoryPrefix = "native-ir-linker-issues-symbol-mismatch",
             nativeCacheKind = NativeCacheKind.NONE,
@@ -246,6 +247,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         localRepo: Path,
         expectedErrorMessage: () -> String,
     ) {
+
         buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v1.0", localRepo = localRepo, gradleVersion)
         buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v2.0", localRepo = localRepo, gradleVersion)
         buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "libb", localRepo = localRepo, gradleVersion)
@@ -290,6 +292,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
         directoryPrefix: String, projectName: String, localRepo: Path, gradleVersion: GradleVersion,
     ) {
         prepareProject(directoryPrefix, projectName, localRepo, nativeCacheKind = NativeCacheKind.STATIC, gradleVersion) {
+//            makeSnapshotTo("/Users/Nataliya.Valtman/Development/snapshotProject")
             build("publish")
         }
     }

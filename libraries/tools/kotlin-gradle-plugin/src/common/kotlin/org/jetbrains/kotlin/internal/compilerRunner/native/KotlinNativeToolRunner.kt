@@ -12,6 +12,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
@@ -24,12 +25,14 @@ import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeArgumentMetrics
 import org.jetbrains.kotlin.konan.target.HostManager
+import java.io.File
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import javax.inject.Inject
+import kotlin.io.path.readLines
 
 internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val metricsReporterProvider: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
@@ -67,14 +70,22 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 .escapeQuotesForWindows()
                 .toMap() + toolSpec.systemProperties
 
+            val file = File("native_compiler_report.txt")
+            file.createNewFile()
+
+            val reportFile = Files.createTempFile(
+                "compiler-native-report",
+                ".txt"
+            )
+
             val toolArgsPair = if (toolSpec.shouldPassArgumentsViaArgFile.get()) {
-                val argFile = args.toArgFile()
+                val argFile = args.toArgFile(reportFile)
                 argFile to listOfNotNull(
                     toolSpec.optionalToolName.orNull,
                     "@${argFile.toFile().absolutePath}"
                 )
             } else {
-                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments
+                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments + reportFile.toAbsolutePath().toString()
             }
 
             try {
@@ -101,15 +112,38 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     spec.environment(toolSpec.environment)
                     toolSpec.environmentBlacklist.forEach { spec.environment.remove(it) }
                     spec.args(toolArgsPair.second)
+//                    spec.args("\"${file.absolutePath}\"")
                 }
+                println("------------------")
+                println(reportFile.toFile().readText())
+                metricsReporter.parseCompilerMetricsFromFile(reportFile)
+                println("-------------------")
+                file.delete()
             } finally {
                 toolArgsPair.first?.let {
                     try {
                         Files.deleteIfExists(it)
-                    } catch (_: IOException) {}
+                    } catch (_: IOException) {
+                    }
                 }
             }
         }
+    }
+
+    private fun BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>.parseCompilerMetricsFromFile(file: Path) {
+        file.toFile().forEachLine { line ->
+            when {
+                line.startsWith("TRANSLATION") -> metricsReporter.addTimeMetricNs(GradleBuildTime.IR_TRANSLATION, parseTimeFromString(line))
+                line.startsWith("LOWERING") -> metricsReporter.addTimeMetricNs(GradleBuildTime.IR_LOWERING, parseTimeFromString(line))
+                line.startsWith("GENERATION") -> metricsReporter.addTimeMetricNs(GradleBuildTime.IR_GENERATION, parseTimeFromString(line))
+            }
+
+        }
+    }
+
+    fun parseTimeFromString(line: String): Long {
+        System.out.println(line)
+        return 1
     }
 
     private fun runInProcess(args: ToolArguments) {
@@ -148,7 +182,16 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint.get()}'")
 
                 metricsReporter.measure(GradleBuildTime.RUN_ENTRY_POINT) {
-                    entryPoint.invoke(null, toolArgs.toTypedArray())
+                    val file = "/Users/Nataliya.Valtman/Development/configuration_cache_fus/report"
+                    val compilerMetricList = ArrayList<BuildTime>()
+                    GradleBuildTime.COMPILER_PERFORMANCE.children()?.let { compilerMetricList.addAll(it) }
+                    GradleBuildTime.COMPILATION_ROUND.children()?.let { compilerMetricList.addAll(it) }
+
+                    val result = entryPoint.invoke(null, toolArgs.toTypedArray(), file)
+                    println(result)
+                    println(File(file).readText())
+                    File(file).delete()
+
                 }
             } catch (t: InvocationTargetException) {
                 throw t.targetException
@@ -186,7 +229,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             else -> this
         }
 
-    private fun ToolArguments.toArgFile(): Path {
+    private fun ToolArguments.toArgFile(reportFile: Path? = null): Path {
         val argFile = Files.createTempFile(
             "kotlinc-native-args",
             ".lst"
@@ -198,6 +241,9 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     .replace("\\", "\\\\")
                     .replace("\"", "\\\"")
                 w.println("\"$escapedArg\"")
+            }
+            reportFile?.toAbsolutePath()?.also {
+                w.println("\"$it\"")
             }
         }
 

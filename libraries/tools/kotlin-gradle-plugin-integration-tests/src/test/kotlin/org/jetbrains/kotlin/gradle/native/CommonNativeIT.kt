@@ -66,6 +66,9 @@ class CommonNativeIT : KGPBaseTest() {
             val appCompileTasks = appTargets.map { ":app:compileKotlin${it.capitalize()}" }
             val appLinkFrameworkTasks = appTargets.map { ":app:linkDebugFramework${it.capitalize()}" }
             val appLinkTestTasks = appTargets.map { ":app:linkDebugTest${it.capitalize()}" }
+
+            makeSnapshotTo("/Users/Nataliya.Valtman/Development/snapshotProject")
+
             build(":lib:publish") {
                 assertTasksExecuted(libCompileTasks)
                 libTargets.forEach {
