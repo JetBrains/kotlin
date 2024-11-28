@@ -3173,6 +3173,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
     }
 
     @Test
+    @TestMetadata("setters.kt")
+    public void testSetters() {
+      runTest("compiler/testData/ir/irText/properties/setters.kt");
+    }
+
+    @Test
     @TestMetadata("targetOnPrimaryCtorParameter.kt")
     public void testTargetOnPrimaryCtorParameter() {
       runTest("compiler/testData/ir/irText/properties/targetOnPrimaryCtorParameter.kt");
