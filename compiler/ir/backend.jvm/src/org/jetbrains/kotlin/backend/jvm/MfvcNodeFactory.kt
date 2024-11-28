@@ -404,8 +404,8 @@ private fun makeSpecializedEqualsMethod(
         body = with(context.createJvmIrBuilder(this.symbol)) {
             if (customEqualsAny != null) {
                 irExprBody(irCall(customEqualsAny).apply {
-                    dispatchReceiver = irGet(dispatchReceiverParameter!!)
-                    putValueArgument(0, irGet(other))
+                    arguments[0] = irGet(dispatchReceiverParameter!!)
+                    arguments[1] = irGet(other)
                 })
             } else {
                 val leftArgs = oldFields.map { irGetField(irGet(dispatchReceiverParameter!!), it) }
