@@ -611,7 +611,8 @@ open class FunctionInlining(
                 ).andAllOuterClasses()
 
             val valueArguments =
-                callSite.symbol.owner.valueParameters.map { callSite.getValueArgument(it.indexInOldValueParameters) }.toMutableList()
+                callSite.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+                    .map { callSite.arguments[it] }.toMutableList()
 
             if (callee.extensionReceiverParameter != null) {
                 parameterToArgument += ParameterToArgument(
