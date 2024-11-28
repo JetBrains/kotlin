@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package kotlin.coroutines
 
 import kotlin.*
@@ -28,7 +30,7 @@ internal actual constructor(
 
     public actual override fun resumeWith(result: Result<T>) {
         while (true) {
-            val cur = resultRef.value
+            val cur = resultRef.load()
             when {
                 cur === UNDECIDED -> if (resultRef.compareAndSet(UNDECIDED, result.value)) return
                 cur === COROUTINE_SUSPENDED -> if (resultRef.compareAndSet(COROUTINE_SUSPENDED, RESUMED)) {
@@ -42,10 +44,10 @@ internal actual constructor(
 
     @PublishedApi
     internal actual fun getOrThrow(): Any? {
-        var result = resultRef.value
+        var result = resultRef.load()
         if (result === UNDECIDED) {
             if (resultRef.compareAndSet(UNDECIDED, COROUTINE_SUSPENDED)) return COROUTINE_SUSPENDED
-            result = resultRef.value
+            result = resultRef.load()
         }
         return when {
             result === RESUMED -> COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream

@@ -21,6 +21,8 @@
  */
 
 @file:Suppress("DEPRECATION") // Char.toInt()
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package kotlin.text.regex
 
 import kotlin.experimental.ExperimentalNativeApi
@@ -110,7 +112,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
      * The two nodes are then combined in [CompositeRangeSet] node to fully represent this char class.
      */
     fun classWithSurrogates(): AbstractCharClass {
-        surrogates_.value?.let {
+        surrogates_.load()?.let {
             return it
         }
         val surrogates = lowHighSurrogates
@@ -129,7 +131,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
         result.altSurrogates = this.altSurrogates
         result.mayContainSupplCodepoints = this.mayContainSupplCodepoints
         surrogates_.compareAndSet(null, result)
-        return surrogates_.value!!
+        return surrogates_.load()!!
     }
 
 
@@ -831,9 +833,9 @@ internal abstract class AbstractCharClass : SpecialToken() {
 
         fun getPredefinedClass(name: String, negative: Boolean): AbstractCharClass {
             val charClass = classCacheMap[name] ?: throw PatternSyntaxException("No such character class")
-            val cachedClass = classCache[charClass.ordinal].value ?: run {
-                classCache[charClass.ordinal].compareAndExchange(null, charClass.factory())
-                classCache[charClass.ordinal].value!!
+            val cachedClass = classCache[charClass.ordinal].load() ?: run {
+                classCache[charClass.ordinal].compareAndSet(null, charClass.factory())
+                classCache[charClass.ordinal].load()!!
             }
             return cachedClass.getValue(negative)
         }

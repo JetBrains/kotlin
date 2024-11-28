@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
@@ -21,7 +23,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
         get() {
             if (value_.compareAndExchange(UNINITIALIZED, INITIALIZING) === UNINITIALIZED) {
                 // We execute exclusively here.
-                val ctor = initializer_.value
+                val ctor = initializer_.load()
                 if (ctor != null && initializer_.compareAndSet(ctor, null)) {
                     value_.compareAndSet(INITIALIZING, ctor())
                 } else {
@@ -31,7 +33,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             }
             var result: Any?
             do {
-                result = value_.value
+                result = value_.load()
             } while (result === INITIALIZING)
 
             assert(result !== UNINITIALIZED && result !== INITIALIZING)
@@ -39,10 +41,10 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             return result as T
         }
 
-    override fun isInitialized(): Boolean = value_.value !== UNINITIALIZED
+    override fun isInitialized(): Boolean = value_.load() !== UNINITIALIZED
 
     override fun toString(): String = if (isInitialized())
-        value_.value.toString() else "Lazy value not initialized yet."
+        value_.load().toString() else "Lazy value not initialized yet."
 }
 
 /**
@@ -63,17 +65,17 @@ internal class SynchronizedLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
 
     override val value: T
         get() {
-            val _v1 = valueRef.value
+            val _v1 = valueRef.load()
             if (_v1 !== UNINITIALIZED) {
                 return _v1 as T
             }
 
             return locked(lock) {
-                val _v2 = valueRef.value
+                val _v2 = valueRef.load()
                 if (_v2 === UNINITIALIZED) {
-                    val typedValue = initializer.value!!()
-                    valueRef.value = typedValue
-                    initializer.value = null
+                    val typedValue = initializer.load()!!()
+                    valueRef.store(typedValue)
+                    initializer.store(null)
                     typedValue
                 } else {
                     _v2 as T
@@ -81,7 +83,7 @@ internal class SynchronizedLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             }
         }
 
-    override fun isInitialized() = valueRef.value !== UNINITIALIZED
+    override fun isInitialized() = valueRef.load() !== UNINITIALIZED
 
     override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
 }
@@ -94,24 +96,25 @@ internal class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
 
     override val value: T
         get() {
-            val value = valueRef.value
+            val value = valueRef.load()
             if (value !== UNINITIALIZED) {
                 return value as T
             }
 
-            val initializerValue = initializer.value
+            val initializerValue = initializer.load()
             // if we see null in initializer here, it means that the value is already set by another thread
             if (initializerValue != null) {
                 val newValue = initializerValue()
                 if (valueRef.compareAndSet(UNINITIALIZED, newValue)) {
-                    initializer.value = null
+                    initializer.store(null)
                     return newValue
                 }
             }
-            return valueRef.value as T
+
+            return valueRef.load() as T
         }
 
-    override fun isInitialized(): Boolean = valueRef.value !== UNINITIALIZED
+    override fun isInitialized(): Boolean = valueRef.load() !== UNINITIALIZED
 
     override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
 }
