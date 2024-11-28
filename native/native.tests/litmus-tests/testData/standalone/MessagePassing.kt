@@ -4,6 +4,8 @@
 // Without optimizations, this test runs too slowly.
 // DISABLE_NATIVE: optimizationMode=DEBUG
 // DISABLE_NATIVE: optimizationMode=NO
+// With the aggressive scheduler, this test runs too slowly.
+// DISABLE_NATIVE: gcScheduler=AGGRESSIVE
 
 import kotlin.test.*
 import org.jetbrains.litmuskt.*
