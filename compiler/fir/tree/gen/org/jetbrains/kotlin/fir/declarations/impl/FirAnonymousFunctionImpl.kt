@@ -43,7 +43,7 @@ internal class FirAnonymousFunctionImpl(
     override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override var contextReceivers: MutableOrEmptyList<FirValueParameter>,
+    override var contextParameters: MutableOrEmptyList<FirValueParameter>,
     override var controlFlowGraphReference: FirControlFlowGraphReference?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
@@ -70,7 +70,7 @@ internal class FirAnonymousFunctionImpl(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverParameter?.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
+        contextParameters.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
@@ -85,7 +85,7 @@ internal class FirAnonymousFunctionImpl(
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverParameter(transformer, data)
-        transformContextReceivers(transformer, data)
+        transformContextParameters(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
@@ -116,8 +116,8 @@ internal class FirAnonymousFunctionImpl(
         return this
     }
 
-    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        contextReceivers.transformInplace(transformer, data)
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        contextParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -161,8 +161,8 @@ internal class FirAnonymousFunctionImpl(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {
-        contextReceivers = newContextReceivers.toMutableOrEmpty()
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {
+        contextParameters = newContextParameters.toMutableOrEmpty()
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {

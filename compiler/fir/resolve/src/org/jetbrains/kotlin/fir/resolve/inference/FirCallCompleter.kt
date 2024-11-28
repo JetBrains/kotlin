@@ -395,7 +395,7 @@ class FirCallCompleter(
             }
 
             if (contextReceivers.isNotEmpty()) {
-                lambda.replaceContextReceivers(
+                lambda.replaceContextParameters(
                     contextReceivers.map { contextReceiverType ->
                         buildValueParameter {
                             resolvePhase = FirResolvePhase.BODY_RESOLVE

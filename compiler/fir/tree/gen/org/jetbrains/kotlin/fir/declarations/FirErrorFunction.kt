@@ -39,7 +39,7 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override val deprecationsProvider: DeprecationsProvider
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
-    abstract override val contextReceivers: List<FirValueParameter>
+    abstract override val contextParameters: List<FirValueParameter>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
@@ -63,7 +63,7 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
-    abstract override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>)
+    abstract override fun replaceContextParameters(newContextParameters: List<FirValueParameter>)
 
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
@@ -81,7 +81,7 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
 
     abstract override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
-    abstract override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorFunction
+    abstract override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction
 

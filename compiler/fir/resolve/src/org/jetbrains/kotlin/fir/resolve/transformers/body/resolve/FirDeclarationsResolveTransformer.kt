@@ -712,7 +712,7 @@ open class FirDeclarationsResolveTransformer(
                 accessor.replaceReturnTypeRef(propertyTypeRef)
             }
 
-            for (parameter in owner.contextReceivers) {
+            for (parameter in owner.contextParameters) {
                 if (!parameter.isLegacyContextReceiver()) {
                     context.storeVariable(parameter, session)
                 }
@@ -996,7 +996,7 @@ open class FirDeclarationsResolveTransformer(
             // Separate annotation transformers are responsible in the case of non-local functions.
             function
                 .transformReturnTypeRef(this, data)
-                .transformContextReceivers(this, data)
+                .transformContextParameters(this, data)
                 .transformValueParameters(this, data)
                 .transformAnnotations(this, data)
         }
@@ -1225,8 +1225,8 @@ open class FirDeclarationsResolveTransformer(
                     }
                 })
 
-        lambda.replaceContextReceivers(
-            lambda.contextReceivers.takeIf { it.isNotEmpty() }
+        lambda.replaceContextParameters(
+            lambda.contextParameters.takeIf { it.isNotEmpty() }
                 ?: resolvedLambdaAtom?.contextReceiverTypes?.map { receiverType ->
                     buildValueParameter {
                         resolvePhase = FirResolvePhase.BODY_RESOLVE

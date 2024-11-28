@@ -147,7 +147,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         ignoreVisibility: Boolean,
     ): Boolean {
         if (!ignoreVisibility && Visibilities.isPrivate(baseDeclaration.visibility)) return false
-        if (overrideCandidate.contextReceivers.size != baseDeclaration.contextReceivers.size) return false
+        if (overrideCandidate.contextParameters.size != baseDeclaration.contextParameters.size) return false
 
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
@@ -156,7 +156,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
             overrideCandidate.receiverParameter?.typeRef,
             baseDeclaration.receiverParameter?.typeRef,
             substitutor
-        ) && overrideCandidate.contextReceivers.zip(baseDeclaration.contextReceivers).all { (memberParam, selfParam) ->
+        ) && overrideCandidate.contextParameters.zip(baseDeclaration.contextParameters).all { (memberParam, selfParam) ->
             isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
         }
     }

@@ -124,7 +124,7 @@ class FirClassAnySynthesizedMemberScope(
     private fun FirNamedFunctionSymbol.matchesSomeAnyMember(name: Name): Boolean {
         return when (name) {
             OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> {
-                valueParameterSymbols.isEmpty() && !isExtension && fir.contextReceivers.isEmpty()
+                valueParameterSymbols.isEmpty() && !isExtension && fir.contextParameters.isEmpty()
             }
             else -> {
                 lazyResolveToPhase(FirResolvePhase.TYPES)

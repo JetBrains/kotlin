@@ -53,7 +53,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         get() = null
     override val containerSource: DeserializedContainerSource?
         get() = null
-    override val contextReceivers: List<FirValueParameter>
+    override val contextParameters: List<FirValueParameter>
         get() = emptyList()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val isSetter: Boolean
@@ -101,7 +101,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         return this
     }
 
@@ -143,7 +143,7 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {}
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {}
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference

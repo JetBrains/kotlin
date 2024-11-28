@@ -35,7 +35,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
-    val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
+    val contextParameters: MutableList<FirValueParameter> = mutableListOf()
     lateinit var name: Name
     var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
@@ -52,7 +52,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
+            contextParameters.toMutableOrEmpty(),
             name,
             backingField,
             annotations.toMutableOrEmpty(),

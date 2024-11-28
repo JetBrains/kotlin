@@ -21,7 +21,7 @@ object FirContextReceiversPropertyBackingFieldChecker : FirPropertyChecker(MppCh
         ) {
             return
         }
-        if (declaration.contextReceivers.isEmpty()) return
+        if (declaration.contextParameters.isEmpty()) return
 
         if (declaration.hasBackingField) {
             reporter.reportOn(

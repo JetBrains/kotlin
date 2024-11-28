@@ -235,7 +235,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
                 .transformReceiverParameter(transformer, data)
                 .transformValueParameters(transformer, data)
                 .transformAnnotations(transformer, data)
-                .contextReceivers.forEach {
+                .contextParameters.forEach {
                     it.transformSingle(transformer, data)
                 }
         }
@@ -251,7 +251,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
                 .transformAnnotations(transformer, data)
                 .transformReceiverParameter(transformer, data)
                 .transformReturnTypeRef(transformer, data)
-                .contextReceivers.forEach {
+                .contextParameters.forEach {
                     it.transformSingle(transformer, data)
                 }
 
@@ -288,7 +288,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
                 .transformGetter(transformer, data)
                 .transformSetter(transformer, data)
                 .transformBackingField(transformer, data)
-                .transformContextReceivers(transformer, data)
+                .transformContextParameters(transformer, data)
         }
 
         return property

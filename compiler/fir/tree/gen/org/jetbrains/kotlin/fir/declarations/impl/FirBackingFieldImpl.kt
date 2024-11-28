@@ -52,7 +52,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         get() = null
     override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = null
-    override val contextReceivers: List<FirValueParameter>
+    override val contextParameters: List<FirValueParameter>
         get() = emptyList()
     override val delegate: FirExpression?
         get() = null
@@ -94,7 +94,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirBackingFieldImpl {
         return this
     }
 
@@ -148,7 +148,7 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {}
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {}
 
     override fun replaceDelegate(newDelegate: FirExpression?) {}
 

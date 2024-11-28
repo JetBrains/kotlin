@@ -192,8 +192,8 @@ class CallAndReferenceGenerator(
                     IrFunctionReferenceImplWithShape(
                         startOffset, endOffset, type, irFunctionSymbol,
                         typeArgumentsCount = function.typeParameters.size,
-                        valueArgumentsCount = function.valueParameters.size + function.contextReceivers.size,
-                        contextParameterCount = function.contextReceivers.size,
+                        valueArgumentsCount = function.valueParameters.size + function.contextParameters.size,
+                        contextParameterCount = function.contextParameters.size,
                         hasDispatchReceiver = function.dispatchReceiverType != null,
                         hasExtensionReceiver = function.isExtension,
                         reflectionTarget = irFunctionSymbol
@@ -553,7 +553,7 @@ class CallAndReferenceGenerator(
                         irSymbol,
                         typeArgumentsCount = totalTypeParametersCount,
                         valueArgumentsCount = firSymbol.valueParametersSize(),
-                        contextParameterCount = constructor.contextReceivers.size,
+                        contextParameterCount = constructor.contextParameters.size,
                         constructorTypeArgumentsCount = constructorTypeParametersCount,
                         hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
                         hasExtensionReceiver = firSymbol.isExtension,
@@ -578,7 +578,7 @@ class CallAndReferenceGenerator(
                         startOffset, endOffset, irType, irSymbol,
                         typeArgumentsCount = firSymbol.typeParameterSymbols.size,
                         valueArgumentsCount = firSymbol.valueParametersSize(),
-                        contextParameterCount = firSymbol.fir.contextReceivers.size,
+                        contextParameterCount = firSymbol.fir.contextParameters.size,
                         hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
                         hasExtensionReceiver = firSymbol.isExtension,
                         origin = callOrigin,
@@ -622,8 +622,8 @@ class CallAndReferenceGenerator(
                                 finalIrType,
                                 getterSymbol,
                                 typeArgumentsCount = property.typeParameters.size,
-                                valueArgumentsCount = property.contextReceivers.size,
-                                contextParameterCount = property.contextReceivers.size,
+                                valueArgumentsCount = property.contextParameters.size,
+                                contextParameterCount = property.contextParameters.size,
                                 hasDispatchReceiver = property.dispatchReceiverType != null,
                                 hasExtensionReceiver = property.isExtension,
                                 origin = incOrDecSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
@@ -672,8 +672,8 @@ class CallAndReferenceGenerator(
     private fun FirCallableSymbol<*>.valueParametersSize(): Int {
         return when (this) {
             is FirSyntheticPropertySymbol -> 0
-            is FirNamedFunctionSymbol -> fir.valueParameters.size + fir.contextReceivers.size
-            is FirConstructorSymbol -> fir.valueParameters.size + fir.contextReceivers.size
+            is FirNamedFunctionSymbol -> fir.valueParameters.size + fir.contextParameters.size
+            is FirConstructorSymbol -> fir.valueParameters.size + fir.contextParameters.size
             is FirFunctionSymbol<*> -> fir.valueParameters.size
             else -> error("Illegal symbol: ${this::class}")
         }
@@ -812,8 +812,8 @@ class CallAndReferenceGenerator(
                         setterSymbol != null -> IrCallImplWithShape(
                             startOffset, endOffset, type, setterSymbol,
                             typeArgumentsCount = firProperty.typeParameters.size,
-                            valueArgumentsCount = 1 + firProperty.contextReceivers.size,
-                            contextParameterCount = firProperty.contextReceivers.size,
+                            valueArgumentsCount = 1 + firProperty.contextParameters.size,
+                            contextParameterCount = firProperty.contextParameters.size,
                             hasDispatchReceiver = firProperty.dispatchReceiverType != null,
                             hasExtensionReceiver = firProperty.isExtension,
                             origin = origin,

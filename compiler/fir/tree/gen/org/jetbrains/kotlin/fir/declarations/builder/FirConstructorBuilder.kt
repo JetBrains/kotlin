@@ -42,7 +42,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var contractDescription: FirContractDescription? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
@@ -64,7 +64,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
+            contextParameters.toMutableOrEmpty(),
             valueParameters,
             contractDescription,
             annotations.toMutableOrEmpty(),
@@ -109,7 +109,7 @@ inline fun buildConstructorCopy(original: FirConstructor, init: FirConstructorBu
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
+    copyBuilder.contextParameters.addAll(original.contextParameters)
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.contractDescription = original.contractDescription
     copyBuilder.annotations.addAll(original.annotations)

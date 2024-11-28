@@ -43,7 +43,7 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var contractDescription: FirContractDescription? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
@@ -66,7 +66,7 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
+            contextParameters.toMutableOrEmpty(),
             valueParameters,
             contractDescription,
             annotations.toMutableOrEmpty(),

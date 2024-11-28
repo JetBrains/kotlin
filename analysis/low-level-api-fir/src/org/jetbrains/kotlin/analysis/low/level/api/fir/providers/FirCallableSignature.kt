@@ -34,14 +34,14 @@ class FirCallableSignature private constructor(
 
     fun hasTheSameSignature(declaration: FirCallableDeclaration): Boolean {
         if ((receiverType == null) != (declaration.receiverParameter == null)) return false
-        if (contextReceiverTypes.size != declaration.contextReceivers.size) return false
+        if (contextReceiverTypes.size != declaration.contextParameters.size) return false
         if (typeParametersCount != declaration.typeParameters.size) return false
         if (parameters?.size != (declaration as? FirFunction)?.valueParameters?.size) return false
 
         declaration.lazyResolveToPhase(FirResolvePhase.TYPES)
         if (receiverType != declaration.receiverParameter?.typeRef?.renderType()) return false
 
-        val receivers = declaration.contextReceivers
+        val receivers = declaration.contextParameters
         for ((index, parameter) in contextReceiverTypes.withIndex()) {
             if (receivers[index].returnTypeRef.renderType() != parameter) return false
         }
@@ -85,7 +85,7 @@ class FirCallableSignature private constructor(
 
             return FirCallableSignature(
                 receiverType = callableDeclaration.receiverParameter?.typeRef?.renderType(),
-                contextReceiverTypes = callableDeclaration.contextReceivers.map { it.returnTypeRef.renderType() },
+                contextReceiverTypes = callableDeclaration.contextParameters.map { it.returnTypeRef.renderType() },
                 parameters = if (callableDeclaration is FirFunction) {
                     callableDeclaration.valueParameters.map { it.returnTypeRef.renderType() }
                 } else {

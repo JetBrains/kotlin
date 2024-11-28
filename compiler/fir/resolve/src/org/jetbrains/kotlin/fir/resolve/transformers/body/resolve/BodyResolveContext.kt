@@ -268,7 +268,7 @@ class BodyResolveContext(
         val contextReceivers = mutableListOf<ContextReceiverValue>()
         val contextParameters = mutableListOf<ImplicitContextParameterValue>()
 
-        owner.contextReceivers.forEach { receiver ->
+        owner.contextParameters.forEach { receiver ->
             if (receiver.isLegacyContextReceiver()) {
                 contextReceivers += ContextReceiverValue(
                     receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, holder.session, holder.scopeSession,
@@ -765,7 +765,7 @@ class BodyResolveContext(
                 // Make all value parameters available in the local scope so that even one parameter that refers to another parameter,
                 // which may not be initialized yet, can be resolved. [FirFunctionParameterChecker] will detect and report an error
                 // if an uninitialized parameter is accessed by a preceding parameter.
-                for (contextParameter in function.contextReceivers) {
+                for (contextParameter in function.contextParameters) {
                     if (!contextParameter.isLegacyContextReceiver()) {
                         storeVariable(contextParameter, holder.session)
                     }
@@ -945,7 +945,7 @@ class BodyResolveContext(
             addLocalScope(FirLocalScope(holder.session))
             if (!forContracts && receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
                 !property.isLocal && property.delegate == null &&
-                property.contextReceivers.isEmpty()
+                property.contextParameters.isEmpty()
             ) {
                 storeBackingField(property, holder.session)
             }

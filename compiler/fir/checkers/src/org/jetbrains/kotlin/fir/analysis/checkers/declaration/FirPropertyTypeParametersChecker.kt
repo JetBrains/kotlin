@@ -30,7 +30,7 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Comm
             }
         }
         declaration.receiverParameter?.typeRef?.let { collectAllTypes(it.coneType) }
-        declaration.contextReceivers.forEach { collectAllTypes(it.returnTypeRef.coneType) }
+        declaration.contextParameters.forEach { collectAllTypes(it.returnTypeRef.coneType) }
 
         val usedNames = usedTypes.filterIsInstance<ConeTypeParameterType>().map { it.lookupTag.name }
         if (!declaration.isLocal) {

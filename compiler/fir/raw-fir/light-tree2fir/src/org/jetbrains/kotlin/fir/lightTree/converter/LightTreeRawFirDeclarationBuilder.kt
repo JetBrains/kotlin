@@ -1072,7 +1072,7 @@ class LightTreeRawFirDeclarationBuilder(
                 this.valueParameters += valueParameters.map { it.firValueParameter }
                 delegatedConstructor = firDelegatedCall
                 this.body = null
-                this.contextReceivers.addContextReceivers(classNode, constructorSymbol)
+                this.contextParameters.addContextReceivers(classNode, constructorSymbol)
             }
 
             return PrimaryConstructor(
@@ -1183,9 +1183,9 @@ class LightTreeRawFirDeclarationBuilder(
                 this.body = body
                 contractDescription?.let { this.contractDescription = it }
                 context.firFunctionTargets.removeLast()
-                this.contextReceivers.addContextReceivers(secondaryConstructor.getParent()!!.getParent()!!, constructorSymbol)
+                this.contextParameters.addContextReceivers(secondaryConstructor.getParent()!!.getParent()!!, constructorSymbol)
                 if (contextParameterEnabled) {
-                    this.contextReceivers.addContextReceivers(secondaryConstructor, constructorSymbol)
+                    this.contextParameters.addContextReceivers(secondaryConstructor, constructorSymbol)
                 }
             }.also {
                 it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
@@ -1510,7 +1510,7 @@ class LightTreeRawFirDeclarationBuilder(
                     else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                 }
 
-                contextReceivers.addContextReceivers(property, propertySymbol)
+                contextParameters.addContextReceivers(property, propertySymbol)
             }.also {
                 if (!isLocal) {
                     fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
@@ -1944,7 +1944,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
                     dispatchReceiverType = runIf(!isLocal) { currentDispatchReceiverType() }
-                    contextReceivers.addContextReceivers(functionDeclaration, functionSymbol)
+                    contextParameters.addContextReceivers(functionDeclaration, functionSymbol)
                 }
             }
 

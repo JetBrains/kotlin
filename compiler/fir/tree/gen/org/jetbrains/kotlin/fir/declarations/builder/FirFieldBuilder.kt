@@ -79,8 +79,8 @@ open class FirFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder {
             throw IllegalStateException()
         }
 
-    @Deprecated("Modification of 'contextReceivers' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
-    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
+    @Deprecated("Modification of 'contextParameters' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
+    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
 
     @Deprecated("Modification of 'delegate' has no impact for FirFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var delegate: FirExpression?

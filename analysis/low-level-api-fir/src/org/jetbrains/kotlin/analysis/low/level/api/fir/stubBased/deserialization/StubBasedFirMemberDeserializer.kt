@@ -416,10 +416,10 @@ internal class StubBasedFirMemberDeserializer(
                 isUnsigned = returnTypeRef.coneType.isUnsignedType
             )
 
-            property.contextReceiverList?.contextReceivers()?.mapTo(contextReceivers) {
+            property.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) {
                 loadContextReceiver(it, symbol)
             }
-            property.contextReceiverList?.contextParameters()?.mapTo(contextReceivers) {
+            property.contextReceiverList?.contextParameters()?.mapTo(contextParameters) {
                 loadContextReceiver(it, symbol)
             }
         }.apply {
@@ -546,8 +546,8 @@ internal class StubBasedFirMemberDeserializer(
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
             this.containerSource = c.containerSource
 
-            function.contextReceiverList?.contextReceivers()?.mapTo(contextReceivers) { loadContextReceiver(it, symbol) }
-            function.contextReceiverList?.contextParameters()?.mapTo(contextReceivers) { loadContextReceiver(it, symbol) }
+            function.contextReceiverList?.contextReceivers()?.mapTo(contextParameters) { loadContextReceiver(it, symbol) }
+            function.contextReceiverList?.contextParameters()?.mapTo(contextParameters) { loadContextReceiver(it, symbol) }
         }.apply {
             setLazyPublishedVisibility(c.session)
         }
@@ -624,7 +624,7 @@ internal class StubBasedFirMemberDeserializer(
             containerSource = c.containerSource
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
-            contextReceivers.addAll(createContextReceiversForClass(classOrObject, symbol))
+            contextParameters.addAll(createContextReceiversForClass(classOrObject, symbol))
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             setLazyPublishedVisibility(c.session)

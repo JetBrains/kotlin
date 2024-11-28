@@ -210,7 +210,7 @@ open class FirTypeResolveTransformer(
                 property.transformTypeParameters(this, data)
                     .transformReturnTypeRef(this, data)
                     .transformReceiverParameter(this, data)
-                    .transformContextReceivers(this, data)
+                    .transformContextParameters(this, data)
                     .transformGetter(this, data)
                     .transformSetter(this, data)
                     .transformBackingField(this, data)

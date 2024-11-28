@@ -46,7 +46,7 @@ fun extractLambdaInfoFromFunctionType(
     // can never fill its role.
     val receiverType = if (lambda.isLambda) expectedClassLikeType.receiverType(session) else lambda.receiverType
     val contextReceiversNumber =
-        if (lambda.isLambda) expectedClassLikeType.contextReceiversNumberForFunctionType else lambda.contextReceivers.size
+        if (lambda.isLambda) expectedClassLikeType.contextReceiversNumberForFunctionType else lambda.contextParameters.size
 
     val valueParametersTypesIncludingReceiver = expectedClassLikeType.valueParameterTypesIncludingReceiver(session)
     val isExtensionFunctionType = expectedClassLikeType.isExtensionFunctionType(session)
@@ -95,7 +95,7 @@ fun extractLambdaInfoFromFunctionType(
         when {
             contextReceiversNumber == 0 -> emptyList()
             lambda.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextReceiversNumber)
-            else -> lambda.contextReceivers.map { it.returnTypeRef.coneType }
+            else -> lambda.contextParameters.map { it.returnTypeRef.coneType }
         }
 
     return ConeResolvedLambdaAtom(

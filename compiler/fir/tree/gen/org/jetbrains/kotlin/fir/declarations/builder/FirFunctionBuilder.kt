@@ -34,7 +34,7 @@ interface FirFunctionBuilder : FirDeclarationBuilder, FirAnnotationContainerBuil
     abstract var deprecationsProvider: DeprecationsProvider
     abstract var containerSource: DeserializedContainerSource?
     abstract var dispatchReceiverType: ConeSimpleKotlinType?
-    abstract val contextReceivers: MutableList<FirValueParameter>
+    abstract val contextParameters: MutableList<FirValueParameter>
     abstract val valueParameters: MutableList<FirValueParameter>
     abstract var body: FirBlock?
     override fun build(): FirFunction

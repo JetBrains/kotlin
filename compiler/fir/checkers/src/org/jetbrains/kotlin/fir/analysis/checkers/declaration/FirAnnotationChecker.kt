@@ -124,7 +124,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        fun FirPropertyAccessor.hasNoReceivers() = contextReceivers.isEmpty() && receiverParameter?.typeRef == null &&
+        fun FirPropertyAccessor.hasNoReceivers() = contextParameters.isEmpty() && receiverParameter?.typeRef == null &&
                 propertySymbol.resolvedReceiverTypeRef == null && propertySymbol.resolvedContextReceivers.isEmpty()
 
         val (hint, type) = when (annotation.useSiteTarget) {

@@ -364,7 +364,7 @@ class JavaOverrideChecker internal constructor(
     // As in the K1 implementation in `methodSignatureMapping.kt`, we're checking if the method has `MutableCollection.remove`
     // in its overridden symbols.
     private fun forceSingleValueParameterBoxing(function: FirSimpleFunction): Boolean {
-        if (function.name.asString() != "remove" || function.receiverParameter != null || function.contextReceivers.isNotEmpty())
+        if (function.name.asString() != "remove" || function.receiverParameter != null || function.contextParameters.isNotEmpty())
             return false
 
         val parameter = function.valueParameters.singleOrNull() ?: return false

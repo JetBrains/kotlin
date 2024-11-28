@@ -321,7 +321,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
 
             defaultNull("receiverParameter", "delegate", "getter", "setter", "containerSource", "backingField", withGetter = true)
-            defaultEmptyList("contextReceivers", "typeParameters", withGetter = true)
+            defaultEmptyList("contextParameters", "typeParameters", withGetter = true)
         }
 
         impl(enumEntry) {
@@ -331,7 +331,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "receiverParameter", "delegate", "getter", "setter", "containerSource", "dispatchReceiverType", "backingField",
                 withGetter = true
             )
-            defaultEmptyList("contextReceivers", "typeParameters", withGetter = true)
+            defaultEmptyList("contextParameters", "typeParameters", withGetter = true)
         }
 
         impl(namedArgumentExpression) {
@@ -422,7 +422,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(propertyAccessor) {
             defaultNull("receiverParameter", "containerSource", withGetter = true)
-            defaultEmptyList("contextReceivers", "typeParameters", withGetter = true)
+            defaultEmptyList("contextParameters", "typeParameters", withGetter = true)
             default("isSetter") {
                 value = "!isGetter"
                 withGetter = true
@@ -439,7 +439,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             )
 
             defaultEmptyList(
-                "contextReceivers", "typeParameters",
+                "contextParameters", "typeParameters",
                 withGetter = true
             )
         }
@@ -593,7 +593,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "getter", "setter", "initializer", "delegate", "receiverParameter", "dispatchReceiverType", "backingField", "containerSource",
                 withGetter = true
             )
-            defaultEmptyList("contextReceivers", withGetter = true)
+            defaultEmptyList("contextParameters", withGetter = true)
         }
 
         impl(valueParameter) {

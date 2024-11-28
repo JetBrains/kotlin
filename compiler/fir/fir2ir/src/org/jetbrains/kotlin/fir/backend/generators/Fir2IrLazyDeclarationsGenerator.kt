@@ -128,7 +128,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
 
         irConstructor.valueParameters = buildList {
             callablesGenerator.addContextReceiverParametersTo(
-                fir.contextReceivers,
+                fir.contextParameters,
                 irConstructor,
                 this@buildList
             )

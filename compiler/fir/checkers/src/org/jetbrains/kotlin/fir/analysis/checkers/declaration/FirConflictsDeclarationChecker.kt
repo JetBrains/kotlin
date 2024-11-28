@@ -92,7 +92,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
 
     private fun getDestructuredParameters(declaration: FirCallableDeclaration): List<FirVariable> {
         return buildList {
-            declaration.contextReceivers.filterTo(this) { it.valueParameterKind == FirValueParameterKind.ContextParameter }
+            declaration.contextParameters.filterTo(this) { it.valueParameterKind == FirValueParameterKind.ContextParameter }
 
             if (declaration is FirFunction) {
                 addAll(declaration.valueParameters)

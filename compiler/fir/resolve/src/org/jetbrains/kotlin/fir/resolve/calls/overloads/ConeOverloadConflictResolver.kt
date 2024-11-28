@@ -473,12 +473,12 @@ class ConeOverloadConflictResolver(
             typeParameters = (variable as? FirProperty)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
             valueParameterTypes = computeSignatureTypes(call, variable),
             hasExtensionReceiver = variable.receiverParameter != null,
-            contextReceiverCount = if (!contextParametersEnabled) variable.contextReceivers.size else 0,
+            contextReceiverCount = if (!contextParametersEnabled) variable.contextParameters.size else 0,
             hasVarargs = false,
             numDefaults = 0,
             isExpect = (variable as? FirProperty)?.isExpect == true,
             isSyntheticMember = false,
-            hasContext = variable.contextReceivers.isNotEmpty(),
+            hasContext = variable.contextParameters.isNotEmpty(),
         )
     }
 
@@ -489,12 +489,12 @@ class ConeOverloadConflictResolver(
             valueParameterTypes = computeSignatureTypes(call, constructor),
             //constructor.receiverParameter != null,
             hasExtensionReceiver = false,
-            contextReceiverCount = if (!contextParametersEnabled) constructor.contextReceivers.size else 0,
+            contextReceiverCount = if (!contextParametersEnabled) constructor.contextParameters.size else 0,
             hasVarargs = constructor.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = constructor.isExpect,
             isSyntheticMember = false,
-            hasContext = constructor.contextReceivers.isNotEmpty(),
+            hasContext = constructor.contextParameters.isNotEmpty(),
         )
     }
 
@@ -504,12 +504,12 @@ class ConeOverloadConflictResolver(
             typeParameters = function.typeParameters.map { it.symbol.toLookupTag() },
             valueParameterTypes = computeSignatureTypes(call, function),
             hasExtensionReceiver = function.receiverParameter != null,
-            contextReceiverCount = if (!contextParametersEnabled) function.contextReceivers.size else 0,
+            contextReceiverCount = if (!contextParametersEnabled) function.contextParameters.size else 0,
             hasVarargs = function.valueParameters.any { it.isVararg },
             numDefaults = call.numDefaults,
             isExpect = function.isExpect,
             isSyntheticMember = false,
-            hasContext = function.contextReceivers.isNotEmpty(),
+            hasContext = function.contextParameters.isNotEmpty(),
         )
     }
 
@@ -540,7 +540,7 @@ class ConeOverloadConflictResolver(
                     }
             } else {
                 if (!contextParametersEnabled) {
-                    called.contextReceivers.mapTo(this) { TypeWithConversion(it.returnTypeRef.coneType.prepareType(session, call)) }
+                    called.contextParameters.mapTo(this) { TypeWithConversion(it.returnTypeRef.coneType.prepareType(session, call)) }
                 }
                 if (call.argumentMappingInitialized) {
                     call.argumentMapping.mapTo(this) { (argument, parameter) ->

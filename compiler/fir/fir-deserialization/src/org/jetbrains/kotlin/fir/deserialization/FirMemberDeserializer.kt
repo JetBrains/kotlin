@@ -476,7 +476,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 else -> null
             }
 
-            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers) {
+            proto.contextReceiverTypes(c.typeTable).mapTo(contextParameters) {
                 loadContextReceiver(it, local, FirDeclarationOrigin.Library, symbol)
             }
         }.apply {
@@ -605,7 +605,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false, versionRequirements)
             this.containerSource = c.containerSource
 
-            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers) {
+            proto.contextReceiverTypes(c.typeTable).mapTo(contextParameters) {
                 loadContextReceiver(it, local, deserializationOrigin, symbol)
             }
         }.apply {
@@ -691,7 +691,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             containerSource = c.containerSource
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
-            contextReceivers.addAll(createContextReceiversForClass(classProto, FirDeclarationOrigin.Library, symbol))
+            contextParameters.addAll(createContextReceiversForClass(classProto, FirDeclarationOrigin.Library, symbol))
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             this.versionRequirements = VersionRequirement.create(proto, c)

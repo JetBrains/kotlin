@@ -134,7 +134,7 @@ internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: T) {
         visitMemberDeclaration(callableDeclaration, data)
-        callableDeclaration.contextReceivers.forEach { it.accept(this, data) }
+        callableDeclaration.contextParameters.forEach { it.accept(this, data) }
         callableDeclaration.receiverParameter?.accept(this, data)
         callableDeclaration.returnTypeRef.accept(this, data)
     }

@@ -110,7 +110,7 @@ internal class ClassMemberGenerator(
                         irFunction.putParametersInScope(firFunction)
                     }
                 }
-                val irParameters = valueParameters.drop(firFunction.contextReceivers.size)
+                val irParameters = valueParameters.drop(firFunction.contextParameters.size)
                 val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
                 for ((valueParameter, firValueParameter) in irParameters.zip(firFunction.valueParameters)) {
                     visitor.withAnnotationMode(enableAnnotationMode = annotationMode) {
@@ -383,7 +383,7 @@ internal class ClassMemberGenerator(
                     irConstructorSymbol,
                     typeArgumentsCount = constructor.typeParameters.size,
                     valueArgumentsCount = constructor.valueParameters.size,
-                    contextParameterCount = constructor.contextReceivers.size,
+                    contextParameterCount = constructor.contextParameters.size,
                     hasDispatchReceiver = constructor.dispatchReceiverType != null,
                     hasExtensionReceiver = constructor.isExtension,
                 )
@@ -393,8 +393,8 @@ internal class ClassMemberGenerator(
                     builtins.unitType,
                     irConstructorSymbol,
                     typeArgumentsCount = constructor.typeParameters.size,
-                    valueArgumentsCount = constructor.valueParameters.size + constructor.contextReceivers.size,
-                    contextParameterCount = constructor.contextReceivers.size,
+                    valueArgumentsCount = constructor.valueParameters.size + constructor.contextParameters.size,
+                    contextParameterCount = constructor.contextParameters.size,
                     hasDispatchReceiver = constructor.dispatchReceiverType != null,
                     hasExtensionReceiver = constructor.isExtension,
                 )

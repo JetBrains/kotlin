@@ -828,7 +828,7 @@ class Fir2IrVisitor(
             else -> null
         } ?: return null
 
-        val contextReceiverNumber = firCallableSymbol.fir.contextReceivers.indexOf(calleeReference.boundSymbol?.fir)
+        val contextReceiverNumber = firCallableSymbol.fir.contextParameters.indexOf(calleeReference.boundSymbol?.fir)
         val receiver = if (contextReceiverNumber != -1) {
             irFunction.valueParameters[contextReceiverNumber]
         } else {

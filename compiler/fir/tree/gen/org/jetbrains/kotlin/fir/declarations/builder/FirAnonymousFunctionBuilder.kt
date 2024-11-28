@@ -44,7 +44,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     var receiverParameter: FirReceiverParameter? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
     var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
@@ -71,7 +71,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
             receiverParameter,
             deprecationsProvider,
             dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
+            contextParameters.toMutableOrEmpty(),
             controlFlowGraphReference,
             valueParameters,
             body,

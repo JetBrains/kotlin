@@ -101,7 +101,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +referencedSymbol(callableSymbolType.withArgs(callableDeclaration))
         +field("containerSource", type<DeserializedContainerSource>(), nullable = true)
         +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
-        +listField(name = "contextReceivers", valueParameter, useMutableOrEmpty = true, withReplace = true, withTransform = true)
+        +listField(name = "contextParameters", valueParameter, useMutableOrEmpty = true, withReplace = true, withTransform = true)
     }
 
     val function: Element by sealedElement(Declaration) {

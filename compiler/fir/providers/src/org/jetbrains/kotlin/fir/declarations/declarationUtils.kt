@@ -122,7 +122,7 @@ fun FirFunction.itOrExpectHasDefaultParameterValue(index: Int): Boolean =
 fun FirSimpleFunction.isEquals(session: FirSession): Boolean {
     if (name != OperatorNameConventions.EQUALS) return false
     if (valueParameters.size != 1) return false
-    if (contextReceivers.isNotEmpty()) return false
+    if (contextParameters.isNotEmpty()) return false
     if (receiverParameter != null) return false
     val parameter = valueParameters.first()
     return parameter.returnTypeRef.coneType.fullyExpandedType(session).isNullableAny

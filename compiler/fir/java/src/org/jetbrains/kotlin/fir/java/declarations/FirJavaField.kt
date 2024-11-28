@@ -90,7 +90,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val typeParameters: List<FirTypeParameterRef>
         get() = emptyList()
 
-    override val contextReceivers: List<FirValueParameter>
+    override val contextParameters: List<FirValueParameter>
         get() = emptyList()
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
@@ -119,7 +119,7 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirField {
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirField {
         return this
     }
 
@@ -185,7 +185,7 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {
         error("Body cannot be replaced for FirJavaField")
     }
 

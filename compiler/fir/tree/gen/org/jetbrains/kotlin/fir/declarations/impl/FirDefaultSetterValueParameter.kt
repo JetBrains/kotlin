@@ -51,7 +51,7 @@ internal class FirDefaultSetterValueParameter(
         get() = null
     override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = null
-    override val contextReceivers: List<FirValueParameter>
+    override val contextParameters: List<FirValueParameter>
         get() = emptyList()
     override val name: Name = Name.identifier("value")
     override val initializer: FirExpression?
@@ -117,7 +117,7 @@ internal class FirDefaultSetterValueParameter(
         return this
     }
 
-    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
         return this
     }
 
@@ -166,7 +166,7 @@ internal class FirDefaultSetterValueParameter(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {}
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {}
 
     override fun replaceInitializer(newInitializer: FirExpression?) {}
 

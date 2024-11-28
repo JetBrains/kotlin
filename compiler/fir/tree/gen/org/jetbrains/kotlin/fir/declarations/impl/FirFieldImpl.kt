@@ -51,7 +51,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
         get() = null
     override val containerSource: DeserializedContainerSource?
         get() = null
-    override val contextReceivers: List<FirValueParameter>
+    override val contextParameters: List<FirValueParameter>
         get() = emptyList()
     override val delegate: FirExpression?
         get() = null
@@ -106,7 +106,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         return this
     }
 
@@ -156,7 +156,7 @@ class FirFieldImpl @FirImplementationDetail constructor(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {}
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {}
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
         initializer = newInitializer

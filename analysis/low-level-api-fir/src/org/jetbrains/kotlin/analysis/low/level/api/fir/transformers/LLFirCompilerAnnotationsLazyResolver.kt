@@ -245,11 +245,11 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
             when (target) {
                 is FirFunction -> {
-                    target.contextReceivers.forEach(::publishResult)
+                    target.contextParameters.forEach(::publishResult)
                     target.valueParameters.forEach(::publishResult)
                 }
                 is FirProperty -> {
-                    target.contextReceivers.forEach(::publishResult)
+                    target.contextParameters.forEach(::publishResult)
                     target.getter?.let(::publishResult)
                     target.setter?.let(::publishResult)
                     target.backingField?.let(::publishResult)

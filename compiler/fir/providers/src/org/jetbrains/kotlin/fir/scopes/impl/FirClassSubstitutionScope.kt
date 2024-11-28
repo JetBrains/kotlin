@@ -137,7 +137,7 @@ class FirClassSubstitutionScope(
             it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
 
-        val newContextReceiverTypes = member.contextReceivers.map {
+        val newContextReceiverTypes = member.contextParameters.map {
             it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
 
@@ -202,7 +202,7 @@ class FirClassSubstitutionScope(
             it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
 
-        val newContextReceiverTypes = constructor.contextReceivers.map {
+        val newContextReceiverTypes = constructor.contextParameters.map {
             it.returnTypeRef.coneType.substitute(newSubstitutor)
         }
 
@@ -242,7 +242,7 @@ class FirClassSubstitutionScope(
         val (newTypeParameters, newDispatchReceiverType, newReceiverType, newReturnType, _, callableCopySubstitutionForTypeUpdater) =
             createSubstitutedData(member, symbolForOverride)
 
-        val newContextReceiverTypes = member.contextReceivers.map {
+        val newContextReceiverTypes = member.contextParameters.map {
             it.returnTypeRef.coneType.substitute(substitutor)
         }
 

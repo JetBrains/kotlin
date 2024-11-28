@@ -1190,7 +1190,7 @@ open class PsiRawFirBuilder(
                     symbol = constructorSymbol
                     delegatedConstructor = firDelegatedCall
                     typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
-                    this.contextReceivers.addContextReceivers(owner.contextReceiverList, constructorSymbol)
+                    this.contextParameters.addContextReceivers(owner.contextReceiverList, constructorSymbol)
                     this@toFirConstructor?.extractAnnotationsTo(this)
                     this@toFirConstructor?.extractValueParametersTo(this, symbol, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
                     this.body = null
@@ -1971,7 +1971,7 @@ open class PsiRawFirBuilder(
                             isSuspend = function.hasModifier(SUSPEND_KEYWORD)
                         }
 
-                        contextReceivers.addContextReceivers(function.contextReceiverList, functionSymbol)
+                        contextParameters.addContextReceivers(function.contextReceiverList, functionSymbol)
                     }
                 }
 
@@ -2176,9 +2176,9 @@ open class PsiRawFirBuilder(
                         isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                     }
                     dispatchReceiverType = owner.obtainDispatchReceiverForConstructor()
-                    contextReceivers.addContextReceivers(owner.contextReceiverList, symbol)
+                    contextParameters.addContextReceivers(owner.contextReceiverList, symbol)
                     if (contextParameterEnabled) {
-                        contextReceivers.addContextReceivers(this@toFirConstructor.getChildOfType(), symbol)
+                        contextParameters.addContextReceivers(this@toFirConstructor.getChildOfType(), symbol)
                     }
                     if (!owner.hasModifier(EXTERNAL_KEYWORD) && !status.isExpect || isExplicitDelegationCall()) {
                         delegatedConstructor = buildOrLazyDelegatedConstructorCall(
@@ -2412,7 +2412,7 @@ open class PsiRawFirBuilder(
                         else -> propertyAnnotations.filterStandalonePropertyRelevantAnnotations(isVar)
                     }
 
-                    contextReceivers.addContextReceivers(this@toFirProperty.contextReceiverList, propertySymbol)
+                    contextParameters.addContextReceivers(this@toFirProperty.contextReceiverList, propertySymbol)
                 }.also {
                     if (!isLocal) {
                         fillDanglingConstraintsTo(it)

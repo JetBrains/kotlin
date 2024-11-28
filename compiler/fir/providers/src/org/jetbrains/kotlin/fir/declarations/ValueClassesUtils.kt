@@ -74,7 +74,7 @@ fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
     containingClassLookupTag()?.toRegularClassSymbol(session)?.run {
         val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
         with(this@isTypedEqualsInValueClass) {
-            contextReceivers.isEmpty() && receiverParameter == null
+            contextParameters.isEmpty() && receiverParameter == null
                     && name == OperatorNameConventions.EQUALS
                     && this@run.isInline && valueParameters.size == 1
                     && returnTypeRef.coneType.fullyExpandedType(session).let {

@@ -74,7 +74,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
             reporter.reportError(declaration.source, "is not allowed on extension properties", context)
         }
 
-        if (declaration.contextReceivers.isNotEmpty()) {
+        if (declaration.contextParameters.isNotEmpty()) {
             reporter.reportError(declaration.source, "is not allowed on properties with context receivers", context)
         }
 

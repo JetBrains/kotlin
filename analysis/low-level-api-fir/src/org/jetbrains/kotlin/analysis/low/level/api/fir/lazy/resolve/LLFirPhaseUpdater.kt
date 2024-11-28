@@ -68,14 +68,14 @@ internal object LLFirPhaseUpdater {
             is FirFunction -> {
                 element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.receiverParameter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
-                element.contextReceivers.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
+                element.contextParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
             is FirProperty -> {
                 element.getter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.setter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.backingField?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.receiverParameter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
-                element.contextReceivers.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
+                element.contextParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
             else -> {}
         }

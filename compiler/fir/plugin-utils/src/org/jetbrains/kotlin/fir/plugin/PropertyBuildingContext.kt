@@ -99,7 +99,7 @@ public class PropertyBuildingContext(
                 }
             }
 
-            produceContextReceiversTo(contextReceivers, typeParameters, origin, symbol)
+            produceContextReceiversTo(contextParameters, typeParameters, origin, symbol)
 
             isVar = !isVal
             getter = FirDefaultPropertyGetter(

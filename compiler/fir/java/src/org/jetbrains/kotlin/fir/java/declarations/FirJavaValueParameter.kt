@@ -110,7 +110,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = null
 
-    override val contextReceivers: List<FirValueParameter>
+    override val contextParameters: List<FirValueParameter>
         get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -134,7 +134,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirValueParameter {
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }
 
@@ -207,7 +207,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {
+    override fun replaceContextParameters(newContextParameter: List<FirValueParameter>) {
         error("Body cannot be replaced for FirJavaValueParameter")
     }
 

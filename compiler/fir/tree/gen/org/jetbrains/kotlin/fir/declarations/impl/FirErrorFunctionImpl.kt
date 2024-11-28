@@ -40,7 +40,7 @@ internal class FirErrorFunctionImpl(
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override var contextReceivers: MutableOrEmptyList<FirValueParameter>,
+    override var contextParameters: MutableOrEmptyList<FirValueParameter>,
     override val valueParameters: MutableList<FirValueParameter>,
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorFunctionSymbol,
@@ -64,7 +64,7 @@ internal class FirErrorFunctionImpl(
         annotations.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
-        contextReceivers.forEach { it.accept(visitor, data) }
+        contextParameters.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
     }
@@ -73,7 +73,7 @@ internal class FirErrorFunctionImpl(
         transformAnnotations(transformer, data)
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
-        transformContextReceivers(transformer, data)
+        transformContextParameters(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         return this
@@ -102,8 +102,8 @@ internal class FirErrorFunctionImpl(
         return this
     }
 
-    override fun <D> transformContextReceivers(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
-        contextReceivers.transformInplace(transformer, data)
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        contextParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -134,8 +134,8 @@ internal class FirErrorFunctionImpl(
         deprecationsProvider = newDeprecationsProvider
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirValueParameter>) {
-        contextReceivers = newContextReceivers.toMutableOrEmpty()
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {
+        contextParameters = newContextParameters.toMutableOrEmpty()
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {

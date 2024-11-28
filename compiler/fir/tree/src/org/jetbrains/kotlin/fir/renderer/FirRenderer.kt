@@ -261,7 +261,7 @@ class FirRenderer(
         }
 
         override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
-            renderContexts(callableDeclaration.contextReceivers)
+            renderContexts(callableDeclaration.contextParameters)
             annotationRenderer?.render(callableDeclaration)
             if (callableDeclaration is FirProperty) {
                 val backingField = callableDeclaration.backingField

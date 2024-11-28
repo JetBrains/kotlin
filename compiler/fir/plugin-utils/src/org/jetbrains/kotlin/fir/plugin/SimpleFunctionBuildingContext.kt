@@ -73,7 +73,7 @@ public class SimpleFunctionBuildingContext(
                 generateTypeParameter(it, symbol)
             }
             initTypeParameterBounds(typeParameters, typeParameters)
-            produceContextReceiversTo(contextReceivers, typeParameters, origin, symbol)
+            produceContextReceiversTo(contextParameters, typeParameters, origin, symbol)
 
             this@SimpleFunctionBuildingContext.valueParameters.mapTo(valueParameters) {
                 generateValueParameter(it, symbol, typeParameters)

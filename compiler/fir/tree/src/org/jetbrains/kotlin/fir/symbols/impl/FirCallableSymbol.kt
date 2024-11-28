@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -58,9 +57,9 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
 
     val resolvedContextReceivers: List<FirValueParameter>
         get() {
-            if (fir.contextReceivers.isEmpty()) return emptyList()
+            if (fir.contextParameters.isEmpty()) return emptyList()
             lazyResolveToPhase(FirResolvePhase.TYPES)
-            return fir.contextReceivers
+            return fir.contextParameters
         }
 
     val resolvedStatus: FirResolvedDeclarationStatus

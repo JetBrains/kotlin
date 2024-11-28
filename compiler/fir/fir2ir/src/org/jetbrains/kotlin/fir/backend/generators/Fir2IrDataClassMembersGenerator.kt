@@ -313,7 +313,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                 val scope = klass.symbol.unsubstitutedScope(c)
                 return scope.getFunctions(HASHCODE_NAME).first { symbol ->
                     val function = symbol.fir
-                    function.valueParameters.isEmpty() && function.receiverParameter == null && function.contextReceivers.isEmpty()
+                    function.valueParameters.isEmpty() && function.receiverParameter == null && function.contextParameters.isEmpty()
                 }
             }
 

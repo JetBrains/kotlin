@@ -40,7 +40,7 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextReceivers: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     open var contractDescription: FirContractDescription? = null
@@ -62,7 +62,7 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
-            contextReceivers.toMutableOrEmpty(),
+            contextParameters.toMutableOrEmpty(),
             valueParameters,
             body,
             contractDescription,
@@ -100,7 +100,7 @@ inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleF
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
-    copyBuilder.contextReceivers.addAll(original.contextReceivers)
+    copyBuilder.contextParameters.addAll(original.contextParameters)
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.body = original.body
     copyBuilder.contractDescription = original.contractDescription
