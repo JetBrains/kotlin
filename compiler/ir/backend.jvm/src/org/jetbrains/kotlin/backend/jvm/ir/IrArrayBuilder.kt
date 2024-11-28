@@ -124,7 +124,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
 
         return builder.irBlock {
             val spreadBuilderVar = irTemporary(irCallConstructor(spreadBuilder.constructors.single(), listOf()).apply {
-                putValueArgument(0, irInt(elements.size))
+                arguments[0] = irInt(elements.size)
             })
 
             for (element in elements) {
