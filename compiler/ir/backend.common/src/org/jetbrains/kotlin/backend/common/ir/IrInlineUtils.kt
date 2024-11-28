@@ -46,7 +46,7 @@ fun IrExpression.asInlinableFunctionReference(): IrFunctionReference? {
 
 private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrInlinableLambda? {
     if (this is IrFunctionExpression) {
-        if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
+        if (function.parameters.any { it.isVararg || it.defaultValue != null })
             return null
         return IrInlinableLambda(function, null)
     }
