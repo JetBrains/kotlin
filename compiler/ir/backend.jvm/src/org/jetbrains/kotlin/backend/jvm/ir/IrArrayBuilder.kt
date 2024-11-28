@@ -160,7 +160,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
             builder.irCall(builder.irSymbols.unsafeCoerceIntrinsic, irType).apply {
                 putTypeArgument(0, expression.type)
                 putTypeArgument(1, irType)
-                putValueArgument(0, expression)
+                arguments[0] = expression
             }
         else expression
 }
