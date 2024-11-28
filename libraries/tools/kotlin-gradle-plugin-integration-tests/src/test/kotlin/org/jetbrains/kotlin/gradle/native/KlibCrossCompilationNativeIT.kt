@@ -58,7 +58,7 @@ class KlibCrossCompilationNativeIT : KGPBaseTest() {
         ) {
             build(":compileKotlinIosArm64") {
                 KotlinTestUtils.assertEqualsToFile(
-                    projectPath.resolve("diagnostics-compileKotlinIosArm64.txt"), extractProjectsAndTheirDiagnostics()
+                    projectPath.resolve("diagnostics-compileKotlinIosArm64.txt"), extractProjectsAndTheirDiagnostics(buildOptions.kotlinVersion, buildOptions.nativeOptions.version)
                 )
                 assertTasksExecuted(":compileKotlinIosArm64")
             }
