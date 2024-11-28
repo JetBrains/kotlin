@@ -19,9 +19,11 @@ class KotlinTopLevelCallableByPackageShortNameIndex : NameByPackageShortNameInde
         val NAME = ID.create<FqName, List<Name>>(KotlinTopLevelCallableByPackageShortNameIndex::class.java.simpleName)
     }
 
-    override fun getName(): ID<FqName, List<Name>> = NAME
+    override val name: ID<FqName, List<Name>>
+        get() = NAME
 
-    override fun getVersion(): Int = 3
+    override val version: Int
+        get() = 3
 
     override fun getDeclarationNamesByKtFile(ktFile: KtFile): List<Name> = buildList {
         for (declaration in ktFile.declarations) {

@@ -32,20 +32,21 @@ interface StubIndex {
 }
 
 interface FileBasedIndex {
-    fun <K, V> getValues(
+    fun <K, V> processValues(
         indexId: ID<K, V>,
         dataKey: K,
         filter: GlobalSearchScope,
-    ): List<V>
+        processor: Processor<in V>
+    ): Boolean
 }
 
 interface FileBasedIndexExtension<K, V> {
-    fun getName(): ID<K, V>
-    fun getVersion(): Int
-    fun getKeyDescriptor(): KeyDescriptor<K>
-    fun getValueExternalizer(): DataExternalizer<V>
+    val name: ID<K, V>
+    val version: Int
+    val keyDescriptor: KeyDescriptor<K>
+    val valueExternalizer: DataExternalizer<V>
 
-    fun getInputFilter(): List<FileType>
+    val inputFilter: List<FileType>
 
-    fun getIndexer(): DataIndexer<K, V, FileContent>
+    val indexer: DataIndexer<K, V, FileContent>
 }

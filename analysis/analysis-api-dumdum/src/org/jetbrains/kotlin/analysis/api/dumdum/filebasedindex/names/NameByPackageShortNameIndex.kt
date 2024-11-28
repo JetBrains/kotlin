@@ -27,9 +27,10 @@ import java.io.DataOutput
 
 fun FileBasedIndex.getNamesInPackage(indexId: ID<FqName, List<Name>>, packageFqName: FqName, scope: GlobalSearchScope): Set<Name> {
     return buildSet {
-        getValues(indexId, packageFqName, scope).forEach {
+        processValues(indexId, packageFqName, scope) {
             ProgressManager.checkCanceled()
             addAll(it)
+            true
         }
     }
 }
@@ -54,37 +55,40 @@ abstract class NameByPackageShortNameIndex : FileBasedIndexExtension<FqName, Lis
     protected abstract fun getDeclarationNamesByKnm(kotlinNativeMetadata: FileWithMetadata.Compatible): List<Name>
 
     fun dependsOnFileContent() = true
-    override fun getVersion() = 2
-    override fun getKeyDescriptor(): FqNameKeyDescriptor = FqNameKeyDescriptor
-    override fun getValueExternalizer(): DataExternalizer<List<Name>> = ListOfNamesDataExternalizer
+    override val version get() = 2
+    override val keyDescriptor: FqNameKeyDescriptor
+        get() = FqNameKeyDescriptor
+    override val valueExternalizer: DataExternalizer<List<Name>>
+        get() = ListOfNamesDataExternalizer
     fun traceKeyHashToVirtualFileMapping(): Boolean = true
 
-    override fun getInputFilter(): List<FileType> =
-        listOf(
+    override val inputFilter: List<FileType>
+        get() = listOf(
             KotlinFileType.INSTANCE,
             JavaClassFileType.INSTANCE,
             KotlinBuiltInFileType,
             KlibMetaFileType,
         )
 
-    override fun getIndexer() = DataIndexer<FqName, List<Name>, FileContent> { fileContent ->
-        try {
-            when (fileContent.fileType) {
-                JavaClassFileType.INSTANCE -> getPackageAndNamesFromMetadata(fileContent)
-                KotlinBuiltInFileType -> getPackageAndNamesFromBuiltIns(fileContent)
-                KotlinFileType.INSTANCE -> {
-                    val ktFile = fileContent.psiFile as? KtFile ?: return@DataIndexer emptyMap()
-                    mapOf(ktFile.packageFqName to getDeclarationNamesByKtFile(ktFile).distinct())
+    override val indexer
+        get() = DataIndexer<FqName, List<Name>, FileContent> { fileContent ->
+            try {
+                when (fileContent.fileType) {
+                    JavaClassFileType.INSTANCE -> getPackageAndNamesFromMetadata(fileContent)
+                    KotlinBuiltInFileType -> getPackageAndNamesFromBuiltIns(fileContent)
+                    KotlinFileType.INSTANCE -> {
+                        val ktFile = fileContent.psiFile as? KtFile ?: return@DataIndexer emptyMap()
+                        mapOf(ktFile.packageFqName to getDeclarationNamesByKtFile(ktFile).distinct())
+                    }
+                    KlibMetaFileType -> getPackageAndNamesFromKnm(fileContent)
+                    else -> emptyMap()
                 }
-                KlibMetaFileType -> getPackageAndNamesFromKnm(fileContent)
-                else -> emptyMap()
+            } catch (e: Throwable) {
+                if (e is ControlFlowException) throw e
+                LOG.warn("Error `(${e.javaClass.simpleName}: ${e.message})` while indexing file ${fileContent.fileName} using ${name} index. Probably the file is broken.")
+                emptyMap()
             }
-        } catch (e: Throwable) {
-            if (e is ControlFlowException) throw e
-            LOG.warn("Error `(${e.javaClass.simpleName}: ${e.message})` while indexing file ${fileContent.fileName} using ${getName()} index. Probably the file is broken.")
-            emptyMap()
         }
-    }
 
     private fun getPackageAndNamesFromMetadata(fileContent: FileContent): Map<FqName, List<Name>> {
         val binaryClass = fileContent.toKotlinJvmBinaryClass() ?: return emptyMap()
