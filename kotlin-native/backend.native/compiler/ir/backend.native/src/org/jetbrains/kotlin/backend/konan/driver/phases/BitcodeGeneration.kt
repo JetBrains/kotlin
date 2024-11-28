@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
 import org.jetbrains.kotlin.backend.konan.initializeCachedBoxes
+import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGeneratorVisitor
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.RTTIGeneratorVisitor
@@ -82,9 +83,7 @@ internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState
                 it.acceptVoid(visitor)
             }
 
-            if (input.irModule != null) {
-                visitor.processAllInitializers()
-            }
+            visitor.processAllInitializers(generationState.context.config.isFinalBinary && (!generationState.shouldOptimize() || generationState.producedLlvmModuleContainsStdlib))
 
             if (generationState.hasDebugInfo())
                 DIFinalize(generationState.debugInfo.builder)

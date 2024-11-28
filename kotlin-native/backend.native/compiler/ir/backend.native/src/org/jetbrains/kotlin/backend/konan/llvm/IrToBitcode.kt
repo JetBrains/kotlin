@@ -406,14 +406,15 @@ internal class CodeGeneratorVisitor(
         TODO(ir2string(element))
     }
 
-    fun processAllInitializers() {
+    fun processAllInitializers(isFinalBinary: Boolean) {
         runAndProcessInitializers(null) {
             // Note: it is here because it also generates some bitcode.
-            generationState.objCExport.generate(codegen)
+            if (generationState.hasObjCExport)
+                generationState.objCExport.generate(codegen)
 
             codegen.objCDataGenerator?.finishModule()
 
-            overrideRuntimeGlobals()
+            overrideRuntimeGlobals(isFinalBinary)
             appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toConstPointer().llvm } + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
             if (context.config.produceCInterface) {
@@ -421,7 +422,7 @@ internal class CodeGeneratorVisitor(
             }
         }
 
-        appendStaticInitializers()
+        appendStaticInitializers(isFinalBinary)
     }
 
     //-------------------------------------------------------------------------//
@@ -2631,8 +2632,8 @@ internal class CodeGeneratorVisitor(
     private fun overrideRuntimeGlobal(name: String, value: ConstValue) =
             codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(name, value)
 
-    private fun overrideRuntimeGlobals() {
-        if (!context.config.isFinalBinary)
+    private fun overrideRuntimeGlobals(isFinalBinary: Boolean) {
+        if (!isFinalBinary)
             return
 
         overrideRuntimeGlobal("Kotlin_gcMutatorsCooperate", llvm.constInt32(if (context.config.gcMutatorsCooperate) 1 else 0))
@@ -2693,7 +2694,7 @@ internal class CodeGeneratorVisitor(
     }
 
     //-------------------------------------------------------------------------//
-    fun appendStaticInitializers() {
+    fun appendStaticInitializers(isFinalBinary: Boolean) {
         // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
         val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
 
@@ -2763,7 +2764,7 @@ internal class CodeGeneratorVisitor(
             }
         }
 
-        appendGlobalCtors(ctorFunctions)
+        appendGlobalCtors(ctorFunctions, isFinalBinary)
     }
 
     private fun appendStaticInitializers(ctorCallableProto: LlvmFunctionProto, initializers: List<LlvmCallable>) : LlvmCallable {
@@ -2796,8 +2797,8 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-    private fun appendGlobalCtors(ctorFunctions: List<LlvmCallable>) {
-        if (context.config.isFinalBinary) {
+    private fun appendGlobalCtors(ctorFunctions: List<LlvmCallable>, isFinalBinary: Boolean) {
+        if (isFinalBinary) {
             // Generate function calling all [ctorFunctions].
             val ctorProto = ctorFunctionSignature.toProto(
                     name = "_Konan_constructors",
