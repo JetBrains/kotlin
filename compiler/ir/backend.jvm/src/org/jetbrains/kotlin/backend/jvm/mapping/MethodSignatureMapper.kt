@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgument.arguments
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
@@ -321,7 +322,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
             getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
-                if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst)?.value as? Boolean ?: true else null
+                if (arguments.size >= 1) (arguments[0] as? IrConst)?.value as? Boolean ?: true else null
             }
     }
 
