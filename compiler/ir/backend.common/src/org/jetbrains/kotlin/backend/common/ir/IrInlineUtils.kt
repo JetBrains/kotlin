@@ -56,7 +56,10 @@ private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrI
         return IrInlinableLambda(function, null)
     }
     return asInlinableFunctionReference()?.let { reference ->
-        IrInlinableLambda(reference.symbol.owner as IrSimpleFunction, reference.extensionReceiver?.let { builder.irTemporary(it) })
+        val referenceExtensionReceiver = reference.arguments.zip(reference.symbol.owner.parameters)
+            .firstOrNull { (_, parameter) -> parameter.kind == IrParameterKind.ExtensionReceiver }
+            ?.first
+        IrInlinableLambda(reference.symbol.owner as IrSimpleFunction, referenceExtensionReceiver?.let { builder.irTemporary(it) })
     }
 }
 
