@@ -615,13 +615,7 @@ open class FunctionInlining(
                     .map { callSite.arguments[it] }.toMutableList()
 
             val extensionReceiverParameter = callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
-            val extensionReceiver: IrExpression? = callSite.run {
-                symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }.let { index ->
-                    if (index >= 0)
-                        arguments[index]
-                    else null
-                }
-            }
+            val extensionReceiver: IrExpression? = callSite.maybeExtensionReceiver()
             if (extensionReceiverParameter != null) {
                 parameterToArgument += ParameterToArgument(
                     parameter = extensionReceiverParameter,
@@ -847,6 +841,13 @@ open class FunctionInlining(
         }
     }
 }
+
+internal fun IrFunctionAccessExpression.maybeExtensionReceiver(): IrExpression? =
+    symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }.let { index ->
+        if (index >= 0)
+            arguments[index]
+        else null
+    }
 
 /**
  * Checks if the given function should be treated by 1st phase of inlining (inlining of private functions):
