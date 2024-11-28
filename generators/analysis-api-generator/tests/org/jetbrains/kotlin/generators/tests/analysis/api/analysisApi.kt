@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractOriginalConstructorIfTypeAliasedTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
@@ -638,6 +639,14 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("referenceResolveProvider") {
         test<AbstractIsImplicitCompanionReferenceTest> {
             model(it, "isImplicitReferenceToCompanion")
+        }
+    }
+
+    component("relationProvider") {
+        test<AbstractOriginalConstructorIfTypeAliasedTest>(
+            filter = frontendIs(FrontendKind.Fir),
+        ) {
+            model(it, "originalConstructorIfTypeAliased")
         }
     }
 
