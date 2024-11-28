@@ -43,11 +43,9 @@ object KotlinPackageIndexUtils {
         searchScope: GlobalSearchScope,
     ): Boolean {
         if (certainlyDoesNotExist(packageFqName, searchScope)) return false
-        return !fileBasedIndex.processValues(
-            KotlinPartialPackageNamesIndex.NAME,
-            packageFqName,
-            searchScope
-        ) { false }
+        return !fileBasedIndex.processValues(KotlinPartialPackageNamesIndex.NAME, packageFqName, searchScope) {
+            false
+        }
     }
 
     private fun certainlyDoesNotExist(
@@ -90,10 +88,3 @@ object KotlinPackageIndexUtils {
     }
 }
 
-private fun <K, V> FileBasedIndex.getValues(name: ID<K, V>, fqName: K, scope: GlobalSearchScope): List<V> =
-    buildList {
-        processValues(name, fqName, scope) {
-            add(it)
-            true
-        }
-    }

@@ -80,10 +80,10 @@ fun main() {
                 }
             }
         )
-        
-        application.registerService(PluginUtil::class.java, object: PluginUtil {
+
+        application.registerService(PluginUtil::class.java, object : PluginUtil {
             val id = PluginId.getId("dumdum")
-            
+
             override fun getCallerPlugin(stackFrameCount: Int): PluginId? = id
 
             override fun findPluginId(t: Throwable): PluginId? = id
@@ -126,18 +126,6 @@ fun main() {
                 registerExtension(PsiElementFinderImpl(project), d)
             }
 
-            registerService(
-                KotlinDirectInheritorsProvider::class.java,
-                object : KotlinDirectInheritorsProvider {
-                    override fun getDirectKotlinInheritors(
-                        ktClass: KtClass,
-                        scope: GlobalSearchScope,
-                        includeLocalInheritors: Boolean,
-                    ): Iterable<KtClassOrObject> {
-                        TODO("Not yet implemented")
-                    }
-                }
-            )
 
             registerService(
                 KotlinGlobalSearchScopeMerger::class.java,
@@ -159,7 +147,6 @@ fun main() {
                 object : KotlinPlatformSettings {
                     override val deserializedDeclarationsOrigin: KotlinDeserializedDeclarationsOrigin
                         get() = KotlinDeserializedDeclarationsOrigin.BINARIES
-
                 }
             )
 
@@ -219,128 +206,52 @@ fun main() {
                 }
             )
 
-            registerService(
-                KotlinAnnotationsResolverFactory::class.java,
-                object : KotlinAnnotationsResolverFactory {
-                    override fun createAnnotationResolver(searchScope: GlobalSearchScope): KotlinAnnotationsResolver {
-                        return object : KotlinAnnotationsResolver {
-                            override fun declarationsByAnnotation(annotationClassId: ClassId): Set<KtAnnotated> {
-                                TODO("Not yet implemented")
-                            }
+            val stubIndex: StubIndex = 1
+            val fileBasedIndex: FileBasedIndex = 1
 
-                            override fun annotationsOnDeclaration(declaration: KtAnnotated): Set<ClassId> {
-                                TODO("Not yet implemented")
-                            }
-                        }
+            registerService(
+                KotlinDirectInheritorsProvider::class.java,
+                object : KotlinDirectInheritorsProvider {
+                    override fun getDirectKotlinInheritors(
+                        ktClass: KtClass,
+                        scope: GlobalSearchScope,
+                        includeLocalInheritors: Boolean,
+                    ): Iterable<KtClassOrObject> {
+                        TODO("Not yet implemented")
                     }
                 }
+            )
+
+            registerService(
+                KotlinAnnotationsResolverFactory::class.java,
+                IdeKotlinAnnotationsResolverFactory(project, stubIndex),
             )
 
             registerService(
                 KotlinResolutionScopeProvider::class.java,
-                object : KotlinResolutionScopeProvider {
-                    override fun getResolutionScope(module: KaModule): GlobalSearchScope {
-                        return GlobalSearchScope.filesScope(project, listOf(singleFile))
-                    }
-                }
+                KotlinByModulesResolutionScopeProvider()
             )
 
             registerService(
                 KotlinDeclarationProviderFactory::class.java,
-                object : KotlinDeclarationProviderFactory {
-                    override fun createDeclarationProvider(
-                        scope: GlobalSearchScope,
-                        contextualModule: KaModule?,
-                    ): KotlinDeclarationProvider {
-                        return KotlinFileBasedDeclarationProvider(psiFile as KtFile)
-                    }
-                }
+                IdeKotlinDeclarationProviderFactory(project, stubIndex, fileBasedIndex)
             )
             registerService(
                 KotlinDeclarationProviderMerger::class.java,
-                object : KotlinDeclarationProviderMerger {
-                    override fun merge(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider {
-                        TODO("Not yet implemented")
-                    }
-                }
+                IdeKotlinDeclarationProviderMerger(project, stubIndex, fileBasedIndex)
             )
             registerService(
                 KotlinPackageProviderFactory::class.java,
-                object : KotlinPackageProviderFactory {
-                    override fun createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider {
-                        return object : KotlinPackageProvider {
-                            override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun doesKotlinOnlyPackageExist(packageFqName: FqName): Boolean {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun doesPlatformSpecificPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun getSubPackageFqNames(
-                                packageFqName: FqName,
-                                platform: TargetPlatform,
-                                nameFilter: (Name) -> Boolean,
-                            ): Set<Name> {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun getKotlinOnlySubPackagesFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name> {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun getPlatformSpecificSubPackagesFqNames(
-                                packageFqName: FqName,
-                                platform: TargetPlatform,
-                                nameFilter: (Name) -> Boolean,
-                            ): Set<Name> {
-                                TODO("Not yet implemented")
-                            }
-
-                        }
-                    }
-                }
+                IdeKotlinPackageProviderFactory(project, fileBasedIndex)
             )
             registerService(
                 KotlinPackageProviderMerger::class.java,
-                object : KotlinPackageProviderMerger {
-                    override fun merge(providers: List<KotlinPackageProvider>): KotlinPackageProvider {
-                        TODO("Not yet implemented")
-                    }
-                }
+                IdeKotlinPackageProviderMerger(project, fileBasedIndex)
             )
 
             registerService(
                 KotlinPackagePartProviderFactory::class.java,
-                object : KotlinPackagePartProviderFactory {
-                    override fun createPackagePartProvider(scope: GlobalSearchScope): PackagePartProvider {
-                        return object : PackagePartProvider {
-                            override fun findPackageParts(packageFqName: String): List<String> {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun computePackageSetWithNonClassDeclarations(): Set<String> {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun getAllOptionalAnnotationClasses(): List<ClassData> {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun mayHaveOptionalAnnotationClasses(): Boolean {
-                                TODO("Not yet implemented")
-                            }
-                        }
-                    }
-                }
+                IdeKotlinPackagePartProviderFactory(fileBasedIndex)
             )
         }
 

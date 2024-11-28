@@ -62,11 +62,13 @@ class KotlinPartialPackageNamesIndex : FileBasedIndexExtension<FqName, Name?> {
             if (input.readBoolean()) null else Name.guessByFirstCharacter(IOUtil.readUTF(input))
     }
 
-    override val name get() = NAME
+    override val name 
+        get() = NAME
 
 //    override fun dependsOnFileContent() = true
 
-    override val keyDescriptor get() = FqNameKeyDescriptor
+    override val keyDescriptor 
+        get() = FqNameKeyDescriptor
 
     override val valueExternalizer: DataExternalizer<Name?>
         get() = NullableNameExternalizer
@@ -80,7 +82,8 @@ class KotlinPartialPackageNamesIndex : FileBasedIndexExtension<FqName, Name?> {
             KlibMetaFileType,
         )
 
-    override val version get() = 5
+    override val version 
+        get() = 5
 
 //    override fun traceKeyHashToVirtualFileMapping(): Boolean = true
 

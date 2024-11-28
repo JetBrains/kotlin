@@ -36,9 +36,23 @@ interface FileBasedIndex {
         indexId: ID<K, V>,
         dataKey: K,
         filter: GlobalSearchScope,
-        processor: Processor<in V>
+        processor: Processor<in V>,
+    ): Boolean
+    
+    fun <K, V> processAllKeys(
+        indexId: ID<K, V>,
+        filter: GlobalSearchScope,
+        processor: Processor<in K>,
     ): Boolean
 }
+
+fun <K, V> FileBasedIndex.getValues(name: ID<K, V>, fqName: K, scope: GlobalSearchScope): List<V> =
+    buildList {
+        processValues(name, fqName, scope) {
+            add(it)
+            true
+        }
+    }
 
 interface FileBasedIndexExtension<K, V> {
     val name: ID<K, V>
