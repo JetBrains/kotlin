@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.codegen.serialization
 
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
@@ -61,6 +61,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     private val approximator = state.typeApproximator
     private val useOldManglingScheme = state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     private val signatureSerializer = JvmSignatureSerializerImpl(stringTable)
+    private val localDelegatedProperties = state.localDelegatedProperties
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
 
@@ -122,9 +123,8 @@ class JvmSerializerExtension @JvmOverloads constructor(
         classAsmType: Type,
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
     ) {
-        val localVariables = CodegenBinding.getLocalDelegatedProperties(codegenBinding, classAsmType) ?: return
-
-        for (localVariable in localVariables) {
+        for (localVariable in localDelegatedProperties[classAsmType].orEmpty()) {
+            if (localVariable !is LocalVariableDescriptor) continue
             val propertyDescriptor = createFreeFakeLocalPropertyDescriptor(localVariable, approximator)
             val serializer = DescriptorSerializer.createForLambda(this, languageVersionSettings)
             proto.addExtension(extension, serializer.propertyProto(propertyDescriptor)?.build() ?: continue)
