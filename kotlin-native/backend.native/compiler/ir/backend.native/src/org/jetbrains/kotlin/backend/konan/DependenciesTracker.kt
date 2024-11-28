@@ -329,12 +329,24 @@ internal class DependenciesTrackerImpl(
         Dependencies()
     }
 
-    override val immediateBitcodeDependencies get() = (dependencies.immediateBitcodeDependencies + parent?.immediateBitcodeDependencies.orEmpty()).toSet().toList()
-    override val allCachedBitcodeDependencies get() = (dependencies.allCachedBitcodeDependencies + parent?.allCachedBitcodeDependencies.orEmpty()).toSet().toList()
-    override val allBitcodeDependencies get() = (dependencies.allBitcodeDependencies + parent?.allBitcodeDependencies.orEmpty()).toSet().toList()
-    override val nativeDependenciesToLink get() = (dependencies.nativeDependenciesToLink + parent?.nativeDependenciesToLink.orEmpty()).toSet().toList()
-    override val allNativeDependencies get() = (dependencies.allNativeDependencies + parent?.allNativeDependencies.orEmpty()).toSet().toList()
-    override val bitcodeToLink get() = (dependencies.bitcodeToLink + parent?.bitcodeToLink.orEmpty()).toSet().toList()
+    override val immediateBitcodeDependencies get() = dependencies.immediateBitcodeDependencies.run {
+            this + parent?.immediateBitcodeDependencies?.filter { candidate -> none { it.library.uniqueName == candidate.library.uniqueName } }.orEmpty()
+        }
+    override val allCachedBitcodeDependencies get() = dependencies.allCachedBitcodeDependencies.run {
+            this + parent?.allCachedBitcodeDependencies?.filter { candidate -> none { it.library.uniqueName == candidate.library.uniqueName } }.orEmpty()
+        }
+    override val allBitcodeDependencies get() = dependencies.allBitcodeDependencies.run {
+            this + parent?.allBitcodeDependencies?.filter { candidate -> none { it.library.uniqueName == candidate.library.uniqueName } }.orEmpty()
+        }
+    override val nativeDependenciesToLink get() = dependencies.nativeDependenciesToLink.run {
+            this + parent?.nativeDependenciesToLink?.filter { candidate -> none { it.uniqueName == candidate.uniqueName } }.orEmpty()
+        }
+    override val allNativeDependencies get() = dependencies.allNativeDependencies.run {
+            this + parent?.allNativeDependencies?.filter { candidate -> none { it.uniqueName == candidate.uniqueName } }.orEmpty()
+        }
+    override val bitcodeToLink get() = dependencies.bitcodeToLink.run {
+            this + parent?.bitcodeToLink?.filter { candidate -> none { it.uniqueName == candidate.uniqueName } }.orEmpty()
+        }
 
     override fun collectResult(): DependenciesTrackingResult = DependenciesTrackingResult(
             bitcodeToLink,
@@ -416,6 +428,55 @@ data class DependenciesTrackingResult(
             val allCachedBitcodeDependencies = allCachedBitcodeDeps.map { unresolvedDep ->
                 val lib = topSortedLibraries.find { it.uniqueName == unresolvedDep.libName }
                 require(lib != null && lib is KonanLibrary) { "Invalid dependency ${unresolvedDep.libName} at $path" }
+                when (unresolvedDep.kind) {
+                    is DependenciesTracker.DependencyKind.CertainFiles ->
+                        DependenciesTracker.ResolvedDependency.certainFiles(lib, unresolvedDep.kind.files)
+                    else -> DependenciesTracker.ResolvedDependency.wholeModule(lib)
+                }
+            }
+
+            return DependenciesTrackingResult(nativeDependenciesToLink, allNativeDependencies, allCachedBitcodeDependencies)
+        }
+
+        fun merge(results: List<DependenciesTrackingResult>, config: KonanConfig): DependenciesTrackingResult {
+            val nativeLibsToLink = buildSet {
+                results.flatMapTo(this) { it.nativeDependenciesToLink.map { it.uniqueName } }
+            }
+            val allNativeLibs = buildSet {
+                results.flatMapTo(this) { it.allNativeDependencies.map { it.uniqueName } }
+            }
+            val allWholeModuleBitcodeDependencies = buildSet {
+                results.flatMapTo(this) {
+                    it.allCachedBitcodeDependencies.mapNotNull {
+                        if (it.kind is DependenciesTracker.DependencyKind.WholeModule) {
+                            it.library.uniqueName
+                        } else {
+                            null
+                        }
+                    }
+                }
+            }
+            val allCertainFilesBitcodeDependencies = buildMap<String, MutableSet<String>> {
+                results.forEach {
+                    it.allCachedBitcodeDependencies.forEach {
+                        if (it.kind is DependenciesTracker.DependencyKind.CertainFiles) {
+                            this.getOrPut(it.library.uniqueName) { mutableSetOf<String>() }.addAll(it.kind.files)
+                        }
+                    }
+                }
+            }
+            val allCachedBitcodeDeps = allWholeModuleBitcodeDependencies.map {
+                DependenciesTracker.UnresolvedDependency.wholeModule(it)
+            } + allCertainFilesBitcodeDependencies.map { (lib, files) ->
+                DependenciesTracker.UnresolvedDependency.certainFiles(lib, files.toList())
+            }
+
+            val topSortedLibraries = config.resolvedLibraries.getFullList(TopologicalLibraryOrder)
+            val nativeDependenciesToLink = topSortedLibraries.mapNotNull { if (it.uniqueName in nativeLibsToLink && it is KonanLibrary) it else null }
+            val allNativeDependencies = topSortedLibraries.mapNotNull { if (it.uniqueName in allNativeLibs && it is KonanLibrary) it else null }
+            val allCachedBitcodeDependencies = allCachedBitcodeDeps.map { unresolvedDep ->
+                val lib = topSortedLibraries.find { it.uniqueName == unresolvedDep.libName }
+                require(lib != null && lib is KonanLibrary) { "Invalid dependency ${unresolvedDep.libName}" }
                 when (unresolvedDep.kind) {
                     is DependenciesTracker.DependencyKind.CertainFiles ->
                         DependenciesTracker.ResolvedDependency.certainFiles(lib, unresolvedDep.kind.files)

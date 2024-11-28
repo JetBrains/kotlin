@@ -182,14 +182,11 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                     }
                 }
 
-                val moduleCompilationOutput = moduleCompilationOutputs.reduce { result, moduleCompilationOutput ->
-                    val dependencies = DependenciesTrackingResult(
-                            nativeDependenciesToLink = result.dependenciesTrackingResult.nativeDependenciesToLink + moduleCompilationOutput.dependenciesTrackingResult.nativeDependenciesToLink,
-                            allNativeDependencies = result.dependenciesTrackingResult.allNativeDependencies + moduleCompilationOutput.dependenciesTrackingResult.allNativeDependencies,
-                            allCachedBitcodeDependencies = result.dependenciesTrackingResult.allCachedBitcodeDependencies + moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies,
-                    )
-                    ModuleCompilationOutput(result.objectFiles + moduleCompilationOutput.objectFiles, dependencies)
+                val dependencies = DependenciesTrackingResult.merge(moduleCompilationOutputs.map { it.dependenciesTrackingResult }, context.config)
+                val objectFiles = buildList {
+                    moduleCompilationOutputs.flatMapTo(this) { it.objectFiles }
                 }
+                val moduleCompilationOutput = ModuleCompilationOutput(objectFiles, dependencies)
 
                 generationState.dependenciesTracker.collectResult().let { topLevelResult ->
                     topLevelResult.nativeDependenciesToLink.forEach {
@@ -203,7 +200,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         }
                     }
                     topLevelResult.allCachedBitcodeDependencies.forEach {
-                        check(moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies.contains(it)) {
+                        check(moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies.any { it2 ->
+                            it2.library.uniqueName == it.library.uniqueName
+                        }) {
                             "${it.library.uniqueName} not found in allCachedBitcodeDependencies: ${moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies.map { it.library.uniqueName }}"
                         }
                     }
