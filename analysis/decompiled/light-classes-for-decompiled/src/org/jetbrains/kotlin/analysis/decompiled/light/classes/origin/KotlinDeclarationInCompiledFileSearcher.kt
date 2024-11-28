@@ -19,43 +19,29 @@ import org.jetbrains.kotlin.constant.StringValue
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
-import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
-import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinDeclarationInCompiledFileSearcher {
-    private fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember, signature: MemberSignature): KtDeclaration? {
-        val relativeClassName = generateSequence(member.containingClass) { it.containingClass }.toList().dropLast(1).reversed()
-            .map { Name.identifier(it.name!!) }
-
-        val memberName = member.name ?: return null
-        return findByStubs(file, relativeClassName, member, memberName)
-    }
-
     fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember): KtDeclaration? {
-        val signature = when (member) {
-            is PsiField -> {
-                val desc = MapPsiToAsmDesc.typeDesc(member.type)
-                MemberSignature.fromFieldNameAndDesc(member.name, desc)
+        if (member is PsiClass) return null
+        val memberName = member.name ?: return null
+
+        val relativeClassName = generateSequence(member.containingClass) { it.containingClass }
+            .toList()
+            .ifNotEmpty {
+                subList(0, size - 1).asReversed().map { Name.identifier(it.name!!) }
             }
+            .orEmpty()
 
-            is PsiMethod -> {
-                val desc = MapPsiToAsmDesc.methodDesc(member)
-                val name = if (member.isConstructor) "<init>" else member.name
-                MemberSignature.fromMethodNameAndDesc(name, desc)
-            }
-
-            else -> null
-        } ?: return null
-
-        return findDeclarationInCompiledFile(file, member, signature)
+        return findByStubs(file, relativeClassName, member, memberName)
     }
 
     private fun findByStubs(
