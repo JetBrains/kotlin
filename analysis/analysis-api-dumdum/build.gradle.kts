@@ -8,6 +8,7 @@ dependencies {
     implementation(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     implementation(commonDependency("org.codehaus.woodstox:stax2-api"))
     implementation(commonDependency("com.fasterxml:aalto-xml"))
+    implementation(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     implementation(intellijCore())
     implementation(kotlinStdlib())
     implementation(project(":compiler:psi"))
@@ -17,6 +18,11 @@ dependencies {
     implementation(project(":analysis:analysis-api-impl-base"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
+    implementation(project(":analysis:decompiled:decompiler-to-stubs"))
+    implementation(project(":analysis:decompiled:decompiler-native"))
+    implementation(project(":core:deserialization.common"))
+    implementation(project(":core:deserialization.common.jvm"))
+    implementation(project(":core:deserialization"))
 
 }
 

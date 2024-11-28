@@ -1,7 +1,9 @@
 package org.jetbrains.kotlin.analysis.api.dumdum
 
+import com.intellij.ide.plugins.PluginUtil
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.ModificationTracker
@@ -10,11 +12,20 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.impl.smartPointers.SmartTypePointerManagerImpl
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.IndexSink
+import com.intellij.psi.stubs.ObjectStubBase
+import com.intellij.psi.stubs.ObjectStubSerializer
+import com.intellij.psi.stubs.PsiFileStub
+import com.intellij.psi.stubs.Stub
+import com.intellij.psi.stubs.StubIndexKey
+import com.intellij.psi.stubs.StubTree
 import com.intellij.psi.util.descendantsOfType
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.util.containers.HashingStrategy
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.IdeStubIndexService
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
@@ -31,11 +42,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -45,6 +53,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
+import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 
 @OptIn(KaImplementationDetail::class)
@@ -52,9 +63,9 @@ fun main() {
     if (System.getProperty("java.awt.headless") == null) {
         System.setProperty("java.awt.headless", "true")
     }
+    System.setProperty("idea.home.path", "/Users/jetzajac/tmp")
     Disposer.newDisposable().use { d ->
         val env = KotlinCoreEnvironment.createForProduction(d, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
-        
         val application = env.applicationEnvironment.application
         PluginStructureProvider.registerApplicationServices(application, "/META-INF/analysis-api/analysis-api-fir.xml")
         application.registerService(
@@ -69,7 +80,19 @@ fun main() {
                 }
             }
         )
+        
+        application.registerService(PluginUtil::class.java, object: PluginUtil {
+            val id = PluginId.getId("dumdum")
+            
+            override fun getCallerPlugin(stackFrameCount: Int): PluginId? = id
 
+            override fun findPluginId(t: Throwable): PluginId? = id
+
+            override fun findPluginName(pluginId: PluginId): String? = id.idString
+
+        });
+
+        application.registerService(StubIndexService::class.java, IdeStubIndexService())
 
         val project = env.project as MockProject
 
@@ -115,7 +138,7 @@ fun main() {
                     }
                 }
             )
-            
+
             registerService(
                 KotlinGlobalSearchScopeMerger::class.java,
                 KotlinSimpleGlobalSearchScopeMerger()
@@ -326,8 +349,25 @@ fun main() {
         analyze(call) {
             println((call.resolveToCall() as KaSuccessCallInfo).call)
         }
+
+        val fileElementType = KtFileElementType.INSTANCE
+        // let's build stub for my file:
+        val stub = fileElementType.builder.buildStubTree(psiFile)
+        println(stub.childrenStubs)
+
+        val map = StubTree(stub as KotlinFileStub).indexStubTree { indexKey ->
+            HashingStrategy.canonical()
+        }
+        println(map)
     }
 }
+
+
+fun Stub.serializer(): ObjectStubSerializer<*, *> =
+    when (this) {
+        is PsiFileStub<*> -> type
+        else -> stubType
+    }
 
 internal data class KaSourceModuleImpl(
     override val directRegularDependencies: List<KaModule>,
