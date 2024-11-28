@@ -23,7 +23,8 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
     @PublishedApi
     internal var indent: Int = 0
 
-    override fun append(seq: CharSequence): Appendable = apply {
+    override fun append(nullableSeq: CharSequence?): Appendable = apply {
+        val seq = nullableSeq ?: "null"
         if (seq.isEmpty()) return@apply
         printPrefixes()
         seq.split('\n').forEachIndexed { index, line ->
@@ -35,8 +36,8 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         }
     }
 
-    override fun append(seq: CharSequence, start: Int, end: Int): Appendable = apply {
-        append(seq.subSequence(start, end))
+    override fun append(nullableSeq: CharSequence?, start: Int, end: Int): Appendable = apply {
+        append((nullableSeq ?: "null").subSequence(start, end))
     }
 
     override fun append(c: Char): Appendable = apply {
