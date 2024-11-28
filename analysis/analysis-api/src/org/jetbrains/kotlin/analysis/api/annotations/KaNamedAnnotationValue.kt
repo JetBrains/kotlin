@@ -9,9 +9,28 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Name-Value pair which is used as annotation argument.
+ * A name/value pair representing an annotation argument.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * annotation class Foo(val bar: String)
+ *
+ * @Foo(bar = "abc")
+ * fun foo() {}
+ * ```
+ *
+ * The annotation application `@Foo(bar = "abc")` has a single [KaNamedAnnotationValue] `bar = "abc"`, with the name "bar" and a
+ * [KaAnnotationValue.ConstantValue] representing the [String] constant `"abc"`.
  */
 public interface KaNamedAnnotationValue : KaLifetimeOwner {
+    /**
+     * The name of the annotation argument.
+     */
     public val name: Name
+
+    /**
+     * The value of the annotation argument.
+     */
     public val expression: KaAnnotationValue
 }

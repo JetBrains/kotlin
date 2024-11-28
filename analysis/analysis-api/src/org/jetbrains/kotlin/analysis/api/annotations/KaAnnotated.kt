@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.annotations
 
 /**
- * An entity which may have annotations applied to it, such as a declaration or type.
+ * [KaAnnotated] represents an entity which may have annotations applied to it. All [types][org.jetbrains.kotlin.analysis.api.types.KaType]s
+ * and almost all [symbols][org.jetbrains.kotlin.analysis.api.symbols.KaSymbol] can have annotations.
  */
 public interface KaAnnotated {
     /**

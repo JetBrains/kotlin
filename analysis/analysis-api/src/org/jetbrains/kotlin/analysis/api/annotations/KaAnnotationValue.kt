@@ -14,86 +14,100 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
- * Annotation values are expected to be compile-time constants. According to the
- * [spec](https://kotlinlang.org/spec/annotations.html#annotation-values),
- * allowed kinds are:
- *   * integer types,
- *   * string type,
- *   * enum types,
- *   * other annotation types, and
- *   * array of aforementioned types
+ * [KaAnnotationValue] represents the [value](https://kotlinlang.org/spec/annotations.html#annotation-values) of an annotation argument.
  *
- *  [KaConstantAnnotationValue]  covers first two kinds;
- *  [KaEnumEntryAnnotationValue] corresponds to enum types;
- *  [KaAnnotationApplicationValue] represents annotation types (with annotation fq name and arguments); and
- *  [KaArrayAnnotationValue] abstracts an array of [KaAnnotationValue]s.
+ * Annotation values must be compile-time constants. They are restricted in their allowed types, which are:
+ *
+ * - Integers, [Boolean], and [String] ([ConstantValue])
+ * - Enum types ([EnumEntryValue])
+ * - [KClass][kotlin.reflect.KClass] ([ClassLiteralValue])
+ * - Other annotation types ([NestedAnnotationValue])
+ * - Arrays of aforementioned types ([ArrayValue])
+ *
+ * #### Examples
+ *
+ * ```kotlin
+ * @Foo1(5, true, "foo")                        // Constant values
+ * @Foo2(Color.RED)                             // Enum entries
+ * @Foo3(String::class)                         // `KClass` values
+ * @Foo4(Foo2(Color.RED))                       // Nested annotation values
+ * @Foo5([Color.RED, Color.GREEN, Color.BLUE])  // Arrays
+ * ```
  */
 public sealed interface KaAnnotationValue : KaLifetimeOwner {
+    /**
+     * The [KtElement] underlying the annotation value. This is only defined for annotations in source files. For libraries, it always
+     * returns `null`.
+     */
     public val sourcePsi: KtElement?
 
     /**
-     * Represents an unsupported expression used as an annotation value.
+     * A constant annotation value, such as `1` or `"foo"`.
+     *
+     * @see KaConstantValue
      */
-    public interface UnsupportedValue : KaAnnotationValue
-
-    /**
-     * Represents an array of annotation values.
-     * E.g., `[1, 2]`.
-     */
-    public interface ArrayValue : KaAnnotationValue {
-        public val values: Collection<KaAnnotationValue>
-    }
-
-    /**
-     * Represents a nested annotation value.
-     * E.g., @Foo(bar = Bar(1)).
-     */
-    public interface NestedAnnotationValue : KaAnnotationValue {
-        public val annotation: KaAnnotation
-    }
-
-    /**
-     * Represents a class literal value.
-     * E.g., `String::class`.
-     */
-    public interface ClassLiteralValue : KaAnnotationValue {
+    public interface ConstantValue : KaAnnotationValue {
         /**
-         * The referenced [ClassId], if available.
-         * The property is useful for error handling, as [KaClassErrorType] currently does not provide a [ClassId].
+         * A constant value (a number, [Boolean], [Char], or [String]) wrapped into the [KaConstantValue] abstraction.
          */
-        public val classId: ClassId?
-
-        /**
-         * The class reference type.
-         * E.g., `Array<String>` for the `Array<String>::class` literal.
-         */
-        public val type: KaType
+        public val value: KaConstantValue
     }
 
     /**
-     * Represents an enum entry value.
-     * E.g., `Color.RED`.
+     * An enum entry annotation value, such as `Color.RED`.
      */
     public interface EnumEntryValue : KaAnnotationValue {
         /**
-         * Name of an enum entry.
+         * The fully qualified [CallableId] of the enum entry.
          */
         public val callableId: CallableId?
     }
 
     /**
-     * Represents a constant value.
-     * E.g., `1`, `"foo"`.
-     *
-     * @see [KaConstantValue]
+     * A class literal annotation value, such as `String::class` or `Array<String>::class`.
      */
-    public interface ConstantValue : KaAnnotationValue {
-        public val value: KaConstantValue
+    public interface ClassLiteralValue : KaAnnotationValue {
+        /**
+         * The [KaType] of the class reference, such as `String` for the `String::class` reference.
+         */
+        public val type: KaType
+
+        /**
+         * The referenced [ClassId], if available.
+         *
+         * The property is useful for error handling, as [KaClassErrorType] currently does not provide a [ClassId].
+         */
+        public val classId: ClassId?
     }
+
+    /**
+     * Represents a nested annotation value, such as `ReplaceWith("bar()")` in `@Deprecated("Use 'bar()' instead", ReplaceWith("bar()"))`.
+     */
+    public interface NestedAnnotationValue : KaAnnotationValue {
+        /**
+         * The [KaAnnotation] which is applied as an annotation argument through this nested annotation value.
+         */
+        public val annotation: KaAnnotation
+    }
+
+    /**
+     * Represents an array of annotation values, such as `arrayOf(1, 2)` or `[1, 2]`.
+     */
+    public interface ArrayValue : KaAnnotationValue {
+        /**
+         * The list of annotation values contained in the array.
+         */
+        public val values: Collection<KaAnnotationValue>
+    }
+
+    /**
+     * Represents an unsupported expression used as an annotation value.
+     */
+    public interface UnsupportedValue : KaAnnotationValue
 }
 
 /**
- * Render annotation value, resulted string is a valid Kotlin source code.
+ * Renders the annotation value as valid Kotlin source code.
  */
 public fun KaAnnotationValue.renderAsSourceCode(): String =
     KaAnnotationValueRenderer.render(this)

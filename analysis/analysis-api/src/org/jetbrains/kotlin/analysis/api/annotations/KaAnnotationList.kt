@@ -9,43 +9,29 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.name.ClassId
 
 /**
- * A list of annotations applied for some entity.
+ * A list of annotations applied to an entity.
  *
- * Annotation owners are usually implement [KaAnnotated]
+ * Annotation owners usually implement [KaAnnotated].
  */
 public interface KaAnnotationList : List<KaAnnotation>, KaLifetimeOwner {
     /**
-     * Checks if entity contains annotation with specified [classId].
-     *
-     * The semantic is equivalent to
-     * ```
-     * annotationsList.hasAnnotation(classId) == annotationsList.annotations.any { it.classId == classId }
-     * ```
-     * @param classId [ClassId] to search
+     * Checks if the entity contains an annotation with the specified [classId].
      */
     public operator fun contains(classId: ClassId): Boolean
 
     /**
-     * A list of annotations applied with specified [classId].
+     * Returns the list of annotations with the specified [classId]. The same type of annotation may occur multiple times if it is
+     * [repeatable](https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.annotation/-repeatable/).
      *
-     * To check if annotation is present, please use [contains].
-     *
-     * The semantic is equivalent to
-     * ```
-     * annotationsList.annotationsByClassId(classId) == annotationsList.annotations.filter { it.classId == classId }
-     * ```
+     * To check if an annotation is present, use [contains] instead.
      */
     public operator fun get(classId: ClassId): List<KaAnnotation>
 
     /**
-     * A list of annotations [ClassId].
+     * The list of [ClassId]s of all annotations, in their original order. If the entity has [repeatable](https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.annotation/-repeatable/)
+     * annotations, [classIds] may contain the same class ID multiple times.
      *
-     * To check if annotation is present, please use [contains].
-     *
-     * The semantic is equivalent to
-     * ```
-     * annotationsList.annotationClassIds == annotationsList.annotations.map { it.classId }
-     * ```
+     * To check if an annotation is present, use [contains] instead.
      */
     public val classIds: Collection<ClassId>
 }
