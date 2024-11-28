@@ -1915,6 +1915,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("smartcastToIntersection.kt")
+    public void testSmartcastToIntersection() {
+      runTest("compiler/testData/ir/irText/expressions/smartcastToIntersection.kt");
+    }
+
+    @Test
     @TestMetadata("specializedTypeAliasConstructorCall.kt")
     public void testSpecializedTypeAliasConstructorCall() {
       runTest("compiler/testData/ir/irText/expressions/specializedTypeAliasConstructorCall.kt");

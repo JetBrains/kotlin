@@ -1,0 +1,24 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /Bar : /IChild, /IParentImpl { // /Bar|null[0]
+    constructor <init>() // /Bar.<init>|<init>(){}[0]
+    open fun b(kotlin/String): kotlin/String // /Bar.b|b(kotlin.String){}[0]
+}
+open class /Foo : /IChild, /IParentImpl { // /Foo|null[0]
+    constructor <init>() // /Foo.<init>|<init>(){}[0]
+    open fun b(kotlin/String): kotlin/String // /Foo.b|b(kotlin.String){}[0]
+}
+abstract interface /IChild : /IParent<kotlin/String, kotlin/String> // /IChild|null[0]
+abstract interface <#A: kotlin/Any?, #B: kotlin/Any?> /IParent { // /IParent|null[0]
+    abstract fun b(#A): #B // /IParent.b|b(1:0){}[0]
+}
+open class /IParentImpl : /IParent<kotlin/String, kotlin/String> { // /IParentImpl|null[0]
+    constructor <init>() // /IParentImpl.<init>|<init>(){}[0]
+    open fun b(kotlin/String): kotlin/String // /IParentImpl.b|b(kotlin.String){}[0]
+}
+final fun /getChild(): /IChild? // /getChild|getChild(){}[0]
+final fun /test(): kotlin/String? // /test|test(){}[0]
