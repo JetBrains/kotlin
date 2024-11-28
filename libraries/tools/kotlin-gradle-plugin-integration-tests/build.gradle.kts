@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.nio.file.Paths
+import java.time.Duration
 
 plugins {
     kotlin("jvm")
@@ -408,6 +409,9 @@ tasks.withType<Test>().configureEach {
 
     val noTestProperty = project.providers.gradleProperty("noTest")
     onlyIf { !noTestProperty.isPresent }
+
+    // Trigger task timeout earlier than TC timeout, so we could collect more info what went wrong with IT tests
+    timeout.set(Duration.ofHours(2))
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
