@@ -523,7 +523,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
         project(
             "mpp-composite-build/sample0/consumerBuild",
-            gradleVersion, buildOptions = defaultBuildOptions.enableKmpIsolatedProjectSupport()
+            gradleVersion
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
 

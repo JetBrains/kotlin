@@ -388,18 +388,6 @@ fun BuildOptions.withBundledKotlinNative() = copy(
 fun BuildOptions.disableConfigurationCache_KT70416() = copy(configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED)
 
 fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)
-fun BuildOptions.enableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.ENABLE)
 
-// TODO: KT-71130 flip projectIsolation by default to AUTO, as soon as KT-71130 is completely fixed
-fun BuildOptions.autoIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.AUTO)
-fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)
 fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)
-
-/** Should be used when test data doesn't support isolated projects completely,
- *  but tests can be run to verify KMP Isolated Projects support feature flag */
-fun BuildOptions.disableIsolatedProjectsButEnableKmpSupportForMaxGradle(gradleVersion: GradleVersion) =
-    if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)) {
-        disableIsolatedProjects().enableKmpIsolatedProjectSupport()
-    } else {
-        disableIsolatedProjects().disableKmpIsolatedProjectSupport()
-    }
+fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)

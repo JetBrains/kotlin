@@ -108,8 +108,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
             "externalAndroidTarget-project2project",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = androidVersion)
-                .disableIsolatedProjectsButEnableKmpSupportForMaxGradle(gradleVersion),
+                .copy(androidVersion = androidVersion),
             buildJdk = jdkVersion.location,
             localRepoDir = localRepoDir
         ) {

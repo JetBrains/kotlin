@@ -354,6 +354,9 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 "jvmWithJavaSourcesElements",
             )
 
+            // They are created together with target.kotlinComponents
+            val outgoingPublishedConfigurations = outgoingConfigurations.map { "$it-published" }
+
             val testJavaConfigurations = listOf(
                 "testCompileClasspath",
                 "testCompileOnly",
@@ -374,6 +377,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             val expectedConfigurationsWithDisambiguationAttribute = javaConfigurations +
                     kotlinJvmConfigurations +
                     outgoingConfigurations +
+                    outgoingPublishedConfigurations +
                     testJavaConfigurations +
                     jvmWithJavaTestConfigurations
 

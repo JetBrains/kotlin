@@ -96,11 +96,8 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            val (commonizeNativeDistributionTask, cleanNativeDistributionCommonizationTask) = if (kmpIsolatedProjectsSupportEnabled) {
-                ":lib:commonizeNativeDistribution" to ":lib:cleanNativeDistributionCommonization"
-            } else {
-                ":commonizeNativeDistribution" to ":cleanNativeDistributionCommonization"
-            }
+            val commonizeNativeDistributionTask = ":lib:commonizeNativeDistribution"
+            val cleanNativeDistributionCommonizationTask = ":lib:cleanNativeDistributionCommonization"
 
             build(":lib:compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(commonizeNativeDistributionTask)
@@ -218,7 +215,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     )
     @GradleTest
     fun `test composite build with precompiled script plugins and multiplatform`(gradleVersion: GradleVersion) {
-        project("composite-build-with-precompiled-script-plugins", gradleVersion) {
+        val buildOptions = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)) {
+            defaultBuildOptions.disableIsolatedProjects()
+        } else defaultBuildOptions
+
+        project("composite-build-with-precompiled-script-plugins", gradleVersion, buildOptions = buildOptions) {
             settingsGradleKts.replaceText(
                 "pluginManagement {",
                 """
@@ -367,7 +368,7 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions
             .copy(configurationCache = BuildOptions.ConfigurationCacheValue.ENABLED)
-            .autoIsolatedProjects()
+            .enableIsolatedProjects()
 
     protected fun TestProject.testConfigurationCacheOf(
         vararg taskNames: String,

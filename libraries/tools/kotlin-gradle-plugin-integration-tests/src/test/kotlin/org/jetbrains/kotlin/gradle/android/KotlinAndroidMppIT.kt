@@ -388,8 +388,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             "new-mpp-android",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
-                .disableConfigurationCache_KT70416()
-                .disableIsolatedProjectsButEnableKmpSupportForMaxGradle(gradleVersion),
+                .disableConfigurationCache_KT70416(),
             buildJdk = jdkVersion.location
         ) {
             // Convert the 'app' project to a library, publish two flavors without metadata,
@@ -502,8 +501,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             "new-mpp-android",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .disableIsolatedProjectsButEnableKmpSupportForMaxGradle(gradleVersion),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             settingsGradle.replaceText("include ':app', ':lib'", "include ':lib'")
@@ -523,17 +521,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                     .readText()
                     .replace("""\s+""".toRegex(), "")
 
-                if (kmpIsolatedProjectsSupportEnabled) {
-                    assertContains(
-                        pomText,
-                        """<groupId>com.example</groupId><artifactId>libFromIncluded-androidlib</artifactId><version>1.0</version>"""
-                    )
-                } else {
-                    assertContains(
-                        pomText,
-                        """<groupId>com.example</groupId><artifactId>libFromIncluded</artifactId><version>1.0</version>"""
-                    )
-                }
+                assertContains(
+                    pomText,
+                    """<groupId>com.example</groupId><artifactId>libFromIncluded-androidlib</artifactId><version>1.0</version>"""
+                )
             }
         }
     }

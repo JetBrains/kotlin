@@ -35,9 +35,6 @@ open class CommonizerIT : KGPBaseTest() {
         private const val commonizerOutput = "Preparing commonized Kotlin/Native libraries"
     }
 
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.enableKmpIsolatedProjectSupport()
-
     @DisplayName("Commonize native distribution with Ios Linux and Windows")
     @GradleTest
     fun testCommonizeNativeDistributionWithIosLinuxWindows(gradleVersion: GradleVersion) {

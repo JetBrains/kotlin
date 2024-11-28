@@ -1198,7 +1198,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @DisplayName("It should be possible to disable default publications for stdlib and other kotlin libraries")
     fun `test disable default publications`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         project("mppCustomPublicationLayout", gradleVersion = gradleVersion, localRepoDir = tempDir) {
-            makeSnapshotTo("/tmp/111")
             build(":libWithCustomLayout:publishKotlinPublicationToMavenRepository") {
                 listOf("jvm.jar", "linuxArm64.klib", "linuxX64.klib")
                     .map { tempDir.resolve("test/libWithCustomLayout/1.0/libWithCustomLayout-1.0-$it") }

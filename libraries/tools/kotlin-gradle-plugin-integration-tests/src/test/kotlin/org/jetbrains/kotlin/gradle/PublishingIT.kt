@@ -119,7 +119,6 @@ class PublishingIT : KGPBaseTest() {
             "pom-rewriter",
             gradleVersion,
             localRepoDir = localRepo,
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsButEnableKmpSupportForMaxGradle(gradleVersion),
         ) {
 
             projectPath.resolve("included").addDefaultSettingsToSettingsGradle(
@@ -137,12 +136,7 @@ class PublishingIT : KGPBaseTest() {
                     .readText()
                     .replace(buildOptions.kotlinVersion, "{kotlin_version}")
 
-                val expectedPomName = if (kmpIsolatedProjectsSupportEnabled) {
-                    "expected-pom-kmp-isolated-projects-support-pom-rewriter.xml"
-                } else {
-                    "expected-pom-legacy-pom-rewriter.xml"
-                }
-                val expectedPomFile = projectPath.resolve(expectedPomName).toFile()
+                val expectedPomFile = projectPath.resolve("expected-pom.xml").toFile()
 
                 assertEqualsToFile(expectedPomFile, actualPomContent)
             }
