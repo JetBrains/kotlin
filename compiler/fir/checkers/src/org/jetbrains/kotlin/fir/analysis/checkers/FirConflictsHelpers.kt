@@ -55,7 +55,7 @@ private val CallableId.isTopLevel get() = className == null
 
 private fun FirBasedSymbol<*>.isCollectable(): Boolean {
     if (this is FirCallableSymbol<*>) {
-        if (resolvedContextReceivers.any { it.returnTypeRef.coneType.hasError() }) return false
+        if (resolvedContextParameters.any { it.returnTypeRef.coneType.hasError() }) return false
         if (typeParameterSymbols.any { it.toConeType().hasError() }) return false
         if (receiverParameter?.typeRef?.coneType?.hasError() == true) return false
         if (this is FirFunctionSymbol<*> && valueParameterSymbols.any { it.resolvedReturnType.hasError() }) return false

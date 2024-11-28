@@ -62,7 +62,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppChec
                 reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol, context)
             }
 
-            if (referredSymbol.resolvedContextReceivers.isNotEmpty() && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            if (referredSymbol.resolvedContextParameters.isNotEmpty() && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
                 reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION, referredSymbol, context)
             }
         }

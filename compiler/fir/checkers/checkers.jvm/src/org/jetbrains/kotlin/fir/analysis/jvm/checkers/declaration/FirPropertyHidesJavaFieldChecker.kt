@@ -33,7 +33,7 @@ object FirPropertyHidesJavaFieldChecker : FirClassChecker(MppCheckerKind.Platfor
             if (propertySymbol.getContainingClassSymbol() != declaration.symbol) return@processAllProperties
             if (propertySymbol.origin != FirDeclarationOrigin.Source) return@processAllProperties
             if (propertySymbol.receiverParameter != null) return@processAllProperties
-            if (propertySymbol.resolvedContextReceivers.isNotEmpty()) return@processAllProperties
+            if (propertySymbol.resolvedContextParameters.isNotEmpty()) return@processAllProperties
             if (propertySymbol.isDeprecationLevelHidden(context.session)) return@processAllProperties
             var warningReported = false
             scope.processPropertiesByName(propertySymbol.name) { fieldSymbol ->

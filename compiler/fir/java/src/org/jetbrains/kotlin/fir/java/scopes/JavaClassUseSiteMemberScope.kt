@@ -172,7 +172,7 @@ class JavaClassUseSiteMemberScope(
             val key = SyntheticPropertiesCacheKey(
                 name,
                 overriddenProperty.chosenSymbol.receiverParameter?.typeRef?.coneType,
-                overriddenProperty.chosenSymbol.resolvedContextReceivers.ifNotEmpty { map { it.returnTypeRef.coneType } } ?: emptyList()
+                overriddenProperty.chosenSymbol.resolvedContextParameters.ifNotEmpty { map { it.returnTypeRef.coneType } } ?: emptyList()
             )
             val overrideInClass = syntheticPropertyCache.getValue(key, this to overriddenProperty)
 
@@ -228,7 +228,7 @@ class JavaClassUseSiteMemberScope(
     ): FirNamedFunctionSymbol? {
         val propertyFromSupertype = fir
         val expectedReturnType = propertyFromSupertype.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-        val receiverCount = (if (receiverParameter != null) 1 else 0) + resolvedContextReceivers.size
+        val receiverCount = (if (receiverParameter != null) 1 else 0) + resolvedContextParameters.size
         return scope.getFunctions(Name.identifier(getterName)).firstNotNullOfOrNull factory@{ candidateSymbol ->
             val candidate = candidateSymbol.fir
             if (candidate.valueParameters.size != receiverCount) return@factory null
@@ -254,7 +254,7 @@ class JavaClassUseSiteMemberScope(
         scope: FirScope,
     ): FirNamedFunctionSymbol? {
         val propertyType = fir.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return null
-        val receiverCount = (if (receiverParameter != null) 1 else 0) + resolvedContextReceivers.size
+        val receiverCount = (if (receiverParameter != null) 1 else 0) + resolvedContextParameters.size
 
         return scope.getFunctions(Name.identifier(JvmAbi.setterName(fir.name.asString()))).firstNotNullOfOrNull factory@{ candidateSymbol ->
             val candidate = candidateSymbol.fir
@@ -282,7 +282,7 @@ class JavaClassUseSiteMemberScope(
         var parameterIndex = 0
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
 
-        for (contextReceiver in this.resolvedContextReceivers) {
+        for (contextReceiver in this.resolvedContextParameters) {
             if (contextReceiver.returnTypeRef.coneType.computeJvmDescriptorRepresentation() !=
                 candidate.valueParameters[parameterIndex++].returnTypeRef
                     .toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource)

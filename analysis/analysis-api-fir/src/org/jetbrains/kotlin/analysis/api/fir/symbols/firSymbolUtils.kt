@@ -62,13 +62,13 @@ internal fun <D> FirBasedSymbol<D>.createRegularKtTypeParameters(
 internal fun FirCallableSymbol<*>.createContextReceivers(
     builder: KaSymbolByFirBuilder
 ): List<KaContextReceiver> {
-    return resolvedContextReceivers.map { createContextReceiver(builder, it) }
+    return resolvedContextParameters.map { createContextReceiver(builder, it) }
 }
 
 internal fun FirRegularClassSymbol.createContextReceivers(
     builder: KaSymbolByFirBuilder
 ): List<KaContextReceiver> {
-    return resolvedContextReceivers.map { createContextReceiver(builder, it) }
+    return resolvedContextParameters.map { createContextReceiver(builder, it) }
 }
 
 private fun createContextReceiver(

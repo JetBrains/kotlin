@@ -78,7 +78,7 @@ internal fun FirCallableSymbol<*>.isDataClassCopy(containingClass: FirClassSymbo
                 dispatchReceiverType?.classId == containingClass.classId &&
                 resolvedReturnType.classId == containingClass.classId &&
                 constructor != null &&
-                resolvedContextReceivers.isEmpty() &&
+                resolvedContextParameters.isEmpty() &&
                 typeParameterSymbols.isEmpty() &&
                 receiverParameter == null &&
                 valueParameterSymbols.map { it.isVararg to it.resolvedReturnType } == constructor.valueParameterSymbols.map { it.isVararg to it.resolvedReturnType }
