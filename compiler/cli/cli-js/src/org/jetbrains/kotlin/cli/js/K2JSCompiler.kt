@@ -417,17 +417,21 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // Serialize klib
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
-            val phaseConfig = createPhaseConfig(
-                JsPreSerializationLoweringPhasesProvider.lowerings(configuration),
-                arguments,
-                messageCollector,
-            )
+            val transformedResult = if (!arguments.wasm) {
+                val phaseConfig = createPhaseConfig(
+                    JsPreSerializationLoweringPhasesProvider.lowerings(configuration),
+                    arguments,
+                    messageCollector,
+                )
 
-            val transformedResult = PhaseEngine(
-                phaseConfig,
-                PhaserState(),
-                JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
-            ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)
+                PhaseEngine(
+                    phaseConfig,
+                    PhaserState(),
+                    JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration),
+                ).runPreSerializationLoweringPhases(fir2IrActualizedResult, JsPreSerializationLoweringPhasesProvider, configuration)
+            } else {
+                fir2IrActualizedResult
+            }
 
             serializeFirKlib(
                 moduleStructure = moduleStructure,
