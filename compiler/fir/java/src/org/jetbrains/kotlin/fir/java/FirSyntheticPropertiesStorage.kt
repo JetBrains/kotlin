@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 data class SyntheticPropertiesCacheKey(
     val name: Name,
     val receiverParameterType: ConeKotlinType?,
-    val contextReceiverTypes: List<ConeKotlinType>
+    val contextParameterTypes: List<ConeKotlinType>
 )
 
 typealias SyntheticPropertiesCache = FirCache<SyntheticPropertiesCacheKey, FirSyntheticPropertySymbol?, Pair<JavaClassUseSiteMemberScope, ResultOfIntersection<FirPropertySymbol>>>

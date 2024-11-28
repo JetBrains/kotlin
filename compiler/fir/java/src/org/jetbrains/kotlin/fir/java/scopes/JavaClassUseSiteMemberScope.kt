@@ -282,8 +282,8 @@ class JavaClassUseSiteMemberScope(
         var parameterIndex = 0
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
 
-        for (contextReceiver in this.resolvedContextParameters) {
-            if (contextReceiver.returnTypeRef.coneType.computeJvmDescriptorRepresentation() !=
+        for (contextParameter in this.resolvedContextParameters) {
+            if (contextParameter.returnTypeRef.coneType.computeJvmDescriptorRepresentation() !=
                 candidate.valueParameters[parameterIndex++].returnTypeRef
                     .toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource)
                     .computeJvmDescriptorRepresentation()
