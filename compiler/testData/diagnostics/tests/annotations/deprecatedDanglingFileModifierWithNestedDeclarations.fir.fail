@@ -1,0 +1,9 @@
+Caused by: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Expected FirResolvedTypeRef with ConeKotlinType but was FirUserTypeRefImpl
+	at org.jetbrains.kotlin.fir.types.FirTypeUtilsKt.getConeType(FirTypeUtils.kt:201)
+	at org.jetbrains.kotlin.fir.resolve.transformers.AbstractFirStatusResolveTransformer.superTypeToSymbols(FirStatusResolveTransformer.kt:349)
+	at org.jetbrains.kotlin.fir.resolve.transformers.AbstractFirStatusResolveTransformer.forceResolveStatusesOfSupertypes(FirStatusResolveTransformer.kt:339)
+	at org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer.transformClassContent(FirStatusResolveTransformer.kt:92)
+	at org.jetbrains.kotlin.fir.resolve.transformers.AbstractFirStatusResolveTransformer.transformRegularClass(FirStatusResolveTransformer.kt:263)
+	at org.jetbrains.kotlin.fir.resolve.transformers.AbstractFirStatusResolveTransformer.transformRegularClass(FirStatusResolveTransformer.kt:187)
+	at org.jetbrains.kotlin.fir.declarations.FirRegularClass.transform(FirRegularClass.kt:52)
+	at org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl.transformChildren(FirErrorExpressionImpl.kt:49)

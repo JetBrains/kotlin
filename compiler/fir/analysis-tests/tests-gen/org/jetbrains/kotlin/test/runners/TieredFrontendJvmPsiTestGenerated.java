@@ -1713,6 +1713,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       }
 
       @Test
+      @TestMetadata("danglingFileModifierWithNestedDeclarations.kt")
+      public void testDanglingFileModifierWithNestedDeclarations() {
+        runTest("compiler/testData/diagnostics/tests/annotations/danglingFileModifierWithNestedDeclarations.kt");
+      }
+
+      @Test
       @TestMetadata("DanglingInScript.kts")
       public void testDanglingInScript() {
         runTest("compiler/testData/diagnostics/tests/annotations/DanglingInScript.kts");
@@ -1734,6 +1740,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
       @TestMetadata("DanglingWithBrackets.kt")
       public void testDanglingWithBrackets() {
         runTest("compiler/testData/diagnostics/tests/annotations/DanglingWithBrackets.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecatedDanglingFileModifierWithNestedDeclarations.kt")
+      public void testDeprecatedDanglingFileModifierWithNestedDeclarations() {
+        runTest("compiler/testData/diagnostics/tests/annotations/deprecatedDanglingFileModifierWithNestedDeclarations.kt");
       }
 
       @Test
