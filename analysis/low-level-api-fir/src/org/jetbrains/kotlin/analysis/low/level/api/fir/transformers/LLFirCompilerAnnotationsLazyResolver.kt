@@ -255,7 +255,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                     target.backingField?.let(::publishResult)
                 }
                 is FirRegularClass -> {
-                    target.contextReceivers.forEach(::publishResult)
+                    target.contextParameters.forEach(::publishResult)
                 }
             }
         }

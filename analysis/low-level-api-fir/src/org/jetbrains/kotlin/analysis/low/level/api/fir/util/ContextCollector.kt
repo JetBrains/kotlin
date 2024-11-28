@@ -517,7 +517,7 @@ private class ContextCollectorVisitor(
     @OptIn(PrivateForInline::class)
     private fun Processor.processClassHeader(regularClass: FirRegularClass) {
         context.withTypeParametersOf(regularClass) {
-            processList(regularClass.contextReceivers)
+            processList(regularClass.contextParameters)
             processList(regularClass.typeParameters)
             processList(regularClass.superTypeRefs)
         }

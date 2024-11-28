@@ -131,14 +131,14 @@ internal class ClassMemberGenerator(
                         body.statements += irDelegatingConstructorCall
                     }
 
-                    if (containingClass is FirRegularClass && containingClass.contextReceivers.isNotEmpty()) {
+                    if (containingClass is FirRegularClass && containingClass.contextParameters.isNotEmpty()) {
                         val contextReceiverFields =
                             c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, containingClass)
 
                         val thisParameter =
                             conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
 
-                        for (index in containingClass.contextReceivers.indices) {
+                        for (index in containingClass.contextParameters.indices) {
                             require(contextReceiverFields.size > index) {
                                 "Not defined context receiver #${index} for $irClass. " +
                                         "Context receivers found: $contextReceiverFields"

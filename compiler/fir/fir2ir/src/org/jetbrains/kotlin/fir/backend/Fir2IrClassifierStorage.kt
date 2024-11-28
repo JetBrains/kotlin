@@ -245,10 +245,10 @@ class Fir2IrClassifierStorage(
     }
 
     fun getFieldsWithContextReceiversForClass(irClass: IrClass, klass: FirClass): List<IrField> {
-        if (klass !is FirRegularClass || klass.contextReceivers.isEmpty()) return emptyList()
+        if (klass !is FirRegularClass || klass.contextParameters.isEmpty()) return emptyList()
 
         return fieldsForContextReceivers.getOrPut(irClass) {
-            klass.contextReceivers.withIndex().map { (index, contextReceiver) ->
+            klass.contextParameters.withIndex().map { (index, contextReceiver) ->
                 IrFactoryImpl.createField(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,

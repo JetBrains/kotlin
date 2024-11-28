@@ -60,7 +60,7 @@ internal object LLFirPhaseUpdater {
 
         when (element) {
             is FirRegularClass -> {
-                element.contextReceivers.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
+                element.contextParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
             is FirScript -> {
                 element.receivers.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }

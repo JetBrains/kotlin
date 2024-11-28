@@ -69,7 +69,7 @@ internal sealed class LLFirLazyResolver(val resolverPhase: FirResolvePhase) {
             }
 
             is FirScript -> declaration.receivers.forEach(::checkIsResolved)
-            is FirRegularClass -> declaration.contextReceivers.forEach(::checkIsResolved)
+            is FirRegularClass -> declaration.contextParameters.forEach(::checkIsResolved)
             else -> {}
         }
     }

@@ -157,7 +157,7 @@ private class CodeFragmentCapturedValueVisitor(
                                         is FirCallableDeclaration -> containingDeclaration.contextReceivers.indexOf(
                                             valueParameter
                                         )
-                                        is FirRegularClass -> containingDeclaration.contextReceivers.indexOf(valueParameter)
+                                        is FirRegularClass -> containingDeclaration.contextParameters.indexOf(valueParameter)
                                         else -> errorWithFirSpecificEntries(
                                             message = "Unexpected containing declaration ${containingDeclaration::class.simpleName}",
                                             fir = containingDeclaration

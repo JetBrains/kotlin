@@ -671,7 +671,7 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                         initCompanionObjectSymbolAttr()
 
-                        contextReceivers.addContextReceivers(classNode, classSymbol)
+                        contextParameters.addContextReceivers(classNode, classSymbol)
                     }.also {
                         it.delegateFieldsMap = delegatedFieldsMap
                     }

@@ -169,7 +169,7 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
         }
 
         transformer.withClassScopes(firClass) {
-            for (contextReceiver in firClass.contextReceivers) {
+            for (contextReceiver in firClass.contextParameters) {
                 contextReceiver.transformSingle(transformer, null)
             }
         }

@@ -1814,7 +1814,7 @@ open class PsiRawFirBuilder(
                             initCompanionObjectSymbolAttr()
 
                             context.popFirTypeParameters()
-                            contextReceivers.addContextReceivers(classOrObject.contextReceiverList, classSymbol)
+                            contextParameters.addContextReceivers(classOrObject.contextReceiverList, classSymbol)
                         }.also {
                             it.delegateFieldsMap = delegatedFieldsMap
                         }

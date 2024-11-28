@@ -37,7 +37,7 @@ object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChec
             }
             reporter.reportOn(declaration.source, factory, context)
         }
-        if (declaration is FirRegularClass && declaration.contextReceivers.onlyLegacyContextReceivers()) {
+        if (declaration is FirRegularClass && declaration.contextParameters.onlyLegacyContextReceivers()) {
             reporter.reportOn(declaration.source, FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR, context)
         }
     }

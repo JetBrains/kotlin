@@ -246,7 +246,7 @@ internal fun deserializeClassToSymbol(
         })
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
-        contextReceivers.addAll(memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
+        contextParameters.addAll(memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
     }.apply {
         if (classOrObject is KtClass && isInline) {
             val stub = classOrObject.stub as? KotlinClassStubImpl ?: loadStubByElement(classOrObject)

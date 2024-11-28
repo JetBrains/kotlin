@@ -336,7 +336,7 @@ class FirRenderer(
         }
 
         override fun visitRegularClass(regularClass: FirRegularClass) {
-            renderContexts(regularClass.contextReceivers)
+            renderContexts(regularClass.contextParameters)
             annotationRenderer?.render(regularClass)
             visitMemberDeclaration(regularClass)
             supertypeRenderer?.renderSupertypes(regularClass)

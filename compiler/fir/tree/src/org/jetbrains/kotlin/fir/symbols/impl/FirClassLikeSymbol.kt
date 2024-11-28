@@ -80,9 +80,9 @@ class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(
 
     val resolvedContextReceivers: List<FirValueParameter>
         get() {
-            if (fir.contextReceivers.isEmpty()) return emptyList()
+            if (fir.contextParameters.isEmpty()) return emptyList()
             lazyResolveToPhase(FirResolvePhase.TYPES)
-            return fir.contextReceivers
+            return fir.contextParameters
         }
 }
 

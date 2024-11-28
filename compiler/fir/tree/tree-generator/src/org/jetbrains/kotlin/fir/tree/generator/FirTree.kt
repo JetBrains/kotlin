@@ -427,7 +427,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("hasLazyNestedClassifiers", boolean)
         +referencedSymbol("companionObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true)
         +listField("superTypeRefs", typeRef, withReplace = true)
-        +listField(name = "contextReceivers", valueParameter, useMutableOrEmpty = true, withTransform = true)
+        +listField(name = "contextParameters", valueParameter, useMutableOrEmpty = true, withTransform = true)
     }
 
     val anonymousObject: Element by element(Declaration) {

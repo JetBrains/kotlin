@@ -303,7 +303,7 @@ class FirElementSerializer private constructor(
         }
 
         if (klass is FirRegularClass) {
-            for (contextReceiver in klass.contextReceivers) {
+            for (contextReceiver in klass.contextParameters) {
                 val typeRef = contextReceiver.returnTypeRef
                 if (useTypeTable()) {
                     builder.addContextReceiverTypeId(typeId(typeRef))

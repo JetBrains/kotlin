@@ -764,7 +764,7 @@ class Fir2IrVisitor(
                 return thisRef
             }
             // TODO(KT-72994) remove everything below when context receivers are removed
-            val contextReceiverNumber = (firClass as FirRegularClass).contextReceivers.indexOf(referencedFir)
+            val contextReceiverNumber = (firClass as FirRegularClass).contextParameters.indexOf(referencedFir)
 
             val constructorForCurrentlyGeneratedDelegatedConstructor =
                 conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass.symbol)

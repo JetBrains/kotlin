@@ -189,7 +189,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
             regularClass.transformAnnotations(this, ResolutionMode.ContextIndependent)
             regularClass.transformTypeParameters(this, ResolutionMode.ContextIndependent)
             regularClass.transformSuperTypeRefs(this, ResolutionMode.ContextIndependent)
-            regularClass.contextReceivers.forEach {
+            regularClass.contextParameters.forEach {
                 it.transformSingle(this, ResolutionMode.ContextIndependent)
             }
         }

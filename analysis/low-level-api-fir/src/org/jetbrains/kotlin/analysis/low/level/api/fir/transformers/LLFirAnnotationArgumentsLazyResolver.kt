@@ -176,7 +176,7 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
                     target.transformAnnotations(declarationTransformer, ResolutionMode.ContextIndependent)
                     target.transformTypeParameters(declarationTransformer, ResolutionMode.ContextIndependent)
                     target.transformSuperTypeRefs(declarationTransformer, ResolutionMode.ContextIndependent)
-                    target.contextReceivers.forEach { it.transformSingle(declarationTransformer, ResolutionMode.ContextIndependent) }
+                    target.contextParameters.forEach { it.transformSingle(declarationTransformer, ResolutionMode.ContextIndependent) }
                 }
             }
 

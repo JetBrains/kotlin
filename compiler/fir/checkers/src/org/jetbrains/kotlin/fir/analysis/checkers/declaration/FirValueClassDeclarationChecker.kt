@@ -67,7 +67,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL, context)
         }
 
-        if (declaration.contextReceivers.isNotEmpty() && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+        if (declaration.contextParameters.isNotEmpty() && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, context)
         }
 

@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PrivateForInline
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(PrivateForInline::class)
 abstract class AbstractFirSpecificAnnotationResolveTransformer(
@@ -377,7 +376,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             regularClass,
             transformChildren = {
                 regularClass.transformDeclarations(this, data)
-                regularClass.transformContextReceivers(this, data)
+                regularClass.transformContextParameters(this, data)
             },
             afterChildrenTransform = {
                 calculateDeprecations(regularClass)
