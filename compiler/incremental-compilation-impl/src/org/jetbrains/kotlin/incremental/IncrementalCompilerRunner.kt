@@ -37,11 +37,6 @@ import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.Time
-import org.jetbrains.kotlin.util.forEachPhaseMeasurement
-import org.jetbrains.kotlin.util.getLinesPerSecond
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import java.io.File
@@ -652,50 +647,6 @@ abstract class IncrementalCompilerRunner<
 
     private object EmptyCompilationCanceledStatus : CompilationCanceledStatus {
         override fun checkCanceled() {
-        }
-    }
-
-    protected fun reportPerformanceData(defaultPerformanceManager: PerformanceManager) {
-        val moduleStats = defaultPerformanceManager.unitStats
-        if (moduleStats.linesCount > 0) {
-            reporter.addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong())
-        }
-
-        fun reportLps(lpsMetrics: GradleBuildPerformanceMetric, time: Time) {
-            if (time != Time.ZERO) {
-                reporter.addMetric(lpsMetrics, moduleStats.getLinesPerSecond(time).toLong())
-            }
-        }
-
-        var codegenTime: Time = Time.ZERO
-
-        moduleStats.forEachPhaseMeasurement { phaseType, time ->
-            if (time == null) return@forEachPhaseMeasurement
-
-            val gradleBuildTime = when (phaseType) {
-                PhaseType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
-                PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
-                PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
-                PhaseType.IrLowering -> {
-                    codegenTime += time
-                    GradleBuildTime.IR_LOWERING
-                }
-                PhaseType.Backend -> {
-                    codegenTime += time
-                    GradleBuildTime.BACKEND
-                }
-            }
-
-            reporter.addTimeMetricMs(gradleBuildTime, time.millis)
-
-            if (phaseType == PhaseType.Analysis) {
-                reportLps(GradleBuildPerformanceMetric.ANALYSIS_LPS, time)
-            }
-        }
-
-        if (codegenTime != Time.ZERO) {
-            reporter.addTimeMetricMs(GradleBuildTime.CODE_GENERATION, codegenTime.millis)
-            reportLps(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, codegenTime)
         }
     }
 }

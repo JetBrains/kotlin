@@ -87,4 +87,5 @@ private fun ObjectFactory.kotlinNativeCommonizerToolSpec(
     classpath = toolClasspath,
     jvmArgs = listProperty<String>().value(toolJvmArgs).also { it.add("-Xmx4g") },
     shouldPassArgumentsViaArgFile = property<Boolean>().value(true),
+    collectNativeCompilerMetrics = property<Boolean>().value(false),
 ).disableC2().enableAssertions()

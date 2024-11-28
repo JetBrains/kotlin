@@ -362,6 +362,16 @@ public abstract interface class org/jetbrains/kotlin/gradle/incremental/Incremen
 	public abstract fun getInfo ()Lorg/jetbrains/kotlin/incremental/IncrementalModuleInfo;
 }
 
+public final class org/jetbrains/kotlin/gradle/logging/BuildErrorMessageCollector {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Ljava/lang/String;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun addError (Ljava/lang/String;)V
+	public final fun clear ()V
+	public final fun flush (Ljava/util/Set;)V
+	public final fun getLogger ()Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;
+	public final fun hasErrors ()Z
+}
+
 public final class org/jetbrains/kotlin/gradle/logging/GradleErrorMessageCollector : org/jetbrains/kotlin/cli/common/messages/MessageCollector {
 	public fun <init> (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/cli/common/messages/MessageCollector;Ljava/util/List;Ljava/lang/String;)V
 	public synthetic fun <init> (Lorg/gradle/api/logging/Logger;Lorg/jetbrains/kotlin/cli/common/messages/MessageCollector;Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -369,6 +379,8 @@ public final class org/jetbrains/kotlin/gradle/logging/GradleErrorMessageCollect
 	public synthetic fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Lorg/jetbrains/kotlin/cli/common/messages/MessageCollector;Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun clear ()V
 	public final fun flush (Ljava/util/Set;)V
+	public final fun getKotlinPluginVersion ()Ljava/lang/String;
+	public final fun getLogger ()Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;
 	public fun hasErrors ()Z
 	public final fun report (Ljava/lang/Throwable;Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSourceLocation;)V
 	public fun report (Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSeverity;Ljava/lang/String;Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSourceLocation;)V

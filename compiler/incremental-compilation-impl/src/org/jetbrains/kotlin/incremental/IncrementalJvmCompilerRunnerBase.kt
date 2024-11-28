@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -174,7 +175,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         args.allowNoSourceFiles = true
         val exitCode = compiler.exec(messageCollector, services, args)
         args.freeArgs = freeArgsBackup
-        reportPerformanceData(compiler.defaultPerformanceManager)
+        reporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
         return exitCode to sourcesToCompile
     }
 }

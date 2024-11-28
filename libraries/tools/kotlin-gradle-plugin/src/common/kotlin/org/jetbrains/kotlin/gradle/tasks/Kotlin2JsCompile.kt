@@ -325,7 +325,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val gradleMessageCollector =
-            GradleErrorMessageCollector(logger, gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
+            GradleErrorMessageCollector(logger, gradlePrintingMessageCollector)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 

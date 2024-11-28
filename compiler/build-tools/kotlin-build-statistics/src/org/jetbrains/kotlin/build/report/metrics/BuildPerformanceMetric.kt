@@ -79,6 +79,9 @@ enum class GradleBuildPerformanceMetric(
     SOURCE_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
     ANALYSIS_LPS(parent = COMPILE_ITERATION, "Analysis lines per second", type = ValueType.NUMBER),
     CODE_GENERATION_LPS(parent = COMPILE_ITERATION, "Code generation lines per second", type = ValueType.NUMBER),
+    TRANSLATION_TO_IR_LPS(parent = COMPILE_ITERATION, "Translation to IR lines per second", type = ValueType.NUMBER),
+    IR_LOWERING_LPS(parent = COMPILE_ITERATION, "IR Lowering lines per second", type = ValueType.NUMBER),
+    BACKEND_LPS(parent = COMPILE_ITERATION, "Backend lines per second", type = ValueType.NUMBER),
 
     // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature
     CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM_EXECUTION_COUNT(
@@ -160,7 +163,7 @@ enum class GradleBuildPerformanceMetric(
     }
 
     companion object {
-        const val serialVersionUID = 2L
+        const val serialVersionUID = 3L
 
         val children by lazy {
             entries.filter { it.parent != null }.groupBy { it.parent }

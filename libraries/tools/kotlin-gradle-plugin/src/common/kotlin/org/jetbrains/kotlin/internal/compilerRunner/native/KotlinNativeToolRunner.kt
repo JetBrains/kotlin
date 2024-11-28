@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
+import com.google.gson.Gson
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
@@ -16,15 +17,24 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
 import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.argumentAnnotation
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
+import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeArgumentMetrics
 import org.jetbrains.kotlin.gradle.utils.escapeStringCharacters
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.statistics.FusMetricRetrievalException
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.UnitStats
+import org.jetbrains.kotlin.util.forEachPhaseMeasurement
+import java.io.File
 import java.io.IOException
+import java.io.PrintWriter
 import java.lang.reflect.InvocationTargetException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -38,7 +48,13 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val fusMetricsConsumer: Provider<out BuildFusService<out BuildFusService.Parameters>>,
     private val execOperations: ExecOperations,
 ) {
+
+    companion object {
+        private val dumpPerfArgument = CommonCompilerArguments::dumpPerf.argumentAnnotation.value
+        private val gson = Gson()
+    }
     private val logger = Logging.getLogger(toolSpec.displayName.get())
+    private val errorMessageCollector = GradleErrorMessageCollector(logger)
     private val classLoadersCachingBuildService: ClassLoadersCachingBuildService
         get() = classLoadersCachingBuildServiceProvider.get()
     private val metricsReporter get() = metricsReporterProvider.get()
@@ -67,14 +83,19 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 .escapeQuotesForWindows()
                 .toMap() + toolSpec.systemProperties
 
+            val reportFile = File.createTempFile("native_compiler_${::runViaExec.name}_report", ".json")
+            val reportArguments = if (toolSpec.collectNativeCompilerMetrics.get()) {
+                listOf("$dumpPerfArgument=${reportFile.absolutePath}")
+            } else emptyList()
+
             val toolArgsPair = if (toolSpec.shouldPassArgumentsViaArgFile.get()) {
-                val argFile = args.toArgFile()
+                val argFile = args.toArgFile(reportArguments)
                 argFile to listOfNotNull(
                     toolSpec.optionalToolName.orNull,
                     "@${argFile.toFile().absolutePath}"
                 )
             } else {
-                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments
+                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments + reportArguments
             }
 
             try {
@@ -102,11 +123,13 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     toolSpec.environmentBlacklist.forEach { spec.environment.remove(it) }
                     spec.args(toolArgsPair.second)
                 }
+                metricsReporter.parseCompilerMetricsFromFile(reportFile)
             } finally {
                 toolArgsPair.first?.let {
                     try {
                         Files.deleteIfExists(it)
-                    } catch (_: IOException) {}
+                    } catch (_: IOException) {
+                    }
                 }
             }
         }
@@ -148,7 +171,15 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint.get()}'")
 
                 metricsReporter.measure(GradleBuildTime.RUN_ENTRY_POINT) {
-                    entryPoint.invoke(null, toolArgs.toTypedArray())
+                    if (toolSpec.collectNativeCompilerMetrics.get()) {
+                        val reportFile = Files.createTempFile("native_compiler_${::runInProcess.name}_report", ".json")
+                        val toolArgsWithPerformance = toolArgs.toMutableList()
+                        toolArgsWithPerformance.add("$dumpPerfArgument=${reportFile.toAbsolutePath()}")
+                        entryPoint.invoke(null, toolArgsWithPerformance.toTypedArray())
+                        metricsReporter.parseCompilerMetricsFromFile(reportFile.toFile())
+                    } else {
+                        entryPoint.invoke(null, toolArgs.toTypedArray())
+                    }
                 }
             } catch (t: InvocationTargetException) {
                 throw t.targetException
@@ -186,7 +217,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             else -> this
         }
 
-    private fun ToolArguments.toArgFile(): Path {
+    private fun ToolArguments.toArgFile(additionalArguments: List<String> = emptyList()): Path {
         val argFile = Files.createTempFile(
             "kotlinc-native-args",
             ".lst"
@@ -194,14 +225,19 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
         argFile.toFile().printWriter().use { w ->
             arguments.forEach { arg ->
-                val escapedArg = arg
-                    .replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                w.println("\"$escapedArg\"")
+                writeArgumentIntoWriter(arg, w)
             }
+            additionalArguments.forEach { arg -> writeArgumentIntoWriter(arg, w) }
         }
 
         return argFile
+    }
+
+    private fun writeArgumentIntoWriter(arg: String, w: PrintWriter) {
+        val escapedArg = arg
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+        w.println("\"$escapedArg\"")
     }
 
     class ToolSpec(
@@ -212,6 +248,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val classpath: FileCollection,
         val jvmArgs: ListProperty<String>,
         val shouldPassArgumentsViaArgFile: Provider<Boolean>,
+        val collectNativeCompilerMetrics: Provider<Boolean>,
         val systemProperties: Map<String, String> = emptyMap(),
         val environment: Map<String, String> = emptyMap(),
         val environmentBlacklist: Set<String> = emptySet(),
@@ -253,4 +290,30 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel,
         val arguments: List<String>,
     )
+
+
+    internal fun BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>.parseCompilerMetricsFromFile(
+        jsonFile: File,
+    ) {
+        if (!jsonFile.isFile()) return
+        try {
+            val unitStats = gson.fromJson(jsonFile.readText(), UnitStats::class.java)
+
+            unitStats.forEachPhaseMeasurement { type, time ->
+                if (time == null) return@forEachPhaseMeasurement
+
+                val gradleBuildTime = when (type) {
+                    PhaseType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
+                    PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
+                    PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
+                    PhaseType.IrLowering -> GradleBuildTime.IR_LOWERING
+                    PhaseType.Backend -> GradleBuildTime.BACKEND
+                }
+
+                addTimeMetricNs(gradleBuildTime, time.nanos)
+            }
+        } catch (e: Exception) {
+            errorMessageCollector.report(FusMetricRetrievalException("Failed to parse metrics from file ${jsonFile.absolutePath}", e), location = null)
+        }
+    }
 }

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
+import java.io.File
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override val platform: TargetPlatform = NativePlatforms.unspecifiedNativePlatform
@@ -231,8 +232,8 @@ typealias BinaryOptionWithValue<T> = org.jetbrains.kotlin.backend.konan.BinaryOp
 
 @Suppress("unused")
 fun parseBinaryOptions(
-        arguments: K2NativeCompilerArguments,
-        configuration: CompilerConfiguration
+    arguments: K2NativeCompilerArguments,
+    configuration: CompilerConfiguration,
 ): List<BinaryOptionWithValue<*>> = org.jetbrains.kotlin.backend.konan.parseBinaryOptions(arguments, configuration)
 
 fun main(args: Array<String>) = K2Native.main(args)

@@ -34,7 +34,7 @@ class JpsCompilationResult : CompilationResults,
                 val compileIterationResult = value as? CompileIterationResult
                 if (compileIterationResult != null) {
                     val sourceFiles = compileIterationResult.sourceFiles
-                    buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.IC_COMPILE_ITERATION)
+                    buildMetrics.buildPerformanceMetrics.addLong(JpsBuildPerformanceMetric.IC_COMPILE_ITERATION)
                     compiledFiles.addAll(sourceFiles.map { it.path })
                 }
             }
@@ -50,9 +50,9 @@ class JpsCompilationResult : CompilationResults,
                         CompilationPerformanceMetrics.CODE_ANALYSIS -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.CODE_ANALYSIS, it.value)
                         CompilationPerformanceMetrics.COMPILER_INITIALIZATION -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.COMPILER_INITIALIZATION, it.value)
 
-                        CompilationPerformanceMetrics.SOURCE_LINES_NUMBER -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.SOURCE_LINES_NUMBER, it.value)
-                        CompilationPerformanceMetrics.ANALYSIS_LPS -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.ANALYSIS_LPS, it.value)
-                        CompilationPerformanceMetrics.CODE_GENERATION_LPS -> buildMetrics.buildPerformanceMetrics.add(JpsBuildPerformanceMetric.CODE_GENERATION_LPS, it.value)
+                        CompilationPerformanceMetrics.SOURCE_LINES_NUMBER -> buildMetrics.buildPerformanceMetrics.addLong(JpsBuildPerformanceMetric.SOURCE_LINES_NUMBER, it.value)
+                        CompilationPerformanceMetrics.ANALYSIS_LPS -> buildMetrics.buildPerformanceMetrics.addLong(JpsBuildPerformanceMetric.ANALYSIS_LPS, it.value)
+                        CompilationPerformanceMetrics.CODE_GENERATION_LPS -> buildMetrics.buildPerformanceMetrics.addLong(JpsBuildPerformanceMetric.CODE_GENERATION_LPS, it.value)
                     }
                 }
             }

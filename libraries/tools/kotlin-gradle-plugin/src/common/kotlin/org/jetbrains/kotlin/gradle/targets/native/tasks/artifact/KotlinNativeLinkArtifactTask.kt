@@ -231,6 +231,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
+    private val simpleKotlinNativeVersion = project.nativeProperties.kotlinNativeVersion
 
     @get:Internal
     internal val nativeCompilerRunner
@@ -243,7 +244,8 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             actualNativeHomeDirectory,
             runnerJvmArgs,
             konanPropertiesService,
-            buildFusService
+            buildFusService,
+            simpleKotlinNativeVersion
         )
 
     @TaskAction

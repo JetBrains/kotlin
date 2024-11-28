@@ -16,6 +16,16 @@ interface BuildTime : Serializable {
 
     fun children(): List<BuildTime>?
 
+    fun allChildrenMetrics(): Set<BuildTime> {
+        val result = mutableSetOf<BuildTime>()
+        fun addChildren(time: BuildTime) {
+            result.add(time)
+            time.children()?.forEach { addChildren(it) }
+        }
+        children()?.forEach { addChildren(it) }
+        return result
+    }
+
     fun getName(): String
 }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
@@ -25,12 +26,12 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.streams.asSequence
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @DisplayName("Build reports")
-@JvmGradlePluginTests
 class BuildReportsIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
@@ -45,6 +46,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testBuildReportSmokeTest(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("assemble") {
@@ -62,6 +64,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testBuildReportOutputProperty(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             buildAndFail("assemble", "-Pkotlin.build.report.output=file,invalid") {
@@ -75,6 +78,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testBuildMetricsSmokeTest(gradleVersion: GradleVersion) {
         testBuildReportInFile("simpleProject", "assemble", gradleVersion)
     }
@@ -84,6 +88,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testBuildMetricsForMppJvm(gradleVersion: GradleVersion) {
         testBuildReportInFile("mppJvmWithJava", "assemble", gradleVersion)
     }
@@ -93,6 +98,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testBuildMetricsForMppJs(gradleVersion: GradleVersion) {
         testBuildReportInFile("kotlin-js-package-module-name", "assemble", gradleVersion)
     }
@@ -103,6 +109,7 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     @TestMetadata("kotlin-js-plugin-project")
+    @JvmGradlePluginTests
     fun testBuildMetricsForJsProject(gradleVersion: GradleVersion) {
         testBuildReportInFile(
             "kotlin-js-plugin-project",
@@ -195,6 +202,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testCompilerBuildMetricsSmokeTest(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("assemble") {
@@ -218,6 +226,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testFileReportWithoutKotlinTask(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             build("assemble", "--dry-run") {
@@ -235,6 +244,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testSingleBuildMetricsFileValidation(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
@@ -251,6 +261,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testSingleBuildMetricsFile(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
@@ -269,6 +280,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testDeprecatedReportProperties(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val deprecatedMetricsPath = projectPath.resolve("deprecated_metrics.bin")
@@ -287,6 +299,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testSingleBuildMetricsFileSmoke(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
@@ -311,6 +324,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testCustomValueLimitForBuildScan(gradleVersion: GradleVersion) {
         project(
             "simpleProject",
@@ -332,6 +346,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testBuildScanListenerLazyInitialisation(gradleVersion: GradleVersion) {
         project(
             "simpleProject",
@@ -352,6 +367,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testBuildReportWithProjectIsolation(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
@@ -378,6 +394,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testErrorsFileSmokeTest(
         gradleVersion: GradleVersion,
     ) {
@@ -435,6 +452,7 @@ class BuildReportsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
     @GradleTest
+    @JvmGradlePluginTests
     fun testErrorsFileWithCompilationError(
         gradleVersion: GradleVersion,
     ) {
@@ -464,6 +482,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Error file is not written into .gradle/kotlin/errors")
     @GradleTest
     fun testDisableWritingErrorsIntoGradleProjectDir(
@@ -512,7 +531,9 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+
     @DisplayName("build scan metrics validation")
+    @JvmGradlePluginTests
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
@@ -531,6 +552,7 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("build reports work with init script")
+    @JvmGradlePluginTests
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
@@ -572,6 +594,7 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("json validation")
+    @JvmGradlePluginTests
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
@@ -590,6 +613,7 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("json report")
+    @JvmGradlePluginTests
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0],
     )
@@ -634,6 +658,7 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("build report should not be overridden")
+    @JvmGradlePluginTests
     @GradleTest
     fun testMultipleRuns(gradleVersion: GradleVersion) {
         project(
@@ -655,6 +680,7 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("build scan with project isolation")
+    @JvmGradlePluginTests
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_8_0,
         //There is an exception for gradle 7.6 with project isolation:
@@ -680,6 +706,7 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     @DisplayName("for build scan with develocity plugin")
+    @JvmGradlePluginTests
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_8_4
     )
@@ -722,6 +749,36 @@ class BuildReportsIT : KGPBaseTest() {
                 assertOutputDoesNotContain("The following functionality has been deprecated and will be removed in the next major release of the Develocity Gradle plugin.")
                 assertOutputContains("Build metrics are stored into build scan for")
                 assertOutputContains("[com.gradle.develocity.agent.gradle.DevelocityPlugin] Publishing build scan...")
+            }
+        }
+    }
+
+    @DisplayName("Verify that the metric for native in-process compilation")
+    @NativeGradlePluginTests
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
+    fun testMetricForNativeProjectInProcess(gradleVersion: GradleVersion) {
+        nativeProject(
+            "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    incremental = true
+                ),
+                buildReport = listOf(BuildReportType.JSON)
+            )
+        ) {
+            build("linkDebugExecutableHost", "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}") {
+                val jsonReportFile = projectPath.getSingleFileInDir("report")
+                assertTrue { jsonReportFile.exists() }
+                val jsonReport = readJsonReport(jsonReportFile)
+                assertContains(jsonReport.aggregatedMetrics.buildTimes.asMapMs().keys, GradleBuildTime.NATIVE_IN_PROCESS)
+
+                val compilerMetrics = GradleBuildTime.COMPILER_PERFORMANCE.allChildrenMetrics()
+                val reportedCompilerMetrics = jsonReport.aggregatedMetrics.buildTimes.asMapMs().keys.filter { it in compilerMetrics }
+
+                //After KT-76477 is fixed, all compiler metrics are expected
+                assertEquals(listOf(GradleBuildTime.COMPILER_INITIALIZATION), reportedCompilerMetrics)
             }
         }
     }

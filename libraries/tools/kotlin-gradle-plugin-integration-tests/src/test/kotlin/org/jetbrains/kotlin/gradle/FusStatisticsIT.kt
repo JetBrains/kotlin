@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
@@ -182,7 +183,10 @@ class FusStatisticsIT : KGPBaseTest() {
             )
         ) {
             build("linkDebugExecutableHost", "-Pkotlin.session.logger.root.path=$projectPath") {
-                assertFileContains(fusStatisticsPath, "KOTLIN_INCREMENTAL_NATIVE_ENABLED=true")
+                assertFileContains(
+                    fusStatisticsPath,
+                    "KOTLIN_INCREMENTAL_NATIVE_ENABLED=true",
+                )
             }
         }
     }

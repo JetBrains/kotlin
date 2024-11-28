@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -199,7 +200,7 @@ class IncrementalJsCompilerRunner(
             compiler.exec(messageCollector, services, args) to sourcesToCompile
         } finally {
             args.freeArgs = freeArgsBackup
-            reportPerformanceData(compiler.defaultPerformanceManager)
+            reporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
         }
     }
 

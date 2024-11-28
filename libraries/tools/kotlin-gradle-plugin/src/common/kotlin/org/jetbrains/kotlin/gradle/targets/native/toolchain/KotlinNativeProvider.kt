@@ -76,6 +76,9 @@ internal class KotlinNativeFromToolchainProvider(
     @get:Internal
     val reinstallBundle: Property<Boolean> = project.objects.property(project.kotlinPropertiesProvider.nativeReinstall)
 
+    @get:Internal
+    internal val simpleKotlinNativeVersion: Provider<String> = project.nativeProperties.kotlinNativeVersion
+
     @get:Input
     internal val kotlinNativeBundleVersion: Provider<String> =
         toolchainEnabled.flatMap { toolchainEnabled ->
@@ -88,7 +91,7 @@ internal class KotlinNativeFromToolchainProvider(
                         it.parameters.bundleDirectory.set(project.nativeProperties.actualNativeHomeDirectory.map { it.absolutePath })
                         it.parameters.reinstallBundle.set(reinstallBundle)
                         it.parameters.kotlinNativeVersion.set(NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project))
-                        it.parameters.simpleKotlinNativeVersion.set(project.nativeProperties.kotlinNativeVersion)
+                        it.parameters.simpleKotlinNativeVersion.set(simpleKotlinNativeVersion)
                         it.parameters.kotlinNativeCompilerConfiguration.set(
                             project.objects.fileCollection()
                                 .from(
@@ -120,6 +123,7 @@ internal class KotlinNativeFromToolchainProvider(
                 nativeJvmArgs,
                 actualNativeHomeDirectory,
                 konanDataDir,
+                simpleKotlinNativeVersion
             )
             nativeVersion
         }

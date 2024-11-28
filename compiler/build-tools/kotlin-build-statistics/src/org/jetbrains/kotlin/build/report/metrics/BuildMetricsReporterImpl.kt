@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
-import kotlin.collections.HashMap
 
 open class BuildMetricsReporterImpl<B : BuildTime, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, Serializable {
     private val myBuildTimeStartNs = HashMap<B, Long>()
@@ -47,14 +46,13 @@ open class BuildMetricsReporterImpl<B : BuildTime, P : BuildPerformanceMetric> :
     }
 
     override fun addMetric(metric: P, value: Long) {
-        myBuildMetrics.add(metric, value)
+        myBuildMetrics.addLong(metric, value)
     }
 
     override fun addTimeMetric(metric: P) {
         when (metric.getType()) {
-            ValueType.NANOSECONDS -> myBuildMetrics.add(metric, System.nanoTime())
-            ValueType.MILLISECONDS -> myBuildMetrics.add(metric, System.currentTimeMillis())
-            ValueType.TIME -> myBuildMetrics.add(metric, System.currentTimeMillis())
+            ValueType.NANOSECONDS -> myBuildMetrics.addLong(metric, System.nanoTime())
+            ValueType.MILLISECONDS, ValueType.TIME -> myBuildMetrics.addLong(metric, System.currentTimeMillis())
             else -> error("Unable to add time metric for '${metric.getType()}' type")
         }
 

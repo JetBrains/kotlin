@@ -49,7 +49,8 @@ internal class PlatformLibrariesGenerator(
     val jvmArgs: ListProperty<String>,
     val actualNativeHomeDirectory: Provider<File>,
     val konanDataDir: Provider<String?>,
-    nativeCacheKind: Provider<NativeCacheKind>
+    nativeCacheKind: Provider<NativeCacheKind>,
+    kotlinNativeVersion: Provider<String>,
 ) {
 
     private val logger = Logging.getLogger(this::class.java)
@@ -60,7 +61,8 @@ internal class PlatformLibrariesGenerator(
         useXcodeMessageStyle,
         classpath,
         jvmArgs,
-        konanPropertiesService.map { it.environmentBlacklist }
+        konanPropertiesService.map { it.environmentBlacklist },
+        kotlinNativeVersion
     )
 
     private val konanHome
