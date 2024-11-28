@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
@@ -76,7 +75,7 @@ class IrValidatorTest {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
-        function.addExtensionReceiver(TestIrBuiltins.stringType)
+        function.parameters += function.createExtensionReceiver(TestIrBuiltins.stringType)
         function.addValueParameter(Name.identifier("p0"), TestIrBuiltins.anyType)
         val functionCall =
             IrCallImpl(
@@ -100,7 +99,7 @@ class IrValidatorTest {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
-        function.addExtensionReceiver(TestIrBuiltins.stringType)
+        function.parameters += function.createExtensionReceiver(TestIrBuiltins.stringType)
         function.addValueParameter(Name.identifier("p0"), TestIrBuiltins.anyType)
         val body = IrFactoryImpl.createBlockBody(5, 24)
         val stringConcatenationWithWrongType = IrStringConcatenationImpl(9, 20, TestIrBuiltins.anyType)
