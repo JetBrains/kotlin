@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
 internal class KaFirClassLikeSymbolPointer<T : KaClassLikeSymbol>(
     private val classId: ClassId,
     private val expectedClass: KClass<T>,
-    originalSymbol: T? = null,
+    originalSymbol: T?,
 ) : KaBaseSymbolPointer<T>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): T? {

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 internal class KaFe10DescFunctionSymbolPointer<T : KaFunctionSymbol>(
     private val callableId: CallableId,
     private val signature: String,
-    originalSymbol: T? = null
+    originalSymbol: T?
 ) : KaBaseSymbolPointer<T>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): T? {

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirScriptParameterSymbolPointer(
     private val parameterName: Name,
     private val scriptPointer: KaSymbolPointer<KaScriptSymbol>,
-    originalSymbol: KaLocalVariableSymbol? = null
+    originalSymbol: KaLocalVariableSymbol?
 ) : KaBaseSymbolPointer<KaLocalVariableSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaLocalVariableSymbol? {

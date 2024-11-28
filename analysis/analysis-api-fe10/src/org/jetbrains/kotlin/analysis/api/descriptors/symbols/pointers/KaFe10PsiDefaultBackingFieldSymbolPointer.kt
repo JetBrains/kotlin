@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 internal class KaFe10PsiDefaultBackingFieldSymbolPointer(
     private val propertySymbolPointer: KaPsiBasedSymbolPointer<KaPropertySymbol>,
-    originalSymbol: KaBackingFieldSymbol? = null,
+    originalSymbol: KaBackingFieldSymbol?,
 ) : KaBaseSymbolPointer<KaBackingFieldSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaBackingFieldSymbol? {

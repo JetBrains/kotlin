@@ -57,7 +57,7 @@ class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
             other.expectedClass == expectedClass &&
             other.psiPointer == psiPointer
 
-    constructor(psi: KtElement, expectedClass: KClass<S>, originalSymbol: S? = null) : this(
+    constructor(psi: KtElement, expectedClass: KClass<S>, originalSymbol: S?) : this(
         createCompatibleSmartPointer(psi),
         expectedClass,
         originalSymbol
@@ -82,18 +82,22 @@ class KaPsiBasedSymbolPointer<S : KaSymbol> private constructor(
                 else -> return null
             }
 
-            return KaPsiBasedSymbolPointer(psi, expectedClass)
+            return KaPsiBasedSymbolPointer(psi, expectedClass, symbol)
         }
 
 
-        fun <S : KaSymbol> createForSymbolFromPsi(ktElement: KtElement, expectedClass: KClass<S>): KaPsiBasedSymbolPointer<S>? {
+        fun <S : KaSymbol> createForSymbolFromPsi(
+            ktElement: KtElement,
+            expectedClass: KClass<S>,
+            originalSymbol: S?
+        ): KaPsiBasedSymbolPointer<S>? {
             ifDisabled { return null }
 
-            return KaPsiBasedSymbolPointer(ktElement, expectedClass)
+            return KaPsiBasedSymbolPointer(ktElement, expectedClass, originalSymbol)
         }
 
         inline fun <reified S : KaSymbol> createForSymbolFromPsi(ktElement: KtElement): KaPsiBasedSymbolPointer<S>? {
-            return createForSymbolFromPsi(ktElement, S::class)
+            return createForSymbolFromPsi(ktElement, S::class, null)
         }
 
         @TestOnly

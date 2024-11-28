@@ -7,20 +7,17 @@ package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.psi.KtElement
 import kotlin.reflect.KClass
 
-@KaExperimentalApi
 @KaImplementationDetail
 public interface KaPsiSymbolPointerCreator {
     /**
      * Returns `KaPsiSymbolPointer` for the given [element].
      * The [originalSymbol], when provided, must be a symbol calculated for [element]
      */
-    @KaExperimentalApi
     public fun symbolPointer(element: KtElement, originalSymbol: KaSymbol? = null): KaSymbolPointer<KaSymbol>
 
     /**
@@ -28,14 +25,12 @@ public interface KaPsiSymbolPointerCreator {
      * The [originalSymbol], when provided, must be a symbol calculated for [element]
      * The restored symbol must be an instance of [expectedType].
      */
-    @KaExperimentalApi
     public fun <S : KaSymbol> symbolPointerOfType(
         element: KtElement,
         expectedType: KClass<S>,
         originalSymbol: S? = null
     ): KaSymbolPointer<S>
 
-    @KaExperimentalApi
     @KaImplementationDetail
     public companion object {
         private fun getInstance(project: Project): KaPsiSymbolPointerCreator = project.service()
@@ -43,7 +38,6 @@ public interface KaPsiSymbolPointerCreator {
         /**
          * Returns `KaPsiSymbolPointer` for the given [element]
          */
-        @KaExperimentalApi
         public fun symbolPointer(element: KtElement): KaSymbolPointer<KaSymbol> = getInstance(element.project).symbolPointer(element)
 
         /**
@@ -51,7 +45,6 @@ public interface KaPsiSymbolPointerCreator {
          * The [originalSymbol], when provided, must be a symbol calculated for [element]
          * The restored symbol must be an instance of [expectedType].
          */
-        @KaExperimentalApi
         public fun <S : KaSymbol> symbolPointerOfType(
             element: KtElement,
             expectedType: KClass<S>,
@@ -64,7 +57,6 @@ public interface KaPsiSymbolPointerCreator {
          * Returns `KaPsiSymbolPointer` for the given [element].
          * The [originalSymbol], when provided, must be a symbol calculated for [element]
          */
-        @KaExperimentalApi
         public inline fun <reified S : KaSymbol> symbolPointerOfType(
             element: KtElement,
             originalSymbol: S? = null

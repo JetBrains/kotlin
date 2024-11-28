@@ -24,7 +24,7 @@ internal class KaFirJavaSyntheticPropertySymbolPointer(
     ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val propertyName: Name,
     private val isSynthetic: Boolean,
-    originalSymbol: KaSyntheticJavaPropertySymbol? = null,
+    originalSymbol: KaSyntheticJavaPropertySymbol?,
 ) : KaFirMemberSymbolPointer<KaSyntheticJavaPropertySymbol>(ownerPointer, originalSymbol = originalSymbol) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,

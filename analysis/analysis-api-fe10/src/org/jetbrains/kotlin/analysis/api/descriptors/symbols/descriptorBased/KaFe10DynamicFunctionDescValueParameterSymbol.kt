@@ -78,7 +78,7 @@ internal class KaFe10DynamicFunctionDescValueParameterSymbol(
 
     private class Pointer(
         val ownerPointer: KaSymbolPointer<KaNamedFunctionSymbol>,
-        originalSymbol: KaValueParameterSymbol? = null
+        originalSymbol: KaValueParameterSymbol?
     ) : KaBaseSymbolPointer<KaValueParameterSymbol>(originalSymbol) {
         @KaImplementationDetail
         override fun restoreIfNotCached(analysisSession: KaSession): KaValueParameterSymbol? {

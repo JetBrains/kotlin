@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
 
 internal class KaFirScriptSymbolPointer(
     private val filePointer: KaSymbolPointer<KaFileSymbol>,
-    originalSymbol: KaScriptSymbol? = null
+    originalSymbol: KaScriptSymbol?
 ) : KaBaseSymbolPointer<KaScriptSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaScriptSymbol? {

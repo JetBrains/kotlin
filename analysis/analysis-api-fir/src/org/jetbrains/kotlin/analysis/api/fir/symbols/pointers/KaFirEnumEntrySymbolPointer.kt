@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KaFirEnumEntrySymbolPointer(
     private val ownerPointer: KaSymbolPointer<KaClassSymbol>,
     private val name: Name,
-    originalSymbol: KaEnumEntrySymbol? = null,
+    originalSymbol: KaEnumEntrySymbol?,
 ) : KaBaseSymbolPointer<KaEnumEntrySymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaEnumEntrySymbol? {

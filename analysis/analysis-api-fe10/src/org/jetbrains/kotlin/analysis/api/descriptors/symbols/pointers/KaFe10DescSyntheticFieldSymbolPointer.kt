@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 
 internal class KaFe10DescSyntheticFieldSymbolPointer(
     private val psiPointer: KaPsiBasedSymbolPointer<KaPropertyAccessorSymbol>,
-    originalSymbol: KaBackingFieldSymbol? = null
+    originalSymbol: KaBackingFieldSymbol?
 ) : KaBaseSymbolPointer<KaBackingFieldSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaBackingFieldSymbol? {

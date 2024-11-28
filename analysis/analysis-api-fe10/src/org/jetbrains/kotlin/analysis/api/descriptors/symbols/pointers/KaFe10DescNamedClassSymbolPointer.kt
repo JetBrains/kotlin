@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFe10DescNamedClassSymbolPointer(
     private val classId: ClassId,
-    originalSymbol: KaNamedClassSymbol? = null
+    originalSymbol: KaNamedClassSymbol?
 ) : KaBaseSymbolPointer<KaNamedClassSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaNamedClassSymbol? {

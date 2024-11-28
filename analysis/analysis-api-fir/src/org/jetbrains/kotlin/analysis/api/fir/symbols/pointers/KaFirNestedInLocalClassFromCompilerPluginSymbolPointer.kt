@@ -28,7 +28,7 @@ internal class KaFirNestedInLocalClassFromCompilerPluginSymbolPointer(
     private val containingClassPointer: KaSymbolPointer<KaNamedClassSymbol>,
     private val name: Name,
     private val compilerPluginOrigin: GeneratedDeclarationKey,
-    originalSymbol: KaNamedClassSymbol? = null,
+    originalSymbol: KaNamedClassSymbol?,
 ) : KaBaseSymbolPointer<KaNamedClassSymbol>(originalSymbol) {
 
     @KaImplementationDetail

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import java.lang.ref.WeakReference
 
-abstract class KaBaseSymbolPointer<out S : KaSymbol>(originalSymbol: S? = null) : KaSymbolPointer<S>() {
+abstract class KaBaseSymbolPointer<out S : KaSymbol>(originalSymbol: S?) : KaSymbolPointer<S>() {
     /**
      * Most of the pointers are derived from [KaBaseSymbolPointer] and support weak symbol cache.
      * This means that if the original symbol the pointer is created from is not garbage-collected and still valid on restore,

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KaFirDynamicPropertySymbolPointer(
     private val name: Name,
-    originalSymbol: KaKotlinPropertySymbol? = null,
+    originalSymbol: KaKotlinPropertySymbol?,
 ) : KaBaseSymbolPointer<KaKotlinPropertySymbol>(originalSymbol) {
 
     override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol {

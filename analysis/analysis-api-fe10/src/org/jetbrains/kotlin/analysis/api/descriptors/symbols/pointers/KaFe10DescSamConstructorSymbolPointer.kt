@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 
 internal class KaFe10DescSamConstructorSymbolPointer(
     private val classId: ClassId,
-    originalSymbol: KaSamConstructorSymbol? = null
+    originalSymbol: KaSamConstructorSymbol?
 ) : KaBaseSymbolPointer<KaSamConstructorSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaSamConstructorSymbol? {
