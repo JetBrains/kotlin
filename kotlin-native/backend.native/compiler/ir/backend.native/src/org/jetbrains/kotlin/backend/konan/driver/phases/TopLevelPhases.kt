@@ -107,7 +107,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         )
 
         fun SubFragment.generationState(topLevel: NativeGenerationState): NativeGenerationState {
-            val containsStdlib = name == topLevel.context.stdlibModule.konanLibrary!!.uniqueName
+            val containsStdlib = name == "" || name == topLevel.context.stdlibModule.konanLibrary!!.uniqueName
             val llvmModuleSpecification = if (topLevel.llvmModuleSpecification is DefaultLlvmModuleSpecification) {
                 object : LlvmModuleSpecificationBase(config.cachedLibraries) {
                     override val isFinal: Boolean
@@ -126,6 +126,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 if (containsStdlib && cacheDeserializationStrategy.containsRuntime) {
                     files.filter { isReferencedByNativeRuntime(it.declarations) }
                             .forEach { dependenciesTracker.add(it) }
+                }
+                if (containsStdlib) {
+                    dependenciesTracker.setParent(topLevel.dependenciesTracker)
                 }
             }
         }
@@ -189,15 +192,21 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
 
                 generationState.dependenciesTracker.collectResult().let { topLevelResult ->
-                    check(topLevelResult.nativeDependenciesToLink.all {
-                        moduleCompilationOutput.dependenciesTrackingResult.nativeDependenciesToLink.contains(it)
-                    })
-                    check(topLevelResult.allNativeDependencies.all {
-                        moduleCompilationOutput.dependenciesTrackingResult.allNativeDependencies.contains(it)
-                    })
-                    check(topLevelResult.allCachedBitcodeDependencies.all {
-                        moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies.contains(it)
-                    })
+                    topLevelResult.nativeDependenciesToLink.forEach {
+                        check(moduleCompilationOutput.dependenciesTrackingResult.nativeDependenciesToLink.contains(it)) {
+                            "${it.uniqueName} not found in nativeDependenciesToLink: ${moduleCompilationOutput.dependenciesTrackingResult.nativeDependenciesToLink.map { it.uniqueName }}"
+                        }
+                    }
+                    topLevelResult.allNativeDependencies.forEach {
+                        check(moduleCompilationOutput.dependenciesTrackingResult.allNativeDependencies.contains(it)) {
+                            "${it.uniqueName} not found in allNativeDependencies: ${moduleCompilationOutput.dependenciesTrackingResult.allNativeDependencies.map { it.uniqueName }}"
+                        }
+                    }
+                    topLevelResult.allCachedBitcodeDependencies.forEach {
+                        check(moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies.contains(it)) {
+                            "${it.library.uniqueName} not found in allCachedBitcodeDependencies: ${moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies.map { it.library.uniqueName }}"
+                        }
+                    }
                 }
 
                 val depsFilePath = config.writeSerializedDependencies

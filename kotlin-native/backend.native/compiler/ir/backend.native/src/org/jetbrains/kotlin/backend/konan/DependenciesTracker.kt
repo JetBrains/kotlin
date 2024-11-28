@@ -44,6 +44,7 @@ interface DependenciesTracker {
     fun add(declaration: IrDeclaration, onlyBitcode: Boolean = false)
     fun addNativeRuntime(onlyBitcode: Boolean = false)
     fun add(functionOrigin: FunctionOrigin, onlyBitcode: Boolean = false)
+    fun setParent(parent: DependenciesTracker)
 
     val immediateBitcodeDependencies: List<ResolvedDependency>
     val allCachedBitcodeDependencies: List<ResolvedDependency>
@@ -94,6 +95,7 @@ internal class DependenciesTrackerImpl(
     private val stdlibKFunctionImpl by lazy { findStdlibFile(KonanFqNames.internalPackageName, "KFunctionImpl.kt") }
 
     private var sealed = false
+    private var parent: DependenciesTracker? = null
 
     override fun add(functionOrigin: FunctionOrigin, onlyBitcode: Boolean) = when (functionOrigin) {
         FunctionOrigin.FromNativeRuntime -> addNativeRuntime(onlyBitcode)
@@ -110,6 +112,16 @@ internal class DependenciesTrackerImpl(
 
     override fun addNativeRuntime(onlyBitcode: Boolean) =
             add(FileOrigin.StdlibRuntime, onlyBitcode)
+
+    override fun setParent(parent: DependenciesTracker) {
+        require(this.parent == null) {
+            "parent was already set"
+        }
+        if (this.parent === parent)
+            return
+        require(!sealed) { "dependencies already sealed" }
+        this.parent = parent
+    }
 
     private fun computeFileOrigin(packageFragment: IrPackageFragment, filePathGetter: () -> String): FileOrigin {
         return if (packageFragment.isFunctionInterfaceFile)
@@ -317,12 +329,12 @@ internal class DependenciesTrackerImpl(
         Dependencies()
     }
 
-    override val immediateBitcodeDependencies get() = dependencies.immediateBitcodeDependencies
-    override val allCachedBitcodeDependencies get() = dependencies.allCachedBitcodeDependencies
-    override val allBitcodeDependencies get() = dependencies.allBitcodeDependencies
-    override val nativeDependenciesToLink get() = dependencies.nativeDependenciesToLink
-    override val allNativeDependencies get() = dependencies.allNativeDependencies
-    override val bitcodeToLink get() = dependencies.bitcodeToLink
+    override val immediateBitcodeDependencies get() = (dependencies.immediateBitcodeDependencies + parent?.immediateBitcodeDependencies.orEmpty()).toSet().toList()
+    override val allCachedBitcodeDependencies get() = (dependencies.allCachedBitcodeDependencies + parent?.allCachedBitcodeDependencies.orEmpty()).toSet().toList()
+    override val allBitcodeDependencies get() = (dependencies.allBitcodeDependencies + parent?.allBitcodeDependencies.orEmpty()).toSet().toList()
+    override val nativeDependenciesToLink get() = (dependencies.nativeDependenciesToLink + parent?.nativeDependenciesToLink.orEmpty()).toSet().toList()
+    override val allNativeDependencies get() = (dependencies.allNativeDependencies + parent?.allNativeDependencies.orEmpty()).toSet().toList()
+    override val bitcodeToLink get() = (dependencies.bitcodeToLink + parent?.bitcodeToLink.orEmpty()).toSet().toList()
 
     override fun collectResult(): DependenciesTrackingResult = DependenciesTrackingResult(
             bitcodeToLink,

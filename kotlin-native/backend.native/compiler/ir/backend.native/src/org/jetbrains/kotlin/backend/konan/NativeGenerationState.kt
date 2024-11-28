@@ -98,7 +98,7 @@ internal class NativeGenerationState(
     val runtime by runtimeDelegate
     override val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
-    val cStubsManager = CStubsManager(config.target, this)
+    var cStubsManager = CStubsManager(config.target, this)
     lateinit var llvmDeclarations: LlvmDeclarations
 
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()
@@ -134,6 +134,7 @@ internal class NativeGenerationState(
             if (original::fileLowerState.isInitialized) {
                 new.fileLowerState = original.fileLowerState
             }
+            new.cStubsManager = original.cStubsManager
             if (original::llvmDeclarations.isInitialized) {
                 new.llvmDeclarations = original.llvmDeclarations
             }
