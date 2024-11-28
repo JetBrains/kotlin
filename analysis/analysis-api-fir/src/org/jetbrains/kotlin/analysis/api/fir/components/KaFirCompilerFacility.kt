@@ -75,11 +75,7 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -709,18 +705,10 @@ internal class KaFirCompilerFacility(
             return ktFile in files || ktFile in filesWithInlinedClasses
         }
 
-        override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean {
-            return true
-        }
-
         override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean {
             return processingClassOrObject.containingKtFile in files ||
                     processingClassOrObject is KtObjectDeclaration && processingClassOrObject in inlinedClasses
         }
-
-        override fun shouldGenerateScript(script: KtScript): Boolean = script.containingKtFile in files
-
-        override fun shouldGenerateCodeFragment(script: KtCodeFragment) = false
     }
 
     private fun createJvmIrCodegenFactory(

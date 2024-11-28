@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
@@ -140,21 +138,14 @@ class GenerationState private constructor(
     }
 
     abstract class GenerateClassFilter {
-        abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
         abstract fun shouldGeneratePackagePart(ktFile: KtFile): Boolean
-        abstract fun shouldGenerateScript(script: KtScript): Boolean
-        abstract fun shouldGenerateCodeFragment(script: KtCodeFragment): Boolean
-        open fun shouldGenerateClassMembers(processingClassOrObject: KtClassOrObject) = shouldGenerateClass(processingClassOrObject)
 
         companion object {
             @JvmField
             val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
-                override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean = true
                 override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean = true
-                override fun shouldGenerateScript(script: KtScript): Boolean = true
                 override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean = true
-                override fun shouldGenerateCodeFragment(script: KtCodeFragment) = true
             }
         }
     }
