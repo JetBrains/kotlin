@@ -170,7 +170,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
                                     error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
                                 else -> irGet(addValueParameter("p$next", argumentTypes[next]))
                             }
-                            putArgument(referencedFunction, parameter, getOnNewParameter)
+                            arguments[parameter] = getOnNewParameter
                         }
                     }
                     +irReturn(exprToReturn)
