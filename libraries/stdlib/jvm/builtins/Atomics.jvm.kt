@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 package kotlin.concurrent
 
 /**
@@ -11,31 +10,32 @@ package kotlin.concurrent
  *
  * Instances of [AtomicInt] are represented by [java.util.concurrent.atomic.AtomicInteger] and provide the the same atomicity guarantees.
  */
-@SinceKotlin("2.2")
+@SinceKotlin("2.1")
+@ExperimentalStdlibApi
 public actual class AtomicInt(value: Int) {
     /**
-     * Atomically gets the value of the atomic.
+     * Atomically loads the value from this [AtomicInt].
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.get].
      */
     public actual fun load(): Int
 
     /**
-     * Atomically sets the value of the atomic to the [new value][newValue].
+     * Atomically stores the [new value][newValue] into this [AtomicInt].
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.set].
      */
     public actual fun store(newValue: Int)
 
     /**
-     * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     * Atomically stores the given [new value][newValue] into this [AtomicInt] and returns the old value.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.getAndSet].
      */
     public actual fun exchange(newValue: Int): Int
 
     /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expectedValue],
+     * Atomically stores the given [new value][newValue] into this [AtomicInt] if the current value equals the [expected value][expectedValue],
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
@@ -45,7 +45,7 @@ public actual class AtomicInt(value: Int) {
     public actual fun compareAndSet(expectedValue: Int, newValue: Int): Boolean
 
     /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expectedValue]
+     * Atomically stores the given [new value][newValue] into this [AtomicInt] if the current value equals the [expected value][expectedValue]
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
@@ -59,14 +59,14 @@ public actual class AtomicInt(value: Int) {
     public actual fun compareAndExchange(expectedValue: Int, newValue: Int): Int
 
     /**
-     * Atomically adds the [given value][delta] to the current value and returns the old value.
+     * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the old value.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.getAndAdd].
      */
     public actual fun fetchAndAdd(delta: Int): Int
 
     /**
-     * Atomically adds the [given value][delta] to the current value and returns the new value.
+     * Atomically adds the [given value][delta] to the current value of this [AtomicInt] and returns the new value.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicInteger.addAndGet].
      */
@@ -85,31 +85,32 @@ public actual class AtomicInt(value: Int) {
  *
  * Instances of [AtomicLong] are represented by [java.util.concurrent.atomic.AtomicLong] and provide the the same atomicity guarantees.
  */
-@SinceKotlin("2.2")
+@SinceKotlin("2.1")
+@ExperimentalStdlibApi
 public actual class AtomicLong(value: Long) {
     /**
-     * Atomically gets the value of the atomic.
+     * Atomically loads the value from this [AtomicLong].
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.get].
      */
     public actual fun load(): Long
 
     /**
-     * Atomically sets the value of the atomic to the [new value][newValue].
+     * Atomically stores the [new value][newValue] into this [AtomicLong].
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.set].
      */
     public actual fun store(newValue: Long)
 
     /**
-     * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     * Atomically stores the given [new value][newValue] into this [AtomicLong] and returns the old value.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.getAndSet].
      */
     public actual fun exchange(newValue: Long): Long
 
     /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expectedValue],
+     * Atomically stores the given [new value][newValue] into this [AtomicLong] if the current value equals the [expected value][expectedValue],
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
@@ -119,7 +120,7 @@ public actual class AtomicLong(value: Long) {
     public actual fun compareAndSet(expectedValue: Long, newValue: Long): Boolean
 
     /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expectedValue]
+     * Atomically stores the given [new value][newValue] into this [AtomicLong] if the current value equals the [expected value][expectedValue]
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
@@ -133,14 +134,14 @@ public actual class AtomicLong(value: Long) {
     public actual fun compareAndExchange(expectedValue: Long, newValue: Long): Long
 
     /**
-     * Atomically adds the [given value][delta] to the current value and returns the old value.
+     * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the old value.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.getAndAdd].
      */
     public actual fun fetchAndAdd(delta: Long): Long
 
     /**
-     * Atomically adds the [given value][delta] to the current value and returns the new value.
+     * Atomically adds the [given value][delta] to the current value of this [AtomicLong] and returns the new value.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicLong.addAndGet].
      */
@@ -159,31 +160,32 @@ public actual class AtomicLong(value: Long) {
  *
  * Instances of [AtomicBoolean] are represented by [java.util.concurrent.atomic.AtomicBoolean] and provide the the same atomicity guarantees.
  */
-@SinceKotlin("2.2")
+@SinceKotlin("2.1")
+@ExperimentalStdlibApi
 public actual class AtomicBoolean (value: Boolean) {
     /**
-     * Atomically gets the value of the atomic.
+     * Atomically loads the value from this [AtomicBoolean].
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicBoolean.get].
      */
     public actual fun load(): Boolean
 
     /**
-     * Atomically sets the value of the atomic to the [new value][newValue].
+     * Atomically stores the [new value][newValue] into this [AtomicBoolean].
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicBoolean.set].
      */
     public actual fun store(newValue: Boolean)
 
     /**
-     * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     * Atomically stores the given [new value][newValue] into this [AtomicBoolean] and returns the old value.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicBoolean.getAndSet].
      */
     public actual fun exchange(newValue: Boolean): Boolean
 
     /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expectedValue],
+     * Atomically stores the given [new value][newValue] into this [AtomicBoolean] if the current value equals the [expected value][expectedValue],
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
@@ -193,7 +195,7 @@ public actual class AtomicBoolean (value: Boolean) {
     public actual fun compareAndSet(expectedValue: Boolean, newValue: Boolean): Boolean
 
     /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expectedValue]
+     * Atomically stores the given [new value][newValue] into this [AtomicBoolean] if the current value equals the [expected value][expectedValue]
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
@@ -219,31 +221,32 @@ public actual class AtomicBoolean (value: Boolean) {
  *
  * Instances of [AtomicReference] are represented by [java.util.concurrent.atomic.AtomicReference] and provide the the same atomicity guarantees.
  */
-@SinceKotlin("2.2")
+@SinceKotlin("2.1")
+@ExperimentalStdlibApi
 public actual class AtomicReference<T> (value: T) {
     /**
-     * Atomically gets the value of the atomic.
+     * Atomically loads the value from this [AtomicReference].
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicReference.get].
      */
     public actual fun load(): T
 
     /**
-     * Atomically sets the value of the atomic to the [new value][newValue].
+     * Atomically stores the [new value][newValue] into this [AtomicReference].
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicReference.set].
      */
     public actual fun store(newValue: T)
 
     /**
-     * Atomically sets the value to the given [new value][newValue] and returns the old value.
+     * Atomically stores the given [new value][newValue] into this [AtomicReference] and returns the old value.
      *
      * Has the same memory effects as [java.util.concurrent.atomic.AtomicReference.getAndSet].
      */
     public actual fun exchange(newValue: T): T
 
     /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expectedValue],
+     * Atomically stores the given [new value][newValue] into this [AtomicReference] if the current value equals the [expected value][expectedValue],
      * returns true if the operation was successful and false only if the current value was not equal to the expected value.
      *
      * Comparison of values is done by value.
@@ -253,7 +256,7 @@ public actual class AtomicReference<T> (value: T) {
     public actual fun compareAndSet(expectedValue: T, newValue: T): Boolean
 
     /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expectedValue]
+     * Atomically stores the given [new value][newValue] into this [AtomicReference] if the current value equals the [expected value][expectedValue]
      * and returns the old value in any case.
      *
      * Comparison of values is done by value.
