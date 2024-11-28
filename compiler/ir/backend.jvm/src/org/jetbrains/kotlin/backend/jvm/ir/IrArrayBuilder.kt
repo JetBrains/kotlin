@@ -84,9 +84,9 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
 
             for ((index, element) in elements.withIndex()) {
                 +irCall(set).apply {
-                    dispatchReceiver = irGet(result)
-                    putValueArgument(0, irInt(index))
-                    putValueArgument(1, coerce(element.expression, elementType))
+                    arguments[0] = irGet(result)
+                    arguments[1] = irInt(index)
+                    arguments[2] = coerce(element.expression, elementType)
                 }
             }
 
