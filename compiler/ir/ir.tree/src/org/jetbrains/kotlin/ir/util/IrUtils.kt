@@ -853,27 +853,6 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
     this.index = index
 }
 
-fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
-    dispatchReceiverParameter = from.dispatchReceiverParameter?.run {
-        factory.createValueParameter(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = name,
-            type = type.substitute(substitutionMap),
-            isAssignable = isAssignable,
-            symbol = IrValueParameterSymbolImpl(),
-            varargElementType = varargElementType?.substitute(substitutionMap),
-            isCrossinline = isCrossinline,
-            isNoinline = isNoinline,
-            isHidden = isHidden,
-        ).also { parameter ->
-            parameter.parent = this@copyReceiverParametersFrom
-        }
-    }
-    extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
-}
-
 fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
     parameters = parameters memoryOptimizedPlus from.parameters.map {
         it.copyTo(

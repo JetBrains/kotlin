@@ -119,14 +119,13 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendCon
         function.copyAttributes(this)
         function.copyTypeParametersFrom(this)
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
-        function.copyReceiverParametersFrom(this, substitutionMap)
+        function.copyValueParametersFrom(this, substitutionMap)
 
         function.overriddenSymbols = function.overriddenSymbols memoryOptimizedPlus overriddenSymbols.map {
             factory.stageController.restrictTo(it.owner) {
                 it.owner.getOrCreateFunctionWithContinuationStub(context).symbol
             }
         }
-        function.valueParameters = valueParameters.memoryOptimizedMap { it.copyTo(function) }
 
         function.addValueParameter {
             startOffset = function.startOffset
