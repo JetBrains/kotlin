@@ -118,9 +118,11 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, invoke.returnType, invoke.symbol,
                 typeArgumentsCount = 0,
             ).apply {
-                dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, invokable.symbol)
-                for ((index, argument) in arguments.withIndex()) {
-                    putValueArgument(index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, argument.symbol))
+                val newArguments = (listOf(invokable) + arguments).map { arg ->
+                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arg.symbol)
+                }
+                for ((index, argument) in newArguments.withIndex()) {
+                    this.arguments[index] = argument
                 }
             }
         }
