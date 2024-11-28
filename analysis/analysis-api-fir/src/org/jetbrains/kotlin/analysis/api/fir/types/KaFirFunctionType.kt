@@ -70,7 +70,7 @@ internal class KaFirFunctionType(
     @KaExperimentalApi
     override val contextReceivers: List<KaContextReceiver>
         get() = withValidityAssertion {
-            coneType.contextReceiversTypes(builder.rootSession)
+            coneType.contextParameterTypes(builder.rootSession)
                 .map {
                     // Context receivers in function types may not have labels, hence the `null` label.
                     KaBaseContextReceiver(it.buildKtType(), label = null, token)

@@ -45,14 +45,14 @@ fun extractLambdaInfoFromFunctionType(
     // For lambdas, the existence of the receiver is always implied by the expected type, and a value parameter
     // can never fill its role.
     val receiverType = if (lambda.isLambda) expectedClassLikeType.receiverType(session) else lambda.receiverType
-    val contextReceiversNumber =
-        if (lambda.isLambda) expectedClassLikeType.contextReceiversNumberForFunctionType else lambda.contextParameters.size
+    val contextParameterNumber =
+        if (lambda.isLambda) expectedClassLikeType.contextParameterNumberForFunctionType else lambda.contextParameters.size
 
     val valueParametersTypesIncludingReceiver = expectedClassLikeType.valueParameterTypesIncludingReceiver(session)
     val isExtensionFunctionType = expectedClassLikeType.isExtensionFunctionType(session)
     val expectedParameters = valueParametersTypesIncludingReceiver.let {
         val forExtension = if (receiverType != null && isExtensionFunctionType) 1 else 0
-        val toDrop = forExtension + contextReceiversNumber
+        val toDrop = forExtension + contextParameterNumber
 
         if (toDrop > 0) it.drop(toDrop) else it
     }.map {
@@ -93,8 +93,8 @@ fun extractLambdaInfoFromFunctionType(
 
     val contextReceivers =
         when {
-            contextReceiversNumber == 0 -> emptyList()
-            lambda.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextReceiversNumber)
+            contextParameterNumber == 0 -> emptyList()
+            lambda.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextParameterNumber)
             else -> lambda.contextParameters.map { it.returnTypeRef.coneType }
         }
 

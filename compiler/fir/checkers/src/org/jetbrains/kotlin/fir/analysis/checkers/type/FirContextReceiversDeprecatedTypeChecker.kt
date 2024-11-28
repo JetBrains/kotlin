@@ -13,15 +13,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.hasContextReceivers
+import org.jetbrains.kotlin.fir.types.hasContextParameters
 
 object FirContextReceiversDeprecatedTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirResolvedTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) return
 
         if (typeRef.source == null || typeRef.source?.kind is KtFakeSourceElementKind) return
-        if (typeRef.coneType.hasContextReceivers) {
+        if (typeRef.coneType.hasContextParameters) {
             reporter.reportOn(typeRef.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, context)
         }
     }

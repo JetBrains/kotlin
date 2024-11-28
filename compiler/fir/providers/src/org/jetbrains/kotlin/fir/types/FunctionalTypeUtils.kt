@@ -274,18 +274,18 @@ fun ConeKotlinType.findContributedInvokeSymbol(
 
 // ---------------------------------------------- function type type argument extraction ----------------------------------------------
 
-fun ConeKotlinType.contextReceiversTypes(session: FirSession): List<ConeKotlinType> {
+fun ConeKotlinType.contextParameterTypes(session: FirSession): List<ConeKotlinType> {
     if (!isSomeFunctionType(session)) return emptyList()
     return fullyExpandedType(session).let { expanded ->
-        val contextReceivers = expanded.typeArguments.take(expanded.contextReceiversNumberForFunctionType)
-        contextReceivers.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
+        val contextParameter = expanded.typeArguments.take(expanded.contextParameterNumberForFunctionType)
+        contextParameter.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }
     }
 }
 
 fun ConeKotlinType.receiverType(session: FirSession): ConeKotlinType? {
     if (!isSomeFunctionType(session) || !isExtensionFunctionType(session)) return null
     return fullyExpandedType(session).let { expanded ->
-        expanded.typeArguments[expanded.contextReceiversNumberForFunctionType].typeOrDefault(session.builtinTypes.nothingType.coneType)
+        expanded.typeArguments[expanded.contextParameterNumberForFunctionType].typeOrDefault(session.builtinTypes.nothingType.coneType)
     }
 }
 
@@ -298,7 +298,7 @@ fun ConeClassLikeType.valueParameterTypesWithoutReceivers(session: FirSession): 
     // TODO: add requirement
     val expandedType = fullyExpandedType(session)
 
-    val receiversNumber = expandedType.contextReceiversNumberForFunctionType + if (expandedType.isExtensionFunctionType) 1 else 0
+    val receiversNumber = expandedType.contextParameterNumberForFunctionType + if (expandedType.isExtensionFunctionType) 1 else 0
     val valueParameters = expandedType.typeArguments.drop(receiversNumber).dropLast(1)
 
     return valueParameters.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }

@@ -1011,14 +1011,14 @@ class FirElementSerializer private constructor(
                     }
                 }
                 fillFromPossiblyInnerType(builder, type, abbreviationOnly)
-                if (type.hasContextReceivers) {
+                if (type.hasContextParameters) {
                     typeAnnotations.addIfNotNull(
                         createAnnotationFromAttribute(
                             correspondingTypeRef?.annotations, CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID,
                             argumentMapping = buildAnnotationArgumentMapping {
                                 this.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] =
                                     buildLiteralExpression(
-                                        source = null, ConstantValueKind.Int, type.contextReceiversNumberForFunctionType, setType = true
+                                        source = null, ConstantValueKind.Int, type.contextParameterNumberForFunctionType, setType = true
                                     )
                             }
                         )

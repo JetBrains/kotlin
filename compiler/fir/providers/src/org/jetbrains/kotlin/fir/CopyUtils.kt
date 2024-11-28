@@ -95,7 +95,7 @@ fun List<FirAnnotation>.computeTypeAttributes(
             CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID ->
                 attributes +=
                     CompilerConeAttributes.ContextFunctionTypeParams(
-                        annotation.extractContextReceiversCount() ?: 0
+                        annotation.extractContextParameterCount() ?: 0
                     )
             ParameterNameTypeAttribute.ANNOTATION_CLASS_ID -> {
                 // ConeAttributes.create() will always take the last attribute of a given type,
@@ -139,5 +139,5 @@ private fun FirAnnotation.tryExpandClassId(session: FirSession): ClassId? {
     }
 }
 
-private fun FirAnnotation.extractContextReceiversCount() =
+private fun FirAnnotation.extractContextParameterCount() =
     (argumentMapping.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] as? FirLiteralExpression)?.value as? Int
