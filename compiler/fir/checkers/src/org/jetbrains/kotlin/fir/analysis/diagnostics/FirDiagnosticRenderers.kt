@@ -48,7 +48,7 @@ object FirDiagnosticRenderers {
                 callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
                 declarationRenderer = FirDeclarationRenderer("local "),
                 annotationRenderer = null,
-                lineBreakAfterContextReceivers = false,
+                lineBreakAfterContextParameters = false,
                 renderFieldAnnotationSeparately = false,
             ).renderElementAsString(symbol.fir, trim = true)
             is FirTypeParameterSymbol -> symbol.name.asString()
@@ -72,7 +72,7 @@ object FirDiagnosticRenderers {
                 annotationRenderer = null,
                 contractRenderer = null,
                 supertypeRenderer = null,
-                lineBreakAfterContextReceivers = false,
+                lineBreakAfterContextParameters = false,
                 renderFieldAnnotationSeparately = false,
             ).renderElementAsString(symbol.fir, trim = true)
             is FirTypeParameterSymbol -> symbol.name.asString()
