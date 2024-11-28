@@ -188,6 +188,18 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                     ModuleCompilationOutput(result.objectFiles + moduleCompilationOutput.objectFiles, dependencies)
                 }
 
+                generationState.dependenciesTracker.collectResult().let { topLevelResult ->
+                    check(topLevelResult.nativeDependenciesToLink.all {
+                        moduleCompilationOutput.dependenciesTrackingResult.nativeDependenciesToLink.contains(it)
+                    })
+                    check(topLevelResult.allNativeDependencies.all {
+                        moduleCompilationOutput.dependenciesTrackingResult.allNativeDependencies.contains(it)
+                    })
+                    check(topLevelResult.allCachedBitcodeDependencies.all {
+                        moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies.contains(it)
+                    })
+                }
+
                 val depsFilePath = config.writeSerializedDependencies
                 if (!depsFilePath.isNullOrEmpty()) {
                     depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(moduleCompilationOutput.dependenciesTrackingResult))
