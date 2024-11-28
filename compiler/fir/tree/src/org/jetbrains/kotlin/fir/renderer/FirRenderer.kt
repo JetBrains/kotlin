@@ -856,9 +856,9 @@ class FirRenderer(
         }
 
         override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef) {
-            if (functionTypeRef.contextReceiverTypeRefs.isNotEmpty()) {
+            if (functionTypeRef.contextParameterTypeRefs.isNotEmpty()) {
                 print("context(")
-                renderSeparated(functionTypeRef.contextReceiverTypeRefs, visitor)
+                renderSeparated(functionTypeRef.contextParameterTypeRefs, visitor)
                 print(")")
             }
 

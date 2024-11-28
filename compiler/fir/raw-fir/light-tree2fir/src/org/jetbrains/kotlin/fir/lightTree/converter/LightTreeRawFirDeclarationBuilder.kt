@@ -2512,7 +2512,7 @@ class LightTreeRawFirDeclarationBuilder(
             returnTypeRef = returnTypeReference
             this.parameters += parameters
             this.isSuspend = isSuspend
-            this.contextReceiverTypeRefs.addAll(
+            this.contextParameterTypeRefs.addAll(
                 functionType.getChildNodeByType(CONTEXT_RECEIVER_LIST)?.getChildNodesByType(CONTEXT_RECEIVER)?.mapNotNull {
                     it.getChildNodeByType(TYPE_REFERENCE)?.let(::convertType)
                 }.orEmpty()

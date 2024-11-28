@@ -29,7 +29,7 @@ internal class FirFunctionTypeRefImpl(
     override val parameters: MutableList<FirFunctionTypeParameter>,
     override var returnTypeRef: FirTypeRef,
     override val isSuspend: Boolean,
-    override val contextReceiverTypeRefs: MutableList<FirTypeRef>,
+    override val contextParameterTypeRefs: MutableList<FirTypeRef>,
 ) : FirFunctionTypeRef() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -37,7 +37,7 @@ internal class FirFunctionTypeRefImpl(
         receiverTypeRef?.accept(visitor, data)
         parameters.forEach { it.accept(visitor, data) }
         returnTypeRef.accept(visitor, data)
-        contextReceiverTypeRefs.forEach { it.accept(visitor, data) }
+        contextParameterTypeRefs.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFunctionTypeRefImpl {
@@ -45,7 +45,7 @@ internal class FirFunctionTypeRefImpl(
         receiverTypeRef = receiverTypeRef?.transform(transformer, data)
         parameters.transformInplace(transformer, data)
         returnTypeRef = returnTypeRef.transform(transformer, data)
-        contextReceiverTypeRefs.transformInplace(transformer, data)
+        contextParameterTypeRefs.transformInplace(transformer, data)
         return this
     }
 

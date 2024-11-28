@@ -2548,7 +2548,7 @@ open class PsiRawFirBuilder(
                             }
                         }
 
-                        contextReceiverTypeRefs.addAll(
+                        contextParameterTypeRefs.addAll(
                             unwrappedElement.contextReceiversTypeReferences.mapNotNull {
                                 it.toFirType()
                             }

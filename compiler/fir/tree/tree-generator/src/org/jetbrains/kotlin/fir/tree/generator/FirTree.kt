@@ -1159,7 +1159,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("parameters", functionTypeParameter)
         +field("returnTypeRef", typeRef)
         +field("isSuspend", boolean)
-        +listField("contextReceiverTypeRefs", typeRef)
+        +listField("contextParameterTypeRefs", typeRef)
     }
 
     val dynamicTypeRef: Element by element(TypeRefElement) {
