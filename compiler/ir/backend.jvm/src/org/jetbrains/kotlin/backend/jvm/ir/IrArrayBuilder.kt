@@ -135,15 +135,15 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
             }
 
             val toArrayCall = irCall(toArray).apply {
-                dispatchReceiver = irGet(spreadBuilderVar)
+                arguments[0] = irGet(spreadBuilderVar)
                 if (unwrappedArrayType.isBoxedArray) {
                     val size = spreadBuilder.functions.single { it.owner.name.asString() == "size" }
-                    putValueArgument(0, irCall(builder.irSymbols.arrayOfNulls, arrayType).apply {
+                    arguments[1] = irCall(builder.irSymbols.arrayOfNulls, arrayType).apply {
                         putTypeArgument(0, elementType)
                         putValueArgument(0, irCall(size).apply {
                             dispatchReceiver = irGet(spreadBuilderVar)
                         })
-                    })
+                    }
                 }
             }
 
