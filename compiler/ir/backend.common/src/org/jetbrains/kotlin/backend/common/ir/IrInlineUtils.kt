@@ -39,7 +39,7 @@ fun IrExpression.asInlinableFunctionReference(): IrFunctionReference? {
     if (reference.arguments.zip(reference.symbol.owner.parameters)
             .any { (argument, parameter) -> parameter.kind != IrParameterKind.ExtensionReceiver && argument != null }
     ) return null
-    if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
+    if (function.parameters.any { it.isVararg || it.defaultValue != null })
         return null
     return reference
 }
