@@ -231,7 +231,7 @@ class Candidate(
 
     override var chosenExtensionReceiver: ConeResolutionAtom? = givenExtensionReceiverOptions.singleOrNull()
 
-    override var contextReceiverArguments: List<ConeResolutionAtom>? = null
+    override var contextArguments: List<ConeResolutionAtom>? = null
 
     // FirExpressionStub can be located here in case of callable reference resolution
     fun dispatchReceiverExpression(): FirExpression? {
@@ -243,8 +243,8 @@ class Candidate(
         return chosenExtensionReceiver?.expression?.takeIf { it !is FirExpressionStub }
     }
 
-    fun contextReceiverArguments(): List<FirExpression> {
-        return contextReceiverArguments?.map { it.expression } ?: emptyList()
+    fun contextArguments(): List<FirExpression> {
+        return contextArguments?.map { it.expression } ?: emptyList()
     }
 
     private var sourcesWereUpdated = false
@@ -257,7 +257,7 @@ class Candidate(
 
         dispatchReceiver = dispatchReceiver?.tryToSetSourceForImplicitReceiver()
         chosenExtensionReceiver = chosenExtensionReceiver?.tryToSetSourceForImplicitReceiver()
-        contextReceiverArguments = contextReceiverArguments?.map { it.tryToSetSourceForImplicitReceiver() }
+        contextArguments = contextArguments?.map { it.tryToSetSourceForImplicitReceiver() }
     }
 
     private fun ConeResolutionAtom.tryToSetSourceForImplicitReceiver(): ConeResolutionAtom {

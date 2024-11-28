@@ -376,7 +376,7 @@ class FirTypeVariablesAfterPCLATransformer(private val substitutor: ConeSubstitu
         candidate.chosenExtensionReceiver = ConeResolutionAtom.createRawAtom(
             candidate.chosenExtensionReceiver?.expression?.transform(this, data = null)
         )
-        candidate.contextReceiverArguments = candidate.contextReceiverArguments?.map {
+        candidate.contextArguments = candidate.contextArguments?.map {
             ConeResolutionAtom.createRawAtom(it.expression.transform(this, data = null))
         }
     }

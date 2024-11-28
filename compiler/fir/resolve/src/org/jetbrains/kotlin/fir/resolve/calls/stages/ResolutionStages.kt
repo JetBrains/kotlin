@@ -241,7 +241,7 @@ object CheckContextReceivers : ResolutionStage() {
             }
         }
 
-        candidate.contextReceiverArguments = resultingContextReceiverArguments
+        candidate.contextArguments = resultingContextReceiverArguments
     }
 }
 
