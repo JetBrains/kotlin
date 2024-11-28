@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
 internal fun Provider<Boolean>.nativeDaemonEntryPoint() = map { useXcodeMessageStyle ->
-    if (useXcodeMessageStyle) "daemonMainWithXcodeRenderer" else "daemonMain"
+    if (useXcodeMessageStyle) "daemonMainWithXcodeRenderer" else "daemonMainWithPerformance"
 }
 
 private fun Provider<File>.kotlinNativeCompilerJar(

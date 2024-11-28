@@ -9,10 +9,17 @@ import org.jetbrains.kotlin.cli.bc.main as konancMain
 import org.jetbrains.kotlin.cli.klib.main as klibMain
 import org.jetbrains.kotlin.cli.bc.mainNoExitWithGradleRenderer as konancMainWithGradleRenderer
 import org.jetbrains.kotlin.cli.bc.mainNoExitWithXcodeRenderer as konancMainWithXcodeRenderer
+import org.jetbrains.kotlin.cli.bc.mainWithPerformance as konancMainWithPerformance
 import org.jetbrains.kotlin.backend.konan.env.setEnv
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 
-private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (Array<String>) -> Unit) {
+private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (Array<String>) -> Any) {
+    println("------------------------------------------")
+    println("arguments:")
+    for (arg in args) {
+        println(arg)
+    }
+    println("-------------------------------------------------")
     val utilityName = args[0]
     val utilityArgs = args.drop(1).toTypedArray()
     when (utilityName) {
@@ -48,12 +55,15 @@ private fun setupClangEnv() {
 }
 
 fun daemonMain(args: Array<String>) = inProcessMain(args, ::konancMainWithGradleRenderer)
+fun daemonMainWithPerformance(args: Array<String>, reportFilePath: String) =
+        inProcessMain(args) { args -> konancMainWithPerformance(reportFilePath, args) }
+
 
 fun daemonMainWithXcodeRenderer(args: Array<String>) = inProcessMain(args, ::konancMainWithXcodeRenderer)
 
-private fun inProcessMain(args: Array<String>, konancMain: (Array<String>) -> Unit) {
+private fun inProcessMain(args: Array<String>, konancMain: (Array<String>) -> Any): Any? =
     usingNativeMemoryAllocator {
         setupClangEnv() // For in-process invocation have to setup proper environment manually.
         mainImpl(args, true, konancMain)
     }
-}
+

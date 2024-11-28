@@ -22,7 +22,7 @@ import kotlin.time.*
  * @see measureTime
  * @sample samples.system.Timing.measureBlockTimeMillis
  */
-public inline fun measureTimeMillis(block: () -> Unit): Long {
+public inline fun measureTimeMillis(block: () -> Any): Long {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
