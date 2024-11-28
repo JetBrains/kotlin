@@ -103,14 +103,15 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         data class SubFragment(
                 val name: String,
                 val files: List<IrFile>,
-                val module: IrModuleFragment?,
+                val module: IrModuleFragment,
         )
 
         fun SubFragment.generationState(topLevel: NativeGenerationState): NativeGenerationState {
+            val containsStdlib = name == topLevel.context.stdlibModule.konanLibrary!!.uniqueName
             val llvmModuleSpecification = if (topLevel.llvmModuleSpecification is DefaultLlvmModuleSpecification) {
                 object : LlvmModuleSpecificationBase(config.cachedLibraries) {
                     override val isFinal: Boolean
-                        get() = module != null
+                        get() = containsStdlib
 
                     override fun containsLibrary(library: KotlinLibrary): Boolean {
                         if (cachedLibraries.isLibraryCached(library))
@@ -122,7 +123,6 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
             } else topLevel.llvmModuleSpecification
             return topLevel.createChild(topLevel.llvmModuleName + name, llvmModuleSpecification).apply {
-                val containsStdlib = name == context.stdlibModule.konanLibrary!!.uniqueName
                 if (containsStdlib && cacheDeserializationStrategy.containsRuntime) {
                     files.filter { isReferencedByNativeRuntime(it.declarations) }
                             .forEach { dependenciesTracker.add(it) }
@@ -137,7 +137,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             return buildList {
                 val perLibraryFiles = fragment.irModule.files.groupBy { it.konanLibrary!!.uniqueName }
                 perLibraryFiles.mapNotNullTo(this) { (name, files) ->
-                    if (name == "stdlib") null else SubFragment(name, files, null)
+                    if (name == "stdlib") null else SubFragment(name, files, fragment.irModule)
                 }
                 add(SubFragment("stdlib", perLibraryFiles["stdlib"]!!, fragment.irModule))
             }
@@ -350,7 +350,7 @@ internal data class ModuleCompilationOutput(
  * 3. Serializes it to a bitcode file.
  */
 internal fun PhaseEngine<NativeGenerationState>.compileModule(
-        module: IrModuleFragment?,
+        module: IrModuleFragment,
         files: List<IrFile>,
         irBuiltIns: IrBuiltIns,
         bitcodeFile: java.io.File,
@@ -452,7 +452,7 @@ internal fun PhaseEngine<NativeGenerationState>.lowerModuleWithDependencies(modu
     mergeDependencies(module, dependenciesToCompile)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment?, files: List<IrFile>, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, files: List<IrFile>, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
     runCodegen(module, files, irBuiltIns)
     val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
@@ -517,7 +517,7 @@ private fun PhaseEngine<NativeGenerationState>.runGlobalOptimizations(module: Ir
  * Compile lowered [module] to object file.
  * @return absolute path to object file.
  */
-private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment?, files: List<IrFile>, irBuiltIns: IrBuiltIns) {
+private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, files: List<IrFile>, irBuiltIns: IrBuiltIns) {
     runPhase(CreateLLVMDeclarationsPhase, files)
     runPhase(RTTIPhase, RTTIInput(files, context.dceResult))
     runPhase(CodegenPhase, CodegenInput(module, files, irBuiltIns, context.lifetimes))

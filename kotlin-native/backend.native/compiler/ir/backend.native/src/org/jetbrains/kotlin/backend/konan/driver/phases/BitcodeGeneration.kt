@@ -53,7 +53,7 @@ internal val RTTIPhase = createSimpleNamedCompilerPhase<NativeGenerationState, R
 )
 
 internal data class CodegenInput(
-        val irModule: IrModuleFragment?,
+        val irModule: IrModuleFragment,
         val irFiles: List<IrFile>,
         val irBuiltIns: IrBuiltIns,
         val lifetimes: Map<IrElement, Lifetime>
@@ -64,16 +64,14 @@ internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState
         preactions = getDefaultIrActions<CodegenInput, NativeGenerationState>() + getDefaultLlvmModuleActions(),
         postactions = getDefaultIrActions<CodegenInput, NativeGenerationState>() + getDefaultLlvmModuleActions(),
         op = { generationState, input ->
-            input.irModule?.descriptor?.let {
-                val context = generationState.context
-                generationState.objCExport = ObjCExport(
-                        generationState,
-                        it,
-                        context.objCExportedInterface,
-                        context.objCExportCodeSpec
-                )
-                generationState.hasObjCExport = true
-            }
+            val context = generationState.context
+            generationState.objCExport = ObjCExport(
+                    generationState,
+                    input.irModule.descriptor,
+                    context.objCExportedInterface,
+                    context.objCExportCodeSpec
+            )
+            generationState.hasObjCExport = true
 
             initializeCachedBoxes(generationState)
 
