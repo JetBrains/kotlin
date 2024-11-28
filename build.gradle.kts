@@ -270,7 +270,6 @@ val fe10CompilerModules = arrayOf(
     ":native:frontend.native",
     ":wasm:wasm.frontend",
     ":compiler:backend.common.jvm",
-    ":analysis:decompiled:light-classes-for-decompiled-fe10",
 ).also { extra["fe10CompilerModules"] = it }
 
 extra["compilerModules"] =

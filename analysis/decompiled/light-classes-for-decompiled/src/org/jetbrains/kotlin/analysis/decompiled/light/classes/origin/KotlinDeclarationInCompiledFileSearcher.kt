@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,8 +30,15 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-abstract class KotlinDeclarationInCompiledFileSearcher {
-    abstract fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember, signature: MemberSignature): KtDeclaration?
+class KotlinDeclarationInCompiledFileSearcher {
+    private fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember, signature: MemberSignature): KtDeclaration? {
+        val relativeClassName = generateSequence(member.containingClass) { it.containingClass }.toList().dropLast(1).reversed()
+            .map { Name.identifier(it.name!!) }
+
+        val memberName = member.name ?: return null
+        return findByStubs(file, relativeClassName, member, memberName)
+    }
+
     fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember): KtDeclaration? {
         val signature = when (member) {
             is PsiField -> {
@@ -51,7 +58,7 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
         return findDeclarationInCompiledFile(file, member, signature)
     }
 
-    protected fun findByStubs(
+    private fun findByStubs(
         file: KtClsFile,
         relativeClassName: List<Name>,
         member: PsiMember,

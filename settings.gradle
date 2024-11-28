@@ -691,7 +691,6 @@ include ":generators:analysis-api-generator",
         ":analysis:decompiled:decompiler-js",
         ":analysis:decompiled:decompiler-native",
         ":analysis:decompiled:light-classes-for-decompiled",
-        ":analysis:decompiled:light-classes-for-decompiled-fe10",
         ":prepare:analysis-api-test-framework",
         ":tools:ide-plugin-dependencies-validator"
 
