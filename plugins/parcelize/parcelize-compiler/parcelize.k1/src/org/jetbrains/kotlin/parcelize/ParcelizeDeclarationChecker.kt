@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -212,16 +209,8 @@ open class ParcelizeDeclarationChecker(
             diagnosticHolder.report(ErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY.on(reportElement))
         }
 
-        val typeMapper = KotlinTypeMapper(
-            bindingContext,
-            ClassBuilderMode.FULL,
-            descriptor.module.name.asString(),
-            languageVersionSettings,
-            useOldInlineClassesManglingScheme = false
-        )
-
         for (parameter in primaryConstructor?.valueParameters.orEmpty<KtParameter>()) {
-            checkParcelableClassProperty(parameter, descriptor, declaration.body, diagnosticHolder, typeMapper, languageVersionSettings)
+            checkParcelableClassProperty(parameter, descriptor, declaration.body, diagnosticHolder, bindingContext, languageVersionSettings)
         }
     }
 
@@ -230,13 +219,13 @@ open class ParcelizeDeclarationChecker(
         containerClass: ClassDescriptor,
         containerClassBody: KtClassBody?,
         diagnosticHolder: DiagnosticSink,
-        typeMapper: KotlinTypeMapper,
+        bindingContext: BindingContext,
         languageVersionSettings: LanguageVersionSettings
     ) {
         if (!parameter.hasValOrVar()) {
             if (containerClass.allowBareValueArguments()) {
                 if (containerClassBody != null) {
-                    FindParameterReferences(setOf(parameter), typeMapper.bindingContext, diagnosticHolder).visitElement(containerClassBody)
+                    FindParameterReferences(setOf(parameter), bindingContext, diagnosticHolder).visitElement(containerClassBody)
                 }
             } else {
                 val reportElement = parameter.nameIdentifier ?: parameter
@@ -244,7 +233,7 @@ open class ParcelizeDeclarationChecker(
             }
         } else {
 
-            val descriptor = typeMapper.bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter] ?: return
+            val descriptor = bindingContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter] ?: return
 
             // Don't check parameters which won't be serialized
             if (descriptor.annotations.any { it.fqName in IGNORED_ON_PARCEL_FQ_NAMES }) {
