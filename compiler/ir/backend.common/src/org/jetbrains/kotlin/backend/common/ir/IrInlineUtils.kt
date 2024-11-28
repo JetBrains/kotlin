@@ -120,7 +120,7 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
             ).apply {
                 dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, invokable.symbol)
                 for ((index, argument) in arguments.withIndex()) {
-                    putValueArgument(index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, argument.symbol))
+                    this.arguments[index + 1] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, argument.symbol)
                 }
             }
         }
