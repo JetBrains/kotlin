@@ -270,7 +270,7 @@ class FirPCLAInferenceSession(
         if (dispatchReceiver?.expression?.isReceiverPostponed() == true) return false
         if (givenExtensionReceiverOptions.any { it.expression.isReceiverPostponed() }) return false
         // At the step of candidate's system creation, there are no chosen context receiver values, yet
-        // (see org.jetbrains.kotlin.fir.resolve.calls.CheckContextReceivers)
+        // (see org.jetbrains.kotlin.fir.resolve.calls.CheckContextArguments)
         // Thus, we just postpone everything with symbols requiring some context receivers
         if ((symbol as? FirCallableSymbol)?.resolvedContextParameters?.isNotEmpty() == true) return false
 

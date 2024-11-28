@@ -91,7 +91,7 @@ fun extractLambdaInfoFromFunctionType(
         }
     }
 
-    val contextReceivers =
+    val contextParameters =
         when {
             contextParameterNumber == 0 -> emptyList()
             lambda.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextParameterNumber)
@@ -103,7 +103,7 @@ fun extractLambdaInfoFromFunctionType(
         expectedClassLikeType,
         actualFunctionKind ?: expectedFunctionKind,
         receiverType,
-        contextReceivers,
+        contextParameters,
         parameters,
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,

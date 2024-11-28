@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1227,7 +1226,7 @@ open class FirDeclarationsResolveTransformer(
 
         lambda.replaceContextParameters(
             lambda.contextParameters.takeIf { it.isNotEmpty() }
-                ?: resolvedLambdaAtom?.contextReceiverTypes?.map { receiverType ->
+                ?: resolvedLambdaAtom?.contextParameterTypes?.map { receiverType ->
                     buildValueParameter {
                         resolvePhase = FirResolvePhase.BODY_RESOLVE
                         source = lambda.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)

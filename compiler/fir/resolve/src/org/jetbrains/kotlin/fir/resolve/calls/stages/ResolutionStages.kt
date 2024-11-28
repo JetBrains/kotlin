@@ -202,9 +202,9 @@ object CheckDispatchReceiver : ResolutionStage() {
     }
 }
 
-object CheckContextReceivers : ResolutionStage() {
+object CheckContextArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val contextReceiverExpectedTypes = (candidate.symbol as? FirCallableSymbol<*>)?.fir?.contextParameters?.map {
+        val contextExpectedTypes = (candidate.symbol as? FirCallableSymbol<*>)?.fir?.contextParameters?.map {
             candidate.substitutor.substituteOrSelf(it.returnTypeRef.coneType)
         }?.takeUnless { it.isEmpty() } ?: return
 
@@ -221,27 +221,27 @@ object CheckContextReceivers : ResolutionStage() {
                     ?: towerDataElement.implicitContextGroup?.map { it.computeExpression() }
             }
 
-        val resultingContextReceiverArguments = mutableListOf<ConeResolutionAtom>()
-        for (expectedType in contextReceiverExpectedTypes) {
+        val resultingContextArguments = mutableListOf<ConeResolutionAtom>()
+        for (expectedType in contextExpectedTypes) {
             val matchingReceivers = candidate.findClosestMatchingReceivers(expectedType, receiverGroups, context)
             when (matchingReceivers.size) {
                 0 -> {
-                    sink.reportDiagnostic(NoApplicableValueForContextReceiver(expectedType))
+                    sink.reportDiagnostic(NoContextArgument(expectedType))
                     return
                 }
                 1 -> {
                     val matchingReceiver = matchingReceivers.single()
-                    resultingContextReceiverArguments.add(matchingReceiver.atom)
+                    resultingContextArguments.add(matchingReceiver.atom)
                     candidate.system.addSubtypeConstraint(matchingReceiver.type, expectedType, SimpleConstraintSystemConstraintPosition)
                 }
                 else -> {
-                    sink.reportDiagnostic(AmbiguousValuesForContextReceiverParameter(expectedType))
+                    sink.reportDiagnostic(AmbiguousContextArgument(expectedType))
                     return
                 }
             }
         }
 
-        candidate.contextArguments = resultingContextReceiverArguments
+        candidate.contextArguments = resultingContextArguments
     }
 }
 

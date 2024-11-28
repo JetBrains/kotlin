@@ -522,7 +522,7 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(session: FirSessi
     val parameterTypes = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(ConeIntermediateDiagnostic("No type for parameter $it"))
     }
-    val contextReceiversTypes = contextParameters.map {
+    val contextParameterTypes = contextParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(ConeIntermediateDiagnostic("No type for context receiver $it"))
     }
     val kind = session.functionTypeService.extractSingleSpecialKindForFunction(symbol) ?: FunctionTypeKind.Function
@@ -531,7 +531,7 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(session: FirSessi
         parameterTypes,
         receiverType = receiverParameter?.typeRef?.coneType,
         rawReturnType = returnTypeRef.coneType,
-        contextReceivers = contextReceiversTypes
+        contextParameters = contextParameterTypes
     )
 }
 

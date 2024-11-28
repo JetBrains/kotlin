@@ -18,7 +18,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
-        CheckContextReceivers,
+        CheckContextArguments,
         CheckDslScopeViolation,
         CheckLowPriorityInOverloadResolution,
         ProcessDynamicExtensionAnnotation,
@@ -50,7 +50,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
-        CheckContextReceivers,
+        CheckContextArguments,
         CheckDslScopeViolation,
         CheckArguments,
         CheckCallModifiers,
@@ -74,7 +74,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
-        CheckContextReceivers,
+        CheckContextArguments,
         CheckDslScopeViolation,
         CheckArguments,
         EagerResolveOfCallableReferences,
@@ -132,7 +132,7 @@ class ResolutionSequenceBuilder(
     var mapTypeArguments: Boolean = false,
     var resolveCallableReferenceArguments: Boolean = false,
     var checkCallableReferenceExpectedType: Boolean = false,
-    val checkContextReceivers: Boolean = false,
+    val checkContextParameters: Boolean = false,
 ) {
     fun build(): CallKind {
         val stages = mutableListOf<ResolutionStage>().apply {
@@ -144,7 +144,7 @@ class ResolutionSequenceBuilder(
             if (checkDispatchReceiver) add(CheckDispatchReceiver)
             if (checkExtensionReceiver) add(CheckExtensionReceiver)
             if (checkArguments) add(CheckArguments)
-            if (checkContextReceivers) add(CheckContextReceivers)
+            if (checkContextParameters) add(CheckContextArguments)
             if (resolveCallableReferenceArguments) add(EagerResolveOfCallableReferences)
             if (checkLowPriorityInOverloadResolution) add(CheckLowPriorityInOverloadResolution)
             if (checkCallableReferenceExpectedType) add(CheckCallableReferenceExpectedType)

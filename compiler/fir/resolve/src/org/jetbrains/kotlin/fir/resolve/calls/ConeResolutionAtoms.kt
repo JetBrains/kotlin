@@ -153,7 +153,7 @@ class ConeResolvedLambdaAtom(
     expectedType: ConeKotlinType?,
     val expectedFunctionTypeKind: FunctionTypeKind?,
     internal val receiverType: ConeKotlinType?,
-    internal val contextReceiverTypes: List<ConeKotlinType>,
+    internal val contextParameterTypes: List<ConeKotlinType>,
     internal val parameterTypes: List<ConeKotlinType>,
     var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
@@ -174,11 +174,11 @@ class ConeResolvedLambdaAtom(
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {
-            if (receiverType == null && contextReceiverTypes.isEmpty()) return parameterTypes
-            return ArrayList<ConeKotlinType>(parameterTypes.size + contextReceiverTypes.size + (if (receiverType != null) 1 else 0)).apply {
+            if (receiverType == null && contextParameterTypes.isEmpty()) return parameterTypes
+            return ArrayList<ConeKotlinType>(parameterTypes.size + contextParameterTypes.size + (if (receiverType != null) 1 else 0)).apply {
                 addAll(parameterTypes)
                 addIfNotNull(receiverType)
-                addAll(contextReceiverTypes)
+                addAll(contextParameterTypes)
             }
         }
 

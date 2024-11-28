@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -328,7 +327,7 @@ class FirCallCompleter(
         override fun analyzeAndGetLambdaReturnArguments(
             lambdaAtom: ConeResolvedLambdaAtom,
             receiverType: ConeKotlinType?,
-            contextReceivers: List<ConeKotlinType>,
+            contextParameters: List<ConeKotlinType>,
             parameters: List<ConeKotlinType>,
             expectedReturnType: ConeKotlinType?,
             candidate: Candidate,
@@ -394,9 +393,9 @@ class FirCallCompleter(
                 else -> lambda.replaceReceiverParameter(null)
             }
 
-            if (contextReceivers.isNotEmpty()) {
+            if (contextParameters.isNotEmpty()) {
                 lambda.replaceContextParameters(
-                    contextReceivers.map { contextReceiverType ->
+                    contextParameters.map { contextParameterType ->
                         buildValueParameter {
                             resolvePhase = FirResolvePhase.BODY_RESOLVE
                             source = lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter)
@@ -405,7 +404,7 @@ class FirCallCompleter(
                             origin = FirDeclarationOrigin.Source
                             name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                             symbol = FirValueParameterSymbol(name)
-                            returnTypeRef = contextReceiverType
+                            returnTypeRef = contextParameterType
                                 // TODO(KT-73150) investigate/test the need for approximation
                                 .approximateLambdaInputType(symbol, withPCLASession)
                                 .toFirResolvedTypeRef(lambdaAtom.anonymousFunction.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))

@@ -166,13 +166,13 @@ class MultipleContextReceiversApplicableForExtensionReceivers : ResolutionDiagno
 
 object NoReceiverAllowed : ResolutionDiagnostic(INAPPLICABLE)
 
-class NoApplicableValueForContextReceiver(
+class NoContextArgument(
     val expectedContextReceiverType: ConeKotlinType
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 object UnsupportedContextualDeclarationCall : ResolutionDiagnostic(INAPPLICABLE)
 
-class AmbiguousValuesForContextReceiverParameter(
+class AmbiguousContextArgument(
     val expectedContextReceiverType: ConeKotlinType,
 ) : ResolutionDiagnostic(INAPPLICABLE)
 

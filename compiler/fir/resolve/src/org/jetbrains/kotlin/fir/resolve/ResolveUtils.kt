@@ -226,7 +226,7 @@ fun FirFunction.constructFunctionType(kind: FunctionTypeKind? = null): ConeLooku
 
     return createFunctionType(
         kind ?: FunctionTypeKind.Function, parameters, receiverTypeRef?.coneType, rawReturnType,
-        contextReceivers = contextParameters.map { it.returnTypeRef.coneType }
+        contextParameters = contextParameters.map { it.returnTypeRef.coneType }
     )
 }
 
@@ -271,11 +271,11 @@ fun createFunctionType(
     parameters: List<ConeKotlinType>,
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
-    contextReceivers: List<ConeKotlinType> = emptyList(),
+    contextParameters: List<ConeKotlinType> = emptyList(),
 ): ConeLookupTagBasedType {
     val receiverAndParameterTypes =
         buildList {
-            addAll(contextReceivers)
+            addAll(contextParameters)
             addIfNotNull(receiverType)
             addAll(parameters)
             add(rawReturnType)
@@ -283,9 +283,9 @@ fun createFunctionType(
 
     val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
     val attributes = when {
-        contextReceivers.isNotEmpty() -> ConeAttributes.create(
+        contextParameters.isNotEmpty() -> ConeAttributes.create(
             buildList {
-                add(CompilerConeAttributes.ContextFunctionTypeParams(contextReceivers.size))
+                add(CompilerConeAttributes.ContextFunctionTypeParams(contextParameters.size))
                 if (receiverType != null) {
                     add(CompilerConeAttributes.ExtensionFunctionType)
                 }

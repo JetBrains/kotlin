@@ -356,7 +356,7 @@ internal object ArgumentCheckingProcessor {
                 parameters,
                 resolvedArgument.receiverType,
                 resolvedArgument.returnType,
-                contextReceivers = resolvedArgument.contextReceiverTypes,
+                contextParameters = resolvedArgument.contextParameterTypes,
             )
 
             val position = ConeArgumentConstraintPosition(resolvedArgument.anonymousFunction)
@@ -398,7 +398,7 @@ internal object ArgumentCheckingProcessor {
                 ?: ConeTypeVariableForLambdaParameterType("_P$i").apply { csBuilder.registerVariable(this) }.defaultType
         }
 
-        val contextReceivers = lambda.contextParameters.mapIndexed { i, it ->
+        val contextParameters = lambda.contextParameters.mapIndexed { i, it ->
             it.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?: defaultType
                 ?: ConeTypeVariableForLambdaParameterType("_C$i").apply { csBuilder.registerVariable(this) }.defaultType
@@ -414,7 +414,7 @@ internal object ArgumentCheckingProcessor {
             expectedType,
             expectedFunctionTypeKind = lambda.typeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.functionTypeKind(session),
             receiverType,
-            contextReceivers,
+            contextParameters,
             parameters,
             returnType,
             typeVariable.takeIf { newTypeVariableUsed },
