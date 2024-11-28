@@ -30,6 +30,12 @@ fun IrReturnTarget.returnType(context: CommonBackendContext) =
         else -> error("Unknown ReturnTarget: $this")
     }
 
+/**
+ * ##### This is a deprecated API
+ * Instead, add [buildReceiverParameter][org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter] result to
+ * [IrSimpleFunction.parameters].
+ */
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
 inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder.() -> Unit): IrValueParameter =
     IrValueParameterBuilder().run {
         builder()

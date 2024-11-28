@@ -242,11 +242,13 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         .apply { superTypes = superTypes memoryOptimizedPlus parameter.superTypes }
                 }
 
-                valueParameters = stateMachineFunction.valueParameters.memoryOptimizedMap { parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
-                }
+                this.parameters += this.createDispatchReceiverParameterWithClassParent()
 
-                this.createDispatchReceiverParameter()
+                this.parameters += stateMachineFunction.parameters
+                    .filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+                    .memoryOptimizedMap { parameter ->
+                        parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
+                    }
 
                 overriddenSymbols = overriddenSymbols memoryOptimizedPlus stateMachineFunction.symbol
             }

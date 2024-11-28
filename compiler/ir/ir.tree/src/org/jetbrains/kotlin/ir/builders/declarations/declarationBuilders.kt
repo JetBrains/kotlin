@@ -320,6 +320,13 @@ fun <D> buildReceiverParameter(
         it.parent = parent
     }
 
+fun IrFunction.buildReceiverParameter(
+    origin: IrDeclarationOrigin,
+    type: IrType,
+    startOffset: Int = parent.startOffset,
+    endOffset: Int = parent.endOffset
+) = buildReceiverParameter(this, origin, type, startOffset, endOffset)
+
 fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
     with(builder) {
         return createValueParameter(

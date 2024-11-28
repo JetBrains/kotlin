@@ -284,7 +284,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                 isInfix = false,
         ).also { result ->
             result.parent = irClass
-            result.createDispatchReceiverParameter()
+            result.parameters += result.createDispatchReceiverParameterWithClassParent()
             result.valueParameters += constructor.valueParameters.map { it.copyTo(result) }
 
             result.overriddenSymbols += initMethod.symbol

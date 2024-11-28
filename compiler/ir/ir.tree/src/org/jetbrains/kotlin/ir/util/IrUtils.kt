@@ -1126,6 +1126,11 @@ fun IrDeclarationContainer.simpleFunctions() = declarations.flatMap {
     }
 }
 
+/**
+ * ##### This is a deprecated API
+ * Instead, add [createDispatchReceiverParameterWithClassParent] result to [IrFunction.parameters].
+ */
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
 fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null) {
     assert(dispatchReceiverParameter == null)
 
@@ -1148,6 +1153,14 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 
     parameters = listOf(new) + parameters
 }
+
+fun IrFunction.createDispatchReceiverParameterWithClassParent(origin: IrDeclarationOrigin? = null): IrValueParameter =
+    buildReceiverParameter(
+        origin = origin ?: parentAsClass.origin,
+        type = parentAsClass.defaultType,
+        startOffset = startOffset,
+        endOffset = endOffset,
+    )
 
 val IrFunction.allParameters: List<IrValueParameter>
     get() = when (this) {
