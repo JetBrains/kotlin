@@ -32,6 +32,7 @@ internal object LLFirPhaseUpdater {
 
                 is FirAnonymousInitializer -> target.body?.accept(LocalElementPhaseUpdatingTransformer)
                 is FirCodeFragment -> target.block.accept(LocalElementPhaseUpdatingTransformer)
+                is FirDanglingModifierList -> target.acceptChildren(LocalElementPhaseUpdatingTransformer)
             }
         }
     }
