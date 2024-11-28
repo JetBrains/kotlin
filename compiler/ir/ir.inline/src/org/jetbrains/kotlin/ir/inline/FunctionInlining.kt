@@ -671,7 +671,7 @@ open class FunctionInlining(
 
                         else -> {
                             val message = "Incomplete expression: call to ${callee.render()} " +
-                                    "has no argument at index ${parameter.indexInOldValueParameters}"
+                                    "has no argument at index ${parameter.indexInParameters}"
                             throw Error(message)
                         }
                     }
@@ -717,8 +717,7 @@ open class FunctionInlining(
                 }
                 when (it.parameter) {
                     referenced.dispatchReceiverParameter -> reference.dispatchReceiver = newArgument
-                    referenced.extensionReceiverParameter -> reference.extensionReceiver = newArgument
-                    else -> reference.putValueArgument(it.parameter.indexInOldValueParameters, newArgument)
+                    else -> reference.arguments[it.parameter] = newArgument
                 }
             }
             return evaluationStatements
