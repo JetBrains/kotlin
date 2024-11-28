@@ -125,7 +125,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                     parent = irClass
                     irClass.declarations.add(this)
 
-                    createDispatchReceiverParameter()
+                    parameters += createDispatchReceiverParameterWithClassParent()
 
                     body = context.irFactory.createBlockBody(startOffset, endOffset, allInitializers)
                 }

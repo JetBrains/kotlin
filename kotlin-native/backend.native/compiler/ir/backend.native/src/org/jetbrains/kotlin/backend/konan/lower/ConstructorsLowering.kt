@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.ir.isArray
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -50,9 +51,8 @@ internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor)
                 parent = parentClass
                 originalConstructor = irConstructor
 
-                addDispatchReceiver {
-                    startOffset = parentClass.startOffset
-                    endOffset = parentClass.startOffset
+                parameters += buildReceiverParameter {
+                    origin = JvmLoweredDeclarationOrigin.TO_ARRAY
                     type = parentClass.defaultType
                 }
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -65,10 +65,11 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
                     superTypes.add(context.irBuiltIns.anyNType)
                 }
                 returnType = context.irBuiltIns.arrayClass.typeWith(elementType.defaultType)
-                val receiver = addDispatchReceiver {
-                    type = irClass.defaultType
+                val receiver = buildReceiverParameter {
                     origin = JvmLoweredDeclarationOrigin.TO_ARRAY
+                    type = irClass.defaultType
                 }
+                parameters += receiver
                 val prototype = addValueParameter("array", returnType, JvmLoweredDeclarationOrigin.TO_ARRAY)
                 body = context.createIrBuilder(symbol).irBlockBody {
                     if (bridge == null) {
@@ -93,10 +94,11 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
                 modality = if (bridge != null) Modality.FINAL else Modality.OPEN
                 returnType = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType)
             }.apply {
-                val receiver = addDispatchReceiver {
-                    type = irClass.defaultType
+                val receiver = buildReceiverParameter {
                     origin = JvmLoweredDeclarationOrigin.TO_ARRAY
+                    type = irClass.defaultType
                 }
+                parameters += receiver
                 body = context.createIrBuilder(symbol).irBlockBody {
                     if (bridge == null) {
                         +irReturn(irCall(symbols.nonGenericToArray, symbols.nonGenericToArray.owner.returnType).apply {

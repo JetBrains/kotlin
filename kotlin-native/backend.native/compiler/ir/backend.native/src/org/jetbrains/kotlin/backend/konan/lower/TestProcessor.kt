@@ -354,7 +354,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
             val superFunction = baseClassSuite.simpleFunctions()
                     .single { it.name == getterName && it.valueParameters.isEmpty() }
 
-            createDispatchReceiverParameter()
+            parameters += createDispatchReceiverParameterWithClassParent()
             overriddenSymbols += superFunction.symbol
 
             body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
@@ -391,7 +391,7 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
             val superFunction = baseClassSuite.simpleFunctions()
                     .single { it.name == getterName && it.valueParameters.isEmpty() }
 
-            createDispatchReceiverParameter()
+            parameters += createDispatchReceiverParameterWithClassParent()
             overriddenSymbols += superFunction.symbol
 
             body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {

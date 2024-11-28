@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
@@ -806,7 +805,8 @@ class JvmSymbols(
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
             parent = kotlinJvmInternalPackage
-            addDispatchReceiver {
+            parameters += buildReceiverParameter {
+                origin = IrDeclarationOrigin.DEFINED
                 type = irBuiltIns.anyNType
             }
             addValueParameter("owner", irBuiltIns.stringType)

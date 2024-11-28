@@ -127,7 +127,7 @@ class MemoizedInlineClassReplacements(
                 returnType = irClass.inlineClassRepresentation!!.underlyingType
             }.apply {
                 parent = irClass
-                createDispatchReceiverParameter()
+                parameters += createDispatchReceiverParameterWithClassParent()
             }
         }
 
