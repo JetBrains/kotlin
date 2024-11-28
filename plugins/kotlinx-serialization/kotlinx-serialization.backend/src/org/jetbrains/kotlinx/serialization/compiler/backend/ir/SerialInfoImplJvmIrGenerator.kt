@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.jvm.lower.JvmAnnotationImplementationTransformer
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -53,7 +53,7 @@ class SerialInfoImplJvmIrGenerator(
                         )
                     }
                 )
-                addExtensionReceiver(context.irBuiltIns.kClassClass.starProjectedType)
+                parameters += createExtensionReceiver(context.irBuiltIns.kClassClass.starProjectedType)
                 returnType = javaLangClass.starProjectedType
             }
         }.symbol

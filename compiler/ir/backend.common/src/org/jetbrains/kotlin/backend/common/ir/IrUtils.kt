@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
@@ -37,6 +39,10 @@ inline fun IrSimpleFunction.addDispatchReceiver(builder: IrValueParameterBuilder
         }
     }
 
+@DeprecatedForRemovalCompilerApi(
+    deprecatedSince = CompilerVersionOfApiDeprecation._2_1_20,
+    replaceWith = "org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver",
+)
 fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
     IrValueParameterBuilder().run {
         this.type = type
@@ -45,6 +51,15 @@ fun IrSimpleFunction.addExtensionReceiver(type: IrType, origin: IrDeclarationOri
         factory.buildValueParameter(this, this@addExtensionReceiver).also { receiver ->
             extensionReceiverParameter = receiver
         }
+    }
+
+fun IrSimpleFunction.createExtensionReceiver(type: IrType, origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED): IrValueParameter =
+    IrValueParameterBuilder().run {
+        this.type = type
+        this.origin = origin
+        this.name = "receiver".synthesizedName
+        this.kind = IrParameterKind.ExtensionReceiver
+        factory.buildValueParameter(this, this@createExtensionReceiver)
     }
 
 // TODO: support more cases like built-in operator call and so on
