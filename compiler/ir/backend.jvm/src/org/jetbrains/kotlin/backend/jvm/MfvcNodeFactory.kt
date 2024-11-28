@@ -413,8 +413,8 @@ private fun makeSpecializedEqualsMethod(
                 val conjunctions = leftArgs.zip(rightArgs) { l, r -> irEquals(l, r) }
                 irExprBody(conjunctions.reduce { acc, current ->
                     irCall(context.irBuiltIns.andandSymbol).apply {
-                        putValueArgument(0, acc)
-                        putValueArgument(1, current)
+                        arguments[0] = acc
+                        arguments[1] = current
                     }
                 })
             }
