@@ -20,7 +20,7 @@ internal class KaFirJavaFieldSymbolPointer(
     ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,
     private val fieldName: Name,
     isStatic: Boolean,
-    originalSymbol: KaJavaFieldSymbol? = null,
+    originalSymbol: KaJavaFieldSymbol?,
 ) : KaFirMemberSymbolPointer<KaJavaFieldSymbol>(ownerPointer, isStatic, originalSymbol) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: FirScope,

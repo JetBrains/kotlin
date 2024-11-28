@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KaFirDynamicFunctionSymbolPointer(
     private val name: Name,
-    originalSymbol: KaNamedFunctionSymbol? = null,
+    originalSymbol: KaNamedFunctionSymbol?,
 ) : KaBaseSymbolPointer<KaNamedFunctionSymbol>(originalSymbol) {
 
     override fun restoreIfNotCached(analysisSession: KaSession): KaNamedFunctionSymbol {

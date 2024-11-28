@@ -30,7 +30,7 @@ sealed class KaBasePropertyAccessorSymbolPointer<T : KaPropertyAccessorSymbol>(
 @KaImplementationDetail
 class KaBasePropertyGetterSymbolPointer(
     propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
-    originalSymbol: KaPropertyGetterSymbol? = null
+    originalSymbol: KaPropertyGetterSymbol?
 ) : KaBasePropertyAccessorSymbolPointer<KaPropertyGetterSymbol>(propertySymbolPointer, originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaPropertyGetterSymbol? {
@@ -41,7 +41,7 @@ class KaBasePropertyGetterSymbolPointer(
 @KaImplementationDetail
 class KaBasePropertySetterSymbolPointer(
     propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
-    originalSymbol: KaPropertySetterSymbol? = null
+    originalSymbol: KaPropertySetterSymbol?
 ) : KaBasePropertyAccessorSymbolPointer<KaPropertySetterSymbol>(propertySymbolPointer, originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaPropertySetterSymbol? {

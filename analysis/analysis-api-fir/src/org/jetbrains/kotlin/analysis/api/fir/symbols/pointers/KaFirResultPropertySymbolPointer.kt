@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
 
 internal class KaFirResultPropertySymbolPointer(
     private val scriptPointer: KaSymbolPointer<KaScriptSymbol>,
-    originalSymbol: KaKotlinPropertySymbol? = null
+    originalSymbol: KaKotlinPropertySymbol?
 ) : KaBaseSymbolPointer<KaKotlinPropertySymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol? {

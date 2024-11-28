@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 internal class KaFirSamConstructorSymbolPointer(
     private val ownerClassId: ClassId,
-    originalSymbol: KaSamConstructorSymbol? = null,
+    originalSymbol: KaSamConstructorSymbol?,
 ) : KaBaseSymbolPointer<KaSamConstructorSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaSamConstructorSymbol? = with(analysisSession) {

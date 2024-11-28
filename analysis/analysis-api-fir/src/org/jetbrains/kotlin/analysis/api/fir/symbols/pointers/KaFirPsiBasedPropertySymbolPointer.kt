@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 internal class KaFirPsiBasedPropertySymbolPointer(
     private val variableSymbolPointer: KaSymbolPointer<KaVariableSymbol>,
-    originalSymbol: KaKotlinPropertySymbol? = null,
+    originalSymbol: KaKotlinPropertySymbol?,
 ) : KaBaseSymbolPointer<KaKotlinPropertySymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaKotlinPropertySymbol? =

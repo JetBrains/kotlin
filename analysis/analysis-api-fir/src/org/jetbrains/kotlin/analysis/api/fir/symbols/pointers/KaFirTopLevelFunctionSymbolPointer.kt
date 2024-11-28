@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.CallableId
 internal class KaFirTopLevelFunctionSymbolPointer(
     callableId: CallableId,
     private val signature: FirCallableSignature,
-    originalSymbol: KaNamedFunctionSymbol? = null,
+    originalSymbol: KaNamedFunctionSymbol?,
 ) : KaTopLevelCallableSymbolPointer<KaNamedFunctionSymbol>(callableId, originalSymbol) {
     override fun KaFirSession.chooseCandidateAndCreateSymbol(
         candidates: Collection<FirCallableSymbol<*>>,

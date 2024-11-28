@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 
 internal class KaFe10PackageSymbolPointer(
     private val packageName: FqName,
-    originalSymbol: KaPackageSymbol? = null
+    originalSymbol: KaPackageSymbol?
 ) : KaBaseSymbolPointer<KaPackageSymbol>(originalSymbol) {
     @KaImplementationDetail
     override fun restoreIfNotCached(analysisSession: KaSession): KaPackageSymbol {
