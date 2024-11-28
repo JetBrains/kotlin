@@ -16,11 +16,17 @@ import org.gradle.api.services.BuildServiceParameters
  */
 abstract class TaskInstantiationTrackingBuildService : BuildService<BuildServiceParameters.None>, AutoCloseable {
     var startedExecution = false
-    val tasksExecutedAtExecutionTime = mutableListOf<String>()
+    val tasksExecutedAtExecutionTime = mutableListOf<Pair<String,Throwable>>()
 
     override fun close() {
         require(tasksExecutedAtExecutionTime.isEmpty()) {
-            "The following tasks were instantiated at execution time: $tasksExecutedAtExecutionTime"
+            buildString {
+                appendLine("Task instantiation tracking build service has detected tasks executed at execution time:")
+                tasksExecutedAtExecutionTime.forEach { (taskPath, throwable) ->
+                    appendLine("  * Task $taskPath")
+                    appendLine("    ${throwable.stackTraceToString()}")
+                }
+            }
         }
     }
 
@@ -34,7 +40,7 @@ abstract class TaskInstantiationTrackingBuildService : BuildService<BuildService
             project.tasks.configureEach { task ->
                 task.usesService(trackingService)
                 if (trackingService.get().startedExecution) {
-                    trackingService.get().tasksExecutedAtExecutionTime.add(task.path)
+                    trackingService.get().tasksExecutedAtExecutionTime += task.path to Throwable() /* throwable to track stacktrace */
                 }
                 task.doFirst {
                     trackingService.get().startedExecution = true

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.utils.JsonUtils
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
+import org.jetbrains.kotlin.gradle.utils.registerArtifact
 
 internal val Project.kotlinSecondaryVariantsDataSharing: KotlinSecondaryVariantsDataSharing by projectStoredProperty {
     KotlinSecondaryVariantsDataSharing(project)
@@ -83,9 +84,11 @@ internal class KotlinSecondaryVariantsDataSharing(
         }
 
         outgoingConfiguration.outgoing.variants.create(key) { variant ->
-            variant.artifact(taskOutputProvider) { artifact ->
-                artifact.type = key
-                artifact.builtBy(taskDependencies)
+            variant.registerArtifact(
+                artifactProvider = taskOutputProvider,
+                type = key
+            ) {
+                builtBy(taskDependencies)
             }
             variant.attributes.configureAttributes(key)
         }

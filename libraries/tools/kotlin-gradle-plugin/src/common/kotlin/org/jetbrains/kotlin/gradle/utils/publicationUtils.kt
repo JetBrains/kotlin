@@ -15,29 +15,34 @@ import org.gradle.api.provider.Provider
  * Otherwise, Gradle versions before 8.4 may instantiate tasks registered as artifacts during dependencies overviewing without actual resolution.
  * An example of such overviewing is [[org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation]]
  * which does not require platform klibs, but klib generation tasks were instantiated at execution time (KT-71328) leading to races.
+ *
+ * When artifact is exported as secondary variant [name], [extension] and [classifier] are not used,
+ * so setting it to some "default" value is acceptable. But one has to be careful when setting those
+ * on publishable artifacts. Check [ConfigurationPublications.registerArtifact]
  */
 private fun ConfigurablePublishArtifact.configureMandatoryProperties(
-    name: String?,
-    type: String?,
-    extension: String?,
+    name: String = "default-name",
+    type: String = "default-type",
+    extension: String = "default-extension",
     classifier: String?,
 ) {
-    if (name != null) setName(name)
-    if (type != null) setType(type)
-    if (extension != null) setExtension(extension)
-    // Classifier must be always set even if null
-    setClassifier(classifier)
+    this.name = name
+    this.type = type
+    this.extension = extension
+    this.classifier = classifier
 }
 
 internal fun ConfigurationVariant.registerArtifact(
     artifactProvider: Provider<*>,
-    name: String? = null,
-    type: String? = null,
-    extension: String? = null,
+    name: String = "default-name",
+    type: String = "default-type",
+    extension: String = "default-extension",
     classifier: String? = null,
+    configure: ConfigurablePublishArtifact.() -> Unit = {},
 ) {
     artifact(artifactProvider) { artifact ->
         artifact.configureMandatoryProperties(name, type, extension, classifier)
+        artifact.configure()
     }
 }
 
