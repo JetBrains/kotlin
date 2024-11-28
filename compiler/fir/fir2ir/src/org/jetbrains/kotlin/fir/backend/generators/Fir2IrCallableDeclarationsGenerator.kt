@@ -597,12 +597,12 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         }
     }
 
-    fun addContextReceiverParametersTo(
-        contextReceivers: List<FirValueParameter>,
+    fun addContextParametersTo(
+        contextParameters: List<FirValueParameter>,
         parent: IrFunction,
         result: MutableList<IrValueParameter>,
     ) {
-        contextReceivers.mapIndexedTo(result) { index, contextReceiver ->
+        contextParameters.mapIndexedTo(result) { index, contextReceiver ->
             if (contextReceiver.isLegacyContextReceiver()) {
                 createIrParameterFromContextReceiver(contextReceiver, index)
             } else {
@@ -659,11 +659,11 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             val type = valueParameter.returnTypeRef.toIrType(c, ConversionTypeOrigin.SETTER)
             declareDefaultSetterParameter(type, valueParameter)
         } else if (function != null) {
-            val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
+            val contextParameters = function.contextParametersForFunctionOrContainingProperty()
 
-            contextReceiverParametersCount = contextReceivers.size
+            contextReceiverParametersCount = contextParameters.size
             valueParameters = buildList {
-                addContextReceiverParametersTo(contextReceivers, parent, this)
+                addContextParametersTo(contextParameters, parent, this)
 
                 function.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                     declarationStorage.createAndCacheParameter(

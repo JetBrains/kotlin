@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
-import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
+import org.jetbrains.kotlin.fir.backend.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -42,7 +41,7 @@ class Fir2IrLazyPropertyAccessor(
 ) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(c, startOffset, endOffset, origin, symbol, parent, isFakeOverride) {
     init {
         symbol.bind(this)
-        this.contextReceiverParametersCount = fir.contextReceiversForFunctionOrContainingProperty().size
+        this.contextReceiverParametersCount = fir.contextParametersForFunctionOrContainingProperty().size
     }
 
     override val fir: FirCallableDeclaration

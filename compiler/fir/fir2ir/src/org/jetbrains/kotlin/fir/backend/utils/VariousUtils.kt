@@ -42,7 +42,7 @@ fun FirRegularClass.getIrSymbolsForSealedSubclasses(c: Fir2IrComponents): List<I
     }.filterIsInstance<IrClassSymbol>()
 }
 
-fun FirCallableDeclaration.contextReceiversForFunctionOrContainingProperty(): List<FirValueParameter> =
+fun FirCallableDeclaration.contextParametersForFunctionOrContainingProperty(): List<FirValueParameter> =
     if (this is FirPropertyAccessor)
         this.propertySymbol.fir.contextParameters
     else

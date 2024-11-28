@@ -795,7 +795,7 @@ class CallAndReferenceGenerator(
                             origin = origin,
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                         ).apply {
-                            putContextReceiverArguments(lValue)
+                            putContextArguments(lValue)
                             putValueArgument(0, irRhsWithCast)
                         }
 
@@ -819,7 +819,7 @@ class CallAndReferenceGenerator(
                             origin = origin,
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                         ).apply {
-                            putValueArgument(putContextReceiverArguments(lValue), irRhsWithCast)
+                            putValueArgument(putContextArguments(lValue), irRhsWithCast)
                         }
 
                         backingFieldSymbol != null -> IrSetFieldImpl(
@@ -1048,7 +1048,7 @@ class CallAndReferenceGenerator(
         val call = statement as? FirCall
         return when (this) {
             is IrMemberAccessExpression<*> -> {
-                val contextReceiverCount = putContextReceiverArguments(statement)
+                val contextArgumentCount = putContextArguments(statement)
                 if (call == null) return this
                 val argumentsCount = call.arguments.size
                 if (argumentsCount <= valueArgumentsCount) {
@@ -1056,7 +1056,7 @@ class CallAndReferenceGenerator(
                         val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
                         if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty()) && valueParameters != null) {
                             return applyArgumentsWithReorderingIfNeeded(
-                                argumentMapping, valueParameters, substitutor, contextReceiverCount, call,
+                                argumentMapping, valueParameters, substitutor, contextArgumentCount, call,
                             )
                         }
                         check(argumentsCount == 0) { "Non-empty unresolved argument list." }
@@ -1104,12 +1104,12 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun IrMemberAccessExpression<*>.putContextReceiverArguments(statement: FirStatement?): Int {
+    private fun IrMemberAccessExpression<*>.putContextArguments(statement: FirStatement?): Int {
         if (statement !is FirContextArgumentListOwner) return 0
 
-        val contextReceiverCount = statement.contextArguments.size
-        if (contextReceiverCount > 0) {
-            for (index in 0 until contextReceiverCount) {
+        val contextArgumentCount = statement.contextArguments.size
+        if (contextArgumentCount > 0) {
+            for (index in 0 until contextArgumentCount) {
                 putValueArgument(
                     index,
                     visitor.convertToIrExpression(statement.contextArguments[index]),
@@ -1117,14 +1117,14 @@ class CallAndReferenceGenerator(
             }
         }
 
-        return contextReceiverCount
+        return contextArgumentCount
     }
 
     private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
         argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
         substitutor: ConeSubstitutor,
-        contextReceiverCount: Int,
+        contextArgumentCount: Int,
         call: FirCall,
     ): IrExpression {
         val converted = convertArguments(argumentMapping, substitutor)
@@ -1145,7 +1145,7 @@ class CallAndReferenceGenerator(
                 extensionReceiver = extensionReceiver?.freeze("\$receiver")
                 for ((parameter, irArgument) in converted) {
                     putValueArgument(
-                        valueParameters.indexOf(parameter) + contextReceiverCount,
+                        valueParameters.indexOf(parameter) + contextArgumentCount,
                         irArgument.freeze(parameter.name.asString())
                     )
                 }
@@ -1153,7 +1153,7 @@ class CallAndReferenceGenerator(
             }
         } else {
             for ((parameter, irArgument) in converted) {
-                putValueArgument(valueParameters.indexOf(parameter) + contextReceiverCount, irArgument)
+                putValueArgument(valueParameters.indexOf(parameter) + contextArgumentCount, irArgument)
             }
             if (visitor.annotationMode) {
                 val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction

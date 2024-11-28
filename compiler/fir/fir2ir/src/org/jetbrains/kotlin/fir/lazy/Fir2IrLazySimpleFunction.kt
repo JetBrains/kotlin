@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
-import org.jetbrains.kotlin.fir.backend.generators.Fir2IrCallableDeclarationsGenerator
+import org.jetbrains.kotlin.fir.backend.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.lazyMappedFunctionListVar
 import org.jetbrains.kotlin.fir.backend.toIrType
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.initialSignatureAttr
@@ -38,7 +36,7 @@ class Fir2IrLazySimpleFunction(
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
-        this.contextReceiverParametersCount = fir.contextReceiversForFunctionOrContainingProperty().size
+        this.contextReceiverParametersCount = fir.contextParametersForFunctionOrContainingProperty().size
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

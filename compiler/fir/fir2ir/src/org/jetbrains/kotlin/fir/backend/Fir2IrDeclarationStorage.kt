@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
-import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
+import org.jetbrains.kotlin.fir.backend.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -428,15 +428,15 @@ class Fir2IrDeclarationStorage(
     }
 
     fun <T : IrFunction> T.putParametersInScope(function: FirFunction): T {
-        val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
+        val contextParameters = function.contextParametersForFunctionOrContainingProperty()
 
-        for ((firParameter, irParameter) in contextReceivers.zip(this.valueParameters.take(contextReceivers.size))) {
+        for ((firParameter, irParameter) in contextParameters.zip(this.valueParameters.take(contextParameters.size))) {
             if (!firParameter.isLegacyContextReceiver()) {
                 localStorage.putParameter(firParameter, irParameter.symbol)
             }
         }
 
-        for ((firParameter, irParameter) in function.valueParameters.zip(valueParameters.drop(contextReceivers.size))) {
+        for ((firParameter, irParameter) in function.valueParameters.zip(valueParameters.drop(contextParameters.size))) {
             localStorage.putParameter(firParameter, irParameter.symbol)
         }
         return this

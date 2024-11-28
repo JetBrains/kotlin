@@ -764,25 +764,25 @@ class Fir2IrVisitor(
                 return thisRef
             }
             // TODO(KT-72994) remove everything below when context receivers are removed
-            val contextReceiverNumber = (firClass as FirRegularClass).contextParameters.indexOf(referencedFir)
+            val contextParameterNumber = (firClass as FirRegularClass).contextParameters.indexOf(referencedFir)
 
             val constructorForCurrentlyGeneratedDelegatedConstructor =
                 conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass.symbol)
 
             if (constructorForCurrentlyGeneratedDelegatedConstructor != null) {
                 val constructorParameter =
-                    constructorForCurrentlyGeneratedDelegatedConstructor.valueParameters[contextReceiverNumber]
+                    constructorForCurrentlyGeneratedDelegatedConstructor.valueParameters[contextParameterNumber]
                 IrGetValueImpl(startOffset, endOffset, constructorParameter.type, constructorParameter.symbol)
             } else {
                 val contextReceivers =
                     c.classifierStorage.getFieldsWithContextReceiversForClass(irClass, firClass)
-                require(contextReceivers.size > contextReceiverNumber) {
-                    "Not defined context receiver #$contextReceiverNumber for $irClass. " +
+                require(contextReceivers.size > contextParameterNumber) {
+                    "Not defined context receiver #$contextParameterNumber for $irClass. " +
                             "Context receivers found: $contextReceivers"
                 }
 
                 IrGetFieldImpl(
-                    startOffset, endOffset, contextReceivers[contextReceiverNumber].symbol,
+                    startOffset, endOffset, contextReceivers[contextParameterNumber].symbol,
                     thisReceiverExpression.resolvedType.toIrType(c),
                     thisRef,
                 )
@@ -797,9 +797,9 @@ class Fir2IrVisitor(
         val calleeReference = thisReceiverExpression.calleeReference
         val firScript = firScriptSymbol.fir
         val irScript = declarationStorage.getCachedIrScript(firScript) ?: error("IrScript for ${firScript.name} not found")
-        val contextReceiverNumber = firScriptSymbol.fir.receivers.indexOf(calleeReference.boundSymbol?.fir)
+        val contextParameterNumber = firScriptSymbol.fir.receivers.indexOf(calleeReference.boundSymbol?.fir)
         val receiverParameter =
-            irScript.implicitReceiversParameters.find { it.indexInOldValueParameters == contextReceiverNumber } ?: irScript.thisReceiver
+            irScript.implicitReceiversParameters.find { it.indexInOldValueParameters == contextParameterNumber } ?: irScript.thisReceiver
         if (receiverParameter != null) {
             return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                 IrGetValueImpl(startOffset, endOffset, receiverParameter.type, receiverParameter.symbol)
@@ -828,9 +828,9 @@ class Fir2IrVisitor(
             else -> null
         } ?: return null
 
-        val contextReceiverNumber = firCallableSymbol.fir.contextParameters.indexOf(calleeReference.boundSymbol?.fir)
-        val receiver = if (contextReceiverNumber != -1) {
-            irFunction.valueParameters[contextReceiverNumber]
+        val contextParameterNumber = firCallableSymbol.fir.contextParameters.indexOf(calleeReference.boundSymbol?.fir)
+        val receiver = if (contextParameterNumber != -1) {
+            irFunction.valueParameters[contextParameterNumber]
         } else {
             irFunction.extensionReceiverParameter
         } ?: return null

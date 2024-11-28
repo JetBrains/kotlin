@@ -270,8 +270,8 @@ class Fir2IrLazyProperty(
         }
 
         accessor.valueParameters = buildList {
-            callablesGenerator.addContextReceiverParametersTo(
-                accessor.fir.contextReceiversForFunctionOrContainingProperty(),
+            callablesGenerator.addContextParametersTo(
+                accessor.fir.contextParametersForFunctionOrContainingProperty(),
                 accessor,
                 this@buildList
             )

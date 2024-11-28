@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.utils.contextReceiversForFunctionOrContainingProperty
+import org.jetbrains.kotlin.fir.backend.utils.contextParametersForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
 import org.jetbrains.kotlin.fir.backend.utils.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.utils.irOrigin
@@ -63,8 +63,8 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
         }
 
         irFunction.valueParameters = buildList {
-            callablesGenerator.addContextReceiverParametersTo(
-                fir.contextReceiversForFunctionOrContainingProperty(),
+            callablesGenerator.addContextParametersTo(
+                fir.contextParametersForFunctionOrContainingProperty(),
                 irFunction,
                 this@buildList
             )
@@ -127,7 +127,7 @@ class Fir2IrLazyDeclarationsGenerator(private val c: Fir2IrComponents) : Fir2IrC
         }
 
         irConstructor.valueParameters = buildList {
-            callablesGenerator.addContextReceiverParametersTo(
+            callablesGenerator.addContextParametersTo(
                 fir.contextParameters,
                 irConstructor,
                 this@buildList
