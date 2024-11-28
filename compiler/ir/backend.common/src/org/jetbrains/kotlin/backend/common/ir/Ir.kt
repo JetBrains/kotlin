@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -177,7 +178,7 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
         val plusSymbol = if (functionSymbol.owner.dispatchReceiverParameter?.type?.isString() == true)
             memberStringPlus
-        else if (functionSymbol.owner.extensionReceiverParameter?.type?.isNullableString() == true)
+        else if (functionSymbol.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.isNullableString() == true)
             extensionStringPlus
         else
             return false
