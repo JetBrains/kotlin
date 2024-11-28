@@ -69,7 +69,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
         return builder.irCall(arrayConstructor, unwrappedArrayType).apply {
             if (typeArgumentsCount != 0)
                 putTypeArgument(0, elementType)
-            putValueArgument(0, size)
+            arguments[0] = size
         }
     }
 
