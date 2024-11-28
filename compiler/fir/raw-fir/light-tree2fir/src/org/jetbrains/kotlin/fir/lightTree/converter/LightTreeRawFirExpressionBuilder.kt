@@ -388,6 +388,7 @@ class LightTreeRawFirExpressionBuilder(
             argumentList = buildArgumentList { arguments += args }
             source = data.treeToStack.last()!!.toFirSourceElement()
             interpolationPrefix = ""
+            fromStringLiterals = true
         }
     }
 

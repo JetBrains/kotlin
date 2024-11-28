@@ -1020,6 +1020,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(expression)
 
         +field("interpolationPrefix", string)
+        +field("fromStringLiterals", boolean)
     }
 
     val throwExpression: Element by element(Expression) {

@@ -273,6 +273,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(stringConcatenationCall) {
             parents += callBuilder
+            defaultFalse("fromStringLiterals")
         }
 
         builder(thisReceiverExpression) {

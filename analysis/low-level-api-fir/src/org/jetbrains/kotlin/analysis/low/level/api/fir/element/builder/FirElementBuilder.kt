@@ -18,11 +18,19 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.toKtPsiSourceElement
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.ThreadSafe
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -121,7 +129,24 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
         val structureElement = fileStructure.getStructureElementFor(element, nonLocalContainer)
         val mappings = structureElement.mappings
-        return mappings.getFir(psi)
+        return adjustSelectedFir(mappings.getFir(psi), element)
+    }
+
+    private fun adjustSelectedFir(fir: FirElement?, element: KtElement): FirElement? {
+        if (fir is FirStringConcatenationCall && fir.fromStringLiterals && element is KtOperationReferenceExpression) {
+            val stringClassSymbol =
+                moduleComponents.session.symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.String) as FirRegularClassSymbol
+            val plusStringSymbol =
+                stringClassSymbol.declarationSymbols.find { it is FirFunctionSymbol && it.callableId.callableName == OperatorNameConventions.PLUS }!!
+
+            return buildResolvedNamedReference {
+                source = element.toKtPsiSourceElement()
+                name = OperatorNameConventions.PLUS
+                resolvedSymbol = plusStringSymbol
+            }
+        }
+
+        return fir
     }
 
     private inline fun <T : KtElement, E : PsiElement> getFirForNonBodyElement(
