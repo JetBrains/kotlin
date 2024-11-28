@@ -24,12 +24,16 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeArgumentMetrics
 import org.jetbrains.kotlin.gradle.utils.escapeStringCharacters
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.phaseDescription
+import java.io.File
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import javax.inject.Inject
+import kotlin.io.path.absolutePathString
 
 internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val metricsReporterProvider: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
@@ -67,14 +71,19 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                 .escapeQuotesForWindows()
                 .toMap() + toolSpec.systemProperties
 
+            val reportFile = File.createTempFile("native_compiler_report", "txt")
+            val reportArguments = if (toolSpec.collectNativeCompilerMetrics.get()) {
+                listOf("--report-file", reportFile.absolutePath)
+            } else emptyList()
+
             val toolArgsPair = if (toolSpec.shouldPassArgumentsViaArgFile.get()) {
-                val argFile = args.toArgFile()
+                val argFile = args.toArgFile(/*reportFile*/)
                 argFile to listOfNotNull(
                     toolSpec.optionalToolName.orNull,
                     "@${argFile.toFile().absolutePath}"
                 )
             } else {
-                null to listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments
+                null to reportArguments + listOfNotNull(toolSpec.optionalToolName.orNull) + args.arguments
             }
 
             try {
@@ -102,11 +111,13 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     toolSpec.environmentBlacklist.forEach { spec.environment.remove(it) }
                     spec.args(toolArgsPair.second)
                 }
+                metricsReporter.parseCompilerMetricsFromFile(reportFile)
             } finally {
                 toolArgsPair.first?.let {
                     try {
                         Files.deleteIfExists(it)
-                    } catch (_: IOException) {}
+                    } catch (_: IOException) {
+                    }
                 }
             }
         }
@@ -148,7 +159,13 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint.get()}'")
 
                 metricsReporter.measure(GradleBuildTime.RUN_ENTRY_POINT) {
-                    entryPoint.invoke(null, toolArgs.toTypedArray())
+                    if (toolSpec.collectNativeCompilerMetrics.get()) {
+                        val reportFile = Files.createTempFile("compiler-native-report", ".txt")
+                        entryPoint.invoke(null, toolArgs.toTypedArray(), reportFile.absolutePathString())
+                        metricsReporter.parseCompilerMetricsFromFile(reportFile.toFile())
+                    } else {
+                        entryPoint.invoke(null, toolArgs.toTypedArray())
+                    }
                 }
             } catch (t: InvocationTargetException) {
                 throw t.targetException
@@ -186,7 +203,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             else -> this
         }
 
-    private fun ToolArguments.toArgFile(): Path {
+    private fun ToolArguments.toArgFile(/*reportFile: Path? = null*/): Path {
         val argFile = Files.createTempFile(
             "kotlinc-native-args",
             ".lst"
@@ -212,6 +229,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val classpath: FileCollection,
         val jvmArgs: ListProperty<String>,
         val shouldPassArgumentsViaArgFile: Provider<Boolean>,
+        val collectNativeCompilerMetrics: Provider<Boolean>,
         val systemProperties: Map<String, String> = emptyMap(),
         val environment: Map<String, String> = emptyMap(),
         val environmentBlacklist: Set<String> = emptySet(),
@@ -253,4 +271,53 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel,
         val arguments: List<String>,
     )
+}
+
+private fun PhaseType.toGradleBuildTime() = when (this) {
+    PhaseType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
+    PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
+    PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
+    PhaseType.IrLowering -> GradleBuildTime.IR_LOWERING
+    PhaseType.Backend -> GradleBuildTime.BACKEND
+}
+
+private fun PhaseType.toLpsGradleMetrics() = when (this) {
+    PhaseType.Analysis -> GradleBuildPerformanceMetric.ANALYSIS_LPS
+    PhaseType.TranslationToIr -> GradleBuildPerformanceMetric.TRANSLATION_TO_IR_LPS
+    PhaseType.IrLowering -> GradleBuildPerformanceMetric.IR_LOWERING_LPS
+    PhaseType.Backend -> GradleBuildPerformanceMetric.BACKEND_LPS
+    else -> null
+}
+
+private val pattern = "\\s*([A-z_\\s]*)\\s*(\\d*) ms(.*)".toRegex()
+private val locPerSecondPattern = "\\s*(\\d*) loc/s".toRegex()
+private val phases = PhaseType.values().associateBy { it.phaseDescription() }
+
+internal fun BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>.parseCompilerMetricsFromFile(file: File) {
+    if (!file.isFile()) return
+    fun addLinePerSecondIfPresent(line: String, metricName: PhaseType?) {
+        if (line.isNotEmpty()) {
+            val locPerSecondMatchResult = locPerSecondPattern.matchEntire(line)
+            if (locPerSecondMatchResult != null) {
+                val locPerSecondValue = locPerSecondMatchResult.groupValues.getOrNull(1)?.toLongOrNull()
+                val lpsMetricName = metricName?.toLpsGradleMetrics()
+                if (lpsMetricName != null && locPerSecondValue != null) {
+                    addMetric(lpsMetricName, locPerSecondValue)
+                }
+            }
+        }
+    }
+
+    file.forEachLine { line ->
+        val matchResult = pattern.matchEntire(line)
+        if (matchResult != null) {
+            val metricName = matchResult.groupValues.getOrNull(1).let { phases[it?.trim()] }
+            val value = matchResult.groupValues.getOrNull(2)?.toLongOrNull()
+            if (metricName != null && value != null) {
+                addTimeMetricMs(metricName.toGradleBuildTime(), value)
+            }
+
+            addLinePerSecondIfPresent(matchResult.groupValues.getOrNull(3).orEmpty(), metricName)
+        }
+    }
 }

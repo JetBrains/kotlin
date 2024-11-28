@@ -30,6 +30,7 @@ internal fun ObjectFactory.KotlinNativeCompilerRunner(
     jvmArgs: Provider<List<String>>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
     buildFusService: Property<out BuildFusService<out BuildFusService.Parameters>?>,
+    kotlinNativeVersion: Provider<String>,
 ): KotlinNativeToolRunner = newInstance<KotlinNativeToolRunner>(
     metricsReporter,
     classLoadersCachingBuildService,
@@ -40,6 +41,7 @@ internal fun ObjectFactory.KotlinNativeCompilerRunner(
         actualNativeHomeDirectory,
         jvmArgs,
         konanPropertiesBuildService,
+        kotlinNativeVersion
     ),
     buildFusService
 )
@@ -51,11 +53,12 @@ private fun ObjectFactory.kotlinToolSpec(
     actualNativeHomeDirectory: Provider<File>,
     jvmArgs: Provider<List<String>>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
+    kotlinNativeVersion: Provider<String>,
 ) = KotlinNativeToolRunner.ToolSpec(
     displayName = property("konanc"),
     optionalToolName = property("konanc"),
     mainClass = nativeMainClass,
-    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
+    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(kotlinNativeVersion),
     classpath = nativeCompilerClasspath(actualNativeHomeDirectory, isUseEmbeddableCompilerJar),
     jvmArgs = listProperty<String>().value(jvmArgs),
     shouldPassArgumentsViaArgFile = shouldDisableKonanDaemon,
@@ -65,4 +68,5 @@ private fun ObjectFactory.kotlinToolSpec(
         mapOf(MessageRenderer.PROPERTY_KEY to messageRenderer.name)
     }.get(),
     environmentBlacklist = konanPropertiesBuildService.get().environmentBlacklist,
+    collectNativeCompilerMetrics = useXcodeMessageStyle.nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion)
 ).disableC2().enableAssertions().configureDefaultMaxHeapSize()

@@ -9,14 +9,29 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 
-internal fun Provider<Boolean>.nativeDaemonEntryPoint() = map { useXcodeMessageStyle ->
-    if (useXcodeMessageStyle) "daemonMainWithXcodeRenderer" else "daemonMain"
-}
+internal fun Provider<Boolean>.nativeDaemonEntryPoint(kotlinNativeVersion: Provider<String>) =
+    zip(kotlinNativeVersion) { useXcodeMessageStyle, version ->
+        if (useXcodeMessageStyle) {
+            "daemonMainWithXcodeRenderer"
+        } else if (KotlinToolingVersion(version).supportCompilerMetricsForNative()) {
+            "daemonMainWithPerformance"
+        } else {
+            "daemonMain"
+        }
+    }
+
+internal fun Provider<Boolean>.nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion: Provider<String>) =
+    zip(kotlinNativeVersion) { useXcodeMessageStyle, version ->
+        !useXcodeMessageStyle && KotlinToolingVersion(version).supportCompilerMetricsForNative()
+    }
+
+private fun KotlinToolingVersion.supportCompilerMetricsForNative() = this >= KotlinToolingVersion("2.2.0-dev-13610")
 
 private fun Provider<File>.kotlinNativeCompilerJar(
-    shouldUseEmbeddableCompilerJar: Provider<Boolean>
+    shouldUseEmbeddableCompilerJar: Provider<Boolean>,
 ) = zip(shouldUseEmbeddableCompilerJar) { nativeHomeDir, useJar ->
     if (useJar) {
         nativeHomeDir.resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
@@ -34,7 +49,7 @@ internal fun ObjectFactory.nativeCompilerClasspath(
 )
 
 internal fun nativeExecSystemProperties(
-    useXcodeMessageStyle: Provider<Boolean>
+    useXcodeMessageStyle: Provider<Boolean>,
 ) = useXcodeMessageStyle.map {
     val messageRenderer = if (it) MessageRenderer.XCODE_STYLE else MessageRenderer.GRADLE_STYLE
     mapOf(MessageRenderer.PROPERTY_KEY to messageRenderer.name)

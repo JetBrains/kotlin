@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.bc.main as konancMain
 import org.jetbrains.kotlin.cli.klib.main as klibMain
 import org.jetbrains.kotlin.cli.bc.mainNoExitWithGradleRenderer as konancMainWithGradleRenderer
 import org.jetbrains.kotlin.cli.bc.mainNoExitWithXcodeRenderer as konancMainWithXcodeRenderer
+import org.jetbrains.kotlin.cli.bc.mainWithPerformance as konancMainWithPerformance
 import org.jetbrains.kotlin.backend.konan.env.setEnv
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 
@@ -36,18 +37,27 @@ private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (A
         "llvm" -> runLlvmTool(utilityArgs)
         "clang" -> runLlvmClangToolWithTarget(utilityArgs)
 
-        else ->
-            error("Unexpected utility name")
+        else -> error("Unexpected utility name: $utilityName")
     }
 }
 
-fun main(args: Array<String>) = mainImpl(args, false, ::konancMain)
+fun main(args: Array<String>) = if (args[0] == "--report-file") {
+    val reportFile = args[1]
+    mainImpl(args.drop(2).toTypedArray(), false) { reportFile.runKonancMainAndStorePerformanceMetrics(it) }
+} else {
+    mainImpl(args, false, ::konancMain)
+}
+
+private fun String.runKonancMainAndStorePerformanceMetrics(args: Array<String>) = konancMainWithPerformance(this, args)
 
 private fun setupClangEnv() {
     setEnv("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
 }
 
 fun daemonMain(args: Array<String>) = inProcessMain(args, ::konancMainWithGradleRenderer)
+fun daemonMainWithPerformance(args: Array<String>, reportFilePath: String) =
+        inProcessMain(args) { args -> konancMainWithPerformance(reportFilePath, args) }
+
 
 fun daemonMainWithXcodeRenderer(args: Array<String>) = inProcessMain(args, ::konancMainWithXcodeRenderer)
 
@@ -57,3 +67,4 @@ private fun inProcessMain(args: Array<String>, konancMain: (Array<String>) -> Un
         mainImpl(args, true, konancMain)
     }
 }
+

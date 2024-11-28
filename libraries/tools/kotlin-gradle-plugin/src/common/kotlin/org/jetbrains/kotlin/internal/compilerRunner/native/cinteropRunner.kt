@@ -26,10 +26,11 @@ internal fun ObjectFactory.KotlinNativeCInteropRunner(
     jvmArgs: Provider<List<String>>,
     useXcodeMessageStyle: Provider<Boolean>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
+    kotlinNativeVersion: Provider<String>,
 ): KotlinNativeToolRunner = newInstance(
     metricsReporter,
     classLoadersCachingBuildService,
-    kotlinToolSpec(isUseEmbeddableCompilerJar, actualNativeHomeDirectory, jvmArgs, useXcodeMessageStyle, konanPropertiesBuildService),
+    kotlinToolSpec(isUseEmbeddableCompilerJar, actualNativeHomeDirectory, jvmArgs, useXcodeMessageStyle, konanPropertiesBuildService, kotlinNativeVersion),
     property(BuildFusService::class.java)
 )
 
@@ -39,15 +40,17 @@ private fun ObjectFactory.kotlinToolSpec(
     jvmArgs: Provider<List<String>>,
     useXcodeMessageStyle: Provider<Boolean>,
     konanPropertiesBuildService: Provider<KonanPropertiesBuildService>,
+    kotlinNativeVersion: Provider<String>,
 ) = KotlinNativeToolRunner.ToolSpec(
     displayName = property("cinterop"),
     optionalToolName = property("cinterop"),
     mainClass = nativeMainClass,
-    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(),
+    daemonEntryPoint = useXcodeMessageStyle.nativeDaemonEntryPoint(kotlinNativeVersion),
     classpath = nativeCompilerClasspath(actualNativeHomeDirectory, isUseEmbeddableCompilerJar),
     jvmArgs = listProperty<String>().value(jvmArgs),
     shouldPassArgumentsViaArgFile = property(false),
     systemProperties = nativeExecSystemProperties(useXcodeMessageStyle),
     environment = nativeExecLLVMEnvironment,
     environmentBlacklist = konanPropertiesBuildService.get().environmentBlacklist,
+    collectNativeCompilerMetrics = useXcodeMessageStyle.nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion)
 ).configureDefaultMaxHeapSize().enableAssertions()

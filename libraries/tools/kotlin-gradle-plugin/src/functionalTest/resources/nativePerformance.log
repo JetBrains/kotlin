@@ -1,0 +1,12 @@
+Kotlin to Native Compiler performance report
+                INIT        78265876 ms
+             ANALYZE        10 ms            2345 loc/s
+             BACKEND        23 ms            qewrff loc/s
+             BACKEND        556908 ms            234 loc/s
+         IR LOWERING        2938748 ms    Infinity loc/s
+         IR LOWERING        amcnsmdbj ms    Infinity loc/s
+         IR LOWERING        jiah387jshfs ms    Infinity loc/s
+         IR LOWERING        ms ms    Infinity loc/s
+         IR LOWERING        245 ms            2435 loc/s
+   TRANSLATION to IR        245 ms            2 loc/s
+   TRANSLATION to IR        1234 ms             loc/s

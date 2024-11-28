@@ -134,17 +134,19 @@ fun UnitStats.forEachPhaseSideMeasurement(action: (PhaseSideType, SideStats?) ->
     action(PhaseSideType.BinaryClassFromKotlinFile, findKotlinClassStats)
 }
 
+fun PhaseType.phaseDescription() = when (this) {
+    PhaseType.Initialization -> "INIT"
+    PhaseType.Analysis -> "ANALYZE"
+    PhaseType.TranslationToIr -> "TRANSLATION to IR"
+    PhaseType.IrLowering -> "IR LOWERING"
+    PhaseType.Backend -> "BACKEND"
+}
+
 fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
     forEachPhaseMeasurement { phaseType, time ->
         if (time == null) return@forEachPhaseMeasurement
 
-        val name = when (phaseType) {
-            PhaseType.Initialization -> "INIT"
-            PhaseType.Analysis -> "ANALYZE"
-            PhaseType.TranslationToIr -> "TRANSLATION to IR"
-            PhaseType.IrLowering -> "IR LOWERING"
-            PhaseType.Backend -> "BACKEND"
-        }
+        val name = phaseType.phaseDescription()
 
         action(
             "%20s%8s ms".format(name, time.millis) +

@@ -428,6 +428,7 @@ internal constructor(
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
+    private val simpleKotlinNativeVersion = project.nativeProperties.kotlinNativeVersion
 
     @get:Internal
     internal val nativeCompilerRunner
@@ -440,7 +441,8 @@ internal constructor(
             actualNativeHomeDirectory,
             runnerJvmArgs,
             konanPropertiesService,
-            buildFusService
+            buildFusService,
+            simpleKotlinNativeVersion
         )
 
     // endregion.
@@ -1168,6 +1170,8 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
+    private val simpleKotlinNativeVersion = project.nativeProperties.kotlinNativeVersion
+
     private val cinteropRunner: KotlinNativeToolRunner
         get() = objectFactory.KotlinNativeCInteropRunner(
             metrics,
@@ -1177,6 +1181,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
             runnerJvmArgs,
             useXcodeMessageStyle,
             konanPropertiesService,
+            simpleKotlinNativeVersion
         )
 
     // Inputs and outputs.
