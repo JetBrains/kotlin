@@ -636,7 +636,7 @@ internal object CheckVisibility : ResolutionStage() {
 
             val typeAlias = declaration.typeAliasForConstructor
             if (typeAlias != null) {
-                if (!visibilityChecker.isVisible(typeAlias.fir, candidate)) {
+                if (!visibilityChecker.isVisible(typeAlias.fir, candidate.callInfo, dispatchReceiver = null)) {
                     sink.yieldVisibilityError(callInfo)
                 }
             }

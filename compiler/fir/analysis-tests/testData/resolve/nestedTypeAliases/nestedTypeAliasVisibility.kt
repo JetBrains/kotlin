@@ -44,7 +44,7 @@ typealias PublicOuterTA = OuterClass.InnerClass
 
 class OuterClassInheritor : OuterClass() {
     fun testProtected() {
-        PrivateTAInner() // ERROR (invisible)
+        <!INVISIBLE_REFERENCE!>PrivateTAInner<!>() // ERROR (invisible)
         ProtectedTAInner() // OK
         PublicTAInner() // OK
 
@@ -60,8 +60,8 @@ class OuterClassInheritor : OuterClass() {
 
 fun testPublic() {
     val outerClass = OuterClass()
-    outerClass.PrivateTAInner() // ERROR (invisible)
-    outerClass.ProtectedTAInner() // ERROR (invisible)
+    outerClass.<!INVISIBLE_REFERENCE!>PrivateTAInner<!>() // ERROR (invisible)
+    outerClass.<!INVISIBLE_REFERENCE!>ProtectedTAInner<!>() // ERROR (invisible)
     outerClass.PublicTAInner() // OK
 
     outerClass.<!INVISIBLE_REFERENCE!>PrivateTAPrivateInner<!>() // ERROR (invisible, single error)
