@@ -809,7 +809,7 @@ open class FunctionInlining(
                     statements.add(variableInitializer.doImplicitCastIfNeededTo(parameter.type))
                 },
                 isMutable = false,
-                origin = if (parameter == callee.extensionReceiverParameter) {
+                origin = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
                     IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
                 } else {
                     IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
