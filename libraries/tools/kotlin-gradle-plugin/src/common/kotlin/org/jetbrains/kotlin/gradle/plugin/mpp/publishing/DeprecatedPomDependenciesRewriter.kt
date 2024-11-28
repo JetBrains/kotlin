@@ -11,10 +11,13 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetComponentWithPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope
@@ -85,6 +88,14 @@ internal class DeprecatedPomDependenciesRewriter(
                 val noMapping = coordinates to coordinates
                 when (dependency) {
                     is ProjectDependency -> {
+                        if (GradleVersion.current() >= GradleVersion.version("9.0")) {
+                            compilation.project.reportDiagnostic(
+                                KotlinToolingDiagnostics.NotCompatibleWithGradle9(
+                                    "add 'kotlin.kmp.isolated-projects.support=enable' into 'gradle.properties'"
+                                )
+                            )
+                        }
+                        @Suppress("DEPRECATION")
                         val dependencyProject = dependency.dependencyProject
                         val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtensionOrNull
                             ?: return@associate noMapping

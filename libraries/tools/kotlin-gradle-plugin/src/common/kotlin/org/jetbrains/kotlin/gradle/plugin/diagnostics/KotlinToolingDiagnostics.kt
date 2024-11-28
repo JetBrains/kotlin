@@ -1060,6 +1060,17 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object NotCompatibleWithGradle9 : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(
+            fixAction: String
+        ): ToolingDiagnostic = build(
+            """
+            Current configuration of Kotlin Gradle Plugin is not compatible with Gradle 9.
+            Please $fixAction to fix it. 
+            """.trimIndent()
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

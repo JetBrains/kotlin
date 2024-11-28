@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.tooling.provider.model.ToolingModelBuilder
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.model.CompilerArguments
 import org.jetbrains.kotlin.gradle.model.KotlinProject
 import org.jetbrains.kotlin.gradle.model.SourceSet
@@ -69,8 +70,14 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
             return listOf("expectedBy", "implement")
                 .flatMap { project.configurations.findByName(it)?.dependencies ?: emptySet<Dependency>() }
                 .filterIsInstance<ProjectDependency>()
-                .mapNotNull { it.dependencyProject }
-                .map { it.pathOrName() }
+                .mapNotNull {
+                    if (GradleVersion.current() < GradleVersion.version("8.11")) {
+                        @Suppress("DEPRECATION")
+                        it.dependencyProject.pathOrName()
+                    } else {
+                        it.path
+                    }
+                }
         }
 
         private fun Project.pathOrName() = if (path == ":") name else path

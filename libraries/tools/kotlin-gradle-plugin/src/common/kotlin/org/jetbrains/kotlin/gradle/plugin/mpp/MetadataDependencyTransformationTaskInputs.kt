@@ -5,6 +5,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
+import org.gradle.util.GradleVersion
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -99,7 +100,12 @@ internal class MetadataDependencyTransformationTaskInputs(
                 .allDependencies
                 .map { dependency ->
                     if (dependency is ProjectDependency && keepProjectDependencies) {
-                        dependency.dependencyProject.path
+                        if (GradleVersion.current() < GradleVersion.version("8.11")) {
+                            @Suppress("DEPRECATION")
+                            dependency.dependencyProject.path
+                        } else {
+                            dependency.path
+                        }
                     } else {
                         "${dependency.name}:${dependency.group}:${dependency.version}"
                     }
