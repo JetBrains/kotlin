@@ -175,12 +175,19 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     val memberStringPlus: IrSimpleFunctionSymbol get() = irBuiltIns.memberStringPlus
 
     fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
-        val plusSymbol = if (functionSymbol.owner.dispatchReceiverParameter?.type?.isString() == true)
-            memberStringPlus
-        else if (functionSymbol.owner.extensionReceiverParameter?.type?.isNullableString() == true)
-            extensionStringPlus
-        else
-            return false
+        val plusSymbol = when {
+            functionSymbol.owner.hasShape(
+                dispatchReceiver = true,
+                regularParameters = 1,
+                parameterTypes = listOf(irBuiltIns.stringType, null)
+            ) -> memberStringPlus
+            functionSymbol.owner.hasShape(
+                extensionReceiver = true,
+                regularParameters = 1,
+                parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), null)
+            ) -> extensionStringPlus
+            else -> return false
+        }
 
         return functionSymbol == plusSymbol
     }
