@@ -246,7 +246,7 @@ abstract class Symbols(
                 function.name.asString() == "<get-isInitialized>" &&
                         function.isTopLevel &&
                         function.getPackageFragment().packageFqName.asString() == "kotlin" &&
-                        function.valueParameters.isEmpty() &&
+                        function.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }.isEmpty() &&
                         symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
                             receiverClass?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
                         }
