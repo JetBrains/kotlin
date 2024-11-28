@@ -303,12 +303,12 @@ class FirElementSerializer private constructor(
         }
 
         if (klass is FirRegularClass) {
-            for (contextReceiver in klass.contextParameters) {
-                val typeRef = contextReceiver.returnTypeRef
+            for (contextParameter in klass.contextParameters) {
+                val typeRef = contextParameter.returnTypeRef
                 if (useTypeTable()) {
                     builder.addContextReceiverTypeId(typeId(typeRef))
                 } else {
-                    builder.addContextReceiverType(typeProto(contextReceiver.returnTypeRef))
+                    builder.addContextReceiverType(typeProto(contextParameter.returnTypeRef))
                 }
             }
         }
@@ -583,12 +583,12 @@ class FirElementSerializer private constructor(
             builder.addTypeParameter(local.typeParameterProto(typeParameter))
         }
 
-        for (contextReceiver in property.contextParameters) {
-            val typeRef = contextReceiver.returnTypeRef
+        for (contextParameter in property.contextParameters) {
+            val typeRef = contextParameter.returnTypeRef
             if (useTypeTable()) {
                 builder.addContextReceiverTypeId(local.typeId(typeRef))
             } else {
-                builder.addContextReceiverType(local.typeProto(contextReceiver.returnTypeRef))
+                builder.addContextReceiverType(local.typeProto(contextParameter.returnTypeRef))
             }
         }
 
@@ -671,12 +671,12 @@ class FirElementSerializer private constructor(
             builder.addTypeParameter(local.typeParameterProto(typeParameter))
         }
 
-        for (contextReceiver in function.contextParameters) {
-            val typeRef = contextReceiver.returnTypeRef
+        for (contextParameter in function.contextParameters) {
+            val typeRef = contextParameter.returnTypeRef
             if (useTypeTable()) {
                 builder.addContextReceiverTypeId(local.typeId(typeRef))
             } else {
-                builder.addContextReceiverType(local.typeProto(contextReceiver.returnTypeRef))
+                builder.addContextReceiverType(local.typeProto(contextParameter.returnTypeRef))
             }
         }
 

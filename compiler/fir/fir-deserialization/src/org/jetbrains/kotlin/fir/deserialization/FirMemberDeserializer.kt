@@ -477,7 +477,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             }
 
             proto.contextReceiverTypes(c.typeTable).mapTo(contextParameters) {
-                loadContextReceiver(it, local, FirDeclarationOrigin.Library, symbol)
+                loadContextParameter(it, local, FirDeclarationOrigin.Library, symbol)
             }
         }.apply {
             when (val initializer = initializer) {
@@ -507,7 +507,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
-    private fun loadContextReceiver(
+    private fun loadContextParameter(
         proto: ProtoBuf.Type,
         context: FirDeserializationContext,
         origin: FirDeclarationOrigin,
@@ -526,12 +526,12 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
-    internal fun createContextReceiversForClass(
+    internal fun createContextParametersForClass(
         classProto: ProtoBuf.Class,
         origin: FirDeclarationOrigin,
         containingDeclarationSymbol: FirBasedSymbol<*>,
     ): List<FirValueParameter> =
-        classProto.contextReceiverTypes(c.typeTable).map { loadContextReceiver(it, c, origin, containingDeclarationSymbol) }
+        classProto.contextReceiverTypes(c.typeTable).map { loadContextParameter(it, c, origin, containingDeclarationSymbol) }
 
     fun loadFunction(
         proto: ProtoBuf.Function,
@@ -606,7 +606,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.containerSource = c.containerSource
 
             proto.contextReceiverTypes(c.typeTable).mapTo(contextParameters) {
-                loadContextReceiver(it, local, deserializationOrigin, symbol)
+                loadContextParameter(it, local, deserializationOrigin, symbol)
             }
         }.apply {
             this.versionRequirements = versionRequirements
@@ -691,7 +691,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             containerSource = c.containerSource
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
-            contextParameters.addAll(createContextReceiversForClass(classProto, FirDeclarationOrigin.Library, symbol))
+            contextParameters.addAll(createContextParametersForClass(classProto, FirDeclarationOrigin.Library, symbol))
         }.build().apply {
             containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
             this.versionRequirements = VersionRequirement.create(proto, c)
