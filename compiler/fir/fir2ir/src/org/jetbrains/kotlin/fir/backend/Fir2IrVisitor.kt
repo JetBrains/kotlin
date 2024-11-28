@@ -945,7 +945,11 @@ class Fir2IrVisitor(
                 }
             }
         }.let {
-            expression.accept(implicitCastInserter, it) as IrExpression
+            // If the expression is a smartcast, we already inserted the proper implicit cast during it's transformation to IR
+            when (expression) {
+                is FirSmartCastExpression -> it
+                else -> expression.accept(implicitCastInserter, it)
+            } as IrExpression
         }
     }
 

@@ -288,7 +288,9 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
             val smartcastedType = smartCastExpression.resolvedType
             val approximatedType = smartcastedType.approximateForIrOrNull(c)
             if (approximatedType != null) {
-                if (smartCastExpression.originalExpression.resolvedType.isSubtypeOf(approximatedType, session)) {
+                val originalType = smartCastExpression.originalExpression.resolvedType
+                val originalNotNullType = originalType.withNullability(nullable = false, session.typeContext)
+                if (originalNotNullType.isSubtypeOf(approximatedType, session)) {
                     return data
                 }
             }
