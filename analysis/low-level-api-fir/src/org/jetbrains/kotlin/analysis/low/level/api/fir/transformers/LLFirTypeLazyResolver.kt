@@ -113,14 +113,15 @@ private class LLFirTypeTargetResolver(target: LLFirResolveTarget) : LLFirTargetR
                 // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
                 resolveOutsideClassBody(target, transformer::transformDelegatedConstructorCall)
             }
+
             is FirScript -> resolveScriptTypes(target)
+            is FirField if (target.origin == FirDeclarationOrigin.Synthetic.DelegateField) -> {
+                // delegated field should be resolved in the same context as super types
+                resolveOutsideClassBody(target, transformer::transformDelegateField)
+            }
+
             is FirDanglingModifierList, is FirCallableDeclaration, is FirTypeAlias, is FirAnonymousInitializer -> {
-                if (target is FirField && target.origin == FirDeclarationOrigin.Synthetic.DelegateField) {
-                    // delegated field should be resolved in the same context as super types
-                    resolveOutsideClassBody(target, transformer::transformDelegateField)
-                } else {
-                    target.accept(transformer, null)
-                }
+                target.accept(transformer, null)
             }
 
             is FirFile -> transformer.withFileScope(target) { target.transformAnnotations(transformer, null) }
