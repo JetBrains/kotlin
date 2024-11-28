@@ -8,6 +8,6 @@ interface Box<T> where T : CharSequence {
     val value: T
 }
 
-fun withClues(box: Box<out <!UPPER_BOUND_VIOLATED!>() -> Any?<!>>) {
+fun withClues(box: Box<<!UPPER_BOUND_VIOLATED!>out () -> Any?<!>>) {
     arrayOf({ "" }, box.value)
 }

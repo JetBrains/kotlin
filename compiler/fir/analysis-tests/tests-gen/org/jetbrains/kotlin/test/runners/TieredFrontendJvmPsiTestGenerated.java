@@ -10594,6 +10594,12 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
+        @TestMetadata("capturedFunctionalType.kt")
+        public void testCapturedFunctionalType() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedFunctionalType.kt");
+        }
+
+        @Test
         @TestMetadata("capturedType.kt")
         public void testCapturedType() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedType.kt");

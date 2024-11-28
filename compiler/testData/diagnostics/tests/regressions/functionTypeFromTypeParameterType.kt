@@ -7,4 +7,10 @@ class A {
         var y: Int = x.eased<Function0<String>>({ "" }, p2)
         return y
     }
+
+    fun <T> eased2(p1: T, p2: T): Int where T : CharSequence, T : Function0<String> {
+        val x: A = A()
+        var y: Int = x.eased<Function0<String>>({ "" }, p2)
+        return y
+    }
 }
