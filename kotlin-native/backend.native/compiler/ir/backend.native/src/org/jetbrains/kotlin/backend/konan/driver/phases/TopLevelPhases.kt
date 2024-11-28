@@ -121,7 +121,13 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                     }
                 }
             } else topLevel.llvmModuleSpecification
-            return topLevel.createChild(topLevel.llvmModuleName + name, llvmModuleSpecification)
+            return topLevel.createChild(topLevel.llvmModuleName + name, llvmModuleSpecification).apply {
+                val containsStdlib = name == context.stdlibModule.konanLibrary!!.uniqueName
+                if (containsStdlib && cacheDeserializationStrategy.containsRuntime) {
+                    files.filter { isReferencedByNativeRuntime(it.declarations) }
+                            .forEach { dependenciesTracker.add(it) }
+                }
+            }
         }
 
         fun splitFragment(fragment: BackendJobFragment): List<SubFragment> {
@@ -155,7 +161,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 }
                 val subfragments = splitFragment(fragment)
 
-                val objectFiles = subfragments.map {
+                val moduleCompilationOutputs = subfragments.map {
                     backendEngine.useContext(it.generationState(generationState)) { generationStateEngine ->
                         val bitcodeFile = tempFiles.create(generationStateEngine.context.llvmModuleName, "${it.name}.bc").javaFile()
                         val objectFile = tempFiles.create(File(outputFiles.nativeBinaryFile).name, "${it.name}.o").javaFile()
@@ -169,11 +175,18 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         } else null
                         // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
                         generationStateEngine.compileModule(it.module, it.files, backendContext.irBuiltIns, bitcodeFile, objectFile, cExportFiles)
-                        objectFile
+                        ModuleCompilationOutput(listOf(objectFile), generationStateEngine.context.dependenciesTracker.collectResult())
                     }
                 }
 
-                val moduleCompilationOutput = ModuleCompilationOutput(objectFiles, generationState.dependenciesTracker.collectResult())
+                val moduleCompilationOutput = moduleCompilationOutputs.reduce { result, moduleCompilationOutput ->
+                    val dependencies = DependenciesTrackingResult(
+                            nativeDependenciesToLink = result.dependenciesTrackingResult.nativeDependenciesToLink + moduleCompilationOutput.dependenciesTrackingResult.nativeDependenciesToLink,
+                            allNativeDependencies = result.dependenciesTrackingResult.allNativeDependencies + moduleCompilationOutput.dependenciesTrackingResult.allNativeDependencies,
+                            allCachedBitcodeDependencies = result.dependenciesTrackingResult.allCachedBitcodeDependencies + moduleCompilationOutput.dependenciesTrackingResult.allCachedBitcodeDependencies,
+                    )
+                    ModuleCompilationOutput(result.objectFiles + moduleCompilationOutput.objectFiles, dependencies)
+                }
 
                 val depsFilePath = config.writeSerializedDependencies
                 if (!depsFilePath.isNullOrEmpty()) {

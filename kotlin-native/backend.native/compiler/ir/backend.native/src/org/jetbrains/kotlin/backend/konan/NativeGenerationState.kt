@@ -117,7 +117,7 @@ internal class NativeGenerationState(
                 config,
                 context,
                 cacheDeserializationStrategy,
-                dependenciesTracker,
+                DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
                 llvmModuleSpecification,
                 outputFiles,
                 llvmModuleName
