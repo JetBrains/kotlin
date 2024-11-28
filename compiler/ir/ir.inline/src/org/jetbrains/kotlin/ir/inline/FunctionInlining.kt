@@ -614,19 +614,23 @@ open class FunctionInlining(
                 callSite.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
                     .map { callSite.arguments[it] }.toMutableList()
 
-            if (callee.extensionReceiverParameter != null) {
+            val extensionReceiverParameter = callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
+            val extensionReceiver: IrExpression? = callSite.run {
+                symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }.let { index ->
+                    if (index >= 0)
+                        arguments[index]
+                    else null
+                }
+            }
+            if (extensionReceiverParameter != null) {
                 parameterToArgument += ParameterToArgument(
-                    parameter = callee.extensionReceiverParameter!!,
-                    originalArgumentExpression = if (callSite.extensionReceiver != null) {
-                        callSite.extensionReceiver!!
-                    } else {
-                        // Special case: lambda with receiver is called as usual lambda:
-                        valueArguments.removeAt(0)!!
-                    }
+                    parameter = extensionReceiverParameter,
+                    originalArgumentExpression = extensionReceiver
+                        ?: valueArguments.removeAt(0)!! // Special case: lambda with receiver is called as usual lambda:
                 )
-            } else if (callSite.extensionReceiver != null) {
+            } else extensionReceiver?.let {
                 // Special case: usual lambda is called as lambda with receiver:
-                valueArguments.add(0, callSite.extensionReceiver!!)
+                valueArguments.add(0, it)
             }
 
             val parametersWithDefaultToArgument = mutableListOf<ParameterToArgument>()
