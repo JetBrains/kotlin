@@ -131,10 +131,12 @@ abstract class InlineCallableReferenceToLambdaPhase(
             isSuspend = referencedFunction.isSuspend
         }.apply {
             body = context.createIrBuilder(symbol, startOffset, endOffset).run {
-                val boundReceiver = dispatchReceiver ?: extensionReceiver
+                val extensionReceiver = maybeExtensionReceiver()
+                val boundReceiver = dispatchReceiver
+                    ?: extensionReceiver
                 val boundReceiverParameter = when {
                     dispatchReceiver != null -> referencedFunction.dispatchReceiverParameter
-                    extensionReceiver != null -> referencedFunction.extensionReceiverParameter
+                    extensionReceiver != null -> referencedFunction.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
                     else -> null
                 }
 
@@ -206,4 +208,20 @@ private fun IrType.convertKPropertyToKFunction(irBuiltIns: IrBuiltIns): IrType {
     if (!this.isKProperty() && !this.isKMutableProperty()) return this
 
     return this.toBuilder().apply { classifier = irBuiltIns.functionN(arguments.size - 1).symbol }.buildSimpleType()
+}
+
+// Returns extension receiver of function or property reference, if any. Otherwise, return null.
+// Suggested drop-in replacement for IrMemberAccessExpression<*>.extensionReceiver is invalid, since refers to `symbol.owner.parameters`.
+// which exists only for `this` of type IrFunctionReference, but not IrPropertyReference.
+fun IrCallableReference<*>.maybeExtensionReceiver(): IrExpression? {
+    val function = when (val owner = symbol.owner) {
+        is IrFunction -> owner
+        is IrProperty -> owner.getter
+        else -> null
+    }
+    return function?.parameters?.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver }?.let { index ->
+        if (index >= 0)
+            arguments[index]
+        else null
+    }
 }
