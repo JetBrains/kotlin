@@ -14,18 +14,18 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
- * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.contextReceiverArgumentListOwner]
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.contextArgumentListOwner]
  */
-interface FirContextReceiverArgumentListOwner : FirElement {
+interface FirContextArgumentListOwner : FirElement {
     override val source: KtSourceElement?
     val contextArguments: List<FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitContextReceiverArgumentListOwner(this, data)
+        visitor.visitContextArgumentListOwner(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformContextReceiverArgumentListOwner(this, data) as E
+        transformer.transformContextArgumentListOwner(this, data) as E
 
     fun replaceContextArguments(newContextArguments: List<FirExpression>)
 }

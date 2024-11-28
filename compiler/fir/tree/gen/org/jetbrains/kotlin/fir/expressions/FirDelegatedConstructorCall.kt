@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.delegatedConstructorCall]
  */
-abstract class FirDelegatedConstructorCall : FirExpression(), FirResolvable, FirCall, FirContextReceiverArgumentListOwner {
+abstract class FirDelegatedConstructorCall : FirExpression(), FirResolvable, FirCall, FirContextArgumentListOwner {
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
     abstract override val contextArguments: List<FirExpression>

@@ -315,12 +315,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(elvisExpression)
     }
 
-    final override fun visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner, data: Nothing?) {
-        visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner)
+    final override fun visitContextArgumentListOwner(contextArgumentListOwner: FirContextArgumentListOwner, data: Nothing?) {
+        visitContextArgumentListOwner(contextArgumentListOwner)
     }
 
-    open fun visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner) {
-        visitElement(contextReceiverArgumentListOwner)
+    open fun visitContextArgumentListOwner(contextArgumentListOwner: FirContextArgumentListOwner) {
+        visitElement(contextArgumentListOwner)
     }
 
     final override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?) {

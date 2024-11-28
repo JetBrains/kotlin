@@ -131,8 +131,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitElvisExpression(elvisExpression: FirElvisExpression, data: D): R =
         visitElement(elvisExpression, data)
 
-    open fun visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner, data: D): R =
-        visitElement(contextReceiverArgumentListOwner, data)
+    open fun visitContextArgumentListOwner(contextArgumentListOwner: FirContextArgumentListOwner, data: D): R =
+        visitElement(contextArgumentListOwner, data)
 
     open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): R =
         visitElement(qualifiedAccessExpression, data)

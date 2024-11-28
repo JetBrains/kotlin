@@ -274,14 +274,14 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("rhs", expression, withTransform = true)
     }
 
-    val contextReceiverArgumentListOwner: Element by element(Expression) {
+    val contextArgumentListOwner: Element by element(Expression) {
         +listField("contextArguments", expression, useMutableOrEmpty = true, withReplace = true)
     }
 
     val qualifiedAccessExpression: Element by element(Expression) {
         parent(expression)
         parent(resolvable)
-        parent(contextReceiverArgumentListOwner)
+        parent(contextArgumentListOwner)
 
         +typeArguments {
             withTransform = true
@@ -607,7 +607,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val delegatedConstructorCall: Element by element(Expression) {
         parent(resolvable)
         parent(call)
-        parent(contextReceiverArgumentListOwner)
+        parent(contextArgumentListOwner)
         parent(expression)
 
         +field("constructedTypeRef", typeRef, withReplace = true)

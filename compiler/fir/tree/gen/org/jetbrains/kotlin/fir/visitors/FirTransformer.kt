@@ -315,12 +315,12 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElvisExpression(elvisExpression, data)
     }
 
-    open fun transformContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner, data: D): FirContextReceiverArgumentListOwner {
-        return transformElement(contextReceiverArgumentListOwner, data)
+    open fun transformContextArgumentListOwner(contextArgumentListOwner: FirContextArgumentListOwner, data: D): FirContextArgumentListOwner {
+        return transformElement(contextArgumentListOwner, data)
     }
 
-    final override fun visitContextReceiverArgumentListOwner(contextReceiverArgumentListOwner: FirContextReceiverArgumentListOwner, data: D): FirContextReceiverArgumentListOwner {
-        return transformContextReceiverArgumentListOwner(contextReceiverArgumentListOwner, data)
+    final override fun visitContextArgumentListOwner(contextArgumentListOwner: FirContextArgumentListOwner, data: D): FirContextArgumentListOwner {
+        return transformContextArgumentListOwner(contextArgumentListOwner, data)
     }
 
     open fun transformQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): FirStatement {
