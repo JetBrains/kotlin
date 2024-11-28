@@ -23,7 +23,7 @@ object FirReceiverAccessBeforeSuperCallChecker : FirInaccessibleReceiverChecker(
             require(
                 expression == dispatchReceiver ||
                         expression == extensionReceiver ||
-                        expression in contextReceiverArguments ||
+                        expression in contextArguments ||
                         // Receiver can migrate here into an argument, see AbstractRawFirBuilder.convertFirSelector
                         this is FirImplicitInvokeCall && expression == arguments.first()
             ) {

@@ -275,7 +275,7 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val contextReceiverArgumentListOwner: Element by element(Expression) {
-        +listField("contextReceiverArguments", expression, useMutableOrEmpty = true, withReplace = true)
+        +listField("contextArguments", expression, useMutableOrEmpty = true, withReplace = true)
     }
 
     val qualifiedAccessExpression: Element by element(Expression) {

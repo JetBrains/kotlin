@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 class FirCallableReferenceAccessBuilder : FirQualifiedAccessExpressionBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    override val contextArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression? = null
@@ -42,7 +42,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessExpressionBuilder, F
         return FirCallableReferenceAccessImpl(
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
-            contextReceiverArguments.toMutableOrEmpty(),
+            contextArguments.toMutableOrEmpty(),
             typeArguments.toMutableOrEmpty(),
             explicitReceiver,
             dispatchReceiver,

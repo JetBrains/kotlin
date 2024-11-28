@@ -26,7 +26,7 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
-    abstract override val contextReceiverArguments: List<FirExpression>
+    abstract override val contextArguments: List<FirExpression>
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression?
@@ -47,7 +47,7 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
+    abstract override fun replaceContextArguments(newContextArguments: List<FirExpression>)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 

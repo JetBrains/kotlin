@@ -31,7 +31,7 @@ internal class FirComponentCallImpl(
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
+    override var contextArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var dispatchReceiver: FirExpression?,
     override var extensionReceiver: FirExpression?,
@@ -46,7 +46,7 @@ internal class FirComponentCallImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        contextReceiverArguments.forEach { it.accept(visitor, data) }
+        contextArguments.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)
         calleeReference.accept(visitor, data)
@@ -61,7 +61,7 @@ internal class FirComponentCallImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
         transformAnnotations(transformer, data)
-        contextReceiverArguments.transformInplace(transformer, data)
+        contextArguments.transformInplace(transformer, data)
         transformTypeArguments(transformer, data)
         argumentList = argumentList.transform(transformer, data)
         transformCalleeReference(transformer, data)
@@ -103,8 +103,8 @@ internal class FirComponentCallImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
+    override fun replaceContextArguments(newContextArguments: List<FirExpression>) {
+        contextArguments = newContextArguments.toMutableOrEmpty()
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {

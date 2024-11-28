@@ -142,8 +142,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "delegatedConstructorCalls.last().argumentList"
                 withGetter = true
             }
-            default("contextReceiverArguments") {
-                value = "delegatedConstructorCalls.last().contextReceiverArguments"
+            default("contextArguments") {
+                value = "delegatedConstructorCalls.last().contextArguments"
                 withGetter = true
             }
             default("constructedTypeRef") {
@@ -187,7 +187,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = error
                 withGetter = true
             }
-            default("contextReceiverArguments") {
+            default("contextArguments") {
                 value = error
                 withGetter = true
             }
@@ -399,7 +399,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(thisReceiverExpression) {
             defaultNull("explicitReceiver", "dispatchReceiver", "extensionReceiver", withGetter = true)
-            defaultEmptyList("contextReceiverArguments", withGetter = true)
+            defaultEmptyList("contextArguments", withGetter = true)
         }
 
         impl(expression, "FirUnitExpression") {

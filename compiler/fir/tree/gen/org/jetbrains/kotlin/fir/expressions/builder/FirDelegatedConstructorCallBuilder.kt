@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
-    val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    val contextArguments: MutableList<FirExpression> = mutableListOf()
     lateinit var constructedTypeRef: FirTypeRef
     var dispatchReceiver: FirExpression? = null
     lateinit var calleeReference: FirReference
@@ -36,7 +36,7 @@ class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContaine
         return FirDelegatedConstructorCallImpl(
             annotations.toMutableOrEmpty(),
             argumentList,
-            contextReceiverArguments.toMutableOrEmpty(),
+            contextArguments.toMutableOrEmpty(),
             constructedTypeRef,
             dispatchReceiver,
             calleeReference,

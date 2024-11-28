@@ -128,7 +128,7 @@ val FirVariableAssignment.dispatchReceiver: FirExpression? get() = unwrapLValue(
 
 val FirVariableAssignment.extensionReceiver: FirExpression? get() = unwrapLValue()?.extensionReceiver
 
-val FirVariableAssignment.contextReceiverArguments: List<FirExpression> get() = unwrapLValue()?.contextReceiverArguments ?: emptyList()
+val FirVariableAssignment.contextArguments: List<FirExpression> get() = unwrapLValue()?.contextArguments ?: emptyList()
 
 fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
     val lValue = lValue
@@ -165,7 +165,7 @@ val FirQualifiedAccessExpression.allReceiverExpressions: List<FirExpression>
     get() = buildList {
         addIfNotNull(dispatchReceiver)
         addIfNotNull(extensionReceiver)
-        addAll(contextReceiverArguments)
+        addAll(contextArguments)
     }
 
 inline fun FirFunctionCall.forAllReifiedTypeParameters(block: (ConeKotlinType, FirTypeProjectionWithVariance) -> Unit) {

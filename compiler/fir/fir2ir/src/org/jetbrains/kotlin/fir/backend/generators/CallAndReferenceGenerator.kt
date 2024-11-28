@@ -1107,12 +1107,12 @@ class CallAndReferenceGenerator(
     private fun IrMemberAccessExpression<*>.putContextReceiverArguments(statement: FirStatement?): Int {
         if (statement !is FirContextReceiverArgumentListOwner) return 0
 
-        val contextReceiverCount = statement.contextReceiverArguments.size
+        val contextReceiverCount = statement.contextArguments.size
         if (contextReceiverCount > 0) {
             for (index in 0 until contextReceiverCount) {
                 putValueArgument(
                     index,
-                    visitor.convertToIrExpression(statement.contextReceiverArguments[index]),
+                    visitor.convertToIrExpression(statement.contextArguments[index]),
                 )
             }
         }

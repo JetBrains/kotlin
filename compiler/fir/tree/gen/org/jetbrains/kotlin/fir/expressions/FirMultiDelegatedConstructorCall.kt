@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 abstract class FirMultiDelegatedConstructorCall : FirDelegatedConstructorCall() {
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
-    abstract override val contextReceiverArguments: List<FirExpression>
+    abstract override val contextArguments: List<FirExpression>
     @UnresolvedExpressionTypeAccess
     abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val constructedTypeRef: FirTypeRef
@@ -45,7 +45,7 @@ abstract class FirMultiDelegatedConstructorCall : FirDelegatedConstructorCall() 
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
-    abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
+    abstract override fun replaceContextArguments(newContextArguments: List<FirExpression>)
 
     abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 

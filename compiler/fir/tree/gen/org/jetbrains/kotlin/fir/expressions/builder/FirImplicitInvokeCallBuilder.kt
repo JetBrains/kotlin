@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    override val contextArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression? = null
@@ -41,7 +41,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
         return FirImplicitInvokeCallImpl(
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
-            contextReceiverArguments.toMutableOrEmpty(),
+            contextArguments.toMutableOrEmpty(),
             typeArguments.toMutableOrEmpty(),
             explicitReceiver,
             dispatchReceiver,

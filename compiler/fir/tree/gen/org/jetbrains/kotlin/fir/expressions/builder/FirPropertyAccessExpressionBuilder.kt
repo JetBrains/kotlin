@@ -31,7 +31,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var calleeReference: FirReference
-    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    override val contextArguments: MutableList<FirExpression> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression? = null
@@ -45,7 +45,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
             coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             calleeReference,
-            contextReceiverArguments.toMutableOrEmpty(),
+            contextArguments.toMutableOrEmpty(),
             typeArguments.toMutableOrEmpty(),
             explicitReceiver,
             dispatchReceiver,
@@ -74,7 +74,7 @@ inline fun buildPropertyAccessExpressionCopy(original: FirPropertyAccessExpressi
     copyBuilder.coneTypeOrNull = original.coneTypeOrNull
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.calleeReference = original.calleeReference
-    copyBuilder.contextReceiverArguments.addAll(original.contextReceiverArguments)
+    copyBuilder.contextArguments.addAll(original.contextArguments)
     copyBuilder.typeArguments.addAll(original.typeArguments)
     copyBuilder.explicitReceiver = original.explicitReceiver
     copyBuilder.dispatchReceiver = original.dispatchReceiver

@@ -27,8 +27,8 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
         get() = delegatedConstructorCalls.last().annotations
     override val argumentList: FirArgumentList
         get() = delegatedConstructorCalls.last().argumentList
-    override val contextReceiverArguments: List<FirExpression>
-        get() = delegatedConstructorCalls.last().contextReceiverArguments
+    override val contextArguments: List<FirExpression>
+        get() = delegatedConstructorCalls.last().contextArguments
     @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType?
         get() = delegatedConstructorCalls.last().coneTypeOrNull
@@ -75,7 +75,7 @@ class FirMultiDelegatedConstructorCallImpl @FirImplementationDetail constructor(
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {}
 
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {}
+    override fun replaceContextArguments(newContextArguments: List<FirExpression>) {}
 
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
         require(newConeTypeOrNull == coneTypeOrNull) { "${javaClass.simpleName}.replaceConeTypeOrNull() called with invalid type '${newConeTypeOrNull}'. Current type is '$coneTypeOrNull'" }

@@ -31,7 +31,7 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
         get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
     override val argumentList: FirArgumentList
         get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val contextReceiverArguments: List<FirExpression>
+    override val contextArguments: List<FirExpression>
         get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
     override val dispatchReceiver: FirExpression?
         get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
@@ -68,7 +68,7 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {}
 
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {}
+    override fun replaceContextArguments(newContextArguments: List<FirExpression>) {}
 
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
         coneTypeOrNull = newConeTypeOrNull

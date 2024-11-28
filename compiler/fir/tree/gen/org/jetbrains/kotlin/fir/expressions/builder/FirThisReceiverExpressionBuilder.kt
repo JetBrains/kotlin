@@ -48,8 +48,8 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fi
     }
 
 
-    @Deprecated("Modification of 'contextReceiverArguments' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override val contextReceiverArguments: MutableList<FirExpression> = mutableListOf()
+    @Deprecated("Modification of 'contextArguments' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
+    override val contextArguments: MutableList<FirExpression> = mutableListOf()
 
     @Deprecated("Modification of 'explicitReceiver' has no impact for FirThisReceiverExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var explicitReceiver: FirExpression?

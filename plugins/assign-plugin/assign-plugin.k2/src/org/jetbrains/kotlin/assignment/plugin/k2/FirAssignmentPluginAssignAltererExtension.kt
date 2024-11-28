@@ -61,7 +61,7 @@ class FirAssignmentPluginAssignAltererExtension(
                 explicitReceiver = variableAssignment.explicitReceiver
                 dispatchReceiver = variableAssignment.dispatchReceiver
                 extensionReceiver = variableAssignment.extensionReceiver
-                contextReceiverArguments += variableAssignment.contextReceiverArguments
+                contextArguments += variableAssignment.contextArguments
             }
             argumentList = buildUnaryArgumentList(rightArgument)
             calleeReference = buildSimpleNamedReference {

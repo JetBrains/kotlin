@@ -29,7 +29,7 @@ internal class FirImplicitInvokeCallImpl(
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
+    override var contextArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression?,
@@ -44,7 +44,7 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        contextReceiverArguments.forEach { it.accept(visitor, data) }
+        contextArguments.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -59,7 +59,7 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCallImpl {
         transformAnnotations(transformer, data)
-        contextReceiverArguments.transformInplace(transformer, data)
+        contextArguments.transformInplace(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -101,8 +101,8 @@ internal class FirImplicitInvokeCallImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
+    override fun replaceContextArguments(newContextArguments: List<FirExpression>) {
+        contextArguments = newContextArguments.toMutableOrEmpty()
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {

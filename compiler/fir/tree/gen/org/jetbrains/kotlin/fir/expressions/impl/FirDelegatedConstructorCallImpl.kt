@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 internal class FirDelegatedConstructorCallImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var argumentList: FirArgumentList,
-    override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
+    override var contextArguments: MutableOrEmptyList<FirExpression>,
     override var constructedTypeRef: FirTypeRef,
     override var dispatchReceiver: FirExpression?,
     override var calleeReference: FirReference,
@@ -45,7 +45,7 @@ internal class FirDelegatedConstructorCallImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         argumentList.accept(visitor, data)
-        contextReceiverArguments.forEach { it.accept(visitor, data) }
+        contextArguments.forEach { it.accept(visitor, data) }
         constructedTypeRef.accept(visitor, data)
         calleeReference.accept(visitor, data)
     }
@@ -53,7 +53,7 @@ internal class FirDelegatedConstructorCallImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCallImpl {
         transformAnnotations(transformer, data)
         argumentList = argumentList.transform(transformer, data)
-        contextReceiverArguments.transformInplace(transformer, data)
+        contextArguments.transformInplace(transformer, data)
         constructedTypeRef = constructedTypeRef.transform(transformer, data)
         transformCalleeReference(transformer, data)
         return this
@@ -82,8 +82,8 @@ internal class FirDelegatedConstructorCallImpl(
         argumentList = newArgumentList
     }
 
-    override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
+    override fun replaceContextArguments(newContextArguments: List<FirExpression>) {
+        contextArguments = newContextArguments.toMutableOrEmpty()
     }
 
     override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {

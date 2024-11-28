@@ -188,7 +188,7 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        qualifiedAccessExpression.replaceContextReceiverArguments(subCandidate.contextReceiverArguments())
+        qualifiedAccessExpression.replaceContextArguments(subCandidate.contextReceiverArguments())
 
         subCandidate.diagnostics.firstIsInstanceOrNull<NotFunctionAsOperator>()?.let { propertyAsOperator ->
             val coneNotFunctionAsOperator = ConeNotFunctionAsOperator(propertyAsOperator.symbol)

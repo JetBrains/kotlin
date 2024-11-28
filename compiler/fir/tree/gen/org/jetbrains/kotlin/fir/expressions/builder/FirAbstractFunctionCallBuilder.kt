@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 interface FirAbstractFunctionCallBuilder : FirQualifiedAccessExpressionBuilder, FirCallBuilder {
     abstract override var coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: MutableList<FirAnnotation>
-    abstract override val contextReceiverArguments: MutableList<FirExpression>
+    abstract override val contextArguments: MutableList<FirExpression>
     abstract override val typeArguments: MutableList<FirTypeProjection>
     abstract override var explicitReceiver: FirExpression?
     abstract override var dispatchReceiver: FirExpression?
