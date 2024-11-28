@@ -30254,6 +30254,23 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+      @Test
+      @TestMetadata("annotationDefaultTargetFirstOnly.kt")
+      public void testAnnotationDefaultTargetFirstOnly() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetFirstOnly.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationDefaultTargetParamProperty.kt")
+      public void testAnnotationDefaultTargetParamProperty() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetParamProperty.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
     public class CallableReferences {
