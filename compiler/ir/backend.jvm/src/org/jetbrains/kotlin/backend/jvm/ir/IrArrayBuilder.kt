@@ -105,8 +105,8 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
             val arrayCopyOf = builder.irSymbols.getArraysCopyOfFunction(unwrappedArrayType as IrSimpleType)
             // TODO consider using System.arraycopy if the requested array type is non-generic.
             +irCall(arrayCopyOf).apply {
-                putValueArgument(0, coerce(irGet(spreadVar), unwrappedArrayType))
-                putValueArgument(1, irCall(size).apply { dispatchReceiver = irGet(spreadVar) })
+                arguments[0] = coerce(irGet(spreadVar), unwrappedArrayType)
+                arguments[1] = irCall(size).apply { dispatchReceiver = irGet(spreadVar) }
             }
         }
     }
