@@ -457,5 +457,5 @@ private fun FirVariable.canBeMutableReference(candidate: Candidate): Boolean {
     val original = this.unwrapFakeOverridesOrDelegated()
     return original.source?.kind == KtFakeSourceElementKind.PropertyFromParameter ||
             (original.setter is FirMemberDeclaration &&
-                    candidate.callInfo.session.visibilityChecker.isVisible(original.setter!!, candidate))
+                    candidate.callInfo.session.visibilityChecker.isVisibleAsNotConstructorCall(original.setter!!, candidate))
 }

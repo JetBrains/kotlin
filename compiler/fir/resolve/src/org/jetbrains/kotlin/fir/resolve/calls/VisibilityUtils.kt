@@ -29,7 +29,11 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-fun FirVisibilityChecker.isVisible(
+fun FirVisibilityChecker.isVisibleAsConstructorCall(declaration: FirMemberDeclaration, constructorCallInfo: CallInfo): Boolean {
+    return isVisibleCall(declaration, constructorCallInfo, dispatchReceiver = null, skipCheckForContainingClassVisibility = false)
+}
+
+private fun FirVisibilityChecker.isVisibleCall(
     declaration: FirMemberDeclaration,
     callInfo: CallInfo,
     dispatchReceiver: FirExpression?,
@@ -59,14 +63,15 @@ fun FirVisibilityChecker.isVisible(
     )
 }
 
-fun FirVisibilityChecker.isVisible(
+fun FirVisibilityChecker.isVisibleAsNotConstructorCall(
     declaration: FirMemberDeclaration,
     candidate: Candidate,
     skipCheckForContainingClassVisibility: Boolean = false,
 ): Boolean {
     val callInfo = candidate.callInfo
+    val dispatchReceiverExpression = candidate.dispatchReceiver?.expression
 
-    if (!isVisible(declaration, callInfo, candidate.dispatchReceiver?.expression, skipCheckForContainingClassVisibility)) {
+    if (!isVisibleCall(declaration, callInfo, dispatchReceiverExpression, skipCheckForContainingClassVisibility)) {
         // There are some examples when applying smart cast makes a callable invisible
         // open class A {
         //     private fun foo() {}
@@ -83,9 +88,9 @@ fun FirVisibilityChecker.isVisible(
         // }
         // In both these examples (see !!! above) we should try to drop smart cast to B and repeat a visibility check
         val dispatchReceiverWithoutSmartCastType =
-            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiver?.expression, candidate.callInfo.session) ?: return false
+            removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiverExpression, candidate.callInfo.session) ?: return false
 
-        if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType, skipCheckForContainingClassVisibility)) return false
+        if (!isVisibleCall(declaration, callInfo, dispatchReceiverWithoutSmartCastType, skipCheckForContainingClassVisibility)) return false
 
         // Note: in case of a smart cast, we already checked the visibility of the smart cast target before,
         // so now it's visibility is not important, only callable visibility itself should be taken into account
@@ -101,17 +106,17 @@ fun FirVisibilityChecker.isVisible(
         //    if (param is Info) param.status
         // }
         // Here smart cast is still necessary, because without it 'status' cannot be resolved at all
-        if (!isVisible(declaration, callInfo, candidate.dispatchReceiver?.expression, skipCheckForContainingClassVisibility = true)) {
+        if (!isVisibleCall(declaration, callInfo, dispatchReceiverExpression, skipCheckForContainingClassVisibility = true)) {
             candidate.dispatchReceiver = ConeResolutionAtom.createRawAtom(dispatchReceiverWithoutSmartCastType)
         }
     }
 
     val backingField = declaration.getBackingFieldIfApplicable()
     if (backingField != null) {
-        candidate.hasVisibleBackingField = isVisible(
+        candidate.hasVisibleBackingField = isVisibleCall(
             backingField,
             callInfo,
-            candidate.dispatchReceiver?.expression,
+            dispatchReceiverExpression,
             skipCheckForContainingClassVisibility
         )
     }

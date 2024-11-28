@@ -607,37 +607,33 @@ internal object CheckVisibility : ResolutionStage() {
 
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val visibilityChecker = callInfo.session.visibilityChecker
-        val symbol = candidate.symbol
-        val declaration = symbol.fir
-        if (declaration is FirMemberDeclaration && declaration !is FirConstructor) {
-            if (!visibilityChecker.isVisible(declaration, candidate)) {
+        val declaration = candidate.symbol.fir
+        if (declaration !is FirConstructor) {
+            if (declaration is FirMemberDeclaration && !visibilityChecker.isVisibleAsNotConstructorCall(declaration, candidate)) {
                 sink.yieldVisibilityError(callInfo)
                 return
             }
-        }
-
-        if (declaration is FirConstructor) {
+        } else {
             val classSymbol = declaration.returnTypeRef.coneType.classLikeLookupTagIfAny?.toSymbol(context.session)
 
+            var visibilityErrorReported = false
             if (classSymbol is FirRegularClassSymbol) {
                 if (classSymbol.fir.classKind.isSingleton) {
                     sink.yieldDiagnostic(HiddenCandidate)
                 }
 
-                val visible = visibilityChecker.isVisible(
-                    declaration,
-                    candidate.callInfo,
-                    dispatchReceiver = null
-                )
-                if (!visible) {
+                if (!visibilityChecker.isVisibleAsConstructorCall(declaration, candidate.callInfo)) {
                     sink.yieldVisibilityError(callInfo)
+                    visibilityErrorReported = true
                 }
             }
 
-            val typeAlias = declaration.typeAliasForConstructor
-            if (typeAlias != null) {
-                if (!visibilityChecker.isVisible(typeAlias.fir, candidate.callInfo, dispatchReceiver = null)) {
-                    sink.yieldVisibilityError(callInfo)
+            if (!visibilityErrorReported) {
+                declaration.typeAliasForConstructor?.let { typeAlias ->
+                    if (!visibilityChecker.isVisibleAsConstructorCall(typeAlias.fir, candidate.callInfo)) {
+                        sink.yieldVisibilityError(callInfo)
+                        visibilityErrorReported = true
+                    }
                 }
             }
         }
