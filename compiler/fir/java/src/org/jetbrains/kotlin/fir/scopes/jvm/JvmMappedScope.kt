@@ -365,7 +365,7 @@ class JvmMappedScope(
             newReturnType = substitutor.substituteOrSelf(oldConstructor.returnTypeRef.coneType),
             newParameterTypes = oldConstructor.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
             newTypeParameters = null,
-            newContextReceiverTypes = emptyList(),
+            newContextParameterTypes = emptyList(),
             isExpect = false,
             deferredReturnTypeCalculation = null,
             newSource = oldConstructor.source,

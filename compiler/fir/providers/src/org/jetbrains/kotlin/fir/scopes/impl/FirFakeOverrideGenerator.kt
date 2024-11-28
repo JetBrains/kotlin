@@ -43,7 +43,7 @@ object FirFakeOverrideGenerator {
         newDispatchReceiverType: ConeSimpleKotlinType?,
         origin: FirDeclarationOrigin.SubstitutionOverride,
         newReceiverType: ConeKotlinType? = null,
-        newContextReceiverTypes: List<ConeKotlinType?>? = null,
+        newContextParameterTypes: List<ConeKotlinType?>? = null,
         newReturnType: ConeKotlinType? = null,
         newParameterTypes: List<ConeKotlinType?>? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
@@ -52,7 +52,7 @@ object FirFakeOverrideGenerator {
     ): FirNamedFunctionSymbol {
         createSubstitutionOverrideFunction(
             symbolForSubstitutionOverride, session, baseFunction, derivedClassLookupTag,
-            newDispatchReceiverType, newReceiverType, newContextReceiverTypes,
+            newDispatchReceiverType, newReceiverType, newContextParameterTypes,
             newReturnType, newParameterTypes, newTypeParameters,
             isExpect, callableCopySubstitutionForTypeUpdater, origin,
         )
@@ -74,7 +74,7 @@ object FirFakeOverrideGenerator {
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType?,
-        newContextReceiverTypes: List<ConeKotlinType?>?,
+        newContextParameterTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         newParameterTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameter>?,
@@ -95,7 +95,7 @@ object FirFakeOverrideGenerator {
             newParameterTypes,
             newTypeParameters,
             newReceiverType,
-            newContextReceiverTypes,
+            newContextParameterTypes,
             newReturnType,
             deferredReturnTypeCalculation = callableCopySubstitutionForTypeUpdater
         ).apply {
@@ -114,7 +114,7 @@ object FirFakeOverrideGenerator {
         newParameterTypes: List<ConeKotlinType?>? = null,
         newTypeParameters: List<FirTypeParameterRef>? = null,
         newReceiverType: ConeKotlinType? = null,
-        newContextReceiverTypes: List<ConeKotlinType?>? = null,
+        newContextParameterTypes: List<ConeKotlinType?>? = null,
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
@@ -133,7 +133,7 @@ object FirFakeOverrideGenerator {
         attributes = baseFunction.attributes.copy()
         typeParameters += configureAnnotationsTypeParametersAndSignature(
             session, baseFunction, newParameterTypes, newTypeParameters,
-            newReceiverType, newContextReceiverTypes, newReturnType, deferredReturnTypeCalculation, newSymbol,
+            newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation, newSymbol,
             copyDefaultValues = false,
         ).filterIsInstance<FirTypeParameter>()
         deprecationsProvider = baseFunction.deprecationsProvider
@@ -150,7 +150,7 @@ object FirFakeOverrideGenerator {
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReturnType: ConeKotlinType?,
         newParameterTypes: List<ConeKotlinType?>?,
-        newContextReceiverTypes: List<ConeKotlinType?>?,
+        newContextParameterTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameterRef>?,
         isExpect: Boolean,
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType?,
@@ -178,7 +178,7 @@ object FirFakeOverrideGenerator {
             newParameterTypes,
             newTypeParameters,
             newReceiverType = null,
-            newContextReceiverTypes,
+            newContextParameterTypes,
             newReturnType,
             deferredReturnTypeCalculation,
             fakeOverrideSymbol,
@@ -206,7 +206,7 @@ object FirFakeOverrideGenerator {
         newParameterTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameterRef>?,
         newReceiverType: ConeKotlinType?,
-        newContextReceiverTypes: List<ConeKotlinType?>?,
+        newContextParameterTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType?,
         symbolForOverride: FirFunctionSymbol<*>,
@@ -219,7 +219,7 @@ object FirFakeOverrideGenerator {
                     symbolForOverride,
                     newParameterTypes,
                     newReceiverType,
-                    newContextReceiverTypes,
+                    newContextParameterTypes,
                     newReturnType,
                     deferredReturnTypeCalculation,
                     origin,
@@ -235,8 +235,8 @@ object FirFakeOverrideGenerator {
                     substitutor.substituteOrNull(it.returnTypeRef.coneType)
                 }
                 val symbol = baseFunction.symbol
-                val (copiedReceiverType, copiedContextReceiverTypes, possibleReturnType) = substituteReceiverAndReturnType(
-                    baseFunction as FirCallableDeclaration, newReceiverType, newContextReceiverTypes, newReturnType, substitutor
+                val (copiedReceiverType, copiedContextParameterTypes, possibleReturnType) = substituteReceiverAndReturnType(
+                    baseFunction as FirCallableDeclaration, newReceiverType, newContextParameterTypes, newReturnType, substitutor
                 )
                 val (copiedReturnType, newCallableCopySubstitutionForTypeUpdater) = when (possibleReturnType) {
                     is Maybe.Value -> possibleReturnType.value to null
@@ -247,7 +247,7 @@ object FirFakeOverrideGenerator {
                     symbolForOverride,
                     copiedParameterTypes,
                     copiedReceiverType,
-                    copiedContextReceiverTypes,
+                    copiedContextParameterTypes,
                     copiedReturnType,
                     newCallableCopySubstitutionForTypeUpdater,
                     origin,
@@ -261,7 +261,7 @@ object FirFakeOverrideGenerator {
                     symbolForOverride,
                     newParameterTypes,
                     newReceiverType,
-                    newContextReceiverTypes,
+                    newContextParameterTypes,
                     newReturnType,
                     deferredReturnTypeCalculation,
                     origin,
@@ -277,7 +277,7 @@ object FirFakeOverrideGenerator {
         fakeFunctionSymbol: FirFunctionSymbol<*>,
         newParameterTypes: List<ConeKotlinType?>?,
         newReceiverType: ConeKotlinType?,
-        newContextReceiverTypes: List<ConeKotlinType?>?,
+        newContextParameterTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         deferredTypeCalculation: DeferredCallableCopyReturnType?,
         origin: FirDeclarationOrigin,
@@ -322,11 +322,11 @@ object FirFakeOverrideGenerator {
         }
 
         contextParameters += baseFunction.contextParameters.zip(
-            newContextReceiverTypes ?: List(baseFunction.contextParameters.size) { null }
-        ) { contextReceiver, newType ->
-            buildValueParameterCopy(contextReceiver) {
+            newContextParameterTypes ?: List(baseFunction.contextParameters.size) { null }
+        ) { contextParameter, newType ->
+            buildValueParameterCopy(contextParameter) {
                 symbol = FirValueParameterSymbol(name)
-                returnTypeRef = contextReceiver.returnTypeRef.withReplacedConeType(newType)
+                returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType)
             }
         }
     }
@@ -363,7 +363,7 @@ object FirFakeOverrideGenerator {
         newDispatchReceiverType: ConeSimpleKotlinType?,
         origin: FirDeclarationOrigin.SubstitutionOverride,
         newReceiverType: ConeKotlinType? = null,
-        newContextReceiverTypes: List<ConeKotlinType?>? = null,
+        newContextParameterTypes: List<ConeKotlinType?>? = null,
         newReturnType: ConeKotlinType? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
         isExpect: Boolean = baseProperty.isExpect,
@@ -371,7 +371,7 @@ object FirFakeOverrideGenerator {
     ): FirPropertySymbol {
         createCopyForFirProperty(
             symbolForSubstitutionOverride, baseProperty, derivedClassLookupTag, session, origin,
-            isExpect, newDispatchReceiverType, newTypeParameters, newReceiverType, newContextReceiverTypes, newReturnType,
+            isExpect, newDispatchReceiverType, newTypeParameters, newReceiverType, newContextParameterTypes, newReturnType,
             deferredReturnTypeCalculation = callableCopySubstitutionForTypeUpdater
         ).apply {
             originalForSubstitutionOverrideAttr = baseProperty
@@ -397,7 +397,7 @@ object FirFakeOverrideGenerator {
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newTypeParameters: List<FirTypeParameter>? = null,
         newReceiverType: ConeKotlinType? = null,
-        newContextReceiverTypes: List<ConeKotlinType?>? = null,
+        newContextParameterTypes: List<ConeKotlinType?>? = null,
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
@@ -422,7 +422,7 @@ object FirFakeOverrideGenerator {
             baseProperty,
             newTypeParameters,
             newReceiverType,
-            newContextReceiverTypes,
+            newContextParameterTypes,
             newReturnType,
             deferredReturnTypeCalculation
         )
@@ -565,7 +565,7 @@ object FirFakeOverrideGenerator {
         isExpect: Boolean = baseField.isExpect,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newReceiverType: ConeKotlinType? = null,
-        newContextReceiverTypes: List<ConeKotlinType?>? = null,
+        newContextParameterTypes: List<ConeKotlinType?>? = null,
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
@@ -583,7 +583,7 @@ object FirFakeOverrideGenerator {
         dispatchReceiverType = newDispatchReceiverType
         attributes = baseField.attributes.copy()
         configureAnnotationsAndSignature(
-            baseField, newReceiverType, newContextReceiverTypes, newReturnType,
+            baseField, newReceiverType, newContextParameterTypes, newReturnType,
             deferredReturnTypeCalculation, updateReceiver = false
         )
         deprecationsProvider = baseField.deprecationsProvider
@@ -596,14 +596,14 @@ object FirFakeOverrideGenerator {
         baseProperty: FirProperty,
         newTypeParameters: List<FirTypeParameter>?,
         newReceiverType: ConeKotlinType?,
-        newContextReceiverTypes: List<ConeKotlinType?>?,
+        newContextParameterTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType?,
     ): List<FirTypeParameter> {
         return when {
             baseProperty.typeParameters.isEmpty() -> {
                 configureAnnotationsAndSignature(
-                    baseProperty, newReceiverType, newContextReceiverTypes, newReturnType, deferredReturnTypeCalculation
+                    baseProperty, newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation
                 )
                 emptyList()
             }
@@ -611,22 +611,22 @@ object FirFakeOverrideGenerator {
                 val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
                     useSiteSession, baseProperty, symbol, ConeSubstitutor.Empty, origin,
                 )
-                val (copiedReceiverType, copiedContextReceiverTypes, possibleReturnType) = substituteReceiverAndReturnType(
-                    baseProperty, newReceiverType, newContextReceiverTypes, newReturnType, substitutor
+                val (copiedReceiverType, copiedContextParameterTypes, possibleReturnType) = substituteReceiverAndReturnType(
+                    baseProperty, newReceiverType, newContextParameterTypes, newReturnType, substitutor
                 )
                 val (copiedReturnType, newCallableCopySubstitutionForTypeUpdater) = when (possibleReturnType) {
                     is Maybe.Value -> possibleReturnType.value to null
                     else -> null to DeferredReturnTypeOfSubstitution(substitutor, baseProperty.symbol)
                 }
                 configureAnnotationsAndSignature(
-                    baseProperty, copiedReceiverType, copiedContextReceiverTypes,
+                    baseProperty, copiedReceiverType, copiedContextParameterTypes,
                     copiedReturnType, newCallableCopySubstitutionForTypeUpdater
                 )
                 copiedTypeParameters.filterIsInstance<FirTypeParameter>()
             }
             else -> {
                 configureAnnotationsAndSignature(
-                    baseProperty, newReceiverType, newContextReceiverTypes, newReturnType, deferredReturnTypeCalculation
+                    baseProperty, newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation
                 )
                 newTypeParameters
             }
@@ -636,7 +636,7 @@ object FirFakeOverrideGenerator {
     private fun substituteReceiverAndReturnType(
         baseCallable: FirCallableDeclaration,
         newReceiverType: ConeKotlinType?,
-        newContextReceiverTypes: List<ConeKotlinType?>?,
+        newContextParameterTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         substitutor: ConeSubstitutor,
     ): Triple<ConeKotlinType?, List<ConeKotlinType?>, Maybe<ConeKotlinType?>> {
@@ -646,7 +646,7 @@ object FirFakeOverrideGenerator {
             substitutor.substituteOrNull(it.coneType)
         }
 
-        val copiedContextReceiverTypes = newContextReceiverTypes?.map {
+        val copiedContextParameterTypes = newContextParameterTypes?.map {
             it?.let(substitutor::substituteOrNull)
         } ?: baseCallable.contextParameters.map {
             substitutor.substituteOrNull(it.returnTypeRef.coneType)
@@ -657,18 +657,18 @@ object FirFakeOverrideGenerator {
         } ?: baseCallable.returnTypeRef.let {
             val coneType = baseCallable.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return Triple(
                 copiedReceiverType,
-                copiedContextReceiverTypes,
+                copiedContextParameterTypes,
                 Maybe.Nothing,
             )
             substitutor.substituteOrNull(coneType)
         }
-        return Triple(copiedReceiverType, copiedContextReceiverTypes, Maybe.Value(copiedReturnType))
+        return Triple(copiedReceiverType, copiedContextParameterTypes, Maybe.Value(copiedReturnType))
     }
 
     private fun FirVariableBuilder.configureAnnotationsAndSignature(
         baseVariable: FirVariable,
         newReceiverType: ConeKotlinType?,
-        newContextReceiverTypes: List<ConeKotlinType?>?,
+        newContextParameterTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType?,
         updateReceiver: Boolean = true,
@@ -699,11 +699,11 @@ object FirFakeOverrideGenerator {
         }
 
         contextParameters += baseVariable.contextParameters.zip(
-            newContextReceiverTypes ?: List(baseVariable.contextParameters.size) { null }
-        ) { contextReceiver, newType ->
-            buildValueParameterCopy(contextReceiver) {
+            newContextParameterTypes ?: List(baseVariable.contextParameters.size) { null }
+        ) { contextParameter, newType ->
+            buildValueParameterCopy(contextParameter) {
                 symbol = FirValueParameterSymbol(name)
-                returnTypeRef = contextReceiver.returnTypeRef.withReplacedConeType(newType)
+                returnTypeRef = contextParameter.returnTypeRef.withReplacedConeType(newType)
             }
         }
     }

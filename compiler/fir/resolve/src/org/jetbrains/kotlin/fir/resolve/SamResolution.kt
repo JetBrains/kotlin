@@ -242,7 +242,7 @@ class FirSamResolver(
         val newParameterTypes = samConstructorForClass.valueParameters.map {
             substitutor.substituteOrSelf(it.returnTypeRef.coneType)
         }
-        val newContextReceiverTypes = samConstructorForClass.contextParameters.map {
+        val newContextParameterTypes = samConstructorForClass.contextParameters.map {
             substitutor.substituteOrSelf(it.returnTypeRef.coneType)
         }
 
@@ -252,7 +252,7 @@ class FirSamResolver(
             session, FirDeclarationOrigin.SamConstructor,
             newDispatchReceiverType = null,
             newReceiverType = null,
-            newContextReceiverTypes = newContextReceiverTypes,
+            newContextParameterTypes = newContextParameterTypes,
             newReturnType = type.withAbbreviation(AbbreviatedTypeAttribute(typeAliasSymbol.defaultType())),
             newParameterTypes = newParameterTypes,
             newTypeParameters = typeAliasSymbol.fir.typeParameters,

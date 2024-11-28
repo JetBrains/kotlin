@@ -140,7 +140,7 @@ private fun FirSimpleFunction.substituteOrNull(
             newDispatchReceiverType = null,
             newParameterTypes = newParameterTypes,
             newReturnType = newReturnType,
-            newContextReceiverTypes = newContextReceiverTypes,
+            newContextParameterTypes = newContextReceiverTypes,
             newReceiverType = newExtensionReceiverType,
         )
     }
@@ -181,7 +181,7 @@ private fun FirProperty.substituteOrNull(
             FirDeclarationOrigin.Enhancement,
             newDispatchReceiverType = null,
             newReturnType = newReturnType,
-            newContextReceiverTypes = newContextReceiverTypes,
+            newContextParameterTypes = newContextReceiverTypes,
             newReceiverType = newExtensionReceiverType,
         )
     }
