@@ -44,7 +44,7 @@ fun IrExpression.asInlinableFunctionReference(): IrFunctionReference? {
                 (parameter.kind == IrParameterKind.Regular || parameter.kind == IrParameterKind.Context) && argument != null
             }
     ) return null
-    if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
+    if (function.parameters.any { it.isVararg || it.defaultValue != null })
         return null
     return reference
 }
