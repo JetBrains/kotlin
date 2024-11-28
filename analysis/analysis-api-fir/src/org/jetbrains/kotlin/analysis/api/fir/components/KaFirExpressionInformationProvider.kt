@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
@@ -220,11 +219,11 @@ internal class KaFirExpressionInformationProvider(
             // Lambdas do not use their expression-blocks if they are inferred
             // to be of unit type
             is KtFunctionLiteral ->
-                parent.bodyBlockExpression == child && !returnsUnit(parent)
+                parent.bodyBlockExpression == child && !analysisSession.returnsUnit(parent)
 
             /** See [doesNamedFunctionUseBody] */
             is KtNamedFunction ->
-                doesNamedFunctionUseBody(parent, child)
+                analysisSession.doesNamedFunctionUseBody(parent, child)
 
             // Function parameter declarations use their default value expressions.
             is KtParameter ->
@@ -262,7 +261,7 @@ internal class KaFirExpressionInformationProvider(
             // Calls use only the callee directly -- arguments are wrapped in a
             // KtValueArgument container
             is KtCallExpression ->
-                parent.calleeExpression == child && doesCallExpressionUseCallee(child)
+                parent.calleeExpression == child && analysisSession.doesCallExpressionUseCallee(child)
 
             // Collection literals use each of its constituent expressions.
             is KtCollectionLiteralExpression ->
@@ -400,11 +399,8 @@ private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
  *
  * in which the `f` in 2) is regarded as used and `f` in 1) is not.
  */
-private fun doesCallExpressionUseCallee(callee: PsiElement): Boolean {
-    return callee !is KtReferenceExpression ||
-            analyze(callee) {
-                isSimpleVariableAccessCall(callee)
-            }
+private fun KaSession.doesCallExpressionUseCallee(callee: PsiElement): Boolean {
+    return callee !is KtReferenceExpression || isSimpleVariableAccessCall(callee)
 }
 
 /**
@@ -421,7 +417,7 @@ private fun doesPropertyAccessorUseBody(propertyAccessor: KtPropertyAccessor, bo
  *  - the function body is a block e.g., `fun foo(): Int { return bar }` or
  *  - the function itself returns Unit
  */
-private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiElement): Boolean = when {
+private fun KaSession.doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiElement): Boolean = when {
     // The body is a block expression e.g., fun foo(): Int { return bar }
     namedFunction.bodyBlockExpression == body ->
         false
@@ -429,9 +425,7 @@ private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiEl
     !returnsUnit(namedFunction) ->
         true
     namedFunction.bodyExpression == body ->
-        analyze(namedFunction) {
-            (body as KtExpression).expressionType?.isUnitType == true
-        }
+        (body as KtExpression).expressionType?.isUnitType == true
     else ->
         false
 }
@@ -445,8 +439,4 @@ private fun KaSession.isSimpleVariableAccessCall(reference: KtReferenceExpressio
             false
     }
 
-private fun returnsUnit(declaration: KtDeclaration): Boolean {
-    return analyze(declaration) {
-        declaration.returnType.isUnitType
-    }
-}
+private fun KaSession.returnsUnit(declaration: KtDeclaration): Boolean = declaration.returnType.isUnitType
