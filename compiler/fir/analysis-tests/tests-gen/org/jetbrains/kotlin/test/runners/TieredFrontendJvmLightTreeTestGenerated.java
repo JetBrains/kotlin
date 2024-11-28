@@ -30136,6 +30136,23 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+      @Test
+      @TestMetadata("annotationTargetingFirstOnly.kt")
+      public void testAnnotationTargetingFirstOnly() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationTargetingFirstOnly.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationTargetingParamProperty.kt")
+      public void testAnnotationTargetingParamProperty() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationTargetingParamProperty.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences")
     @TestDataPath("$PROJECT_ROOT")
     public class CallableReferences {

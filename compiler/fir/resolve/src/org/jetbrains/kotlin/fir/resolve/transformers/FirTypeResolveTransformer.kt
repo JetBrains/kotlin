@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
@@ -570,14 +571,39 @@ open class FirTypeResolveTransformer(
                 null -> {
                     val allowedTargets = annotation.useSiteTargetsFromMetaAnnotation(session)
                     when {
-                        this is FirValueParameter -> CONSTRUCTOR_PARAMETER in allowedTargets
-                        this.source?.kind == KtFakeSourceElementKind.PropertyFromParameter && CONSTRUCTOR_PARAMETER in allowedTargets -> false
+                        // If parameter is allowed, we apply annotation to it in the first turn, independent of the targeting mode
+                        this is FirValueParameter -> {
+                            CONSTRUCTOR_PARAMETER in allowedTargets
+                        }
+                        this is FirProperty && this.source?.kind == KtFakeSourceElementKind.PropertyFromParameter &&
+                                CONSTRUCTOR_PARAMETER in allowedTargets -> {
+                            when {
+                                !session.languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultingMode) -> {
+                                    false
+                                }
+                                // In the property-param mode,
+                                // we should apply annotation also to the property (or to the field) if it's allowed
+                                PROPERTY in allowedTargets -> true
+                                backingField != null && annotationShouldBeMovedToField(allowedTargets) -> {
+                                    backingFieldAnnotations += annotation
+                                    replaceBackingFieldAnnotations = true
+                                    false
+                                }
+                                else -> false
+                            }
+                        }
+                        // Otherwise (for a regular property or for a constructor property if annotation isn't applicable to parameter),
+                        // we simply choose between a property and a field
                         this is FirProperty && backingField != null && annotationShouldBeMovedToField(allowedTargets) -> {
                             backingFieldAnnotations += annotation
                             replaceBackingFieldAnnotations = true
                             false
                         }
-                        else -> true
+                        // Here we can come with a regular (non-constructor) property without a backing field,
+                        // or with some other non-parameter variable
+                        else -> {
+                            true
+                        }
                     }
                 }
                 else -> true
