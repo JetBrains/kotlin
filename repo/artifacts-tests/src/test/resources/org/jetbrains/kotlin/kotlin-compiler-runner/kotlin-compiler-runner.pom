@@ -28,12 +28,6 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-build-common</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-daemon-client</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>

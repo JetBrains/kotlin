@@ -330,10 +330,6 @@
         </exclusion>
         <exclusion>
           <groupId>org.jetbrains.kotlin</groupId>
-          <artifactId>kotlin-build-common</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-common</artifactId>
         </exclusion>
       </exclusions>

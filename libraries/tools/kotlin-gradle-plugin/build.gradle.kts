@@ -173,8 +173,6 @@ dependencies {
     commonImplementation(project(":kotlin-util-klib-metadata")) // TODO: consider removing in KT-70247
 
     commonRuntimeOnly(project(":kotlin-compiler-runner")) { // TODO: consider removing in KT-70247
-        // Excluding dependency with not-relocated 'com.intellij' types
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-build-common")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
     }
     for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies) {

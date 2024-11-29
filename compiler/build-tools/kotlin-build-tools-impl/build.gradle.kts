@@ -16,10 +16,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(project(":kotlin-scripting-compiler"))
     runtimeOnly(project(":kotlin-compiler-embeddable"))
-    runtimeOnly(project(":kotlin-compiler-runner")) {
-        // Excluding dependency with not-relocated 'com.intellij' types
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-build-common")
-    }
+    runtimeOnly(project(":kotlin-compiler-runner"))
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     runtimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
 }
