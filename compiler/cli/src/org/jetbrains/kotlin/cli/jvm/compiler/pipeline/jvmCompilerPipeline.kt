@@ -165,8 +165,6 @@ fun generateCodeFromIr(
         input.targetId
     ).moduleName(
         input.targetId.name
-    ).outDirectory(
-        input.configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY]
     ).onIndependentPartCompilationEnd(
         createOutputFilesFlushingCallbackIfPossible(input.configuration)
     ).jvmBackendClassResolver(

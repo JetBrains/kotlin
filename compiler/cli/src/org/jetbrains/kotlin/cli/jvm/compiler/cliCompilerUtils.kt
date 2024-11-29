@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
@@ -78,10 +75,8 @@ fun GenerationState.Builder.withModule(module: Module?) =
         if (module != null) {
             targetId(TargetId(module))
             moduleName(module.getModuleName())
-            outDirectory(File(module.getOutputDirectory()))
         }
     }
-
 
 fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): GenerationStateEventCallback {
     if (configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) == null) {
@@ -124,12 +119,11 @@ fun writeOutput(
         return
     }
 
-    val outputDir = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
-        ?.takeUnless { it.path.isBlank() }
-        ?: File(".")
-
-    outputFiles.writeAll(outputDir, messageCollector, reportOutputFiles)
+    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles)
 }
+
+private fun CompilerConfiguration.outputDirOrCurrentDirectory(): File =
+    outputDirectory?.takeUnless { it.path.isBlank() } ?: File(".")
 
 fun writeOutputsIfNeeded(
     project: Project,
@@ -155,7 +149,7 @@ fun writeOutputsIfNeeded(
         val singleState = outputs.singleOrNull()
         if (singleState != null) {
             return JavacWrapper.getInstance(project).use {
-                it.compile(singleState.outDirectory)
+                it.compile(configuration.outputDirOrCurrentDirectory())
             }
         } else {
             messageCollector.report(

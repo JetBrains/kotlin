@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
-import java.io.File
 import java.lang.reflect.InvocationTargetException
 
 class GenerationState private constructor(
@@ -47,7 +46,6 @@ class GenerationState private constructor(
     val generateDeclaredClassFilter: GenerateClassFilter,
     val targetId: TargetId?,
     moduleName: String?,
-    val outDirectory: File?,
     private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
     val jvmBackendClassResolver: JvmBackendClassResolver,
     val ignoreErrors: Boolean,
@@ -71,14 +69,6 @@ class GenerationState private constructor(
         fun moduleName(v: String?) =
             apply { moduleName = v }
 
-        // 'outDirectory' is a hack to correctly determine if a compiled class is from the same module as the callee during
-        // partial compilation. Module chunks are treated as a single module.
-        // TODO: get rid of it with the proper module infrastructure
-        private var outDirectory: File? = null
-
-        fun outDirectory(v: File?) =
-            apply { outDirectory = v }
-
         private var onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING
         fun onIndependentPartCompilationEnd(v: GenerationStateEventCallback) =
             apply { onIndependentPartCompilationEnd = v }
@@ -99,7 +89,7 @@ class GenerationState private constructor(
             return GenerationState(
                 project, builderFactory, module, configuration,
                 generateDeclaredClassFilter, targetId,
-                moduleName, outDirectory, onIndependentPartCompilationEnd,
+                moduleName, onIndependentPartCompilationEnd,
                 jvmBackendClassResolver, ignoreErrors,
                 diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector),
             )
