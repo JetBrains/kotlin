@@ -49,6 +49,12 @@
       <artifactId>kotlin-compiler-runner</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-build-common</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
