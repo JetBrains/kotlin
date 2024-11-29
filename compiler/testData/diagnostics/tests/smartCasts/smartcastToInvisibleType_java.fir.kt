@@ -38,6 +38,13 @@ fun testInference(a: A, b: B) {
     x.<!INVISIBLE_REFERENCE!>foo<!>()
 }
 
+fun <T> dnnSelect(vararg x: T & Any): T & Any = x[0]
+
+fun testDnn(a: A, b: B) {
+    val x = dnnSelect(a, b)
+    x.<!INVISIBLE_REFERENCE!>foo<!>()
+}
+
 // FILE: samePackage.kt
 package foo
 

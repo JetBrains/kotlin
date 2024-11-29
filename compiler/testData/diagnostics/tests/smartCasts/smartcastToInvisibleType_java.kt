@@ -38,6 +38,13 @@ fun testInference(a: A, b: B) {
     <!INACCESSIBLE_TYPE!>x<!>.<!INVISIBLE_MEMBER!>foo<!>()
 }
 
+fun <T> dnnSelect(vararg x: T & Any): T & Any = x[0]
+
+fun testDnn(a: A, b: B) {
+    val x = <!INACCESSIBLE_TYPE!>dnnSelect(a, b)<!>
+    <!INACCESSIBLE_TYPE!>x<!>.<!INVISIBLE_MEMBER!>foo<!>()
+}
+
 // FILE: samePackage.kt
 package foo
 
