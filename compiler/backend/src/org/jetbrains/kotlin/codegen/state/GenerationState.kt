@@ -59,17 +59,6 @@ class GenerationState private constructor(
         private val module: ModuleDescriptor,
         private val configuration: CompilerConfiguration
     ) {
-        // TODO: patch IntelliJ project and remove this compatibility c-tor
-        constructor(
-            project: Project,
-            builderFactory: ClassBuilderFactory,
-            module: ModuleDescriptor,
-            files: List<KtFile>,
-            configuration: CompilerConfiguration
-        ) : this(project, builderFactory, module, configuration) {
-            this.files = files
-        }
-
         private var generateDeclaredClassFilter: GenerateClassFilter = GenerateClassFilter.GENERATE_ALL
         fun generateDeclaredClassFilter(v: GenerateClassFilter) =
             apply { generateDeclaredClassFilter = v }
@@ -106,13 +95,6 @@ class GenerationState private constructor(
         fun diagnosticReporter(v: DiagnosticReporter) =
             apply { diagnosticReporter = v }
 
-        // TODO: remove after cleanin up IDE counterpart
-        private var files: List<KtFile>? = null
-        private var codegenFactory: CodegenFactory? = null
-        fun codegenFactory(v: CodegenFactory) =
-            apply { codegenFactory = v }
-
-
         fun build(): GenerationState {
             return GenerationState(
                 project, builderFactory, module, configuration,
@@ -120,10 +102,7 @@ class GenerationState private constructor(
                 moduleName, outDirectory, onIndependentPartCompilationEnd,
                 jvmBackendClassResolver, ignoreErrors,
                 diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector),
-            ).also {
-                it.files = files
-                it.codegenFactory = codegenFactory
-            }
+            )
         }
     }
 
@@ -152,10 +131,6 @@ class GenerationState private constructor(
     val deprecationProvider = DeprecationResolver(
         LockBasedStorageManager.NO_LOCKS, languageVersionSettings, JavaDeprecationSettings
     )
-
-    // TODO: remove after cleanin up IDE counterpart
-    var files: List<KtFile>? = null
-    var codegenFactory: CodegenFactory? = null
 
     init {
         val icComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)

@@ -47,12 +47,5 @@ public class KotlinCodegenFacade {
         state.getFactory().done();
     }
 
-    // TODO: remove after cleanin up IDE counterpart
-    public static void compileCorrectFiles(@NotNull GenerationState state, @NotNull BindingContext bindingContext) {
-        CodegenFactory codegenFactory = state.getCodegenFactory();
-        assert codegenFactory != null : "CodegenFactory should be initialized";
-        compileCorrectFiles(state.getFiles(), state, bindingContext, codegenFactory);
-    }
-
     private KotlinCodegenFacade() {}
 }

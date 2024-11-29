@@ -98,9 +98,8 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             environment.project,
             ClassBuilderFactories.TEST,
             analysisResult.moduleDescriptor,
-            analysisResult.files,
             environment.configuration
-        ).codegenFactory(codegenFactory).build()
+        ).build()
 
         state.beforeCompile()
 

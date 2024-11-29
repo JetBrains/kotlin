@@ -119,14 +119,11 @@ internal class KaFe10CompilerFacility(
             file.project,
             target.classBuilderFactory,
             analysisContext.resolveSession.moduleDescriptor,
-            filesToCompile,
             effectiveConfiguration,
-        ).generateDeclaredClassFilter(generateClassFilter)
-            .codegenFactory(codegenFactory)
-            .build()
+        ).generateDeclaredClassFilter(generateClassFilter).build()
 
         try {
-            KotlinCodegenFacade.compileCorrectFiles(state, bindingContext)
+            KotlinCodegenFacade.compileCorrectFiles(filesToCompile, state, bindingContext, codegenFactory)
             val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
             return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
         } finally {

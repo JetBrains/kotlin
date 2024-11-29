@@ -20,11 +20,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOut
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.refinedContextModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedId
@@ -43,7 +39,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticMarker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -234,7 +229,7 @@ internal class KaFirCompilerFacility(
             var compileResult: KaCompilationResult? = null
             runFir2IrForDependency(
                 effectiveDependencyFile, configuration, jvmIrDeserializer, diagnosticReporter
-            ) { fir2IrResult, ktFiles, dependencyConfiguration ->
+            ) { fir2IrResult, dependencyConfiguration ->
                 val codegenFactory = createJvmIrCodegenFactory(
                     configuration = dependencyConfiguration,
                     isCodeFragment = effectiveDependencyFile is KtCodeFragment,
@@ -250,7 +245,6 @@ internal class KaFirCompilerFacility(
                     fir2IrResult = fir2IrResult,
                     configuration = dependencyConfiguration,
                     target = target,
-                    targetFiles = ktFiles,
                     codeFragmentMappings = null,
                     codegenFactory = codegenFactory,
                     generateClassFilter = generateClassFilter,
@@ -321,7 +315,6 @@ internal class KaFirCompilerFacility(
             targetFir2IrResult,
             targetConfiguration,
             target,
-            targetFiles,
             codeFragmentMappings,
             codegenFactory,
             SingleFileGenerateClassFilter(targetFiles, compilationPeerData.inlinedClasses),
@@ -339,7 +332,6 @@ internal class KaFirCompilerFacility(
         fir2IrResult: Fir2IrActualizedResult,
         configuration: CompilerConfiguration,
         target: KaCompilerTarget,
-        targetFiles: List<KtFile>,
         codeFragmentMappings: CodeFragmentMappings?,
         codegenFactory: JvmIrCodegenFactory,
         generateClassFilter: SingleFileGenerateClassFilter,
@@ -352,10 +344,8 @@ internal class KaFirCompilerFacility(
             project,
             target.classBuilderFactory,
             fir2IrResult.irModuleFragment.descriptor,
-            targetFiles,
             configuration,
         ).generateDeclaredClassFilter(generateClassFilter)
-            .codegenFactory(codegenFactory)
             .diagnosticReporter(diagnosticReporter)
             .build()
 
@@ -434,7 +424,7 @@ internal class KaFirCompilerFacility(
         configuration: CompilerConfiguration,
         jvmIrDeserializer: JvmIrDeserializerImpl,
         diagnosticReporter: PendingDiagnosticsCollectorWithSuppress,
-        handleFir2IrResult: ((Fir2IrActualizedResult, List<KtFile>, CompilerConfiguration) -> Unit)? = null,
+        handleFir2IrResult: ((Fir2IrActualizedResult, CompilerConfiguration) -> Unit)? = null,
     ) {
         val dependencyFirFile = getFullyResolvedFirFile(dependencyFile)
         val dependencySession = dependencyFirFile.llFirSession
@@ -454,7 +444,7 @@ internal class KaFirCompilerFacility(
         )
 
         if (handleFir2IrResult != null) {
-            handleFir2IrResult(fir2IrResult, listOf(dependencyFile), dependencyConfiguration)
+            handleFir2IrResult(fir2IrResult, dependencyConfiguration)
         }
     }
 
