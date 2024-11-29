@@ -1044,6 +1044,7 @@ tasks {
     }
 
     register<Exec>("mvnInstall") {
+        notCompatibleWithConfigurationCache("Uses project.rootDir")
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
         commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests")

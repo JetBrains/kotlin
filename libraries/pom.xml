@@ -96,9 +96,9 @@
         <module>tools/kotlin-bom</module>
         <module>tools/kotlin-dist-for-jps-meta</module>
 
-        <module>tools/kotlin-maven-plugin-test</module>
+<!--        <module>tools/kotlin-maven-plugin-test</module>-->
 
-        <module>examples/kotlin-java-example</module>
+<!--        <module>examples/kotlin-java-example</module>-->
     </modules>
 
     <dependencies>
