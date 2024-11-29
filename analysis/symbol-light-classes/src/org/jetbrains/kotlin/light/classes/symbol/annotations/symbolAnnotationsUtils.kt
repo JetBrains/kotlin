@@ -79,9 +79,10 @@ internal fun KaAnnotatedSymbol.suppressWildcard(): Boolean? {
 }
 
 internal fun KaAnnotatedSymbol.getJvmSuppressWildcardsFromAnnotation(): Boolean? {
-    return annotations[JvmStandardClassIds.Annotations.JvmSuppressWildcards].firstOrNull()?.let { annoApp ->
-        (annoApp.arguments.firstOrNull()?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? Boolean
-    }
+    val annotation = findAnnotation(JvmStandardClassIds.Annotations.JvmSuppressWildcards) ?: return null
+
+    val argument = annotation.arguments.firstOrNull()
+    return (argument?.expression as? KaAnnotationValue.ConstantValue)?.value?.value as? Boolean != false
 }
 
 internal fun KaAnnotatedSymbol.hasJvmWildcardAnnotation(): Boolean = JvmStandardClassIds.Annotations.JvmWildcard in annotations
