@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isNullableArray
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.ir.util.isAccessor
 import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -40,9 +41,9 @@ import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
 import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
-import kotlin.collections.get
 
 internal fun validateVararg(irElement: IrElement, type: IrType, varargElementType: IrType, context: CheckerContext) {
     val isCorrectArrayOf = (type.isArray() || type.isNullableArray())
@@ -104,11 +105,35 @@ private fun IrDeclarationWithVisibility.isVisibleAsPrivate(file: IrFile): Boolea
     return file.fileEntry == fileOrNull?.fileEntry
 }
 
+/**
+ * The set of declarations' fully qualified names references to which we don't want to check for visibility violations.
+ *
+ * FIXME: This is temporary hack until KT-70295 is fixed.
+ */
+private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
+    "kotlin.js.sharedBoxCreate",
+    "kotlin.js.sharedBoxWrite",
+    "kotlin.js.sharedBoxRead",
+    "kotlin.wasm.internal.ClosureBoxBoolean",
+    "kotlin.wasm.internal.ClosureBoxByte",
+    "kotlin.wasm.internal.ClosureBoxShort",
+    "kotlin.wasm.internal.ClosureBoxChar",
+    "kotlin.wasm.internal.ClosureBoxInt",
+    "kotlin.wasm.internal.ClosureBoxLong",
+    "kotlin.wasm.internal.ClosureBoxFloat",
+    "kotlin.wasm.internal.ClosureBoxDouble",
+    "kotlin.wasm.internal.ClosureBoxAny",
+).mapTo(hashSetOf(), ::FqName)
+
 internal fun checkVisibility(
     referencedDeclarationSymbol: IrSymbol,
     reference: IrElement,
     context: CheckerContext,
 ) {
+    if (FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS.any(referencedDeclarationSymbol::hasEqualFqName)) {
+        return
+    }
+
     if (context.file.module.name in EXCLUDED_MODULE_NAMES) return
 
     val referencedDeclaration = referencedDeclarationSymbol.owner as? IrDeclarationWithVisibility ?: return
