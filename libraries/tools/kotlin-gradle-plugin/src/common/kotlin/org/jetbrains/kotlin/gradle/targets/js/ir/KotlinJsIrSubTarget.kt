@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.*
-import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
@@ -167,9 +164,6 @@ abstract class KotlinJsIrSubTarget(
 
     abstract fun configureDefaultTestFramework(test: KotlinJsTest)
     abstract fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary)
-    abstract fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile>
-    abstract fun binarySyncTaskName(binary: JsIrBinary): String
-    abstract fun binarySyncOutput(binary: JsIrBinary): Provider<Directory>
 
     private fun configureMainCompilation() {
         target.compilations.all { compilation ->
