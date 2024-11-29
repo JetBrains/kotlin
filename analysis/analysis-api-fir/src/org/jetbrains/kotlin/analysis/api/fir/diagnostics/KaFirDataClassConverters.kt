@@ -1365,6 +1365,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD) { firDiagnostic ->
+        AnnotationWillBeAppliedAlsoToPropertyOrFieldImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
         JsModuleProhibitedOnVarImpl(
             firDiagnostic as KtPsiDiagnostic,

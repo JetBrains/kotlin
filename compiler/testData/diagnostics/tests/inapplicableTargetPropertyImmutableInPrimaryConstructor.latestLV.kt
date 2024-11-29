@@ -8,7 +8,7 @@ package second
 annotation class Anno
 
 class SimpleVarClass(
-    @Anno
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@Anno<!>
     @get:Anno
     <!INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE!>@set:Anno<!>
     <!INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE!>@setparam:Anno<!>

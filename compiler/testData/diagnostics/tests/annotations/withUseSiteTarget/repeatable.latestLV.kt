@@ -11,7 +11,7 @@ class CustomDelegate {
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = prop.name
 }
 
-public class A(@param:Ann <!REPEATED_ANNOTATION!>@Ann<!> val x: Int, @param: RepeatableAnn @Ann val y: Int) {
+public class A(@param:Ann <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property"), REPEATED_ANNOTATION!>@Ann<!> val x: Int, @param: RepeatableAnn <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@Ann<!> val y: Int) {
 
     @field:Ann @property:Ann @RepeatableAnn @property:RepeatableAnn
     val a: Int = 0

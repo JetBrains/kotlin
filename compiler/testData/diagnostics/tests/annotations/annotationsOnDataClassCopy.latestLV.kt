@@ -15,7 +15,7 @@ annotation class Prop
 annotation class Both
 
 data class Foo(
-    @NoTarget @Param @Prop @Both val p1: Int,
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@NoTarget<!> @Param @Prop <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@Both<!> val p1: Int,
     @param:NoTarget @param:Both val p2: String,
     @property:NoTarget @property:Both val p3: Boolean,
 )

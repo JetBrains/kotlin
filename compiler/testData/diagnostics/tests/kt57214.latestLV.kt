@@ -9,7 +9,7 @@
 //
 //open class SecondClass
 
-class ConfigurationTarget(@ConfigField val target: String)
+class ConfigurationTarget(<!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@ConfigField<!> val target: String)
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ConfigField()
@@ -20,4 +20,4 @@ annotation class ConfigField()
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ConfigField()
 
-class ConfigurationTarget(@ConfigField val target: String)
+class ConfigurationTarget(<!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@ConfigField<!> val target: String)

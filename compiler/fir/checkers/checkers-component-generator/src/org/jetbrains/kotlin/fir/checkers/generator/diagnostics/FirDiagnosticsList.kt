@@ -452,6 +452,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION by error<KtAnnotationEntry>()
 
         val POTENTIALLY_NON_REPORTED_ANNOTATION by warning<KtAnnotationEntry>()
+
+        val ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD by warning<KtAnnotationEntry> {
+            parameter<String>("useSiteDescription")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

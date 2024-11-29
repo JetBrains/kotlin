@@ -981,6 +981,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = PotentiallyNonReportedAnnotation::class
     }
 
+    interface AnnotationWillBeAppliedAlsoToPropertyOrField : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = AnnotationWillBeAppliedAlsoToPropertyOrField::class
+        val useSiteDescription: String
+    }
+
     interface JsModuleProhibitedOnVar : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = JsModuleProhibitedOnVar::class
     }
