@@ -387,6 +387,17 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
 private val interopPhase = createFileLoweringPhase(
         lowering = ::InteropLowering,
         name = "Interop",
+)
+
+private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
+        lowering = ::SpecialInteropIntrinsicsLowering,
+        name = "SpecialInteropIntrinsics",
+        prerequisite = setOf(inlineAllFunctionsPhase)
+)
+
+internal val specialObjCValidationPhase = createFileLoweringPhase(
+        lowering = ::SpecialObjCValidationLowering,
+        name = "SpecialObjCValidation",
         prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
@@ -552,20 +563,21 @@ internal val constEvaluationPhase = createFileLoweringPhase(
 )
 
 internal fun KonanConfig.getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = listOfNotNull(
-    assertionWrapperPhase,
-    lateinitPhase,
-    sharedVariablesPhase,
-    outerThisSpecialAccessorInInlineFunctionsPhase,
-    extractLocalClassesFromInlineBodies,
-    inlineCallableReferenceToLambdaPhase,
-    arrayConstructorPhase,
-    wrapInlineDeclarationsWithReifiedTypeParametersLowering,
-    inlineOnlyPrivateFunctionsPhase.takeUnless { this.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
-    syntheticAccessorGenerationPhase.takeUnless { this.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+        assertionWrapperPhase,
+        lateinitPhase,
+        sharedVariablesPhase,
+        outerThisSpecialAccessorInInlineFunctionsPhase,
+        extractLocalClassesFromInlineBodies,
+        inlineCallableReferenceToLambdaPhase,
+        arrayConstructorPhase,
+        wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+        interopPhase,
+        inlineOnlyPrivateFunctionsPhase.takeUnless { this.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
+        syntheticAccessorGenerationPhase.takeUnless { this.configuration.getBoolean(KlibConfigurationKeys.NO_DOUBLE_INLINING) },
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
-        interopPhase,
+        specialInteropIntrinsicsPhase,
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
         assertionRemoverPhase,

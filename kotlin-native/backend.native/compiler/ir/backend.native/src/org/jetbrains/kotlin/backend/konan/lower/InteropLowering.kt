@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
@@ -50,21 +53,32 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
-internal class InteropLowering(generationState: NativeGenerationState) : FileLoweringPass {
-    // TODO: merge these lowerings.
-    private val part1 = InteropLoweringPart1(generationState)
-    private val part2 = InteropLoweringPart2(generationState)
-
+internal class InteropLowering(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
-        part1.lower(irFile)
-        part2.lower(irFile)
+        // TODO: merge these lowerings.
+        InteropLoweringPart1(generationState).lower(irFile)
+        InteropLoweringPart2(generationState).lower(irFile)
+    }
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        InteropLoweringPart1(generationState).lower(irBody, container)
+        InteropLoweringPart2(generationState).lower(irBody, container)
     }
 }
 
+private fun getUniqueName(packageFragment: IrPackageFragment, fileName: String) =
+        packageFragment.moduleDescriptor.name.asString().let { it.substring(1, it.lastIndex) } + fileName
+
+private val IrFile.uniqueName: String
+    get() = getUniqueName(this, fileEntry.name)
+
 private abstract class BaseInteropIrTransformer(
-        private val generationState: NativeGenerationState
+        protected val generationState: NativeGenerationState,
+        protected val irFile: IrFile?,
+        private val uniqueName: String,
 ) : IrBuildingTransformer(generationState.context) {
     protected val context = generationState.context
+    protected val symbols = context.ir.symbols
 
     protected inline fun <T : IrDeclaration> generateDeclarationWithStubs(
             owner: IrDeclarationContainer,
@@ -110,18 +124,15 @@ private abstract class BaseInteropIrTransformer(
     }
 
     private fun createKotlinStubs(element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
-        val location = if (element != null) {
+        val location = if (element != null && irFile != null) {
             element.getCompilerMessageLocation(irFile)
         } else {
             builder.getCompilerMessageLocation()
         }
 
-        val uniqueModuleName = irFile.moduleDescriptor.name.asString()
-                .let { it.substring(1, it.lastIndex) }
-        val uniqueFileName = irFile.fileEntry.name
         val uniquePrefix = buildString {
             append('_')
-            (uniqueModuleName + uniqueFileName).toByteArray().joinTo(this, "") {
+            uniqueName.toByteArray().joinTo(this, "") {
                 (0xFF and it.toInt()).toString(16).padStart(2, '0')
             }
             append('_')
@@ -169,8 +180,6 @@ private abstract class BaseInteropIrTransformer(
 
     protected fun renderCompilerError(element: IrElement?, message: String = "Failed requirement") =
             renderCompilerError(irFile, element, message)
-
-    protected abstract val irFile: IrFile
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         expression.transformChildrenVoid()
@@ -258,28 +267,28 @@ private abstract class BaseInteropIrTransformer(
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-private class InteropLoweringPart1(val generationState: NativeGenerationState) : BaseInteropIrTransformer(generationState), FileLoweringPass {
-    private val symbols get() = context.ir.symbols
-
-    lateinit var currentFile: IrFile
-
-    private val eagerTopLevelInitializers = mutableListOf<IrExpression>()
-
+private class InteropLoweringPart1(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
+    private val context = generationState.context
     private var topLevelInitializersCounter = 0
 
-    override val irFile: IrFile
-        get() = currentFile
-
     override fun lower(irFile: IrFile) {
-        currentFile = irFile
-        irFile.transformChildrenVoid(this)
-
-        eagerTopLevelInitializers.forEach { irFile.addTopLevelInitializer(it, context, threadLocal = false, eager = true) }
-        eagerTopLevelInitializers.clear()
+        val transformer = InteropTransformerPart1(generationState, irFile, irFile.uniqueName)
+        irFile.transformChildrenVoid(transformer)
+        val eagerTopLevelInitializers = transformer.eagerTopLevelInitializers
+        eagerTopLevelInitializers.forEach { irFile.addTopLevelInitializer(it, threadLocal = false, eager = true) }
     }
 
-    private fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean, eager: Boolean) {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        val transformer = InteropTransformerPart1(
+                generationState,
+                container.fileOrNull,
+                getUniqueName(container.getPackageFragment(), context.irLinker.getExternalDeclarationFileName(container))
+        )
+        container.transform(transformer, null)
+        require(transformer.eagerTopLevelInitializers.isEmpty()) { "A local Obj-C class in an inline function is not supported" }
+    }
+
+    private fun IrFile.addTopLevelInitializer(expression: IrExpression, threadLocal: Boolean, eager: Boolean) {
         val irField = context.irFactory.createField(
                 expression.startOffset,
                 expression.endOffset,
@@ -303,6 +312,15 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         }
         addChild(irField)
     }
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private class InteropTransformerPart1(
+        generationState: NativeGenerationState,
+        irFile: IrFile?,
+        uniqueName: String,
+) : BaseInteropIrTransformer(generationState, irFile, uniqueName) {
+    val eagerTopLevelInitializers = mutableListOf<IrExpression>()
 
     private fun IrBuilderWithScope.callAlloc(classPtr: IrExpression): IrExpression =
             irCall(symbols.interopAllocObjCObject).apply {
@@ -343,7 +361,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         }.let { irClass.addChildren(it) }
 
         if (irClass.annotations.hasAnnotation(InteropFqNames.exportObjCClass)) {
-            val irBuilder = context.createIrBuilder(currentFile.symbol).at(irClass)
+            val irBuilder = context.createIrBuilder(irClass.symbol).at(irClass)
             eagerTopLevelInitializers.add(irBuilder.getObjCClass(symbols, irClass.symbol))
         }
     }
@@ -757,7 +775,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 
         callee.getExternalObjCMethodInfo()?.let { methodInfo ->
             val isInteropStubsFile =
-                    currentFile.annotations.hasAnnotation(FqName("kotlinx.cinterop.InteropStubs"))
+                    irFile?.annotations?.hasAnnotation(FqName("kotlinx.cinterop.InteropStubs")) == true
 
             // Special case: bridge from Objective-C method implementation template to Kotlin method;
             // handled in CodeGeneratorVisitor.callVirtual.
@@ -784,24 +802,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             }
         }
 
-        return when (callee.symbol) {
-            symbols.interopTypeOf -> {
-                val typeArgument = expression.getSingleTypeArgument()
-                val classSymbol = typeArgument.classifierOrNull as? IrClassSymbol
-
-                if (classSymbol == null) {
-                    expression
-                } else {
-                    val irClass = classSymbol.owner
-
-                    val companionObject = irClass.companionObject() ?:
-                            error(irFile, expression, "native variable class ${irClass.descriptor} must have the companion object")
-
-                    builder.at(expression).irGetObject(companionObject.symbol)
-                }
-            }
-            else -> expression
-        }
+        return expression
     }
 
     override fun visitProperty(declaration: IrProperty): IrStatement {
@@ -837,46 +838,6 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         }
     }
 
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
-        if (inlinedBlock.inlineFunctionSymbol?.owner?.isAutoreleasepool() == true) {
-            // Prohibit calling suspend functions from `autoreleasepool {}` block.
-            // See https://youtrack.jetbrains.com/issue/KT-50786 for more details.
-            // Note: we can't easily check this in frontend, because we need to prohibit indirect cases like
-            ///    inline fun <T> myAutoreleasepool(block: () -> T) = autoreleasepool(block)
-            ///    myAutoreleasepool { suspendHere() }
-
-            inlinedBlock.acceptVoid(object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitDeclaration(declaration: IrDeclarationBase) {
-                    // Skip local declarations.
-                }
-
-                override fun visitCall(expression: IrCall) {
-                    super.visitCall(expression)
-
-                    if (expression.symbol.owner.isSuspend) {
-                        context.reportCompilationError(
-                                "Calling suspend functions from `autoreleasepool {}` is prohibited, " +
-                                        "see https://youtrack.jetbrains.com/issue/KT-50786",
-                                currentFile,
-                                expression
-                        )
-                    }
-                }
-            })
-        }
-        return super.visitInlinedFunctionBlock(inlinedBlock)
-    }
-
-    private fun IrFunction.isAutoreleasepool(): Boolean {
-        return this.name.asString() == "autoreleasepool" && this.parent.let { parent ->
-            parent is IrPackageFragment && parent.packageFqName == InteropFqNames.packageName
-        }
-    }
-
     private fun IrBuilderWithScope.callAllocAndInit(
             classPtr: IrExpression,
             initMethodInfo: ObjCMethodInfo,
@@ -901,20 +862,28 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 /**
  * Lowers some interop intrinsic calls.
  */
-private class InteropLoweringPart2(val generationState: NativeGenerationState) : FileLoweringPass {
+private class InteropLoweringPart2(val generationState: NativeGenerationState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
-        val transformer = InteropTransformer(generationState, irFile)
+        val transformer = InteropTransformerPart2(generationState, irFile, irFile.uniqueName)
         irFile.transformChildrenVoid(transformer)
+    }
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        val transformer = InteropTransformerPart2(
+                generationState,
+                container.fileOrNull,
+                getUniqueName(container.getPackageFragment(), generationState.context.irLinker.getExternalDeclarationFileName(container))
+        )
+        container.transform(transformer, null)
     }
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-private class InteropTransformer(
-        val generationState: NativeGenerationState,
-        override val irFile: IrFile
-) : BaseInteropIrTransformer(generationState) {
-    val symbols = context.ir.symbols
-
+private class InteropTransformerPart2(
+        generationState: NativeGenerationState,
+        irFile: IrFile?,
+        uniqueName: String,
+) : BaseInteropIrTransformer(generationState, irFile, uniqueName) {
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
         if (declaration.isKotlinObjCClass()) {

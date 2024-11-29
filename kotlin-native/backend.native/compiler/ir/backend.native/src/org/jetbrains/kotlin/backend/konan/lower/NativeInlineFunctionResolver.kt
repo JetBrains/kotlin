@@ -62,6 +62,7 @@ internal class NativeInlineFunctionResolver(
         NativeInlineCallableReferenceToLambdaPhase(generationState).lower(function)
         ArrayConstructorLowering(context).lower(body, function)
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
+        InteropLowering(generationState).lower(body, function)
 
         if (doubleInliningEnabled) {
             NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
