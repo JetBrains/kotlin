@@ -11,33 +11,40 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
- * A receiver value of a call.
+ * A [receiver](https://kotlin.github.io/analysis-api/receivers.html) value of a call, which represents either an
+ * [explicit][KaExplicitReceiverValue], [implicit][KaImplicitReceiverValue], or [smart-casted][KaSmartCastedReceiverValue] receiver.
  */
 public sealed interface KaReceiverValue : KaLifetimeOwner {
     /**
-     * Inferred [KaType] of the receiver.
-     *
-     * A smart cast type in the case of smart cast on the receiver.
+     * The inferred [KaType] of the receiver. This is a smart-casted type in the case of a smart cast on the receiver.
      */
     public val type: KaType
 }
 
-
 /**
- * An explicit expression receiver. For example
+ * An explicit receiver value.
+ *
+ * #### Example
+ *
  * ```
- *   "".length // explicit receiver `""`
+ * "".length    // explicit receiver `""`
  * ```
  */
 public interface KaExplicitReceiverValue : KaReceiverValue {
+    /**
+     * The [KtExpression] of the explicit receiver.
+     */
     public val expression: KtExpression
 
     /**
-     * Whether safe navigation is used on this receiver. For example
+     * Whether [safe navigation](https://kotlinlang.org/docs/null-safety.html#safe-call-operator) is used on this receiver.
+     *
+     * #### Example
+     *
      * ```kotlin
      * fun test(s1: String?, s2: String) {
-     *   s1?.length // explicit receiver `s1` has `isSafeNavigation = true`
-     *   s2.length // explicit receiver `s2` has `isSafeNavigation = false`
+     *   s1?.length // The explicit receiver `s1` has `isSafeNavigation = true`
+     *   s2.length  // The explicit receiver `s2` has `isSafeNavigation = false`
      * }
      * ```
      */
@@ -45,17 +52,20 @@ public interface KaExplicitReceiverValue : KaReceiverValue {
 }
 
 /**
- * An implicit receiver. For example
+ * An implicit receiver value.
+ *
+ * #### Example
+ *
  * ```kotlin
  * class A {
  *   val i: Int = 1
  *   fun test() {
- *     i // implicit receiver bound to class `A`
+ *     i    // The implicit receiver of type `A` is bound to the `KaNamedClassSymbol` of class `A`.
  *   }
  * }
  *
  * fun String.test() {
- *   length // implicit receiver bound to the `KaReceiverParameterSymbol` of type `String` declared by `test`.
+ *   length // The implicit receiver of type `String` is bound to the `KaReceiverParameterSymbol` for the extension receiver of `test`.
  * }
  * ```
  */
@@ -67,18 +77,24 @@ public interface KaImplicitReceiverValue : KaReceiverValue {
 }
 
 /**
- * A smart-casted receiver. For example
+ * A smart-casted receiver value.
+ *
+ * #### Example
+ *
  * ```kotlin
  * fun Any.test() {
  *   if (this is String) {
- *     length // smart-casted implicit receiver bound to the `KaReceiverParameterSymbol` of type `String` declared by `test`.
+ *     length
  *   }
  * }
  * ```
+ *
+ * `length` has a smart-casted receiver value of type `String`. Its [original] is an implicit receiver which is bound to the
+ * [KaReceiverParameterSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol] for the extension receiver of `test`.
  */
 public interface KaSmartCastedReceiverValue : KaReceiverValue {
     /**
-     * The original [KaReceiverValue] to which the smart cast is applied.
+     * The original [KaReceiverValue] to which the smart cast was applied.
      */
     public val original: KaReceiverValue
 }

@@ -22,64 +22,96 @@ public sealed interface KaCall : KaLifetimeOwner
  * A call to a function, or a simple/compound access to a property.
  */
 public sealed interface KaCallableMemberCall<S : KaCallableSymbol, C : KaCallableSignature<S>> : KaCall {
+    /**
+     * A symbol wrapper for the callee, containing a substituted declaration signature (parameter types for functions, return type for
+     * functions and properties), and the actual dispatch receiver.
+     */
     public val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<S, C>
 
     /**
-     * This map returns inferred type arguments. If the type placeholders was used, actual inferred type will be used as a value.
-     * Keys for this map is from the set [partiallyAppliedSymbol].signature.typeParameters.
-     * In case of resolution or inference error could return empty map.
+     * A map of inferred type arguments. If type placeholders were used, the actual inferred type will be used as a value. The keys for this
+     * map are from [partiallyAppliedSymbol]'s type parameters.
+     *
+     * In case of a resolution or inference error, the map might be empty.
      */
     public val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>
 }
 
-public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCall<S, C>.symbol: S get() = partiallyAppliedSymbol.symbol
+/**
+ * The [KaCallableSymbol] of the [KaCallableMemberCall]'s callee.
+ */
+public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCall<S, C>.symbol: S
+    get() = partiallyAppliedSymbol.symbol
 
+/**
+ * A call to a function within Kotlin code. This includes calls to regular functions, constructors, constructors of superclasses, and
+ * annotations.
+ */
 public sealed interface KaFunctionCall<S : KaFunctionSymbol> : KaCallableMemberCall<S, KaFunctionSignature<S>> {
-
     /**
-     * The mapping from argument to parameter declaration. In case of vararg parameters, multiple arguments may be mapped to the same
-     * [KaValueParameterSymbol].
-     *
-     * The map has stable order.
+     * A mapping from the call's argument expressions to their associated parameter symbols in a stable order. In case of `vararg`
+     * parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
      */
     public val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
 }
 
 /**
- * A call to a function.
+ * A simple, direct call to a function, without any delegation or special syntax involved.
  */
 public interface KaSimpleFunctionCall : KaFunctionCall<KaFunctionSymbol> {
     /**
-     * Whether this function call is an implicit invoke call on a value that has an `invoke` member function. See
-     * https://kotlinlang.org/docs/operator-overloading.html#invoke-operator for more details.
+     * Whether this function call is an [implicit invoke call](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) on a
+     * value that has an `invoke` member function.
      */
     public val isImplicitInvoke: Boolean
 }
 
 /**
- * A call to an annotation. For example
- * ```
- * @Deprecated("foo") // call to annotation constructor with single argument `"foo"`.
+ * A call to an [annotation constructor](https://kotlinlang.org/docs/annotations.html#constructors).
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * @Deprecated("foo") // call to the annotation constructor `Foo` with single argument `"foo"`
  * fun foo() {}
  * ```
  */
 public interface KaAnnotationCall : KaFunctionCall<KaConstructorSymbol>
 
 /**
- * A delegated call to constructors. For example
- * ```
+ * A call to another constructor within the same class, or to a superclass constructor. This corresponds to the use of `this(...)` or
+ * `super(...)` within a constructor's body to delegate initialization to another constructor.
+ *
+ * #### Example
+ *
+ * ```kotlin
  * open class SuperClass(i: Int)
- * class SubClass1: SuperClass(1) // a call to constructor of `SuperClass` with single argument `1`
+ *
+ * class SubClass1 : SuperClass(1)      // a call to the constructor of `SuperClass` with a single argument `1`
+ *
  * class SubClass2 : SuperClass {
- *   constructor(i: Int): super(i) {} // a call to constructor of `SuperClass` with single argument `i`
- *   constructor(): this(2) {} // a call to constructor of `SubClass2` with single argument `2`.
+ *   constructor(i: Int) : super(i) {}  // a call to the constructor of `SuperClass` with a single argument `i`
+ *   constructor() : this(2) {}         // a call to the constructor of `SubClass2` with a single argument `2`
  * }
  * ```
  */
 public interface KaDelegatedConstructorCall : KaFunctionCall<KaConstructorSymbol> {
+    /**
+     * Determines whether the constructor call is a [`super(...)`][Kind.SUPER_CALL] call or a [`this(...)`][Kind.THIS_CALL] call.
+     */
     public val kind: Kind
 
-    public enum class Kind { SUPER_CALL, THIS_CALL }
+    public enum class Kind {
+        /**
+         * A `super(...)` constructor delegation to a superclass constructor.
+         */
+        SUPER_CALL,
+
+        /**
+         * A `this(...)` constructor delegation to another constructor of the same class.
+         */
+        THIS_CALL,
+    }
 }
 
 /**
@@ -92,21 +124,27 @@ public sealed interface KaVariableAccessCall : KaCallableMemberCall<KaVariableSy
  */
 public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
     /**
-     * The type of access to this property.
+     * The kind of access to the variable (read or write), alongside additional information.
      */
     public val simpleAccess: KaSimpleVariableAccess
 }
 
+/**
+ * A compound access of a [variable][KaCompoundVariableAccessCall] or an [array][KaCompoundArrayAccessCall].
+ */
 public interface KaCompoundAccessCall {
     /**
-     * The corresponding compound operation.
+     * The corresponding [compound operation][KaCompoundOperation].
      */
     public val compoundOperation: KaCompoundOperation
 }
 
 /**
- * Compound access of a mutable variable.
- * For example:
+ * A compound access of a mutable variable. Such accesses combine reading, modifying, and writing to the variable in a single expression,
+ * using operators like `+=`, `-=`, `++`, or `--`.
+ *
+ * #### Example
+ *
  * ```kotlin
  * fun test() {
  *   var i = 0
@@ -135,14 +173,20 @@ public interface KaCompoundAccessCall {
  *   // }
  * }
  * ```
- * Note that if the variable has a `<op>Assign` operator, then it's represented as a simple `KaFunctionCall`.
- * For example,
+ *
+ * ### `<op>Assign` function calls
+ *
+ * If the variable has an [`<op>Assign` operator](https://kotlinlang.org/docs/operator-overloading.html#augmented-assignments), then it's
+ * represented as a simple [KaFunctionCall]:
+ *
  * ```kotlin
  * fun test(m: MutableList<String>) {
- *   m += "a" // A simple `KaFunctionCall` to `MutableList.plusAssign`, not a `KaVariableAccessCall`. However, the dispatch receiver of this
- *            // call, `m`, is a simple read access represented as a `KaVariableAccessCall`
+ *   m += "a" //
  * }
  * ```
+ *
+ * `m += "a"` is a simple `KaFunctionCall` to `MutableList.plusAssign`, not a `KaCompoundVariableAccessCall`. However, the dispatch receiver
+ * of this call, `m`, is a simple read access represented as a `KaVariableAccessCall`.
  */
 public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
     /**
@@ -152,8 +196,12 @@ public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
 }
 
 /**
- * A compound access using the array access convention. For example,
- * ```
+ * A compound access using the array access convention, involving calls to both the `get()` and `set()` functions. For example,
+ * `a[1] += "foo"` is such an array compound access.
+ *
+ * #### Example
+ *
+ * ```kotlin
  * fun test(m: MutableMap<String, String>) {
  *   m["a"] += "b"
  *   // indexArguments: ["a"]
@@ -174,20 +222,38 @@ public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
  *   // }
  * }
  * ```
- * Such a call always involve both calls to `get` and `set` functions. With the example above, a call to `String?.plus` is sandwiched
- * between `get` and `set` call to compute the new value passed to `set`.
  *
- * Note that simple access using the array access convention is not captured by this class. For example, assuming `ThrowingMap` throws
- * in case of absent key instead of returning `null`,
- * ```
+ * Such a call always involves both calls to the `get` and `set` functions. With the example above, a call to `String?.plus` is sandwiched
+ * between a `get` and a `set` call to compute the new value passed to `set`.
+ *
+ * ### `<op>Assign` function calls
+ *
+ * Simple access using the array access convention is not captured by this class. If the collection has an [`<op>Assign` operator](https://kotlinlang.org/docs/operator-overloading.html#augmented-assignments),
+ * the call is represented as a simple [KaFunctionCall].
+ *
+ * For example, assuming `ThrowingMap` throws in case of an absent key instead of returning `null`:
+ *
+ * ```kotlin
  * fun test(m: ThrowingMap<String, MutableList<String>>) {
  *   m["a"] += "b"
  * }
  * ```
+ *
  * The above call is represented as a simple `KaFunctionCall` to `MutableList.plusAssign`, with the dispatch receiver referencing the
- * `m["a"]`, which is again a simple `KaFunctionCall` to `ThrowingMap.get`.
+ * expression `m["a"]`, which is again a simple `KaFunctionCall` to `ThrowingMap.get`.
  */
 public interface KaCompoundArrayAccessCall : KaCall, KaCompoundAccessCall {
+    /**
+     * The arguments representing the indices in the [index access operator](https://kotlinlang.org/docs/operator-overloading.html#indexed-access-operator)
+     * call.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * m1["a"] += "b"   // A single index argument `"a"`.
+     * m2[1, 5] += 12   // Two index arguments, `1` and `5`.
+     * ```
+     */
     public val indexArguments: List<KtExpression>
 
     /**
@@ -196,7 +262,7 @@ public interface KaCompoundArrayAccessCall : KaCall, KaCompoundAccessCall {
     public val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 
     /**
-     * The `set` function that's invoked when writing values corresponding to the given [indexArguments] and computed value from the
+     * The `set` function that's invoked when writing values corresponding to the given [indexArguments] and the computed value from the
      * operation.
      */
     public val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>

@@ -11,18 +11,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
- * The type of access to a variable or using the array access convention.
+ * The type of compound access to a variable, or to an array element using the array access convention.
  */
 public sealed interface KaCompoundOperation : KaLifetimeOwner {
     /**
-     * The function that compute the value for this compound access. For example, if the access is `+=`, this is the resolved `plus`
+     * The function that computes the value for this compound access. For example, if the access is `+=`, this is the resolved `plus`
      * function. If the access is `++`, this is the resolved `inc` function.
      */
     public val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
 }
 
 /**
- * A compound access that read, compute, and write the computed value back. Note that calls to `<op>Assign` is not represented by this.
+ * A compound access that reads, computes, and writes the computed value. Note that calls to `<op>Assign` are not represented by this.
  */
 @KaExperimentalApi
 public interface KaCompoundAssignOperation : KaCompoundOperation {
@@ -36,7 +36,7 @@ public interface KaCompoundAssignOperation : KaCompoundOperation {
 }
 
 /**
- * A compound access that read, increment or decrement, and write the computed value back.
+ * A compound access that reads, increments or decrements, and writes the computed value.
  */
 @KaExperimentalApi
 public interface KaCompoundUnaryOperation : KaCompoundOperation {
