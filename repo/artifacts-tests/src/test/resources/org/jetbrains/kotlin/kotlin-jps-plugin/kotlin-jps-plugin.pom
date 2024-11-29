@@ -35,12 +35,6 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-build-common</artifactId>
-      <version>ArtifactsTest.version</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-util-io</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>

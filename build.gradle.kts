@@ -428,7 +428,6 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
 
 extra["kotlinJpsPluginMavenDependencies"] = listOf(
     ":kotlin-daemon-client",
-    ":kotlin-build-common",
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",

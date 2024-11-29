@@ -40,12 +40,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-publish()
-
-runtimeJar()
-sourcesJar()
-javadocJar()
-
 testsJar()
 
 projectTest(parallel = true)
