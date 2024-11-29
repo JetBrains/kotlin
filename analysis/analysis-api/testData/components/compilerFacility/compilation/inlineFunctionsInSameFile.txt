@@ -1,5 +1,5 @@
 public final class home/MainKt {
     // source: 'main.kt'
     public final static method Greeting(p0: java.lang.String): void
-    public final inner class com/example/module1/moduleClass1$Companion
+    public final inner class com/example/common/Foo$Companion
 }

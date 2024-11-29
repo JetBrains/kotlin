@@ -3,7 +3,7 @@ MODULE_FRAGMENT
     FUN name:Greeting visibility:public modality:FINAL <> (name:kotlin.String) returnType:kotlin.Unit
       VALUE_PARAMETER name:name index:0 type:kotlin.String
       BLOCK_BODY
-        CALL 'public final fun Text (text: kotlin.String): kotlin.Unit declared in com.example.ui' type=kotlin.Unit origin=null
+        CALL 'public final fun Text (text: kotlin.String): kotlin.Unit declared in com.example.jvmLib' type=kotlin.Unit origin=null
           text: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
             $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
               $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS

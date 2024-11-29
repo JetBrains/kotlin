@@ -1,43 +1,50 @@
 // DUMP_IR
 
-// MODULE: ui
+// MODULE: jvmLib
 // MODULE_KIND: LibraryBinary
-// FILE: com/example/ui/Text.kt
-package com.example.ui
+// FILE: jvmLib.kt
+package com.example.jvmLib
 
 fun Text(text: String) {}
 
-// MODULE: myModule
+
+// MODULE: commonDep
 // TARGET_PLATFORM: Common
-// FILE: com/example/myModule/OtherModule.kt
-package com.example.myModule
+// FILE: commonDep.kt
+package com.example.commonDep
 
 class OtherModule {
-    inline fun giveMeString() : String {
-        return secret()
+    inline fun getInline() : String {
+        return getPublished()
     }
 
     @PublishedApi
-    internal fun secret() : String {
-        return "what is up!!!!!!!"
+    internal fun getPublished() : String {
+        return "foo"
     }
 }
 
-// MODULE: moduleWithoutInline(myModule)
-// FILE: com/example/moduleWithoutInline/Foo.kt
-package com.example.moduleWithoutInline
 
-import com.example.myModule.OtherModule
+// MODULE: dep()()(commonDep)
+// TARGET_PLATFORM: JVM
 
-fun foo(name: String) : String = "$name!" + OtherModule().giveMeString()
 
-// MODULE: main(moduleWithoutInline, ui)
+// MODULE: common(commonDep)
+// FILE: common.kt
+package com.example.common
+
+import com.example.commonDep.OtherModule
+
+fun foo(name: String) : String = "$name!" + OtherModule().getInline()
+
+
+// MODULE: main(jvmLib, commonDep, dep)()(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 package home
 
-import com.example.moduleWithoutInline.foo
-import com.example.ui.Text
+import com.example.common.foo
+import com.example.jvmLib.Text
 
 fun Greeting(name: String) {
     Text(

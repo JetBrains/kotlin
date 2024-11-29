@@ -1,9 +1,9 @@
 // DUMP_IR
 
-// MODULE: ui
+// MODULE: jvmLib
 // MODULE_KIND: LibraryBinary
-// FILE: com/example/ui/Text.kt
-package com.example.ui
+// FILE: jvmLib.kt
+package com.example.jvmLib
 
 fun Text(text: String) {}
 
@@ -36,10 +36,15 @@ class moduleClass8 {
 
         @PublishedApi
         internal fun secret(): String {
-            return "what is up!!!!!!!"
+            return "foo"
         }
     }
 }
+
+
+// MODULE: jvm8()()(module8)
+// TARGET_PLATFORM: JVM
+
 
 // MODULE: module7(module8)
 // TARGET_PLATFORM: Common
@@ -56,10 +61,15 @@ class moduleClass7 {
 
         @PublishedApi
         internal fun secret(): String {
-            return "what is up!!!!!!!"
+            return "foo"
         }
     }
 }
+
+
+// MODULE: jvm7(module8, jvm8)()(module7)
+// TARGET_PLATFORM: JVM
+
 
 // MODULE: module6(module7, module8)
 // TARGET_PLATFORM: Common
@@ -77,10 +87,15 @@ class moduleClass6 {
 
         @PublishedApi
         internal fun secret(): String {
-            return "what is up!!!!!!!" + moduleClass8.giveMeString()
+            return "foo" + moduleClass8.giveMeString()
         }
     }
 }
+
+
+// MODULE: jvm6(module7, jvm7, module8, jvm8)()(module6)
+// TARGET_PLATFORM: JVM
+
 
 // MODULE: module5(module7)
 // TARGET_PLATFORM: Common
@@ -97,10 +112,16 @@ class moduleClass5 {
 
         @PublishedApi
         internal fun secret(): String {
-            return "what is up!!!!!!!"
+            return "foo"
         }
     }
 }
+
+
+// MODULE: jvm5(module7, jvm7)()(module5)
+// TARGET_PLATFORM: JVM
+
+
 // MODULE: module4(module7)
 // TARGET_PLATFORM: Common
 // FILE: com/example/module4/moduleClass4.kt
@@ -116,10 +137,16 @@ class moduleClass4 {
 
         @PublishedApi
         internal fun secret(): String {
-            return "what is up!!!!!!!"
+            return "foo"
         }
     }
 }
+
+
+// MODULE: jvm4(module7, jvm7)()(module4)
+// TARGET_PLATFORM: JVM
+
+
 // MODULE: module3(module4, module5, module6)
 // TARGET_PLATFORM: Common
 // FILE: com/example/module3/moduleClass3.kt
@@ -137,10 +164,15 @@ class moduleClass3 {
 
         @PublishedApi
         internal fun secret(): String {
-            return "what is up!!!!!!!" + moduleClass5.giveMeString() + moduleClass6.giveMeString()
+            return "foo" + moduleClass5.giveMeString() + moduleClass6.giveMeString()
         }
     }
 }
+
+
+// MODULE: jvm3(module4, jvm4, module5, jvm5, module6, jvm6)()(module3)
+// TARGET_PLATFORM: JVM
+
 
 // MODULE: module2(module3)
 // TARGET_PLATFORM: Common
@@ -157,10 +189,15 @@ class moduleClass2 {
 
         @PublishedApi
         internal fun secret(): String {
-            return "what is up!!!!!!!"
+            return "foo"
         }
     }
 }
+
+
+// MODULE: jvm2(module3, jvm3)()(module2)
+// TARGET_PLATFORM: JVM
+
 
 // MODULE: module1(module3)
 // TARGET_PLATFORM: Common
@@ -178,19 +215,27 @@ class moduleClass1 {
 
         @PublishedApi
         internal fun secret(): String {
-            return "what is up!!!!!!!"
+            return "foo"
         }
     }
 }
 
-// MODULE: main(module1, module2, ui)
+
+// MODULE: jvm1(module3, jvm3)()(module1)
+// TARGET_PLATFORM: JVM
+// FILE: com/example/module1/jvm1.kt
+package com.example.module1
+class Boo
+
+
+// MODULE: main(module1, jvm1, module2, jvm2, jvmLib)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 package home
 
 import com.example.module1.moduleClass1
 import com.example.module2.moduleClass2
-import com.example.ui.Text
+import com.example.jvmLib.Text
 
 fun Greeting(name: String) {
     Text(

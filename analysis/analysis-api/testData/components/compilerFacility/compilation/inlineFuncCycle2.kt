@@ -1,58 +1,64 @@
 // CODE_COMPILATION_EXCEPTION
 
-// MODULE: ui
+// MODULE: jvmLib
 // MODULE_KIND: LibraryBinary
-// FILE: com/example/ui/Text.kt
-package com.example.ui
+// FILE: jvmLib.kt
+package com.example.jvmLib
 
 fun Text(text: String) {}
 
-// MODULE: module2
+
+// MODULE: commonDep
 // TARGET_PLATFORM: Common
-// FILE: com/example/module2/A.kt
-package com.example.module2
-
+// FILE: commonDepA.kt
+package com.example.commonDep
 inline fun a(): String = "Hi" + b()
-// FILE: com/example/module2/B.kt
-package com.example.module2
 
+// FILE: commonDepB.kt
+package com.example.commonDep
 inline fun b(): String = "Hi" + c()
-// FILE: com/example/module2/C.kt
-package com.example.module2
 
+// FILE: commonDepC.kt
+package com.example.commonDep
 inline fun c(): String = "Hi" + a()
 
-// MODULE: module1(module2)
+
+// MODULE: dep()()(commonDep)
+// TARGET_PLATFORM: JVM
+
+
+// MODULE: common(commonDep)
 // TARGET_PLATFORM: Common
-// FILE: com/example/module1/moduleClass1.kt
+// FILE: common.kt
 @file:JvmName("SpecialName")
-package com.example.module1
+package com.example.common
 
-import com.example.module2.a
+import com.example.commonDep.a
 
-class moduleClass1 {
+class Foo {
     companion object {
-        inline fun giveMeString(): String {
-            return secret() + a()
+        inline fun getInline(): String {
+            return getPublished() + a()
         }
 
         @PublishedApi
-        internal fun secret(): String {
-            return "what is up!!!!!!!"
+        internal fun getPublished(): String {
+            return "foo"
         }
     }
 }
 
-// MODULE: main(module1, ui)
+
+// MODULE: main(jvmLib, commonDep, dep)()(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 package home
 
-import com.example.module1.moduleClass1
-import com.example.ui.Text
+import com.example.common.Foo
+import com.example.jvmLib.Text
 
 fun Greeting(name: String) {
     Text(
-        text = "$name!" + moduleClass1.giveMeString()
+        text = "$name!" + Foo.getInline()
     )
 }
