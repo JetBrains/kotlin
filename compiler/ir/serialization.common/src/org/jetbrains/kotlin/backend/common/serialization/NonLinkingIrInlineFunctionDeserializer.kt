@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class NonLinkingIrInlineFunctionDeserializer(
     private val irBuiltIns: IrBuiltIns,
     private val signatureComputer: PublicIdSignatureComputer,
-    libraries: List<KotlinLibrary>
 ) {
     private val irInterner = IrInterningService()
     private val irFactory get() = irBuiltIns.irFactory
@@ -42,7 +42,7 @@ class NonLinkingIrInlineFunctionDeserializer(
      */
     private val detachedSymbolTable = SymbolTable(signaturer = null, irFactory)
 
-    private val moduleDeserializers = libraries.map(::ModuleDeserializer)
+    private val moduleDeserializers = hashMapOf<KotlinLibrary, ModuleDeserializer>()
 
     // TODO: consider the case of `external inline` functions that exist in Kotlin/Native stdlib
     fun deserializeInlineFunction(function: IrFunction) {
@@ -53,12 +53,19 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         check(!function.isEffectivelyPrivate()) { "Deserialization of private inline functions is not supported: ${function.render()}" }
 
+        val deserializedContainerSource = function.containerSource
+        check(deserializedContainerSource is KlibDeserializedContainerSource) {
+            "Cannot deserialize inline function from a non-Kotlin library: ${function.render()}\nFunction source: " +
+                    deserializedContainerSource?.let { "${it::class.java}, ${it.presentableString}" }
+        }
+
+        val library = deserializedContainerSource.klib
+        val moduleDeserializer = moduleDeserializers.getOrPut(library) { ModuleDeserializer(library) }
+
         val functionSignature: IdSignature = signatureComputer.computeSignature(function)
         val topLevelSignature: IdSignature = functionSignature.topLevelSignature()
 
-        val topLevelDeclaration: IrDeclaration? = moduleDeserializers.firstNotNullOfOrNull {
-            it.getTopLevelDeclarationOrNull(topLevelSignature)
-        }
+        val topLevelDeclaration: IrDeclaration? = moduleDeserializer.getTopLevelDeclarationOrNull(topLevelSignature)
 
         val deserializedFunction: IrFunction? = when {
             topLevelDeclaration == null -> null
