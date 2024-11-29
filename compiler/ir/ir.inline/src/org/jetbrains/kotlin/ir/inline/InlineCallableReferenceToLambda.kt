@@ -59,9 +59,9 @@ abstract class InlineCallableReferenceToLambdaPhase(
         expression.transformChildren(this, data)
         if (inlineFunctionResolver.needsInlining(expression)) {
             val function = expression.symbol.owner
-            for (parameter in function.valueParameters) {
+            for (parameter in function.parameters) {
                 if (parameter.isInlineParameter()) {
-                    expression.putValueArgument(parameter.indexInOldValueParameters, expression.getValueArgument(parameter.indexInOldValueParameters)?.transformToLambda(data))
+                    expression.arguments[parameter] = expression.arguments[parameter]?.transformToLambda(data)
                 }
             }
         }
