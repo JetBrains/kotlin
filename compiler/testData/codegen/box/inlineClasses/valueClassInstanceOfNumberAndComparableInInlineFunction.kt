@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // ISSUE: KT-67520
+// LANGUAGE: +AvoidWrongOptimizationOfTypeOperatorsOnValueClasses
 
 inline class X(val x: String)
 

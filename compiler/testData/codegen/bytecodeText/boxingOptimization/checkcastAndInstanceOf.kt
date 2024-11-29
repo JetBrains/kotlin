@@ -1,4 +1,4 @@
-// LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses, +AvoidWrongOptimizationOfTypeOperatorsOnValueClasses
 
 // FILE: Test.kt
 
