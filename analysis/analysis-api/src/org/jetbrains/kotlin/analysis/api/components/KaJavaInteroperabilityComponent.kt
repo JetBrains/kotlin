@@ -70,7 +70,7 @@ public interface KaJavaInteroperabilityComponent {
     public fun PsiType.asKaType(useSitePosition: PsiElement): KaType?
 
     /**
-     * Create ASM JVM type by corresponding KaType
+     * Convert the given [KaType] to a JVM [ASM](https://asm.ow2.io) type.
      *
      * @see TypeMappingMode
      */
@@ -84,17 +84,13 @@ public interface KaJavaInteroperabilityComponent {
     public val KaType.isPrimitiveBacked: Boolean
 
     /**
-     * Maps the given [PsiClass] declaration to a Kotlin class symbol.
-     *
-     * [namedClassSymbol] is always `null` for anonymous classes, local classes, type parameters (which are also [PsiClass]es),
-     * and for Kotlin light classes.
+     * A [KaNamedClassSymbol] for the given [PsiClass], or `null` for anonymous classes, local classes, type parameters (which are also
+     * [PsiClass]es), and Kotlin light classes.
      */
     public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
 
     /**
-     * Maps the given [PsiMember] method or field to a callable symbol.
-     *
-     * [callableSymbol] is always `null` for local declarations.
+     * A [KaCallableSymbol] for the given [PsiMember] method or field, or `null` for local declarations.
      */
     public val PsiMember.callableSymbol: KaCallableSymbol?
 
