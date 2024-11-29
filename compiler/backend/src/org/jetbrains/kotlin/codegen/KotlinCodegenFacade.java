@@ -33,8 +33,6 @@ public class KotlinCodegenFacade {
     ) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        state.beforeCompile();
-
         CodegenFactory.IrConversionInput psi2irInput =
                 CodegenFactory.IrConversionInput.Companion.fromGenerationStateAndFiles(state, files, bindingContext);
         CodegenFactory.BackendInput backendInput = codegenFactory.convertToIr(psi2irInput);

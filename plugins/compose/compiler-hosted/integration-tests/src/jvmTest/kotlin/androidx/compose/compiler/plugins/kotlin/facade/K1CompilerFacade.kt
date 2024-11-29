@@ -101,18 +101,12 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             ClassBuilderFactories.TEST,
         )
 
-        state.beforeCompile()
-
         val psi2irInput = CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
             state, analysisResult.files, analysisResult.bindingContext,
         )
         val backendInput = codegenFactory.convertToIr(psi2irInput)
 
-        return K1FrontendResult(
-            state,
-            backendInput,
-            codegenFactory
-        )
+        return K1FrontendResult(state, backendInput, codegenFactory)
     }
 
     override fun compileToIr(files: List<SourceFile>): IrModuleFragment =

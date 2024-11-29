@@ -129,7 +129,6 @@ object GenerationUtils {
             diagnosticReporter = diagnosticReporter,
         )
 
-        generationState.beforeCompile()
         JvmIrCodegenFactory(configuration).generateModuleInFrontendIRMode(
             generationState, moduleFragment, symbolTable, components.irProviders,
             fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,

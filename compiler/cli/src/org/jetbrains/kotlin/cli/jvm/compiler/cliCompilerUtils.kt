@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -70,11 +69,11 @@ fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<Str
         (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
     }
 
-fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): GenerationStateEventCallback {
+fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): (GenerationState) -> Unit {
     if (configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) == null) {
-        return GenerationStateEventCallback.DO_NOTHING
+        return {}
     }
-    return GenerationStateEventCallback { state ->
+    return { state ->
         val currentOutput = SimpleOutputFileCollection(state.factory.currentOutput)
         writeOutput(configuration, currentOutput, null)
         if (!configuration.get(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, false)) {
@@ -128,13 +127,9 @@ fun writeOutputsIfNeeded(
         return false
     }
 
-    try {
-        for (state in outputs) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            writeOutput(state.configuration, state.factory, mainClassFqName)
-        }
-    } finally {
-        outputs.forEach(GenerationState::destroy)
+    for (state in outputs) {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+        writeOutput(state.configuration, state.factory, mainClassFqName)
     }
 
     if (configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {

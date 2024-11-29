@@ -56,11 +56,6 @@ public class ClassBuilderFactories {
         public byte[] asBytes(ClassBuilder builder) {
             return ((TraceBuilder) builder).binary.toByteArray();
         }
-
-        @Override
-        public void close() {
-
-        }
     }
     
     @NotNull
@@ -87,9 +82,6 @@ public class ClassBuilderFactories {
             ClassWriter visitor = (ClassWriter) builder.getVisitor();
             return visitor.toByteArray();
         }
-
-        @Override
-        public void close() {}
     };
 
     private ClassBuilderFactories() {

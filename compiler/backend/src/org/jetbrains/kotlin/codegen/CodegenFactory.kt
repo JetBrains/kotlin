@@ -58,8 +58,8 @@ interface CodegenFactory {
             ): IrConversionInput =
                 with(state) {
                     IrConversionInput(
-                        project, files, configuration, module, bindingContext, languageVersionSettings, ignoreErrors,
-                        skipBodies = !state.classBuilderMode.generateBodies
+                        project, files, configuration, module, bindingContext, config.languageVersionSettings, ignoreErrors,
+                        skipBodies = !classBuilderMode.generateBodies
                     )
                 }
         }

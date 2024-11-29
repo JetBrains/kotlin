@@ -174,7 +174,6 @@ fun generateCodeFromIr(
     val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
     performanceManager?.notifyGenerationStarted()
     performanceManager?.notifyIRLoweringStarted()
-    generationState.beforeCompile()
     JvmIrCodegenFactory(input.configuration).generateModuleInFrontendIRMode(
         generationState,
         input.irModuleFragment,

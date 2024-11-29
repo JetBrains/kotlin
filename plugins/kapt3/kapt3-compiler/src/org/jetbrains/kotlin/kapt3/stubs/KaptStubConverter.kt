@@ -981,7 +981,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private fun getConstantValue(expression: KtExpression, expectedType: KotlinType): ConstantValue<*>? {
         val moduleDescriptor = kaptContext.generationState.module
-        val languageVersionSettings = kaptContext.generationState.languageVersionSettings
+        val languageVersionSettings = kaptContext.generationState.config.languageVersionSettings
         val evaluator = ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings)
         val trace = DelegatingBindingTrace(kaptContext.bindingContext, "Kapt")
         val const = evaluator.evaluateExpression(expression, trace, expectedType)

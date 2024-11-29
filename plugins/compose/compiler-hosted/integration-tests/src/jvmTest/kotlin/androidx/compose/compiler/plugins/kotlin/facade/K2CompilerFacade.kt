@@ -238,9 +238,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             jvmBackendClassResolver = FirJvmBackendClassResolver(components),
         )
 
-        generationState.beforeCompile()
-        val codegenFactory = JvmIrCodegenFactory(configuration)
-        codegenFactory.generateModuleInFrontendIRMode(
+        JvmIrCodegenFactory(configuration).generateModuleInFrontendIRMode(
             generationState,
             irModuleFragment,
             frontendResult.firResult.symbolTable,

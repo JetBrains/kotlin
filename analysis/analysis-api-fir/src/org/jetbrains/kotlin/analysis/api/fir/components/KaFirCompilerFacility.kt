@@ -351,40 +351,34 @@ internal class KaFirCompilerFacility(
 
         fillInlineCache(generationState)
 
-        try {
-            generationState.beforeCompile()
+        ProgressManager.checkCanceled()
 
-            ProgressManager.checkCanceled()
+        codegenFactory.generateModuleInFrontendIRMode(
+            generationState,
+            fir2IrResult.irModuleFragment,
+            fir2IrResult.symbolTable,
+            fir2IrResult.components.irProviders,
+            CompilerFacilityJvmGeneratorExtensions(jvmGeneratorExtensions),
+            FirJvmBackendExtension(fir2IrResult.components, null),
+            fir2IrResult.pluginContext
+        )
 
-            codegenFactory.generateModuleInFrontendIRMode(
-                generationState,
-                fir2IrResult.irModuleFragment,
-                fir2IrResult.symbolTable,
-                fir2IrResult.components.irProviders,
-                CompilerFacilityJvmGeneratorExtensions(jvmGeneratorExtensions),
-                FirJvmBackendExtension(fir2IrResult.components, null),
-                fir2IrResult.pluginContext
-            )
+        CodegenFactory.doCheckCancelled(generationState)
+        generationState.factory.done()
 
-            CodegenFactory.doCheckCancelled(generationState)
-            generationState.factory.done()
-
-            val outputFiles = generationState.factory.asList().map(::KaBaseCompiledFileForOutputFile)
-            val capturedValues = buildList {
-                if (codeFragmentMappings != null) {
-                    addAll(codeFragmentMappings.capturedValues)
-                }
-                for ((_, _, descriptor) in generationState.newFragmentCaptureParameters) {
-                    if (descriptor is IrBasedDeclarationDescriptor<*>) {
-                        addIfNotNull(computeAdditionalCodeFragmentMapping(descriptor))
-                    }
+        val outputFiles = generationState.factory.asList().map(::KaBaseCompiledFileForOutputFile)
+        val capturedValues = buildList {
+            if (codeFragmentMappings != null) {
+                addAll(codeFragmentMappings.capturedValues)
+            }
+            for ((_, _, descriptor) in generationState.newFragmentCaptureParameters) {
+                if (descriptor is IrBasedDeclarationDescriptor<*>) {
+                    addIfNotNull(computeAdditionalCodeFragmentMapping(descriptor))
                 }
             }
-
-            return KaCompilationResult.Success(outputFiles, capturedValues)
-        } finally {
-            generationState.destroy()
         }
+
+        return KaCompilationResult.Success(outputFiles, capturedValues)
     }
 
     private fun getIrGenerationExtensions(modules: List<KaModule>): List<IrGenerationExtension> = buildList {

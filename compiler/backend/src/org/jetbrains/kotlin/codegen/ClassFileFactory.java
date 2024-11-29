@@ -119,7 +119,7 @@ public class ClassFileFactory implements OutputFileCollection {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
                 int flags = 0;
-                if (state.getLanguageVersionSettings().getFlag(JvmAnalysisFlags.getStrictMetadataVersionSemantics())) {
+                if (state.getConfig().getLanguageVersionSettings().getFlag(JvmAnalysisFlags.getStrictMetadataVersionSemantics())) {
                     flags |= ModuleMapping.STRICT_METADATA_VERSION_SEMANTICS_FLAG;
                 }
                 return ModuleMappingKt.serializeToByteArray(moduleProto, getMetadataVersionToUseForModuleMapping(), flags);

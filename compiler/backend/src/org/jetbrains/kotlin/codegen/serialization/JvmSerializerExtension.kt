@@ -51,7 +51,7 @@ class JvmSerializerExtension(
     private val useTypeTable = state.config.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
-    private val languageVersionSettings = state.languageVersionSettings
+    private val languageVersionSettings = state.config.languageVersionSettings
     private val isParamAssertionsDisabled = state.config.isParamAssertionsDisabled
     private val unifiedNullChecks = state.config.unifiedNullChecks
     private val functionsWithInlineClassReturnTypesMangled = state.config.functionsWithInlineClassReturnTypesMangled

@@ -123,13 +123,9 @@ internal class KaFe10CompilerFacility(
             generateDeclaredClassFilter = generateClassFilter,
         )
 
-        try {
-            KotlinCodegenFacade.compileCorrectFiles(filesToCompile, state, bindingContext, codegenFactory)
-            val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
-            return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
-        } finally {
-            state.destroy()
-        }
+        KotlinCodegenFacade.compileCorrectFiles(filesToCompile, state, bindingContext, codegenFactory)
+        val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
+        return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
     }
 
     private fun computeErrors(diagnostics: Diagnostics, allowedErrorFilter: (KaDiagnostic) -> Boolean): List<KaDiagnostic> {

@@ -52,7 +52,6 @@ class KaptContextForStubGeneration(
 
     override fun close() {
         (treeMaker as? KaptTreeMaker)?.dispose()
-        generationState.destroy()
         super.close()
     }
 }

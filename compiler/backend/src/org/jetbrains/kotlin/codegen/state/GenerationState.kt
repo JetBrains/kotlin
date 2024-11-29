@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.incrementalCompilationComponents
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -27,11 +30,9 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
@@ -46,7 +47,7 @@ class GenerationState(
     val generateDeclaredClassFilter: GenerateClassFilter? = null,
     val targetId: TargetId? = null,
     moduleName: String? = configuration.moduleName,
-    private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING,
+    private val onIndependentPartCompilationEnd: (GenerationState) -> Unit = {},
     val jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module),
     val ignoreErrors: Boolean = false,
     diagnosticReporter: DiagnosticReporter? = null,
@@ -60,34 +61,21 @@ class GenerationState(
     }
 
     val config = JvmBackendConfig(configuration)
-    val languageVersionSettings = config.languageVersionSettings
 
     val inlineCache: InlineCache = InlineCache()
 
-    val incrementalCacheForThisTarget: IncrementalCache?
-    val deserializationConfiguration: DeserializationConfiguration =
-        CompilerDeserializationConfiguration(languageVersionSettings)
-
-    val deprecationProvider = DeprecationResolver(
-        LockBasedStorageManager.NO_LOCKS, languageVersionSettings, JavaDeprecationSettings
-    )
-
-    init {
-        val icComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-        if (icComponents != null) {
-            val targetId = targetId
-                ?: moduleName?.let {
-                    // hack for Gradle IC, Gradle does not use build.xml file, so there is no way to pass target id
-                    TargetId(it, "java-production")
-                } ?: error("Target ID should be specified for incremental compilation")
-            incrementalCacheForThisTarget = icComponents.getIncrementalCache(targetId)
-        } else {
-            incrementalCacheForThisTarget = null
-        }
+    val incrementalCacheForThisTarget: IncrementalCache? = configuration.incrementalCompilationComponents?.let { components ->
+        val targetId = targetId
+            ?: moduleName?.let {
+                // hack for Gradle IC, Gradle does not use build.xml file, so there is no way to pass target id
+                TargetId(it, "java-production")
+            } ?: error("Target ID should be specified for incremental compilation")
+        components.getIncrementalCache(targetId)
     }
 
-    private val interceptedBuilderFactory: ClassBuilderFactory
-    private var used = false
+    val deprecationProvider = DeprecationResolver(
+        LockBasedStorageManager.NO_LOCKS, config.languageVersionSettings, JavaDeprecationSettings
+    )
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
@@ -95,7 +83,18 @@ class GenerationState(
     val localDelegatedProperties: MutableMap<Type, List<VariableDescriptorWithAccessors>> = mutableMapOf()
 
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext()
-    val factory: ClassFileFactory
+    val factory: ClassFileFactory = ClassFileFactory(
+        this,
+        BuilderFactoryForDuplicateClassNameDiagnostics(
+            if (classBuilderMode.generateBodies) OptimizationClassBuilderFactory(builderFactory, this) else builderFactory,
+            this
+        ).let {
+            loadClassBuilderInterceptors().fold(it) { classBuilderFactory: ClassBuilderFactory, extension ->
+                extension.interceptClassBuilderFactory(classBuilderFactory, BindingContext.EMPTY, DiagnosticSink.DO_NOTHING)
+            }
+        },
+        ClassFileFactoryFinalizerExtension.getInstances(project),
+    )
 
     val scriptSpecific = ForScript()
 
@@ -117,30 +116,9 @@ class GenerationState(
 
     lateinit var reportDuplicateClassNameError: (JvmDeclarationOrigin, String, String) -> Unit
 
-    val typeApproximator: TypeApproximator? =
-        if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
-            TypeApproximator(module.builtIns, languageVersionSettings)
-        else
-            null
+    val typeApproximator: TypeApproximator = TypeApproximator(module.builtIns, config.languageVersionSettings)
 
-    init {
-        this.interceptedBuilderFactory = builderFactory
-            .wrapWith(
-                {
-                    if (classBuilderMode.generateBodies)
-                        OptimizationClassBuilderFactory(it, this)
-                    else
-                        it
-                },
-                { BuilderFactoryForDuplicateClassNameDiagnostics(it, this) },
-            )
-            .wrapWith(loadClassBuilderInterceptors()) { classBuilderFactory, extension ->
-                extension.interceptClassBuilderFactory(classBuilderFactory, BindingContext.EMPTY, DiagnosticSink.DO_NOTHING)
-            }
-
-        val finalizers = ClassFileFactoryFinalizerExtension.getInstances(project)
-        this.factory = ClassFileFactory(this, interceptedBuilderFactory, finalizers)
-    }
+    val newFragmentCaptureParameters: MutableList<Triple<String, KotlinType, DeclarationDescriptor>> = mutableListOf()
 
     @Suppress("UNCHECKED_CAST", "DEPRECATION_ERROR")
     private fun loadClassBuilderInterceptors(): List<org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension> {
@@ -157,46 +135,7 @@ class GenerationState(
         return org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.getInstances(project) + adapted
     }
 
-    fun beforeCompile() {
-        markUsed()
-    }
-
     fun afterIndependentPart() {
         onIndependentPartCompilationEnd(this)
     }
-
-    private fun markUsed() {
-        if (used) throw IllegalStateException("${GenerationState::class.java} cannot be used more than once")
-
-        used = true
-    }
-
-    fun destroy() {
-        interceptedBuilderFactory.close()
-    }
-
-    val newFragmentCaptureParameters: MutableList<Triple<String, KotlinType, DeclarationDescriptor>> = mutableListOf()
-    fun recordNewFragmentCaptureParameter(string: String, type: KotlinType, descriptor: DeclarationDescriptor) {
-        newFragmentCaptureParameters.add(Triple(string, type, descriptor))
-    }
 }
-
-interface GenerationStateEventCallback : (GenerationState) -> Unit {
-    companion object {
-        val DO_NOTHING = GenerationStateEventCallback { }
-    }
-}
-
-fun GenerationStateEventCallback(block: (GenerationState) -> Unit): GenerationStateEventCallback =
-    object : GenerationStateEventCallback {
-        override fun invoke(s: GenerationState) = block(s)
-    }
-
-private fun ClassBuilderFactory.wrapWith(vararg wrappers: (ClassBuilderFactory) -> ClassBuilderFactory): ClassBuilderFactory =
-    wrappers.fold(this) { builderFactory, wrapper -> wrapper(builderFactory) }
-
-private inline fun <T> ClassBuilderFactory.wrapWith(
-    elements: Iterable<T>,
-    wrapper: (ClassBuilderFactory, T) -> ClassBuilderFactory
-): ClassBuilderFactory =
-    elements.fold(this, wrapper)

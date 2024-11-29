@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.markNoinlineLambdaIfSuspen
 import org.jetbrains.kotlin.codegen.inline.coroutines.surroundInvokesWithSuspendMarkersIfNeeded
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
-import org.jetbrains.kotlin.codegen.optimization.common.*
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
+import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
 import org.jetbrains.kotlin.codegen.optimization.fixStack.*
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckParameterIsNotNull
 import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariablesEliminationTransformer
@@ -50,7 +52,7 @@ class MethodInliner(
     private val defaultMaskStart: Int = -1,
     private val defaultMaskEnd: Int = -1
 ) {
-    private val languageVersionSettings = inliningContext.state.languageVersionSettings
+    private val languageVersionSettings = inliningContext.state.config.languageVersionSettings
     private val invokeCalls = ArrayList<InvokeCall>()
 
     //keeps order
@@ -781,7 +783,7 @@ class MethodInliner(
         }
 
         if (shouldPreprocessApiVersionCalls) {
-            val targetApiVersion = inliningContext.state.languageVersionSettings.apiVersion
+            val targetApiVersion = inliningContext.state.config.languageVersionSettings.apiVersion
             ApiVersionCallsPreprocessingMethodTransformer(targetApiVersion).transform("fake", node)
         }
 
