@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -349,12 +348,10 @@ internal class KaFirCompilerFacility(
         allowedErrorFilter: (KaDiagnostic) -> Boolean,
         fillInlineCache: (GenerationState) -> Unit,
     ): KaCompilationResult {
-        val bindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
         val generationState = GenerationState.Builder(
             project,
             target.classBuilderFactory,
             fir2IrResult.irModuleFragment.descriptor,
-            bindingContext,
             targetFiles,
             configuration,
         ).generateDeclaredClassFilter(generateClassFilter)
@@ -381,13 +378,6 @@ internal class KaFirCompilerFacility(
 
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
-
-            val backendDiagnostics = generationState.collectedExtraJvmDiagnostics.all()
-            val backendErrors = computeErrors(backendDiagnostics, allowedErrorFilter)
-
-            if (backendErrors.isNotEmpty()) {
-                return KaCompilationResult.Failure(backendErrors)
-            }
 
             val outputFiles = generationState.factory.asList().map(::KaBaseCompiledFileForOutputFile)
             val capturedValues = buildList {

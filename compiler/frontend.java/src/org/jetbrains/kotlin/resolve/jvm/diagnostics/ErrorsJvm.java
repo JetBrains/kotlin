@@ -109,8 +109,6 @@ public interface ErrorsJvm {
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> JAVA_CLASS_ON_COMPANION = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<KtExpression, KotlinType, KotlinType> JAVA_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
-    DiagnosticFactory2<PsiElement, String, String> DUPLICATE_CLASS_NAMES = DiagnosticFactory2.create(ERROR);
-
     DiagnosticFactory0<PsiElement> UPPER_BOUND_CANNOT_BE_ARRAY = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, String> SUPER_CALL_WITH_DEFAULT_PARAMETERS = DiagnosticFactory1.create(ERROR);
@@ -119,11 +117,6 @@ public interface ErrorsJvm {
 
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, DeclarationDescriptor, String> TARGET6_INTERFACE_INHERITANCE =
             DiagnosticFactory3.create(ERROR);
-
-    DiagnosticFactoryForDeprecation0<PsiElement> DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET =
-            DiagnosticFactoryForDeprecation0.create(LanguageFeature.DefaultMethodsCallFromJava6TargetError);
-    DiagnosticFactoryForDeprecation0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET =
-            DiagnosticFactoryForDeprecation0.create(LanguageFeature.DefaultMethodsCallFromJava6TargetError);
 
     DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM_WARNING = DiagnosticFactory2.create(WARNING);

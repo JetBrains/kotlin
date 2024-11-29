@@ -30,9 +30,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.resolve.diagnostics.OnDemandSuppressCache
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -46,7 +43,6 @@ class GenerationState private constructor(
     val project: Project,
     builderFactory: ClassBuilderFactory,
     val module: ModuleDescriptor,
-    val originalFrontendBindingContext: BindingContext,
     val configuration: CompilerConfiguration,
     val generateDeclaredClassFilter: GenerateClassFilter,
     val targetId: TargetId?,
@@ -61,7 +57,6 @@ class GenerationState private constructor(
         private val project: Project,
         private val builderFactory: ClassBuilderFactory,
         private val module: ModuleDescriptor,
-        private val bindingContext: BindingContext,
         private val configuration: CompilerConfiguration
     ) {
         // TODO: patch IntelliJ project and remove this compatibility c-tor
@@ -69,10 +64,9 @@ class GenerationState private constructor(
             project: Project,
             builderFactory: ClassBuilderFactory,
             module: ModuleDescriptor,
-            bindingContext: BindingContext,
             files: List<KtFile>,
             configuration: CompilerConfiguration
-        ) : this(project, builderFactory, module, bindingContext, configuration) {
+        ) : this(project, builderFactory, module, configuration) {
             this.files = files
         }
 
@@ -121,7 +115,7 @@ class GenerationState private constructor(
 
         fun build(): GenerationState {
             return GenerationState(
-                project, builderFactory, module, bindingContext, configuration,
+                project, builderFactory, module, configuration,
                 generateDeclaredClassFilter, targetId,
                 moduleName, outDirectory, onIndependentPartCompilationEnd,
                 jvmBackendClassResolver, ignoreErrors,
@@ -177,22 +171,12 @@ class GenerationState private constructor(
         }
     }
 
-    private val extraJvmDiagnosticsTrace: BindingTrace =
-        DelegatingBindingTrace(
-            originalFrontendBindingContext, "For extra diagnostics in ${this::class.java}", false,
-            customSuppressCache = OnDemandSuppressCache(originalFrontendBindingContext),
-        )
-
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 
-    val diagnostics: DiagnosticSink get() = extraJvmDiagnosticsTrace
-    val collectedExtraJvmDiagnostics: Diagnostics get() = extraJvmDiagnosticsTrace.bindingContext.diagnostics
-
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
-    val bindingTrace: BindingTrace = DelegatingBindingTrace(originalFrontendBindingContext, "trace in GenerationState")
-    val bindingContext: BindingContext = bindingTrace.bindingContext
+    val bindingTrace: BindingTrace = DelegatingBindingTrace(BindingContext.EMPTY, "trace in GenerationState")
     val localDelegatedProperties: MutableMap<Type, List<VariableDescriptorWithAccessors>> = mutableMapOf()
 
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext()
@@ -216,11 +200,7 @@ class GenerationState private constructor(
 
     var multiFieldValueClassUnboxInfo: (ClassDescriptor) -> MultiFieldValueClassUnboxInfo? = { null }
 
-    var reportDuplicateClassNameError: (JvmDeclarationOrigin, String, String) -> Unit = { origin, internalName, duplicateClasses ->
-        origin.element?.let {
-            diagnostics.report(ErrorsJvm.DUPLICATE_CLASS_NAMES.on(it, internalName, duplicateClasses))
-        }
-    }
+    lateinit var reportDuplicateClassNameError: (JvmDeclarationOrigin, String, String) -> Unit
 
     val typeApproximator: TypeApproximator? =
         if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
@@ -240,7 +220,7 @@ class GenerationState private constructor(
                 { BuilderFactoryForDuplicateClassNameDiagnostics(it, this) },
             )
             .wrapWith(loadClassBuilderInterceptors()) { classBuilderFactory, extension ->
-                extension.interceptClassBuilderFactory(classBuilderFactory, originalFrontendBindingContext, diagnostics)
+                extension.interceptClassBuilderFactory(classBuilderFactory, BindingContext.EMPTY, DiagnosticSink.DO_NOTHING)
             }
 
         val finalizers = ClassFileFactoryFinalizerExtension.getInstances(project)

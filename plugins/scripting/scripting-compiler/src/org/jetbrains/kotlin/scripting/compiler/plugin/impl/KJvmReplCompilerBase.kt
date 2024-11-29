@@ -139,7 +139,6 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     snippetKtFile.project,
                     ClassBuilderFactories.BINARIES,
                     compilationState.analyzerEngine.module,
-                    compilationState.analyzerEngine.trace.bindingContext,
                     compilationState.environment.configuration
                 ).diagnosticReporter(codegenDiagnosticsCollector)
 
@@ -192,7 +191,11 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
         codegenFactory.generateModule(
             generationState,
-            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(generationState, sourceFiles)),
+            codegenFactory.convertToIr(
+                CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
+                    generationState, sourceFiles, compilationState.analyzerEngine.trace.bindingContext
+                )
+            ),
         )
 
         return generationState

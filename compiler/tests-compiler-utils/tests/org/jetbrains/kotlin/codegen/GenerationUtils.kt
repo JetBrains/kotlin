@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.FirParser
@@ -61,7 +60,7 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST,
         trace: BindingTrace = NoScopeRecordCliBindingTrace(environment.project)
     ): GenerationState =
-        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
+        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace).first
 
     @JvmStatic
     @JvmOverloads
@@ -71,22 +70,13 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         trace: BindingTrace = NoScopeRecordCliBindingTrace(files.first().project)
-    ): GenerationState {
+    ): Pair<GenerationState, BindingContext> {
         val project = files.first().project
-        val state = if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider)
+        return if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider) to BindingContext.EMPTY
         } else {
             compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
         }
-
-        // For JVM-specific errors
-        try {
-            AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)
-        } catch (e: Throwable) {
-            throw TestsCompiletimeError(e)
-        }
-
-        return state
     }
 
     @OptIn(ObsoleteTestInfrastructure::class)
@@ -133,12 +123,8 @@ object GenerationUtils {
             irGeneratorExtensions = emptyList()
         )
 
-        val dummyBindingContext = NoScopeRecordCliBindingTrace(project).bindingContext
-
-        val codegenFactory = JvmIrCodegenFactory(configuration)
-
         val generationState = GenerationState.Builder(
-            project, classBuilderFactory, moduleFragment.descriptor, dummyBindingContext, configuration
+            project, classBuilderFactory, moduleFragment.descriptor, configuration
         ).jvmBackendClassResolver(
             FirJvmBackendClassResolver(components)
         ).diagnosticReporter(
@@ -146,7 +132,7 @@ object GenerationUtils {
         ).build()
 
         generationState.beforeCompile()
-        codegenFactory.generateModuleInFrontendIRMode(
+        JvmIrCodegenFactory(configuration).generateModuleInFrontendIRMode(
             generationState, moduleFragment, symbolTable, components.irProviders,
             fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,
         ) {}
@@ -162,7 +148,7 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         trace: BindingTrace
-    ): GenerationState {
+    ): Pair<GenerationState, BindingContext> {
         val resolvedKlibs = configuration.get(JVMConfigurationKeys.KLIB_PATHS)?.let { klibPaths ->
             jvmResolveLibraries(klibPaths, configuration.getLogger(treatWarningsAsErrors = true))
         }
@@ -174,25 +160,24 @@ object GenerationUtils {
             )
         analysisResult.throwIfError()
 
-        return generateFiles(project, files, configuration, classBuilderFactory, analysisResult)
+        return generateFiles(project, files, configuration, classBuilderFactory, analysisResult) to analysisResult.bindingContext
     }
 
-    fun generateFiles(
+    private fun generateFiles(
         project: Project,
         files: List<KtFile>,
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
         analysisResult: AnalysisResult,
-        configureGenerationState: GenerationState.Builder.() -> Unit = {},
     ): GenerationState {
         val generationState = GenerationState.Builder(
-            project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
-            configuration
-        ).apply(configureGenerationState).build()
+            project, classBuilderFactory, analysisResult.moduleDescriptor, configuration
+        ).build()
         if (analysisResult.shouldGenerateCode) {
             KotlinCodegenFacade.compileCorrectFiles(
                 files,
                 generationState,
+                analysisResult.bindingContext,
                 JvmIrCodegenFactory(configuration),
             )
         }

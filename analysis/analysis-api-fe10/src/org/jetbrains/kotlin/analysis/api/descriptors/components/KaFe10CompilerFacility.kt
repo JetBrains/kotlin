@@ -119,7 +119,6 @@ internal class KaFe10CompilerFacility(
             file.project,
             target.classBuilderFactory,
             analysisContext.resolveSession.moduleDescriptor,
-            bindingContext,
             filesToCompile,
             effectiveConfiguration,
         ).generateDeclaredClassFilter(generateClassFilter)
@@ -127,13 +126,7 @@ internal class KaFe10CompilerFacility(
             .build()
 
         try {
-            KotlinCodegenFacade.compileCorrectFiles(state)
-
-            val backendErrors = computeErrors(state.collectedExtraJvmDiagnostics, allowedErrorFilter)
-            if (backendErrors.isNotEmpty()) {
-                return KaCompilationResult.Failure(backendErrors)
-            }
-
+            KotlinCodegenFacade.compileCorrectFiles(state, bindingContext)
             val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
             return KaCompilationResult.Success(outputFiles, capturedValues = emptyList())
         } finally {

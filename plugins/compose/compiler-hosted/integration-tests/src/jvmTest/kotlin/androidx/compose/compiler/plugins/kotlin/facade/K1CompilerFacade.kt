@@ -98,7 +98,6 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             environment.project,
             ClassBuilderFactories.TEST,
             analysisResult.moduleDescriptor,
-            analysisResult.bindingContext,
             analysisResult.files,
             environment.configuration
         ).codegenFactory(codegenFactory).build()
@@ -106,17 +105,9 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         state.beforeCompile()
 
         val psi2irInput = CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
-            state,
-            analysisResult.files
+            state, analysisResult.files, analysisResult.bindingContext,
         )
         val backendInput = codegenFactory.convertToIr(psi2irInput)
-
-        // For JVM-specific errors
-        try {
-            AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)
-        } catch (e: Throwable) {
-            throw TestsCompilerError(e)
-        }
 
         return K1FrontendResult(
             state,

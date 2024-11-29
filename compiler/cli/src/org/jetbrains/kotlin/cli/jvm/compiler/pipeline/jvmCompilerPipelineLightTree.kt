@@ -10,23 +10,15 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
-import org.jetbrains.kotlin.cli.common.GroupedKtSources
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
-import org.jetbrains.kotlin.cli.common.collectSources
-import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForLt
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
-import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.createPendingReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.BackendInputForMultiModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runBackend
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
@@ -189,7 +181,6 @@ private fun compileMultiModuleChunkUsingFrontendIrAndLightTree(
         factory,
         input,
         fir2IrAndIrActualizerResult.irModuleFragment.descriptor,
-        NoScopeRecordCliBindingTrace(project).bindingContext,
         FirJvmBackendClassResolver(fir2IrAndIrActualizerResult.components),
         FirJvmBackendExtension(
             fir2IrAndIrActualizerResult.components,

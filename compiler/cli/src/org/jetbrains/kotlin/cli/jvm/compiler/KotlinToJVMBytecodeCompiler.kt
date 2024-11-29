@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
@@ -151,8 +150,7 @@ object KotlinToJVMBytecodeCompiler {
             }
             // Lowerings (per module)
             codegenInputs += runLowerings(
-                project, moduleConfiguration, moduleDescriptor, bindingContext,
-                sourceFiles = null, module, codegenFactory, backendInput, diagnosticsReporter,
+                project, moduleConfiguration, moduleDescriptor, module, codegenFactory, backendInput, diagnosticsReporter,
                 firJvmBackendClassResolver
             )
         }
@@ -188,20 +186,13 @@ object KotlinToJVMBytecodeCompiler {
 
         // K1: PSI2IR
         val (factory, input) = convertToIr(environment, result)
-        return BackendInputForMultiModuleChunk(
-            factory,
-            input,
-            result.moduleDescriptor,
-            result.bindingContext,
-            mainClassFqName = mainClassFqName
-        )
+        return BackendInputForMultiModuleChunk(factory, input, result.moduleDescriptor, mainClassFqName = mainClassFqName)
     }
 
     internal data class BackendInputForMultiModuleChunk(
         val codegenFactory: CodegenFactory,
         val backendInput: CodegenFactory.BackendInput,
         val moduleDescriptor: ModuleDescriptor,
-        val bindingContext: BindingContext,
         val firJvmBackendClassResolver: FirJvmBackendClassResolver? = null,
         val firJvmBackendExtension: FirJvmBackendExtension? = null,
         val mainClassFqName: FqName? = null,
@@ -278,8 +269,8 @@ object KotlinToJVMBytecodeCompiler {
         val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
         val input = runLowerings(
-            environment.project, environment.configuration, result.moduleDescriptor, result.bindingContext,
-            environment.getSourceFiles(), null, codegenFactory, backendInput, diagnosticsReporter
+            environment.project, environment.configuration, result.moduleDescriptor, module = null, codegenFactory,
+            backendInput, diagnosticsReporter
         )
         return runCodegen(input, input.state, codegenFactory, diagnosticsReporter, environment.configuration)
     }
@@ -387,12 +378,10 @@ object KotlinToJVMBytecodeCompiler {
         override fun toString() = "All files under: $directories"
     }
 
-    internal fun runLowerings(
+    private fun runLowerings(
         project: Project,
         configuration: CompilerConfiguration,
         moduleDescriptor: ModuleDescriptor,
-        bindingContext: BindingContext,
-        sourceFiles: List<KtFile>?,
         module: Module?,
         codegenFactory: CodegenFactory,
         backendInput: CodegenFactory.BackendInput,
@@ -405,7 +394,6 @@ object KotlinToJVMBytecodeCompiler {
             project,
             ClassBuilderFactories.BINARIES,
             moduleDescriptor,
-            bindingContext,
             configuration
         )
             .withModule(module)
@@ -428,7 +416,7 @@ object KotlinToJVMBytecodeCompiler {
             .also { performanceManager?.notifyIRLoweringFinished() }
     }
 
-    internal fun runCodegen(
+    private fun runCodegen(
         codegenInput: CodegenFactory.CodegenInput,
         state: GenerationState,
         codegenFactory: CodegenFactory,
@@ -450,15 +438,9 @@ object KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        AnalyzerWithCompilerReport.reportDiagnostics(
-            state.collectedExtraJvmDiagnostics,
-            messageCollector,
-            configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        )
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
             diagnosticsReporter,
-            messageCollector,
+            configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY),
             configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
 

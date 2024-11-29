@@ -106,7 +106,6 @@ open class GenericReplCompiler(
                 psiFile.project,
                 ClassBuilderFactories.BINARIES,
                 compilerState.analyzerEngine.module,
-                compilerState.analyzerEngine.trace.bindingContext,
                 compilerConfiguration
             ).build()
 
@@ -121,7 +120,11 @@ open class GenericReplCompiler(
 
             codegenFactory.generateModule(
                 generationState,
-                codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(generationState, listOf(psiFile))),
+                codegenFactory.convertToIr(
+                    CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
+                        generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
+                    )
+                ),
             )
 
             compilerState.history.push(LineId(codeLine.no, 0, codeLine.hashCode()), scriptDescriptor)

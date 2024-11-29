@@ -16,16 +16,10 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.createPendingReporter
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.BackendInputForMultiModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
-import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
-import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
-import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -50,7 +44,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
-import kotlin.collections.map
 
 fun compileSingleModuleUsingFrontendIrAndPsi(
     project: Project,
@@ -123,7 +116,6 @@ internal fun runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi(
             factory,
             input,
             fir2IrAndIrActualizerResult.irModuleFragment.descriptor,
-            NoScopeRecordCliBindingTrace(project).bindingContext,
             FirJvmBackendClassResolver(fir2IrAndIrActualizerResult.components),
             FirJvmBackendExtension(
                 fir2IrAndIrActualizerResult.components,
