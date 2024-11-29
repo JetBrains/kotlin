@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.SmartList
@@ -57,6 +56,6 @@ class KlibIcCacheBasedSymbolProvider(
     }
 
     override fun createDeserializedContainerSource(resolvedLibrary: KlibIcData, packageFqName: FqName): DeserializedContainerSource {
-        return KlibDeserializedContainerSource(false, "Package '$packageFqName'", false)
+        return KlibIcDeserializedContainerSource(packageFqName)
     }
 }
