@@ -1176,6 +1176,12 @@ internal class PotentiallyNonReportedAnnotationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.PotentiallyNonReportedAnnotation
 
+internal class AnnotationWillBeAppliedAlsoToPropertyOrFieldImpl(
+    override val useSiteDescription: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationWillBeAppliedAlsoToPropertyOrField
+
 internal class JsModuleProhibitedOnVarImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

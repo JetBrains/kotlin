@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_MESSAGES
+// LATEST_LV_DIFFERENCE
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS,  AnnotationTarget.PROPERTY,  AnnotationTarget.VALUE_PARAMETER)
 annotation class An

@@ -65,7 +65,7 @@ import test.AnnotationTargets.*
 @base @meta @type <!WRONG_ANNOTATION_TARGET!>@konstructor<!> annotation class KMeta
 
 @base <!WRONG_ANNOTATION_TARGET!>@meta<!> @type <!WRONG_ANNOTATION_TARGET!>@method<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> class KClass(
-        @base @fieldann @parameter val y:
+        <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("property")!>@base<!> @fieldann @parameter val y:
         <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@type<!> Int) {
 
     @base @multiple @fieldann <!WRONG_ANNOTATION_TARGET!>@local<!> val x = 0
@@ -77,7 +77,7 @@ import test.AnnotationTargets.*
     ): <!WRONG_ANNOTATION_TARGET!>@fieldann<!> <!WRONG_ANNOTATION_TARGET!>@parameter<!> Int {
 
         @local @base <!WRONG_ANNOTATION_TARGET!>@multiple<!> <!WRONG_ANNOTATION_TARGET!>@fieldann<!> val j = i + 1
-        <!WRONG_ANNOTATION_TARGET!>@base<!> <!WRONG_ANNOTATION_TARGET!>@multiple<!> return j
+        @base @multiple return j
     }
 
     @base <!WRONG_ANNOTATION_TARGET!>@method<!> @konstructor constructor(): this(0)

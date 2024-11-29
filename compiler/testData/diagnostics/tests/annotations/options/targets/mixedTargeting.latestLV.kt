@@ -85,7 +85,7 @@ annotation class KmetaButKotlinFun
 
 @noneButKotlinClass @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@metaButKotlinFun<!> @typeButKotlinParameter @methodButKotlinMultiple <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!>
 class KClass(
-    @baseButKotlinType @fieldannButKotlinMeta @parameterButKotlinFile @multipleButKotlinProperty val y: @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> Int
+    <!ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD("field")!>@baseButKotlinType<!> @fieldannButKotlinMeta @parameterButKotlinFile @multipleButKotlinProperty val y: @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> Int
 ) {
     @baseButKotlinType @multipleButKotlinProperty @fieldannButKotlinMeta <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!>
     val x = 0

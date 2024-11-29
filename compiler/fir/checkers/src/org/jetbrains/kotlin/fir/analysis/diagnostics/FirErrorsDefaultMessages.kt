@@ -100,6 +100,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_ILL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_USED_AS_ANNOTATION_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE
@@ -1192,6 +1193,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             POTENTIALLY_NON_REPORTED_ANNOTATION,
             "Deprecations and opt-ins on a method overridden from 'Any' may not be reported.",
+        )
+        map.put(
+            ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD,
+            "This annotation is currently applied to the value parameter only, but in the future it will also be applied to ''{0}''. " +
+                    "See https://youtrack.jetbrains.com/issue/KT-73255 for more details. " +
+                    "To remove this warning, use the ''@param:'' annotation target.",
+            TO_STRING,
         )
 
         // OptIn

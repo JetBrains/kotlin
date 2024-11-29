@@ -6110,6 +6110,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("annotationDefaultTargetFirstOnlyWarn.kt")
+      public void testAnnotationDefaultTargetFirstOnlyWarn() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetFirstOnlyWarn.kt");
+      }
+
+      @Test
       @TestMetadata("annotationDefaultTargetParamProperty.kt")
       public void testAnnotationDefaultTargetParamProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetParamProperty.kt");
