@@ -399,3 +399,23 @@ inline fun <V : Any> KMutableProperty0<V?>.getOrSetIfNull(compute: () -> V): V =
     this.get() ?: compute().also {
         this.set(it)
     }
+
+fun <T, R> List<T>.zipToMap(other: List<R>): Map<T, R> {
+    return buildMap {
+        zipLet(other) { t1, t2 ->
+            put(t1, t2)
+        }
+    }
+}
+
+inline fun <T, R> List<T>.zipLet(other: List<R>, action: (a: T, b: R) -> Unit) {
+    for (i in 0 until minOf(size, other.size)) {
+        action(this[i], other[i])
+    }
+}
+
+inline fun <T, R> Array<T>.zipLet(other: Array<R>, action: (a: T, b: R) -> Unit) {
+    for (i in 0 until minOf(size, other.size)) {
+        action(this[i], other[i])
+    }
+}

@@ -67,6 +67,8 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.addToStdlib.zipLet
+import org.jetbrains.kotlin.utils.addToStdlib.zipToMap
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -255,8 +257,10 @@ class FirCallCompletionResultsWriterTransformer(
         @OptIn(Candidate.UpdatingCandidateInvariants::class)
         updateSubstitutor(
             substitutorByMap(
-                updatedSymbol.typeParameterSymbols.zip(freshVariables).associate { (typeParameter, typeVariable) ->
-                    typeParameter to typeVariable.defaultType
+                buildMap {
+                    updatedSymbol.typeParameterSymbols.zipLet(freshVariables) { typeParameter, typeVariable ->
+                        put(typeParameter, typeVariable.defaultType)
+                    }
                 },
                 session,
             )
@@ -266,7 +270,7 @@ class FirCallCompletionResultsWriterTransformer(
         require(oldSymbol is FirFunctionSymbol)
 
         val oldArgumentMapping = argumentMapping
-        val oldValueParametersToNewMap = oldSymbol.valueParameterSymbols.zip(updatedSymbol.valueParameterSymbols).toMap()
+        val oldValueParametersToNewMap = oldSymbol.valueParameterSymbols.zipToMap(updatedSymbol.valueParameterSymbols)
 
         @OptIn(Candidate.UpdatingCandidateInvariants::class)
         updateArgumentMapping(oldArgumentMapping.mapValuesTo(linkedMapOf()) { oldValueParametersToNewMap[it.value.symbol]!!.fir })

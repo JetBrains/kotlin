@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.zipToMap
 
 abstract class SupertypeSupplier {
     abstract fun forClass(firClass: FirClass, useSiteSession: FirSession): List<ConeClassLikeType>
@@ -308,7 +309,7 @@ fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: F
     val arguments = superType.typeArguments.map {
         it as? ConeKotlinType ?: ConeErrorType(ConeSimpleDiagnostic("illegal projection usage", DiagnosticKind.IllegalProjectionUsage))
     }
-    val mapping = klass.typeParameters.map { it.symbol }.zip(arguments).toMap()
+    val mapping = klass.typeParameters.map { it.symbol }.zipToMap(arguments)
     return substitutorByMap(mapping, session)
 }
 

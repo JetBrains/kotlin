@@ -605,7 +605,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
         val substitutor = if (declaration is FirTypeParameterRefsOwner) {
             val substitution =
-                declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
+                declaration.typeParameters. zip(type.typeArguments).associate { (parameter, argument) ->
                     parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
                         ?: session.builtinTypes.nullableAnyType.coneType)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
