@@ -34,7 +34,7 @@ abstract class JsEnvironmentConfigurator<RunTask : Task>(protected val subTarget
                 val assembleTask = if (subTarget.target.wasmTargetType == KotlinWasmTargetType.WASI) {
                     (productionExecutable as WasmBinary).optimizeTask
                 } else {
-                    project.tasks.named(subTarget.binarySyncTaskName(productionExecutable))
+                    productionExecutable.linkSyncTask
                 }
 
                 if (compilation.isMain()) {

@@ -57,7 +57,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                 val mode = binary.mode
                 val archivesName = project.archivesName
 
-                val linkSyncTask = compilation.target.project.tasks.named<IncrementalSyncTask>(subTarget.binarySyncTaskName(binary))
+                val linkSyncTask = binary.linkSyncTask
 
                 val webpackTask = subTarget.registerSubTargetTask<KotlinWebpack>(
                     subTarget.disambiguateCamelCased(
@@ -127,7 +127,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                 val mode = binary.mode
                 val archivesName = project.archivesName
 
-                val linkSyncTask = compilation.target.project.tasks.named<IncrementalSyncTask>(subTarget.binarySyncTaskName(binary))
+                val linkSyncTask = binary.linkSyncTask
 
                 subTarget.registerSubTargetTask<KotlinWebpack>(
                     subTarget.disambiguateCamelCased(

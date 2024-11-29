@@ -5,25 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFile
-import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-
 abstract class KotlinJsIrNpmBasedSubTarget(
     target: KotlinJsIrTarget,
     disambiguationClassifier: String,
-) : KotlinJsIrSubTarget(target, disambiguationClassifier) {
-
-    override fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile> {
-        return binary.mainFileSyncPath
-    }
-
-    override fun binarySyncTaskName(binary: JsIrBinary): String {
-        return binary.linkSyncTaskName
-    }
-
-    override fun binarySyncOutput(binary: JsIrBinary): Provider<Directory> {
-        return binary.compilation.npmProject.dist
-    }
-}
+) : KotlinJsIrSubTarget(target, disambiguationClassifier)

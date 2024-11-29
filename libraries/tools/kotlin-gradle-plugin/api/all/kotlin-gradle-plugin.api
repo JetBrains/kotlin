@@ -3732,9 +3732,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinBrowserJsIr$C
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinD8Ir : org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSubTarget, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmD8Dsl {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;)V
-	public fun binaryInputFile (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Lorg/gradle/api/provider/Provider;
-	public fun binarySyncOutput (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Lorg/gradle/api/provider/Provider;
-	public fun binarySyncTaskName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Ljava/lang/String;
 	public fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
 	public fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
 	public fun getTestTaskDescription ()Ljava/lang/String;
@@ -3847,9 +3844,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrLink :
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrNpmBasedSubTarget : org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSubTarget {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;Ljava/lang/String;)V
-	public fun binaryInputFile (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Lorg/gradle/api/provider/Provider;
-	public fun binarySyncOutput (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Lorg/gradle/api/provider/Provider;
-	public fun binarySyncTaskName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrOutputGranularity : java/lang/Enum {
@@ -3876,9 +3870,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrSubTar
 	public static final field DISTRIBUTION_TASK_NAME Ljava/lang/String;
 	public static final field RUN_TASK_NAME Ljava/lang/String;
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;Ljava/lang/String;)V
-	public abstract fun binaryInputFile (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Lorg/gradle/api/provider/Provider;
-	public abstract fun binarySyncOutput (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Lorg/gradle/api/provider/Provider;
-	public abstract fun binarySyncTaskName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Ljava/lang/String;
 	public abstract fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
 	public abstract fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
 	public fun distribution (Lorg/gradle/api/Action;)V
@@ -3972,9 +3963,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTargetPre
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinNodeJsIr : org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrNpmBasedSubTarget, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsNodeDsl {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;)V
-	public fun binaryInputFile (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Lorg/gradle/api/provider/Provider;
-	public fun binarySyncOutput (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Lorg/gradle/api/provider/Provider;
-	public fun binarySyncTaskName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)Ljava/lang/String;
 	public fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
 	public fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
 	public fun getTestTaskDescription ()Ljava/lang/String;
