@@ -27,8 +27,6 @@ class CliTraceHolder(val project: Project) : JvmCodeAnalyzerInitializer() {
         private set
     lateinit var languageVersionSettings: LanguageVersionSettings
         private set
-    lateinit var jvmTarget: JvmTarget
-        private set
 
     override fun initialize(
         trace: BindingTrace,
@@ -40,7 +38,6 @@ class CliTraceHolder(val project: Project) : JvmCodeAnalyzerInitializer() {
         this.bindingContext = trace.bindingContext
         this.module = module
         this.languageVersionSettings = languageVersionSettings
-        this.jvmTarget = jvmTarget
 
         if (trace !is CliBindingTrace) {
             throw IllegalArgumentException("Shared trace is expected to be subclass of ${CliBindingTrace::class.java.simpleName} class")

@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.codegen.state
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingConfiguration
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.mapType
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -38,7 +40,7 @@ object StaticTypeMapperForOldBackend : KotlinTypeMapperBase() {
         }
 
         override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {
-            throw IllegalStateException(KotlinTypeMapper.generateErrorMessageForErrorType(kotlinType, descriptor))
+            throw IllegalStateException(generateErrorMessageForErrorType(kotlinType, descriptor))
         }
 
         override fun preprocessType(kotlinType: KotlinType): KotlinType? {
@@ -50,5 +52,24 @@ object StaticTypeMapperForOldBackend : KotlinTypeMapperBase() {
 
     override fun mapTypeCommon(type: KotlinTypeMarker, mode: TypeMappingMode): Type {
         return mapType(type as KotlinType, AsmTypeFactory, mode, staticTypeMappingConfiguration, null)
+    }
+
+    private fun generateErrorMessageForErrorType(type: KotlinType, descriptor: DeclarationDescriptor): String {
+        val declarationElement = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
+            ?: return "Error type encountered: $type (${type.javaClass.simpleName})."
+
+        val containingDeclaration = descriptor.containingDeclaration
+        val parentDeclarationElement =
+            if (containingDeclaration != null) DescriptorToSourceUtils.descriptorToDeclaration(containingDeclaration) else null
+
+        return "Error type encountered: %s (%s). Descriptor: %s. For declaration %s:%s in %s:%s".format(
+            type,
+            type.javaClass.simpleName,
+            descriptor,
+            declarationElement,
+            declarationElement.text,
+            parentDeclarationElement,
+            if (parentDeclarationElement != null) parentDeclarationElement.text else "null"
+        )
     }
 }
