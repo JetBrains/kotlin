@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.ir.IrElement
@@ -112,16 +113,39 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
 }
 
 /**
- * This resolver is supposed to be run at the first compilation stage for all non-JVM targets.
+ * These resolvers are supposed to be run at the first compilation stage for all non-JVM targets.
  */
-internal class PreSerializationInlineFunctionResolver(
+internal class PreSerializationPrivateInlineFunctionResolver(
     context: LoweringContext,
-    private val deserializer: NonLinkingIrInlineFunctionDeserializer,
-    inlineMode: InlineMode,
     override val allowExternalInlining: Boolean,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? =
-        super.getFunctionDeclaration(symbol)?.also(deserializer::deserializeInlineFunction)
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        val function = super.getFunctionDeclaration(symbol)
+        if (function != null) {
+            check(function.body != null) { "Unexpected inline function without body: ${function.render()}" }
+        }
+        return function
+    }
+}
+
+internal class PreSerializationNonPrivateInlineFunctionResolver(
+    context: LoweringContext,
+    override val allowExternalInlining: Boolean,
+    irMangler: KotlinMangler.IrMangler,
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.ALL_INLINE_FUNCTIONS) {
+
+    private val deserializer = NonLinkingIrInlineFunctionDeserializer(
+        irBuiltIns = context.irBuiltIns,
+        signatureComputer = PublicIdSignatureComputer(irMangler)
+    )
+
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        val function = super.getFunctionDeclaration(symbol)
+        if (function != null && function.body == null) {
+            deserializer.deserializeInlineFunction(function)
+        }
+        return function
+    }
 }
 
 open class FunctionInlining(

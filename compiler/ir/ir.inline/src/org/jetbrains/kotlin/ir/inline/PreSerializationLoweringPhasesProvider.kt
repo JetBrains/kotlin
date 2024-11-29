@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 
 abstract class PreSerializationLoweringPhasesProvider<Context : CommonBackendContext> {
 
@@ -23,13 +24,22 @@ abstract class PreSerializationLoweringPhasesProvider<Context : CommonBackendCon
     protected open val allowExternalInlineFunctions: Boolean
         get() = false
 
+    protected abstract val irMangler: IrMangler
+
     @Suppress("unused") // TODO: Will be used when KT-71415 is fixed
-    private fun inlineFunctionResolver(context: Context, inlineMode: InlineMode): InlineFunctionResolver {
-        return PreSerializationInlineFunctionResolver(
-            context,
-            TODO("supply NonLinkingIrInlineFunctionDeserializer"),
-            inlineMode,
-            allowExternalInlineFunctions
+    private fun privateInlineFunctionResolver(context: Context): InlineFunctionResolver {
+        return PreSerializationPrivateInlineFunctionResolver(
+            context = context,
+            allowExternalInlining = allowExternalInlineFunctions,
+        )
+    }
+
+    @Suppress("unused") // TODO: Will be used when KT-71415 is fixed
+    private fun nonPrivateInlineFunctionResolver(context: Context): InlineFunctionResolver {
+        return PreSerializationNonPrivateInlineFunctionResolver(
+            context = context,
+            allowExternalInlining = allowExternalInlineFunctions,
+            irMangler = irMangler,
         )
     }
 
