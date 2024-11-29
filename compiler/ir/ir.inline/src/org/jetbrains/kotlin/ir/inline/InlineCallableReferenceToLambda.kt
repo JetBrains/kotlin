@@ -191,13 +191,14 @@ abstract class InlineCallableReferenceToLambdaPhase(
                 if (original is IrFunctionReference) {
                     // It is required to copy value arguments if any.
                     // Don't need to copy the dispatch receiver because it was remapped on extension receiver.
-                    original.symbol.owner.parameters.forEach { parameter ->
+                    original.symbol.owner.parameters.zip(original.arguments).forEach { (parameter, argument) ->
                         if (parameter.kind == IrParameterKind.Regular || parameter.kind == IrParameterKind.Context) {
-                            arguments[parameter.indexInParameters] = original.arguments[parameter.indexInParameters]
+                            arguments[parameter.indexInParameters] = argument
                         }
                     }
                 }
-                extensionReceiver = original.dispatchReceiver ?: original.extensionReceiver
+                val receiver = original.dispatchReceiver ?: original.maybeExtensionReceiver()
+                receiver?.let { arguments[0] = it }
             }
         }
 }
