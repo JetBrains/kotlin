@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.createPendingReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.BackendInputForMultiModuleChunk
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.codegenFactoryWithJvmIrBackendInput
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runBackend
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -181,7 +182,8 @@ private fun compileMultiModuleChunkUsingFrontendIrAndLightTree(
     val irGenerationExtensions = IrGenerationExtension.getInstances(project)
     val fir2IrAndIrActualizerResult =
         firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, compilerConfiguration, diagnosticsReporter, irGenerationExtensions)
-    val (factory, input) = fir2IrAndIrActualizerResult.codegenFactoryWithJvmIrBackendInput(compilerConfiguration)
+    val factory = JvmIrCodegenFactory(compilerConfiguration)
+    val input = fir2IrAndIrActualizerResult.toBackendInput(compilerConfiguration)
 
     val backendInputForMultiModuleChunk = BackendInputForMultiModuleChunk(
         factory,

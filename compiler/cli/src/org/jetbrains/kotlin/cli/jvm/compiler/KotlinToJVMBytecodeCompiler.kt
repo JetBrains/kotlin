@@ -307,11 +307,10 @@ object KotlinToJVMBytecodeCompiler {
         return Pair(codegenFactory, backendInput)
     }
 
-    internal fun Fir2IrActualizedResult.codegenFactoryWithJvmIrBackendInput(
+    internal fun Fir2IrActualizedResult.toBackendInput(
         configuration: CompilerConfiguration
-    ): Pair<CodegenFactory, CodegenFactory.BackendInput> {
-        val codegenFactory = JvmIrCodegenFactory(configuration)
-        return codegenFactory to JvmIrCodegenFactory.JvmIrBackendInput(
+    ): CodegenFactory.BackendInput {
+        return JvmIrCodegenFactory.JvmIrBackendInput(
             irModuleFragment,
             irBuiltIns,
             symbolTable,
