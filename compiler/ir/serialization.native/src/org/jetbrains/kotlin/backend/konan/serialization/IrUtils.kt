@@ -41,7 +41,7 @@ fun IrDeclaration.isFromCInteropLibrary(): Boolean {
     else
         getSourceElementFromDescriptor(topLevelDeclaration)
 
-    return containerSource is KlibDeserializedContainerSource && containerSource.isFromCInteropLibrary
+    return containerSource is KlibDeserializedContainerSource && containerSource.klib.isCInteropLibrary()
 }
 
 /**

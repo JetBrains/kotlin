@@ -21,14 +21,14 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         val libraryHeader = (packageAccessedHandler ?: SimplePackageAccessHandler).loadModuleHeader(library)
 
         return packageFragmentNames.flatMap {
-            val fqName = FqName(it)
-            val containerSource = KlibDeserializedContainerSource(library, libraryHeader, configuration, fqName)
-            val parts = library.packageMetadataParts(fqName.asString())
+            val packageFqName = FqName(it)
+            val containerSource = KlibDeserializedContainerSource(library, libraryHeader, configuration, packageFqName)
+            val parts = library.packageMetadataParts(packageFqName.asString())
             val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
             parts.map { partName ->
                 if (isBuiltInModule)
                     BuiltInKlibMetadataDeserializedPackageFragment(
-                        fqName,
+                        packageFqName,
                         library,
                         packageAccessedHandler,
                         storageManager,
@@ -38,7 +38,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                     )
                 else
                     KlibMetadataDeserializedPackageFragment(
-                        fqName,
+                        packageFqName,
                         library,
                         packageAccessedHandler,
                         storageManager,
