@@ -347,7 +347,7 @@ internal class GranularMetadataTransformation(
         val module = dependency.selected
         val moduleId = module.id
 
-        // FIXME: *facepalm* psmExtractorFactory -> psmExtractor -> psm while it could be just one "extractPsm" call
+        // FIXME: KT-73537 psmExtractorFactory -> psmExtractor -> psm while it could be just one "extractPsm" call
         val psmExtractorFactory = params.projectStructureMetadataExtractorFactory
         val psmExtractor = when (psmExtractorFactory) {
             is KotlinProjectStructureMetadataExtractorFactory -> {
