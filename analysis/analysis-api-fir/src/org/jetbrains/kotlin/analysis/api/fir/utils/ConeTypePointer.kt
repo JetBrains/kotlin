@@ -55,6 +55,7 @@ private class ConeClassLikeTypePointer(coneType: ConeClassLikeType, builder: KaS
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder) }
     private val isNullable = coneType.isMarkedNullable
     private val abbreviatedTypePointer = coneType.abbreviatedType?.createPointer(builder)
+    private val safeAttributes = coneType.attributes.filter { it is ParameterNameTypeAttribute }
 
     override fun restore(session: KaFirSession): ConeClassLikeTypeImpl? {
         val typeArguments = typeArgumentPointers.map { it.restore(session) ?: return null }
@@ -64,6 +65,7 @@ private class ConeClassLikeTypePointer(coneType: ConeClassLikeType, builder: KaS
             if (abbreviatedType != null) {
                 add(AbbreviatedTypeAttribute(abbreviatedType))
             }
+            addAll(safeAttributes)
         }
 
         return ConeClassLikeTypeImpl(
