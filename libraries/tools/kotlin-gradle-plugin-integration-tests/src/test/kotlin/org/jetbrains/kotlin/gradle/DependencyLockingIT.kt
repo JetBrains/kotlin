@@ -15,8 +15,8 @@ class DependencyLockingIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @DisplayName("KT-71549: dependency locking does not cause build failure")
     @TestMetadata("jvm-with-dependency-locking")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0) // Gradle of a lower version leaves some file descriptor open
     @GradleTest
-    @Disabled("It's flaky. See the issue comments, first requires a proper fix. Additionally, on Windows it sometimes fails due to inability to delete the tmp directory.")
     fun testJvmDependencyLocking(gradleVersion: GradleVersion) {
         project("jvm-with-dependency-locking", gradleVersion) {
             build("compileKotlin", "--write-locks")
