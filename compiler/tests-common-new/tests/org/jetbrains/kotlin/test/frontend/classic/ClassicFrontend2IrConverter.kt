@@ -61,12 +61,10 @@ class ClassicFrontend2IrConverter(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val codegenFactory = JvmIrCodegenFactory(configuration)
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val state = GenerationState.Builder(
-            project, ClassBuilderFactories.TEST, analysisResult.moduleDescriptor, configuration
-        ).ignoreErrors(CodegenTestDirectives.IGNORE_ERRORS in module.directives)
-            .diagnosticReporter(DiagnosticReporterFactory.createReporter(messageCollector))
-            .build()
+        val state = GenerationState(
+            project, analysisResult.moduleDescriptor, configuration, ClassBuilderFactories.TEST,
+            ignoreErrors = CodegenTestDirectives.IGNORE_ERRORS in module.directives,
+        )
 
         val conversionResult = codegenFactory.convertToIr(
             CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values, analysisResult.bindingContext)

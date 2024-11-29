@@ -115,12 +115,13 @@ internal class KaFe10CompilerFacility(
 
         val codegenFactory = createJvmIrCodegenFactory(effectiveConfiguration)
 
-        val state = GenerationState.Builder(
+        val state = GenerationState(
             file.project,
-            target.classBuilderFactory,
             analysisContext.resolveSession.moduleDescriptor,
             effectiveConfiguration,
-        ).generateDeclaredClassFilter(generateClassFilter).build()
+            target.classBuilderFactory,
+            generateDeclaredClassFilter = generateClassFilter,
+        )
 
         try {
             KotlinCodegenFacade.compileCorrectFiles(filesToCompile, state, bindingContext, codegenFactory)

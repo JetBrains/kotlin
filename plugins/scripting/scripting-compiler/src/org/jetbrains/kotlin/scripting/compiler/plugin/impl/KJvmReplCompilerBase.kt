@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -135,14 +134,14 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     messageCollector.report(severity, message)
                 }
 
-                val genStateBuilder = GenerationState.Builder(
+                val generationState = GenerationState(
                     snippetKtFile.project,
-                    ClassBuilderFactories.BINARIES,
                     compilationState.analyzerEngine.module,
-                    compilationState.environment.configuration
-                ).diagnosticReporter(codegenDiagnosticsCollector)
+                    compilationState.environment.configuration,
+                    diagnosticReporter = codegenDiagnosticsCollector,
+                )
 
-                val generationState = generateWithBackendIr(compilationState, sourceFiles, genStateBuilder)
+                generateWithBackendIr(compilationState, sourceFiles, generationState)
 
                 if (codegenDiagnosticsCollector.hasErrors) {
                     val scriptDiagnostics = codegenDiagnosticsCollector.scriptDiagnostics(snippet)
@@ -178,8 +177,8 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
     private fun generateWithBackendIr(
         compilationState: ReplCompilationState<AnalyzerT>,
         sourceFiles: List<KtFile>,
-        prebuiltState: GenerationState.Builder,
-    ): GenerationState {
+        generationState: GenerationState,
+    ) {
         val generatorExtensions = object : JvmGeneratorExtensionsImpl(compilationState.environment.configuration) {
             override fun getPreviousScripts() = state.history.map { compilationState.symbolTable.descriptorExtension.referenceScript(it.item) }
         }
@@ -187,8 +186,6 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
             compilationState.environment.configuration,
             compilationState.mangler, compilationState.symbolTable, generatorExtensions
         )
-        val generationState = prebuiltState.build()
-
         codegenFactory.generateModule(
             generationState,
             codegenFactory.convertToIr(
@@ -197,8 +194,6 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 )
             ),
         )
-
-        return generationState
     }
 
     override suspend fun invoke(

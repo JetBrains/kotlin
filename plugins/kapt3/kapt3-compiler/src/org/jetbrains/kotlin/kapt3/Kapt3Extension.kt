@@ -244,9 +244,7 @@ abstract class AbstractKapt3Extension(
             type = "java-production"
         )
 
-        val generationState = GenerationState.Builder(project, builderFactory, module, configuration)
-            .targetId(targetId)
-            .build()
+        val generationState = GenerationState(project, module, configuration, builderFactory, targetId = targetId)
 
         val (classFilesCompilationTime) = measureTimeMillis {
             KotlinCodegenFacade.compileCorrectFiles(

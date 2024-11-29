@@ -70,14 +70,6 @@ fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<Str
         (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
     }
 
-fun GenerationState.Builder.withModule(module: Module?) =
-    apply {
-        if (module != null) {
-            targetId(TargetId(module))
-            moduleName(module.getModuleName())
-        }
-    }
-
 fun createOutputFilesFlushingCallbackIfPossible(configuration: CompilerConfiguration): GenerationStateEventCallback {
     if (configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY) == null) {
         return GenerationStateEventCallback.DO_NOTHING

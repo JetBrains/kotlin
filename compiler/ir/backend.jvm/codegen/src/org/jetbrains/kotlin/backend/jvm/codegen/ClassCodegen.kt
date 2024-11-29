@@ -199,8 +199,8 @@ class ClassCodegen private constructor(
         val filter = state.generateDeclaredClassFilter
         val ktFile = PsiSourceManager.findPsiElement(irClass, irClass, KtFile::class)
         val ktClass = PsiSourceManager.findPsiElement(irClass, irClass, KtClassOrObject::class)
-        return (ktFile != null && !filter.shouldGeneratePackagePart(ktFile))
-                || (ktClass != null && !filter.shouldGenerateClass(ktClass))
+        return (ktFile != null && filter != null && !filter.shouldGeneratePackagePart(ktFile))
+                || (ktClass != null && filter != null && !filter.shouldGenerateClass(ktClass))
     }
 
     private fun generatePermittedSubclasses() {

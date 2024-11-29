@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileSingleModuleUsingFr
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.runFrontendAndGenerateIrForMultiModuleChunkUsingFrontendIRAndPsi
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
+import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LOOKUP_TRACKER
@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -390,20 +391,16 @@ object KotlinToJVMBytecodeCompiler {
     ): CodegenFactory.CodegenInput {
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
-        val state = GenerationState.Builder(
+        val state = GenerationState(
             project,
-            ClassBuilderFactories.BINARIES,
             moduleDescriptor,
-            configuration
+            configuration,
+            targetId = module?.let(::TargetId),
+            moduleName = module?.getModuleName() ?: configuration.moduleName,
+            onIndependentPartCompilationEnd = createOutputFilesFlushingCallbackIfPossible(configuration),
+            diagnosticReporter = diagnosticsReporter,
+            jvmBackendClassResolver = firJvmBackendClassResolver ?: JvmBackendClassResolverForModuleWithDependencies(moduleDescriptor),
         )
-            .withModule(module)
-            .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
-            .diagnosticReporter(diagnosticsReporter)
-            .apply {
-                if (firJvmBackendClassResolver != null) {
-                    jvmBackendClassResolver(firJvmBackendClassResolver)
-                }
-            }.build()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 

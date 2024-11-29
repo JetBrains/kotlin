@@ -340,14 +340,14 @@ internal class KaFirCompilerFacility(
         allowedErrorFilter: (KaDiagnostic) -> Boolean,
         fillInlineCache: (GenerationState) -> Unit,
     ): KaCompilationResult {
-        val generationState = GenerationState.Builder(
+        val generationState = GenerationState(
             project,
-            target.classBuilderFactory,
             fir2IrResult.irModuleFragment.descriptor,
             configuration,
-        ).generateDeclaredClassFilter(generateClassFilter)
-            .diagnosticReporter(diagnosticReporter)
-            .build()
+            target.classBuilderFactory,
+            generateDeclaredClassFilter = generateClassFilter,
+            diagnosticReporter = diagnosticReporter,
+        )
 
         fillInlineCache(generationState)
 

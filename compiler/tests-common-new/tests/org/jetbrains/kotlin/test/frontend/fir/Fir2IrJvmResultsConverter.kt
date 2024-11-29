@@ -105,18 +105,15 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         )
 
         val project = testServices.compilerConfigurationProvider.getProject(module)
-        val codegenFactory = JvmIrCodegenFactory(compilerConfiguration)
-        val generationState = GenerationState.Builder(
-            project, ClassBuilderFactories.TEST, fir2IrResult.irModuleFragment.descriptor, compilerConfiguration
-        ).jvmBackendClassResolver(
-            FirJvmBackendClassResolver(fir2IrResult.components)
-        ).diagnosticReporter(
-            diagnosticReporter
-        ).build()
+        val generationState = GenerationState(
+            project, fir2IrResult.irModuleFragment.descriptor, compilerConfiguration, ClassBuilderFactories.TEST,
+            jvmBackendClassResolver = FirJvmBackendClassResolver(fir2IrResult.components),
+            diagnosticReporter = diagnosticReporter,
+        )
 
         return IrBackendInput.JvmIrBackendInput(
             generationState,
-            codegenFactory,
+            JvmIrCodegenFactory(compilerConfiguration),
             backendInput,
             sourceFiles,
             descriptorMangler = null,

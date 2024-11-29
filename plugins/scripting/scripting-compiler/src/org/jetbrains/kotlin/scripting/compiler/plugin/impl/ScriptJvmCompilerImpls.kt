@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -276,30 +275,27 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
 }
 
 private fun generate(
-    analysisResult: AnalysisResult, sourceFiles: List<KtFile>, kotlinCompilerConfiguration: CompilerConfiguration,
-    messageCollector: MessageCollector
+    analysisResult: AnalysisResult, sourceFiles: List<KtFile>, configuration: CompilerConfiguration, messageCollector: MessageCollector,
 ): GenerationState {
     val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
-    return GenerationState.Builder(
+    val state = GenerationState(
         sourceFiles.first().project,
-        ClassBuilderFactories.BINARIES,
         analysisResult.moduleDescriptor,
-        kotlinCompilerConfiguration
-    ).diagnosticReporter(
-        diagnosticsReporter
-    ).build().also {
-        KotlinCodegenFacade.compileCorrectFiles(
-            sourceFiles,
-            it,
-            analysisResult.bindingContext,
-            JvmIrCodegenFactory(kotlinCompilerConfiguration),
-        )
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-            diagnosticsReporter,
-            messageCollector,
-            kotlinCompilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        )
-    }
+        configuration,
+        diagnosticReporter = diagnosticsReporter,
+    )
+    KotlinCodegenFacade.compileCorrectFiles(
+        sourceFiles,
+        state,
+        analysisResult.bindingContext,
+        JvmIrCodegenFactory(configuration),
+    )
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+        diagnosticsReporter,
+        messageCollector,
+        configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    )
+    return state
 }
 
 private fun doCompileWithK2(

@@ -94,12 +94,12 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val codegenFactory = JvmIrCodegenFactory(environment.configuration)
 
-        val state = GenerationState.Builder(
+        val state = GenerationState(
             environment.project,
-            ClassBuilderFactories.TEST,
             analysisResult.moduleDescriptor,
-            environment.configuration
-        ).build()
+            environment.configuration,
+            ClassBuilderFactories.TEST,
+        )
 
         state.beforeCompile()
 

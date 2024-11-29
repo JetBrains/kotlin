@@ -159,19 +159,17 @@ fun generateCodeFromIr(
         if (input.configuration.getBoolean(JVMConfigurationKeys.SKIP_BODIES)) OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
         else ClassBuilderFactories.BINARIES
 
-    val generationState = GenerationState.Builder(
-        environment.projectEnvironment.project, builderFactory, input.irModuleFragment.descriptor, input.configuration
-    ).targetId(
-        input.targetId
-    ).moduleName(
-        input.targetId.name
-    ).onIndependentPartCompilationEnd(
-        createOutputFilesFlushingCallbackIfPossible(input.configuration)
-    ).jvmBackendClassResolver(
-        FirJvmBackendClassResolver(input.components)
-    ).diagnosticReporter(
-        environment.diagnosticsReporter
-    ).build()
+    val generationState = GenerationState(
+        environment.projectEnvironment.project,
+        input.irModuleFragment.descriptor,
+        input.configuration,
+        builderFactory,
+        targetId = input.targetId,
+        moduleName = input.targetId.name,
+        onIndependentPartCompilationEnd = createOutputFilesFlushingCallbackIfPossible(input.configuration),
+        jvmBackendClassResolver = FirJvmBackendClassResolver(input.components),
+        diagnosticReporter = environment.diagnosticsReporter,
+    )
 
     val performanceManager = input.configuration[CLIConfigurationKeys.PERF_MANAGER]
     performanceManager?.notifyGenerationStarted()

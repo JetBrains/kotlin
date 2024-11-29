@@ -123,13 +123,11 @@ object GenerationUtils {
             irGeneratorExtensions = emptyList()
         )
 
-        val generationState = GenerationState.Builder(
-            project, classBuilderFactory, moduleFragment.descriptor, configuration
-        ).jvmBackendClassResolver(
-            FirJvmBackendClassResolver(components)
-        ).diagnosticReporter(
-            diagnosticReporter
-        ).build()
+        val generationState = GenerationState(
+            project, moduleFragment.descriptor, configuration, classBuilderFactory,
+            jvmBackendClassResolver = FirJvmBackendClassResolver(components),
+            diagnosticReporter = diagnosticReporter,
+        )
 
         generationState.beforeCompile()
         JvmIrCodegenFactory(configuration).generateModuleInFrontendIRMode(
@@ -170,9 +168,7 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory,
         analysisResult: AnalysisResult,
     ): GenerationState {
-        val generationState = GenerationState.Builder(
-            project, classBuilderFactory, analysisResult.moduleDescriptor, configuration
-        ).build()
+        val generationState = GenerationState(project, analysisResult.moduleDescriptor, configuration, classBuilderFactory)
         if (analysisResult.shouldGenerateCode) {
             KotlinCodegenFacade.compileCorrectFiles(
                 files,

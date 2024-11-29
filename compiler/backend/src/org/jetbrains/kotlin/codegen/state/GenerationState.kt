@@ -38,75 +38,25 @@ import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.reflect.InvocationTargetException
 
-class GenerationState private constructor(
+class GenerationState(
     val project: Project,
-    builderFactory: ClassBuilderFactory,
     val module: ModuleDescriptor,
     val configuration: CompilerConfiguration,
-    val generateDeclaredClassFilter: GenerateClassFilter,
-    val targetId: TargetId?,
-    moduleName: String?,
-    private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
-    val jvmBackendClassResolver: JvmBackendClassResolver,
-    val ignoreErrors: Boolean,
-    val diagnosticReporter: DiagnosticReporter,
+    builderFactory: ClassBuilderFactory = ClassBuilderFactories.BINARIES,
+    val generateDeclaredClassFilter: GenerateClassFilter? = null,
+    val targetId: TargetId? = null,
+    moduleName: String? = configuration.moduleName,
+    private val onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING,
+    val jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module),
+    val ignoreErrors: Boolean = false,
+    diagnosticReporter: DiagnosticReporter? = null,
 ) {
-    class Builder(
-        private val project: Project,
-        private val builderFactory: ClassBuilderFactory,
-        private val module: ModuleDescriptor,
-        private val configuration: CompilerConfiguration
-    ) {
-        private var generateDeclaredClassFilter: GenerateClassFilter = GenerateClassFilter.GENERATE_ALL
-        fun generateDeclaredClassFilter(v: GenerateClassFilter) =
-            apply { generateDeclaredClassFilter = v }
-
-        private var targetId: TargetId? = null
-        fun targetId(v: TargetId?) =
-            apply { targetId = v }
-
-        private var moduleName: String? = configuration[CommonConfigurationKeys.MODULE_NAME]
-        fun moduleName(v: String?) =
-            apply { moduleName = v }
-
-        private var onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING
-        fun onIndependentPartCompilationEnd(v: GenerationStateEventCallback) =
-            apply { onIndependentPartCompilationEnd = v }
-
-        private var jvmBackendClassResolver: JvmBackendClassResolver = JvmBackendClassResolverForModuleWithDependencies(module)
-        fun jvmBackendClassResolver(v: JvmBackendClassResolver) =
-            apply { jvmBackendClassResolver = v }
-
-        var ignoreErrors: Boolean = false
-        fun ignoreErrors(v: Boolean): Builder =
-            apply { ignoreErrors = v }
-
-        var diagnosticReporter: DiagnosticReporter? = null
-        fun diagnosticReporter(v: DiagnosticReporter) =
-            apply { diagnosticReporter = v }
-
-        fun build(): GenerationState {
-            return GenerationState(
-                project, builderFactory, module, configuration,
-                generateDeclaredClassFilter, targetId,
-                moduleName, onIndependentPartCompilationEnd,
-                jvmBackendClassResolver, ignoreErrors,
-                diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector),
-            )
-        }
-    }
+    val diagnosticReporter: DiagnosticReporter =
+        diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector)
 
     abstract class GenerateClassFilter {
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
         abstract fun shouldGeneratePackagePart(ktFile: KtFile): Boolean
-
-        companion object {
-            @JvmField
-            val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
-                override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean = true
-                override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean = true
-            }
-        }
     }
 
     val config = JvmBackendConfig(configuration)

@@ -230,14 +230,13 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val irModuleFragment = frontendResult.firResult.irModuleFragment
         val components = frontendResult.firResult.components
 
-        val generationState = GenerationState.Builder(
+        val generationState = GenerationState(
             project,
-            ClassBuilderFactories.TEST,
             irModuleFragment.descriptor,
-            configuration
-        ).jvmBackendClassResolver(
-            FirJvmBackendClassResolver(components)
-        ).build()
+            configuration,
+            ClassBuilderFactories.TEST,
+            jvmBackendClassResolver = FirJvmBackendClassResolver(components),
+        )
 
         generationState.beforeCompile()
         val codegenFactory = JvmIrCodegenFactory(configuration)
