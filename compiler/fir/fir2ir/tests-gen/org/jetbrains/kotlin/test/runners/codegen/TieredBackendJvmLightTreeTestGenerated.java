@@ -23150,6 +23150,77 @@ public class TieredBackendJvmLightTreeTestGenerated extends AbstractTieredBacken
         public void testSubtyping() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/subtyping.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DeclarationAndUsages {
+          @Test
+          @TestMetadata("contextParameterIsNotInlined.kt")
+          public void testContextParameterIsNotInlined() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextParameterIsNotInlined.kt");
+          }
+
+          @Test
+          @TestMetadata("contextParameterToDefaultArgument.kt")
+          public void testContextParameterToDefaultArgument() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextParameterToDefaultArgument.kt");
+          }
+
+          @Test
+          @TestMetadata("emptyContextName.kt")
+          public void testEmptyContextName() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/emptyContextName.kt");
+          }
+
+          @Test
+          @TestMetadata("inFunctionDeclaration.kt")
+          public void testInFunctionDeclaration() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inFunctionDeclaration.kt");
+          }
+
+          @Test
+          @TestMetadata("inFunctionalType.kt")
+          public void testInFunctionalType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inFunctionalType.kt");
+          }
+
+          @Test
+          @TestMetadata("inPropertyDeclaration.kt")
+          public void testInPropertyDeclaration() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inPropertyDeclaration.kt");
+          }
+
+          @Test
+          @TestMetadata("moreThenOneContext.kt")
+          public void testMoreThenOneContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/moreThenOneContext.kt");
+          }
+
+          @Test
+          @TestMetadata("parameterType.kt")
+          public void testParameterType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterType.kt");
+          }
+
+          @Test
+          @TestMetadata("parameterTypeWithContext.kt")
+          public void testParameterTypeWithContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterTypeWithContext.kt");
+          }
+
+          @Test
+          @TestMetadata("propertyWithContextAndContextType.kt")
+          public void testPropertyWithContextAndContextType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/propertyWithContextAndContextType.kt");
+          }
+
+          @Test
+          @TestMetadata("visibilityOfContextTypeOnProperty.kt")
+          public void testVisibilityOfContextTypeOnProperty() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnProperty.kt");
+          }
+        }
       }
     }
 

@@ -28,3 +28,18 @@ fun multipleUnnamed() {}
 
 context(`_`: String, `_`: Int)
 fun multipleUnnamedQuoted() {}
+
+context(x: String)
+inline fun <reified x> noClashWithTypeParam(b: x){}
+
+context(x: String)
+fun noClashInLocalFun() {
+    fun local(x: String) {
+        x.length
+    }
+}
+
+context(a: String)
+fun a() {
+    a.length
+}

@@ -3379,6 +3379,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
           }
 
           @Test
+          @TestMetadata("inlineWithContextParameter.kt")
+          public void testInlineWithContextParameter() {
+            runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithContextParameter.kt");
+          }
+
+          @Test
+          @TestMetadata("inlineWithContextParameterAsAPropertyType.kt")
+          public void testInlineWithContextParameterAsAPropertyType() {
+            runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithContextParameterAsAPropertyType.kt");
+          }
+
+          @Test
+          @TestMetadata("inlineWithContextParameterAsASupertype.kt")
+          public void testInlineWithContextParameterAsASupertype() {
+            runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithContextParameterAsASupertype.kt");
+          }
+
+          @Test
           @TestMetadata("inlineWithExtensionAsASuperType.kt")
           public void testInlineWithExtensionAsASuperType() {
             runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/inlineWithExtensionAsASuperType.kt");
@@ -3424,6 +3442,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
           @TestMetadata("simple.kt")
           public void testSimple() {
             runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/simple.kt");
+          }
+
+          @Test
+          @TestMetadata("withContextParameterAsAPropertyType.kt")
+          public void testWithContextParameterAsAPropertyType() {
+            runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParameterAsAPropertyType.kt");
+          }
+
+          @Test
+          @TestMetadata("withContextParameters.kt")
+          public void testWithContextParameters() {
+            runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParameters.kt");
+          }
+
+          @Test
+          @TestMetadata("withContextParametersAsASupertype.kt")
+          public void testWithContextParametersAsASupertype() {
+            runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion/withContextParametersAsASupertype.kt");
           }
 
           @Test

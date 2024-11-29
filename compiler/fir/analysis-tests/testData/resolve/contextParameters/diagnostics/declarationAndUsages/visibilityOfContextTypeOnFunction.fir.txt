@@ -1,0 +1,112 @@
+FILE: visibilityOfContextTypeOnFunction.kt
+    public final class PublicClass : R|kotlin/Any| {
+        public constructor(): R|PublicClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    private final class PrivateClass : R|kotlin/Any| {
+        public constructor(): R|PrivateClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    public open class OpenClass : R|kotlin/Any| {
+        public constructor(): R|OpenClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final class ProtectedClass : R|kotlin/Any| {
+            public constructor(): R|OpenClass.ProtectedClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val a: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
+        }
+
+        context(a: R|OpenClass.ProtectedClass|)
+        public final fun test1(): R|kotlin/Unit| {
+            R|<local>/a|.R|/OpenClass.ProtectedClass.a|
+        }
+
+        context(a: R|OpenClass.ProtectedClass|)
+        internal final fun test2(): R|kotlin/Unit| {
+            R|<local>/a|.R|/OpenClass.ProtectedClass.a|
+        }
+
+        context(a: R|OpenClass.ProtectedClass|)
+        protected final fun test3(): R|kotlin/Unit| {
+            R|<local>/a|.R|/OpenClass.ProtectedClass.a|
+        }
+
+        context(a: R|OpenClass.ProtectedClass|)
+        private final fun test4(): R|kotlin/Unit| {
+            R|<local>/a|.R|/OpenClass.ProtectedClass.a|
+        }
+
+    }
+    internal final class InternalClass : R|kotlin/Any| {
+        public constructor(): R|InternalClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    context(w: R|PublicClass|, x: R|PrivateClass|, y: <ERROR TYPE REF: HIDDEN: OpenClass.ProtectedClass is invisible>, z: R|InternalClass|)
+    public final fun test1(): R|kotlin/Unit| {
+        R|<local>/w|.R|/PublicClass.a|
+        R|<local>/x|.R|/PrivateClass.a|
+        R|<local>/y|.R|/OpenClass.ProtectedClass.a<HIDDEN: OpenClass.ProtectedClass is invisible>#|
+        R|<local>/z|.R|/InternalClass.a|
+    }
+    context(w: R|PublicClass|, x: R|PrivateClass|, y: <ERROR TYPE REF: HIDDEN: OpenClass.ProtectedClass is invisible>, z: R|InternalClass|)
+    internal final fun test2(): R|kotlin/Unit| {
+        R|<local>/w|.R|/PublicClass.a|
+        R|<local>/x|.R|/PrivateClass.a|
+        R|<local>/y|.R|/OpenClass.ProtectedClass.a<HIDDEN: OpenClass.ProtectedClass is invisible>#|
+        R|<local>/z|.R|/InternalClass.a|
+    }
+    context(w: R|PublicClass|, x: R|PrivateClass|, y: <ERROR TYPE REF: HIDDEN: OpenClass.ProtectedClass is invisible>, z: R|InternalClass|)
+    private final fun test3(): R|kotlin/Unit| {
+        R|<local>/w|.R|/PublicClass.a|
+        R|<local>/x|.R|/PrivateClass.a|
+        R|<local>/y|.R|/OpenClass.ProtectedClass.a<HIDDEN: OpenClass.ProtectedClass is invisible>#|
+        R|<local>/z|.R|/InternalClass.a|
+    }
+    public final class ProtectedChild : R|OpenClass| {
+        public constructor(): R|ProtectedChild| {
+            super<R|OpenClass|>()
+        }
+
+        context(y: R|OpenClass.ProtectedClass|)
+        private final fun foo1(): R|kotlin/Unit| {
+            R|<local>/y|.R|/OpenClass.ProtectedClass.a|
+        }
+
+        context(y: R|OpenClass.ProtectedClass|)
+        public final fun foo2(): R|kotlin/Unit| {
+            R|<local>/y|.R|/OpenClass.ProtectedClass.a|
+        }
+
+        context(y: R|OpenClass.ProtectedClass|)
+        protected final fun foo3(): R|kotlin/Unit| {
+            R|<local>/y|.R|/OpenClass.ProtectedClass.a|
+        }
+
+        context(y: R|OpenClass.ProtectedClass|)
+        internal final fun foo4(): R|kotlin/Unit| {
+            R|<local>/y|.R|/OpenClass.ProtectedClass.a|
+        }
+
+    }
+

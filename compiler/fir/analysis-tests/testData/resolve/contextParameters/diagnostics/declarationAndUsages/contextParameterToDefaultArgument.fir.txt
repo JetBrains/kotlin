@@ -1,0 +1,60 @@
+FILE: contextParameterToDefaultArgument.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(a: R|kotlin/String|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var a: R|kotlin/String| = R|<local>/a|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final fun foo(): R|kotlin/String| {
+            ^foo this@R|/C|.R|/C.a|
+        }
+
+    }
+    context(a: R|C|)
+    public final fun test(b: R|C| = R|<local>/a|): R|kotlin/Unit| {
+        R|<local>/b|.R|/C.foo|()
+    }
+    context(a: R|C|)
+    public final fun test2(vararg b: R|kotlin/Array<out C>| = R|kotlin/arrayOf|<R|C|>(vararg(R|<local>/a|))): R|kotlin/Unit| {
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<C>| = R|<local>/b|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<CapturedType(out C)>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval t: R|C| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|C|>|()
+                 {
+                    R|<local>/t|.R|/C.foo|()
+                }
+
+            }
+
+        }
+
+    }
+    context(a: R|kotlin/Array<C>|)
+    public final fun test3(b: R|kotlin/Array<C>| = R|kotlin/arrayOf|<R|C|>(vararg(*R|<local>/a|))): R|kotlin/Unit| {
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<C>| = R|<local>/b|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<C>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval t: R|C| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|C|>|()
+                 {
+                    R|<local>/t|.R|/C.foo|()
+                }
+
+            }
+
+        }
+
+    }
+    public final fun usage(): R|kotlin/Unit| {
+        R|kotlin/with|<R|C|, R|kotlin/Unit|>(R|/C.C|(String(OK)), <L> = with@fun R|C|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test|()
+            R|/test2|()
+        }
+        )
+        R|kotlin/with|<R|kotlin/Array<C>|, R|kotlin/Unit|>(R|kotlin/arrayOf|<R|C|>(vararg(R|/C.C|(String(OK)))), <L> = with@fun R|kotlin/Array<C>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/test3|()
+        }
+        )
+    }
