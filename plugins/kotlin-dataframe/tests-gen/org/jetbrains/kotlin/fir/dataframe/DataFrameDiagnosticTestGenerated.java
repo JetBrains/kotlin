@@ -45,6 +45,12 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
   }
 
   @Test
+  @TestMetadata("targetOfCastIsNotDataSchema.kt")
+  public void testTargetOfCastIsNotDataSchema() {
+    runTest("testData/diagnostics/targetOfCastIsNotDataSchema.kt");
+  }
+
+  @Test
   @TestMetadata("toDataFrame_java.kt")
   public void testToDataFrame_java() {
     runTest("testData/diagnostics/toDataFrame_java.kt");
