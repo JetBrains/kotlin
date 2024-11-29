@@ -1,0 +1,17 @@
+FILE: valVarOnContextParameter.kt
+    context(a: R|kotlin/String|)
+    public final fun test1(): R|kotlin/Unit| {
+    }
+    context(a: R|kotlin/String|)
+    public final fun test2(): R|kotlin/Unit| {
+    }
+    context(a: R|kotlin/String|)
+    public final val property1: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|<local>/a|
+        }
+    context(a: R|kotlin/String|)
+    public final val property2: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ R|<local>/a|
+        }

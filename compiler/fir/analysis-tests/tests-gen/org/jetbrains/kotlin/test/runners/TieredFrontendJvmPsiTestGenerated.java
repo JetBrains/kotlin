@@ -28546,15 +28546,98 @@ public class TieredFrontendJvmPsiTestGenerated extends AbstractTieredFrontendJvm
         }
 
         @Test
-        @TestMetadata("nameClashes.kt")
-        public void testNameClashes() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/nameClashes.kt");
-        }
-
-        @Test
         @TestMetadata("unsupportedContextParameters.kt")
         public void testUnsupportedContextParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/unsupportedContextParameters.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages")
+        @TestDataPath("$PROJECT_ROOT")
+        public class DeclarationAndUsages {
+          @Test
+          @TestMetadata("contextOnGetterSetter.kt")
+          public void testContextOnGetterSetter() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/contextOnGetterSetter.kt");
+          }
+
+          @Test
+          @TestMetadata("emptyListOfContextParameters.kt")
+          public void testEmptyListOfContextParameters() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/emptyListOfContextParameters.kt");
+          }
+
+          @Test
+          @TestMetadata("initializerInProperty.kt")
+          public void testInitializerInProperty() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/initializerInProperty.kt");
+          }
+
+          @Test
+          @TestMetadata("inlineForTypeWithContext.kt")
+          public void testInlineForTypeWithContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/inlineForTypeWithContext.kt");
+          }
+
+          @Test
+          @TestMetadata("multipleContextsWithTheSameType.kt")
+          public void testMultipleContextsWithTheSameType() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/multipleContextsWithTheSameType.kt");
+          }
+
+          @Test
+          @TestMetadata("nameClashes.kt")
+          public void testNameClashes() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/nameClashes.kt");
+          }
+
+          @Test
+          @TestMetadata("onClassifierDeclaration.kt")
+          public void testOnClassifierDeclaration() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/onClassifierDeclaration.kt");
+          }
+
+          @Test
+          @TestMetadata("onConstructor.kt")
+          public void testOnConstructor() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/onConstructor.kt");
+          }
+
+          @Test
+          @TestMetadata("parameterModifiersOnContextParameter.kt")
+          public void testParameterModifiersOnContextParameter() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterModifiersOnContextParameter.kt");
+          }
+
+          @Test
+          @TestMetadata("parameterWithDefault.kt")
+          public void testParameterWithDefault() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/parameterWithDefault.kt");
+          }
+
+          @Test
+          @TestMetadata("usageWithoutContext.kt")
+          public void testUsageWithoutContext() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/usageWithoutContext.kt");
+          }
+
+          @Test
+          @TestMetadata("usageWithoutContextForMultipleParameters.kt")
+          public void testUsageWithoutContextForMultipleParameters() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/usageWithoutContextForMultipleParameters.kt");
+          }
+
+          @Test
+          @TestMetadata("valVarOnContextParameter.kt")
+          public void testValVarOnContextParameter() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/valVarOnContextParameter.kt");
+          }
+
+          @Test
+          @TestMetadata("visibilityOfContextTypeOnFunction.kt")
+          public void testVisibilityOfContextTypeOnFunction() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/declarationAndUsages/visibilityOfContextTypeOnFunction.kt");
+          }
         }
       }
     }
