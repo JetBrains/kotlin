@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import java.lang.ref.WeakReference
@@ -28,11 +30,16 @@ abstract class KaBaseSymbolPointer<out S : KaSymbol>(originalSymbol: S?) : KaSym
         }
 
         return restoreIfNotCached(analysisSession)?.also {
-            cachedSymbol = WeakReference(it)
+            if (!it.isLocal()) cachedSymbol = WeakReference(it)
         }
     }
 
-    private var cachedSymbol: WeakReference<@UnsafeVariance S>? = originalSymbol?.let { WeakReference(it) }
+    private var cachedSymbol: WeakReference<@UnsafeVariance S>? = originalSymbol?.let {
+        if (!it.isLocal()) WeakReference(it) else null
+    }
+
+    private fun KaSymbol.isLocal() =
+        ((this as? KaClassLikeSymbol)?.classId?.isLocal != false && (this as? KaCallableSymbol)?.callableId?.isLocal != false)
 
     protected abstract fun restoreIfNotCached(analysisSession: KaSession): S?
 }
