@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 import kotlin.reflect.KProperty
 
 @Retention(AnnotationRetention.SOURCE)

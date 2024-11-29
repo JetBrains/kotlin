@@ -30146,6 +30146,12 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
+      @TestMetadata("annotationTargetingFirstOnlyWarn.kt")
+      public void testAnnotationTargetingFirstOnlyWarn() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationTargetingFirstOnlyWarn.kt");
+      }
+
+      @Test
       @TestMetadata("annotationDefaultTargetParamProperty.kt")
       public void testAnnotationDefaultTargetParamProperty() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetParamProperty.kt");
