@@ -108,7 +108,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             returnType = field.type
         }.apply {
             body = context.createIrBuilder(symbol).run {
-                val boundReceiver = dispatchReceiver ?: extensionReceiver
+                val boundReceiver = dispatchReceiver ?: maybeExtensionReceiver()
                 val fieldReceiver = when {
                     field.isStatic -> null
                     boundReceiver != null -> irGet(addExtensionReceiver(boundReceiver.type))
