@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -29,11 +30,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-fun FirVisibilityChecker.isVisibleAsConstructorCall(declaration: FirMemberDeclaration, constructorCallInfo: CallInfo): Boolean {
-    return isVisibleCall(declaration, constructorCallInfo, dispatchReceiver = null, skipCheckForContainingClassVisibility = false)
-}
-
-private fun FirVisibilityChecker.isVisibleCall(
+private fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
     callInfo: CallInfo,
     dispatchReceiver: FirExpression?,
@@ -63,15 +60,23 @@ private fun FirVisibilityChecker.isVisibleCall(
     )
 }
 
-fun FirVisibilityChecker.isVisibleAsNotConstructorCall(
+fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
     candidate: Candidate,
     skipCheckForContainingClassVisibility: Boolean = false,
 ): Boolean {
     val callInfo = candidate.callInfo
-    val dispatchReceiverExpression = candidate.dispatchReceiver?.expression
+    // Dispatch receiver should not be considered during constructor call checking
+    // (Containing classes of the given dispatcher receiver).
+    // Moreover, a constructor call can be obtained from a typealias,
+    // and it's a single way to use the typealias with a specified dispatch receiver (for instance, nested typealias).
+    // That's why the checking for only typealias symbol is also valid.
+    val dispatchReceiverExpression = if (candidate.symbol.let { it is FirConstructorSymbol || it is FirTypeAliasSymbol })
+        null
+    else
+        candidate.dispatchReceiver?.expression
 
-    if (!isVisibleCall(declaration, callInfo, dispatchReceiverExpression, skipCheckForContainingClassVisibility)) {
+    if (!isVisible(declaration, callInfo, dispatchReceiverExpression, skipCheckForContainingClassVisibility)) {
         // There are some examples when applying smart cast makes a callable invisible
         // open class A {
         //     private fun foo() {}
@@ -90,7 +95,13 @@ fun FirVisibilityChecker.isVisibleAsNotConstructorCall(
         val dispatchReceiverWithoutSmartCastType =
             removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiverExpression, candidate.callInfo.session) ?: return false
 
-        if (!isVisibleCall(declaration, callInfo, dispatchReceiverWithoutSmartCastType, skipCheckForContainingClassVisibility)) return false
+        if (!isVisible(
+                declaration,
+                callInfo,
+                dispatchReceiverWithoutSmartCastType,
+                skipCheckForContainingClassVisibility
+            )
+        ) return false
 
         // Note: in case of a smart cast, we already checked the visibility of the smart cast target before,
         // so now it's visibility is not important, only callable visibility itself should be taken into account
@@ -106,14 +117,14 @@ fun FirVisibilityChecker.isVisibleAsNotConstructorCall(
         //    if (param is Info) param.status
         // }
         // Here smart cast is still necessary, because without it 'status' cannot be resolved at all
-        if (!isVisibleCall(declaration, callInfo, dispatchReceiverExpression, skipCheckForContainingClassVisibility = true)) {
+        if (!isVisible(declaration, callInfo, dispatchReceiverExpression, skipCheckForContainingClassVisibility = true)) {
             candidate.dispatchReceiver = ConeResolutionAtom.createRawAtom(dispatchReceiverWithoutSmartCastType)
         }
     }
 
     val backingField = declaration.getBackingFieldIfApplicable()
     if (backingField != null) {
-        candidate.hasVisibleBackingField = isVisibleCall(
+        candidate.hasVisibleBackingField = isVisible(
             backingField,
             callInfo,
             dispatchReceiverExpression,

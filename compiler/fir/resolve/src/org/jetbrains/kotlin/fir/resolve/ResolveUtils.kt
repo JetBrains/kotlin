@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.TypeParameterAsExpression
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirPropertyWithExplicitBackingFieldResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.calls.isVisibleAsNotConstructorCall
+import org.jetbrains.kotlin.fir.resolve.calls.isVisible
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -710,14 +710,14 @@ fun createConeDiagnosticForCandidateWithError(
             val session = candidate.callInfo.session
 
             (symbol as? FirConstructorSymbol)?.typeAliasForConstructor?.let {
-                if (!session.visibilityChecker.isVisibleAsNotConstructorCall(it.fir, candidate)) {
+                if (!session.visibilityChecker.isVisible(it.fir, candidate)) {
                     return ConeVisibilityError(it)
                 }
             }
 
             val declaration = symbol.fir
             if (declaration is FirMemberDeclaration &&
-                session.visibilityChecker.isVisibleAsNotConstructorCall(declaration, candidate, skipCheckForContainingClassVisibility = true)
+                session.visibilityChecker.isVisible(declaration, candidate, skipCheckForContainingClassVisibility = true)
             ) {
                 // We can have declarations that are visible by themselves, but some containing declaration is invisible.
                 // We report the nearest invisible containing declaration, otherwise we'll get a confusing diagnostic like

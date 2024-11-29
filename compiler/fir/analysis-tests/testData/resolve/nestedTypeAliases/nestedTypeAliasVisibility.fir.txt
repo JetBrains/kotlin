@@ -75,13 +75,13 @@ FILE: nestedTypeAliasVisibility.kt
         }
 
         public final fun testProtected(): R|kotlin/Unit| {
-            this@R|/OuterClassInheritor|.R|/OuterClass.InnerClass.InnerClass<HIDDEN: /OuterClass.InnerClass.InnerClass is invisible>#|()
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerClass.InnerClass<HIDDEN: OuterClass.PrivateTAInner is invisible>#|()
             this@R|/OuterClassInheritor|.R|/OuterClass.InnerClass.InnerClass|()
             this@R|/OuterClassInheritor|.R|/OuterClass.InnerClass.InnerClass|()
             R|/Class.Class<HIDDEN: OuterClass.PrivateTA is invisible>#|()
             R|/Class.Class|()
             R|/Class.Class|()
-            this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: /OuterClass.InnerPrivateClass.InnerPrivateClass is invisible>#|()
+            this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: OuterClass.PrivateTAPrivateInner is invisible>#|()
             this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: /OuterClass.InnerPrivateClass.InnerPrivateClass is invisible>#|()
             this@R|/OuterClassInheritor|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: /OuterClass.InnerPrivateClass.InnerPrivateClass is invisible>#|()
         }
@@ -89,10 +89,10 @@ FILE: nestedTypeAliasVisibility.kt
     }
     public final fun testPublic(): R|kotlin/Unit| {
         lval outerClass: R|OuterClass| = R|/OuterClass.OuterClass|()
-        R|<local>/outerClass|.R|/OuterClass.InnerClass.InnerClass<HIDDEN: /OuterClass.InnerClass.InnerClass is invisible>#|()
-        R|<local>/outerClass|.R|/OuterClass.InnerClass.InnerClass<HIDDEN: /OuterClass.InnerClass.InnerClass is invisible>#|()
+        R|<local>/outerClass|.R|/OuterClass.InnerClass.InnerClass<HIDDEN: OuterClass.PrivateTAInner is invisible>#|()
+        R|<local>/outerClass|.R|/OuterClass.InnerClass.InnerClass<HIDDEN: OuterClass.ProtectedTAInner is invisible>#|()
         R|<local>/outerClass|.R|/OuterClass.InnerClass.InnerClass|()
-        R|<local>/outerClass|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: /OuterClass.InnerPrivateClass.InnerPrivateClass is invisible>#|()
+        R|<local>/outerClass|.R|/OuterClass.InnerPrivateClass.InnerPrivateClass<HIDDEN: OuterClass.PrivateTAPrivateInner is invisible>#|()
         Q|OuterClass|.R|/Class.Class<HIDDEN: OuterClass.PrivateTA is invisible>#|()
         Q|OuterClass|.R|/Class.Class<HIDDEN: OuterClass.ProtectedTA is invisible>#|()
         Q|OuterClass|.R|/Class.Class|()
