@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.OnDemandSuppressCache
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
@@ -57,7 +54,6 @@ class GenerationState private constructor(
     val outDirectory: File?,
     private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
     val jvmBackendClassResolver: JvmBackendClassResolver,
-    val isIrBackend: Boolean,
     val ignoreErrors: Boolean,
     val diagnosticReporter: DiagnosticReporter,
 ) {
@@ -128,7 +124,7 @@ class GenerationState private constructor(
                 project, builderFactory, module, bindingContext, configuration,
                 generateDeclaredClassFilter, targetId,
                 moduleName, outDirectory, onIndependentPartCompilationEnd,
-                jvmBackendClassResolver, isIrBackend = true, ignoreErrors,
+                jvmBackendClassResolver, ignoreErrors,
                 diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector),
             ).also {
                 it.files = files
@@ -156,8 +152,6 @@ class GenerationState private constructor(
     val inlineCache: InlineCache = InlineCache()
 
     val incrementalCacheForThisTarget: IncrementalCache?
-    val packagesWithObsoleteParts: Set<FqName>
-    val obsoleteMultifileClasses: List<FqName>
     val deserializationConfiguration: DeserializationConfiguration =
         CompilerDeserializationConfiguration(languageVersionSettings)
 
@@ -178,16 +172,8 @@ class GenerationState private constructor(
                     TargetId(it, "java-production")
                 } ?: error("Target ID should be specified for incremental compilation")
             incrementalCacheForThisTarget = icComponents.getIncrementalCache(targetId)
-            packagesWithObsoleteParts = incrementalCacheForThisTarget.getObsoletePackageParts().map {
-                JvmClassName.byInternalName(it).packageFqName
-            }.toSet()
-            obsoleteMultifileClasses = incrementalCacheForThisTarget.getObsoleteMultifileClasses().map {
-                JvmClassName.byInternalName(it).fqNameForClassNameWithoutDollars
-            }
         } else {
             incrementalCacheForThisTarget = null
-            packagesWithObsoleteParts = emptySet()
-            obsoleteMultifileClasses = emptyList()
         }
     }
 
@@ -207,16 +193,6 @@ class GenerationState private constructor(
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
     val bindingTrace: BindingTrace = DelegatingBindingTrace(originalFrontendBindingContext, "trace in GenerationState")
     val bindingContext: BindingContext = bindingTrace.bindingContext
-    val mainFunctionDetector = MainFunctionDetector(originalFrontendBindingContext, languageVersionSettings)
-    val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
-        bindingContext,
-        classBuilderMode,
-        this.moduleName,
-        languageVersionSettings,
-        config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
-        config.target,
-        isIrBackend
-    )
     val localDelegatedProperties: MutableMap<Type, List<VariableDescriptorWithAccessors>> = mutableMapOf()
 
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext()
@@ -230,16 +206,12 @@ class GenerationState private constructor(
         var resultType: KotlinType? = null
     }
 
-    val jvmDefaultMode: JvmDefaultMode
-        get() = config.jvmDefaultMode
-
     val globalSerializationBindings = JvmSerializationBindings()
-    var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }
+    lateinit var mapInlineClass: (ClassDescriptor) -> Type
 
     class MultiFieldValueClassUnboxInfo(val unboxedTypesAndMethodNamesAndFieldNames: List<Triple<Type, String, String>>) {
         val unboxedTypes = unboxedTypesAndMethodNamesAndFieldNames.map { (type, _, _) -> type }
         val unboxedMethodNames = unboxedTypesAndMethodNamesAndFieldNames.map { (_, methodName, _) -> methodName }
-        val unboxedFieldNames = unboxedTypesAndMethodNamesAndFieldNames.map { (_, _, fieldName) -> fieldName }
     }
 
     var multiFieldValueClassUnboxInfo: (ClassDescriptor) -> MultiFieldValueClassUnboxInfo? = { null }

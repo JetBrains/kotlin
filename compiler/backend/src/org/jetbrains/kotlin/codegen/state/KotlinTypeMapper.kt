@@ -60,7 +60,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
     val languageVersionSettings: LanguageVersionSettings,
     private val useOldInlineClassesManglingScheme: Boolean,
     val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
-    private val isIrBackend: Boolean = false,
     private val typePreprocessor: ((KotlinType) -> KotlinType?)? = null,
     private val namePreprocessor: ((ClassDescriptor) -> String?)? = null
 ) : KotlinTypeMapperBase() {
@@ -170,10 +169,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
         signatureVisitor: JvmSignatureWriter? = null,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT
     ): Type {
-        if (isIrBackend) {
-            throw AssertionError("IR backend shouldn't call KotlinTypeMapper.mapType: $type")
-        }
-
         return mapType(
             type, AsmTypeFactory, mode, typeMappingConfiguration, signatureVisitor
         ) { ktType, asmType, typeMappingMode ->

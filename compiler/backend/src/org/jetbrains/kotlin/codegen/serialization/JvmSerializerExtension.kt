@@ -41,13 +41,12 @@ import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
-class JvmSerializerExtension @JvmOverloads constructor(
+class JvmSerializerExtension(
     private val bindings: JvmSerializationBindings,
     state: GenerationState,
-    private val typeMapper: KotlinTypeMapperBase = state.typeMapper
+    private val typeMapper: KotlinTypeMapperBase,
 ) : SerializerExtension() {
     private val globalBindings = state.globalSerializationBindings
-    private val codegenBinding = state.bindingContext
     override val stringTable = JvmCodegenStringTable(typeMapper)
     private val useTypeTable = state.config.useTypeTableInSerializer
     private val moduleName = state.moduleName
@@ -57,7 +56,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     private val unifiedNullChecks = state.config.unifiedNullChecks
     private val functionsWithInlineClassReturnTypesMangled = state.config.functionsWithInlineClassReturnTypesMangled
     override val metadataVersion = state.config.metadataVersion
-    private val jvmDefaultMode = state.jvmDefaultMode
+    private val jvmDefaultMode = state.config.jvmDefaultMode
     private val approximator = state.typeApproximator
     private val useOldManglingScheme = state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     private val signatureSerializer = JvmSignatureSerializerImpl(stringTable)
