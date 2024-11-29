@@ -169,6 +169,7 @@ private class ExtTestDataFile(
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
+                && !(FILECHECK_STAGE.name in structure.directives)
                 && !(FILECHECK_STAGE.name in structure.directives
                      && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
                 && !(optimizationMode != OptimizationMode.OPT && structure.directives[FILECHECK_STAGE.name] == "OptimizeTLSDataLoads")
