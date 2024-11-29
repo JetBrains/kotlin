@@ -418,7 +418,7 @@ internal class CodeGeneratorVisitor(
             overrideRuntimeGlobals(isFinalBinary)
             appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toConstPointer().llvm } + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
-            if (context.config.produceCInterface) {
+            if (context.config.produceCInterface && isFinalBinary) {
                 context.cAdapterExportedElements?.let { appendCAdapters(it) }
             }
         }
