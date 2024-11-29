@@ -468,6 +468,18 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
   }
 
+  @Test
+  @TestMetadata("wildcardWithoutArguments.kt")
+  public void testWildcardWithoutArguments() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/wildcardWithoutArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("wildcardWithoutArgumentsOnType.kt")
+  public void testWildcardWithoutArgumentsOnType() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/wildcardWithoutArgumentsOnType.kt");
+  }
+
   @Nested
   @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/delegation")
   @TestDataPath("$PROJECT_ROOT")

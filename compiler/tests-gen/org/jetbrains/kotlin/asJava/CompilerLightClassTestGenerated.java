@@ -399,6 +399,16 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/VarArgs.kt");
   }
 
+  @TestMetadata("wildcardWithoutArguments.kt")
+  public void testWildcardWithoutArguments() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/wildcardWithoutArguments.kt");
+  }
+
+  @TestMetadata("wildcardWithoutArgumentsOnType.kt")
+  public void testWildcardWithoutArgumentsOnType() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/wildcardWithoutArgumentsOnType.kt");
+  }
+
   @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
