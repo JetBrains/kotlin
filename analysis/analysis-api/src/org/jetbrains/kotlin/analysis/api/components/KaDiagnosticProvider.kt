@@ -26,8 +26,22 @@ public interface KaDiagnosticProvider {
     public fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
 }
 
+/**
+ * [KaDiagnosticCheckerFilter] controls which kinds of diagnostics are included in the result of diagnostic collection.
+ */
 public enum class KaDiagnosticCheckerFilter {
+    /**
+     * Includes diagnostics only from the compiler's common checkers.
+     */
     ONLY_COMMON_CHECKERS,
+
+    /**
+     * Includes diagnostics from extended checkers (that typically run only in the IDE).
+     */
     ONLY_EXTENDED_CHECKERS,
+
+    /**
+     * Includes diagnostics from both common and extended checkers.
+     */
     EXTENDED_AND_COMMON_CHECKERS,
 }
