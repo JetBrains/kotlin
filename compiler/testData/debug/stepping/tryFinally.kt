@@ -93,8 +93,8 @@ fun box() {
 // test.kt:12 $foo (8, 8)
 // test.kt:26 $mightThrow2 (8, 8, 22, 22, 16)
 // test.kt:27 $mightThrow2
-// test.kt:11 $foo (12, 4, 12)
-// test.kt:14 $foo (8, 8, 8, 8, 8, 8)
+// test.kt:11 $foo (12, 4, 12, 12)
+// test.kt:14 $foo (8, 8, 8, 8, 8, 8, 8, 8, 8)
 // test.kt:16 $foo
 // test.kt:31 $box (13, 4)
 // test.kt:32 $box

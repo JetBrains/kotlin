@@ -240,7 +240,7 @@ class O<T>(i: T) {
 // test.kt:71 $N.<init>
 // test.kt:67 $N.<init> (16, 8)
 // test.kt:68 $N.<init>
-// test.kt:16 $box (4, 6, 6, 4, 4)
+// test.kt:16 $box (4, 6, 6, 6, 6, 6, 6, 4, 4)
 // test.kt:73 $O.<init> (16, 16)
 // test.kt:17 $box (4, 6, 9, 9, 9, 9, 4)
 // test.kt:74 $O.<init> (36, 31)
