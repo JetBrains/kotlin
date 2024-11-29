@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 
@@ -2702,6 +2703,12 @@ internal class CodeGeneratorVisitor(
 
         llvm.irStaticInitializers.forEach {
             val library = it.konanLibrary
+            check(library != null || isFinalBinary) {
+                "Found initializer ${it.initializer.name} for unnamed library when producing not a final module"
+            }
+            check(library == null || generationState.llvmModuleSpecification.containsLibrary(library)) {
+                "Found initializer ${it.initializer.name} for ${library?.uniqueName} when producing ${generationState.llvmModuleName}"
+            }
             val initializers = libraryToInitializers[library]
                     ?: error("initializer for not included library ${library?.libraryFile}")
 
@@ -2710,8 +2717,8 @@ internal class CodeGeneratorVisitor(
 
         fun fileCtorName(libraryName: String, fileName: String) = "$libraryName:$fileName".moduleConstructorName
 
-        fun ctorProto(ctorName: String): LlvmFunctionProto {
-            return ctorFunctionSignature.toProto(ctorName, null, LLVMLinkage.LLVMExternalLinkage)
+        fun ctorProto(ctorName: String, linkage: LLVMLinkage = LLVMLinkage.LLVMExternalLinkage): LlvmFunctionProto {
+            return ctorFunctionSignature.toProto(ctorName, null, linkage)
         }
 
         val ctorFunctions = dependencies.flatMap { dependency ->
@@ -2727,12 +2734,21 @@ internal class CodeGeneratorVisitor(
                 else -> library.moduleConstructorName
             }
 
-            if (library == null || generationState.llvmModuleSpecification.containsLibrary(library)) {
+            if (library == null && !isFinalBinary) {
+                check(llvm.otherStaticInitializers.isEmpty()) { "Losing ${llvm.otherStaticInitializers.size} other initializers" }
+                emptyList()
+            } else if (library == null || generationState.llvmModuleSpecification.containsLibrary(library)) {
                 val otherInitializers = llvm.otherStaticInitializers.takeIf { library == null }.orEmpty()
 
                 listOf(
                     appendStaticInitializers(ctorProto(ctorName), initializers + otherInitializers)
                 )
+            } else if (library.isCInteropLibrary() == true) {
+                check(initializers.isEmpty()) { "cinterop library ${library.uniqueName} has ${initializers.size} initializers" }
+
+                listOf(generateFunctionNoRuntime(codegen, ctorProto(ctorName, LLVMLinkage.LLVMLinkOnceAnyLinkage)) {
+                    ret(null)
+                })
             } else {
                 // A cached library.
                 check(initializers.isEmpty()) {
@@ -2746,7 +2762,7 @@ internal class CodeGeneratorVisitor(
                         if (!context.shouldOptimize()) {
                             error("Library ${library.libraryFile} is expected to be cached")
                         }
-                        emptyList()
+                        listOf(ctorProto(ctorName))
                     }
                     is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
                     is CachedLibraries.Cache.PerFile -> {
