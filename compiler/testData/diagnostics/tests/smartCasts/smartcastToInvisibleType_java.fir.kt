@@ -41,7 +41,7 @@ fun testInference(a: A, b: B) {
 fun <T> dnnSelect(vararg x: T & Any): T & Any = x[0]
 
 fun testDnn(a: A, b: B) {
-    val x = dnnSelect(a, b)
+    val x = <!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>dnnSelect<!>(a, b)
     x.<!INVISIBLE_REFERENCE!>foo<!>()
 }
 
