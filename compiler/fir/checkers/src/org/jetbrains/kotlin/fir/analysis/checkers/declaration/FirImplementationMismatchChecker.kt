@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.zipToMap
 
 sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClassChecker(mppKind) {
     object Regular : FirImplementationMismatchChecker(MppCheckerKind.Platform) {
@@ -296,9 +297,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         val fromParams = fromDeclaration.typeParameterSymbols
         val toParams = toDeclaration.typeParameterSymbols
 
-        val substitutionMap = fromParams.zip(toParams) { from, to ->
-            from to to.toConeType()
-        }.toMap()
+        val substitutionMap = fromParams.zipToMap(toParams) { fromParam, toParam -> fromParam to toParam.toConeType() }
 
         return substitutorByMap(substitutionMap, context.session).substituteOrSelf(this)
     }

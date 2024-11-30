@@ -399,3 +399,42 @@ inline fun <V : Any> KMutableProperty0<V?>.getOrSetIfNull(compute: () -> V): V =
     this.get() ?: compute().also {
         this.set(it)
     }
+
+fun <T, R> List<T>.zipToMap(other: List<R>): Map<T, R> {
+    return LinkedHashMap<T, R>(size.coerceAtLeast(16)).apply {
+        zipTake(other) { t1, t2 -> this[t1] = t2 }
+    }
+}
+
+inline fun <T, R, V, M> List<T>.zipToMap(other: List<R>, transform: (a: T, b: R) -> Pair<V, M>): Map<V, M> {
+    return LinkedHashMap<V, M>(size.coerceAtLeast(16)).apply {
+        zipTake(other) { t1, t2 ->
+            this += transform(t1, t2)
+        }
+    }
+}
+
+inline fun <T, R> List<T>.zipCheckAll(other: List<R>, predicate: (a: T, b: R) -> Boolean): Boolean {
+    zipTake(other) { a, b ->
+        if (!predicate(a, b)) return false
+    }
+    return true
+}
+
+inline fun <T, R> List<T>.zipTake(other: List<R>, action: (a: T, b: R) -> Unit) {
+    for (i in 0 until minOf(size, other.size)) {
+        action(this[i], other[i])
+    }
+}
+
+inline fun <T, R> List<T>.zipTake(other: Array<out R>, action: (a: T, b: R) -> Unit) {
+    for (i in 0 until minOf(size, other.size)) {
+        action(this[i], other[i])
+    }
+}
+
+inline fun <T, R> Array<out T>.zipTake(other: Array<out R>, action: (a: T, b: R) -> Unit) {
+    for (i in 0 until minOf(size, other.size)) {
+        action(this[i], other[i])
+    }
+}

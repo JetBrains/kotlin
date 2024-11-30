@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.zipCheckAll
+import org.jetbrains.kotlin.utils.addToStdlib.zipToMap
 
 /**
  * @param firKotlinClass Kotlin version of built-in class mapped to some JDK class (e.g. kotlin.collections.List)
@@ -321,7 +323,7 @@ class JvmMappedScope(
                 val valueParamsFromKotlin = ctorFromKotlin.fir.valueParameters
                 if (valueParams.size != valueParamsFromKotlin.size) return false
                 val substitutor = buildSubstitutorForOverridesCheck(ctorFromKotlin.fir, this@isShadowedBy, session) ?: return false
-                return valueParamsFromKotlin.zip(valueParams).all { (kotlinCtorParam, javaCtorParam) ->
+                return valueParamsFromKotlin.zipCheckAll(valueParams) { kotlinCtorParam, javaCtorParam ->
                     overrideChecker.isEqualTypes(kotlinCtorParam.returnTypeRef, javaCtorParam.returnTypeRef, substitutor)
                 }
             }
@@ -420,11 +422,9 @@ class JvmMappedScope(
          */
         private fun createMappingSubstitutor(fromClass: FirRegularClass, toClass: FirRegularClass, session: FirSession): ConeSubstitutor =
             substitutorByMap(
-                fromClass.typeParameters.zip(toClass.typeParameters).associate { (fromTypeParameter, toTypeParameter) ->
-                    fromTypeParameter.symbol to ConeTypeParameterTypeImpl(
-                        ConeTypeParameterLookupTag(toTypeParameter.symbol),
-                        isMarkedNullable = false
-                    )
+                fromClass.typeParameters.zipToMap(toClass.typeParameters) { fromTypeParameter, toTypeParameter ->
+                    fromTypeParameter.symbol to
+                            ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(toTypeParameter.symbol), isMarkedNullable = false)
                 },
                 session
             )

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
+
 object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
     private val ConeKotlinType.priority : Int
         get() = when (this) {
@@ -53,7 +55,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
         if (sizeDiff != 0) {
             return sizeDiff
         }
-        for ((aTypeProjection, bTypeProjection) in a.zip(b)) {
+        a.zipTake(b) { aTypeProjection, bTypeProjection ->
             val typeProjectionDiff = compare(aTypeProjection, bTypeProjection)
             if (typeProjectionDiff != 0) {
                 return typeProjectionDiff

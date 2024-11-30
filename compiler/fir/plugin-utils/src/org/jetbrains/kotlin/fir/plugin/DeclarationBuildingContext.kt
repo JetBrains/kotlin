@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 
 public sealed class DeclarationBuildingContext<T : FirDeclaration>(
     protected val session: FirSession,
@@ -176,7 +176,7 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
     }
 
     protected fun initTypeParameterBounds(allParameters: List<FirTypeParameterRef>, ownTypeParameters: List<FirTypeParameter>) {
-        for ((typeParameter, data) in ownTypeParameters.zip(typeParameters)) {
+        ownTypeParameters.zipTake(typeParameters) { typeParameter, data ->
             val coneBounds = data.boundProviders.map { it.invoke(allParameters) }
             val bounds = if (coneBounds.isEmpty()) {
                 listOf(session.builtinTypes.nullableAnyType)

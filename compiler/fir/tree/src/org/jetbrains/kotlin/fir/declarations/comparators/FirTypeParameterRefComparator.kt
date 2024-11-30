@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRefComparator
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 
 object FirTypeParameterRefComparator : Comparator<FirTypeParameterRef> {
     private val FirTypeParameterRef.priority : Int
@@ -55,7 +56,7 @@ object FirTypeParameterRefComparator : Comparator<FirTypeParameterRef> {
                 if (boundsSizeDiff != 0) {
                     return boundsSizeDiff
                 }
-                for ((aBound, bBound) in a.bounds.zip(b.bounds)) {
+                a.bounds.zipTake(b.bounds) { aBound, bBound ->
                     val boundDiff = FirTypeRefComparator.compare(aBound, bBound)
                     if (boundDiff != 0) {
                         return boundDiff

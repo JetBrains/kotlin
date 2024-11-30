@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.zipToMap
 
 /**
  * A generator that converts callable references or arguments that needs an adapter in between. This covers:
@@ -534,7 +535,7 @@ internal class AdapterGenerator(
         if (argument !is FirVarargArgumentsExpression || argument.arguments.size != elements.size) {
             return this
         }
-        val argumentMapping = elements.zip(argument.arguments).toMap()
+        val argumentMapping = elements.zipToMap(argument.arguments)
         // [IrElementTransformer] is not preferred, since it's hard to visit vararg elements only.
         elements.replaceAll { irVarargElement ->
             if (irVarargElement is IrExpression) {

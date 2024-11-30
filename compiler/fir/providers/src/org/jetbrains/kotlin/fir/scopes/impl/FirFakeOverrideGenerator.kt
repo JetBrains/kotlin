@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 object FirFakeOverrideGenerator {
@@ -829,30 +830,26 @@ object FirFakeOverrideGenerator {
          * <T_, C_ : Collection<T1> constructor(): TColl<T1, T2>
          * ```
          */
-        val (ownTypeParameters, constructedClassTypeParameters) = original.typeParameters
-            .zip(newTypeParameters)
-            .partition { it.first !is FirConstructedClassTypeParameterRef }
+        val ownTypeParameters = mutableMapOf<FirTypeParameterSymbol, ConeTypeParameterType>()
+        val constructedClassTypeParameters = mutableMapOf<FirTypeParameterSymbol, ConeTypeParameterType>()
 
-        fun substitutorFrom(
-            pairs: List<Pair<FirTypeParameterRef, FirTypeParameterBuilder>>,
-            useSiteSession: FirSession,
-        ): ConeSubstitutor = substitutorByMap(
-            pairs.associate { (originalTypeParameter, new) ->
-                Pair(originalTypeParameter.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isMarkedNullable = false))
-            },
-            useSiteSession
-        )
+        original.typeParameters.zipTake(newTypeParameters) { originalTypeParameter, newTypeParameter ->
+            val coneTypeParameter = ConeTypeParameterTypeImpl(newTypeParameter.symbol.toLookupTag(), isMarkedNullable = false)
+            val map =
+                if (originalTypeParameter !is FirConstructedClassTypeParameterRef) ownTypeParameters else constructedClassTypeParameters
+            map[originalTypeParameter.symbol] = coneTypeParameter
+        }
 
         val chainedSubstitutor = ChainedSubstitutor(
-            substitutorFrom(ownTypeParameters, useSiteSession),
+            substitutorByMap(ownTypeParameters, useSiteSession),
             ChainedSubstitutor(
                 substitutor,
-                substitutorFrom(constructedClassTypeParameters, useSiteSession)
+                substitutorByMap(constructedClassTypeParameters, useSiteSession)
             )
         )
 
         var wereChangesInTypeParameters = forceTypeParametersRecreation
-        for ((newTypeParameter, originalTypeParameter) in newTypeParameters.zip(original.typeParameters)) {
+        newTypeParameters.zipTake(original.typeParameters) { newTypeParameter, originalTypeParameter ->
             for (boundTypeRef in originalTypeParameter.symbol.resolvedBounds) {
                 val typeForBound = boundTypeRef.coneType
                 val substitutedBound = chainedSubstitutor.substituteOrNull(typeForBound)

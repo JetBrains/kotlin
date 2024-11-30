@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 
 /**
  * @return false does only mean that there were conflicted values for some type parameter. In all other cases, it returns true.
@@ -116,7 +117,7 @@ fun FirSession.doUnify(
     }
 
     // Foo<...> ~ Foo<...>
-    for ((originalTypeArgument, typeWithParametersArgument) in originalType.typeArguments.zip(typeWithParameters.typeArguments)) {
+    originalType.typeArguments.zipTake(typeWithParameters.typeArguments) { originalTypeArgument, typeWithParametersArgument ->
         if (!doUnify(originalTypeArgument, typeWithParametersArgument, targetTypeParameters, result)) return false
     }
 

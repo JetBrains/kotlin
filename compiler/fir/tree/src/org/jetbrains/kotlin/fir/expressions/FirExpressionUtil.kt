@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 
 inline val FirAnnotation.unexpandedConeClassLikeType: ConeClassLikeType?
     get() = ((annotationTypeRef as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)
@@ -171,10 +172,9 @@ val FirQualifiedAccessExpression.allReceiverExpressions: List<FirExpression>
 inline fun FirFunctionCall.forAllReifiedTypeParameters(block: (ConeKotlinType, FirTypeProjectionWithVariance) -> Unit) {
     val functionSymbol = calleeReference.toResolvedNamedFunctionSymbol() ?: return
 
-    for ((typeParameterSymbol, typeArgument) in functionSymbol.typeParameterSymbols.zip(typeArguments)) {
+    functionSymbol.typeParameterSymbols.zipTake(typeArguments) { typeParameterSymbol, typeArgument ->
         if (typeParameterSymbol.isReified && typeArgument is FirTypeProjectionWithVariance) {
-            val type = typeArgument.typeRef.coneTypeOrNull ?: continue
-            block(type, typeArgument)
+            typeArgument.typeRef.coneTypeOrNull?.let { block(it, typeArgument) }
         }
     }
 }

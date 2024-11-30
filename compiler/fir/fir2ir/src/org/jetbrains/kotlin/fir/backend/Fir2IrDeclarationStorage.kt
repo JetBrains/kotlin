@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -430,13 +431,13 @@ class Fir2IrDeclarationStorage(
     fun <T : IrFunction> T.putParametersInScope(function: FirFunction): T {
         val contextParameters = function.contextParametersForFunctionOrContainingProperty()
 
-        for ((firParameter, irParameter) in contextParameters.zip(this.valueParameters.take(contextParameters.size))) {
+        contextParameters.zipTake(this.valueParameters.take(contextParameters.size)) { firParameter, irParameter ->
             if (!firParameter.isLegacyContextReceiver()) {
                 localStorage.putParameter(firParameter, irParameter.symbol)
             }
         }
 
-        for ((firParameter, irParameter) in function.valueParameters.zip(valueParameters.drop(contextParameters.size))) {
+        function.valueParameters.zipTake(valueParameters.drop(contextParameters.size)) { firParameter, irParameter ->
             localStorage.putParameter(firParameter, irParameter.symbol)
         }
         return this

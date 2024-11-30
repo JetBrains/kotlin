@@ -34,13 +34,14 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
+import org.jetbrains.kotlin.utils.addToStdlib.zipToMap
 
 class DataFlowAnalyzerContext(private val session: FirSession) {
     val graphBuilder: ControlFlowGraphBuilder = ControlFlowGraphBuilder()
@@ -1035,10 +1036,13 @@ abstract class FirDataFlowAnalyzer(
 
         val typeParameters = callee.typeParameters
         val typeArgumentsSubstitutor = if (typeParameters.isNotEmpty() && qualifiedAccess is FirQualifiedAccessExpression) {
-            @Suppress("UNCHECKED_CAST")
-            val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
-                typeParameterRef.symbol to typeArgument.toConeTypeProjection().type
-            }.filter { it.second != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
+            val substitutionFromArguments = buildMap {
+                typeParameters.zipTake(qualifiedAccess.typeArguments) { typeParameterRef, typeArgument ->
+                    typeArgument.toConeTypeProjection().type?.let {
+                        put(typeParameterRef.symbol, it)
+                    }
+                }
+            }
             substitutorByMap(substitutionFromArguments, components.session)
         } else {
             ConeSubstitutor.Empty
@@ -1048,7 +1052,9 @@ abstract class FirDataFlowAnalyzer(
         val substitutor = if (originalFunction == null) {
             typeArgumentsSubstitutor
         } else {
-            val map = originalFunction.symbol.typeParameterSymbols.zip(typeParameters.map { it.symbol.toConeType() }).toMap()
+            val map = originalFunction.symbol.typeParameterSymbols.zipToMap(typeParameters) { typeParameterSymbol, typeParameter ->
+                typeParameterSymbol to typeParameter.symbol.toConeType()
+            }
             substitutorByMap(map, components.session).chain(typeArgumentsSubstitutor)
         }
 

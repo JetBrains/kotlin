@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.zipCheckAll
 
 class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractOverrideChecker() {
     private val context = session.typeContext
@@ -41,7 +42,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         val delegated1 = ref1.delegatedTypeRef as? FirUserTypeRef ?: return false
         val delegated2 = ref2.delegatedTypeRef as? FirUserTypeRef ?: return false
         if (delegated1.qualifier.size != delegated2.qualifier.size) return false
-        return delegated1.qualifier.zip(delegated2.qualifier).all { (l, r) -> l.name == r.name }
+        return delegated1.qualifier.zipCheckAll(delegated2.qualifier) { l, r -> l.name == r.name }
     }
 
 
@@ -79,8 +80,9 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         if (overrideCandidate.symbol == baseDeclaration.symbol) return true
         if (overrideCandidate !is FirTypeParameter || baseDeclaration !is FirTypeParameter) return false
         if (overrideCandidate.bounds.size != baseDeclaration.bounds.size) return false
-        return overrideCandidate.symbol.resolvedBounds.zip(baseDeclaration.symbol.resolvedBounds)
-            .all { (aBound, bBound) -> isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor) }
+        return overrideCandidate.symbol.resolvedBounds.zipCheckAll(baseDeclaration.symbol.resolvedBounds) { aBound, bBound ->
+            isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor)
+        }
     }
 
     override fun buildTypeParametersSubstitutorIfCompatible(
@@ -92,8 +94,8 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         val substitutor = buildSubstitutorForOverridesCheck(overrideCandidate, baseDeclaration, session) ?: return null
         if (
             overrideCandidate.typeParameters.isNotEmpty() &&
-            overrideCandidate.typeParameters.zip(baseDeclaration.typeParameters).any { (override, base) ->
-                !isCompatibleTypeParameters(override, base, substitutor)
+            !overrideCandidate.typeParameters.zipCheckAll(baseDeclaration.typeParameters) { override, base ->
+                isCompatibleTypeParameters(override, base, substitutor)
             }
         ) return null
         return substitutor
@@ -119,7 +121,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
 
         if (!commonCallableChecks(overrideCandidate, baseDeclaration, substitutor, ignoreVisibility)) return false
 
-        return overrideCandidate.valueParameters.zip(baseDeclaration.valueParameters).all { (memberParam, selfParam) ->
+        return overrideCandidate.valueParameters.zipCheckAll(baseDeclaration.valueParameters) { memberParam, selfParam ->
             isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
         }
     }
@@ -156,7 +158,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
             overrideCandidate.receiverParameter?.typeRef,
             baseDeclaration.receiverParameter?.typeRef,
             substitutor
-        ) && overrideCandidate.contextParameters.zip(baseDeclaration.contextParameters).all { (memberParam, selfParam) ->
+        ) && overrideCandidate.contextParameters.zipCheckAll(baseDeclaration.contextParameters) { memberParam, selfParam ->
             isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
         }
     }

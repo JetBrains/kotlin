@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 
 // TODO reimplement using AdditionalTypeChecker KT-62864
 object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
@@ -53,7 +54,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
             FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
         )
 
-        for ((contextArgument, contextParameter) in expression.contextArguments.zip(symbol.resolvedContextParameters)) {
+        expression.contextArguments.zipTake(symbol.resolvedContextParameters) { contextArgument, contextParameter ->
             contextArgument.checkExpressionForEnhancedTypeMismatch(
                 expectedType = substitutor.substituteOrSelf(contextParameter.returnTypeRef.coneType),
                 reporter,
@@ -82,7 +83,7 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         if (expression.typeArguments.isEmpty()) return ConeSubstitutor.Empty
 
         val substitutionMap = buildMap {
-            for ((parameter, argument) in symbol.typeParameterSymbols.zip(expression.typeArguments)) {
+            symbol.typeParameterSymbols.zipTake(expression.typeArguments) { parameter, argument ->
                 if (argument is FirTypeProjectionWithVariance) {
                     put(parameter, argument.typeRef.coneType)
                 }

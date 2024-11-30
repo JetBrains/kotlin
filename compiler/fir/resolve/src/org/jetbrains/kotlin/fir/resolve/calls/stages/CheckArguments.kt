@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.utils.addToStdlib.zipCheckAll
 
 internal object CheckArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
@@ -235,9 +236,9 @@ private fun isSubtypeForSamConversion(
     if (invokeSymbol.fir.valueParameters.size != classLikeExpectedFunctionType.typeArguments.size - 1) {
         return false
     }
-    val parameterPairs =
-        invokeSymbol.fir.valueParameters.zip(classLikeExpectedFunctionType.valueParameterTypesIncludingReceiver(session))
-    return parameterPairs.all { (invokeParameter, expectedParameter) ->
+    return invokeSymbol.fir.valueParameters.zipCheckAll(
+        classLikeExpectedFunctionType.valueParameterTypesIncludingReceiver(session)
+    ) { invokeParameter, expectedParameter ->
         val expectedParameterType = expectedParameter.unwrapToSimpleTypeUsingLowerBound()
         // TODO: can we remove is ConeTypeParameterType check here?
         expectedParameterType is ConeTypeParameterType ||

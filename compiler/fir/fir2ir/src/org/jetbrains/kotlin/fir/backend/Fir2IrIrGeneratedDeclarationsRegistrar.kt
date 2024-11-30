@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.IrGeneratedDeclarationsRegistrar
 import org.jetbrains.kotlin.descriptors.Modality
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 
 // opt-in is safe, this code runs after fir2ir is over and all symbols are bound
 @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -201,7 +201,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 }
                 replaceValueParameters(valueParameters)
 
-                for ((firParameter, irParameter) in typeParameters.zip(irFunction.typeParameters)) {
+                typeParameters.zipTake(irFunction.typeParameters) { firParameter, irParameter ->
                     val newBounds = irParameter.superTypes.map { it.toConeType().toFirResolvedTypeRef() }
                     firParameter.replaceBounds(newBounds)
                     firParameter.replaceAnnotations(irParameter.convertAnnotations())

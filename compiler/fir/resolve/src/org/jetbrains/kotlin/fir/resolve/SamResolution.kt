@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
+import org.jetbrains.kotlin.utils.addToStdlib.zipToMap
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 private val SAM_PARAMETER_NAME = Name.identifier("function")
@@ -160,13 +162,13 @@ class FirSamResolver(
                 .map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isMarkedNullable = false) }
 
         val substitutor = substitutorByMap(
-            firRegularClass.typeParameters
-                .map { it.symbol }
-                .zip(newTypeParameterTypes).toMap(),
+            firRegularClass.typeParameters.zipToMap(newTypeParameterTypes) { typeParameter, newTypeParameterType ->
+                typeParameter.symbol to newTypeParameterType
+            },
             session
         )
 
-        for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
+        newTypeParameters.zipTake(firRegularClass.typeParameters) { newTypeParameter, oldTypeParameter ->
             val declared = oldTypeParameter.symbol.fir
             newTypeParameter.bounds += declared.symbol.resolvedBounds.map { typeRef ->
                 buildResolvedTypeRef {
@@ -305,25 +307,27 @@ private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(session: F
     var containsNonSubstitutedArguments = false
 
     fun createMapping(substitutor: ConeSubstitutor): Map<FirTypeParameterSymbol, ConeKotlinType> {
-        return typeParameters.zip(type.typeArguments).associate { (parameter, projection) ->
-            val typeArgument =
-                projection.type?.let(substitutor::substituteOrSelf)
-                // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
-                    ?: parameter.symbol.fir.bounds.firstOrNull()?.coneTypeOrNull
-                        ?.let(substitutor::substituteOrSelf)
-                        ?.also { bound ->
-                            // We only check for type parameters in upper bounds
-                            // because `projection` can contain a type parameter type as well in a situation like
-                            // fun interface Sam<T> {
-                            //      fun invoke()
-                            //      fun foo(s: Sam<T>) {} <--- here T is substituted with T but it's not a recursion
-                            // }
-                            if (bound.containsReferenceToOtherTypeParameter(this)) {
-                                containsNonSubstitutedArguments = true
+        return buildMap {
+            typeParameters.zipTake(type.typeArguments) { parameter, projection ->
+                val typeArgument =
+                    projection.type?.let(substitutor::substituteOrSelf)
+                    // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
+                        ?: parameter.symbol.fir.bounds.firstOrNull()?.coneTypeOrNull
+                            ?.let(substitutor::substituteOrSelf)
+                            ?.also { bound ->
+                                // We only check for type parameters in upper bounds
+                                // because `projection` can contain a type parameter type as well in a situation like
+                                // fun interface Sam<T> {
+                                //      fun invoke()
+                                //      fun foo(s: Sam<T>) {} <--- here T is substituted with T but it's not a recursion
+                                // }
+                                if (bound.containsReferenceToOtherTypeParameter(this@buildSubstitutorWithUpperBounds)) {
+                                    containsNonSubstitutedArguments = true
+                                }
                             }
-                        }
-                    ?: session.builtinTypes.nullableAnyType.coneType
-            Pair(parameter.symbol, typeArgument)
+                        ?: session.builtinTypes.nullableAnyType.coneType
+                put(parameter.symbol, typeArgument)
+            }
         }
     }
 

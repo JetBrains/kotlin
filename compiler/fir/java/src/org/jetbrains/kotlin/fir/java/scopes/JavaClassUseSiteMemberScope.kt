@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 
 /**
  * It's a kind of use-site scope specialized for a Java owner class. Provides access to symbols by names, both for
@@ -610,15 +611,15 @@ class JavaClassUseSiteMemberScope(
             this.name = name
             symbol = FirNamedFunctionSymbol(explicitlyDeclaredFunctionWithErasedValueParameters.callableId)
             this.valueParameters.clear()
-            explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters.zip(
+            explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters.zipTake(
                 relevantFunctionFromSupertypes.fir.valueParameters
-            ).mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
+            ) { overrideParameter, parameterFromSupertype ->
                 if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
                     allParametersAreAny = false
                 }
-                buildJavaValueParameterCopy(overrideParameter as FirJavaValueParameter) {
+                this.valueParameters.add(buildJavaValueParameterCopy(overrideParameter as FirJavaValueParameter) {
                     this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
-                }
+                })
             }
         }.apply {
             initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters

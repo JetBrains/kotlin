@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
+import org.jetbrains.kotlin.utils.addToStdlib.zipToMap
 
 class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, IrElement>() {
     override fun visitElement(element: FirElement, data: IrElement): IrElement {
@@ -116,7 +118,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         if (irWhen.branches.size != whenExpression.branches.size) {
             return data
         }
-        val firBranchMap = irWhen.branches.zip(whenExpression.branches).toMap()
+        val firBranchMap = irWhen.branches.zipToMap(whenExpression.branches)
         irWhen.branches.replaceAll {
             visitWhenBranch(firBranchMap.getValue(it), it)
         }
@@ -159,7 +161,7 @@ class Fir2IrImplicitCastInserter(private val c: Fir2IrComponents) : Fir2IrCompon
         irTry.tryResult = irTry.tryResult.insertSpecialCast(
             tryExpression.tryBlock, tryExpression.tryBlock.resolvedType, tryExpression.resolvedType
         )
-        for ((irCatch, firCatch) in irTry.catches.zip(tryExpression.catches)) {
+        irTry.catches.zipTake(tryExpression.catches) { irCatch, firCatch ->
             irCatch.result = irCatch.result.insertSpecialCast(firCatch.block, firCatch.block.resolvedType, tryExpression.resolvedType)
         }
         (irTry.finallyExpression as? IrContainerExpression)?.insertImplicitCasts(coerceLastExpressionToUnit = true)

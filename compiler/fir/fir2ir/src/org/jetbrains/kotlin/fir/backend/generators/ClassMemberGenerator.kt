@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 
 internal class ClassMemberGenerator(
     private val c: Fir2IrComponents,
@@ -112,7 +113,7 @@ internal class ClassMemberGenerator(
                 }
                 val irParameters = valueParameters.drop(firFunction.contextParameters.size)
                 val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
-                for ((valueParameter, firValueParameter) in irParameters.zip(firFunction.valueParameters)) {
+                irParameters.zipTake(firFunction.valueParameters) { valueParameter, firValueParameter ->
                     visitor.withAnnotationMode(enableAnnotationMode = annotationMode) {
                         valueParameter.setDefaultValue(firValueParameter)
                     }

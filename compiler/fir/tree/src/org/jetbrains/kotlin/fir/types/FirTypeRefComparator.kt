@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
+import org.jetbrains.kotlin.utils.addToStdlib.zipTake
 
 object FirTypeRefComparator : Comparator<FirTypeRef> {
     private val FirTypeRef.priority : Int
@@ -32,7 +33,7 @@ object FirTypeRefComparator : Comparator<FirTypeRef> {
                 if (qualifierSizeDiff != 0) {
                     return qualifierSizeDiff
                 }
-                for ((aQualifier, bQualifier) in a.qualifier.zip(b.qualifier)) {
+                a.qualifier.zipTake(b.qualifier) { aQualifier, bQualifier ->
                     val qualifierNameDiff = aQualifier.name.compareTo(bQualifier.name)
                     if (qualifierNameDiff != 0) {
                         return qualifierNameDiff
@@ -42,8 +43,7 @@ object FirTypeRefComparator : Comparator<FirTypeRef> {
                     if (typeArgumentSizeDiff != 0) {
                         return typeArgumentSizeDiff
                     }
-                    val typeArguments = aQualifier.typeArgumentList.typeArguments.zip(bQualifier.typeArgumentList.typeArguments)
-                    for ((aTypeArgument, bTypeArgument) in typeArguments) {
+                    aQualifier.typeArgumentList.typeArguments.zipTake(bQualifier.typeArgumentList.typeArguments) { aTypeArgument, bTypeArgument ->
                         val typeArgumentDiff = FirTypeProjectionComparator.compare(aTypeArgument, bTypeArgument)
                         if (typeArgumentDiff != 0) {
                             return typeArgumentDiff
