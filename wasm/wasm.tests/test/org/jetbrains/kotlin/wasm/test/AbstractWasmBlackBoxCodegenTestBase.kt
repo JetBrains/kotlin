@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.KlibInterpreterDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.JsKlibInterpreterDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.WasmIrInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
@@ -119,7 +119,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
             enableMetaInfoHandler()
             configureKlibArtifactsHandlersStep {
-                useHandlers(::KlibInterpreterDumpHandler)
+                useHandlers(::JsKlibInterpreterDumpHandler)
             }
             configureWasmArtifactsHandlersStep {
                 useHandlers(::WasmIrInterpreterDumpHandler)

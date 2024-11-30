@@ -164,7 +164,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
             enableMetaInfoHandler()
             configureKlibArtifactsHandlersStep {
-                useHandlers(::KlibInterpreterDumpHandler)
+                useHandlers(::JsKlibInterpreterDumpHandler)
             }
             configureJsArtifactsHandlersStep {
                 useHandlers(::JsIrInterpreterDumpHandler)
