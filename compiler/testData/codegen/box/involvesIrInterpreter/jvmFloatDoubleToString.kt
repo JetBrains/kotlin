@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: NATIVE
+// IGNORE_GLOBAL_METADATA
+// ^^^ absent EVALUATED{IR} diagnostics
 fun <T> T.id() = this
 
 const val toStringDouble1 = 1.0.<!EVALUATED("1.0")!>toString()<!>

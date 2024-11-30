@@ -16,8 +16,12 @@ import org.jetbrains.kotlin.ir.backend.js.IrModuleInfo
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.model.BackendFacade
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.BackendKinds
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import java.io.File
 
@@ -142,7 +146,9 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
      *   - and "default" dependencies (anything that is implicitly added by the Kotlin/Native compiler, ex: stdlib & platform libraries),
      *     BUT only if such libraries were actually used during the compilation.
      */
-    class NativeBackendInput(
+    // TODO KT-73171: Split this class to NativeAfterFrontendBackendInput and NativeDeserializedFromKlibBackendInput,
+    // similar to `sealed class JsIrBackendInput`. This would give return type for future NativeKlibDeserializerFacade
+    data class NativeBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
         override val diagnosticReporter: BaseDiagnosticsCollector,
@@ -152,3 +158,8 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         val usedLibrariesForManifest: List<KotlinLibrary>,
     ) : IrBackendInput()
 }
+
+data class KlibFacades(
+    val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+    val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
+)

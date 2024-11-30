@@ -1,6 +1,7 @@
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // IGNORE_FIR_DIAGNOSTICS
 // IGNORE_BACKEND_K2: NATIVE
+// IGNORE_GLOBAL_METADATA
 var field: Int = 0
 
 fun next(): Int {

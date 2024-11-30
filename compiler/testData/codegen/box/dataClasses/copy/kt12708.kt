@@ -1,6 +1,7 @@
 // LANGUAGE: -ProhibitDataClassesOverridingCopy
 // IGNORE_BACKEND_K1: NATIVE
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_GLOBAL_METADATA
 // FIR status: Disabling ProhibitDataClassesOverridingCopy is not supported
 
 fun box(): String {

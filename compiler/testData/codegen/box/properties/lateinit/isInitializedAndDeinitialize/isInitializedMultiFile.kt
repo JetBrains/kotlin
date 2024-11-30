@@ -6,6 +6,7 @@
 // In K2, isInitialized on a property from another file is forbidden for all backends.
 // IGNORE_BACKEND_K2: ANY
 // IGNORE_LIGHT_ANALYSIS
+// IGNORE_GLOBAL_METADATA
 
 // FILE: A.kt
 

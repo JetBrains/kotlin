@@ -63,4 +63,9 @@ object KlibIrInlinerTestDirectives : SimpleDirectivesContainer() {
         description = "Ignore failures of checking correctness of synthetic accessors",
         applicability = Global
     )
+
+    val IGNORE_DESERIALIZED_DUMP_MISMATCH by enumDirective<TargetBackend>(
+        description = "Ignore failures on IR mismatch before Klib serialization vs after Klib deserialization",
+        applicability = Global
+    )
 }

@@ -7,6 +7,7 @@
 
 // IGNORE_BACKEND: NATIVE
 // KT-57391: error: platform declaration clash: The following functions have the same IR signature
+// IGNORE_GLOBAL_METADATA
 
 // MODULE: common
 // FILE: common.kt

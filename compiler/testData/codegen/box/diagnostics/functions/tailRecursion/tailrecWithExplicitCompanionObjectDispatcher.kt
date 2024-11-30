@@ -1,5 +1,6 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_FIR_DIAGNOSTICS_DIFF
+// IGNORE_GLOBAL_METADATA
 
 class C {
     companion object {

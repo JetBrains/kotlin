@@ -1,6 +1,7 @@
 // ISSUE: KT-55281
 
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_GLOBAL_METADATA
 // REASON: red code (see corresponding diagnostic test)
 
 fun box(): String {

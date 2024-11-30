@@ -1,3 +1,4 @@
+// IGNORE_GLOBAL_METADATA
 // IGNORE_FIR_DIAGNOSTICS_DIFF
 
 tailrec fun test(counter : Int) : Int? {

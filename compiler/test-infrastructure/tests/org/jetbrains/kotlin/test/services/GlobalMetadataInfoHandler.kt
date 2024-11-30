@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.codeMetaInfo.CodeMetaInfoParser
 import org.jetbrains.kotlin.codeMetaInfo.CodeMetaInfoRenderer
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.GlobalMetadataTestDirectives.IGNORE_GLOBAL_METADATA
 
 class GlobalMetadataInfoHandler(
     private val testServices: TestServices,
@@ -73,8 +75,16 @@ class GlobalMetadataInfoHandler(
                 builder.append(actualFileContent)
             }
         }
+        val firstModule = moduleStructure.modules.first()
+        val doIgnoreK2 = firstModule.languageVersionSettings.languageVersion.usesK2 &&
+                firstModule.directives.contains(IGNORE_GLOBAL_METADATA)
         val actualText = builder.toString()
-        testServices.assertions.assertEqualsToFile(moduleStructure.originalTestDataFiles.single(), actualText)
+        if (doIgnoreK2)
+            testServices.assertions.assertNotEquals(moduleStructure.originalTestDataFiles.single().readText(), actualText) {
+                "Test did not fail as expected. Please remove directive ${IGNORE_GLOBAL_METADATA.name}"
+            }
+        else
+            testServices.assertions.assertEqualsToFile(moduleStructure.originalTestDataFiles.single(), actualText)
     }
 
     private fun StringBuilder.stripAdditionalEmptyLines(file: TestFile): CharSequence {
@@ -93,4 +103,12 @@ abstract class AdditionalMetaInfoProcessor(protected val testServices: TestServi
         get() = testServices.globalMetadataInfoHandler
 
     abstract fun processMetaInfos(module: TestModule, file: TestFile)
+}
+
+object GlobalMetadataTestDirectives : SimpleDirectivesContainer() {
+    val IGNORE_GLOBAL_METADATA by directive(
+        description = """
+            Ignore mismatch in global metadata diagnostics
+        """.trimIndent()
+    )
 }

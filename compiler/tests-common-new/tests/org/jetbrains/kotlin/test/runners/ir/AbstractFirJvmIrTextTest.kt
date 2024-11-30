@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoLightTreeParsingErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
+import org.jetbrains.kotlin.test.backend.ir.KlibFacades
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
-import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest.KlibFacades
 import org.jetbrains.kotlin.test.services.PlatformModuleProvider
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 
