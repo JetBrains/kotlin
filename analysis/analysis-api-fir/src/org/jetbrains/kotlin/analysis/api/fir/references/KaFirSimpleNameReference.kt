@@ -46,9 +46,11 @@ internal class KaFirSimpleNameReference(
 
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         check(this is KaFirSession)
-        val results = FirReferenceResolveHelper.resolveSimpleNameReference(this@KaFirSimpleNameReference, this)
-        //This fix-up needed to resolve annotation call into annotation constructor (but not into the annotation type)
-        return fixUpAnnotationCallResolveToCtor(results)
+        return cacheStorage.resolveToSymbolsCache.value.getOrPut(this@KaFirSimpleNameReference) {
+            val results = FirReferenceResolveHelper.resolveSimpleNameReference(this@KaFirSimpleNameReference, this)
+            //This fix-up needed to resolve annotation call into annotation constructor (but not into the annotation type)
+            fixUpAnnotationCallResolveToCtor(results)
+        }
     }
 
     override fun getResolvedToPsi(analysisSession: KaSession): Collection<PsiElement> = with(analysisSession) {

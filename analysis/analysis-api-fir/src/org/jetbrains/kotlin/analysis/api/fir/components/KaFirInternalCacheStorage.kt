@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.platform.utils.NullableConcurrentCache
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import org.jetbrains.kotlin.psi.KtElement
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * This is a dedicated place for caches stored directly inside [KaSession].
@@ -34,6 +36,10 @@ internal class KaFirInternalCacheStorage(private val analysisSession: KaFirSessi
         softCachedValueWithPsiKey {
             NullableConcurrentCache<KtElement, KaCallInfo?>()
         }
+    }
+
+    val resolveToSymbolsCache: CachedValue<ConcurrentHashMap<KaSymbolBasedReference, Collection<KaSymbol>>> by lazy {
+        softCachedValueWithPsiKey { ConcurrentHashMap<KaSymbolBasedReference, Collection<KaSymbol>>() }
     }
 
     /**
