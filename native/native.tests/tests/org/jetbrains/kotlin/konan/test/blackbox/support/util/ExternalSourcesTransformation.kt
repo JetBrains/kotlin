@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
  * This relates only to external codegen tests (see [AbstractNativeCodegenBoxTest]) that may have their own source transformers.
  */
 
-internal typealias ExternalSourceTransformer = (/* file contents */ String) -> /* patched file contents */ String
+typealias ExternalSourceTransformer = (/* file contents */ String) -> /* patched file contents */ String
 typealias ExternalSourceTransformers = List<ExternalSourceTransformer>
 
 internal object DiagnosticsRemovingSourceTransformer : ExternalSourceTransformer {

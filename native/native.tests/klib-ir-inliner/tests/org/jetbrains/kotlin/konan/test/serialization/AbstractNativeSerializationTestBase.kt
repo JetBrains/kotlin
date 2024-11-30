@@ -3,20 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.ir
+package org.jetbrains.kotlin.konan.test.serialization
 
-import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
-import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
-import org.jetbrains.kotlin.js.test.handlers.*
-import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
+import org.jetbrains.kotlin.test.backend.ir.KlibFacades
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
@@ -25,53 +23,41 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
-import java.lang.Boolean.getBoolean
 
-abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
+// Frontend-agnostic base class for IR serialization/deserialization test, configured in Native-specific way.
+abstract class AbstractNativeSerializationTestBase<
+        R : ResultingArtifact.FrontendOutput<R>,
+        I : ResultingArtifact.BackendInput<I>,
+        A : ResultingArtifact.Binary<A>,
+        >(
     val targetFrontend: FrontendKind<R>,
     targetBackend: TargetBackend,
-    private val pathToTestDir: String,
-    private val testGroupOutputDirPrefix: String,
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>
     abstract val irInliningFacade: Constructor<IrInliningFacade<I>>
-    abstract val backendFacade: Constructor<BackendFacade<I, A>>
-    abstract val afterBackendFacade: Constructor<AbstractTestFacade<A, BinaryArtifacts.Js>>?
-    abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
+    abstract val klibFacades: KlibFacades?
 
     override fun TestConfigurationBuilder.configuration() {
-        commonConfigurationForJsBlackBoxCodegenTest()
-        jsArtifactsHandlersStep {
-            useHandlers(
-                ::NodeJsGeneratorHandler,
-                ::JsBoxRunner,
-                ::JsAstHandler
-            )
-        }
+        commonConfigurationForNativeBlackBoxCodegenTest(IGNORE_IR_DESERIALIZATION_TEST)
     }
 
-    protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
-        commonConfigurationForJsCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, irInliningFacade, backendFacade, customIgnoreDirective)
-
-        val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
-        defaultDirectives {
-            JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
-            JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
-            JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
-            +JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-            if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
-        }
+    protected fun TestConfigurationBuilder.commonConfigurationForNativeBlackBoxCodegenTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
+        commonConfigurationForNativeCodegenTest(
+            targetFrontend,
+            frontendFacade,
+            frontendToBackendConverter,
+            irInliningFacade,
+            klibFacades,
+            customIgnoreDirective
+        )
 
         useAdditionalSourceProviders(
-            ::JsAdditionalSourceProvider,
             ::CoroutineHelpersSourceFilesProvider,
-            ::AdditionalDiagnosticsSourceFilesProvider,
         )
 
         forTestsNotMatching(
@@ -89,26 +75,10 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             useHandlers(::IrMangledNameAndSignatureDumpHandler)
         }
 
-        afterBackendFacade?.let { facadeStep(it) }
-        facadeStep(recompileFacade)
-        jsArtifactsHandlersStep {
-            useHandlers(
-                ::JsSourceMapPathRewriter,
-                ::JsSyntheticAccessorsDumpHandler,
-            )
-        }
-
-        useAfterAnalysisCheckers(
-            ::JsArtifactsDumpHandler
-        )
-
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
             enableMetaInfoHandler()
             configureKlibArtifactsHandlersStep {
-                useHandlers(::JsKlibInterpreterDumpHandler)
-            }
-            configureJsArtifactsHandlersStep {
-                useHandlers(::JsIrInterpreterDumpHandler)
+                useHandlers(::NativeKlibInterpreterDumpHandler)
             }
         }
 
@@ -122,20 +92,20 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
 
 @Suppress("reformat")
 fun <
-    R : ResultingArtifact.FrontendOutput<R>,
-    I : ResultingArtifact.BackendInput<I>,
-    A : ResultingArtifact.Binary<A>
-> TestConfigurationBuilder.commonConfigurationForJsCodegenTest(
+        R : ResultingArtifact.FrontendOutput<R>,
+        I : ResultingArtifact.BackendInput<I>,
+        A : ResultingArtifact.Binary<A>,
+        > TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
     targetFrontend: FrontendKind<R>,
     frontendFacade: Constructor<FrontendFacade<R>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>,
     irInliningFacade: Constructor<IrInliningFacade<I>>,
-    backendFacade: Constructor<BackendFacade<I, A>>,
+    klibFacades: KlibFacades?,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
     globalDefaults {
         frontend = targetFrontend
-        targetPlatform = JsPlatforms.defaultJsPlatform
+        targetPlatform = NativePlatforms.unspecifiedNativePlatform
         dependencyKind = DependencyKind.Binary
     }
 
@@ -144,14 +114,14 @@ fun <
     }
 
     useConfigurators(
-        ::CommonEnvironmentConfigurator,
-        ::JsEnvironmentConfigurator,
+        ::NativeEnvironmentConfigurator,
     )
 
     useAdditionalService(::LibraryProvider)
-
+    useAdditionalSourceProviders(
+        ::AdditionalDiagnosticsSourceFilesProvider,
+    )
     useAfterAnalysisCheckers(
-        ::JsFailingTestSuppressor,
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),
     )
 
@@ -170,8 +140,20 @@ fun <
 
     facadeStep(irInliningFacade)
 
-    facadeStep(backendFacade)
-    klibArtifactsHandlersStep {
-        useHandlers(::KlibBackendDiagnosticsHandler)
+    klibFacades?.let {
+        irHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
+        }
+
+        facadeStep(klibFacades.serializerFacade)
+        klibArtifactsHandlersStep {
+            useHandlers(::KlibAbiDumpHandler)
+        }
+        facadeStep(klibFacades.deserializerFacade)
+        klibArtifactsHandlersStep {
+            useHandlers(::KlibBackendDiagnosticsHandler)
+        }
+        // TODO after fix of KT-73609: add `SerializedIrDumpHandler(it, isAfterDeserialization = true)`, like in AbstractIrTextTest.kt
     }
 }
+
