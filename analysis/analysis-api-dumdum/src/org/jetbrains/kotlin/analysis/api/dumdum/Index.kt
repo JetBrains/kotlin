@@ -1,66 +1,64 @@
 package org.jetbrains.kotlin.analysis.api.dumdum
 
-import com.intellij.openapi.fileTypes.FileType
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.StubIndexKey
-import com.intellij.util.Processor
-import com.intellij.util.indexing.DataIndexer
-import com.intellij.util.indexing.FileContent
-import com.intellij.util.indexing.ID
-import com.intellij.util.io.DataExternalizer
-import com.intellij.util.io.KeyDescriptor
+interface Index {
+    fun <S> value(documentId: DocumentId<*>, valueDescriptor: ValueDescriptor<S>): S?
 
-interface StubIndex {
-    fun <K, V> getContainingFilesIterator(
-        indexId: ID<K, V>,
-        dataKey: K,
-        project: Project,
-        scope: GlobalSearchScope,
-    ): Iterator<VirtualFile>
+    fun <K> documents(key: IndexKey<K>): Sequence<DocumentId<*>>
 
-    fun <Key, Psi : PsiElement> processElements(
-        indexKey: StubIndexKey<Key, Psi>,
-        key: Key,
-        project: Project,
-        scope: GlobalSearchScope,
-        requiredClass: Class<Psi>,
-        processor: Processor<in Psi>,
-    ): Boolean
+    fun <K> keys(keyDescriptor: KeyDescriptor<K>): Sequence<K>
 }
 
-interface FileBasedIndex {
-    fun <K, V> processValues(
-        indexId: ID<K, V>,
-        dataKey: K,
-        filter: GlobalSearchScope,
-        processor: Processor<in V>,
-    ): Boolean
-    
-    fun <K, V> processAllKeys(
-        indexId: ID<K, V>,
-        filter: GlobalSearchScope,
-        processor: Processor<in K>,
-    ): Boolean
-}
+data class IndexUpdate<T>(
+    val documentId: DocumentId<*>,
+    val valueType: ValueDescriptor<T>,
+    val value: T,
+    val keys: List<IndexKey<*>>,
+)
 
-fun <K, V> FileBasedIndex.getValues(name: ID<K, V>, fqName: K, scope: GlobalSearchScope): List<V> =
-    buildList {
-        processValues(name, fqName, scope) {
-            add(it)
-            true
+data class DocumentId<T>(
+    val descriptor: DocumentIdDescriptor<T>,
+    val value: T,
+)
+
+data class DocumentIdDescriptor<T>(
+    val type: String,
+    val serializer: Serializer<T>,
+)
+
+data class IndexKey<K>(
+    val keyDescriptor: KeyDescriptor<K>,
+    val key: K,
+)
+
+data class KeyDescriptor<K>(
+    val id: String,
+    val serializer: Serializer<K>,
+)
+
+data class ValueDescriptor<S>(
+    val id: String,
+    val serializer: Serializer<S>,
+)
+
+interface Serializer<T> {
+
+    fun serialize(t: T): ByteArray
+
+    fun deserialize(bytes: ByteArray): T
+
+    companion object {
+
+        private val DUMMY = object : Serializer<Any> {
+            override fun serialize(t: Any): ByteArray {
+                throw UnsupportedOperationException()
+            }
+
+            override fun deserialize(bytes: ByteArray): Any {
+                throw UnsupportedOperationException()
+            }
         }
+
+        @Suppress("UNCHECKED_CAST")
+        fun <T> dummy(): Serializer<T> = DUMMY as Serializer<T>
     }
-
-interface FileBasedIndexExtension<K, V> {
-    val name: ID<K, V>
-    val version: Int
-    val keyDescriptor: KeyDescriptor<K>
-    val valueExternalizer: DataExternalizer<V>
-
-    val inputFilter: List<FileType>
-
-    val indexer: DataIndexer<K, V, FileContent>
 }

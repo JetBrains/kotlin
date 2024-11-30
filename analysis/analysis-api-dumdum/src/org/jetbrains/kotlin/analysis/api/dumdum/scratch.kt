@@ -19,13 +19,17 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.stubs.StubTree
+import com.intellij.psi.tree.IStubFileElementType
 import com.intellij.psi.util.descendantsOfType
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.containers.HashingStrategy
+import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.dumdum.filebasedindex.names.*
 import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.IdeStubIndexService
+import org.jetbrains.kotlin.analysis.api.dumdum.stubindex.KotlinTopLevelClassByPackageIndex
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
@@ -42,6 +46,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.config.*
@@ -70,15 +75,7 @@ fun main() {
         PluginStructureProvider.registerApplicationServices(application, "/META-INF/analysis-api/analysis-api-fir.xml")
         application.registerService(
             BuiltinsVirtualFileProvider::class.java,
-            object : BuiltinsVirtualFileProvider() {
-                override fun getBuiltinVirtualFiles(): Set<VirtualFile> {
-                    TODO("Not yet implemented")
-                }
-
-                override fun createBuiltinsScope(project: Project): GlobalSearchScope {
-                    TODO("Not yet implemented")
-                }
-            }
+            BuiltinsVirtualFileProviderCliImpl()
         )
 
         application.registerService(PluginUtil::class.java, object : PluginUtil {
@@ -206,8 +203,25 @@ fun main() {
                 }
             )
 
-            val stubIndex: StubIndex = 1
-            val fileBasedIndex: FileBasedIndex = 1
+            val index = inMemoryIndex(
+                indexFile(
+                    file = psiFile,
+                    extensions = listOf(
+                        KotlinJvmModuleAnnotationsIndex(),
+                        KotlinModuleMappingIndex(),
+                        KotlinPartialPackageNamesIndex(),
+                        KotlinTopLevelCallableByPackageShortNameIndex(),
+                        KotlinTopLevelClassLikeDeclarationByPackageShortNameIndex(),
+                    )
+                )
+            )
+
+            val fileLocator = FileLocator { documentId ->
+                @Suppress("UNCHECKED_CAST")
+                (documentId as DocumentId<VirtualFile>).value
+            }
+            val stubIndex: StubIndex = StubIndexImpl(index, fileLocator)
+            val fileBasedIndex: FileBasedIndex = FileBasedIndexImpl(index, fileLocator)
 
             registerService(
                 KotlinDirectInheritorsProvider::class.java,
@@ -255,23 +269,35 @@ fun main() {
             )
         }
 
+        psiFile.references.map { it.resolve() }.forEach {
+            println(it)
+        }
 
         val call = psiFile.descendantsOfType<KtCallElement>().single()
         analyze(call) {
             println((call.resolveToCall() as KaSuccessCallInfo).call)
         }
 
-        val fileElementType = KtFileElementType.INSTANCE
-        // let's build stub for my file:
-        val stub = fileElementType.builder.buildStubTree(psiFile)
-        println(stub.childrenStubs)
-
-        val map = StubTree(stub as KotlinFileStub).indexStubTree { indexKey ->
-            HashingStrategy.canonical()
-        }
-        println(map)
     }
 }
+
+fun indexFile(
+    file: PsiFile,
+    extensions: List<FileBasedIndexExtension<*, *>>,
+): List<IndexUpdate<*>> =
+    fileBasedIndexesUpdates(
+        fileContent = FileContentImpl.createByFile(file.virtualFile, file.project),
+        extensions = extensions
+    ) +
+        (file.fileElementType as? IStubFileElementType<*>)?.let { stubFileElementType ->
+            val stubElement = stubFileElementType.builder.buildStubTree(file)
+            listOf(
+                stubIndexesUpdate(
+                    virtualFile = file.virtualFile,
+                    tree = StubTree(stubElement as PsiFileStub<*>)
+                )
+            )
+        }.orEmpty()
 
 
 fun Stub.serializer(): ObjectStubSerializer<*, *> =
