@@ -131,9 +131,10 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
             get() = state.diagnosticReporter as BaseDiagnosticsCollector
     }
 
+    sealed class NativeBackendInput : IrBackendInput()
+
     /**
-     * Note: For the classic frontend both [firMangler] and [metadataSerializer] are null.
-     * The latter is because the Native backend uses
+     * Note: For the classic frontend [metadataSerializer] is null, since the Native backend uses
      * [org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer] which serializes a whole module.
      *
      * @property usedLibrariesForManifest - The list of dependency libraries that should be written to the produced KLIB
@@ -142,7 +143,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
      *   - and "default" dependencies (anything that is implicitly added by the Kotlin/Native compiler, ex: stdlib & platform libraries),
      *     BUT only if such libraries were actually used during the compilation.
      */
-    class NativeBackendInput(
+    data class NativeAfterFrontendBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
         override val diagnosticReporter: BaseDiagnosticsCollector,
@@ -150,5 +151,21 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val irMangler: KotlinMangler.IrMangler,
         val metadataSerializer: KlibSingleFileMetadataSerializer<*>?,
         val usedLibrariesForManifest: List<KotlinLibrary>,
-    ) : IrBackendInput()
+    ) : NativeBackendInput()
+
+    class NativeDeserializedFromKlibBackendInput(
+        val moduleInfo: IrModuleInfo,
+        val klib: File,
+        override val irPluginContext: IrPluginContext,
+        override val diagnosticReporter: BaseDiagnosticsCollector,
+    ) : NativeBackendInput() {
+        override val irModuleFragment: IrModuleFragment
+            get() = moduleInfo.module
+
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?
+            get() = moduleInfo.symbolTable.signaturer?.mangler
+
+        override val irMangler: KotlinMangler.IrMangler
+            get() = moduleInfo.deserializer.fakeOverrideBuilder.mangler
+    }
 }

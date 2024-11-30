@@ -93,7 +93,7 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
             null
         }
 
-        return IrBackendInput.NativeBackendInput(
+        return IrBackendInput.NativeAfterFrontendBackendInput(
             fir2IrResult.irModuleFragment,
             fir2IrResult.pluginContext,
             diagnosticReporter = diagnosticReporter,
