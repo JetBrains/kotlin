@@ -93,24 +93,56 @@ fun main() {
 
         val project = env.project as MockProject
 
-        val singleFile = LightVirtualFile(
-            "dumdum.kt",
-            KotlinFileType.INSTANCE,
-            "fun hello() { bar() }; fun bar() { }"
+        val files = mapOf(
+            "foo.kt" to """
+                class Foo {
+                    fun foo() { Bar().bar() }
+                }
+                
+            """.trimIndent(),
+            "bar.kt" to """
+                class Bar {
+                    fun bar() { Foo().foo() }
+                }
+            """.trimIndent()
         )
 
-        val psiFile = PsiManager.getInstance(project).findFile(singleFile)!!
+        val virtualFiles = files.map { (name, content) ->
+            LightVirtualFile(
+                name,
+                KotlinFileType.INSTANCE,
+                content
+            )
+        }
+
+        val psiManager = PsiManager.getInstance(project)
+
+        val index = inMemoryIndex(
+            virtualFiles.flatMap { virtualFile ->
+                val psiFile = psiManager.findFile(virtualFile)!!
+                indexFile(
+                    file = psiFile,
+                    extensions = listOf(
+                        KotlinJvmModuleAnnotationsIndex(),
+                        KotlinModuleMappingIndex(),
+                        KotlinPartialPackageNamesIndex(),
+                        KotlinTopLevelCallableByPackageShortNameIndex(),
+                        KotlinTopLevelClassLikeDeclarationByPackageShortNameIndex(),
+                    )
+                )
+            }
+        )
 
         val singleModule = KaSourceModuleImpl(
             directRegularDependencies = emptyList(),
             directDependsOnDependencies = emptyList(),
             directFriendDependencies = emptyList(),
-            contentScope = GlobalSearchScope.filesScope(project, listOf(singleFile)),
+            contentScope = GlobalSearchScope.filesScope(project, virtualFiles),
             targetPlatform = JvmPlatforms.defaultJvmPlatform,
             project = project,
             name = "dumdum",
             languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST),
-            psiRoots = listOf(psiFile)
+            psiRoots = virtualFiles.map { psiManager.findFile(it)!! }
         )
 
         project.apply {
@@ -203,19 +235,6 @@ fun main() {
                 }
             )
 
-            val index = inMemoryIndex(
-                indexFile(
-                    file = psiFile,
-                    extensions = listOf(
-                        KotlinJvmModuleAnnotationsIndex(),
-                        KotlinModuleMappingIndex(),
-                        KotlinPartialPackageNamesIndex(),
-                        KotlinTopLevelCallableByPackageShortNameIndex(),
-                        KotlinTopLevelClassLikeDeclarationByPackageShortNameIndex(),
-                    )
-                )
-            )
-
             val fileLocator = FileLocator { documentId ->
                 @Suppress("UNCHECKED_CAST")
                 (documentId as DocumentId<VirtualFile>).value
@@ -269,15 +288,14 @@ fun main() {
             )
         }
 
-        psiFile.references.map { it.resolve() }.forEach {
-            println(it)
+        for (file in virtualFiles) {
+            val psiFile = psiManager.findFile(file)!!
+            psiFile.descendantsOfType<KtCallElement>().forEach { call -> 
+                analyze(call) {
+                    println((call.resolveToCall() as KaSuccessCallInfo).call)
+                }
+            }
         }
-
-        val call = psiFile.descendantsOfType<KtCallElement>().single()
-        analyze(call) {
-            println((call.resolveToCall() as KaSuccessCallInfo).call)
-        }
-
     }
 }
 
@@ -289,15 +307,15 @@ fun indexFile(
         fileContent = FileContentImpl.createByFile(file.virtualFile, file.project),
         extensions = extensions
     ) +
-        (file.fileElementType as? IStubFileElementType<*>)?.let { stubFileElementType ->
-            val stubElement = stubFileElementType.builder.buildStubTree(file)
-            listOf(
-                stubIndexesUpdate(
-                    virtualFile = file.virtualFile,
-                    tree = StubTree(stubElement as PsiFileStub<*>)
+            (file.fileElementType as? IStubFileElementType<*>)?.let { stubFileElementType ->
+                val stubElement = stubFileElementType.builder.buildStubTree(file)
+                listOf(
+                    stubIndexesUpdate(
+                        virtualFile = file.virtualFile,
+                        tree = StubTree(stubElement as PsiFileStub<*>)
+                    )
                 )
-            )
-        }.orEmpty()
+            }.orEmpty()
 
 
 fun Stub.serializer(): ObjectStubSerializer<*, *> =
