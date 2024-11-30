@@ -239,8 +239,8 @@ fun main() {
                 @Suppress("UNCHECKED_CAST")
                 (documentId as DocumentId<VirtualFile>).value
             }
-            val stubIndex: StubIndex = StubIndexImpl(index, fileLocator)
-            val fileBasedIndex: FileBasedIndex = FileBasedIndexImpl(index, fileLocator)
+            val stubIndex: StubIndex = index.stubIndex(fileLocator)
+            val fileBasedIndex: FileBasedIndex = index.fileBased(fileLocator)
 
             registerService(
                 KotlinDirectInheritorsProvider::class.java,
