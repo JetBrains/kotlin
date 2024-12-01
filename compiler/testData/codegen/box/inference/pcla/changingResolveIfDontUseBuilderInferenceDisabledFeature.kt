@@ -1,7 +1,8 @@
 // WITH_STDLIB
 // LANGUAGE: -UseBuilderInferenceOnlyIfNeeded
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND_K2: NATIVE
 // FIR status: K2 is not intended to handle properly disabling the feature introduced at 1.6
+// JVM_ABI_K1_K2_DIFF
 
 import kotlin.experimental.ExperimentalTypeInference
 

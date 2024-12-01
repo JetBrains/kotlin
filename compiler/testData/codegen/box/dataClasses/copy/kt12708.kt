@@ -1,6 +1,8 @@
 // LANGUAGE: -ProhibitDataClassesOverridingCopy
 // IGNORE_BACKEND_K1: NATIVE
-// IGNORE_BACKEND_K2: ANY
+// ^^^ error: the following features cannot be disabled manually, because the version they first appeared in is no longer supported:
+//     ProhibitDataClassesOverridingCopy
+// IGNORE_BACKEND_K2: NATIVE
 // FIR status: Disabling ProhibitDataClassesOverridingCopy is not supported
 
 fun box(): String {

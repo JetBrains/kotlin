@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
+import org.jetbrains.kotlin.backend.common.BackendException
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runWithEnablingFirUseOption
 import org.jetbrains.kotlin.test.services.TestServices
@@ -21,8 +23,15 @@ class K1AndK2JvmIrBackendFacade(testServices: TestServices) :
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInputsFromK1AndK2): BinaryArtifacts.JvmFromK1AndK2? {
         val fromClassicFrontend = backendForClassicFrontend.transform(module, inputArtifact.fromK1) ?: return null
-        val fromFir =
+        val fromFir = try {
             runWithEnablingFirUseOption(testServices, module) { backendForFir.transform(module, inputArtifact.fromK2) } ?: return null
+        } catch (e: BackendException) {
+            // Backend crash in JVM ABI consistency tests might be caused by expected FIR frontend error, which is indicated by presence of `*.fir.fail` file.
+            // If so, this crash should be ignored, and this approach is much faster, than to run whole set of FIR checkers before backend invocation.
+            if (FirFailingTestSuppressor(testServices).failFile() != null) {
+                return null // when FIR frontend errors are expected -> backend crashes are inevitable and should be ignored.
+            } else throw e
+        }
         return BinaryArtifacts.JvmFromK1AndK2(fromClassicFrontend, fromFir)
     }
 

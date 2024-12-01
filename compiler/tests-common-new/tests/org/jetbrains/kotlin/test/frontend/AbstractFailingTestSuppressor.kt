@@ -12,12 +12,14 @@ import java.io.File
 
 abstract class AbstractFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
 
+    fun failFile() = testFile().let { it.parentFile.resolve("${it.nameWithoutExtension}.fail").takeIf { it.exists() } }
+
     protected abstract fun testFile(): File
 
     protected abstract fun hasFailure(failedAssertions: List<WrappedException>): Boolean
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val failFile = testFile().parentFile.resolve("${testFile().nameWithoutExtension}.fail").takeIf { it.exists() }
+        val failFile = failFile()
             ?: return failedAssertions
         val failReason = failFile.readText().trim()
         if (hasFailure(failedAssertions) || failReason == INCONSISTENT_DIAGNOSTICS) return emptyList()

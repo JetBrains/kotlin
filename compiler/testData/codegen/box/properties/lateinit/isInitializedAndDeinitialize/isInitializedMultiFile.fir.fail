@@ -1,0 +1,1 @@
+// In K2, isInitialized on a property from another file is forbidden for all backends.

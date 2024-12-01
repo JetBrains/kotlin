@@ -1,6 +1,8 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM, NATIVE
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
+// ^^^ TypeError: $f2 is not a function
 // WASM_MUTE_REASON: IGNORED_IN_JS
+// IGNORE_BACKEND: NATIVE
+// ^^^ Exit code is 139 while 0 was expected.
 // FIR status: don't support legacy feature. UNINITIALIZED_PARAMETER y. See KT-49800
 // LANGUAGE: -ProhibitIllegalValueParameterUsageInDefaultArguments
 

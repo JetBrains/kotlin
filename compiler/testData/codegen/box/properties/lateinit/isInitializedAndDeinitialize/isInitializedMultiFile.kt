@@ -3,8 +3,8 @@
 // On JVM, isInitialized on a property from another file is forbidden because lateinit-ness is not included in the an ABI of a property.
 // Native became stable in 1.9.20 while `NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess` was introduced in 1.9. Disabling old features in stable Native is not supported.
 // IGNORE_BACKEND_K1: JVM, JVM_IR, NATIVE
+// IGNORE_BACKEND_K2: NATIVE
 // In K2, isInitialized on a property from another file is forbidden for all backends.
-// IGNORE_BACKEND_K2: ANY
 // IGNORE_LIGHT_ANALYSIS
 
 // FILE: A.kt

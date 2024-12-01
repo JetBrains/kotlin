@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -73,6 +74,9 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
 
             configureBlackBoxTestSettings()
             configureDumpHandlersForCodegenTest()
+            useAfterAnalysisCheckers(
+                ::FirFailingTestSuppressor
+            )
         }
     }
 }

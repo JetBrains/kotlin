@@ -1,0 +1,13 @@
+MODULE main
+	CLASS ChangingResolveIfDontUseBuilderInferenceDisabledFeatureKt$box$x$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<Ljava/util/Map<Ljava/lang/CharSequence;Ljava/lang/String;>;Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;Lkotlin/Unit;>;
+		METHOD invoke(Ljava/util/Map;)V
+			Property: method.signature
+				K1
+					(Ljava/util/Map<Ljava/lang/CharSequence;Ljava/lang/String;>;)V
+				K2
+					(Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;)V
