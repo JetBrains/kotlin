@@ -56686,6 +56686,24 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
     }
 
     @Test
+    @TestMetadata("kt20070_1.kt")
+    public void testKt20070_1() {
+      runTest("compiler/testData/codegen/box/specialBuiltins/kt20070_1.kt");
+    }
+
+    @Test
+    @TestMetadata("kt20070_2.kt")
+    public void testKt20070_2() {
+      runTest("compiler/testData/codegen/box/specialBuiltins/kt20070_2.kt");
+    }
+
+    @Test
+    @TestMetadata("kt20070_3.kt")
+    public void testKt20070_3() {
+      runTest("compiler/testData/codegen/box/specialBuiltins/kt20070_3.kt");
+    }
+
+    @Test
     @TestMetadata("mapGetOrDefault.kt")
     public void testMapGetOrDefault() {
       runTest("compiler/testData/codegen/box/specialBuiltins/mapGetOrDefault.kt");

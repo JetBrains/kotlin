@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -315,8 +316,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
         // Generate common bridges
         val generated = mutableMapOf<Method, Bridge>()
-
-        for (override in irFunction.allOverridden()) {
+        val allOverridden = irFunction.allOverridden()
+        for (override in allOverridden) {
             if (override.isFakeOverride) continue
 
             val signature = override.jvmMethod
@@ -328,6 +329,47 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             }
         }
 
+        /**
+         * See KT-20070.
+         *
+         * Check if a method indirectly overridden [kotlin.collections.Map.entries].
+         * If [irFunction] directly override [kotlin.collections.Map.entries], no issue here.
+         * If an overridden chain like this: A1.entries -> A2.entries -> ... -> An.entries -> Map.entries
+         * ("->" represents "override"), and all "entries" functions in from 'A2' to 'An' are FAKEOVERRIDE,
+         * the issue occurs.
+         * To solve this, we add a hardcoded bridge "getEntries()Ljava/util/Set;" here.
+         *
+         * This issue occurred because we forgot to add "getEntries()Ljava/tilt/Set;". The
+         * bridge method for [kotlin.collections.Map.entries] is "entrySet()Ljava/tilt/Set;"
+         * (see [org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP]).
+         * But when the above situation occurs, we also need a "getEntries()Ljava/util/Set;".
+         * So the hardcoded bridge will not affect other situations.
+         */
+        val entriesGetterName = "<get-entries>"
+        val mapEntriesName = StandardNames.FqNames.map.child(Name.identifier("<get-entries>"))
+        val entriesGetters = allOverridden.filter {
+            it.kotlinFqName != mapEntriesName && it.name.asString() == entriesGetterName
+        }
+        val overrideMapEntries =
+            // Check not directly override [kotlin.collections.Map.entries]
+            irFunction.overriddenSymbols.none { it.owner.kotlinFqName == mapEntriesName }
+                    // Check all override in chain is FAKEOVERRIDE
+                    && entriesGetters.isNotEmpty()
+                    && entriesGetters.all { it.isFakeOverride }
+                    // Check if really override [kotlin.collections.Map.entries]
+                    && allOverridden.any { it.kotlinFqName == mapEntriesName }
+        if (overrideMapEntries) {
+            val override = irFunction.overriddenSymbols.first {
+                it.owner.isFakeOverride && it.owner.name.asString() == entriesGetterName
+            }.owner
+            val signature = override.jvmMethod
+            if (targetMethod != signature && signature !in blacklist) {
+                val bridge = generated.getOrPut(signature) {
+                    Bridge(override, signature)
+                }
+                bridge.overriddenSymbols += override.symbol
+            }
+        }
         if (generated.isEmpty())
             return
 
