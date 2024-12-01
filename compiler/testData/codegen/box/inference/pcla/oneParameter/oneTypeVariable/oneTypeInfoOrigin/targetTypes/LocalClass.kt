@@ -1,13 +1,3 @@
-// IGNORE_BACKEND: JVM
-/* ^ code compiled by legacy JVM backend fails in run-time with
- * NoSuchMethodError: LocalClassKt$testYield$3$buildee$1$Local: method <init>()V not found
- */
-
-// IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND: WASM
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// IGNORE_LIGHT_ANALYSIS
-
 // CHECK_TYPE_WITH_EXACT
 
 class Buildee<CT> {

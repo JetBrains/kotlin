@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure;
 import org.jetbrains.kotlin.TestHelperGeneratorKt;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +44,9 @@ public class TestFiles {
     private static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)(?:\\r\\n|\\n)");
 
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
+
+    // Must be same as in AdditionalDiagnosticsSourceFilesProvider.directiveToFileMap
+    private static final String checkTypeWithExact = "compiler/testData/diagnostics/helpers/types/checkTypeWithExact.kt";
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
@@ -149,6 +155,23 @@ public class TestFiles {
                                                              (expectedText.length() - 1);
         }
 
+        if (isDirectiveDefined(expectedText, "CHECK_TYPE_WITH_EXACT")) {
+            M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList(), Collections.emptyList()) : null;
+            String checkTypeWithExactText;
+            try {
+                checkTypeWithExactText = String.join("\n", Files.readAllLines(Paths.get(checkTypeWithExact)));
+            } catch (IOException ioe) {
+                checkTypeWithExactText = "ERROR: File " +
+                                         checkTypeWithExact + " is required, when CHECK_TYPE_WITH_EXACT directive is specified";
+            }
+            testFiles.add(
+                    factory.createFile(
+                            supportModule,
+                            "checkTypeWithExact.kt",
+                            checkTypeWithExactText,
+                            parseDirectives(commonPrefixOrWholeFile)
+                    ));
+        }
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
             M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList(), Collections.emptyList()) : null;
             if (supportModule != null) {

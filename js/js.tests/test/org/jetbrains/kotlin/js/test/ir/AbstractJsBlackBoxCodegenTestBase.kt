@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersFo
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 import java.lang.Boolean.getBoolean
@@ -70,6 +71,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         useAdditionalSourceProviders(
             ::JsAdditionalSourceProvider,
             ::CoroutineHelpersSourceFilesProvider,
+            ::AdditionalDiagnosticsSourceFilesProvider,
         )
 
         forTestsNotMatching(

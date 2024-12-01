@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersFo
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
 
@@ -64,6 +65,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         useAdditionalSourceProviders(
             ::WasmAdditionalSourceProvider,
             ::CoroutineHelpersSourceFilesProvider,
+            ::AdditionalDiagnosticsSourceFilesProvider,
         )
 
         additionalSourceProvider?.let {
