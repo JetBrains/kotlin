@@ -66,7 +66,11 @@ internal fun <K, V> build(builder: MutableMap<K, V>): Map<K, V> {
  * Otherwise, calls the [defaultValue] function,
  * puts its result into the map under the given key, and returns the call result.
  *
- * The result of [defaultValue] is put into the map even if it is `null`.
+ * In contrast to [getOrPutIfMissing], this function puts and returns
+ * the result of the [defaultValue] function if the [key] is mapped to a `null` value.
+ *
+ * When the given [key] is not in this map or is mapped to a `null`, the result of [defaultValue],
+ * even if `null`, is put into the map under the key.
  * If [defaultValue] throws an exception, the exception is rethrown.
  *
  * This function guarantees not to put the new value into the map if the key is already
@@ -99,6 +103,72 @@ internal fun <K, V> ConcurrentMap<K, V>.internalGetOrPutIfNull(key: K, newValue:
         @Suppress("UNCHECKED_CAST")
         this.putIfAbsent(key, newValue) as V
     }
+
+/**
+ * Concurrent getOrPutIfNull, that is safe for concurrent maps.
+ *
+ * Returns the value for the given [key] if the value is present and not `null`.
+ * Otherwise, calls the [defaultValue] function,
+ * puts its result into the map under the given key, and returns the call result.
+ *
+ * In contrast to [getOrPutIfMissing], this function puts and returns
+ * the result of the [defaultValue] function if the [key] is mapped to a `null` value.
+ *
+ * When the given [key] is not in this map or is mapped to a `null`, the result of [defaultValue],
+ * even if `null`, is put into the map under the key.
+ * If [defaultValue] throws an exception, the exception is rethrown.
+ *
+ * This function guarantees not to put the new value into the map if the key is already
+ * associated with a non-null value. However, the [defaultValue] function may still be invoked.
+ *
+ * This function relies on [ConcurrentMap.computeIfAbsent]. Therefore, `ConcurrentMap` implementations
+ * that support `null` values must override the default `computeIfAbsent` implementation, so that
+ * the result of the `mappingFunction` is put into the map both when there is no existing value for the key
+ * and when the key is associated with a `null` value.
+ *
+ * @throws NullPointerException if the specified [key] or the result of [defaultValue] is `null`,
+ *   and this concurrent map does not support `null` keys or values.
+ *
+ * @sample samples.collections.Maps.Usage.getOrPutIfNull
+ */
+@SinceKotlin("2.1")
+@kotlin.internal.InlineOnly
+public inline fun <K, V> ConcurrentMap<K, V>.getOrPutIfNull(key: K, crossinline defaultValue: () -> V): V {
+    return getOrPut(key, defaultValue)
+}
+
+/**
+ * Concurrent getOrPutIfMissing, that is safe for concurrent maps.
+ *
+ * Returns the value for the given [key] if the value is present.
+ * Otherwise, calls the [defaultValue] function,
+ * puts its result into the map under the given key, and returns the call result.
+ *
+ * In contrast to [getOrPutIfNull], this function returns
+ * the mapped value, even if that value is `null`.
+ *
+ * When the given [key] is not in this map, the result of [defaultValue],
+ * even if `null`, is put into the map under the key.
+ * If [defaultValue] throws an exception, the exception is rethrown.
+ *
+ * This function guarantees not to put the new value into the map if the key is already
+ * associated with a value. However, the [defaultValue] function may still be invoked.
+ *
+ * @throws NullPointerException if the specified [key] or the result of [defaultValue] is `null`,
+ *   and this concurrent map does not support `null` keys or values.
+ *
+ * @sample samples.collections.Maps.Usage.getOrPutIfMissing
+ */
+@SinceKotlin("2.1")
+@kotlin.internal.InlineOnly
+public inline fun <K, V> ConcurrentMap<K, V>.getOrPutIfMissing(key: K, crossinline defaultValue: () -> V): V {
+    // TODO: I'm not sure how to implement this function correctly.
+    //   If putIfAbsent returns `null`, it is either because there was no mapped value or the value is null.
+    //   We should return the defaultValue() if the new value was put.
+    //   How can we check this atomically?
+    return this.get(key)
+        ?: defaultValue().let { default -> this.putIfAbsent(key, default) as V }
+}
 
 
 /**
