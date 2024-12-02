@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.K2JVMCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
@@ -39,6 +40,6 @@ class JvmCliPipeline(override val performanceManager: K2JVMCompilerPerformanceMa
                 (script || expression != null || freeArgs.isEmpty())
 
     override fun isKaptMode(arguments: K2JVMCompilerArguments): Boolean {
-        return arguments.useK2Kapt == true
+        return K2JVMCompiler.kaptIsEnabled(arguments)
     }
 }

@@ -41,8 +41,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         arguments: K2JVMCompilerArguments,
     ): Boolean {
         val isK2 = super.shouldRunK2(messageCollector, arguments)
-        val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
-        if (isK2 && isKaptUsed && !arguments.useK2Kapt) {
+        if (isK2 && kaptIsEnabled(arguments) && !arguments.useK2Kapt) {
             arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
             if (arguments.apiVersion?.startsWith("2") == true) {
                 arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
@@ -53,7 +52,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return false
         }
 
-        return true
+        return isK2
     }
 
     override fun doExecutePhased(
@@ -273,6 +272,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             return if (messageCollector.hasErrors()) null else environment
         }
+
+        internal fun kaptIsEnabled(arguments: K2JVMCompilerArguments): Boolean {
+            return arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
+        }
     }
 
     override val defaultPerformanceManager: K2JVMCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
@@ -333,7 +336,7 @@ fun CompilerConfiguration.configureModuleChunk(
     }
 }
 
-fun ModuleChunk.targetDescription(): String {
+internal fun ModuleChunk.targetDescription(): String {
     return modules
         .map { input -> input.getModuleName() + "-" + input.getModuleType() }
         .let { names -> names.singleOrNull() ?: names.joinToString() }

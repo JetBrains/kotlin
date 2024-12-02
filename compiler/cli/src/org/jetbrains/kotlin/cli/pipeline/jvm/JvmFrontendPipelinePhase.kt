@@ -58,6 +58,12 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         ) ?: return null
 
         FirAnalysisHandlerExtension.analyze(environment.project, configuration)?.let {
+            /**
+             * If the analysis handler exception finishes successfully, we should stop the pipeline (as it doesn't produce the proper
+             *   fronted artifact), but we don't need to return the [ExitCode.COMPILATION_ERROR] (because the "compilation" finished
+             *   successfully). Ideally, it should be implemented in a way, when analysis handler extensions are run in the dedicated
+             *   pipeline (KT-73576), so this is a temporary solution.
+             */
             when (it) {
                 true -> throw SuccessfulPipelineExecutionException()
                 false -> throw PipelineStepException(definitelyCompilerError = true)
