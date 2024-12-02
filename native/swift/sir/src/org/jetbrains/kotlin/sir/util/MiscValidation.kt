@@ -38,6 +38,7 @@ private val swiftIdentifierNonCompliantRegex =
 
 // https://docs.swift.org/swift-book/documentation/the-swift-programming-language/lexicalstructure/
 private val swiftKeywords = setOf(
+    "_", // behaves like a wildcard pattern rather than identifier name
     // Declarations
     "associatedtype", "borrowing", "class", "consuming", "deinit", "enum", "extension", "fileprivate", "func", "import", "init", "inout",
     "internal", "let", "nonisolated", "open", "operator", "private", "precedencegroup", "protocol", "public", "rethrows", "static",

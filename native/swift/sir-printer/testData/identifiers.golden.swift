@@ -3,7 +3,7 @@ public typealias simple0 = Test.simple0
 //
 public typealias _ = Test.
 // _
-public typealias _ = Test._
+public typealias `_` = Test._
 // a
 public typealias a = Test.a
 // 0
@@ -40,7 +40,7 @@ public struct simple0 {
 }
 public struct _ {
 }
-public struct _ {
+public struct `_` {
 }
 public struct a {
 }
@@ -85,7 +85,7 @@ public var _: Test. {
     }
 }
 // _
-public var _: Test._ {
+public var `_`: Test._ {
     get {
         stub()
     }
@@ -191,7 +191,7 @@ public func _() -> Test. {
     stub()
 }
 // _
-public func _() -> Test._ {
+public func `_`() -> Test._ {
     stub()
 }
 // a

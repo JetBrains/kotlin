@@ -16,6 +16,23 @@ private const val cinterop = "kotlinx.cinterop.*"
 private const val stdintHeader = "stdint.h"
 private const val foundationHeader = "Foundation/Foundation.h"
 
+private const val KOTLIN_BASIC_IDENTIFIER_HEADER = """_\p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}"""
+private const val KOTLIN_BASIC_IDENTIFIER_BODY = """\p{Nd}$KOTLIN_BASIC_IDENTIFIER_HEADER"""
+
+private val kotlinQuotedIdentifierRegex =
+    """^[^\r\n`]+\$""".toRegex()
+private val kotlinQuotedIdentifierNonCompliantRegex =
+    """[\r\n`]+""".toRegex()
+
+private val kotlinBasicIdentifierRegex =
+    "^[$KOTLIN_BASIC_IDENTIFIER_HEADER][$KOTLIN_BASIC_IDENTIFIER_BODY]*\$".toRegex()
+
+private val cIdentifierRegex =
+    "^[_a-zA-Z][_a-zA-Z0-9]*\$".toRegex()
+private val cIdentifierNonCompliantRegex =
+    """^[^_a-zA-Z][^_a-zA-Z0-9]*+|(?<!^)[^_a-zA-Z0-9]+""".toRegex()
+
+
 internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : BridgeGenerator {
     override fun generateBridges(request: BridgeRequest): List<GeneratedBridge> = when (request) {
         is FunctionBridgeRequest -> generateFunctionBridges(request)
@@ -23,10 +40,13 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
     }
 
     private fun generateFunctionBridges(request: FunctionBridgeRequest) = buildList {
+        fun argNames(descriptor: BridgeFunctionDescriptor) = descriptor.parameters.map { "__${it.name}".kotlinIdentifier }
+
         when (request.callable) {
             is SirFunction -> {
                 add(
                     request.descriptor(typeNamer).createFunctionBridge {
+                        val args = argNames(this)
                         if (selfParameter != null && extensionReceiverParameter != null) {
                             "__${selfParameter.name}.run { __${extensionReceiverParameter.name}.${kotlinFqName.last()}(${args.joinToString()}) }"
                         } else "$name(${args.joinToString()})"
@@ -36,6 +56,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
             is SirGetter -> {
                 add(
                     request.descriptor(typeNamer).createFunctionBridge {
+                        val args = argNames(this)
                         require(args.isEmpty()) { "Received a getter $name with ${args.size} parameters instead of no parameters, aborting" }
                         name
                     }
@@ -44,6 +65,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
             is SirSetter -> {
                 add(
                     request.descriptor(typeNamer).createFunctionBridge {
+                        val args = argNames(this)
                         require(args.size == 1) { "Received a setter $name with ${args.size} parameters instead of a single one, aborting" }
                         "$name = ${args.single()}"
                     }
@@ -52,11 +74,13 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
             is SirInit -> {
                 add(
                     request.allocationDescriptor(typeNamer).createFunctionBridge {
+                        val args = argNames(this)
                         "kotlin.native.internal.createUninitializedInstance<$name>(${args.joinToString()})"
                     }
                 )
                 add(
                     request.initializationDescriptor(typeNamer).createFunctionBridge {
+                        val args = argNames(this)
                         "kotlin.native.internal.initInstance(${args.first()}, ${name}(${args.drop(1).joinToString()}))"
                     }
                 )
@@ -133,15 +157,12 @@ private class BridgeFunctionDescriptor(
 
     val name
         get() = if (selfParameter != null) {
-            "__${selfParameter.name}.${kotlinFqName.last()}"
+            "__${selfParameter.name}.${kotlinFqName.last().kotlinIdentifier}"
         } else if (extensionReceiverParameter != null) { // TODO both
-            "__${extensionReceiverParameter.name}.${kotlinFqName.last()}"
+            "__${extensionReceiverParameter.name}.${kotlinFqName.last().kotlinIdentifier}"
         } else {
-            kotlinFqName.joinToString(separator = ".")
+            kotlinFqName.joinToString(separator = ".") { it.kotlinIdentifier }
         }
-
-    val args
-        get() = parameters.map { "__${it.name}" }
 }
 
 private fun FunctionBridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
@@ -218,7 +239,7 @@ private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<Bri
                 if (it.bridge is Bridge.AsOptionalWrapper) "_opt_" else ""
     }
     val suffixString = if (parameterBridges.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
-    val result = "${bridgeName}${suffixString}"
+    val result = "${bridgeName}${suffixString}".cIdentifier
     return result
 }
 
@@ -227,10 +248,12 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     buildCallSite: BridgeFunctionDescriptor.() -> String,
 ) = buildList {
     add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cBridgeName}\")")
-    add("public fun $kotlinBridgeName(${allParameters.filter { it.isRenderable }.joinToString { "${it.name}: ${it.bridge.kotlinType.repr}" }}): ${returnType.kotlinType.repr} {")
+    add("public fun $kotlinBridgeName(${allParameters.filter { it.isRenderable }.joinToString { "${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}" }}): ${returnType.kotlinType.repr} {")
     val indent = "    "
+
     allParameters.forEach {
-        add("${indent}val __${it.name} = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name)}")
+        val parameterName = "__${it.name}".kotlinIdentifier
+        add("${indent}val $parameterName = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name.kotlinIdentifier)}")
     }
     val callSite = buildCallSite()
     if (returnType.swiftType.isVoid && errorParameter == null) {
@@ -256,7 +279,11 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 }
 
 private fun BridgeFunctionDescriptor.swiftInvoke(typeNamer: SirTypeNamer): String {
-    return "$cBridgeName(${allParameters.filter { it.isRenderable }.joinToString { it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name) }})"
+    val parameters = allParameters.filter { it.isRenderable }.joinToString {
+        // We fix ugly `self` escaping here. This is the only place we'd otherwise need full support for swift's contextual keywords
+        it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier)
+    }
+    return "$cBridgeName($parameters)"
 }
 
 private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String {
@@ -264,7 +291,7 @@ private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String 
 }
 
 private fun BridgeFunctionDescriptor.cDeclaration() =
-    "${returnType.cType.repr.format("${cBridgeName}(${allParameters.filter { it.isRenderable }.joinToString { it.bridge.cType.repr.format(it.name) }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""}")};"
+    "${returnType.cType.repr.format("${cBridgeName}(${allParameters.filter { it.isRenderable }.joinToString { it.bridge.cType.repr.format(it.name.cIdentifier) }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""}")};"
 
 private fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: BridgeFunctionDescriptor.() -> String) =
     FunctionBridge(
@@ -716,3 +743,33 @@ private val KotlinType.defaultValue: String get() = when(this) {
         -> "kotlin.native.internal.NativePtr.NULL"
     KotlinType.String -> ""
 }
+
+private val String.cIdentifier: String get() = let {
+        this.takeIf(cIdentifierRegex::matches) ?: this.replace(cIdentifierNonCompliantRegex) { match ->
+            match.value.map {
+                String.format("%02X", it.code)
+            }.joinToString(separator = "", prefix = "U")
+        }
+    }.let { it.takeIf { !cKeywords.contains(it) } ?: "${it}_" }
+
+private val cKeywords = setOf(
+    "alignas", "alignof", "auto", "bool", "break", "case", "char", "const", "constexpr", "continue", "default", "do", "double", "else",
+    "enum", "extern", "false", "float", "for", "goto", "if", "inline", "int", "long", "nullptr", "register", "restrict", "return", "short",
+    "signed", "sizeof", "static", "static_assert", "struct", "switch", "thread_local", "true", "typedef", "typeof", "typeof_unqual",
+    "union", "unsigned", "void", "volatile", "while", "_Alignas", "_Alignof", "_Atomic", "_BitInt", "_Bool", "_Complex", "_Decimal128",
+    "_Decimal32", "_Decimal64", "_Generic", "_Imaginary", "_Noreturn", "_Static_assert", "_Thread_local"
+)
+
+private val String.kotlinIdentifier: String
+    get() = this.takeIf { kotlinBasicIdentifierRegex.matches(it) && !kotlinKeywords.contains(it) && it.any { it != '_' } }
+        ?: (this.takeIf(kotlinQuotedIdentifierRegex::matches)
+            ?: this.replace(kotlinQuotedIdentifierNonCompliantRegex) { "" }).let { "`$it`" }
+
+private val kotlinKeywords = setOf(
+    "return@", "continue@", "break@", "this@", "super@", "file", "field", "property", "get", "set", "receiver", "param", "setparam",
+    "delegate", "package", "import", "class", "interface", "fun", "object", "val", "var", "typealias", "constructor", "by", "companion",
+    "init", "this", "super", "typeof", "where", "if", "else", "when", "try", "catch", "finally", "for", "do", "while", "throw", "return",
+    "continue", "break", "as", "is", "in", "!is", "!in", "out", "dynamic", "public", "private", "protected", "internal", "enum", "sealed",
+    "annotation", "data", "inner", "tailrec", "operator", "inline", "infix", "external", "suspend", "override", "abstract", "final", "open",
+    "const", "lateinit", "vararg", "noinline", "crossinline", "reified", "expect", "actual"
+)

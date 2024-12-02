@@ -6,9 +6,9 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 
 @ExportedBridge("Foo_ext__TypesOfArguments__Swift_String__")
-public fun Foo_ext__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, receiver: kotlin.native.internal.NativePtr): Unit {
+public fun Foo_ext__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val __receiver = interpretObjCPointer<kotlin.String>(receiver)
+    val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     __self.run { __receiver.ext() }
 }
 
@@ -25,26 +25,26 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(__kt: ko
 }
 
 @ExportedBridge("__root___foo__TypesOfArguments__Swift_Int32__")
-public fun __root___foo__TypesOfArguments__Swift_Int32__(receiver: Int): Unit {
-    val __receiver = receiver
+public fun __root___foo__TypesOfArguments__Swift_Int32__(`receiver`: Int): Unit {
+    val __receiver = `receiver`
     __receiver.foo()
 }
 
 @ExportedBridge("__root___foo__TypesOfArguments__Swift_Int32_opt___")
-public fun __root___foo__TypesOfArguments__Swift_Int32_opt___(receiver: kotlin.native.internal.NativePtr): Unit {
-    val __receiver = if (receiver == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(receiver)
+public fun __root___foo__TypesOfArguments__Swift_Int32_opt___(`receiver`: kotlin.native.internal.NativePtr): Unit {
+    val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(`receiver`)
     __receiver.foo()
 }
 
 @ExportedBridge("__root___foo__TypesOfArguments__main_Foo__")
-public fun __root___foo__TypesOfArguments__main_Foo__(receiver: kotlin.native.internal.NativePtr): Unit {
-    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(receiver) as Foo
+public fun __root___foo__TypesOfArguments__main_Foo__(`receiver`: kotlin.native.internal.NativePtr): Unit {
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Foo
     __receiver.foo()
 }
 
 @ExportedBridge("__root___foo__TypesOfArguments__main_Foo_opt___")
-public fun __root___foo__TypesOfArguments__main_Foo_opt___(receiver: kotlin.native.internal.NativePtr): Unit {
-    val __receiver = if (receiver == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(receiver) as Foo
+public fun __root___foo__TypesOfArguments__main_Foo_opt___(`receiver`: kotlin.native.internal.NativePtr): Unit {
+    val __receiver = if (`receiver` == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Foo
     __receiver.foo()
 }
 
@@ -89,8 +89,8 @@ public fun namespace1_main_all_args__TypesOfArguments__Swift_Bool_Swift_Int8_Swi
 }
 
 @ExportedBridge("namespace1_main_foobar__TypesOfArguments__Swift_Int32__")
-public fun namespace1_main_foobar__TypesOfArguments__Swift_Int32__(param: Int): Int {
-    val __param = param
+public fun namespace1_main_foobar__TypesOfArguments__Swift_Int32__(`param`: Int): Int {
+    val __param = `param`
     val _result = namespace1.main.foobar(__param)
     return _result
 }

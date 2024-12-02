@@ -130,8 +130,8 @@ public fun namespace_main_foo_get(): Int {
 }
 
 @ExportedBridge("namespace_main_foobar__TypesOfArguments__Swift_Int32__")
-public fun namespace_main_foobar__TypesOfArguments__Swift_Int32__(param: Int): Int {
-    val __param = param
+public fun namespace_main_foobar__TypesOfArguments__Swift_Int32__(`param`: Int): Int {
+    val __param = `param`
     val _result = namespace.main.foobar(__param)
     return _result
 }

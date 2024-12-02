@@ -436,8 +436,8 @@ private val SirClassMemberDeclaration.callableKind: SirCallableKind
     }
 
 private val SirParameter.swiftRender: String
-    get() = (argumentName ?: "_") +
-            (parameterName?.let { " $it" } ?: "") + ": " +
+    get() = (argumentName?.swiftIdentifier ?: "_") +
+            (parameterName?.swiftIdentifier?.let { " $it" } ?: "") + ": " +
             type.swiftRender
 
 private val SirArgument.swiftRender
