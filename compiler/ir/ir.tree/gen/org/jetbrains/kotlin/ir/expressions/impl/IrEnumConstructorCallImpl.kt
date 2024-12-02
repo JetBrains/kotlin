@@ -23,12 +23,13 @@ class IrEnumConstructorCallImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin?,
-    protected override val typeArguments: Array<IrType?>,
     symbol: IrConstructorSymbol,
 ) : IrEnumConstructorCall() {
     override var attributeOwnerId: IrAttributeContainer = this
 
     override var originalBeforeInline: IrAttributeContainer? = null
+
+    override val typeArguments: MutableList<IrType?> = ArrayList(0)
 
     override var symbol: IrConstructorSymbol = symbol
         set(value) {

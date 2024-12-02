@@ -451,7 +451,13 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                 index
 
 
-    protected abstract val typeArguments: Array<IrType?>
+    abstract val typeArguments: MutableList<IrType?>
+
+    internal fun initializeEmptyTypeArguments(count: Int) {
+        repeat((count - typeArguments.size).coerceAtLeast(0)) {
+            typeArguments.add(null)
+        }
+    }
 
     val typeArgumentsCount: Int
         get() = typeArguments.size

@@ -858,11 +858,11 @@ fun IrCallImpl(
     endOffset = endOffset,
     type = type,
     symbol = symbol,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
 ).apply {
     initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 /**
@@ -886,7 +886,6 @@ fun IrCallImplWithShape(
     endOffset = endOffset,
     type = type,
     symbol = symbol,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
     origin = origin,
     superQualifierSymbol = superQualifierSymbol,
 ).apply {
@@ -896,6 +895,7 @@ fun IrCallImplWithShape(
         contextParameterCount = contextParameterCount,
         regularParameterCount = valueArgumentsCount - contextParameterCount
     )
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 /**
@@ -918,11 +918,11 @@ fun IrConstructorCallImpl(
     type = type,
     symbol = symbol,
     origin = origin,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
     source = source,
 ).apply {
     initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 /**
@@ -948,7 +948,6 @@ fun IrConstructorCallImplWithShape(
     type = type,
     symbol = symbol,
     origin = origin,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
     constructorTypeArgumentsCount = constructorTypeArgumentsCount,
     source = source,
 ).apply {
@@ -958,6 +957,7 @@ fun IrConstructorCallImplWithShape(
         contextParameterCount = contextParameterCount,
         regularParameterCount = valueArgumentsCount - contextParameterCount
     )
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 /**
@@ -978,9 +978,9 @@ fun IrDelegatingConstructorCallImpl(
     type = type,
     symbol = symbol,
     origin = origin,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
 ).apply {
     initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 /**
@@ -1004,7 +1004,6 @@ fun IrDelegatingConstructorCallImplWithShape(
     type = type,
     symbol = symbol,
     origin = origin,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
 ).apply {
     initializeTargetShapeExplicitly(
         hasDispatchReceiver = hasDispatchReceiver,
@@ -1012,6 +1011,7 @@ fun IrDelegatingConstructorCallImplWithShape(
         contextParameterCount = contextParameterCount,
         regularParameterCount = valueArgumentsCount - contextParameterCount
     )
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 /**
@@ -1032,9 +1032,9 @@ fun IrEnumConstructorCallImpl(
     type = type,
     symbol = symbol,
     origin = origin,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
 ).apply {
     initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 /**
@@ -1058,7 +1058,6 @@ fun IrEnumConstructorCallImplWithShape(
     type = type,
     symbol = symbol,
     origin = origin,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
 ).apply {
     initializeTargetShapeExplicitly(
         hasDispatchReceiver = hasDispatchReceiver,
@@ -1066,6 +1065,7 @@ fun IrEnumConstructorCallImplWithShape(
         contextParameterCount = contextParameterCount,
         regularParameterCount = valueArgumentsCount - contextParameterCount
     )
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 
@@ -1089,9 +1089,9 @@ fun IrFunctionReferenceImpl(
     origin = origin,
     symbol = symbol,
     reflectionTarget = reflectionTarget,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
 ).apply {
     initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 /**
@@ -1117,7 +1117,6 @@ fun IrFunctionReferenceImplWithShape(
     origin = origin,
     symbol = symbol,
     reflectionTarget = reflectionTarget,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
 ).apply {
     initializeTargetShapeExplicitly(
         hasDispatchReceiver = hasDispatchReceiver,
@@ -1125,6 +1124,7 @@ fun IrFunctionReferenceImplWithShape(
         contextParameterCount = contextParameterCount,
         regularParameterCount = valueArgumentsCount - contextParameterCount
     )
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 fun IrLocalDelegatedPropertyReferenceImpl(
@@ -1146,7 +1146,6 @@ fun IrLocalDelegatedPropertyReferenceImpl(
     getter = getter,
     setter = setter,
     origin = origin,
-    typeArguments = initializeTypeArguments(0),
 ).apply {
     initializeTargetShapeExplicitly(
         hasDispatchReceiver = false,
@@ -1180,9 +1179,9 @@ fun IrPropertyReferenceImpl(
     getter = getter,
     setter = setter,
     origin = origin,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
 ).apply {
     initializeTargetShapeFromSymbol()
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 /**
@@ -1210,7 +1209,6 @@ fun IrPropertyReferenceImplWithShape(
     getter = getter,
     setter = setter,
     origin = origin,
-    typeArguments = initializeTypeArguments(typeArgumentsCount),
 ).apply {
     initializeTargetShapeExplicitly(
         hasDispatchReceiver = hasDispatchReceiver,
@@ -1218,6 +1216,7 @@ fun IrPropertyReferenceImplWithShape(
         contextParameterCount = 0,
         regularParameterCount = 0,
     )
+    initializeEmptyTypeArguments(typeArgumentsCount)
 }
 
 

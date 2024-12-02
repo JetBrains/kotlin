@@ -360,6 +360,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             }
         }
 
+        allImplOf(memberAccessExpression) {
+            default("typeArguments", "ArrayList(0)")
+        }
+
         impl(call) {
             implementation.generationCallback = {
                 println()

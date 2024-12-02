@@ -25,7 +25,6 @@ class IrLocalDelegatedPropertyReferenceImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin?,
-    protected override val typeArguments: Array<IrType?>,
     symbol: IrLocalDelegatedPropertySymbol,
     override var delegate: IrVariableSymbol,
     override var getter: IrSimpleFunctionSymbol,
@@ -34,6 +33,8 @@ class IrLocalDelegatedPropertyReferenceImpl internal constructor(
     override var attributeOwnerId: IrAttributeContainer = this
 
     override var originalBeforeInline: IrAttributeContainer? = null
+
+    override val typeArguments: MutableList<IrType?> = ArrayList(0)
 
     override var symbol: IrLocalDelegatedPropertySymbol = symbol
         set(value) {

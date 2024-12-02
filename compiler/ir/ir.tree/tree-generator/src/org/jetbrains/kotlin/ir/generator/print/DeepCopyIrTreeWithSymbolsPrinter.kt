@@ -136,9 +136,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                     if (useWithShapeConstructor(element)) {
                         printWithShapeExtraArguments(element)
                     }
-                    if (element.isSubclassOf(IrTree.localDelegatedPropertyReference)) {
-                        println("typeArguments = initializeTypeArguments(0),")
-                    }
                 }
                 val fieldsInApply = implementation.fieldsInBody.filter { !it.deepCopyExcludeFromApply && it !in constructorArguments }
                 printApply(element, fieldsInApply)
