@@ -7,21 +7,26 @@ package org.jetbrains.kotlin.wasm.ir.source.location
 
 sealed class SourceLocation {
     object NoLocation : SourceLocation()
+    object NextLocation : SourceLocation()
+
+    sealed class WithSourceInformation : SourceLocation() {
+        abstract val file: String
+        abstract val line: Int
+        abstract val column: Int
+    }
 
     // Both line and column are zero-based
     data class Location(
-        val module: String,
-        val file: String,
-        val line: Int,
-        val column: Int
-    ) : SourceLocation()
+        override val file: String,
+        override val line: Int,
+        override val column: Int
+    ) : WithSourceInformation()
 
     data class IgnoredLocation(
-        val module: String,
-        val file: String,
-        val line: Int,
-        val column: Int
-    ) : SourceLocation()
+        override val file: String,
+        override val line: Int,
+        override val column: Int
+    ) : WithSourceInformation()
 
     companion object {
         @Suppress("FunctionName", "UNUSED_PARAMETER")

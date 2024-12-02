@@ -46,11 +46,13 @@ fun test(b: B) {
 // test.kt:6 box
 
 // EXPECTATIONS WASM
-// test.kt:5 $box (9, 11, 11, 9, 4)
-// test.kt:8 $A.<init>
-// test.kt:10 $B.<init> (8, 8, 8, 17)
+// test.kt:4 $box (10)
+// test.kt:5 $box (11, 9, 4)
+// test.kt:8 $A.<init> (0, 7)
+// test.kt:10 $B.<init> (7, 8, 17)
+// test.kt:14 $test (15)
 // test.kt:15 $test (9, 4)
-// test.kt:16 $test (8, 8)
-// test.kt:11 $B.invoke
-// test.kt:18 $test
-// test.kt:6 $box
+// test.kt:16 $test (8, 11)
+// test.kt:11 $B.invoke (28, 30)
+// test.kt:18 $test (1)
+// test.kt:6 $box (1)

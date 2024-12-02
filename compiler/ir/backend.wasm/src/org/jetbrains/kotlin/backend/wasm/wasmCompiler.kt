@@ -67,6 +67,7 @@ fun compileToLoweredIr(
     exportedDeclarations: Set<FqName> = emptySet(),
     generateTypeScriptFragment: Boolean,
     propertyLazyInitialization: Boolean,
+    isIncremental: Boolean = false
 ): LoweredIrWithExtraArtifacts {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, irLinker) = irModuleInfo
 
@@ -105,7 +106,7 @@ fun compileToLoweredIr(
         allModules,
         context,
         context.irFactory.stageController as WholeWorldStageController,
-        isIncremental = false
+        isIncremental = isIncremental
     )
 
     performanceManager?.notifyIRLoweringFinished()

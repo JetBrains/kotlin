@@ -22,6 +22,7 @@ class SourceMap3Builder(
     private val sources = createOpenHashMap<SourceKey>()
     private val orderedSources = mutableListOf<String>()
     private val orderedSourceContentSuppliers = mutableListOf<Supplier<Reader?>>()
+    private val ignoredSources = hashSetOf<Int>()
 
     private val names = createOpenHashMap<String>()
     private val orderedNames = mutableListOf<String>()
@@ -56,6 +57,11 @@ class SourceMap3Builder(
         json.properties["sources"] = JsonArray(
             orderedSources.mapTo(mutableListOf()) { JsonString(pathPrefix + it) }
         )
+
+        val ignoreList = JsonArray(ignoredSources.mapTo(mutableListOf()) { JsonNumber(it.toDouble()) })
+
+        json.properties["ignoreList"] = ignoreList
+        json.properties["x_google_ignoreList"] = ignoreList
     }
 
     private fun appendSourcesContent(json: JsonObject) {
@@ -113,17 +119,33 @@ class SourceMap3Builder(
         sourceColumn: Int,
         name: String?,
     ) {
-        addMapping(source, fileIdentity, sourceContent, sourceLine, sourceColumn, name, getCurrentOutputColumn())
+        addMapping(
+            source,
+            sourceLine,
+            sourceColumn,
+            getCurrentOutputColumn(),
+            name,
+            fileIdentity,
+            sourceContent,
+        )
+    }
+
+    fun addIgnoredSource(
+        source: String,
+        fileIdentity: Any? = null,
+        sourceContent: Supplier<Reader?> = Supplier { null },
+    ) {
+        ignoredSources.add(getSourceIndex(source.replace(File.separatorChar, '/'), fileIdentity, sourceContent))
     }
 
     fun addMapping(
         source: String,
-        fileIdentity: Any?,
-        sourceContent: Supplier<Reader?>,
         sourceLine: Int,
         sourceColumn: Int,
-        name: String?,
-        outputColumn: Int
+        outputColumn: Int,
+        name: String? = null,
+        fileIdentity: Any? = null,
+        sourceContent: Supplier<Reader?> = Supplier { null },
     ) {
         val sourceIndex = getSourceIndex(source.replace(File.separatorChar, '/'), fileIdentity, sourceContent)
 

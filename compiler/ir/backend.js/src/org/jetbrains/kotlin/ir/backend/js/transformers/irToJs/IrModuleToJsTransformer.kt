@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterfac
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
-import org.jetbrains.kotlin.ir.backend.js.ic.JsPerFileCache
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass

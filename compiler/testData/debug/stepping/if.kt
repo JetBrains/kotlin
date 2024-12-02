@@ -34,9 +34,11 @@ inline fun getB(): Int {
 // test.kt:9 box
 
 // EXPECTATIONS WASM
-// test.kt:6 $box (8, 8)
-// test.kt:15 $box (11, 4, 11, 4)
-// test.kt:7 $box
-// test.kt:12 $getA (13, 14)
+// test.kt:4 $box (15)
+// test.kt:6 $box (8)
+// test.kt:14 $box (23)
+// test.kt:15 $box (11, 4)
+// test.kt:7 $box (8)
+// test.kt:12 $getA (13)
+// test.kt:8 $box (8)
 // test.kt:9 $box (11, 4)
-// test.kt:8 $box

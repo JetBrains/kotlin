@@ -58,12 +58,14 @@ fun testExpressionBody(nullable: String?) =
 // test.kt:11 box
 
 // EXPECTATIONS WASM
-// test.kt:7 $box (9, 9, 9, 9, 4)
-// test.kt:14 $test (11, 4, 11, 4)
-// test.kt:16 $test (12, 21, 31, 12)
-// test.kt:8 $box (9, 4, 4)
-// test.kt:9 $box (23, 23, 23, 23, 4, 4)
-// test.kt:20 $testExpressionBody (4, 4)
-// test.kt:22 $testExpressionBody (12, 21, 31, 12, 32, 32)
+// test.kt:6 $box (10)
+// test.kt:7 $box (9, 4)
+// test.kt:13 $test (37)
+// test.kt:14 $test (11, 4)
+// test.kt:16 $test (12, 21, 31)
+// test.kt:8 $box (9, 4)
+// test.kt:9 $box (23, 4)
+// test.kt:20 $testExpressionBody (4)
+// test.kt:22 $testExpressionBody (12, 21, 31)
 // test.kt:10 $box (23, 4)
-// test.kt:11 $box
+// test.kt:11 $box (1)

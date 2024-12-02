@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_JS_TAG
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_ALLOW_FQNAME_IN_KCLASS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -95,7 +94,6 @@ abstract class WasmEnvironmentConfigurator(testServices: TestServices) : Environ
         val sourceDirs = module.files.map { it.originalFile.parent }.distinct()
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
-        configuration.put(JSConfigurationKeys.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES, SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES in registeredDirectives)
 
         val sourceMapSourceEmbedding = registeredDirectives[SOURCE_MAP_EMBED_SOURCES].singleOrNull() ?: SourceMapSourceEmbedding.NEVER
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapSourceEmbedding)

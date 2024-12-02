@@ -23,7 +23,8 @@ fun box(): String {
 // test.kt:11 box
 
 // EXPECTATIONS WASM
+// test.kt:10 $box (18)
 // test.kt:11 $box (11, 4)
-// test.kt:6 $box
-// test.kt:4 $box (26, 26, 30)
+// test.kt:6 $box (50, 28)
+// test.kt:4 $box (26)
 // test.kt:7 $box (11, 4)

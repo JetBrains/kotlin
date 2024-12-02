@@ -12,14 +12,15 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
 class WasmBackendFacade(
-    private val testServices: TestServices
+    private val testServices: TestServices,
+    isIncremental: Boolean = false
 ) : AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Wasm>() {
     override val inputKind = ArtifactKinds.KLib
     override val outputKind = ArtifactKinds.Wasm
 
     private val deserializerFacade = WasmDeserializerFacade(testServices)
 
-    private val loweringFacade = WasmLoweringFacade(testServices)
+    private val loweringFacade = WasmLoweringFacade(testServices, isIncremental)
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {
         return deserializerFacade.shouldRunAnalysis(module) && loweringFacade.shouldRunAnalysis(module)

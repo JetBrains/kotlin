@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.ir.returnType
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
@@ -569,7 +571,7 @@ class BodyGenerator(
             return
         }
 
-        body.buildRefNull(WasmHeapType.Simple.None, location) // this = null
+        body.buildRefNull(WasmHeapType.Simple.None, SourceLocation.NoLocation("initialize 'this' as null"))
         generateCall(expression)
     }
 
@@ -591,6 +593,9 @@ class BodyGenerator(
     fun generateObjectCreationPrefixIfNeeded(constructor: IrConstructor) {
         val parentClass = constructor.parentAsClass
         if (constructor.origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) return
+        constructor.getSourceLocation().let {
+            if (it is SourceLocation.WithSourceInformation) body.buildNop(it)
+        }
         if (parentClass.isAbstractOrSealed) return
         val thisParameter = functionContext.referenceLocal(parentClass.thisReceiver!!.symbol)
         body.commentGroupStart { "Object creation prefix" }
@@ -635,7 +640,9 @@ class BodyGenerator(
     }
 
     private fun generateCall(call: IrFunctionAccessExpression) {
-        val location = call.getSourceLocation()
+        val location = if (call.origin === LoweredStatementOrigins.DEFAULT_DISPATCH_CALL)
+            SourceLocation.NoLocation("Default dispatch")
+        else call.getSourceLocation()
 
         if (call.symbol == unitGetInstance.symbol) {
             body.buildGetUnit()
@@ -947,14 +954,15 @@ class BodyGenerator(
 
     override fun visitBlockBody(body: IrBlockBody) {
         body.statements.forEach(::generateStatement)
-        this.body.buildNop(body.getSourceEndLocation())
     }
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
         body.buildNop(inlinedBlock.getSourceLocation())
-
+        val locationTarget = inlinedBlock.inlineFunctionSymbol?.owner?.locationTarget
         functionContext.stepIntoInlinedFunction(inlinedBlock.inlineFunctionSymbol, inlinedBlock.fileEntry)
+        locationTarget?.nextLocation()?.let { body.buildNop(it) }
         super.visitInlinedFunctionBlock(inlinedBlock)
+        locationTarget?.getSourceEndLocation()?.let { body.buildNop(it) }
         functionContext.stepOutLastInlinedFunction()
     }
 
@@ -1020,7 +1028,7 @@ class BodyGenerator(
         body.buildBr(functionContext.referenceLoopLevel(jump.loop, LoopLabelType.CONTINUE), jump.getSourceLocation())
     }
 
-    private fun visitFunctionReturn(expression: IrReturn) {
+    private fun visitFunctionReturn(expression: IrReturn, location: SourceLocation) {
         val returnType = expression.returnTargetSymbol.owner.returnType(backendContext)
         val isGetUnitFunction = expression.returnTargetSymbol.owner == unitGetInstance
 
@@ -1034,7 +1042,7 @@ class BodyGenerator(
             body.buildGetLocal(functionContext.referenceLocal(0), SourceLocation.NoLocation("Get implicit dispatch receiver"))
         }
 
-        body.buildInstr(WasmOp.RETURN, expression.getSourceLocation())
+        body.buildInstr(WasmOp.RETURN, location)
     }
 
     internal fun generateWithExpectedType(expression: IrExpression, expectedType: IrType) {
@@ -1136,12 +1144,18 @@ class BodyGenerator(
 
     override fun visitReturn(expression: IrReturn) {
         val nonLocalReturnSymbol = expression.returnTargetSymbol as? IrReturnableBlockSymbol
+        val location = if (expression.isImplicitReturnInLambda()) SourceLocation.NoLocation("Implicit return in lambda") else expression.getSourceLocation()
+
         if (nonLocalReturnSymbol != null) {
             generateWithExpectedType(expression.value, nonLocalReturnSymbol.owner.type)
-            body.buildBr(functionContext.referenceNonLocalReturnLevel(nonLocalReturnSymbol), expression.getSourceLocation())
+            body.buildBr(functionContext.referenceNonLocalReturnLevel(nonLocalReturnSymbol), location)
         } else {
-            visitFunctionReturn(expression)
+            visitFunctionReturn(expression, location)
         }
+    }
+
+    private fun IrReturn.isImplicitReturnInLambda(): Boolean {
+        return startOffset == endOffset
     }
 
     override fun visitWhen(expression: IrWhen) {
@@ -1152,15 +1166,17 @@ class BodyGenerator(
         val resultType = wasmModuleTypeTransformer.transformBlockResultType(expression.type)
         var ifCount = 0
         var seenElse = false
+        val branches = expression.branches
 
-        for (branch in expression.branches) {
+        for (branch in branches) {
             if (!isElseBranch(branch)) {
+                if (ifCount > 0) body.buildElse()
                 generateExpression(branch.condition)
                 body.buildIf(null, resultType)
                 generateWithExpectedType(branch.result, expression.type)
-                body.buildElse()
                 ifCount++
             } else {
+                body.buildElse()
                 generateWithExpectedType(branch.result, expression.type)
                 seenElse = true
                 break
@@ -1172,13 +1188,16 @@ class BodyGenerator(
         if (!seenElse && resultType != null) {
             assert(expression.type != irBuiltIns.nothingType)
             if (expression.type.isUnit()) {
+                body.buildElse()
                 body.buildGetUnit()
             } else {
                 error("'When' without else branch and non Unit type: ${expression.type.dumpKotlinLike()}")
             }
         }
 
-        repeat(ifCount) { body.buildEnd() }
+        repeat(ifCount) {
+            body.buildEnd(branches[branches.lastIndex - it].nextLocation())
+        }
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop) {
@@ -1212,8 +1231,9 @@ class BodyGenerator(
         //         (br $CONTINUE_LABEL)))
 
         val label = loop.label
+        val loopStartLocation = loop.getSourceLocation()
 
-        body.buildLoop(label) { wasmLoop ->
+        body.buildLoop(label, startLocation = loopStartLocation, endLocation = loop.nextLocation()) { wasmLoop ->
             body.buildBlock("BREAK_$label") { wasmBreakBlock ->
                 functionContext.defineLoopLevel(loop, LoopLabelType.BREAK, wasmBreakBlock)
                 functionContext.defineLoopLevel(loop, LoopLabelType.CONTINUE, wasmLoop)
@@ -1225,7 +1245,7 @@ class BodyGenerator(
                 loop.body?.let {
                     generateAsStatement(it)
                 }
-                body.buildBr(wasmLoop, SourceLocation.NoLocation("Continue in the loop"))
+                body.buildBr(wasmLoop, loopStartLocation)
             }
         }
 
@@ -1240,7 +1260,7 @@ class BodyGenerator(
         val init = declaration.initializer!!
         generateExpression(init)
         val varName = functionContext.referenceLocal(declaration.symbol)
-        body.buildSetLocal(varName, declaration.getSourceLocation())
+        body.buildSetLocal(varName, SourceLocation.NoLocation("Set local defined variable ${declaration.name.asString()}"))
     }
 
     // Return true if function is recognized as intrinsic.
@@ -1292,10 +1312,17 @@ class BodyGenerator(
     }
 
     private fun IrElement.getSourceLocation() = getSourceLocation(
-        functionContext.currentFunctionSymbol, functionContext.currentFunctionSymbol?.owner?.fileOrNull
+        functionContext.currentFunctionSymbol, functionContext.currentFileEntry
     )
 
     private fun IrElement.getSourceEndLocation() = getSourceLocation(
-        functionContext.currentFunctionSymbol, functionContext.currentFunctionSymbol?.owner?.fileOrNull, type = LocationType.END
+        functionContext.currentFunctionSymbol, functionContext.currentFileEntry, type = LocationType.END
     )
+
+    private fun IrElement.nextLocation() =
+        when (getSourceLocation(functionContext.currentFunctionSymbol, functionContext.currentFileEntry)) {
+            is SourceLocation.Location -> SourceLocation.NextLocation
+            else -> SourceLocation.NoLocation
+        }
+
 }

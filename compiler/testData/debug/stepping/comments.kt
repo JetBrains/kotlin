@@ -55,9 +55,13 @@ class A {
 // test.kt:8 box
 
 // EXPECTATIONS WASM
-// test.kt:6 $box (4, 4, 8)
-// test.kt:33 $A.<init> (1, 1)
-// test.kt:25 $A.foo
+// test.kt:5 $box (10)
+// test.kt:6 $box (4, 8)
+// test.kt:16 $A.<init> (0)
+// test.kt:33 $A.<init> (1)
+// test.kt:23 $A.foo (14)
+// test.kt:25 $A.foo (5)
 // test.kt:7 $box (4, 8)
-// test.kt:32 $A.bar
-// test.kt:8 $box
+// test.kt:30 $A.bar (14)
+// test.kt:32 $A.bar (5)
+// test.kt:8 $box (1)

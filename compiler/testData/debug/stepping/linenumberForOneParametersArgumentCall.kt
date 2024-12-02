@@ -29,8 +29,11 @@ inline fun lookAtMe(f: (String) -> Unit) {
 // test.kt:9 box
 
 // EXPECTATIONS WASM
-// test.kt:6 $box
-// test.kt:12 $box (12, 12)
+// test.kt:5 $box (10)
+// test.kt:6 $box (4)
+// test.kt:11 $box (41)
+// test.kt:12 $box (12)
 // test.kt:13 $box (6, 4)
-// test.kt:7 $box (16, 16, 16, 8)
-// test.kt:9 $box
+// test.kt:7 $box (8, 16, 19)
+// test.kt:14 $box (1)
+// test.kt:9 $box (1)

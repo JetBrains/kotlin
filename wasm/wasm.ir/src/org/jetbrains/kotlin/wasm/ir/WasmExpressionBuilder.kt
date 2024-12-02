@@ -72,10 +72,16 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    inline fun buildLoop(label: String?, resultType: WasmType? = null, body: (Int) -> Unit) {
-        buildInstr(WasmOp.LOOP, SourceLocation.NoLocation("LOOP"), WasmImmediate.BlockType.Value(resultType))
+    inline fun buildLoop(
+        label: String?,
+        resultType: WasmType? = null,
+        startLocation: SourceLocation = SourceLocation.NoLocation("LOOP"),
+        endLocation: SourceLocation? = null,
+        body: (Int) -> Unit
+    ) {
+        buildInstr(WasmOp.LOOP, startLocation, WasmImmediate.BlockType.Value(resultType))
         body(numberOfNestedBlocks)
-        buildEnd()
+        buildEnd(endLocation)
     }
 
     private fun buildInstrWithNoLocation(op: WasmOp, vararg immediates: WasmImmediate) {
@@ -91,13 +97,22 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>) {
         buildInstrWithNoLocation(WasmOp.ELSE)
     }
 
-    fun buildBlock(resultType: WasmType? = null): Int {
-        buildInstrWithNoLocation(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
+    fun buildBlock(resultType: WasmType? = null, location: SourceLocation? = null): Int {
+        val resultTypeImmediate = WasmImmediate.BlockType.Value(resultType)
+        if (location != null) {
+            buildInstr(WasmOp.BLOCK, location, resultTypeImmediate)
+        } else {
+            buildInstrWithNoLocation(WasmOp.BLOCK, resultTypeImmediate)
+        }
         return numberOfNestedBlocks
     }
 
-    fun buildEnd() {
-        buildInstrWithNoLocation(WasmOp.END)
+    fun buildEnd(location: SourceLocation? = null) {
+        if (location != null) {
+            buildInstr(WasmOp.END, location)
+        } else {
+            buildInstrWithNoLocation(WasmOp.END)
+        }
     }
 
     fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, location: SourceLocation) {

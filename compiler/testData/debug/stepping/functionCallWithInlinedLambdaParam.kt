@@ -42,10 +42,13 @@ inline fun foo(f: () -> Unit) {
 // test.kt:13 box
 
 // EXPECTATIONS WASM
-// test.kt:6 $box
-// test.kt:16 $box (12, 4, 12, 4)
-// test.kt:17 $box (4, 4)
-// test.kt:7 $box (20, 12)
-// test.kt:10 $box
-// test.kt:11 $box (16, 8)
-// test.kt:13 $box
+// test.kt:5 $box (10)
+// test.kt:6 $box (4)
+// test.kt:15 $box (30)
+// test.kt:16 $box (12)
+// test.kt:17 $box (4)
+// test.kt:7 $box (12, 20, 21)
+// test.kt:18 $box (1)
+// test.kt:10 $box (4)
+// test.kt:11 $box (8, 16, 17)
+// test.kt:13 $box (1)

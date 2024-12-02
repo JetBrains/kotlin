@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.originalFqName
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -125,6 +126,7 @@ class DeclarationGenerator(
         }
 
         val function = WasmFunction.Defined(watName, functionTypeSymbol)
+
         val functionCodegenContext = WasmFunctionCodegenContext(
             declaration,
             function,
@@ -146,19 +148,36 @@ class DeclarationGenerator(
             wasmModuleTypeTransformer,
         )
 
+        val declarationBody = declaration.body
+        require(declarationBody is IrBlockBody) { "Only IrBlockBody is supported" }
+
+        val locationTarget = declaration.locationTarget
+
         if (declaration is IrConstructor) {
             bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
+        } else {
+            val location = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull?.fileEntry)
+            if (location is SourceLocation.WithSourceInformation || declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+                exprGen.buildNop(SourceLocation.NextLocation)
+            }
         }
 
-        require(declaration.body is IrBlockBody) { "Only IrBlockBody is supported" }
-        declaration.body?.acceptVoid(bodyBuilder)
+        declarationBody.acceptVoid(bodyBuilder)
+
+        if (declaration.name.asString().contains("foo")) {
+            println("caught")
+        }
+        val declarationBodyEndLocation =
+            locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull?.fileEntry, LocationType.END)
 
         // Return implicit this from constructions to avoid extra tmp
         // variables on constructor call sites.
         // TODO: Redesign construction scheme.
         if (declaration is IrConstructor) {
             exprGen.buildGetLocal(/*implicit this*/ function.locals[0], SourceLocation.NoLocation("Get implicit dispatch receiver"))
-            exprGen.buildInstr(WasmOp.RETURN, SourceLocation.NoLocation("Implicit return from constructor"))
+            exprGen.buildInstr(WasmOp.RETURN, SourceLocation.NoLocation("Return implicit this"))
+        } else {
+            exprGen.buildNop(declarationBodyEndLocation)
         }
 
         // Add unreachable if function returns something but not as a last instruction.
@@ -444,7 +463,7 @@ class DeclarationGenerator(
                     wasmExpressionGenerator,
                     wasmFileCodegenContext,
                     backendContext,
-                    declaration.getSourceLocation(declaration.symbol, declaration.fileOrNull)
+                    initValue.getSourceLocation(declaration.symbol, declaration.fileOrNull?.fileEntry)
                 )
             } else {
                 val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())
@@ -543,5 +562,15 @@ fun generateConstExpression(
             body.buildConstI32(stringValue.length, location)
             body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteral), location)
             body.commentGroupEnd()
+        }
+    }
+
+val IrFunction.locationTarget: IrElement
+    get() = when (origin) {
+        IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> this
+        else -> when (parentClassOrNull?.origin) {
+            CallableReferenceLowering.LAMBDA_IMPL,
+            IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> this
+            else -> body ?: this
         }
     }

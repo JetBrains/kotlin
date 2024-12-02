@@ -36,6 +36,8 @@ inline fun foo(n: Int) {}
 // test.kt:7 box
 
 // EXPECTATIONS WASM
-// test.kt:4 $box (14, 4, 17, 4, 14, 9, 14, 14, 4, 17, 4, 4, 14, 9, 14, 14, 4, 17, 4, 4, 14, 9, 14, 14, 4, 17, 4, 4)
-// test.kt:5 $box (12, 8, 12, 8, 12, 8)
-// test.kt:7 $box
+// test.kt:3 $box (10)
+// test.kt:4 $box (14, 4, 17)
+// test.kt:5 $box (12, 8)
+// test.kt:9 $box (23, 25)
+// test.kt:7 $box (1)

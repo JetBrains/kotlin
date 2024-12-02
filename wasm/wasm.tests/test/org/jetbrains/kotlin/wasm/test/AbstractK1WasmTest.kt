@@ -72,15 +72,18 @@ open class AbstractK1WasmSteppingTest : AbstractK1WasmTest(
     "compiler/testData/debug/stepping/",
     "debug/stepping/k1Box"
 ) {
-
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmDebugRunner
+
+    override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Wasm>>
+        // We need in stepping tests act like in incremental compilations
+        // to turn off some "optimization" lowerings
+        get() = { WasmBackendFacade(it, isIncremental = true) }
 
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForWasmBlackBoxCodegenTest()
         defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
-            +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
         }
     }
 }

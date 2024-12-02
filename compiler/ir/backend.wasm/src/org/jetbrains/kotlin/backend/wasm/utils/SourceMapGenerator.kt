@@ -39,15 +39,17 @@ class SourceMapGenerator(
         val sourceMapBuilder =
             SourceMap3Builder(null, { error("This should not be called for Kotlin/Wasm") }, sourceMapsInfo.sourceMapPrefix)
 
+        val ignoredSource = SPECIAL_IGNORED_FILE.also(sourceMapBuilder::addIgnoredSource)
+
         val pathResolver = SourceFilePathResolver.create(
             sourceMapsInfo.sourceRoots,
             sourceMapsInfo.sourceMapPrefix,
             sourceMapsInfo.outputDir,
-            sourceMapsInfo.includeUnavailableSourcesIntoSourceMap
         )
 
-        var prev: SourceLocation.Location? = null
+        var prev: SourceLocation? = null
         var prevGeneratedLine = 0
+        var offsetExpectedNextLocation = -1
 
         for (mapping in sourceLocationMappings) {
             val generatedLocation = mapping.generatedLocation
@@ -63,21 +65,32 @@ class SourceMapGenerator(
             }
 
             when (sourceLocation) {
-                // TODO: add the ignored location into "ignoreList" in future
-                is SourceLocation.NoLocation, is SourceLocation.IgnoredLocation -> sourceMapBuilder.addEmptyMapping(generatedLocation.column)
-                is SourceLocation.Location -> {
+                is SourceLocation.NoLocation -> continue
+                is SourceLocation.NextLocation -> {
+                    if (offsetExpectedNextLocation == -1) offsetExpectedNextLocation = generatedLocation.column
+                }
+                is SourceLocation.WithSourceInformation -> {
                     // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
-                    val relativePath = pathResolver
-                        .getPathRelativeToSourceRootsIfExists(sourceLocation.module, File(sourceLocation.file))
-                        ?.replace(Regex("^\\.\\./"), "") ?: continue
+                    val relativePath = if (sourceLocation is SourceLocation.Location)
+                        pathResolver
+                            .getPathRelativeToSourceRoots(File(sourceLocation.file))
+                            .replace(Regex("^\\.\\./"), "")
+                    else ignoredSource
+
+                    if (offsetExpectedNextLocation != -1) {
+                        sourceMapBuilder.addMapping(
+                            relativePath,
+                            sourceLocation.line,
+                            sourceLocation.column,
+                            offsetExpectedNextLocation
+                        )
+                        offsetExpectedNextLocation = -1
+                    }
 
                     sourceMapBuilder.addMapping(
                         relativePath,
-                        null,
-                        { null },
                         sourceLocation.line,
                         sourceLocation.column,
-                        null,
                         generatedLocation.column
                     )
                     prev = sourceLocation
@@ -87,5 +100,9 @@ class SourceMapGenerator(
         }
 
         return sourceMapBuilder.build()
+    }
+
+    companion object {
+        private const val SPECIAL_IGNORED_FILE = "IGNORED_IMPLEMENTATIONS.kt"
     }
 }

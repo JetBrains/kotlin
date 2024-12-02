@@ -35,6 +35,7 @@ import java.io.File
 
 class WasmLoweringFacade(
     testServices: TestServices,
+    private val isIncremental: Boolean = false,
 ) : BackendFacade<IrBackendInput, BinaryArtifacts.Wasm>(testServices, BackendKinds.IrBackend, ArtifactKinds.Wasm) {
     private val supportedOptimizer: WasmOptimizer = WasmOptimizer.Binaryen
 
@@ -76,7 +77,8 @@ class WasmLoweringFacade(
             performanceManager,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box"))),
             propertyLazyInitialization = true,
-            generateTypeScriptFragment = generateDts
+            generateTypeScriptFragment = generateDts,
+            isIncremental = isIncremental,
         )
         val generateWat = debugMode >= DebugMode.DEBUG || configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT)
         val baseFileName = "index"

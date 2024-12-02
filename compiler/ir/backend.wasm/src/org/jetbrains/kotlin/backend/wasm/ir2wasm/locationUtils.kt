@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
@@ -18,8 +20,9 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+import java.util.IdentityHashMap
 
-private val IrElement.hasSyntheticOrUndefinedLocation: Boolean
+val IrElement.hasSyntheticOrUndefinedLocation: Boolean
     get() = startOffset in SYNTHETIC_OFFSET..UNDEFINED_OFFSET ||
             endOffset in SYNTHETIC_OFFSET..UNDEFINED_OFFSET
 
@@ -36,37 +39,46 @@ enum class LocationType {
     abstract fun getLineAndColumnNumberFor(irElement: IrElement, fileEntry: IrFileEntry): LineAndColumn
 }
 
+private val debugFriendlyOrigins = IdentityHashMap<IrDeclarationOrigin, Boolean>().apply {
+    set(IrDeclarationOrigin.DEFINED, true)
+    set(IrDeclarationOrigin.LOCAL_FUNCTION, true)
+    set(IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA, true)
+    set(IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, true)
+}
+
 private val IrSymbol?.shouldIgnore: Boolean
-    get() = this?.owner?.getPackageFragment()?.packageFqName?.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE) == true
+    get() = this?.let {
+        val owner = it.owner as? IrFunction ?: return@let false
+        owner.getPackageFragment().packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE) ||
+                owner.origin !in debugFriendlyOrigins
+    } == true
 
 fun IrElement.getSourceLocation(
     declaration: IrSymbol?,
-    file: IrFile?,
+    fileEntry: IrFileEntry?,
     type: LocationType = LocationType.START
 ): SourceLocation {
-    val fileEntry = file?.fileEntry
+    val isIgnoredDeclaration = declaration.shouldIgnore
 
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
-    if (hasSyntheticOrUndefinedLocation) return SourceLocation.NoLocation("Synthetic declaration")
+    if (isIgnoredDeclaration && declaration is IrFunctionSymbol && (declaration.owner.isInline)) return SourceLocation.NoLocation("Inlined function body")
 
     val path = fileEntry.name
-    val (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
+    var (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
 
-    if (line < 0 || column < 0) return SourceLocation.NoLocation("startLine or startColumn < 0")
-
-    // TODO Drop "file" usages after KT-58406 fix and replace IrFile with IrFileEntry
-    val module = file.module.name.asString()
-
-    return if (declaration.shouldIgnore) {
+    if (line < 0 || column < 0) {
+        if (!isIgnoredDeclaration) return SourceLocation.NoLocation("startLine or startColumn < 0")
+        line = 0
+        column = 0
+    }
+    return if (isIgnoredDeclaration) {
         SourceLocation.IgnoredLocation(
-            module,
             path,
             line,
             column
         )
     } else {
         SourceLocation.Location(
-            module,
             path,
             line,
             column

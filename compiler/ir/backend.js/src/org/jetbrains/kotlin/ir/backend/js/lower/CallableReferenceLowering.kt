@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.reflectedNameAccessor
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
@@ -79,7 +82,6 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * ```
  */
 class CallableReferenceLowering(private val context: JsCommonBackendContext) : BodyLoweringPass {
-
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)
     }
@@ -93,9 +95,19 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
     private val stringType = context.irBuiltIns.stringType
 
     private inner class ReferenceTransformer(private val container: IrDeclarationParent) : IrElementTransformerVoid() {
+        private val inlinedFunctions = mutableListOf<IrFunction>()
+        private val currentContainer: IrDeclarationParent get() = inlinedFunctions.lastOrNull() ?: container
 
         override fun visitBody(body: IrBody): IrBody {
             return body
+        }
+
+        override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+            val inlinedFunction = inlinedBlock.inlineFunctionSymbol?.owner
+            inlinedFunction?.let { inlinedFunctions.push(it) }
+            return super.visitInlinedFunctionBlock(inlinedBlock).also {
+                inlinedFunction?.let { inlinedFunctions.pop() }
+            }
         }
 
         override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
@@ -104,7 +116,7 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
             val function = expression.function
             val (clazz, ctor) = buildLambdaReference(function, expression)
 
-            clazz.parent = container
+            clazz.parent = currentContainer
 
             return expression.run {
                 val ctorCall =

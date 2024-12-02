@@ -411,14 +411,13 @@ class WasmSerializer(outputStream: OutputStream) {
     private fun serializeSourceLocation(sl: SourceLocation) =
         when (sl) {
             SourceLocation.NoLocation -> setTag(LocationTags.NO_LOCATION)
+            SourceLocation.NextLocation -> setTag(LocationTags.NEXT_LOCATION)
             is SourceLocation.Location -> withTag(LocationTags.LOCATION) {
-                serializeString(sl.module)
                 serializeString(sl.file)
                 b.writeUInt32(sl.line.toUInt())
                 b.writeUInt32(sl.column.toUInt())
             }
             is SourceLocation.IgnoredLocation -> withTag(LocationTags.IGNORED_LOCATION) {
-                serializeString(sl.module)
                 serializeString(sl.file)
                 b.writeUInt32(sl.line.toUInt())
                 b.writeUInt32(sl.column.toUInt())

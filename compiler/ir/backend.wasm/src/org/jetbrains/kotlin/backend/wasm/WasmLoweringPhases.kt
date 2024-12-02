@@ -371,7 +371,13 @@ private val generateMainFunctionWrappersPhase = makeIrModulePhase(
 )
 
 private val defaultArgumentStubGeneratorPhase = makeIrModulePhase<WasmBackendContext>(
-    { context -> DefaultArgumentStubGenerator(context, MaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true) },
+    { context ->
+        DefaultArgumentStubGenerator(
+            context,
+            MaskedDefaultArgumentFunctionFactory(context, copyOriginalFunctionLocation = false),
+            skipExternalMethods = true
+        )
+    },
     name = "DefaultArgumentStubGenerator",
 )
 

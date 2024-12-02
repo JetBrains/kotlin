@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
@@ -132,7 +133,7 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                 val debuggerSteps = FrameParser(result).parse().mapNotNull { frame ->
                     val pausedLocation = sourceMap
                         .findSegmentForTheGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
-                        ?.takeIf { it.sourceLineNumber >= 0 }
+                        ?.takeIf { it.sourceLineNumber >= 0 && !it.isIgnored }
 
                     pausedLocation?.sourceFileName?.let { sourceFileName ->
                         ProcessedStep(
@@ -143,23 +144,28 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                     }
                 }
 
-                val groupedByLinesSteppingTestLoggedData = debuggerSteps
-                    .groupBy { Triple(it.fileName, it.functionName, it.location.line) }
-                    .map { (key, debuggerSteps) ->
-                        val (fileName, functionName, lineNumber) = key
-                        val aggregatedColumns = debuggerSteps
-                            .takeIf { it.size > 1 }
-                            .orEmpty()
-                            .map { it.location.column }
-                            .joinToString(", ")
-                            .let { if (it.isNotEmpty()) " ($it)" else it }
+                val groupedByLinesSteppingTestLoggedData = buildList<SteppingTestLoggedData> {
+                    var lastStep = ProcessedStep("DUMMY", "DUMMY", Location(-1, -1))
+                    var columns = mutableListOf<Int>()
 
-                        SteppingTestLoggedData(
-                            lineNumber + 1,
-                            false,
-                            formatAsSteppingTestExpectation(fileName, lineNumber + 1, functionName, false) + aggregatedColumns
-                        )
+                    for (step in debuggerSteps.plus(lastStep)) {
+                        if (lastStep == step) {
+                            continue
+                        }
+
+                        if (!lastStep.isOnTheSameLineAs(step) && columns.isNotEmpty()) {
+                            val (fileName, functionName, location) = lastStep
+                            val lineNumber = location.line + 1
+                            val aggregatedColumns = " (${columns.joinToString(", ")})"
+                            val formatedSteppingExpectation = formatAsSteppingTestExpectation(fileName, lineNumber, functionName, false)
+                            push(SteppingTestLoggedData(lineNumber, false, formatedSteppingExpectation + aggregatedColumns))
+                            columns = mutableListOf()
+                        }
+
+                        columns.push(step.location.column)
+                        lastStep = step
                     }
+                }
 
                 checkSteppingTestResult(
                     frontendKind = mainModule.frontendKind,
@@ -193,9 +199,15 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
             is SourceMapError -> error(parseResult.message)
         }
 
-    private class Location(val line: Int, val column: Int)
+    private data class Location(val line: Int, val column: Int)
     private class Frame(val functionName: String, val pausedLocation: Location)
-    private class ProcessedStep(val fileName: String, val functionName: String, val location: Location)
+    private data class ProcessedStep(val fileName: String, val functionName: String, val location: Location) {
+        fun isOnTheSameLineAs(previous: ProcessedStep) =
+            previous.fileName == fileName &&
+                    previous.functionName == functionName &&
+                    previous.location.line == location.line
+    }
+
     private class FrameParser(private val input: String) {
         fun parse(): List<Frame> =
             (parseJson(input) as JsonArray).elements

@@ -38,9 +38,12 @@ fun f(block: () -> Unit) {
 // test.kt:8 box
 
 // EXPECTATIONS WASM
-// test.kt:4 $box (12, 12, 4)
-// test.kt:5 $box (6, 6, 4)
-// test.kt:11 $f (4, 4, 4)
-// test.kt:6 $box$lambda.invoke (8, 12, 8, 16)
-// test.kt:12 $f
-// test.kt:8 $box
+// test.kt:4 $box (12)
+// test.kt:5 $box (6, 4)
+// test.kt:11 $f (4)
+// test.kt:6 $box$lambda.invoke (8, 12, 8)
+// test.kt:7 $box$lambda.invoke (5)
+// test.kt:11 $f (4)
+// test.kt:12 $f (1)
+// test.kt:5 $box (4)
+// test.kt:8 $box (1)
