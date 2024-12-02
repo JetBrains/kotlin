@@ -34,8 +34,7 @@ scopes:
 
   TypeScope, index = 3
     packages: 0
-    classifiers: 1
-      class Nested
+    classifiers: 0
     callables: 4
       fun bar(): kotlin.String
       fun equals(other: kotlin.Any?): kotlin.Boolean

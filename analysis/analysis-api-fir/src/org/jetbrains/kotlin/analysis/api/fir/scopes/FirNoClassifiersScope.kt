@@ -24,4 +24,6 @@ internal class FirNoClassifiersScope(delegate: FirContainingNamesAwareScope) : F
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirNoClassifiersScope? {
         return delegate.withReplacedSessionOrNull(newSession, newScopeSession)?.let { FirNoClassifiersScope(it) }
     }
+
+    val delegateScope: FirContainingNamesAwareScope = delegate
 }

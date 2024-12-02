@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.components.KaScopeKinds
-import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.getAvailableScopesForPosition
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseScopeContext
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
@@ -44,7 +43,8 @@ import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -321,7 +321,7 @@ internal class KaFirScopeProvider(
 
         val firScopes = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
             val availableScopes = towerDataElement
-                .getAvailableScopes { coneType -> withSyntheticPropertiesScopeOrSelf(coneType) }
+                .getAvailableScopesForPosition(position) { coneType -> withSyntheticPropertiesScopeOrSelf(coneType) }
                 .flatMap { flattenFirScope(it) }
             availableScopes.map { IndexedValue(index, it) }
         }
@@ -355,6 +355,7 @@ internal class KaFirScopeProvider(
 
     private fun getScopeKind(firScope: FirScope, indexInTower: Int): KaScopeKind = when (firScope) {
         is FirNameAwareOnlyCallablesScope -> getScopeKind(firScope.delegate, indexInTower)
+        is FirNoClassifiersScope -> getScopeKind(firScope.delegateScope, indexInTower)
 
         is FirLocalScope -> KaScopeKinds.LocalScope(indexInTower)
         is FirTypeScope -> KaScopeKinds.TypeScope(indexInTower)
