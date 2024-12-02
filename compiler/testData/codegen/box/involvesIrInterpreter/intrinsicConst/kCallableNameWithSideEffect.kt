@@ -1,5 +1,7 @@
 // LANGUAGE: +IntrinsicConstEvaluation
 // DONT_TARGET_EXACT_BACKEND: JVM
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// ^^^ KT-73621: EVALUATED{FIR} is shown instead of EVALUATED
 // WITH_STDLIB
 
 fun <T> T.id() = this

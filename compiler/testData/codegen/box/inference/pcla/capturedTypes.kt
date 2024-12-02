@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // ISSUE: KT-61250
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference

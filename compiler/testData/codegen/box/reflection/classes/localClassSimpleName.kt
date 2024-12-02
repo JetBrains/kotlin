@@ -1,5 +1,6 @@
 // NATIVE error: name contains illegal characters: "$"
 // IGNORE_BACKEND: NATIVE
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // WITH_STDLIB
 
 import kotlin.reflect.KClass

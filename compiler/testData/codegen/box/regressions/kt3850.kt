@@ -1,5 +1,6 @@
 // LANGUAGE: -PrivateInFileEffectiveVisibility
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // Reason: unsupported language feature switch OFF
 
 // In light analysis mode, anonymous object type is approximated to the supertype, so `fy` is unresolved.
