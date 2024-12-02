@@ -211,6 +211,14 @@ class IrSourcePrinterVisitor(
         }
     }
 
+    private val IrBody.statements: List<IrStatement>
+        get() = when (this) {
+            is IrBlockBody -> statements
+            is IrExpressionBody -> listOf(expression)
+            is IrSyntheticBody -> emptyList()
+        }
+
+
     fun IrFunction.printBody() {
         val body = body ?: return
         if (body.statements.isEmpty()) {

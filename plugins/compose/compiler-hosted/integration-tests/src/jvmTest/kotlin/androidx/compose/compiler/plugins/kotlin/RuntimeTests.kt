@@ -113,19 +113,25 @@ private class RuntimeTestCompiler(
         val parent = generatedClassLoader.parent
         val classLoader = object : ClassLoader(parent) {
             fun defineClass(name: String, bytes: ByteArray): Class<*> =
-                defineClass(name, bytes, 0, bytes.size)
+                defineClass(name, bytes, 0, bytes.size).also {
+                    loadedClasses += it
+                }
+
+            val loadedClasses = mutableListOf<Class<*>>()
         }
-        val classes = generatedClassLoader.allGeneratedFiles.mapNotNull { generatedFile ->
+        generatedClassLoader.allGeneratedFiles.forEach { generatedFile ->
             if (generatedFile.relativePath.endsWith(".class")) {
                 val className = generatedFile.relativePath.removeSuffix(".class").replace('/', '.')
                 classLoader.defineClass(className, generatedFile.asByteArray())
-                    .takeIf { cls ->
-                        cls.methods.any { m -> m.annotations.any { it.annotationClass == Test::class } }
-                    }
             } else {
                 null
             }
         }
+
+        val classes =
+            classLoader.loadedClasses.filter { cls ->
+                cls.methods.any { m -> m.annotations.any { it.annotationClass == Test::class } }
+            }
 
         return classes
     }

@@ -1,0 +1,10 @@
+
+syntax = "proto3";
+package androidx.compose.compiler.plugins;
+option java_package = "androidx.compose.compiler.plugins";
+option java_outer_classname = "EnumTestProtos";
+
+enum Enum {
+  A = 0;
+  B = 1;
+}
