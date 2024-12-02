@@ -258,6 +258,41 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
+    @TestMetadata("annotationDefaultingFirstOnly.args")
+    public void testAnnotationDefaultingFirstOnly() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultingFirstOnly.args");
+    }
+
+    @TestMetadata("annotationDefaultingFirstOnlyWarn.args")
+    public void testAnnotationDefaultingFirstOnlyWarn() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultingFirstOnlyWarn.args");
+    }
+
+    @TestMetadata("annotationDefaultingOptInFirstOnly.args")
+    public void testAnnotationDefaultingOptInFirstOnly() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultingOptInFirstOnly.args");
+    }
+
+    @TestMetadata("annotationDefaultingOptInParamProperty.args")
+    public void testAnnotationDefaultingOptInParamProperty() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultingOptInParamProperty.args");
+    }
+
+    @TestMetadata("annotationDefaultingOptInSuppressFirstOnly.args")
+    public void testAnnotationDefaultingOptInSuppressFirstOnly() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultingOptInSuppressFirstOnly.args");
+    }
+
+    @TestMetadata("annotationDefaultingOptInSuppressParamProperty.args")
+    public void testAnnotationDefaultingOptInSuppressParamProperty() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultingOptInSuppressParamProperty.args");
+    }
+
+    @TestMetadata("annotationDefaultingParamProperty.args")
+    public void testAnnotationDefaultingParamProperty() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultingParamProperty.args");
+    }
+
     @TestMetadata("apiAndLanguageVersionsUnsupported.args")
     public void testApiAndLanguageVersionsUnsupported() {
       runTest("compiler/testData/cli/jvm/apiAndLanguageVersionsUnsupported.args");
