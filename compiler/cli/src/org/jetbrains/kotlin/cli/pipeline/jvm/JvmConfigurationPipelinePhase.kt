@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationFiller
+import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -31,7 +31,7 @@ import java.io.File
 object JvmConfigurationPipelinePhase : AbstractConfigurationPhase<K2JVMCompilerArguments>(
     name = "JvmConfigurationPipelinePhase",
     postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
-    configurationFillers = listOf(JvmConfigurationFiller)
+    configurationUpdaters = listOf(JvmConfigurationUpdater)
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)
@@ -49,11 +49,11 @@ object JvmConfigurationPipelinePhase : AbstractConfigurationPhase<K2JVMCompilerA
     }
 }
 
-object JvmConfigurationFiller : ConfigurationFiller<K2JVMCompilerArguments>() {
+object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() {
     override fun fillConfiguration(
         input: ArgumentsPipelineArtifact<K2JVMCompilerArguments>,
         configuration: CompilerConfiguration,
-    ): ExitCode {
+    ) {
         val (arguments, services, _, _, _) = input
         val messageCollector = configuration.messageCollector
         messageCollector.report(LOGGING, "Configuring the compilation environment")
@@ -64,7 +64,7 @@ object JvmConfigurationFiller : ConfigurationFiller<K2JVMCompilerArguments>() {
         configuration.setupIncrementalCompilationServices(arguments, services)
 
         configuration.phaseConfig = createPhaseConfig(jvmPhases, arguments, messageCollector)
-        if (!configuration.configureJdkHome(arguments)) return ExitCode.COMPILATION_ERROR
+        if (!configuration.configureJdkHome(arguments)) return
         configuration.disableStandardScriptDefinition = arguments.disableStandardScript
         val moduleName = arguments.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         configuration.moduleName = moduleName
@@ -88,10 +88,7 @@ object JvmConfigurationFiller : ConfigurationFiller<K2JVMCompilerArguments>() {
         if (arguments.useOldBackend) {
             val severity = if (isUseOldBackendAllowed()) CompilerMessageSeverity.WARNING else CompilerMessageSeverity.ERROR
             messageCollector.report(severity, "-Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend")
-            if (severity == CompilerMessageSeverity.ERROR) return ExitCode.COMPILATION_ERROR
         }
-
-        return ExitCode.OK
     }
 
     private fun CompilerConfiguration.setupIncrementalCompilationServices(arguments: K2JVMCompilerArguments, services: Services) {
@@ -116,6 +113,6 @@ object JvmConfigurationFiller : ConfigurationFiller<K2JVMCompilerArguments>() {
     }
 
     private fun isUseOldBackendAllowed(): Boolean {
-        return JvmConfigurationFiller::class.java.classLoader.getResource("META-INF/unsafe-allow-use-old-backend") != null
+        return JvmConfigurationUpdater::class.java.classLoader.getResource("META-INF/unsafe-allow-use-old-backend") != null
     }
 }
