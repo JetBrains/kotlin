@@ -27,6 +27,8 @@ dependencies {
     api(commonDependency("org.jline", "jline"))
     compileOnly(intellijCore())
 
+    api(project(":kotlin-power-assert-compiler-plugin"))
+
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:plugin-api"))
     testApi(project(":compiler:util"))

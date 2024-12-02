@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.JvmStandardRepl
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
+import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.SomeCallTransformer
+import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.SomeIrGenerationExtension
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
@@ -61,6 +63,7 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             // TODO: add jdk path and other params if needed
         }
         withClassloadingProblemsReporting(messageCollector) {
+            IrGenerationExtension.registerExtension(project, SomeIrGenerationExtension())
             CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project, hostConfiguration))
             CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
             ProcessSourcesBeforeCompilingExtension.registerExtension(project, ScriptingProcessSourcesBeforeCompilingExtension(project))
