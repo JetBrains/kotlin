@@ -211,7 +211,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         supertypeSupplier: SupertypeSupplier
     ): Boolean {
         val symbol = declaration.symbol
-        val provider = session.firProvider
 
         return when (declaration.visibility) {
             Visibilities.Internal -> {
@@ -223,7 +222,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                     when {
                         ownerLookupTag == null -> {
                             // Top-level: visible in file
-                            provider.getContainingFile(symbol) == useSiteFile
+                            declaration.moduleData.session.firProvider.getContainingFile(symbol) == useSiteFile
                         }
                         else -> {
                             // Member: visible inside parent class, including all its member classes
