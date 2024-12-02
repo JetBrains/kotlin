@@ -16,8 +16,20 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.runtime.traceEventStart
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.util.kotlinFqName
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformTests(useFir) {
     @Test
@@ -2568,4 +2580,97 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             val background by ThemeToken { background }
         """
     )
+
+    @Test
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    fun testControlFlowGroupsKeysAreGlobalOffsetInvariant() {
+        val irCalls = mutableListOf<String>()
+
+        fun IrCall.renderTestData() = "${symbol.owner.kotlinFqName}(${arguments.map { expression -> expression?.render() }})"
+
+        verifyGoldenComposeIrTransform(
+            extra = """
+                import androidx.compose.runtime.*
+                @Composable fun Box() {}
+                @Composable fun Box2() {}
+            """.trimIndent(),
+            source = """
+                import androidx.compose.runtime.*
+                
+                @Composable fun Foo() {
+                    Bar(true)
+                }
+                
+                @Composable fun Bar(test: Boolean) {
+                    if(test) {
+                        Box()
+                    } else {
+                        Box2()
+                    }
+                }
+            """.trimIndent(), validator = { element ->
+                element.acceptVoid(object : IrVisitorVoid() {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitCall(expression: IrCall) {
+                        if (
+                            expression.symbol.owner.name == ComposeNames.STARTRESTARTGROUP ||
+                            expression.symbol.owner.name == ComposeNames.STARTREPLACEGROUP
+                        ) {
+                            irCalls += expression.renderTestData()
+                        }
+                    }
+                })
+            })
+
+
+        val irCallsDeque = ArrayDeque<String>()
+        irCallsDeque.addAll(irCalls)
+        if (irCallsDeque.isEmpty()) error("No 'irCalls' found")
+
+        verifyGoldenComposeIrTransform(
+            extra = """
+                import androidx.compose.runtime.*
+                @Composable fun Box() {}
+                @Composable fun Box2() {}
+            """.trimIndent(),
+            source = """
+                import androidx.compose.runtime.*
+                
+                @Composable fun Foo() {
+                    /*
+                    This Multiline comment will change the overall offsets and line numbers in the file. 
+                    It is expected that adding a comment won't change the emitted group keys.
+                    */
+                    Bar(true)
+                }
+
+                @Composable fun Bar(test: Boolean) {
+                    if(test) {
+                        Box()
+                    } else {
+                        Box2()
+                    }
+                }
+            """.trimIndent(), validator = { element ->
+                element.acceptVoid(object : IrVisitorVoid() {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    @OptIn(UnsafeDuringIrConstructionAPI::class)
+                    override fun visitCall(expression: IrCall) {
+                        if (expression.symbol.owner.name == ComposeNames.STARTRESTARTGROUP ||
+                            expression.symbol.owner.name == ComposeNames.STARTREPLACEGROUP
+                        ) {
+                            val nextExpect = irCallsDeque.removeFirst()
+                            val nextActual = expression.renderTestData()
+                            assertEquals(nextExpect, nextActual)
+                        }
+                    }
+                })
+            })
+    }
 }
