@@ -18,22 +18,28 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 
 /**
- * [KaSession] is the entry point to all frontend-related work. It has the following contracts:
+ * [KaSession], also called an *analysis session*, is the entry point to all frontend-related work. It has the following contracts:
  *
- * - It should not be accessed from the event dispatch thread or outside a read action.
- * - It should not be leaked outside the read action it was created in. To ensure that an analysis session isn't leaked, there are
+ * - It should not be accessed outside a [read action](https://plugins.jetbrains.com/docs/intellij/threading-model.html) or in [dumb mode][com.intellij.openapi.project.DumbService].
+ *   It should also not be accessed from the event dispatch thread (EDT) or a write action unless explicitly allowed ([allowAnalysisOnEdt][org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisOnEdt],
+ *   [allowAnalysisFromWriteAction][org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisFromWriteAction]).
+ * - It should not be leaked outside the [analyze] call it was created in. To ensure that an analysis session isn't leaked, there are
  *   additional conventions, explained further below.
- * - It should not be accessed in [the dumb mode][com.intellij.openapi.project.DumbService].
- * - All entities retrieved from an analysis session should not be leaked outside the read action the analysis session was created in.
+ * - All [lifetime owners][KaLifetimeOwner]s retrieved from an analysis session should not be leaked outside the [analyze] call that spawned
+ *   the analysis session.
  *
- * To pass a symbol from one read action to another, use [KaSymbolPointer], which can be created from a symbol by [KaSymbol.createPointer].
+ * To pass a lifetime owner from one `analyze` call to another, use a **pointer**:
+ *
+ * - [KaSymbolProvider] for [KaSymbol]s using [KaSymbol.createPointer].
+ * - [KaTypePointer] for [KaType]s using [KaType.createPointer].
  *
  * To create a [KaSession], please use [analyze] or one of its siblings.
  *
  * ### Conventions to avoid leakage
  *
  * It is crucial to avoid leaking the analysis session outside the read action it was created in, as the analysis session itself and all
- * entities retrieved from it will become invalid. An analysis session also shouldn't be leaked from the [analyze] call it was created in.
+ * lifetime owners retrieved from it will become invalid. An analysis session also shouldn't be leaked from the [analyze] call it was
+ * created in.
  *
  * It is forbidden to store an analysis session in a variable, parameter, or property. From the [analyze] block which provides the analysis
  * session, the analysis session should be passed to functions via an extension receiver, or as an ordinary parameter. For example:
