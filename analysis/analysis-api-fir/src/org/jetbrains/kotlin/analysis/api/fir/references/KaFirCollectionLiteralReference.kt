@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 internal class KaFirCollectionLiteralReference(
     expression: KtCollectionLiteralExpression
 ) : KtCollectionLiteralReference(expression), KaFirReference {
-    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
         check(this is KaFirSession)
         val fir = element.getOrBuildFirSafe<FirArrayLiteral>(firResolveSession) ?: return emptyList()
 
