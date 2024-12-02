@@ -11,28 +11,24 @@ import org.jetbrains.kotlin.psi.KtElement
  * Represents a [compile-time constant](https://kotlinlang.org/docs/properties.html#compile-time-constants) value. It can be used as a
  * `const val` initializer or as an annotation argument.
  *
- * [KaConstantValue] can also represent evaluated values. Such as, the `1 + 2` can be represented as an [IntValue] with a value `3`.
- *
- * For more info on constant values, see the [Kotlin documentation](https://kotlinlang.org/docs/properties.html#compile-time-constants]).
+ * [KaConstantValue] can also represent evaluated values. For example, the constant expression `1 + 2` can be represented as an [IntValue]
+ * with a value `3`.
  */
 public sealed interface KaConstantValue {
     /**
-     * The constant.
-     * Type of [value] matches its represented class, e.g. [BooleanValue.value] will return a [Boolean].
+     * The value of the constant. The type of [value] matches its represented class, e.g. [BooleanValue.value] will return a [Boolean].
      *
-     * Note that for [NullValue] and [ErrorValue], special values are returned.
+     * For [NullValue] and [ErrorValue], [value] contains a special value.
      */
     public val value: Any?
 
     /**
-     * A source element from which the value was created.
-     * Might be `null` for constants from non-source files.
+     * A source element from which the value was created. The PSI might be `null` for constants from non-source files.
      */
     public val sourcePsi: KtElement?
 
     /**
-     * Renders the value as a representable constant value [String].
-     * E.g., `1`, `2f, `3u` `null`, `"text"`.
+     * Renders the value as a representable constant value [String], such as `1`, `2f, `3u` `null`, `"text"`.
      */
     public fun render(): String
 
@@ -104,7 +100,7 @@ public sealed interface KaConstantValue {
         override val value: String
     }
 
-    /** Represents either a non-constant value, or a constant evaluation error (such as, a division by zero). */
+    /** Represents either a non-constant value, or a constant evaluation error (such as a division by zero). */
     public interface ErrorValue : KaConstantValue {
         public val errorMessage: String
         override val value: Nothing
