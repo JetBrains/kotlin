@@ -61,17 +61,37 @@ internal fun <K, V> build(builder: MutableMap<K, V>): Map<K, V> {
 /**
  * Concurrent getOrPut, that is safe for concurrent maps.
  *
- * Returns the value for the given [key]. If the key is not found in the map, calls the [defaultValue] function,
- * puts its result into the map under the given key and returns it.
+ * Returns the value for the given [key] if the value is present and not `null`.
+ * Otherwise, calls the [defaultValue] function,
+ * puts its result into the map under the given key and returns the call result.
  *
- * This method guarantees not to put the value into the map if the key is already there,
- * but the [defaultValue] function may be invoked even if the key is already in the map.
+ * This function guarantees not to put the new value into the map if the key is already
+ * mapped to a non-null value. However, the [defaultValue] function may still be invoked.
+ *
+ * This function relies on [ConcurrentMap.computeIfAbsent]. Hence, the `ConcurrentMap` implementations
+ * that support `null` values must override the default `computeIfAbsent` implementation.
+ *
+ * @sample samples.collections.Maps.Usage.getOrPut
  */
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     // Do not use computeIfAbsent on JVM8 as it would change locking behavior
-    return this.get(key)
-            ?: defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
+    this.get(key)?.let { return it }
 
+    val newValue = defaultValue()
+    return try {
+        // computeIfAbsent doesn't put the newValue if it's null
+        if (newValue == null) {
+            this.putIfAbsent(key, newValue) ?: newValue
+        } else {
+            this.computeIfAbsent(key) { newValue }
+        }
+    } catch (e: LinkageError) {
+        // In Android projects without the desugared library, computeIfAbsent is available since SDK 24.
+        // See https://developer.android.com/studio/write/java8-support-table for more info.
+        // Use putIfAbsent as a fallback in this case.
+        // Note: If the key was mapped to a null value, putIfAbsent won't replace it, but the new value will still be returned.
+        this.putIfAbsent(key, newValue) ?: newValue
+    }
 }
 
 
