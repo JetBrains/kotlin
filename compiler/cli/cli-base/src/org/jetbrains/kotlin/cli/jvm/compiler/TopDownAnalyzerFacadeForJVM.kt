@@ -36,12 +36,13 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.jvm.jvmLibrariesProvidedByDefault
 import org.jetbrains.kotlin.javac.components.JavacBasedClassFinder
 import org.jetbrains.kotlin.javac.components.JavacBasedSourceElementFactory
 import org.jetbrains.kotlin.javac.components.StubJavaResolverCache
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
+import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
+import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
@@ -341,7 +342,7 @@ private fun getModuleDescriptorByLibrary(
 
     val dependencies = current.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).mapNotNull {
         mapping[it] ?: run {
-            assert(it in jvmLibrariesProvidedByDefault) { "Unknown library $it" }
+            assert(it == KOTLIN_NATIVE_STDLIB_NAME || it == KOTLIN_JS_STDLIB_NAME) { "Unknown library $it" }
             null
         }
     }

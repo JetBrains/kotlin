@@ -6,16 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.jvm
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
-import org.jetbrains.kotlin.library.RequiredUnresolvedLibrary
-import org.jetbrains.kotlin.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.util.Logger
-
-val jvmLibrariesProvidedByDefault = setOf("stdlib", "kotlin")
 
 class JvmLibraryResolver(
     directLibs: List<String>,
@@ -34,7 +29,7 @@ class JvmLibraryResolver(
 
     // We do not need stdlib in klib form.
     override fun isProvidedByDefault(unresolved: UnresolvedLibrary): Boolean =
-        unresolved.path in jvmLibrariesProvidedByDefault
+        unresolved.path == KOTLIN_NATIVE_STDLIB_NAME || unresolved.path == KOTLIN_JS_STDLIB_NAME
 }
 
 // TODO: This is a temporary set of library resolver policies for jvm compiler.
