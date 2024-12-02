@@ -8116,12 +8116,6 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
-    @TestMetadata("do_while_with_if.kt")
-    public void testDo_while_with_if() {
-      runTest("compiler/testData/codegen/box/controlflow/do_while_with_if.kt");
-    }
-
-    @Test
     @TestMetadata("for_loops.kt")
     public void testFor_loops() {
       runTest("compiler/testData/codegen/box/controlflow/for_loops.kt");
