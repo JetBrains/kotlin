@@ -776,8 +776,7 @@ class LinkTest : BaseAbstractTest() {
         }
     }
     @Test
-    @OnlyDescriptors("due to #3250 a result DRI is unstable")
-    fun `K1 - link should be stable for overloads in different files`() {
+    fun `link should be stable for overloads in different files`() {
         testInline(
             """
             |/src/main/kotlin/Testing.kt
