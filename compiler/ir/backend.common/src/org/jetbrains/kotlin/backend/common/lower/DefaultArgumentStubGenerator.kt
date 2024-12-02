@@ -341,7 +341,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                     endOffset,
                     type,
                     it as IrConstructorSymbol,
-                    LoweredStatementOrigins.DEFAULT_DISPATCH_CALL
+                    IrStatementOrigin.DEFAULT_DISPATCH_CALL
                 )
             }
         }
@@ -368,7 +368,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 IrCallImpl(
                     startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
                     typeArgumentsCount = typeArguments.size - typeParametersToRemove,
-                    origin = LoweredStatementOrigins.DEFAULT_DISPATCH_CALL,
+                    origin = IrStatementOrigin.DEFAULT_DISPATCH_CALL,
                     superQualifierSymbol = superQualifierSymbol
                 )
             }

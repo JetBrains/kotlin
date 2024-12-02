@@ -61,7 +61,7 @@ private val IrDeclaration.original: IrDeclaration
 
 fun IrStatement.unwrapInlineLambda(): IrFunctionReference? = when (this) {
     is IrBlock -> statements.lastOrNull()?.unwrapInlineLambda()
-    is IrFunctionReference -> takeIf { it.origin == LoweredStatementOrigins.INLINE_LAMBDA }
+    is IrFunctionReference -> takeIf { it.origin == IrStatementOrigin.INLINE_LAMBDA }
     else -> null
 }
 

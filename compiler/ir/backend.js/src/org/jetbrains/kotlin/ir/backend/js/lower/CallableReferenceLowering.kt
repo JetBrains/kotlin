@@ -298,7 +298,7 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
                     }
                     boundReceiverParameter?.let {
                         +irSetField(irGet(clazz.thisReceiver!!), boundReceiverField!!, irGet(it),
-                                    LoweredStatementOrigins.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
+                                    IrStatementOrigin.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
                         )
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, clazz.symbol, context.irBuiltIns.unitType)
