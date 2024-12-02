@@ -230,7 +230,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
             pluginOverrides = listOf(writerPlugin)
         ) {
             renderingStage = { _, _ ->
-                val sideMenu = writerPlugin.writer.navigationHtml().select("div.sideMenuPart")
+                val sideMenu = writerPlugin.writer.navigationHtml().select(".toc--part")
 
                 assertEquals("ZERO", sideMenu.select("#root-nav-submenu-0-0-0").text())
                 assertEquals("ONE", sideMenu.select("#root-nav-submenu-0-0-1").text())
