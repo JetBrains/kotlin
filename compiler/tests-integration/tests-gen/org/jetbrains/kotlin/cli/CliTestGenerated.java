@@ -258,6 +258,41 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
+    @TestMetadata("annotationDefaultTargetFirstOnly.args")
+    public void testAnnotationDefaultTargetFirstOnly() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetFirstOnly.args");
+    }
+
+    @TestMetadata("annotationDefaultTargetFirstOnlyWarn.args")
+    public void testAnnotationDefaultTargetFirstOnlyWarn() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetFirstOnlyWarn.args");
+    }
+
+    @TestMetadata("annotationDefaultTargetParamProperty.args")
+    public void testAnnotationDefaultTargetParamProperty() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetParamProperty.args");
+    }
+
+    @TestMetadata("annotationDefaultTargetWithOptInFirstOnly.args")
+    public void testAnnotationDefaultTargetWithOptInFirstOnly() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithOptInFirstOnly.args");
+    }
+
+    @TestMetadata("annotationDefaultTargetWithOptInParamProperty.args")
+    public void testAnnotationDefaultTargetWithOptInParamProperty() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithOptInParamProperty.args");
+    }
+
+    @TestMetadata("annotationDefaultTargetWithSuppressedOptInFirstOnly.args")
+    public void testAnnotationDefaultTargetWithSuppressedOptInFirstOnly() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptInFirstOnly.args");
+    }
+
+    @TestMetadata("annotationDefaultTargetWithSuppressedOptInParamProperty.args")
+    public void testAnnotationDefaultTargetWithSuppressedOptInParamProperty() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptInParamProperty.args");
+    }
+
     @TestMetadata("apiAndLanguageVersionsUnsupported.args")
     public void testApiAndLanguageVersionsUnsupported() {
       runTest("compiler/testData/cli/jvm/apiAndLanguageVersionsUnsupported.args");
