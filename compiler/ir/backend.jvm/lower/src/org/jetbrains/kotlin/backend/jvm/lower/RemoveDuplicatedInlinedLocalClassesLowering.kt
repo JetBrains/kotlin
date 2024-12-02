@@ -57,7 +57,7 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
     private val capturedConstructors = context.mapping.capturedConstructors
 
     private fun removeUselessDeclarationsFromCapturedConstructors(irClass: IrClass, data: Data) {
-        irClass.parents.first { it !is IrFunction || it.origin != LoweredDeclarationOrigins.INLINE_LAMBDA }
+        irClass.parents.first { it !is IrFunction || it.origin != IrDeclarationOrigin.INLINE_LAMBDA }
             .accept(this, data.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false, modifyTree = false))
     }
 

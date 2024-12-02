@@ -488,7 +488,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
             it.putValueArgument(i + if (i >= continuationParameter.indexInOldValueParameters) 1 else 0, getValueArgument(i))
         }
         if (caller != null) {
-            val continuation = if (caller.origin == LoweredDeclarationOrigins.INLINE_LAMBDA)
+            val continuation = if (caller.origin == IrDeclarationOrigin.INLINE_LAMBDA)
                 IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, continuationParameter.type, JvmLoweredStatementOrigin.FAKE_CONTINUATION)
             else
                 IrGetValueImpl(
