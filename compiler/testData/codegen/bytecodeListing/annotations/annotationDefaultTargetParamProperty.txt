@@ -1,0 +1,39 @@
+@kotlin.Metadata
+public final class My {
+    // source: 'annotationDefaultTargetParamProperty.kt'
+    private final @SomeField @org.jetbrains.annotations.NotNull field x: java.lang.String
+    public method <init>(@SomeField @SomeProperty @org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public synthetic deprecated static @SomeProperty method getX$annotations(): void
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+@kotlin.annotation.Target(allowedTargets=[VALUE_PARAMETER, FIELD])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[FIELD, PARAMETER])
+@kotlin.Metadata
+public annotation class SomeField {
+    // source: 'annotationDefaultTargetParamProperty.kt'
+}
+
+@kotlin.annotation.Target(allowedTargets=[VALUE_PARAMETER, PROPERTY])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[PARAMETER])
+@kotlin.Metadata
+public annotation class SomeProperty {
+    // source: 'annotationDefaultTargetParamProperty.kt'
+}
+
+@kotlin.Metadata
+public final class Your$DefaultImpls {
+    // source: 'annotationDefaultTargetParamProperty.kt'
+    public synthetic deprecated static @SomeProperty method value$annotations(): void
+    public final inner class Your$DefaultImpls
+}
+
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class Your {
+    // source: 'annotationDefaultTargetParamProperty.kt'
+    public abstract method value(): java.lang.String
+    public final inner class Your$DefaultImpls
+}
