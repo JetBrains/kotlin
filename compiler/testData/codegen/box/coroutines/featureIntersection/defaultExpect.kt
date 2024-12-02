@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: NATIVE
 // FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 
 import kotlin.coroutines.*

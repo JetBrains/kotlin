@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.util.KtTestUtil.getHomeDirectory
 import java.io.File
@@ -44,3 +45,7 @@ fun generateBoxFunctionLauncher(entryPointFunctionFQN: String, expectedResult: S
         }
         
     """.trimIndent()
+
+fun File.firFailFileExists(pipelineType: PipelineType): Boolean =
+    pipelineType != PipelineType.K1 &&
+            getAbsoluteFile(absolutePath.substringBefore(".kt") + ".fir.fail").exists()

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -90,7 +91,10 @@ open class AbstractNativeUnboundIrSerializationTest : AbstractKotlinCompilerWith
 
         configureFirParser(FirParser.LightTree)
 
-        useAfterAnalysisCheckers(::BoxCodegenWithoutBinarySuppressor) // or: BlackBoxCodegenSuppressor
+        useAfterAnalysisCheckers(
+            ::BoxCodegenWithoutBinarySuppressor, // or: BlackBoxCodegenSuppressor
+            ::FirFailingTestSuppressor,
+        )
         useConfigurators(
             ::NativeEnvironmentConfigurator,
         )

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: NATIVE
 // FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 // IGNORE_BACKEND: JVM
 

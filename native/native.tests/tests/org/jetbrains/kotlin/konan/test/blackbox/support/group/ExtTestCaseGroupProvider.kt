@@ -236,6 +236,7 @@ private class ExtTestDataFile(
          * This invariant may be broken during grouping tests, so MPP tests should be run in standalone mode
          */
         if (pipelineType != PipelineType.K1 && testDataFileSettings.languageSettings.contains("+MultiPlatformProjects")) return true
+        if (testDataFile.firFailFileExists(pipelineType)) return true
 
         var isStandaloneTest = false
 

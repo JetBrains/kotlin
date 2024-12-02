@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: NATIVE
 // FIR status: KT-46419, ILT conversions to Byte and Short are not supported by design
 
 fun box(): String {

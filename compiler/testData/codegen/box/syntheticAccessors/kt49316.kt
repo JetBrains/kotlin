@@ -1,7 +1,6 @@
 // The test isn't passing when using K/N per-file caches and in order to fix it,
 // some hacks are required, which isn't worth it considering that test contains invalid code (reassign of val property).
 // DISABLE_NATIVE
-// IGNORE_BACKEND_K2: NATIVE
 // FIR_STATUS: KT-35565
 //  java.lang.AssertionError
 //    at org.jetbrains.kotlin.js.translate.context.TranslationContext.getDispatchReceiver(TranslationContext.java:590)

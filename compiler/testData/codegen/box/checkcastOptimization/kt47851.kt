@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: NATIVE
 // FIR status: result.getMethod OK in FE1.0, unresolved in FIR
 
 class C(val value: String) {

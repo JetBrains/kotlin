@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TreeNode
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.firFailFileExists
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.joinPackageNames
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.prependPackageName
@@ -41,7 +43,7 @@ abstract class AbstractNativeBlackBoxTest {
             runTestCase(testCaseId)
         } catch (e: CompilationToolException) {
             // TODO find out the way not to re-read test source file, but to re-use already extracted test directives.
-            if (testRunSettings.isIgnoredTarget(absoluteTestFile))
+            if (testRunSettings.isIgnoredTarget(absoluteTestFile) || absoluteTestFile.firFailFileExists(testRunSettings.get<PipelineType>()))
                 println("There was an expected failure: CompilationToolException: ${e.reason}")
             else
                 fail { e.reason }
