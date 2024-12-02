@@ -161,7 +161,7 @@ class ClassCodegen private constructor(
         // 1. Any method other than `<clinit>` can add a field and a `<clinit>` statement:
         for (method in irClass.declarations.filterIsInstance<IrFunction>()) {
             if (method.name.asString() != "<clinit>" &&
-                method.origin != LoweredDeclarationOrigins.INLINE_LAMBDA &&
+                method.origin != IrDeclarationOrigin.INLINE_LAMBDA &&
                 method.origin != IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR &&
                 !(method.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE && method.body == null)
             ) {

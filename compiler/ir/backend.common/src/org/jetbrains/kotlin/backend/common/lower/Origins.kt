@@ -13,5 +13,5 @@ object LoweredStatementOrigins {
 }
 
 object LoweredDeclarationOrigins {
-    val INLINE_LAMBDA by IrDeclarationOriginImpl
+
 }

@@ -96,7 +96,7 @@ fun IrFunction.hasContinuation(): Boolean = isInvokeSuspendOfLambda() ||
         isSuspend && shouldContainSuspendMarkers() &&
         // These are templates for the inliner; the continuation is borrowed from the caller method.
         !isEffectivelyInlineOnly() &&
-        origin != LoweredDeclarationOrigins.INLINE_LAMBDA &&
+        origin != IrDeclarationOrigin.INLINE_LAMBDA &&
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
 
