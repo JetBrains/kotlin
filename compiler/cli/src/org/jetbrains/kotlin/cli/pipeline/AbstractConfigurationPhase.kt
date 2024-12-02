@@ -27,8 +27,11 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
-abstract class ConfigurationFiller<in A : CommonCompilerArguments> {
-    abstract fun fillConfiguration(input: ArgumentsPipelineArtifact<A>, configuration: CompilerConfiguration): ExitCode
+/**
+ * Updates the compiler configuration using information from the compiler arguments
+ */
+abstract class ConfigurationUpdater<in A : CommonCompilerArguments> {
+    abstract fun fillConfiguration(input: ArgumentsPipelineArtifact<A>, configuration: CompilerConfiguration)
 }
 
 // from CLICompiler
@@ -36,13 +39,13 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     name: String,
     preActions: Set<Action<ArgumentsPipelineArtifact<A>, PipelineContext>> = emptySet(),
     postActions: Set<Action<Pair<ArgumentsPipelineArtifact<A>, ConfigurationPipelineArtifact>, PipelineContext>> = emptySet(),
-    val configurationFillers: List<ConfigurationFiller<A>>
+    val configurationUpdaters: List<ConfigurationUpdater<A>>
 ) : PipelinePhase<ArgumentsPipelineArtifact<A>, ConfigurationPipelineArtifact>(name, preActions, postActions) {
     override fun executePhase(input: ArgumentsPipelineArtifact<A>): ConfigurationPipelineArtifact? {
         val configuration = CompilerConfiguration()
         configuration.setupCommonConfiguration(input)
 
-        for (filler in configurationFillers) {
+        for (filler in configurationUpdaters) {
             filler.fillConfiguration(input, configuration)
         }
 
