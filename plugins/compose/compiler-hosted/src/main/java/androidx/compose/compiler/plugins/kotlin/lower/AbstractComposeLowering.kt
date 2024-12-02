@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
@@ -919,14 +920,18 @@ abstract class AbstractComposeLowering(
         return property
     }
 
-    private val hiddenFromObjCAnnotationSymbol: IrClassSymbol by lazy {
-        getTopLevelClass(hiddenFromObjCClassId)
+    private val hiddenFromObjCAnnotationSymbol: IrClassSymbol? by lazy {
+        if (context.platform.isNative()) {
+            getTopLevelClass(hiddenFromObjCClassId)
+        } else null
     }
 
-    private val hiddenFromObjCAnnotation = IrConstructorCallImpl.fromSymbolOwner(
-        type = hiddenFromObjCAnnotationSymbol.defaultType,
-        constructorSymbol = hiddenFromObjCAnnotationSymbol.constructors.first()
-    )
+    private val hiddenFromObjCAnnotation = hiddenFromObjCAnnotationSymbol?.let {
+        IrConstructorCallImpl.fromSymbolOwner(
+            type = it.defaultType,
+            constructorSymbol = it.constructors.first()
+        )
+    }
 
     private val deprecationLevelClass = getTopLevelClass(ClassId.fromString("kotlin/DeprecationLevel"))
     private val hiddenDeprecationLevel = deprecationLevelClass.owner.declarations.filterIsInstance<IrEnumEntry>()
@@ -978,7 +983,11 @@ abstract class AbstractComposeLowering(
                 +irReturn(irGetField(stabilityField))
             }
             parent.addChild(fn)
-            fn.annotations = listOf(hiddenFromObjCAnnotation, hiddenDeprecatedAnnotation)
+            fn.annotations = if (context.platform.isNative()) {
+                listOf(hiddenFromObjCAnnotation ?: error("Expected @HiddenFromObjC annotation to be present."), hiddenDeprecatedAnnotation)
+            } else {
+                listOf(hiddenDeprecatedAnnotation)
+            }
         }
 
         context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(stabilityGetter)
