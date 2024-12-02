@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
@@ -23,16 +24,21 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclaration
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.utils.NullableConcurrentCache
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -111,6 +117,10 @@ private constructor(
                 extensionTools.mapTo(this) { it.packageProvider }
             }
         )
+    }
+
+    val cacheStorage: KaFirInternalCacheStorage by lazy {
+        KaFirInternalCacheStorage(this)
     }
 
     fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { firResolveSession.getScopeSessionFor(session) }
