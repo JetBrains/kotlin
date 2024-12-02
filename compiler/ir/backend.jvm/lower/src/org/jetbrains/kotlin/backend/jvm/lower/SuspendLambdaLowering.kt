@@ -322,7 +322,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
     ): IrExpression {
         val constructorCall = irCall(constructor).also {
             for (typeParameter in constructor.parentAsClass.typeParameters) {
-                it.putTypeArgument(typeParameter.index, typeParameter.defaultType)
+                it.typeArguments[typeParameter.index] = typeParameter.defaultType
             }
             it.putValueArgument(0, irGet(scope.valueParameters.last()))
         }
@@ -343,8 +343,8 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
             this@SuspendLambdaLowering.context.ir.symbols.unsafeCoerceIntrinsic,
             this@SuspendLambdaLowering.context.ir.symbols.resultOfAnyType
         ).apply {
-            putTypeArgument(0, context.irBuiltIns.anyNType)
-            putTypeArgument(1, type)
+            typeArguments[0] = context.irBuiltIns.anyNType
+            typeArguments[1] = type
             putValueArgument(0, irUnit())
         })
 

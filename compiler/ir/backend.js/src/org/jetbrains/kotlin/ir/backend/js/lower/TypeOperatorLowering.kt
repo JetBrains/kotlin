@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractValueUsageLowering.Companion.getActualType
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
@@ -337,7 +334,9 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             }
 
             private fun wrapTypeReference(toType: IrType) =
-                JsIrBuilder.buildCall(jsClassIntrinsicSymbol).apply { putTypeArgument(0, toType) }
+                JsIrBuilder.buildCall(jsClassIntrinsicSymbol).apply {
+                    typeArguments[0] = toType
+                }
 
             private fun generateGenericArrayCheck(argument: IrExpression) =
                 JsIrBuilder.buildCall(isArraySymbol).apply { arguments[0] = argument }

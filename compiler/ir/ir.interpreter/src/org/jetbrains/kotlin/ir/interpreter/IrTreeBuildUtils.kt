@@ -121,10 +121,12 @@ internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean =
         is IrConstructorCall -> symbol.owner.createConstructorCall()
         is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol)
         is IrEnumConstructorCall ->
-            IrEnumConstructorCallImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol, typeArgumentsCount)
+            IrEnumConstructorCallImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, type, symbol, typeArguments.size)
     }.apply {
         if (copyTypeArguments) {
-            (0 until this@shallowCopy.typeArgumentsCount).forEach { this.putTypeArgument(it, this@shallowCopy.getTypeArgument(it)) }
+            this@shallowCopy.typeArguments.indices.forEach {
+                typeArguments[it] = this@shallowCopy.typeArguments[it]
+            }
         }
     }
 }
@@ -164,9 +166,15 @@ internal fun IrBuiltIns.emptyArrayConstructor(arrayType: IrType): IrConstructorC
         // TODO find a way to avoid creation of empty lambda
         val tempFunction = createTempFunction(Name.identifier("TempForVararg"), this.anyType)
         tempFunction.parent = arrayClass // can be anything, will not be used in any case
-        val initLambda = IrFunctionExpressionImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, constructor.valueParameters[1].type, tempFunction, IrStatementOrigin.LAMBDA)
+        val initLambda = IrFunctionExpressionImpl(
+            SYNTHETIC_OFFSET,
+            SYNTHETIC_OFFSET,
+            constructor.valueParameters[1].type,
+            tempFunction,
+            IrStatementOrigin.LAMBDA
+        )
         constructorCall.putValueArgument(1, initLambda)
-        constructorCall.putTypeArgument(0, (arrayType as IrSimpleType).arguments.singleOrNull()?.typeOrNull)
+        constructorCall.typeArguments[0] = (arrayType as IrSimpleType).arguments.singleOrNull()?.typeOrNull
     }
     return constructorCall
 }

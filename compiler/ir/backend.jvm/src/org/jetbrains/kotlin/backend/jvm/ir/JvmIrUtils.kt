@@ -190,10 +190,10 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyFromWithPlaceholderTypeArgume
     copyValueArgumentsFrom(existingCall, this.symbol.owner, receiversAsArguments = true, argumentsAsReceivers = false)
     var offset = 0
     existingCall.symbol.owner.parentAsClass.typeParameters.forEach { _ ->
-        putTypeArgument(offset++, createPlaceholderAnyNType(irBuiltIns))
+        typeArguments[offset++] = createPlaceholderAnyNType(irBuiltIns)
     }
-    for (i in 0 until existingCall.typeArgumentsCount) {
-        putTypeArgument(i + offset, existingCall.getTypeArgument(i))
+    for (i in existingCall.typeArguments.indices) {
+        typeArguments[i + offset] = existingCall.typeArguments[i]
     }
 }
 

@@ -43,7 +43,7 @@ class JsSharedVariablesManager(
                 dynamicType, createBox,
                 typeArgumentsCount = 1
             ).apply {
-                putTypeArgument(0, valueType)
+                typeArguments[0] = valueType
                 putValueArgument(0, initializer)
             }
 
@@ -71,7 +71,7 @@ class JsSharedVariablesManager(
             typeArgumentsCount = 1,
             originalGet.origin
         ).apply {
-            putTypeArgument(0, originalGet.type)
+            typeArguments[0] = originalGet.type
             putValueArgument(
                 0, IrGetValueImpl(
                     originalGet.startOffset,
@@ -93,7 +93,7 @@ class JsSharedVariablesManager(
             typeArgumentsCount = 1,
             originalSet.origin
         ).apply {
-            putTypeArgument(0, originalSet.value.type)
+            typeArguments[0] = originalSet.value.type
             putValueArgument(
                 0, IrGetValueImpl(
                     originalSet.startOffset,

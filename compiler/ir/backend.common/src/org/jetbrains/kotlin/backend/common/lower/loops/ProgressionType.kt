@@ -126,8 +126,8 @@ internal abstract class UnsignedProgressionType(
                 unsafeCoerceIntrinsic,
                 typeArgumentsCount = 2
             ).apply {
-                putTypeArgument(0, fromType)
-                putTypeArgument(1, unsignedType)
+                typeArguments[0] = fromType
+                typeArguments[1] = unsignedType
                 putValueArgument(0, this@asUnsigned)
             }
         } else {
@@ -152,8 +152,8 @@ internal abstract class UnsignedProgressionType(
                 unsafeCoerceIntrinsic,
                 typeArgumentsCount = 2
             ).apply {
-                putTypeArgument(0, unsignedType)
-                putTypeArgument(1, toType)
+                typeArguments[0] = unsignedType
+                typeArguments[1] = toType
                 putValueArgument(0, this@asSigned)
             }
         } else {

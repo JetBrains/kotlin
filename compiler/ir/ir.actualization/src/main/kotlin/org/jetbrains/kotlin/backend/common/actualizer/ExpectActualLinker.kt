@@ -217,7 +217,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             expression.endOffset,
             expression.type.remapType(),
             constructorSymbol,
-            expression.typeArgumentsCount,
+            expression.typeArguments.size,
             expression.constructorTypeArgumentsCount,
             expression.origin,
         ).apply {

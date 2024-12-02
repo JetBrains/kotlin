@@ -19,8 +19,8 @@ import org.jetbrains.org.objectweb.asm.Type
  */
 object UnsafeCoerce : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
-        val from = expression.getTypeArgument(0)!!
-        val to = expression.getTypeArgument(1)!!
+        val from = expression.typeArguments[0]!!
+        val to = expression.typeArguments[1]!!
         val fromType = codegen.typeMapper.mapType(from)
         val toType = codegen.typeMapper.mapType(to)
         require(fromType == toType) {

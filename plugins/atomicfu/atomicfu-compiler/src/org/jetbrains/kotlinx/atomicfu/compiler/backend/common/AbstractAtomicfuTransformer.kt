@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.utils.typeArguments
 import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
@@ -521,7 +520,9 @@ abstract class AbstractAtomicfuTransformer(
                 putValueArgument(shift++, atomicHandlerReceiverValueParam)
                 atomicHandlerExtraArg?.let { putValueArgument(shift++, it) }
                 callValueArguments.forEachIndexed { i, arg -> putValueArgument(i + shift, arg); }
-                callTypeArguments.forEachIndexed { i, irType -> putTypeArgument(i, irType) }
+                callTypeArguments.forEachIndexed { i, irType ->
+                    typeArguments[i] = irType
+                }
             }
         }
 

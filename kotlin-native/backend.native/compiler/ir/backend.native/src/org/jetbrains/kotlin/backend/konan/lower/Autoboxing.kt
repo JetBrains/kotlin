@@ -204,8 +204,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 expression.transformChildrenVoid()
 
                 // TODO: check types has the same binary representation.
-                val oldType = expression.getTypeArgument(0)!!
-                val newType = expression.getTypeArgument(1)!!
+                val oldType = expression.typeArguments[0]!!
+                val newType = expression.typeArguments[1]!!
 
                 assert(oldType.computePrimitiveBinaryTypeOrNull() == newType.computePrimitiveBinaryTypeOrNull())
 
@@ -369,7 +369,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
             // Note: IR variable created below has reference type intentionally.
             val box = irTemporary(irCall(symbols.createUninitializedInstance.owner).also {
-                it.putTypeArgument(0, irClass.defaultType)
+                it.typeArguments[0] = irClass.defaultType
             })
             +irSetField(irGet(box), getInlineClassBackingField(irClass), irGet(valueToBox))
             +irReturn(irGet(box))

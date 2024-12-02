@@ -88,7 +88,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             }
             when {
                 // References to generic synthetic Java properties aren't inlined in K1. Fixes KT-57103
-                typeArgumentsCount > 0 && isReferenceToSyntheticJavaProperty -> this
+                typeArguments.isNotEmpty() && isReferenceToSyntheticJavaProperty -> this
                 // ::property -> { receiver -> receiver.property }; prefer direct field access if allowed.
                 field != null -> wrapField(field!!.owner).toLambda(this, scope!!)
                 else -> wrapFunction(getter!!.owner).toLambda(this, scope!!)

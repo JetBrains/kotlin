@@ -1784,7 +1784,7 @@ class ComposableFunctionBodyTransformer(
                         extensionReceiver = function.extensionReceiverParameter?.let { irGet(it) }
                         dispatchReceiver = outerReceiver?.let { irGet(it) }
                         function.typeParameters.fastForEachIndexed { index, parameter ->
-                            putTypeArgument(index, parameter.defaultType)
+                            typeArguments[index] = parameter.defaultType
                         }
                     }
                 )

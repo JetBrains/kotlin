@@ -886,6 +886,6 @@ internal inline fun IrMemberAccessExpression<*>.putTypeArguments(
 ) {
     if (typeArguments == null) return
     for ((typeParameter, typeArgument) in typeArguments) {
-        putTypeArgument(typeParameter.index, toIrType(typeArgument))
+        this.typeArguments[typeParameter.index] = toIrType(typeArgument)
     }
 }

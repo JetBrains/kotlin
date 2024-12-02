@@ -246,7 +246,7 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
     }
 
     private fun ImportCollectingPrinter.printWithShapeExtraArguments(element: Element) {
-        println("typeArgumentsCount = ${element.visitorParameterName}.typeArgumentsCount,")
+        println("typeArgumentsCount = ${element.visitorParameterName}.typeArguments.size,")
         println("hasDispatchReceiver = ${element.visitorParameterName}.targetHasDispatchReceiver,")
         println("hasExtensionReceiver = ${element.visitorParameterName}.targetHasExtensionReceiver,")
         if (!element.isSubclassOf(IrTree.propertyReference)) {

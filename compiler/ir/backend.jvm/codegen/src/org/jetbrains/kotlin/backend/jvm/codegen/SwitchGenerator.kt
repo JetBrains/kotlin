@@ -75,8 +75,8 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
     fun IrCall.isCoerceFromUIntToInt(): Boolean =
         symbol == context.ir.symbols.unsafeCoerceIntrinsic
-                && getTypeArgument(0)?.isUInt() == true
-                && getTypeArgument(1)?.isInt() == true
+                && typeArguments[0]?.isUInt() == true
+                && typeArguments[1]?.isInt() == true
 
     private fun generateUIntSwitch(
         subject: IrGetValue?,

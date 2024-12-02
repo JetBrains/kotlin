@@ -26,17 +26,17 @@ class ClassTypeArguments(internal val irConstructorCall: IrConstructorCall) : Ab
         if (index >= size)
             throw IndexOutOfBoundsException("index: $index, size: $size")
         else
-            irConstructorCall.getTypeArgument(index)
+            irConstructorCall.typeArguments[index]
 }
 
 fun IrConstructorCall.getConstructorTypeArgumentIndex(constructorTypeArgumentIndex: Int) =
-    typeArgumentsCount - constructorTypeArgumentsCount + constructorTypeArgumentIndex
+    typeArguments.size - constructorTypeArgumentsCount + constructorTypeArgumentIndex
 
 fun IrConstructorCall.getConstructorTypeArgument(index: Int): IrType? =
-    getTypeArgument(getConstructorTypeArgumentIndex(index))
+    typeArguments[getConstructorTypeArgumentIndex(index)]
 
 fun IrConstructorCall.putConstructorTypeArgument(index: Int, type: IrType?) {
-    putTypeArgument(getConstructorTypeArgumentIndex(index), type)
+    typeArguments[getConstructorTypeArgumentIndex(index)] = type
 }
 
 operator fun ConstructorTypeArguments.set(index: Int, type: IrType?) {
@@ -45,13 +45,13 @@ operator fun ConstructorTypeArguments.set(index: Int, type: IrType?) {
 }
 
 val IrConstructorCall.classTypeArgumentsCount: Int
-    get() = typeArgumentsCount - constructorTypeArgumentsCount
+    get() = typeArguments.size - constructorTypeArgumentsCount
 
 fun IrConstructorCall.getClassTypeArgument(index: Int): IrType? =
-    getTypeArgument(index)
+    typeArguments[index]
 
 fun IrConstructorCall.putClassTypeArgument(index: Int, type: IrType?) {
-    putTypeArgument(index, type)
+    typeArguments[index] = type
 }
 
 operator fun ClassTypeArguments.set(index: Int, type: IrType?) {

@@ -578,7 +578,7 @@ internal class PartiallyLinkedIrTreePatcher(
             // TODO: is it necessary to check that the number of type parameters matches the number of type arguments?
             return ExpressionWithUnusableClassifier(
                 this,
-                (0 until typeArgumentsCount).firstNotNullOfOrNull { index -> getTypeArgument(index)?.explore() } ?: return null
+                this.typeArguments.firstNotNullOfOrNull { it?.explore() } ?: return null
             )
         }
 

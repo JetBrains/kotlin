@@ -155,7 +155,7 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                         IrFunctionReferenceImpl(
                             expression.startOffset, expression.endOffset,
                             expression.type,
-                            it.symbol, expression.typeArgumentsCount,
+                            it.symbol, expression.typeArguments.size,
                             expression.reflectionTarget, expression.origin
                         )
                     }
@@ -174,7 +174,7 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                             expression.startOffset, expression.endOffset,
                             expression.type,
                             expression.symbol, // TODO remap property symbol based on remapped getter/setter?
-                            expression.typeArgumentsCount,
+                            expression.typeArguments.size,
                             expression.field,
                             staticGetter?.symbol ?: expression.getter,
                             staticSetter?.symbol ?: expression.setter,
@@ -189,7 +189,7 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                     expression.startOffset, expression.endOffset,
                     expression.type,
                     staticTarget.symbol,
-                    typeArgumentsCount = expression.typeArgumentsCount,
+                    typeArgumentsCount = expression.typeArguments.size,
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol
                 )

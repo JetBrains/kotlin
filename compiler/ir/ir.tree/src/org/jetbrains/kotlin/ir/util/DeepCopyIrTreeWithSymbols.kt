@@ -46,11 +46,11 @@ abstract class IrDeepCopyBase : IrElementTransformerVoid() {
     }
 
     protected fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
-        assert(typeArgumentsCount == other.typeArgumentsCount) {
-            "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
+        assert(typeArguments.size == other.typeArguments.size) {
+            "Mismatching type arguments: ${typeArguments.size} vs ${other.typeArguments.size} "
         }
-        for (i in 0 until typeArgumentsCount) {
-            putTypeArgument(i, other.getTypeArgument(i)?.remapType())
+        for (i in typeArguments.indices) {
+            typeArguments[i] = other.typeArguments[i]?.remapType()
         }
     }
 

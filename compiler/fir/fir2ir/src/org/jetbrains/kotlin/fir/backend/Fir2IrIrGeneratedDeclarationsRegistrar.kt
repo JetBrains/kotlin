@@ -58,7 +58,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         require(declaration.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
             "FAKE_OVERRIDE declarations are not preserved in metadata and should not be marked with annotations"
         }
-        require(annotations.all { it.typeArgumentsCount == 0 }) {
+        require(annotations.all { it.typeArguments.isEmpty() }) {
             "Saving annotations with type arguments from IR to metadata is not supported"
         }
         annotations.forEach {

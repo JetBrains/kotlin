@@ -100,7 +100,7 @@ internal class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendC
                     }
                 +irCall(defaultImplFun.symbol, irFunction.returnType).apply {
                     for (index in superMethod.parentAsClass.typeParameters.indices) {
-                        putTypeArgument(index, createPlaceholderAnyNType(context.irBuiltIns))
+                        typeArguments[index] = createPlaceholderAnyNType(context.irBuiltIns)
                     }
                     passTypeArgumentsFrom(irFunction, offset = superMethod.parentAsClass.typeParameters.size)
 

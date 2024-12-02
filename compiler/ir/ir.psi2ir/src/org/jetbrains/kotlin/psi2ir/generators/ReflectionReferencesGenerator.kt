@@ -235,7 +235,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                                     this@ReflectionReferencesGenerator.context.callToSubstitutedDescriptorMap[irCall] =
                                         checkNotNullSubstituted
                                     irCall.type = irFnType
-                                    irCall.putTypeArgument(0, irFnType)
+                                    irCall.typeArguments[0] = irFnType
                                     irCall.putValueArgument(0, irGet(irFnParameter))
                                 },
                                 irSamType

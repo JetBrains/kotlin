@@ -66,9 +66,9 @@ internal class WasmUsefulDeclarationProcessor(
 
         private fun tryToProcessIntrinsicCall(from: IrDeclaration, call: IrCall): Boolean = when (call.symbol) {
             context.wasmSymbols.unboxIntrinsic -> {
-                val fromType = call.getTypeArgument(0)
+                val fromType = call.typeArguments[0]
                 if (fromType != null && !fromType.isNothing() && !fromType.isNullableNothing()) {
-                    val backingField = call.getTypeArgument(1)
+                    val backingField = call.typeArguments[1]
                         ?.let { context.inlineClassesUtils.getInlinedClass(it) }
                         ?.let { getInlineClassBackingField(it) }
                     backingField?.enqueue(from, "backing inline class field for unboxIntrinsic")
@@ -80,11 +80,11 @@ internal class WasmUsefulDeclarationProcessor(
             context.wasmSymbols.refCastNull,
             context.wasmSymbols.refTest,
             context.wasmSymbols.wasmArrayCopy -> {
-                call.getTypeArgument(0)?.enqueueRuntimeClassOrAny(from, "intrinsic ${call.symbol.owner.name}")
+                call.typeArguments[0]?.enqueueRuntimeClassOrAny(from, "intrinsic ${call.symbol.owner.name}")
                 true
             }
             context.wasmSymbols.boxIntrinsic -> {
-                val type = call.getTypeArgument(0)!!
+                val type = call.typeArguments[0]!!
                 if (type == context.irBuiltIns.booleanType) {
                     context.wasmSymbols.getBoxedBoolean.owner.enqueue(from, "intrinsic boxIntrinsic")
                 } else {

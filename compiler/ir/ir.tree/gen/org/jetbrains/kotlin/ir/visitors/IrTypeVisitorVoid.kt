@@ -149,8 +149,8 @@ abstract class IrTypeVisitorVoid : IrTypeVisitor<Unit, Nothing?>(), IrElementVis
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
-        (0 until expression.typeArgumentsCount).forEach {
-            expression.getTypeArgument(it)?.let { type ->
+        for (type in expression.typeArguments) {
+            if (type != null) {
                 visitTypeRecursively(expression, type)
             }
         }

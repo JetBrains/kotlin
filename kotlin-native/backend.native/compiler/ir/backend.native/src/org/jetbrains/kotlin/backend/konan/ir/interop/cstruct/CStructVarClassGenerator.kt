@@ -245,18 +245,20 @@ internal class CStructVarClassGenerator(
                 }
                 val callCreateCleaner = irCall(symbols.createCleaner).apply {
                     dispatchReceiver = null
-                    putTypeArgument(0, cppType)
-                    putValueArgument(0,
-                            irGet(irClass.primaryConstructor!!.valueParameters[0])
+                    typeArguments[0] = cppType
+                    putValueArgument(
+                        0,
+                        irGet(irClass.primaryConstructor!!.valueParameters[0])
                     )
-                    putValueArgument(1,
-                            IrFunctionExpressionImpl(
-                                    startOffset = SYNTHETIC_OFFSET,
-                                    endOffset = SYNTHETIC_OFFSET,
-                                    type = irBuiltIns.functionN(1).typeWith(cppType, irBuiltIns.unitType),
-                                    origin = IrStatementOrigin.LAMBDA,
-                                    function = lambda
-                            )
+                    putValueArgument(
+                        1,
+                        IrFunctionExpressionImpl(
+                            startOffset = SYNTHETIC_OFFSET,
+                            endOffset = SYNTHETIC_OFFSET,
+                            type = irBuiltIns.functionN(1).typeWith(cppType, irBuiltIns.unitType),
+                            origin = IrStatementOrigin.LAMBDA,
+                            function = lambda
+                        )
                     )
                 }
                 irExprBody(irIfThenElse(callCreateCleaner.type.makeNullable(), irGet(irClass.primaryConstructor!!.valueParameters[1]), callCreateCleaner, irNull()))
@@ -288,8 +290,8 @@ internal class CStructVarClassGenerator(
                                 startOffset, endOffset,
                                 context.irBuiltIns.unitType, symbols.managedTypeConstructor
                         ).also {
-                                it.putTypeArgument(0, irConstructor.valueParameters[0].type)
-                                it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
+                            it.typeArguments[0] = irConstructor.valueParameters[0].type
+                            it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
                         }
                         +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(irClass.descriptor))
                     }

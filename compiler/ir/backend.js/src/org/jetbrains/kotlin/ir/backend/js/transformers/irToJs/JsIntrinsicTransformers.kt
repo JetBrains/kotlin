@@ -93,13 +93,13 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsObjectCreateSymbol) { call, context ->
-                val classToCreate = call.getTypeArgument(0)!!.classifierOrFail.owner as IrClass
+                val classToCreate = call.typeArguments[0]!!.classifierOrFail.owner as IrClass
                 val className = classToCreate.getClassRef(context.staticContext)
                 objectCreate(prototypeOf(className, context.staticContext), context.staticContext)
             }
 
             add(intrinsics.jsClass) { call, context ->
-                val typeArgument = call.getTypeArgument(0)
+                val typeArgument = call.typeArguments[0]
                 typeArgument?.getClassRef(context.staticContext)
                     ?: compilationException(
                         "Type argument of jsClass must be statically known class",
@@ -181,7 +181,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsBoxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                val inlineClass = icUtils.getInlinedClass(call.getTypeArgument(0)!!)!!
+                val inlineClass = icUtils.getInlinedClass(call.typeArguments[0]!!)!!
                 val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
 
                 JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
@@ -190,7 +190,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsUnboxIntrinsic) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                val inlineClass = icUtils.getInlinedClass(call.getTypeArgument(1)!!)!!
+                val inlineClass = icUtils.getInlinedClass(call.typeArguments[1]!!)!!
                 val field = getInlineClassBackingField(inlineClass)
                 val fieldName = context.getNameForField(field)
                 JsNameRef(fieldName, arg).apply { isInlineClassUnboxing = true }

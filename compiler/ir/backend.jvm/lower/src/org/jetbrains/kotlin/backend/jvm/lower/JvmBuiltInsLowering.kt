@@ -119,8 +119,8 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
             null
         else
             IrCallImpl.fromSymbolOwner(startOffset, endOffset, toType, context.ir.symbols.unsafeCoerceIntrinsic).also { call ->
-                call.putTypeArgument(0, type)
-                call.putTypeArgument(1, toType)
+                call.typeArguments[0] = type
+                call.typeArguments[1] = toType
                 call.putValueArgument(0, this)
             }
     }

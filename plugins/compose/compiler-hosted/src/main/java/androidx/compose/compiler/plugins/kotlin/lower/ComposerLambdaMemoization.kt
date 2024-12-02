@@ -1094,7 +1094,7 @@ class ComposerLambdaMemoization(
             origin = ComposeMemoizedLambdaOrigin
         ).apply {
             // The result type type parameter is first, followed by the argument types
-            putTypeArgument(0, expression.type)
+            typeArguments[0] = expression.type
             val lambdaArgumentIndex = if (directRememberFunction != null) {
                 // condition arguments are the first `arg.size` arguments
                 for (i in captures.indices) {

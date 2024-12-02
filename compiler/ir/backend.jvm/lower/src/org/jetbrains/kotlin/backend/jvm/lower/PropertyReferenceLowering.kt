@@ -137,7 +137,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             startOffset, endOffset, expression.type, getter, getter.owner.typeParameters.size, getter, origin
         )
         for ((index, parameter) in getter.owner.typeParameters.withIndex()) {
-            reference.putTypeArgument(index, parameter.erasedUpperBound.defaultType)
+            reference.typeArguments[index] = parameter.erasedUpperBound.defaultType
         }
         return irCall(signatureStringIntrinsic).apply { putValueArgument(0, reference) }
     }
@@ -425,7 +425,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                     with(FunctionReferenceLowering) { referenceClass.getReceiverField(this@PropertyReferenceLowering.context) }
                 val receiverFromField = boundReceiver?.let { irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type) }
                 if (expression.isJavaSyntheticPropertyReference) {
-                    assert(call.typeArgumentsCount == 0) { "Unexpected type arguments: ${call.typeArgumentsCount}" }
+                    assert(call.typeArguments.size == 0) { "Unexpected type arguments: ${call.typeArguments.size}" }
                 } else {
                     call.copyTypeArgumentsFrom(expression)
                 }

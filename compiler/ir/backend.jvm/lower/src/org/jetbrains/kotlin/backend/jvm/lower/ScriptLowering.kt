@@ -786,8 +786,8 @@ private class ScriptToClassTransformer(
         }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: ScriptToClassTransformerContext): IrExpression {
-        for (i in 0 until expression.typeArgumentsCount) {
-            expression.putTypeArgument(i, expression.getTypeArgument(i)?.remapType())
+        for (i in expression.typeArguments.indices) {
+            expression.typeArguments[i] = expression.typeArguments[i]?.remapType()
         }
         if (expression.dispatchReceiver == null && (expression.symbol.owner as? IrDeclaration)?.needsScriptReceiver() == true) {
             val memberAccessTargetReceiverType = when (val callee = expression.symbol.owner) {

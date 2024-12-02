@@ -90,7 +90,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                 val callee = this.inlineDeclaration
                 if (callee !is IrFunction) return emptyList()
                 return callee.typeParameters.mapIndexedNotNull { index, param ->
-                    this.inlineCall!!.getTypeArgument(index)?.takeIf { param.isReified }
+                    inlineCall!!.typeArguments[index]?.takeIf { param.isReified }
                 }
             }
 
@@ -208,8 +208,8 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
             }
 
             override fun visitCall(expression: IrCall) {
-                (0 until expression.typeArgumentsCount).forEach {
-                    expression.getTypeArgument(it)?.recursiveWalkDown(this)
+                expression.typeArguments.forEach {
+                    it?.recursiveWalkDown(this)
                 }
                 super.visitCall(expression)
             }

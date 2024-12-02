@@ -302,7 +302,7 @@ open class LiveLiteralTransformer(
                                     defaultProp.getter!!.symbol
                                 )
                             )
-                            putTypeArgument(0, literalType)
+                            typeArguments[0] = literalType
                         }
                         val c = irTemporary(liveLiteralCall)
                         +irSet(

@@ -237,7 +237,7 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                 if (!parent.isInner) return expression
 
                 val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
-                val classTypeParametersCount = expression.typeArgumentsCount - expression.constructorTypeArgumentsCount
+                val classTypeParametersCount = expression.typeArguments.size - expression.constructorTypeArgumentsCount
                 val newCall = IrConstructorCallImpl.fromSymbolOwner(
                     expression.startOffset, expression.endOffset, expression.type, newCallee.symbol, classTypeParametersCount, expression.origin
                 )
@@ -261,7 +261,7 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                 val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(
                     expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol,
-                    typeArgumentsCount = expression.typeArgumentsCount,
+                    typeArgumentsCount = expression.typeArguments.size,
                 ).apply { copyTypeArgumentsFrom(expression) }
 
                 newCall.putValueArgument(0, dispatchReceiver)
@@ -293,7 +293,7 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                         endOffset,
                         type,
                         newCallee.symbol,
-                        typeArgumentsCount = typeArgumentsCount,
+                        typeArgumentsCount = typeArguments.size,
                         reflectionTarget = newReflectionTarget?.symbol,
                         origin = origin
                     )

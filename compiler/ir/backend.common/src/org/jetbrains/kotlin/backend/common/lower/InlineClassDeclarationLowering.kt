@@ -307,7 +307,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                             val typeParameters = extractTypeParameters(function.parentAsClass) + function.typeParameters
                             for ((index, typeParameter) in typeParameters.withIndex()) {
-                                putTypeArgument(index, IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()))
+                                typeArguments[index] =
+                                    IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
                             }
                         }
                     )

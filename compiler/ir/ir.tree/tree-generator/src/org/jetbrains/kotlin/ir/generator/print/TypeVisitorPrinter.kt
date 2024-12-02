@@ -167,9 +167,9 @@ internal open class TypeVisitorPrinter(
                                         |Please adjust logic of `${visitorType.simpleName}`'s generation.""".trimMargin()
                     )
                 }
-                println("(0 until ", visitorParam, ".typeArgumentsCount).forEach {")
+                println("for (type in ${visitorParam}.typeArguments) {")
                 withIndent {
-                    println(visitorParam, ".getTypeArgument(it)?.let { type ->")
+                    println("if (type != null) {")
                     withIndent {
                         print(visitTypeMethodName, "(", visitorParam, ", type")
                         if (hasDataParameter) {

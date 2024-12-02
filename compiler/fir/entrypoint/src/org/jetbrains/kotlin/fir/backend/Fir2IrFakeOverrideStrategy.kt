@@ -386,13 +386,11 @@ class Fir2IrDelegatedMembersGenerationStrategy(
             }
             for (index in delegatedFunction.typeParameters.indices) {
                 val parameter = delegatedFunction.typeParameters[index]
-                putTypeArgument(
-                    index, IrSimpleTypeImpl(
-                        parameter.symbol,
-                        hasQuestionMark = false,
-                        arguments = emptyList(),
-                        annotations = emptyList()
-                    )
+                typeArguments[index] = IrSimpleTypeImpl(
+                    parameter.symbol,
+                    hasQuestionMark = false,
+                    arguments = emptyList(),
+                    annotations = emptyList()
                 )
             }
         }

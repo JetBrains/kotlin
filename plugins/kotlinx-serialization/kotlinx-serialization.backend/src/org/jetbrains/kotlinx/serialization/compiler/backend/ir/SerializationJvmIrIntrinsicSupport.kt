@@ -77,7 +77,7 @@ class SerializationJvmIrIntrinsicSupport(
             data: BlockInfo
         ): PromisedValue {
             with(codegen) {
-                val argument = expression.getTypeArgument(0)!!
+                val argument = expression.typeArguments[0]!!
                 val intrinsicType = if (withModule) {
                     val moduleReceiver = expression.extensionReceiver!!
                     val materialVal = moduleReceiver.accept(codegen, data).materializedAt(moduleReceiver.type)

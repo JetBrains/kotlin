@@ -102,8 +102,8 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Lower
                                     forwardedParams.forEachIndexed { index, valueParameter ->
                                         call.putValueArgument(index, irBuilder.irGet(valueParameter))
                                     }
-                                    for (i in 0 until expression.typeArgumentsCount) {
-                                        call.putTypeArgument(i, expression.getTypeArgument(i))
+                                    for (i in expression.typeArguments.indices) {
+                                        call.typeArguments[i] = expression.typeArguments[i]
                                     }
                                 },
                             )

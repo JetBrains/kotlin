@@ -1172,16 +1172,16 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             return true
         }
 
-        if (omitAllBracketsIfNoArguments && typeArgumentsCount == 0 && (valueArgumentsCount == 0 || allValueArgumentsAreNull())) return
+        if (omitAllBracketsIfNoArguments && typeArguments.isEmpty() && (valueArgumentsCount == 0 || allValueArgumentsAreNull())) return
 
         if (wrapArguments) p.printWithNoIndent("/*")
 
-        if (typeArgumentsCount > 0) {
+        if (typeArguments.isNotEmpty()) {
             p.printWithNoIndent("<")
-            repeat(typeArgumentsCount) {
+            repeat(typeArguments.size) {
                 p(it > 0, ",")
                 // TODO flag to print type param name?
-                getTypeArgument(it)?.printTypeWithNoIndent() ?: p.printWithNoIndent(commentBlock("null"))
+                this.typeArguments[it]?.printTypeWithNoIndent() ?: p.printWithNoIndent(commentBlock("null"))
             }
             p.printWithNoIndent(">")
         }

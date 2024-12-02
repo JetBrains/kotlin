@@ -175,11 +175,11 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         factory: IrSimpleFunctionSymbol
     ): IrCall {
         val newCall = expression.run {
-            IrCallImpl(startOffset, endOffset, type, factory, typeArgumentsCount, origin)
+            IrCallImpl(startOffset, endOffset, type, factory, typeArguments.size, origin)
         }
 
-        for (i in 0 until expression.typeArgumentsCount) {
-            newCall.putTypeArgument(i, expression.getTypeArgument(i))
+        for (i in expression.typeArguments.indices) {
+            newCall.typeArguments[i] = expression.typeArguments[i]
         }
 
         newCall.arguments.assignFrom(expression.arguments)

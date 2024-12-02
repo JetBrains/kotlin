@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -520,9 +519,9 @@ open class IrFileSerializer(
             proto.dispatchReceiver = serializeExpression(call.dispatchReceiver!!)
         }
 
-        for (index in 0 until call.typeArgumentsCount) {
+        for (typeArg in call.typeArguments) {
             // See `ForbidUsingExtensionPropertyTypeParameterInDelegate` language feature
-            val typeArgumentIndex = call.getTypeArgument(index)?.let { serializeIrType(it) } ?: -1
+            val typeArgumentIndex = typeArg?.let { serializeIrType(it) } ?: -1
             proto.addTypeArgument(typeArgumentIndex)
         }
 

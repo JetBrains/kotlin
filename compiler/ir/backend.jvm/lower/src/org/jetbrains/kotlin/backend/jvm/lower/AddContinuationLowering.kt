@@ -69,7 +69,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 // The only references not yet transformed into objects are inline lambdas; the continuation
                 // for those will be taken from the inline functions they are passed to, not the enclosing scope.
                 return transformed.retargetToSuspendView(context, null) {
-                    IrFunctionReferenceImpl.fromSymbolOwner(startOffset, endOffset, type, it, typeArgumentsCount, reflectionTarget, origin)
+                    IrFunctionReferenceImpl.fromSymbolOwner(startOffset, endOffset, type, it, typeArguments.size, reflectionTarget, origin)
                 }
             }
 
@@ -181,7 +181,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
 
             +irReturn(irCall(irFunction).also {
                 for (i in irFunction.typeParameters.indices) {
-                    it.putTypeArgument(i, typeParameters[i].defaultType)
+                    it.typeArguments[i] = typeParameters[i].defaultType
                 }
                 val capturedThisValue = capturedThisField?.let { irField ->
                     irGetField(irGet(function.dispatchReceiverParameter!!), irField)
@@ -272,7 +272,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
         irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
             +irReturn(irCall(static).also {
                 for (i in irFunction.typeParameters.indices) {
-                    it.putTypeArgument(i, context.irBuiltIns.anyNType)
+                    it.typeArguments[i] = context.irBuiltIns.anyNType
                 }
                 var i = 0
                 if (irFunction.dispatchReceiverParameter != null) {

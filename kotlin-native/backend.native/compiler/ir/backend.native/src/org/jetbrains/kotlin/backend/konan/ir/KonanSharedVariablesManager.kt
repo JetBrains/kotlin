@@ -36,7 +36,7 @@ internal class KonanSharedVariablesManager(private val irBuiltIns: IrBuiltIns, s
                 refClass.typeWith(valueType),
                 refClassConstructor
         ).apply {
-            putTypeArgument(0, valueType)
+            typeArguments[0] = valueType
         }
 
         return with(originalDeclaration) {

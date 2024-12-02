@@ -81,8 +81,8 @@ class AndroidIrBuilder internal constructor(
 
     fun unsafeCoerce(value: IrExpression, fromType: IrType, toType: IrType): IrExpression {
         return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, toType, androidSymbols.unsafeCoerceIntrinsic).apply {
-            putTypeArgument(0, fromType)
-            putTypeArgument(1, toType)
+            typeArguments[0] = fromType
+            typeArguments[1] = toType
             arguments[0] = value
         }
     }

@@ -220,7 +220,7 @@ fun IrBuilderWithScope.irCall(
 ): IrMemberAccessExpression<*> =
     irCall(callee, type).apply {
         typeArguments.forEachIndexed { index, irType ->
-            this.putTypeArgument(index, irType)
+            this.typeArguments[index] = irType
         }
     }
 
@@ -233,7 +233,7 @@ fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArgume
         typeArguments.size - callee.owner.typeParameters.size
     ).apply {
         typeArguments.forEachIndexed { index, irType ->
-            this.putTypeArgument(index, irType)
+            this.typeArguments[index] = irType
         }
     }
 

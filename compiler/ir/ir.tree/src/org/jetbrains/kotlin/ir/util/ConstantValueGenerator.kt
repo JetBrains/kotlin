@@ -203,7 +203,7 @@ abstract class ConstantValueGenerator(
 
         for (i in typeArguments.indices) {
             val typeArgument = typeArguments[i]
-            irCall.putTypeArgument(i, typeArgument.type.toIrType())
+            irCall.typeArguments[i] = typeArgument.type.toIrType()
         }
 
         for (valueParameter in substitutedConstructor.valueParameters) {

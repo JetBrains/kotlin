@@ -225,7 +225,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             IrCallImpl.fromSymbolOwner(startOffset, endOffset, returnType, callTarget.symbol).also { call ->
 
                 callTarget.typeParameters.forEachIndexed { i, _ ->
-                    call.putTypeArgument(i, createPlaceholderAnyNType(context.irBuiltIns))
+                    call.typeArguments[i] = createPlaceholderAnyNType(context.irBuiltIns)
                 }
 
                 valueParameters.forEachIndexed { i, it ->
@@ -247,7 +247,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                 superQualifierSymbol = callTarget.parentAsClass.symbol
             ).also { call ->
                 this.typeParameters.drop(callTarget.parentAsClass.typeParameters.size).forEachIndexed { i, typeParameter ->
-                    call.putTypeArgument(i, typeParameter.defaultType)
+                    call.typeArguments[i] = typeParameter.defaultType
                 }
 
                 var offset = 0

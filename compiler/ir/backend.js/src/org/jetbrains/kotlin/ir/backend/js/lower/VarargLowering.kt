@@ -137,7 +137,7 @@ private class VarargTransformer(
                 copyFunction,
                 typeArgumentsCount = 1
             ).apply {
-                putTypeArgument(0, arrayInfo.primitiveArrayType)
+                typeArguments[0] = arrayInfo.primitiveArrayType
                 arguments[0] = segment
             }
         } else segment
@@ -193,8 +193,8 @@ private fun List<IrExpression>.toArrayLiteral(context: JsIrBackendContext, type:
         type, intrinsic,
         typeArgumentsCount = if (intrinsic.owner.typeParameters.isNotEmpty()) 1 else 0
     ).apply {
-        if (typeArgumentsCount == 1) {
-            putTypeArgument(0, varargElementType)
+        if (typeArguments.size == 1) {
+            typeArguments[0] = varargElementType
         }
         arguments[0] = irVararg
     }

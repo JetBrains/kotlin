@@ -67,8 +67,9 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
             unwrappedArrayType.classOrNull!!.constructors.single { it.owner.hasShape(regularParameters = 1) }
 
         return builder.irCall(arrayConstructor, unwrappedArrayType).apply {
-            if (typeArgumentsCount != 0)
-                putTypeArgument(0, elementType)
+            if (typeArguments.size >= 1) {
+                typeArguments[0] = elementType
+            }
             arguments[0] = size
         }
     }
@@ -139,7 +140,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
                 if (unwrappedArrayType.isBoxedArray) {
                     val size = spreadBuilder.functions.single { it.owner.name.asString() == "size" }
                     arguments[1] = irCall(builder.irSymbols.arrayOfNulls, arrayType).apply {
-                        putTypeArgument(0, elementType)
+                        typeArguments[0] = elementType
                         arguments[0] = irCall(size).apply {
                             arguments[0] = irGet(spreadBuilderVar)
                         }
@@ -158,8 +159,8 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
     private fun coerce(expression: IrExpression, irType: IrType): IrExpression =
         if (isUnboxedInlineClassArray)
             builder.irCall(builder.irSymbols.unsafeCoerceIntrinsic, irType).apply {
-                putTypeArgument(0, expression.type)
-                putTypeArgument(1, irType)
+                typeArguments[0] = expression.type
+                typeArguments[1] = irType
                 arguments[0] = expression
             }
         else expression

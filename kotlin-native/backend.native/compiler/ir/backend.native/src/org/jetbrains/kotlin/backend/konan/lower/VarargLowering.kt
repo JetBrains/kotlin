@@ -241,7 +241,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     inner class ReferenceArrayHandle : ArrayHandle(symbols.array) {
         override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
             return builder.irCall(singleParameterConstructor).apply {
-                putTypeArgument(0, elementType)
+                typeArguments[0] = elementType
                 putValueArgument(0, size)
             }
         }

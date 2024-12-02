@@ -178,7 +178,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         bootstrapMethodArguments: List<IrExpression>
     ) =
         irCall(backendContext.ir.symbols.jvmIndyIntrinsic, dynamicCall.type).apply {
-            putTypeArgument(0, dynamicCall.type)
+            typeArguments[0] = dynamicCall.type
             putValueArgument(0, dynamicCall)
             putValueArgument(1, jvmMethodHandle(bootstrapMethodHandle))
             putValueArgument(2, irVararg(context.irBuiltIns.anyType, bootstrapMethodArguments))
@@ -451,8 +451,8 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                     // Inline class type arguments are stored as their underlying representation.
                     val unboxedType = expectedType.unboxInlineClass()
                     irCall(backendContext.ir.symbols.unsafeCoerceIntrinsic).also { coercion ->
-                        coercion.putTypeArgument(0, unboxedType)
-                        coercion.putTypeArgument(1, expectedType)
+                        coercion.typeArguments[0] = unboxedType
+                        coercion.typeArguments[1] = expectedType
                         coercion.putValueArgument(0, capturedArg)
                     }
                 } else {
@@ -476,7 +476,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         val startOffset = call.startOffset
         val endOffset = call.endOffset
 
-        val samType = call.getTypeArgument(0) as? IrSimpleType
+        val samType = call.typeArguments[0] as? IrSimpleType
             ?: fail("'samType' is expected to be a simple type")
 
         val samMethodRef = call.getValueArgument(0) as? IrRawFunctionReference

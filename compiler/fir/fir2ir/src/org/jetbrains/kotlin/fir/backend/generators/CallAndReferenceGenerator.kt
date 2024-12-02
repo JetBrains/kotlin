@@ -1383,7 +1383,7 @@ class CallAndReferenceGenerator(
         if (this !is IrMemberAccessExpression<*>) return this
 
         val argumentsCount = typeArguments?.size ?: return this
-        if (argumentsCount <= typeArgumentsCount) {
+        if (argumentsCount <= this.typeArguments.size) {
             for ((index, argument) in typeArguments.withIndex()) {
                 val typeParameter = typeParameters?.get(index)
                 val argumentFirType = (argument as FirTypeProjectionWithVariance).typeRef
@@ -1397,14 +1397,14 @@ class CallAndReferenceGenerator(
                 } else {
                     argumentFirType.toIrType()
                 }
-                putTypeArgument(index, argumentIrType)
+                this.typeArguments[index] = argumentIrType
             }
             return this
         } else {
             val name = if (this is IrCallImpl) symbol.signature.toString() else "???"
             return IrErrorExpressionImpl(
                 startOffset, endOffset, type,
-                "Cannot bind $argumentsCount type arguments to $name call with $typeArgumentsCount type parameters"
+                "Cannot bind $argumentsCount type arguments to $name call with ${typeArguments.size} type parameters"
             )
         }
     }

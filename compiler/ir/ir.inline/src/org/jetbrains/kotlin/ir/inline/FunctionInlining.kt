@@ -54,7 +54,7 @@ interface CallInlinerStrategy {
     object DEFAULT : CallInlinerStrategy {
         override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
             return expression.apply {
-                putTypeArgument(0, nonSubstitutedTypeArgument)
+                typeArguments[0] = nonSubstitutedTypeArgument
             }
         }
     }
@@ -196,7 +196,7 @@ open class FunctionInlining(
         if (actualCallee?.body == null) {
             if (expression is IrCall && Symbols.isTypeOfIntrinsic(calleeSymbol)) {
                 inlineFunctionResolver.callInlinerStrategy.at(currentScope!!.scope, expression)
-                return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.getTypeArgument(0)!!)
+                return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.typeArguments[0]!!)
             }
             return expression
         }
@@ -261,8 +261,8 @@ open class FunctionInlining(
                     is IrSimpleFunction -> callee.typeParameters
                 }
             val typeArguments =
-                (0 until callSite.typeArgumentsCount).associate {
-                    typeParameters[it].symbol to callSite.getTypeArgument(it)
+                callSite.typeArguments.indices.associate {
+                    typeParameters[it].symbol to callSite.typeArguments[it]
                 }
             InlineFunctionBodyPreprocessor(typeArguments, parent, inlineFunctionResolver.callInlinerStrategy)
         }
@@ -513,8 +513,9 @@ open class FunctionInlining(
                         arguments[parameterToSet] = argument.doImplicitCastIfNeededTo(parameterToSet.type)
                     }
                     assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
-                    for (index in 0 until irFunctionReference.typeArgumentsCount)
-                        putTypeArgument(index, irFunctionReference.getTypeArgument(index))
+                    for (index in irFunctionReference.typeArguments.indices) {
+                        typeArguments[index] = irFunctionReference.typeArguments[index]
+                    }
                 }
 
                 return if (inlineFunctionResolver.needsInlining(inlinedFunction) || inlinedFunction.isStubForInline()) {

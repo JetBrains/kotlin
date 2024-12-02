@@ -129,7 +129,7 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
     val type = this.symbol.owner.valueParameters[index].type as? IrSimpleType ?: return null
     return type.buildSimpleType {
         val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
-        arguments = listOf(makeTypeProjection(this@getVarargType.getTypeArgument(typeParameter.index)!!, Variance.OUT_VARIANCE))
+        arguments = listOf(makeTypeProjection(typeArguments[typeParameter.index]!!, Variance.OUT_VARIANCE))
     }
 }
 
@@ -293,7 +293,7 @@ internal fun IrType.getTypeIfReified(getType: (IrClassifierSymbol) -> IrType): I
 
 internal fun IrInterpreterEnvironment.loadReifiedTypeArguments(expression: IrFunctionAccessExpression): Map<IrTypeParameterSymbol, KTypeState> {
     return expression.symbol.owner.typeParameters.filter { it.isReified }.map { it.symbol }.keysToMap {
-        val reifiedType = expression.getTypeArgument(it.owner.index)!!.getTypeIfReified(callStack)
+        val reifiedType = expression.typeArguments[it.owner.index]!!.getTypeIfReified(callStack)
         KTypeState(reifiedType, this.kTypeClass.owner)
     }
 }

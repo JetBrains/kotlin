@@ -24,7 +24,7 @@ object HandleResultOfReflectiveAccess : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val typeMapper = codegen.typeMapper
         val mv = codegen.mv
-        val type = expression.getTypeArgument(0)!!
+        val type = expression.typeArguments[0]!!
         expression.getValueArgument(0)!!.accept(codegen, data).materialize()
         val asmResultType = typeMapper.mapType(type.unboxInlineClass())
         val castToType = AsmUtil.boxType(asmResultType)
