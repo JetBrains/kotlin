@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // DIAGNOSTICS: -OPT_IN_USAGE_ERROR -CAST_NEVER_SUCCEEDS
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, WASM, NATIVE
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FIR status: Initializer type mismatch at first val x = : expected kotlin/collections/MutableList<kotlin/CharSequence>, actual kotlin/collections/MutableList<kotlin/String>
 
 import kotlin.experimental.ExperimentalTypeInference

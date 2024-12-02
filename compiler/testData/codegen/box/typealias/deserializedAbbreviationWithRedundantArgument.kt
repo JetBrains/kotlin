@@ -1,3 +1,5 @@
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// ^^^ KT-73619: dump of dependent Klib is missing. Should be fixed after KT-73619
 // FIR_DUMP
 
 // MODULE: a

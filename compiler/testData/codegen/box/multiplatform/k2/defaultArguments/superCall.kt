@@ -2,6 +2,8 @@
 // IGNORE_BACKEND: JVM, JVM_IR, WASM, NATIVE
 // K2/NATIVE fail: KT-59608
 // WASM_MUTE_REASON: EXPECT_DEFAULT_PARAMETERS
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// ^^^ SUPER_CALL_WITH_DEFAULT_PARAMETERS: Super-calls with default arguments are prohibited. Specify all arguments of 'super.foo' explicitly
 
 // MODULE: common
 // FILE: common.kt
