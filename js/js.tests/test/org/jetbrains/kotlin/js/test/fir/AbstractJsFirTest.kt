@@ -45,7 +45,7 @@ open class AbstractFirJsTest(
     testGroupOutputDirPrefix: String,
     targetBackend: TargetBackend = TargetBackend.JS_IR,
     val parser: FirParser = FirParser.Psi,
-) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
+) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact>(
     FrontendKinds.FIR, targetBackend, pathToTestDir, testGroupOutputDirPrefix
 ) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>

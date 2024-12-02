@@ -34,7 +34,7 @@ abstract class AbstractJsIrTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
     targetBackend: TargetBackend = TargetBackend.JS_IR,
-) : AbstractJsBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
+) : AbstractJsBlackBoxCodegenTestBase<ClassicFrontendOutputArtifact>(
     FrontendKinds.ClassicFrontend, targetBackend, pathToTestDir, testGroupOutputDirPrefix
 ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>

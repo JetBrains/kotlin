@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
@@ -32,17 +33,17 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSource
 import org.jetbrains.kotlin.utils.bind
 import java.lang.Boolean.getBoolean
 
-abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>, A : ResultingArtifact.Binary<A>>(
-    val targetFrontend: FrontendKind<R>,
+abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.FrontendOutput<FO>>(
+    val targetFrontend: FrontendKind<FO>,
     targetBackend: TargetBackend,
     private val pathToTestDir: String,
     private val testGroupOutputDirPrefix: String,
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
-    abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>
-    abstract val irInliningFacade: Constructor<IrInliningFacade<I>>
-    abstract val backendFacade: Constructor<BackendFacade<I, A>>
-    abstract val afterBackendFacade: Constructor<AbstractTestFacade<A, BinaryArtifacts.Js>>?
+    abstract val frontendFacade: Constructor<FrontendFacade<FO>>
+    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>
+    abstract val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
+    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+    abstract val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
     abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
 
     override fun TestConfigurationBuilder.configuration() {
@@ -57,7 +58,14 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
     }
 
     protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
-        commonConfigurationForJsCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, irInliningFacade, backendFacade, customIgnoreDirective)
+        commonConfigurationForJsCodegenTest(
+            targetFrontend = targetFrontend,
+            frontendFacade = frontendFacade,
+            frontendToBackendConverter = frontendToBackendConverter,
+            irInliningFacade = irInliningFacade,
+            backendFacade = backendFacade,
+            customIgnoreDirective = customIgnoreDirective
+        )
 
         val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         defaultDirectives {
@@ -121,16 +129,12 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
 }
 
 @Suppress("reformat")
-fun <
-    R : ResultingArtifact.FrontendOutput<R>,
-    I : ResultingArtifact.BackendInput<I>,
-    A : ResultingArtifact.Binary<A>
-> TestConfigurationBuilder.commonConfigurationForJsCodegenTest(
-    targetFrontend: FrontendKind<R>,
-    frontendFacade: Constructor<FrontendFacade<R>>,
-    frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>,
-    irInliningFacade: Constructor<IrInliningFacade<I>>,
-    backendFacade: Constructor<BackendFacade<I, A>>,
+fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonConfigurationForJsCodegenTest(
+    targetFrontend: FrontendKind<FO>,
+    frontendFacade: Constructor<FrontendFacade<FO>>,
+    frontendToBackendConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>,
+    irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>,
+    backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
     globalDefaults {
