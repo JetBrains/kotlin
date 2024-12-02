@@ -351,7 +351,7 @@ private class SyntheticAccessorTransformer(
     }
 
     override fun visitBlock(expression: IrBlock): IrExpression {
-        if (expression.origin == LoweredStatementOrigins.INLINE_ARGS_CONTAINER) {
+        if (expression.origin == IrStatementOrigin.INLINE_ARGS_CONTAINER) {
             return withinIrInlinedFun {
                 super.visitBlock(expression)
             }

@@ -89,7 +89,7 @@ abstract class InitializersLoweringBase(open val context: CommonBackendContext) 
 
     private fun handleAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =
         with(declaration) {
-            IrBlockImpl(startOffset, endOffset, context.irBuiltIns.unitType, LoweredStatementOrigins.SYNTHESIZED_INIT_BLOCK, body.statements)
+            IrBlockImpl(startOffset, endOffset, context.irBuiltIns.unitType, IrStatementOrigin.SYNTHESIZED_INIT_BLOCK, body.statements)
         }
 }
 

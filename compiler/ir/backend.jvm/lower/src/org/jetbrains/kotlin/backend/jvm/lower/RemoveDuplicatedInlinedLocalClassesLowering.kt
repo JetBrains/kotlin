@@ -73,7 +73,7 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
     }
 
     override fun visitBlock(expression: IrBlock, data: Data): IrExpression {
-        if (expression.origin == LoweredStatementOrigins.INLINE_ARGS_CONTAINER) {
+        if (expression.origin == IrStatementOrigin.INLINE_ARGS_CONTAINER) {
             return super.visitBlock(expression, data.copy(insideInlineBlock = true, classDeclaredOnCallSiteOrIsDefaultLambda = false))
         }
 
