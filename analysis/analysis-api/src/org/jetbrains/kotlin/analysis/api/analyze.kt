@@ -15,11 +15,12 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolu
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
- * Executes the given [action] in a [KaSession] context.
+ * Executes the given [action] in an [analysis session][KaSession] context.
  *
  * The project will be analyzed from the perspective of [useSiteElement]'s module, also called the use-site module.
  *
- * @see KaSession
+ * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
+ * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
  */
 public inline fun <R> analyze(
     useSiteElement: KtElement,
@@ -29,11 +30,12 @@ public inline fun <R> analyze(
         .analyze(useSiteElement, action)
 
 /**
- * Executes the given [action] in a [KaSession] context.
+ * Executes the given [action] in an [analysis session][KaSession] context.
  *
  * The project will be analyzed from the perspective of the given [useSiteModule].
  *
- * @see KaSession
+ * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
+ * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
  */
 public inline fun <R> analyze(
     useSiteModule: KaModule,
@@ -45,12 +47,14 @@ public inline fun <R> analyze(
 
 /**
  * Executes the given [action] in a [KaSession] context.
- * Depending on the passed [resolutionMode], declarations inside a file copy will be treated in a specific way.
  *
- * Note that the [useSiteElement] must be inside a dangling file copy.
- * Specifically, [PsiFile.getOriginalFile] must point to the copy source.
+ * The [useSiteElement] must be inside a dangling file copy (specifically, [PsiFile.getOriginalFile] must point to the copy source).
+ * Depending on the passed [resolutionMode], declarations inside the file copy will be treated in a specific way.
  *
  * The project will be analyzed from the perspective of [useSiteElement]'s module, also called the use-site module.
+ *
+ * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
+ * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
  */
 public inline fun <R> analyzeCopy(
     useSiteElement: KtElement,
