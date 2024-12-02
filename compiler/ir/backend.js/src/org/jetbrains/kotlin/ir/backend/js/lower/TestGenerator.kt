@@ -139,7 +139,7 @@ private class TestGenerator(
             isClassReachable
         } else {
             isClassReachable && constructors.any {
-                it.isVisibleFromTests() && it.explicitParametersCount == if (isInner) 1 else 0
+                it.isVisibleFromTests() && it.parameters.size == if (isInner) 1 else 0
             }
         }
     }
@@ -264,7 +264,7 @@ private class TestGenerator(
         return if (kind == ClassKind.OBJECT) {
             JsIrBuilder.buildGetObjectValue(defaultType, symbol)
         } else {
-            declarations.asSequence().filterIsInstance<IrConstructor>().first { it.explicitParametersCount == if (isInner) 1 else 0 }
+            declarations.asSequence().filterIsInstance<IrConstructor>().first { it.parameters.size == if (isInner) 1 else 0 }
                 .let { constructor ->
                     IrConstructorCallImpl.fromSymbolOwner(defaultType, constructor.symbol).also {
                         if (isInner) {

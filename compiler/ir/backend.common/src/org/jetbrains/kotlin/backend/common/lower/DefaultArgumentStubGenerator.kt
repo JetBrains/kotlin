@@ -406,9 +406,9 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         val realArgumentsNumber = declaration.valueParameters.filterNot { it.isMovedReceiver() }.size
         val maskValues = IntArray((realArgumentsNumber + 31) / 32)
 
-        assert(stubFunction.explicitParametersCount - declaration.explicitParametersCount - maskValues.size in listOf(0, 1)) {
+        assert(stubFunction.parameters.size - declaration.parameters.size - maskValues.size in listOf(0, 1)) {
             "argument count mismatch: expected $realArgumentsNumber arguments + ${maskValues.size} masks + optional handler/marker, " +
-                    "got ${stubFunction.explicitParametersCount} total in ${stubFunction.render()}"
+                    "got ${stubFunction.parameters.size} total in ${stubFunction.render()}"
         }
 
         var sourceParameterIndex = -1
@@ -552,7 +552,7 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext) :
             )
         }
         context.remapMultiFieldValueClassStructure(
-            original, this, parametersMappingOrNull = original.explicitParameters.zip(explicitParameters).toMap()
+            original, this, parametersMappingOrNull = original.parameters.zip(parameters).toMap()
         )
     }
 }

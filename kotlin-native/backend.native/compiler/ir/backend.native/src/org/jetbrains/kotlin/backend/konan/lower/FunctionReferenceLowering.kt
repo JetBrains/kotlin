@@ -191,7 +191,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
         private val referencedFunction = functionReference.symbol.owner
-        private val functionParameters = referencedFunction.explicitParameters
+        private val functionParameters = referencedFunction.parameters
         private val boundFunctionParameters = functionReference.getArgumentsWithIr().map { it.first }
         private val unboundFunctionParameters = functionParameters - boundFunctionParameters
 

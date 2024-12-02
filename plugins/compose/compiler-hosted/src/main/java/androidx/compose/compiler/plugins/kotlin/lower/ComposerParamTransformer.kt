@@ -416,7 +416,7 @@ class ComposerParamTransformer(
     }
 
     private fun IrSimpleFunction.copyWithComposerParam(): IrSimpleFunction {
-        assert(explicitParameters.lastOrNull()?.name != ComposeNames.COMPOSER_PARAMETER) {
+        assert(parameters.lastOrNull()?.name != ComposeNames.COMPOSER_PARAMETER) {
             "Attempted to add composer param to $this, but it has already been added."
         }
         return copy().also { fn ->
@@ -451,8 +451,8 @@ class ComposerParamTransformer(
                 }
             }
 
-            val valueParametersMapping = explicitParameters
-                .zip(fn.explicitParameters)
+            val valueParametersMapping = parameters
+                .zip(fn.parameters)
                 .toMap()
 
             val currentParams = fn.valueParameters.size

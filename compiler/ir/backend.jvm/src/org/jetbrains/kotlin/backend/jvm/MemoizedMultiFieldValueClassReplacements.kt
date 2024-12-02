@@ -47,7 +47,7 @@ var IrFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction: List<Remap
     get() = _parameterTemplateStructureOfThisNewMfvcBidingFunction
     set(value) {
         if (value != null) {
-            require(explicitParametersCount == value.sumOf { it.valueParameters.size }) {
+            require(parameters.size == value.sumOf { it.valueParameters.size }) {
                 "Illegal structure $value for function ${this.dump()}"
             }
         }
@@ -390,9 +390,9 @@ class MemoizedMultiFieldValueClassReplacements(
         getArgument: (sourceParameter: IrValueParameter, targetParameterType: IrType) -> IrExpression?
     ): Map<IrValueParameter, IrExpression?> {
         val targetStructure = targetFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction
-            ?: targetFunction.explicitParameters.map { RegularMapping(it) }
+            ?: targetFunction.parameters.map { RegularMapping(it) }
         val sourceStructure = sourceFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction
-            ?: sourceFunction.explicitParameters.map { RegularMapping(it) }
+            ?: sourceFunction.parameters.map { RegularMapping(it) }
         verifyStructureCompatibility(targetStructure, sourceStructure)
         return buildMap {
             for ((targetParameterStructure, sourceParameterStructure) in targetStructure zip sourceStructure) {

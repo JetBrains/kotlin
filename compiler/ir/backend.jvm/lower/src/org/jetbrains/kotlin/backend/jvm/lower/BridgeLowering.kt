@@ -582,7 +582,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     ) = irCastIfNeeded(irBlock {
         +irReturn(irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
             if (getStructure(target) == null && getStructure(bridge) == null) {
-                for ((param, targetParam) in bridge.explicitParameters.zip(target.explicitParameters)) {
+                for ((param, targetParam) in bridge.parameters.zip(target.parameters)) {
                     val argument = irGet(param).let { argument ->
                         if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
                     }
@@ -596,7 +596,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
     private fun getStructure(function: IrSimpleFunction): List<MemoizedMultiFieldValueClassReplacements.RemappedParameter>? {
         val structure = function.parameterTemplateStructureOfThisNewMfvcBidingFunction ?: return null
-        require(structure.sumOf { it.valueParameters.size } == function.explicitParametersCount) {
+        require(structure.sumOf { it.valueParameters.size } == function.parameters.size) {
             "Bad parameters structure: $structure"
         }
 

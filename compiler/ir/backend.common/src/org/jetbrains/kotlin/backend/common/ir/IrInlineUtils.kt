@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
@@ -61,8 +60,8 @@ fun IrExpression.asInlinable(builder: IrStatementsBuilder<*>): IrInlinable =
     asInlinableLambda(builder) ?: IrInvokable(builder.irTemporary(this))
 
 private fun createParameterMapping(source: IrFunction, target: IrFunction): Map<IrValueParameter, IrValueParameter> {
-    val sourceParameters = source.explicitParameters
-    val targetParameters = target.explicitParameters
+    val sourceParameters = source.parameters
+    val targetParameters = target.parameters
     assert(sourceParameters.size == targetParameters.size)
     return sourceParameters.zip(targetParameters).toMap()
 }
@@ -105,7 +104,7 @@ private fun IrBody.move(
 // Inline simple function calls without type parameters, default parameters, or varargs.
 fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
     IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null).apply {
-        statements += body!!.move(this@inline, target, symbol, explicitParameters.zip(arguments).toMap()).statements
+        statements += body!!.move(this@inline, target, symbol, parameters.zip(arguments).toMap()).statements
     }
 
 fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrExpression =

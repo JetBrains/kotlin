@@ -307,7 +307,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 val capturesCrossinline = function.isCapturingCrossinline()
                 val view = function.suspendFunctionViewOrStub(context)
                 val continuationParameter = view.continuationParameter()
-                val parameterMap = function.explicitParameters.zip(view.explicitParameters.filter { it != continuationParameter }).toMap()
+                val parameterMap = function.parameters.zip(view.parameters.filter { it != continuationParameter }).toMap()
                 view.body = function.moveBodyTo(view, parameterMap)
 
                 val result = mutableListOf(view)
@@ -445,7 +445,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
         }
         context.remapMultiFieldValueClassStructure(
             this, function,
-            parametersMappingOrNull = explicitParameters.zip(function.explicitParameters.filter { it != continuationParameter }).toMap()
+            parametersMappingOrNull = parameters.zip(function.parameters.filter { it != continuationParameter }).toMap()
         )
     }
 }

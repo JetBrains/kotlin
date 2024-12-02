@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl.Companion.provideDelegate
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -330,7 +329,7 @@ class CallableReferenceLowering(private val context: JsCommonBackendContext) : B
 
         private fun IrSimpleFunction.createLambdaInvokeMethod() {
             annotations = function.annotations
-            val valueParameterMap = function.explicitParameters
+            val valueParameterMap = function.parameters
                 .associate { param ->
                     param to param.copyTo(this)
                 }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
@@ -70,7 +69,7 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
         return context.createIrBuilder(scope.scopeOwnerSymbol).run {
             at(expression)
             irBlock {
-                val arguments = function.explicitParameters.mapIndexed { index, parameter ->
+                val arguments = function.parameters.mapIndexed { index, parameter ->
                     val argument = expression.getValueArgument(index)!!
                     IrVariableImpl(
                         argument.startOffset, argument.endOffset, IrDeclarationOrigin.DEFINED, IrVariableSymbolImpl(), parameter.name,

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -173,18 +175,7 @@ val IrClass.invokeFun: IrSimpleFunction?
 val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
-fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
-    parametersList.addAll(parameters)
-}
-
 private fun Boolean.toInt(): Int = if (this) 1 else 0
-
-val IrFunction.explicitParametersCount: Int
-    get() = parameters.size
-
-val IrFunction.explicitParameters: List<IrValueParameter>
-    get() = parameters
-
 /**
  * [IrFunction.parameters], except [IrFunction.dispatchReceiverParameter], if present.
  */
@@ -1587,3 +1578,16 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() =
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "createThisReceiverParameter()")
 fun IrClass.createParameterDeclarations() =
     createThisReceiverParameter()
+
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "parameters.size")
+val IrFunction.explicitParametersCount: Int
+    get() = parameters.size
+
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "parameters")
+val IrFunction.explicitParameters: List<IrValueParameter>
+    get() = parameters
+
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
+fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
+    parametersList.addAll(parameters)
+}

@@ -152,7 +152,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
                 irBlockBody {
                     val exprToReturn = irCall(referencedFunction.symbol, returnType).apply {
                         copyTypeArgumentsFrom(this@wrapFunction)
-                        for (parameter in referencedFunction.explicitParameters) {
+                        for (parameter in referencedFunction.parameters) {
                             val next = parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
                             val getOnNewParameter = when {
                                 boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))

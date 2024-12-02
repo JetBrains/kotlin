@@ -2262,7 +2262,7 @@ internal class CodeGeneratorVisitor(
         val result = expression.getArgumentsWithIr().map { (_, argExpr) ->
             evaluateExpression(argExpr)
         }
-        val explicitParametersCount = expression.symbol.owner.explicitParametersCount
+        val explicitParametersCount = expression.symbol.owner.parameters.size
         if (result.size != explicitParametersCount) {
             error("Number of arguments explicitly represented in the IR ${result.size} differs from expected " +
                     "$explicitParametersCount in ${ir2string(expression)}")

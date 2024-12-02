@@ -432,7 +432,7 @@ open class FunctionInlining(
                 irFunctionReference.transformChildrenVoid(this)
 
                 val function = irFunctionReference.symbol.owner
-                val functionParameters = function.explicitParameters
+                val functionParameters = function.parameters
                 val boundFunctionParameters = irFunctionReference.getArgumentsWithIr()
                 val unboundFunctionParameters = functionParameters - boundFunctionParameters.map { it.first }
                 val boundFunctionParametersMap = boundFunctionParameters.associate { it.first to it.second }

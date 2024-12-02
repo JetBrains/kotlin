@@ -132,7 +132,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
             val functionBody = body as IrBlockBody
             functionBody.statements.clear()
             functionBody.statements.addAll(irBuilder.irBlockBody {
-                generateCoroutineStart(coroutine.stateMachineFunction, createCoroutineInstance(this@with, explicitParameters, coroutine))
+                generateCoroutineStart(coroutine.stateMachineFunction, createCoroutineInstance(this@with, parameters, coroutine))
             }.statements)
         }
 
@@ -144,7 +144,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
         private val endOffset = function.endOffset
         private val isSuspendLambda = function.isOperator && function.name.asString() == "invoke" && function.parentClassOrNull
             ?.let { it.origin === CallableReferenceLowering.Companion.LAMBDA_IMPL } == true
-        private val functionParameters = if (isSuspendLambda) function.valueParameters else function.explicitParameters
+        private val functionParameters = if (isSuspendLambda) function.valueParameters else function.parameters
 
         private val coroutineClass: IrClass = getCoroutineClass(function)
 

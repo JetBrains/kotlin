@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
@@ -193,7 +192,7 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
             }
         }
         val isSuspendLambda = transformingFunction.parent === coroutineClass
-        val parameters = if (isSuspendLambda) simplifiedFunction.valueParameters else simplifiedFunction.explicitParameters
+        val parameters = if (isSuspendLambda) simplifiedFunction.valueParameters else simplifiedFunction.parameters
         parameters.forEach {
             localToPropertyMap.getOrPut(it.symbol) {
                 argumentToPropertiesMap.getValue(it).symbol

@@ -159,10 +159,10 @@ class JvmBackendContext(
         parametersMappingOrNull: Map<IrValueParameter, IrValueParameter>?,
     ) {
         val parametersMapping = parametersMappingOrNull ?: run {
-            require(oldFunction.explicitParametersCount == newFunction.explicitParametersCount) {
+            require(oldFunction.parameters.size == newFunction.parameters.size) {
                 "Use non-default mapping instead:\n${oldFunction.render()}\n${newFunction.render()}"
             }
-            oldFunction.explicitParameters.zip(newFunction.explicitParameters).toMap()
+            oldFunction.parameters.zip(newFunction.parameters).toMap()
         }
         val oldRemappedParameters = oldFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction ?: return
         val newRemapsFromOld = oldRemappedParameters.mapNotNull { oldRemapping ->
@@ -179,7 +179,7 @@ class JvmBackendContext(
             }
         }
         val remappedParameters = newRemapsFromOld.flatMap { remap -> remap.valueParameters.map { it to remap } }.toMap()
-        val newBinding = newFunction.explicitParameters.map { remappedParameters[it] ?: RegularMapping(it) }.distinct()
+        val newBinding = newFunction.parameters.map { remappedParameters[it] ?: RegularMapping(it) }.distinct()
         newFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction = newBinding
     }
 }

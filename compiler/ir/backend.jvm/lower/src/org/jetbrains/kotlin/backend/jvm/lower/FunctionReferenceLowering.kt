@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -751,7 +750,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // Inline the body of an anonymous function into the generated lambda subclass.
         private fun IrSimpleFunction.createLambdaInvokeMethod() {
             annotations += callee.annotations
-            val valueParameterMap = callee.explicitParameters.associate { param ->
+            val valueParameterMap = callee.parameters.associate { param ->
                 param to param.copyTo(this)
             }
             valueParameters += valueParameterMap.values
@@ -783,7 +782,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                         putTypeArgument(typeParameter.index, typeArgumentsMap[typeParameter.symbol])
                     }
 
-                    for (parameter in callee.explicitParameters) {
+                    for (parameter in callee.parameters) {
                         when {
                             boundReceiver?.first == parameter ->
                                 // Bound receiver parameter. For function references, this is stored in a field of the superclass.
