@@ -935,6 +935,8 @@ class FirRenderer(
         }
 
         override fun visitNamedReference(namedReference: FirNamedReference) {
+            // println("--- visitNamedReference ${namedReference.name}")
+            // Exception().printStackTrace()
             print("${namedReference.name}#")
         }
 
