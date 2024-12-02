@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -195,7 +196,10 @@ private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
     val constructor = designation.target as FirConstructor
     require(needCalculatingLazyBodyForConstructor(constructor))
 
-    val newConstructor = revive<FirConstructor>(designation)
+    // TODO A temporary hack to avoid problems with lazy resolve of typealiased constructors; see KT-73481
+    val constructorPsi = (constructor.originalConstructorIfTypeAlias ?: constructor).psi
+
+    val newConstructor = revive<FirConstructor>(designation, constructorPsi)
 
     replaceLazyBody(constructor, newConstructor)
     replaceLazyDelegatedConstructor(constructor, newConstructor)
