@@ -56,4 +56,10 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerForWholeFi
   public void testFileWithMultipleDeclarations() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/fileWithMultipleDeclarations.kt");
   }
+
+  @Test
+  @TestMetadata("symbolsFromParentCompanionObject.kt")
+  public void testSymbolsFromParentCompanionObject() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenWholeFile/symbolsFromParentCompanionObject.kt");
+  }
 }
