@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
-import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
@@ -348,7 +347,7 @@ open class FunctionInlining(
                 endOffset = callSite.endOffset,
                 type = callSite.type,
                 statements = newStatementsFromCallSite + retBlock,
-                origin = LoweredStatementOrigins.INLINE_ARGS_CONTAINER
+                origin = IrStatementOrigin.INLINE_ARGS_CONTAINER
             )
         }
 
@@ -477,7 +476,7 @@ open class FunctionInlining(
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             classTypeParametersCount,
-                            INLINED_FUNCTION_REFERENCE
+                            IrStatementOrigin.INLINED_FUNCTION_REFERENCE
                         )
                     }
                     is IrSimpleFunction ->
@@ -487,7 +486,7 @@ open class FunctionInlining(
                             functionReferenceReturnType,
                             inlinedFunction.symbol,
                             inlinedFunction.typeParameters.size,
-                            INLINED_FUNCTION_REFERENCE
+                            IrStatementOrigin.INLINED_FUNCTION_REFERENCE
                         )
                 }.apply {
                     for (parameter in functionParameters) {

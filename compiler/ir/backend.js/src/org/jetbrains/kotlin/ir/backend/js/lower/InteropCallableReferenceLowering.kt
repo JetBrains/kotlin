@@ -472,7 +472,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         return statements
             .asSequence()
             .filterIsInstance<IrSetField>()
-            .filter { it.origin == LoweredStatementOrigins.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE }
+            .filter { it.origin == IrStatementOrigin.STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE }
             .mapNotNull { irSetField ->
                 remapVP(irSetField.value.cast<IrGetValue>().symbol.cast())?.let {
                     irSetField.symbol to it

@@ -74,7 +74,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             // Already a lambda or similar, just mark it with an origin.
             val reference = statements.last() as IrFunctionReference
             reference.symbol.owner.origin = LoweredDeclarationOrigins.INLINE_LAMBDA
-            reference.origin = LoweredStatementOrigins.INLINE_LAMBDA
+            reference.origin = IrStatementOrigin.INLINE_LAMBDA
         }
 
         this is IrFunctionReference -> {
@@ -191,7 +191,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             +IrFunctionReferenceImpl.fromSymbolOwner(
                 startOffset, endOffset, original.type.convertToFunctionIfNeeded(context.irBuiltIns), symbol,
                 typeArgumentsCount = 0, reflectionTarget = null,
-                origin = LoweredStatementOrigins.INLINE_LAMBDA
+                origin = IrStatementOrigin.INLINE_LAMBDA
             ).apply {
                 copyAttributes(original)
                 if (original is IrFunctionReference) {

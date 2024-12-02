@@ -155,7 +155,7 @@ fun IrExpression.isInlineLambdaBlock(): Boolean {
 
     val block = this as IrBlock
     val reference = block.statements.last() as? IrFunctionReference
-    return reference?.origin == LoweredStatementOrigins.INLINE_LAMBDA
+    return reference?.origin == IrStatementOrigin.INLINE_LAMBDA
 }
 
 fun IrFunction.isReifiable(): Boolean =
