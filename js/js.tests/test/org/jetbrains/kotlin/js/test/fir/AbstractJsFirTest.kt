@@ -51,16 +51,16 @@ open class AbstractFirJsTest(
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
 
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+    override val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
 
     override val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
         get() = ::JsIrInliningFacade
 
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+    override val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirJsKlibSerializerFacade
 
-    override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
+    override val backendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
         get() = ::JsIrBackendFacade
 
     override val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>

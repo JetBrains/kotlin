@@ -24,15 +24,15 @@ abstract class AbstractFirLoadCompiledJsKotlinTestBase<F : ResultingArtifact.Fro
 {
     protected abstract val frontendKind: FrontendKind<F>
     protected abstract val frontendFacade: Constructor<FrontendFacade<F>>
-    protected abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, IrBackendInput>>
+    protected abstract val frontendToIrConverter: Constructor<Frontend2BackendConverter<F, IrBackendInput>>
 
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsCodegenTest(
-            frontendKind,
-            frontendFacade,
-            frontendToBackendConverter,
-            ::JsIrInliningFacade,
-            ::FirJsKlibSerializerFacade,
+            targetFrontend = frontendKind,
+            frontendFacade = frontendFacade,
+            frontendToIrConverter = frontendToIrConverter,
+            irInliningFacade = ::JsIrInliningFacade,
+            serializerFacade = ::FirJsKlibSerializerFacade,
         )
 
         configureKlibArtifactsHandlersStep {
@@ -48,7 +48,7 @@ open class AbstractFirLoadK2CompiledJsKotlinTest : AbstractFirLoadCompiledJsKotl
         get() = FrontendKinds.FIR
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+    override val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
 
     override fun configure(builder: TestConfigurationBuilder) {

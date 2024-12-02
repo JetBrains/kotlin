@@ -40,10 +40,10 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
     private val testGroupOutputDirPrefix: String,
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontendFacade: Constructor<FrontendFacade<FO>>
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>
+    abstract val frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>
     abstract val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
-    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-    abstract val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
+    abstract val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+    abstract val backendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
     abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
 
     override fun TestConfigurationBuilder.configuration() {
@@ -61,9 +61,9 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
         commonConfigurationForJsCodegenTest(
             targetFrontend = targetFrontend,
             frontendFacade = frontendFacade,
-            frontendToBackendConverter = frontendToBackendConverter,
+            frontendToIrConverter = frontendToIrConverter,
             irInliningFacade = irInliningFacade,
-            backendFacade = backendFacade,
+            serializerFacade = serializerFacade,
             customIgnoreDirective = customIgnoreDirective
         )
 
@@ -97,7 +97,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             useHandlers(::IrMangledNameAndSignatureDumpHandler)
         }
 
-        afterBackendFacade?.let { facadeStep(it) }
+        backendFacade?.let { facadeStep(it) }
         facadeStep(recompileFacade)
         jsArtifactsHandlersStep {
             useHandlers(
@@ -132,9 +132,9 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
 fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonConfigurationForJsCodegenTest(
     targetFrontend: FrontendKind<FO>,
     frontendFacade: Constructor<FrontendFacade<FO>>,
-    frontendToBackendConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>,
+    frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>,
     irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>,
-    backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+    serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
     globalDefaults {
@@ -169,12 +169,12 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
         useHandlers(::FirDiagnosticsHandler)
     }
 
-    facadeStep(frontendToBackendConverter)
+    facadeStep(frontendToIrConverter)
     irHandlersStep()
 
     facadeStep(irInliningFacade)
 
-    facadeStep(backendFacade)
+    facadeStep(serializerFacade)
     klibArtifactsHandlersStep {
         useHandlers(::KlibBackendDiagnosticsHandler)
     }

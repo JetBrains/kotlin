@@ -40,16 +40,16 @@ abstract class AbstractJsIrTest(
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
         get() = ::ClassicFrontendFacade
 
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
+    override val frontendToIrConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
 
     override val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
         get() = ::JsIrInliningFacade
 
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+    override val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::JsKlibSerializerFacade
 
-    override val afterBackendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
+    override val backendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
         get() = ::JsIrBackendFacade
 
     override val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
