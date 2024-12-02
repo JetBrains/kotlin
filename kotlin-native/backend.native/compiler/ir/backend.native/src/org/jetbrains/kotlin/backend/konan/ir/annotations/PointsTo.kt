@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.ir.annotations
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.util.allParametersCount
+import org.jetbrains.kotlin.ir.util.allParameters
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
@@ -81,5 +81,5 @@ internal value class PointsTo private constructor(private val elements: IntArray
  */
 internal val IrFunction.pointsTo: PointsTo?
     get() = annotations.findAnnotation(NativeRuntimeNames.Annotations.PointsTo.asSingleFqName())?.run {
-        PointsTo((getValueArgument(0)!! as IrVararg).elements.map { (it as IrConst).value as Int }, allParametersCount + 1)
+        PointsTo((arguments[0]!! as IrVararg).elements.map { (it as IrConst).value as Int }, allParameters.size + 1)
     }

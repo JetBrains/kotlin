@@ -670,7 +670,7 @@ internal object DataFlowIR {
             }
             functionMap[it] = symbol
 
-            symbol.parameters = function.allParameters.map { it.type }
+            symbol.parameters = function.parameters.map { it.type }
                     .map { mapTypeToFunctionParameter(it) }
                     .toTypedArray()
             symbol.returnParameter = mapTypeToFunctionParameter(function.returnType)

@@ -1152,7 +1152,7 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 val IrFunction.allParameters: List<IrValueParameter>
     get() = when (this) {
         is IrConstructor -> {
-            ArrayList<IrValueParameter>(allParametersCount).also {
+            ArrayList<IrValueParameter>(parameters.size + 1).also {
                 it.add(
                     this.constructedClass.thisReceiver
                         ?: error(this.render())
@@ -1163,12 +1163,6 @@ val IrFunction.allParameters: List<IrValueParameter>
         is IrSimpleFunction -> {
             parameters
         }
-    }
-
-val IrFunction.allParametersCount: Int
-    get() = when (this) {
-        is IrConstructor -> parameters.size + 1
-        is IrSimpleFunction -> parameters.size
     }
 
 private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrategy.BindToPrivateSymbols(
@@ -1591,3 +1585,10 @@ val IrFunction.explicitParameters: List<IrValueParameter>
 fun IrFunction.addExplicitParametersTo(parametersList: MutableList<IrValueParameter>) {
     parametersList.addAll(parameters)
 }
+
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "allParameters.size")
+val IrFunction.allParametersCount: Int
+    get() = when (this) {
+        is IrConstructor -> parameters.size + 1
+        is IrSimpleFunction -> parameters.size
+    }

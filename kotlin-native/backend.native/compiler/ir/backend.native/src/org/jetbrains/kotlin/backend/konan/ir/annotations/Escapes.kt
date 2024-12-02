@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.ir.annotations
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.util.allParametersCount
+import org.jetbrains.kotlin.ir.util.allParameters
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 import org.jetbrains.kotlin.name.NativeRuntimeNames.Annotations.EscapesNothing
@@ -47,5 +47,5 @@ internal value class Escapes private constructor(private val mask: Int) {
  */
 internal val IrFunction.escapes: Escapes?
     get() = annotations.findAnnotation(NativeRuntimeNames.Annotations.Escapes.asSingleFqName())?.run {
-        Escapes((getValueArgument(0)!! as IrConst).value as Int, allParametersCount + 1)
-    } ?: annotations.findAnnotation(EscapesNothing.asSingleFqName())?.let { Escapes(0, allParametersCount + 1) }
+        Escapes((arguments[0]!! as IrConst).value as Int, allParameters.size + 1)
+    } ?: annotations.findAnnotation(EscapesNothing.asSingleFqName())?.let { Escapes(0, allParameters.size + 1) }

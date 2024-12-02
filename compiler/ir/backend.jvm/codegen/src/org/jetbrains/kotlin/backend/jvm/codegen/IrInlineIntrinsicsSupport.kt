@@ -78,7 +78,7 @@ class IrInlineIntrinsicsSupport(
         // thus cannot have a backing field, and is required to have a getter.
         val getter = property.getter
             ?: error("Property without getter: ${property.render()}")
-        val arity = getter.allParametersCount
+        val arity = getter.parameters.size
         val implClass = (if (property.isVar) MUTABLE_PROPERTY_REFERENCE_IMPL else PROPERTY_REFERENCE_IMPL).getOrNull(arity)
             ?: error("No property reference impl class with arity $arity (${property.render()}")
 
@@ -91,7 +91,7 @@ class IrInlineIntrinsicsSupport(
         v.anew(implClass)
         v.dup()
         if (withArity) {
-            v.iconst(function.allParametersCount)
+            v.iconst(function.parameters.size)
         }
         putClassInstance(v, declaration.parent.getCallableReferenceOwnerKClassType(classCodegen.context))
         v.aconst(declaration.name.asString())
