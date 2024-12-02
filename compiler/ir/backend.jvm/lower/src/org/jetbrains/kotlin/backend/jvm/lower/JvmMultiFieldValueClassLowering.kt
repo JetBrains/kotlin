@@ -620,11 +620,11 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 it.needsMfvcFlattening() && it.erasedUpperBound.typeParameters.size == targetOffset
             }) { "Unexpected dispatcher receiver type: ${dispatchReceiverType.render()}" }
             dispatchReceiverType.erasedUpperBound.typeParameters.forEachIndexed { index, typeParameter ->
-                putTypeArgument(index, typeParameter.defaultType)
+                this.typeArguments[index] = typeParameter.defaultType
             }
         }
         for (i in 0 until passedTypeParametersSize) {
-            putTypeArgument(i + targetOffset, forCommonTypeParameters(i + sourceOffset))
+            this.typeArguments[i + targetOffset] = forCommonTypeParameters(i + sourceOffset)
         }
     }
 
@@ -850,7 +850,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             endOffset = UNDEFINED_OFFSET,
             type = expression.type,
             symbol = wrapper.symbol,
-            typeArgumentsCount = expression.typeArgumentsCount,
+            typeArgumentsCount = expression.typeArguments.size,
             reflectionTarget = expression.reflectionTarget,
             origin = expression.origin,
         ).apply {
@@ -918,7 +918,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                     is IrEnumConstructorCall -> { constructorSymbol ->
                         IrEnumConstructorCallImpl(
                             expression.startOffset, expression.endOffset, expression.type, constructorSymbol,
-                            expression.typeArgumentsCount,
+                            expression.typeArguments.size,
                         )
                     }
                     else -> error("Unknown constructor call type:\n${expression.dump()}")
@@ -1020,7 +1020,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         val newArguments: List<IrExpression?> =
             makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure)
         val resultExpression = makeMemberAccessExpression(replacement.symbol).apply {
-            passTypeArgumentsWithOffsets(replacement, originalFunction) { original.getTypeArgument(it)!! }
+            passTypeArgumentsWithOffsets(replacement, originalFunction) { original.typeArguments[it]!! }
             for ((parameter, argument) in replacement.parameters zip newArguments) {
                 if (argument == null) continue
                 putArgument(replacement, parameter, argument)

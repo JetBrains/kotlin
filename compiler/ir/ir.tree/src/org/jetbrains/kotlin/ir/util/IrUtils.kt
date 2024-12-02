@@ -431,7 +431,7 @@ fun irConstructorCall(
             endOffset = endOffset,
             type = type,
             symbol = newSymbol,
-            typeArgumentsCount = typeArgumentsCount,
+            typeArgumentsCount = typeArguments.size,
             constructorTypeArgumentsCount = 0,
             origin = origin
         ).apply {
@@ -474,7 +474,7 @@ fun irCall(
             endOffset,
             newReturnType ?: type,
             newSymbol,
-            typeArgumentsCount,
+            typeArguments.size,
             origin = origin,
             superQualifierSymbol = newSuperQualifierSymbol
         ).apply {
@@ -593,7 +593,7 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
         }
     }
     return typeParameters.withIndex().associateTo(result) {
-        it.value.symbol to getTypeArgument(it.index)!!
+        it.value.symbol to this.typeArguments[it.index]!!
     }
 }
 
@@ -688,7 +688,7 @@ fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrVa
     is IrGetValue ->
         IrGetValueImpl(startOffset, endOffset, type, newReceiver?.symbol.takeIf { symbol == oldReceiver?.symbol } ?: symbol, origin)
     is IrCall ->
-        IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, origin, superQualifierSymbol).also {
+        IrCallImpl(startOffset, endOffset, type, symbol, typeArguments.size, origin, superQualifierSymbol).also {
             for (param in symbol.owner.parameters) {
                 val argument = arguments[param.indexInParameters]
                 it.arguments[param.indexInParameters] =
@@ -971,7 +971,7 @@ fun IrFunction.copyValueParametersToStatic(
 
 fun IrFunctionAccessExpression.passTypeArgumentsFrom(irFunction: IrTypeParametersContainer, offset: Int = 0) {
     irFunction.typeParameters.forEachIndexed { i, param ->
-        putTypeArgument(i + offset, param.defaultType)
+        typeArguments[i + offset] = param.defaultType
     }
 }
 

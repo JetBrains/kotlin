@@ -1215,8 +1215,8 @@ abstract class AbstractComposeLowering(
             to,
             unsafeCoerceIntrinsic!!
         ).apply {
-            putTypeArgument(0, from)
-            putTypeArgument(1, to)
+            typeArguments[0] = from
+            typeArguments[1] = to
             putValueArgument(0, argument)
         }
 
@@ -1302,7 +1302,7 @@ abstract class AbstractComposeLowering(
             extensionReceiver = currentComposer
             putValueArgument(0, invalid)
             putValueArgument(1, calculation)
-            putTypeArgument(0, returnType)
+            typeArguments[0] = returnType
         }
     }
 

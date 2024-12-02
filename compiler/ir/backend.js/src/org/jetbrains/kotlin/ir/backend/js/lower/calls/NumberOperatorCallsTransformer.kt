@@ -118,7 +118,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                 call.endOffset,
                 call.type,
                 function,
-                call.typeArgumentsCount,
+                call.typeArguments.size,
                 call.origin,
             ).apply {
                 copyTypeArgumentsFrom(call)

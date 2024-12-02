@@ -63,7 +63,7 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
                 IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
         }
         for (arg in wrapperIrFunction.allTypeParameters) {
-            call.putTypeArgument(arg.index, arg.defaultType)
+            call.typeArguments[arg.index] = arg.defaultType
         }
         call.dispatchReceiver = wrapperIrFunction.dispatchReceiverParameter?.let { dispatchReceiver ->
             IrGetValueImpl(

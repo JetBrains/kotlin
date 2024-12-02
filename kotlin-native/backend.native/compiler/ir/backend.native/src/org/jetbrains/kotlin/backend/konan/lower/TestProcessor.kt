@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -450,8 +449,8 @@ internal class TestProcessor(private val generationState: NativeGenerationState)
                 val irBuilder = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset)
                 body = irBuilder.irBlockBody {
                     +irDelegatingConstructorCall(baseClassSuiteConstructor).apply {
-                        putTypeArgument(0, testClassType)
-                        putTypeArgument(1, testCompanionType)
+                        typeArguments[0] = testClassType
+                        typeArguments[1] = testCompanionType
 
                         putValueArgument(0, irString(suiteName))
                         putValueArgument(1, irBoolean(ignored))

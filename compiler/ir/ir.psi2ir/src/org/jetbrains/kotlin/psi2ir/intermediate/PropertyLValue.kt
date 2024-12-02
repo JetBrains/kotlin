@@ -140,7 +140,7 @@ internal class AccessorPropertyLValue(
 
     private fun IrMemberAccessExpression<*>.putTypeArguments() {
         this@AccessorPropertyLValue.typeArguments?.forEachIndexed { index, irType ->
-            this@putTypeArguments.putTypeArgument(index, irType)
+            this@putTypeArguments.typeArguments[index] = irType
         }
     }
 

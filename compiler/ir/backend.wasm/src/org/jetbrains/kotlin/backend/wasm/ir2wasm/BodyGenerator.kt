@@ -649,7 +649,7 @@ class BodyGenerator(
             return
         }
         if (call.symbol == wasmSymbols.boxIntrinsic) {
-            val type = call.getTypeArgument(0)!!
+            val type = call.typeArguments[0]!!
             if (type == irBuiltIns.booleanType) {
                 generateExpression(call.getValueArgument(0)!!)
                 body.buildCall(wasmFileCodegenContext.referenceFunction(backendContext.wasmSymbols.getBoxedBoolean), location)
@@ -815,13 +815,13 @@ class BodyGenerator(
 
         when (function.symbol) {
             wasmSymbols.wasmTypeId -> {
-                val klass = call.getTypeArgument(0)!!.getClass()
+                val klass = call.typeArguments[0]!!.getClass()
                     ?: error("No class given for wasmTypeId intrinsic")
                 body.buildConstI32Symbol(wasmFileCodegenContext.referenceTypeId(klass.symbol), location)
             }
 
             wasmSymbols.wasmIsInterface -> {
-                val irInterface = call.getTypeArgument(0)!!.getClass()
+                val irInterface = call.typeArguments[0]!!.getClass()
                     ?: error("No interface given for wasmIsInterface intrinsic")
                 assert(irInterface.isInterface)
                 body.buildInstr(
@@ -864,7 +864,7 @@ class BodyGenerator(
             wasmSymbols.refCastNull -> {
                 generateRefCast(
                     fromType = call.getValueArgument(0)!!.type,
-                    toType = call.getTypeArgument(0)!!,
+                    toType = call.typeArguments[0]!!,
                     isRefNullCast = true,
                     location = location,
                 )
@@ -873,13 +873,13 @@ class BodyGenerator(
             wasmSymbols.refTest -> {
                 generateRefTest(
                     fromType = call.getValueArgument(0)!!.type,
-                    toType = call.getTypeArgument(0)!!,
+                    toType = call.typeArguments[0]!!,
                     location
                 )
             }
 
             wasmSymbols.unboxIntrinsic -> {
-                val fromType = call.getTypeArgument(0)!!
+                val fromType = call.typeArguments[0]!!
 
                 if (fromType.isNothing()) {
                     body.buildUnreachableAfterNothingType()
@@ -887,7 +887,7 @@ class BodyGenerator(
                     return true
                 }
 
-                val toType = call.getTypeArgument(1)!!
+                val toType = call.typeArguments[1]!!
                 val klass: IrClass = backendContext.inlineClassesUtils.getInlinedClass(toType)!!
                 val field = getInlineClassBackingField(klass)
 
@@ -921,7 +921,7 @@ class BodyGenerator(
 
             wasmSymbols.wasmArrayCopy -> {
                 val immediate = WasmImmediate.GcType(
-                    wasmFileCodegenContext.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
+                    wasmFileCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
                 )
                 body.buildInstr(WasmOp.ARRAY_COPY, location, immediate, immediate)
             }
@@ -932,7 +932,7 @@ class BodyGenerator(
 
             wasmSymbols.wasmArrayNewData0 -> {
                 val arrayGcType = WasmImmediate.GcType(
-                    wasmFileCodegenContext.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
+                    wasmFileCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
                 )
                 body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
             }
@@ -1259,7 +1259,7 @@ class BodyGenerator(
                 }
                 1 -> {
                     fun getReferenceGcType(): WasmSymbol<WasmTypeDeclaration> {
-                        val type = function.dispatchReceiverParameter?.type ?: call.getTypeArgument(0)!!
+                        val type = function.dispatchReceiverParameter?.type ?: call.typeArguments[0]!!
                         return wasmFileCodegenContext.referenceGcType(type.classOrNull!!)
                     }
 

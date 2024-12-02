@@ -53,8 +53,8 @@ interface FunctionDelegate {
         return irCall(overload, type = original.type).apply {
             this.dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)
             this.extensionReceiver = (extensionReceiver ?: original.extensionReceiver)?.deepCopyWithSymbols(parent)
-            for (i in 0 until original.typeArgumentsCount) {
-                putTypeArgument(i, original.getTypeArgument(i))
+            for (i in original.typeArguments.indices) {
+                typeArguments[i] = original.typeArguments[i]
             }
             for ((i, argument) in valueArguments.withIndex()) {
                 putValueArgument(i, argument?.deepCopyWithSymbols(parent))

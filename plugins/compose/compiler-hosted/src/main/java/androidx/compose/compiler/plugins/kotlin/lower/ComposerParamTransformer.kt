@@ -150,7 +150,7 @@ class ComposerParamTransformer(
             endOffset,
             type,
             ownerFn.symbol,
-            typeArgumentsCount,
+            typeArguments.size,
             origin,
             superQualifierSymbol
         ).also {
@@ -629,7 +629,7 @@ class ComposerParamTransformer(
                         dispatchReceiver = copy.dispatchReceiverParameter?.let { irGet(it) }
                         extensionReceiver = copy.extensionReceiverParameter?.let { irGet(it) }
                         copy.typeParameters.fastForEachIndexed { index, param ->
-                            putTypeArgument(index, param.defaultType)
+                            typeArguments[index] = param.defaultType
                         }
                         copy.valueParameters.fastForEachIndexed { index, param ->
                             putValueArgument(index, irGet(param))

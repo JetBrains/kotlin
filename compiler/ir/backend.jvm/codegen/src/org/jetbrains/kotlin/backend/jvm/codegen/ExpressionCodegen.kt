@@ -670,8 +670,8 @@ class ExpressionCodegen(
         // In this case the receiver is `this` (not specified in IR) and the return value is discarded anyway.
         mv.load(0, OBJECT_TYPE)
 
-        for (argumentIndex in 0 until expression.typeArgumentsCount) {
-            val classifier = expression.getTypeArgument(argumentIndex)?.classifierOrNull
+        for (typeArg in expression.typeArguments) {
+            val classifier = typeArg?.classifierOrNull
             if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
                 consumeReifiedOperationMarker(classifier)
             }
@@ -1555,11 +1555,11 @@ class ExpressionCodegen(
             is IrSimpleFunction -> callee
         }
         val typeArguments =
-            if (element.typeArgumentsCount == 0) {
+            if (element.typeArguments.isEmpty()) {
                 //avoid ambiguity with type constructor type parameters
                 emptyMap()
             } else typeArgumentContainer.typeParameters.associate {
-                it.symbol to (element.getTypeArgument(it.index) ?: it.defaultType)
+                it.symbol to (element.typeArguments[it.index] ?: it.defaultType)
             }
 
         val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter)

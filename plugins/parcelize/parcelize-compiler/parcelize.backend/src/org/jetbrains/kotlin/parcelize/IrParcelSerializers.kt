@@ -290,8 +290,9 @@ class IrArrayParcelSerializer(
         }
 
         return irCall(arrayConstructor, arrayType).apply {
-            if (typeArgumentsCount != 0)
-                putTypeArgument(0, elementType)
+            if (typeArguments.size >= 1) {
+                typeArguments[0] = elementType
+            }
             arguments[0] = size
         }
     }

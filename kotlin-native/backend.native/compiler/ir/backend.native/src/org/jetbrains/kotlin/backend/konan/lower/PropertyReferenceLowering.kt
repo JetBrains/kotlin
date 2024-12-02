@@ -117,8 +117,9 @@ internal class PropertyReferenceLowering(val generationState: NativeGenerationSt
                 ).apply {
                     this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
                     this.extensionReceiver = extensionReceiver?.let { irGet(it) }
-                    for (index in 0 until expression.typeArgumentsCount)
-                        putTypeArgument(index, expression.getTypeArgument(index))
+                    for (index in expression.typeArguments.indices) {
+                        typeArguments[index] = expression.typeArguments[index]
+                    }
                 }
             }
 
@@ -137,8 +138,9 @@ internal class PropertyReferenceLowering(val generationState: NativeGenerationSt
                 ).apply {
                     this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
                     this.extensionReceiver = extensionReceiver?.let { irGet(it) }
-                    for (index in 0 until expression.typeArgumentsCount)
-                        putTypeArgument(index, expression.getTypeArgument(index))
+                    for (index in expression.typeArguments.indices) {
+                        typeArguments[index] = expression.typeArguments[index]
+                    }
                 }
             }
 

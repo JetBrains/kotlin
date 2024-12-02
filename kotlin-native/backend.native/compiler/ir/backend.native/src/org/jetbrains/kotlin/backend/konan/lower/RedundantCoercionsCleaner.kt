@@ -76,7 +76,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
             }
             return with(coercion) {
                 IrCallImpl(
-                        startOffset, endOffset, type, symbol, typeArgumentsCount, origin
+                        startOffset, endOffset, type, symbol, typeArguments.size, origin
                 ).apply {
                     putValueArgument(0, result)
                 }

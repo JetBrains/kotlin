@@ -207,7 +207,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
          */
         private val allTypeParametersAndArguments: List<Pair<IrTypeParameterSymbol, IrType>> =
                 referencedFunction.typeParameters.map { typeParam ->
-                    typeParam.symbol to functionReference.getTypeArgument(typeParam.index)!!
+                    typeParam.symbol to functionReference.typeArguments[typeParam.index]!!
                 }
 
         /**
@@ -593,7 +593,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                             assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
 
                             referencedFunction.typeParameters.forEach { typeParam ->
-                                putTypeArgument(typeParam.index, substituteTypeParameterOfReferencedFunction(typeParam))
+                                typeArguments[typeParam.index] = substituteTypeParameterOfReferencedFunction(typeParam)
                             }
                         }
                 )

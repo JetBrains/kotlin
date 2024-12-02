@@ -229,7 +229,11 @@ interface IrBuilderWithPluginContext {
             callee,
             *valueArguments.toTypedArray(),
             typeHint = returnTypeHint
-        ).also { call -> typeArguments.forEachIndexed(call::putTypeArgument) }
+        ).also { call ->
+            typeArguments.forEachIndexed { index, type ->
+                call.typeArguments[index] = type
+            }
+        }
 
     fun IrBuilderWithScope.createArrayOfExpression(
         arrayElementType: IrType,

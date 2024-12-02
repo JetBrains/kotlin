@@ -298,15 +298,15 @@ class DumpIrTreeVisitor(
     }
 
     private fun dumpTypeArguments(expression: IrMemberAccessExpression<*>) {
-        val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
-        for (index in 0 until expression.typeArgumentsCount) {
+        val typeParameterNames = expression.getTypeParameterNames(expression.typeArguments.size)
+        for (index in 0 until expression.typeArguments.size) {
             printer.println("<${typeParameterNames[index]}>: ${expression.renderTypeArgument(index)}")
         }
     }
 
     private fun dumpTypeArguments(expression: IrConstructorCall) {
-        val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
-        for (index in 0 until expression.typeArgumentsCount) {
+        val typeParameterNames = expression.getTypeParameterNames(expression.typeArguments.size)
+        for (index in 0 until expression.typeArguments.size) {
             val typeParameterName = typeParameterNames[index]
             val parameterLabel =
                 if (index < expression.classTypeArgumentsCount)
@@ -346,7 +346,7 @@ class DumpIrTreeVisitor(
     }
 
     private fun IrMemberAccessExpression<*>.renderTypeArgument(index: Int): String =
-        getTypeArgument(index)?.render() ?: "<none>"
+        this.typeArguments[index]?.render() ?: "<none>"
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: String) {
         inlinedBlock.dumpLabeledElementWith(data) {

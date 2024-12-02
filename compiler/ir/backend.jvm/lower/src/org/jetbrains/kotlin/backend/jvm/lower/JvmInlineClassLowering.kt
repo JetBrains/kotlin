@@ -257,16 +257,16 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.ir.symbols.unsafeCoerceIntrinsic).apply {
             val underlyingType = from.erasedUpperBound.inlineClassRepresentation?.underlyingType
             if (underlyingType?.isTypeParameter() == true && !skipCast) {
-                putTypeArgument(0, from)
-                putTypeArgument(1, underlyingType)
+                typeArguments[0] = from
+                typeArguments[1] = underlyingType
                 putValueArgument(
                     0, IrTypeOperatorCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, IrTypeOperator.IMPLICIT_CAST, underlyingType, argument
                     )
                 )
             } else {
-                putTypeArgument(0, from)
-                putTypeArgument(1, to)
+                typeArguments[0] = from
+                typeArguments[1] = to
                 putValueArgument(0, argument)
             }
         }

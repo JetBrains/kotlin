@@ -897,9 +897,9 @@ private fun StringBuilder.renderAsAnnotation(
     val annotationClassName = irAnnotation.symbol.takeIf { it.isBound }?.owner?.parentAsClass?.name?.asString() ?: "<unbound>"
     append(annotationClassName)
 
-    if (irAnnotation.typeArgumentsCount != 0) {
-        (0 until irAnnotation.typeArgumentsCount).joinTo(this, ", ", "<", ">") { i ->
-            irAnnotation.getTypeArgument(i)?.renderTypeWithRenderer(renderer, options) ?: "null"
+    if (irAnnotation.typeArguments.isNotEmpty()) {
+        irAnnotation.typeArguments.joinTo(this, ", ", "<", ">") {
+            it?.renderTypeWithRenderer(renderer, options) ?: "null"
         }
     }
 

@@ -169,7 +169,7 @@ abstract class ParcelizeIrTransformerBase(
                         irExprBody(
                             parcelerNewArray(parcelerObject, sizeParameter)
                                 ?: irCall(context.irBuiltIns.arrayOfNulls, arrayType).apply {
-                                    putTypeArgument(0, arrayType)
+                                    typeArguments[0] = arrayType
                                     arguments[0] = irGet(sizeParameter)
                                 }
                         )

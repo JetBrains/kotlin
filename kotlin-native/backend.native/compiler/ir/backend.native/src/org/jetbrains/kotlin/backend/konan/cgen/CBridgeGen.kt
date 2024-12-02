@@ -133,10 +133,10 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
 
         (0 until expression.valueArgumentsCount).forEach {
             callBuilder.addArgument(
-                    expression.getValueArgument(it)!!,
-                    type = expression.getTypeArgument(it)!!,
-                    variadic = false,
-                    parameter = null
+                expression.getValueArgument(it)!!,
+                type = expression.typeArguments[it]!!,
+                variadic = false,
+                parameter = null
             )
         }
     } else {
@@ -158,7 +158,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
     }
 
     val returnValuePassing = if (isInvoke) {
-        val returnType = expression.getTypeArgument(expression.typeArgumentsCount - 1)!!
+        val returnType = expression.typeArguments.last()!!
         mapReturnType(returnType, expression, signature = null)
     } else {
         mapReturnType(callee.returnType, expression, signature = callee)

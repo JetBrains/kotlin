@@ -317,7 +317,7 @@ internal class BodyGenerator(
                 context.symbolTable.descriptorExtension.referenceConstructor(enumConstructor),
                 1 // kotlin.Enum<T> has a single type parameter
             ).apply {
-                putTypeArgument(0, classDescriptor.defaultType.toIrType())
+                typeArguments[0] = classDescriptor.defaultType.toIrType()
             }
         )
     }

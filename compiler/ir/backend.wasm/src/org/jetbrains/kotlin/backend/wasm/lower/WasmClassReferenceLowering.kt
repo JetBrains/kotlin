@@ -23,7 +23,7 @@ class WasmClassReferenceLowering(context: WasmBackendContext) : ClassReferenceLo
             return primitiveKClass
 
         return JsIrBuilder.buildCall(reflectionSymbols.getKClass, returnType).also {
-            it.putTypeArgument(0, typeArgument)
+            it.typeArguments[0] = typeArgument
         }
     }
 }

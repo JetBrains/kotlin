@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArgumentsFromEnvironment
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
@@ -791,7 +790,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
             val call = builder.irCall(context.wasmSymbols.refCastNull)
             call.putValueArgument(0, expression)
-            call.putTypeArgument(0, toType)
+            call.typeArguments[0] = toType
             return call
         }
     }

@@ -1639,7 +1639,7 @@ class Fir2IrVisitor(
                 hasExtensionReceiver = false,
                 origin = IrStatementOrigin.EXCLEXCL
             ).apply {
-                putTypeArgument(0, checkNotNullCall.argument.resolvedType.toIrType(c).makeNotNull())
+                typeArguments[0] = checkNotNullCall.argument.resolvedType.toIrType(c).makeNotNull()
                 putValueArgument(0, convertToIrExpression(checkNotNullCall.argument))
             }
         }

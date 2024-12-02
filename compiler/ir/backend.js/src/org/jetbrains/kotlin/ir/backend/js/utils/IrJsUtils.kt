@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -35,7 +34,9 @@ val IrFile.nameWithoutExtension: String get() = name.substringBeforeLast(".kt")
 
 fun IrClass.jsConstructorReference(context: JsIrBackendContext): IrExpression {
     return JsIrBuilder.buildCall(context.intrinsics.jsClass, origin = JsStatementOrigins.CLASS_REFERENCE)
-        .apply { putTypeArgument(0, defaultType) }
+        .apply {
+            typeArguments[0] = defaultType
+        }
 }
 
 fun IrDeclaration.isExportedMember(context: JsIrBackendContext) =

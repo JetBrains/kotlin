@@ -83,7 +83,7 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     call.putValueArgument(index, irGet(parameter))
                 }
                 function.typeParameters.forEachIndexed { index, typeParameter ->
-                    call.putTypeArgument(index, typeParameter.defaultType)
+                    call.typeArguments[index] = typeParameter.defaultType
                 }
                 +irReturn(call)
             }

@@ -211,7 +211,7 @@ open class SerializerIrGenerator(
                 primaryCtor.symbol
             ).apply {
                 irClass.typeParameters.forEachIndexed { index, irTypeParameter ->
-                    putTypeArgument(index, irTypeParameter.defaultType)
+                    typeArguments[index] = irTypeParameter.defaultType
                 }
             }
 

@@ -103,7 +103,7 @@ private class MoveExternalInlineFunctionsWithBodiesOutsideLowering(private val c
                         putValueArgument(index, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol))
                     }
                     for ((index, type) in declaration.typeParameters.withIndex()) {
-                        putTypeArgument(index, type.defaultType)
+                        typeArguments[index] = type.defaultType
                     }
                 }
             )

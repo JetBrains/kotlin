@@ -195,7 +195,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
                 startOffset, endOffset, jsClassSymbol.owner.returnType, jsClassSymbol,
                 typeArgumentsCount = 1,
             )
-            irCall.putTypeArgument(0, type)
+            irCall.typeArguments[0] = type
             return irCall
         }
 
@@ -211,10 +211,10 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
                 expression.endOffset,
                 expression.type,
                 factoryFunction.symbol,
-                expression.typeArgumentsCount
+                expression.typeArguments.size
             ).apply {
-                for (ti in 0 until typeArgumentsCount) {
-                    putTypeArgument(ti, expression.getTypeArgument(ti))
+                for (ti in typeArguments.indices) {
+                    typeArguments[ti] = expression.typeArguments[ti]
                 }
 
                 var vi = 0
@@ -227,7 +227,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
             expression.transformChildrenVoid(this)
 
             val builderCall = expression.run {
-                IrCallImpl(startOffset, endOffset, type, localDelegateBuilderSymbol, typeArgumentsCount)
+                IrCallImpl(startOffset, endOffset, type, localDelegateBuilderSymbol, typeArguments.size)
             }
 
             val localName = expression.symbol.owner.name.asString()

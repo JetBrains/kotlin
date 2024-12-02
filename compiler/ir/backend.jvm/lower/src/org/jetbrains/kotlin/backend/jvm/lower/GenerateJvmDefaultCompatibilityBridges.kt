@@ -116,7 +116,7 @@ class GenerateJvmDefaultCompatibilityBridges(private val context: JvmBackendCont
                         dispatchReceiver = irGet(dispatchReceiverParameter!!)
                         extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
                         for ((index, parameter) in typeParameters.withIndex()) {
-                            putTypeArgument(index, parameter.defaultType)
+                            typeArguments[index] = parameter.defaultType
                         }
                         for ((index, parameter) in valueParameters.withIndex()) {
                             putValueArgument(index, irGet(parameter))

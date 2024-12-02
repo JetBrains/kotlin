@@ -318,7 +318,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
 
             for (typeParameterIndex in targetFun.typeParameters.indices) {
-                targetCall.putTypeArgument(typeParameterIndex, reference.getTypeArgument(typeParameterIndex))
+                targetCall.typeArguments[typeParameterIndex] = reference.typeArguments[typeParameterIndex]
             }
 
             val proxyFunBody = context.irFactory.createBlockBody(startOffset, endOffset).also { proxyFun.body = it }
@@ -418,7 +418,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         return context.createJvmIrBuilder(currentScope!!, startOffset, endOffset).run {
             // See [org.jetbrains.kotlin.backend.jvm.JvmSymbols::indyLambdaMetafactoryIntrinsic].
             irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
-                putTypeArgument(0, notNullSamType)
+                typeArguments[0] = notNullSamType
                 putValueArgument(0, irRawFunctionRef(lambdaMetafactoryArguments.samMethod))
                 putValueArgument(1, lambdaMetafactoryArguments.implMethodReference)
                 putValueArgument(2, irRawFunctionRef(lambdaMetafactoryArguments.fakeInstanceMethod))
@@ -779,7 +779,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 var unboundIndex = 0
                 val call = irCall(callee.symbol, referenceReturnType).apply {
                     for (typeParameter in irFunctionReference.symbol.owner.allTypeParameters) {
-                        putTypeArgument(typeParameter.index, typeArgumentsMap[typeParameter.symbol])
+                        typeArguments[typeParameter.index] = typeArgumentsMap[typeParameter.symbol]
                     }
 
                     for (parameter in callee.parameters) {
@@ -913,7 +913,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
                     IrFunctionReferenceImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target,
-                        irFunctionReference.typeArgumentsCount,
+                        irFunctionReference.typeArguments.size,
                         irFunctionReference.reflectionTarget, null
                     ).apply {
                         copyTypeArgumentsFrom(irFunctionReference)
