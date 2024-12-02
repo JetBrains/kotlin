@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 
 class IrTextDumpHandler(
