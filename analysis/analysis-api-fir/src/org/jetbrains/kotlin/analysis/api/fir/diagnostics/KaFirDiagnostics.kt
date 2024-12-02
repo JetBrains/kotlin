@@ -2091,6 +2091,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val valueParameter: KaSymbol
     }
 
+    interface GenericQualifierOnConstructorCallError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = GenericQualifierOnConstructorCallError::class
+    }
+
+    interface GenericQualifierOnConstructorCallWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = GenericQualifierOnConstructorCallWarning::class
+    }
+
     interface ExtensionInClassReferenceNotAllowed : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         val referencedDeclaration: KaCallableSymbol

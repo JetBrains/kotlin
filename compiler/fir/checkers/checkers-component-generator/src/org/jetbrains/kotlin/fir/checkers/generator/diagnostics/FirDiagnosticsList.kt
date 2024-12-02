@@ -992,6 +992,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("typeArgumentType")
             parameter<FirValueParameterSymbol>("valueParameter")
         }
+        val GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL by deprecationError<PsiElement>(
+            LanguageFeature.ProhibitGenericQualifiersOnConstructorCalls,
+            PositioningStrategy.TYPE_ARGUMENT_LIST_OR_SELF
+        )
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

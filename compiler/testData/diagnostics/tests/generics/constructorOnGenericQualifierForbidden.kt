@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73527
-// LANGUAGE: -ProhibitGenericQualifiersOnConstructorCalls
+// LANGUAGE: +ProhibitGenericQualifiersOnConstructorCalls
 
 class Generic<T> {
     class Nested

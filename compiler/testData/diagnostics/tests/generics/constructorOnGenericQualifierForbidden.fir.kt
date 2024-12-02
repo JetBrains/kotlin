@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-73527
-// LANGUAGE: -ProhibitGenericQualifiersOnConstructorCalls
+// LANGUAGE: +ProhibitGenericQualifiersOnConstructorCalls
 
 class Generic<T> {
     class Nested
@@ -19,8 +19,8 @@ fun test(
     i3: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Generic<!>.Inner,
     i4: TA.<!UNRESOLVED_REFERENCE!>Nested<!>,
 ) {
-    Generic<!GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL_WARNING!><Int><!>.Nested()
-    Generic<!GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL_WARNING!><_><!>.Nested()
+    Generic<!GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL_ERROR!><Int><!>.Nested()
+    Generic<!GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL_ERROR!><_><!>.Nested()
     Generic.Nested()
     TA.<!UNRESOLVED_REFERENCE!>Nested<!>()
 
