@@ -1580,14 +1580,10 @@ const val SKIP_BODIES_ERROR_DESCRIPTION = "skipBodies"
 
 // === Junkyard ===
 
-/**
- * Deprecated, use [createThisReceiverParameter]
- */
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "createThisReceiverParameter()")
 fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() =
     createThisReceiverParameter()
 
-/**
- * Deprecated, use [createThisReceiverParameter]
- */
+@DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "createThisReceiverParameter()")
 fun IrClass.createParameterDeclarations() =
     createThisReceiverParameter()
