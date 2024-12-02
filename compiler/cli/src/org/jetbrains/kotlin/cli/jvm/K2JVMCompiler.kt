@@ -147,11 +147,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             // should be called after configuring jdk home from build file
             configuration.configureJdkClasspathRoots()
 
-            val targetDescription = moduleChunk.targetDescription()
-
             val environment = createCoreEnvironment(
                 rootDisposable, configuration, messageCollector,
-                targetDescription
+                moduleChunk.targetDescription()
             ) ?: return COMPILATION_ERROR
             environment.registerJavacIfNeeded(arguments).let {
                 if (!it) return COMPILATION_ERROR
