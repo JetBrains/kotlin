@@ -837,4 +837,59 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
         val oldFunction4 = function4Regex.find(oldBytecode)?.value ?: error("Could not find function4 in old bytecide")
         assertEquals(oldFunction4, function4)
     }
+
+    @Test
+    fun testAddingCodeCommentAboveGroupsWithControlFlow() {
+        val oldBytecode = compileBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable fun Box1() {}
+                @Composable fun Box2() {}
+                
+                @Composable fun Foo(test: Boolean) {
+                    if(test) {
+                        Box1()
+                    } else {
+                        Box2()
+                    }
+                }
+            """,
+            className = "TestClass",
+        )
+
+        val newBytecode = compileBytecode(
+            """
+                import androidx.compose.runtime.*
+
+                @Composable fun Box1() {}
+                @Composable fun Box2() {}
+                
+                /*
+                Code Comment
+                 */
+                @Composable fun Foo(test: Boolean) {
+                    if(test) {
+                        Box1()
+                    } else {
+                        Box2()
+                    }
+                }
+            """,
+            className = "TestClass",
+        )
+
+        /**
+         * There are some parts of the bytecode that contain the actual line number.
+         * This is OK to be changed; therefore, we will sanitize this as we do care about the actual group keys
+         */
+        fun String.sanitize(): String = lines().map { line ->
+            if (line.contains("LINENUMBER")) {
+                return@map "<LINENUMBER>"
+            }
+            line.replace(Regex("""Test.kt:\d+"""), "Test.kt:<LINE_NUMBER>")
+        }.joinToString("\n")
+
+        assertEquals(newBytecode.sanitize(), oldBytecode.sanitize())
+    }
 }
