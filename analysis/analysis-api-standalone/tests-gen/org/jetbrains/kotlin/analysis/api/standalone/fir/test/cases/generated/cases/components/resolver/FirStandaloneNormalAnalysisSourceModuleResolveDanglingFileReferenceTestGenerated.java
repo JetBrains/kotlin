@@ -182,6 +182,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveDanglingFileReference
     }
 
     @Test
+    @TestMetadata("topLevelPrivateDeclaration.kt")
+    public void testTopLevelPrivateDeclaration() {
+      runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/topLevelPrivateDeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("valueParameter.kt")
     public void testValueParameter() {
       runTest("analysis/analysis-api/testData/danglingFileReferenceResolve/ignoreSelf/valueParameter.kt");
