@@ -107,6 +107,8 @@ interface IrDeclarationOrigin {
          * in the middle of code compile of `KaCompilerFacility`.
          */
         val FILLED_FOR_UNBOUND_SYMBOL by IrDeclarationOriginImpl
+
+        val INLINE_LAMBDA by IrDeclarationOriginImpl
     }
 
     /**
