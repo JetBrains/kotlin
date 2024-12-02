@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.js.test.fir
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
-import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.js.test.handlers.JsWrongModuleHandler
@@ -53,9 +52,6 @@ open class AbstractFirJsTest(
 
     override val frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
-
-    override val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
-        get() = ::JsIrInliningFacade
 
     override val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirJsKlibSerializerFacade

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
-import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
@@ -42,9 +41,6 @@ abstract class AbstractJsIrTest(
 
     override val frontendToIrConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
-
-    override val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
-        get() = ::JsIrInliningFacade
 
     override val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::JsKlibSerializerFacade

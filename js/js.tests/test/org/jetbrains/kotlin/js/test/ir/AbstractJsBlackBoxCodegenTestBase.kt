@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
+import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
 import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -41,7 +42,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontendFacade: Constructor<FrontendFacade<FO>>
     abstract val frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>
-    abstract val irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>
     abstract val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
     abstract val backendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
     abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
@@ -62,7 +62,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             targetFrontend = targetFrontend,
             frontendFacade = frontendFacade,
             frontendToIrConverter = frontendToIrConverter,
-            irInliningFacade = irInliningFacade,
             serializerFacade = serializerFacade,
             customIgnoreDirective = customIgnoreDirective
         )
@@ -133,7 +132,6 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     targetFrontend: FrontendKind<FO>,
     frontendFacade: Constructor<FrontendFacade<FO>>,
     frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>,
-    irInliningFacade: Constructor<IrInliningFacade<IrBackendInput>>,
     serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
@@ -172,7 +170,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     facadeStep(frontendToIrConverter)
     irHandlersStep()
 
-    facadeStep(irInliningFacade)
+    facadeStep(::JsIrInliningFacade)
 
     facadeStep(serializerFacade)
     klibArtifactsHandlersStep {
