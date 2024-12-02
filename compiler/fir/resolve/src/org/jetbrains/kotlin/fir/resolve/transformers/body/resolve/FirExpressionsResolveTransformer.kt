@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ContextIndependent
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
@@ -704,7 +703,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
 
                 override fun visitAnnotation(annotation: FirAnnotation) {
-                    annotation.transformSingle(transformer, ContextIndependent)
+                    annotation.transformSingle(transformer, ResolutionMode.ContextIndependent)
                 }
 
                 override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {

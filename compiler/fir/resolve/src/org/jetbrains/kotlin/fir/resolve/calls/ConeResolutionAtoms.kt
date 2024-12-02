@@ -80,7 +80,7 @@ sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
             return when (expression) {
                 null -> null
                 is FirAnonymousFunctionExpression -> ConeResolutionAtomWithPostponedChild(expression)
-                is FirArrayLiteral -> ConeClResolutionAtom(
+                is FirArrayLiteral -> ConeCollectionLiteralResolutionAtom(
                     expression,
                     expression.arguments.map { createRawAtom(it, allowUnresolvedExpression)!! }
                 )
@@ -143,7 +143,8 @@ class ConeResolutionAtomWithPostponedChild(override val expression: FirExpressio
         }
 }
 
-class ConeClResolutionAtom(override val expression: FirArrayLiteral, val subAtoms: List<ConeResolutionAtom>) : ConeResolutionAtom()
+class ConeCollectionLiteralResolutionAtom(override val expression: FirArrayLiteral, val subAtoms: List<ConeResolutionAtom>) :
+    ConeResolutionAtom()
 
 sealed class ConePostponedResolvedAtom : ConeResolutionAtom(), PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<ConeKotlinType>

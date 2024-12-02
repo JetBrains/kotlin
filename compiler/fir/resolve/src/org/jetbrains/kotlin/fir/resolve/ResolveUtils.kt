@@ -378,6 +378,8 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         } else {
             setTypeOfQualifier(this@buildResolvedQualifierForClass)
         }
+    }.also {
+        // println("${it::class} ${it.classId} ${it.symbol} relativeClassName=${relativeClassName}")
     }
 }
 

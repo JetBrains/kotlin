@@ -49,6 +49,11 @@ internal class FirResolvedQualifierImpl(
 }
     override var resolvedToCompanionObject: Boolean = (symbol?.fir as? FirRegularClass)?.companionObjectSymbol != null
 
+    init {
+        // println("FirResolvedQualifier: classId=${this.classId} symbol=${symbol} packageFqName=$packageFqName")
+        // Exception().printStackTrace()
+    }
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         explicitParent?.accept(visitor, data)

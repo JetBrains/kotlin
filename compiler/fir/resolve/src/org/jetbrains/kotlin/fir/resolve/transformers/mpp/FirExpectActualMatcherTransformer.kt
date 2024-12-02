@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
@@ -27,6 +29,9 @@ class FirExpectActualMatcherProcessor(
     override val transformer: FirTransformer<Nothing?> = FirExpectActualMatcherTransformer(session, scopeSession)
 
     override fun processFile(file: FirFile) {
+        // println("--- ${file.name}")
+        // println(file.renderWithType())
+        println()
         if (!enabled) return
         super.processFile(file)
     }

@@ -6,5 +6,5 @@
 package org.jetbrains.kotlin.fir.expressions
 
 enum class FirFunctionCallOrigin {
-    Regular, Infix, Operator
+    Regular, Infix, Operator // origin = operator
 }
