@@ -22,17 +22,28 @@ import androidx.compose.compiler.plugins.StabilityTestProtos
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeWithParameters
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -1754,6 +1765,61 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
               static val %stable: Int = ParametrizedFoo.%stable
             }
         """
+        )
+    }
+
+    @Test
+    fun testTransformSyntheticClass() {
+        val irModule = compileToIr(
+            listOf(SourceFile("Test.kt", "")),
+            registerExtensions = { configuration ->
+                configuration.updateConfiguration()
+                @OptIn(ExperimentalCompilerApi::class)
+                registerExtensionsForTest(this, configuration) {
+                    with(ComposePluginRegistrar.Companion) {
+                        registerCommonExtensions()
+                    }
+                }
+                IrGenerationExtension.registerExtension(
+                    this,
+                    object : IrGenerationExtension {
+                        override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+                            moduleFragment.transformChildrenVoid(
+                                object : IrElementTransformerVoid() {
+                                    override fun visitFile(declaration: IrFile): IrFile {
+                                        val cls = pluginContext.irFactory.buildClass {
+                                            name = Name.identifier("GeneratedForTest")
+                                            visibility = DescriptorVisibilities.PUBLIC
+                                            modality = Modality.FINAL
+                                        }
+                                        cls.parent = declaration
+                                        cls.thisReceiver = buildReceiverParameter(
+                                            cls,
+                                            IrDeclarationOrigin.INSTANCE_RECEIVER,
+                                            cls.symbol.typeWithParameters(emptyList())
+                                        )
+                                        declaration.declarations += cls
+                                        return super.visitFile(declaration)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                )
+                IrGenerationExtension.registerExtension(
+                    this,
+                    ComposePluginRegistrar.createComposeIrExtension(configuration)
+                )
+            }
+        )
+
+        assertEquals(
+            """
+                class GeneratedForTest {
+                  static val %stable: Int = 0
+                }
+            """.trimIndent(),
+            irModule.dumpSrc().replace('$', '%'),
         )
     }
 

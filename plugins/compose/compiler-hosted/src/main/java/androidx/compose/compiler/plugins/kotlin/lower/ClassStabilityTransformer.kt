@@ -191,14 +191,17 @@ class ClassStabilityTransformer(
             it.putValueArgument(0, irConst(parameterMask))
         }
 
-        if (useK2) {
-            context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(
-                cls,
-                annotation,
-            )
-        } else {
-            cls.annotations += annotation
-            classStabilityInferredCollection?.addClass(cls, parameterMask)
+        // If offsets are negative, the class is synthetic and does not have associated metadata.
+        if (cls.startOffset >= 0 && cls.endOffset >= 0) {
+            if (useK2) {
+                context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(
+                    cls,
+                    annotation,
+                )
+            } else {
+                cls.annotations += annotation
+                classStabilityInferredCollection?.addClass(cls, parameterMask)
+            }
         }
 
         cls.addStabilityMarkerField(stableExpr)

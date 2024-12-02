@@ -21,6 +21,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.dump
 import org.junit.Assert.assertEquals
 import org.junit.Rule
