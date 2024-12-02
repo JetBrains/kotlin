@@ -75,9 +75,6 @@ private fun getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePacka
     return (parent as? IrFile)?.getJsQualifier()?.let { FqName(it) } ?: parent.packageFqName.takeIf { shouldIncludePackage }
 }
 
-val IrFunctionAccessExpression.typeArguments: List<IrType?>
-    get() = List(typeArgumentsCount) { getTypeArgument(it) }
-
 val IrFunctionAccessExpression.valueArguments: List<IrExpression?>
     get() = List(valueArgumentsCount) { getValueArgument(it) }
 

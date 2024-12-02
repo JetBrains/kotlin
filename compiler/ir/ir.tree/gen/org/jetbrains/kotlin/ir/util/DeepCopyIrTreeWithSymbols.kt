@@ -580,7 +580,6 @@ open class DeepCopyIrTreeWithSymbols(
             delegate = symbolRemapper.getReferencedVariable(expression.delegate),
             getter = symbolRemapper.getReferencedSimpleFunction(expression.getter),
             setter = expression.setter?.let(symbolRemapper::getReferencedSimpleFunction),
-            typeArguments = initializeTypeArguments(0),
         ).apply {
             processAttributes(expression)
         }

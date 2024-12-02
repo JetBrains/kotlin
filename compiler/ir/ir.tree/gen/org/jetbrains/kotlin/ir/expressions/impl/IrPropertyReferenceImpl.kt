@@ -25,7 +25,6 @@ class IrPropertyReferenceImpl internal constructor(
     override val endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin?,
-    protected override val typeArguments: Array<IrType?>,
     symbol: IrPropertySymbol,
     override var field: IrFieldSymbol?,
     override var getter: IrSimpleFunctionSymbol?,
@@ -34,6 +33,8 @@ class IrPropertyReferenceImpl internal constructor(
     override var attributeOwnerId: IrAttributeContainer = this
 
     override var originalBeforeInline: IrAttributeContainer? = null
+
+    override val typeArguments: MutableList<IrType?> = ArrayList(0)
 
     override var symbol: IrPropertySymbol = symbol
         set(value) {
