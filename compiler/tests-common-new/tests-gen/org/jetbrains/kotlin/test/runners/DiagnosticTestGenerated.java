@@ -14973,6 +14973,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("constructorOnGenericQualifier.kt")
+      public void testConstructorOnGenericQualifier() {
+        runTest("compiler/testData/diagnostics/tests/generics/constructorOnGenericQualifier.kt");
+      }
+
+      @Test
       @TestMetadata("doNotCaptureSupertype.kt")
       public void testDoNotCaptureSupertype() {
         runTest("compiler/testData/diagnostics/tests/generics/doNotCaptureSupertype.kt");
