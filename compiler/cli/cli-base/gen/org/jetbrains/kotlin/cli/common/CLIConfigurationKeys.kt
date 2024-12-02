@@ -67,7 +67,7 @@ object CLIConfigurationKeys {
     val VERSION = CompilerConfigurationKey.create<Boolean>("Print compiler version")
 
     @JvmField
-    val SCRIPT_MODE = CompilerConfigurationKey.create<Boolean>("Compile kotlin script")
+    val SCRIPT_MODE = CompilerConfigurationKey.create<Boolean>("Compile and evaluate kotlin script")
 
     @JvmField
     val KOTLIN_PATHS = CompilerConfigurationKey.create<KotlinPaths>("Kotlin paths")

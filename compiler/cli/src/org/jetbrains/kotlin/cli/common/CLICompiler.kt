@@ -159,6 +159,13 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         configuration: CompilerConfiguration, arguments: A, services: Services
     )
 
+    /**
+     * Main method for execution the new phased CLI compiler pipeline
+     * Since the new pipeline is supposed to be implemented only for K2 compiler, it runs only if [shouldRunK2] returns true.
+     *
+     * If this method returns `null` it's an indicator that the phased pipeline for specific [CLICompiler] is not implemented yet,
+     *   so the old pipeline ([doExecute]) will be executed
+     */
     protected open fun doExecutePhased(
         arguments: A,
         services: Services,
@@ -167,6 +174,12 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         return null
     }
 
+    /**
+     * Main method for execution the old CLI compiler pipeline
+     * It runs for K1 compilation and for cases when the new pipeline is not implemented yet
+     *
+     * This method and its implementations should be dropped together with K1 compiler support
+     */
     protected abstract fun doExecute(
         arguments: A,
         configuration: CompilerConfiguration,

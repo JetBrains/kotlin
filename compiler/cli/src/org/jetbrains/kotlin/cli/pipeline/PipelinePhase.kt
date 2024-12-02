@@ -15,6 +15,11 @@ import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
+/**
+ * [PipelineContext] contains the information which can be used by pre- and post-actions of pipeline phases to report
+ *   some information regarding the executed phase.
+ * [PipelinePhase] itself could be run without the context
+ */
 class PipelineContext(
     val messageCollector: MessageCollector,
     val diagnosticCollector: BaseDiagnosticsCollector,
@@ -25,6 +30,30 @@ class PipelineContext(
     override var inVerbosePhase: Boolean = false
 }
 
+/**
+ * This class is the main abstraction for the phases of the phased CLI
+ * Each phase represents a step of the pipeline, like
+ * - fill the [org.jetbrains.kotlin.config.CompilerConfiguration] from arguments
+ * - run frontend
+ * - run fir2ir and actualizer
+ * - serialize klib
+ * - run backend
+ *
+ * These phases are expected to be isolated, and the only way for them to pass information from one to another
+ *   is input/output artifacts
+ *
+ * These phases are built over [org.jetbrains.kotlin.config.phaser.CompilerPhase] infrastructure, and the CLI uses it to make
+ *   a compound phases which consists of several pipeline steps. But also these phases have other usages, like test infrastructure,
+ *   which manually calls some steps. Because of that, the main method of [PipelinePhase] ([executePhase]) doesn't contain the [context]
+ *   parameter, which is supposed to be used only in CLI pipeline.
+ *
+ * To control the execution of the pipeline, the [PipelineStepException] is used. Throwing it stops the pipeline
+ *
+ * [preActions] and [postActions] are callbacks which might be used for several purposes:
+ * - callbacks before and after some stages (e.g. to notify the performance manager)
+ * - checks that input/output artifacts are consistent (e.g. to check that there no compiler errors were reported). In this case these
+ *   actions also might throw [PipelineStepException] to stop the pipeline
+ */
 abstract class PipelinePhase<I : PipelineArtifact, O : PipelineArtifact>(
     name: String,
     preActions: Set<Action<I, PipelineContext>> = emptySet(),
@@ -34,7 +63,7 @@ abstract class PipelinePhase<I : PipelineArtifact, O : PipelineArtifact>(
     preactions = preActions,
     postactions = postActions
 ) {
-    override fun phaseBody(context: PipelineContext, input: I): O {
+    final override fun phaseBody(context: PipelineContext, input: I): O {
         return executePhase(input) ?: throw PipelineStepException()
     }
 

@@ -51,6 +51,6 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val PATH_TO_KOTLIN_COMPILER_JAR by key<File>("jar of Kotlin compiler in Kotlin plugin", comment = "used in FIR IDE uast tests")
 
     val VERSION by key<Boolean>("Print compiler version")
-    val SCRIPT_MODE by key<Boolean>("Compile kotlin script")
+    val SCRIPT_MODE by key<Boolean>("Compile and evaluate kotlin script")
     val KOTLIN_PATHS by key<KotlinPaths>("Kotlin paths")
 }

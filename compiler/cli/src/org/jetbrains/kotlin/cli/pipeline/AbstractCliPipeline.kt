@@ -32,7 +32,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         val canceledStatus = services[CompilationCanceledStatus::class.java]
         ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus)
         val rootDisposable = Disposer.newDisposable("Disposable for ${CLICompiler::class.simpleName}.execImpl")
-        setIdeaIoUseFallback()
+        setIdeaIoUseFallback() // TODO (KT-73573): probably could be removed
         if (arguments.reportPerf || arguments.dumpPerf != null) {
             performanceManager.enableCollectingPerformanceStatistics()
         }
@@ -51,7 +51,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         )
 
         fun reportException(e: Throwable): ExitCode {
-            MessageCollectorUtil.reportException(messageCollector, e)
+            MessageCollectorUtil.reportException(messageCollector, e) // TODO (KT-73575): investigate reporting in case of OOM
             return if (e is OutOfMemoryError || e.hasOOMCause()) ExitCode.OOM_ERROR else ExitCode.INTERNAL_ERROR
         }
 
