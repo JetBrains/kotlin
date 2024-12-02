@@ -329,6 +329,18 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
     }
 
     @Test
+    @TestMetadata("annotationDefaultingFirstOnly.kt")
+    public void testAnnotationDefaultingFirstOnly() {
+      runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationDefaultingFirstOnly.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationDefaultingParamProperty.kt")
+    public void testAnnotationDefaultingParamProperty() {
+      runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationDefaultingParamProperty.kt");
+    }
+
+    @Test
     @TestMetadata("annotationMixedTargeting.kt")
     public void testAnnotationMixedTargeting() {
       runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationMixedTargeting.kt");
