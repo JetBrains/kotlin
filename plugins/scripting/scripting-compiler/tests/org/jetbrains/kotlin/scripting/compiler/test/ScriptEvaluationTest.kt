@@ -51,6 +51,23 @@ class ScriptEvaluationTest : TestCase() {
         assertEquals("abc", (res.returnValue as ResultValue.Value).value)
     }
 
+    fun testCheck() {
+        var resProp: MutableMap<String, Any> = mutableMapOf()
+        val res = check(
+            """
+                val r = res
+            """.trimIndent().toScriptSource(),
+            ScriptCompilationConfiguration {
+                providedProperties("res" to MutableMap::class)
+            },
+            ScriptEvaluationConfiguration {
+                providedProperties("res" to resProp)
+            }
+        )
+        println(res)
+        println(resProp)
+    }
+
     fun testObjectCapturingScriptInstance() {
         val res = checkCompile(
             """
@@ -84,6 +101,20 @@ class ScriptEvaluationTest : TestCase() {
         val compilationConfiguration = ScriptCompilationConfiguration()
         val compiler = ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)
         return compiler.compile(script, compilationConfiguration)
+    }
+
+    private fun check(
+        script: SourceCode,
+        compilationConfiguration: ScriptCompilationConfiguration,
+        evaluationConfiguration: ScriptEvaluationConfiguration
+    ): EvaluationResult {
+        val compiler = ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)
+        val compiled = compiler.compile(script, compilationConfiguration).valueOrThrow()
+        val evaluator = BasicJvmScriptEvaluator()
+        val res = runBlocking {
+            evaluator.invoke(compiled, evaluationConfiguration).valueOrThrow()
+        }
+        return res
     }
 
     private fun checkEvaluate(script: SourceCode): EvaluationResult {
