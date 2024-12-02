@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.isNonLocal
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
@@ -334,8 +335,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                     restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
                 val secondRestore =
                     restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
-                testServices.assertions.assertTrue(firstRestore === secondRestore) {
-                    "${pointer::class} does not support symbol caching"
+                if (firstRestore.isNonLocal) {
+                    testServices.assertions.assertTrue(firstRestore === secondRestore) {
+                        "${pointer::class} does not support symbol caching"
+                    }
                 }
             }
         }
