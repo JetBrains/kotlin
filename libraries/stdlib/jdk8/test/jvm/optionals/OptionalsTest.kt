@@ -5,11 +5,15 @@
 
 package kotlin.jdk8.jvm.optionals.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.Optional
 import kotlin.test.*
 import kotlin.jvm.optionals.*
 
 class OptionalsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun getOrNull() {
         assertEquals("foo", Optional.of("foo").getOrNull())

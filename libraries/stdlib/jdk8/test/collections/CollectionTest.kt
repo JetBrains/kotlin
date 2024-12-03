@@ -16,6 +16,8 @@
 
 package kotlin.jdk8.collections.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.*
 import java.util.function.Predicate
@@ -23,6 +25,7 @@ import java.util.stream.Collectors
 import kotlin.streams.*
 
 class CollectionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     val data = listOf("abc", "fo", "baar")
 

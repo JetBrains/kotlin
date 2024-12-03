@@ -16,10 +16,14 @@
 
 package kotlin.text.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.*
 
 class RegexTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun namedGroups() {
         val input = "1a 2b 3"
         val regex = "(?<num>\\d)(?<liter>\\w)?".toRegex()
