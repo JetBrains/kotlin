@@ -22,17 +22,17 @@ fun bar(x: (@Dsl B).() -> Unit) {}
 
 fun main() {
     foo {
-        myRunFun(::aFun)
+        myRunFun(::<!DSL_SCOPE_VIOLATION!>aFun<!>)
 
         if (this is ADerived) {
-            myRunFun(::aDerivedFun)
+            myRunFun(::<!DSL_SCOPE_VIOLATION!>aDerivedFun<!>)
         }
 
         bar {
-            myRunFun(::aFun)
+            myRunFun(::<!DSL_SCOPE_VIOLATION!>aFun<!>)
 
             if (this@foo is ADerived) {
-                myRunFun(::aDerivedFun)
+                myRunFun(::<!DSL_SCOPE_VIOLATION!>aDerivedFun<!>)
             }
         }
     }
