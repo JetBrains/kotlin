@@ -176,13 +176,10 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
     } else {
         callStack.pushSimpleInstruction(expression)
 
-        fun IrValueParameter.schedule(arg: IrExpression?) {
-            callStack.pushSimpleInstruction(this)
+        for ((param, arg) in (irFunction.parameters zip expression.arguments).asReversed()) {
+            callStack.pushSimpleInstruction(param)
             callStack.pushCompoundInstruction(arg)
         }
-        (expression.valueArgumentsCount - 1 downTo 0).forEach { irFunction.valueParameters[it].schedule(expression.getValueArgument(it)) }
-        expression.extensionReceiver?.let { irFunction.extensionReceiverParameter!!.schedule(it) }
-        expression.dispatchReceiver?.let { irFunction.dispatchReceiverParameter!!.schedule(it) }
     }
 }
 
