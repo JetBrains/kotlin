@@ -11,7 +11,9 @@ interface I {
 
 class A(
     private val p: I
-) : I by p
+) : I by p {
+    fun regularFunction(): String = "string"
+    val regularProperty: Int = 5
+}
 
 // class: A
-
