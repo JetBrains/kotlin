@@ -48,7 +48,7 @@ package org.jetbrains.kotlin.fir.declarations
  *   as they will only be calculated during the [IMPLICIT_TYPES_BODY_RESOLVE] phase.
  *   See [isItAllowedToCallLazyResolveTo] as a reference.
  *
- * 3. The compiler **can request and rely on the information from the current phase only during *jumping phases***.
+ * 3. The compiler **can request and rely on the information from the current phase only during *jumping phases*.
  *   For example, during the [TYPES] phase,
  *   we cannot request type information for other declarations (except information from the [SUPER_TYPES] phase, such as a super type)
  *   as this information will be calculated only during this phase.
@@ -57,7 +57,7 @@ package org.jetbrains.kotlin.fir.declarations
  *
  * A *jumping phase* is a phase that can request the phase-specific information during that same phase from another declaration.
  *
- * Currently, we have four ***jumping phases***:
+ * Currently, we have four *jumping phases*:
  *
  * - [COMPILER_REQUIRED_ANNOTATIONS] – The compiler can jump from the use site of an annotation to the annotation class
  *   and resolve its annotations as well.
