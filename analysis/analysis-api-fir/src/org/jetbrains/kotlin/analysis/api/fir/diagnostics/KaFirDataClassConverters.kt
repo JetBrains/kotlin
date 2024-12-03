@@ -3410,6 +3410,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE) { firDiagnostic ->
+        ParameterNameChangedOnOverrideImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.MANY_COMPANION_OBJECTS) { firDiagnostic ->
         ManyCompanionObjectsImpl(
             firDiagnostic as KtPsiDiagnostic,

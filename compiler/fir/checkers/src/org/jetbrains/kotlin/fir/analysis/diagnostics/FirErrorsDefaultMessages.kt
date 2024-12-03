@@ -714,6 +714,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
@@ -2034,6 +2035,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             VIRTUAL_MEMBER_HIDDEN, "''{0}'' hides member of supertype ''{1}'' and needs an ''override'' modifier.", DECLARATION_NAME,
             DECLARATION_NAME
+        )
+        map.put(
+            PARAMETER_NAME_CHANGED_ON_OVERRIDE,
+            "The corresponding parameter in the supertype ''{0}'' is named ''{1}''. " +
+                    "This may cause problems when calling this function with named arguments.",
+            DECLARATION_NAME,
+            VARIABLE_NAME,
         )
         map.put(
             DATA_CLASS_OVERRIDE_CONFLICT,

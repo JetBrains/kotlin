@@ -12,21 +12,29 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.leastUpperBound
+import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
@@ -36,6 +44,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
         checkParameterTypes(declaration, context, reporter)
         checkUninitializedParameter(declaration, context, reporter)
         checkValOrVarParameter(declaration, context, reporter)
+        checkParameterNameChangedOnOverride(declaration, context, reporter)
     }
 
     private fun checkParameterTypes(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -142,6 +151,35 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it, context)
             } else {
                 reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it, context)
+            }
+        }
+    }
+
+    private fun checkParameterNameChangedOnOverride(
+        function: FirFunction,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        if (function !is FirSimpleFunction || !function.hasStableParameterNames) return
+
+        val currentScope =
+            function.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return
+        val overriddenFunctions = currentScope.getDirectOverriddenFunctions(function.symbol)
+
+        for (overriddenFunction in overriddenFunctions) {
+            if (!overriddenFunction.resolvedStatus.hasStableParameterNames) continue
+
+            val valueParameterPairs = function.symbol.valueParameterSymbols.zip(overriddenFunction.valueParameterSymbols)
+            for ((currentValueParameter, overriddenValueParameter) in valueParameterPairs) {
+                if (currentValueParameter.name != overriddenValueParameter.name) {
+                    reporter.reportOn(
+                        currentValueParameter.source,
+                        FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE,
+                        overriddenFunction.getContainingClassSymbol() as FirRegularClassSymbol,
+                        overriddenValueParameter,
+                        context,
+                    )
+                }
             }
         }
     }

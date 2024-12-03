@@ -1207,6 +1207,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("declared")
             parameter<FirRegularClassSymbol>("overriddenContainer")
         }
+        val PARAMETER_NAME_CHANGED_ON_OVERRIDE by warning<KtParameter>(PositioningStrategy.NAME_IDENTIFIER) {
+            parameter<FirRegularClassSymbol>("superType")
+            parameter<FirValueParameterSymbol>("conflictingParameter")
+        }
     }
 
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {

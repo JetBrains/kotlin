@@ -11,7 +11,7 @@ interface C : A, B { // Warning here, this is correct, C.foo has no named parame
 }
 
 interface D : C {
-    override fun foo(d1: Int, d2: Double)
+    override fun foo(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d1<!>: Int, <!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d2<!>: Double)
 }
 
 fun test1(d: D) {

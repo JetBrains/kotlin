@@ -63,12 +63,12 @@ class ComposerParamTransformer(
 
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
-    override fun lower(module: IrModuleFragment) {
-        currentModule = module
+    override fun lower(irModule: IrModuleFragment) {
+        currentModule = irModule
 
-        inlineLambdaInfo.scan(module)
+        inlineLambdaInfo.scan(irModule)
 
-        module.transformChildrenVoid(this)
+        irModule.transformChildrenVoid(this)
 
         val typeRemapper = ComposableTypeRemapper(
             context,
@@ -76,11 +76,11 @@ class ComposerParamTransformer(
         )
         val transformer = ComposableTypeTransformer(context, typeRemapper)
         // for each declaration, we remap types to ensure that @Composable lambda types are realized
-        module.transformChildrenVoid(transformer)
+        irModule.transformChildrenVoid(transformer)
 
         // just go through and patch all of the parents to make sure things are properly wired
         // up.
-        module.patchDeclarationParents()
+        irModule.patchDeclarationParents()
     }
 
     private val transformedFunctions: MutableMap<IrSimpleFunction, IrSimpleFunction> =

@@ -207,7 +207,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {
     }
 
-    override fun replaceContextParameters(newContextParameter: List<FirValueParameter>) {
+    override fun replaceContextParameters(newContextParameters: List<FirValueParameter>) {
         error("Body cannot be replaced for FirJavaValueParameter")
     }
 

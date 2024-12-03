@@ -366,9 +366,9 @@ class ComposerLambdaMemoization(
         }
     }
 
-    override fun lower(module: IrModuleFragment) {
-        inlineLambdaInfo.scan(module)
-        module.transformChildrenVoid(this)
+    override fun lower(irModule: IrModuleFragment) {
+        inlineLambdaInfo.scan(irModule)
+        irModule.transformChildrenVoid(this)
     }
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {

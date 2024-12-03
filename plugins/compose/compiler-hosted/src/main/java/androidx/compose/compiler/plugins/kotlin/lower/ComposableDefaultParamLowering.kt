@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
@@ -91,8 +90,8 @@ class ComposableDefaultParamLowering(
 ) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags) {
     private val originalToTransformed = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
-    override fun lower(module: IrModuleFragment) {
-        module.transformChildrenVoid()
+    override fun lower(irModule: IrModuleFragment) {
+        irModule.transformChildrenVoid()
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {

@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -21,8 +19,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlinx.serialization.compiler.fir.*
-import org.jetbrains.kotlinx.serialization.compiler.fir.services.*
 
 /**
  * A checker which reports redundant/inefficient creation of `Json` objects.
@@ -36,21 +32,21 @@ internal object FirSerializationPluginCallChecker : FirFunctionCallChecker(MppCh
     private val parameterNameFrom: Name = Name.identifier("from")
     private val parameterNameBuilderAction: Name = Name.identifier("builderAction")
 
-    override fun check(functionCall: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val function = functionCall.calleeReference.symbol as? FirNamedFunctionSymbol ?: return
+    override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
+        val function = expression.calleeReference.symbol as? FirNamedFunctionSymbol ?: return
         if (!isJsonFormatCreation(function)) return
 
-        if (isDefaultFormat(functionCall)) {
+        if (isDefaultFormat(expression)) {
             reporter.reportOn(
-                functionCall.source,
+                expression.source,
                 FirSerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT,
                 context
             )
         } else {
             val parentCall = context.callsOrAssignments.getOrNull(context.callsOrAssignments.size - 2) as? FirFunctionCall ?: return
-            if (parentCall.explicitReceiver !== functionCall) return
+            if (parentCall.explicitReceiver !== expression) return
             reporter.reportOn(
-                functionCall.source,
+                expression.source,
                 FirSerializationErrors.JSON_FORMAT_REDUNDANT,
                 context
             )
