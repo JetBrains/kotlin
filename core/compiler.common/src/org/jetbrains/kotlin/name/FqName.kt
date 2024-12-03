@@ -75,11 +75,11 @@ class FqName {
         return fqName.toString()
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is FqName) return false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FqName) return false
 
-        if (fqName != o.fqName) return false
+        if (fqName != other.fqName) return false
 
         return true
     }

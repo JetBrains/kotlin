@@ -10,7 +10,7 @@ interface D {
 interface E : C, D
 
 interface F : C, D {
-    override fun foo(a : Int) {
+    override fun foo(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>a<!> : Int) {
         throw UnsupportedOperationException()
     }
 }
