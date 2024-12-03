@@ -22,10 +22,12 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -210,6 +212,7 @@ class FirSyntheticCallGenerator(
             else -> {
                 val toSymbol = expectedTypeConeType.toSymbol(session) ?: error("todo: expectedTypeConeType.toSymbol == null")
                 val klass = toSymbol.fir as? FirRegularClass ?: error("todo ${toSymbol.fir::class} is not FirRegularClass")
+                val classId = klass.classId
                 // val staticScope = klass.staticScope(session, components.scopeSession)
                 // val companionProperty = staticScope?.getProperties(Name.identifier("Companion"))?.singleOrNull()!!
                 val companionObjectSymbol = klass.companionObjectSymbol
@@ -226,36 +229,43 @@ class FirSyntheticCallGenerator(
                 val function = buildFunctionCall {
                     argumentList = arrayLiteral.argumentList
                     source = arrayLiteral.source
-                    // explicitReceiver = buildPropertyAccessExpression {
-                    //     source = arrayLiteral.source
-                    //
-                    //     calleeReference = buildSimpleNamedReference {
-                    //         source = arrayLiteral.source
-                    //         this.name = Name.identifier("Foo") // todo different package
-                    //     }
-                    //
-                    //     // calleeReference = generateCalleeReferenceWithCandidate(
-                    //     //     arrayLiteral,
-                    //     //     klass.symbol,
-                    //     //     FirEmptyArgumentList,
-                    //     //     Name.identifier("Foo"),
-                    //     //     callKind = CallKind.VariableAccess,
-                    //     //     context,
-                    //     //     resolutionMode
-                    //     // )
-                    //
-                    //     // calleeReference = generateCalleeReferenceWithCandidate(
-                    //     //     arrayLiteral,
-                    //     //     companionObjectSymbol,
-                    //     //     FirEmptyArgumentList,
-                    //     //     Name.identifier("Companion"),
-                    //     //     callKind = CallKind.VariableAccess,
-                    //     //     // callKind = CallKind.Function,
-                    //     //     context,
-                    //     //     resolutionMode
-                    //     // )
-                    //
-                    // }
+
+                    val receiver = buildResolvedQualifier {
+                        source = arrayLiteral.source
+                        symbol = companionObjectSymbol
+                        packageFqName = classId.packageFqName
+                        relativeClassFqName = classId.relativeClassName
+
+                        // calleeReference = buildSimpleNamedReference {
+                        //     source = arrayLiteral.source
+                        //     this.name = Name.identifier("Foo") // todo different package
+                        // }
+
+                        // calleeReference = generateCalleeReferenceWithCandidate(
+                        //     arrayLiteral,
+                        //     klass.symbol,
+                        //     FirEmptyArgumentList,
+                        //     Name.identifier("Foo"),
+                        //     callKind = CallKind.VariableAccess,
+                        //     context,
+                        //     resolutionMode
+                        // )
+
+                        // calleeReference = generateCalleeReferenceWithCandidate(
+                        //     arrayLiteral,
+                        //     companionObjectSymbol,
+                        //     FirEmptyArgumentList,
+                        //     Name.identifier("Companion"),
+                        //     callKind = CallKind.VariableAccess,
+                        //     // callKind = CallKind.Function,
+                        //     context,
+                        //     resolutionMode
+                        // )
+
+                    }
+
+                    explicitReceiver = receiver
+                    dispatchReceiver = receiver
 
                     // calleeReference = buildSimpleNamedReference {
                     //     source = arrayLiteral.source
