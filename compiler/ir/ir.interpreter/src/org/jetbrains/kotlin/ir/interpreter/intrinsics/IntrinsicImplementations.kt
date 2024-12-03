@@ -308,9 +308,9 @@ internal object AssertIntrinsic : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val value = environment.callStack.loadState(irFunction.valueParameters.first().symbol).asBoolean()
+        val value = environment.callStack.loadState(irFunction.parameters[1].symbol).asBoolean()
         if (value) return
-        when (irFunction.valueParameters.size) {
+        when (irFunction.parameters.size) {
             1 -> AssertionError("Assertion failed").handleUserException(environment)
             2 -> AssertionError(environment.callStack.popState().asString()).handleUserException(environment)
         }
