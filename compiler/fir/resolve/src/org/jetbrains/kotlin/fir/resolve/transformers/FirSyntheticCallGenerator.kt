@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.references.isError
@@ -48,7 +46,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.getFunctions
-import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
@@ -59,10 +56,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -197,6 +196,12 @@ class FirSyntheticCallGenerator(
         }
     }
 
+    private val listOfNothingConeType = ConeClassLikeTypeImpl(
+        StandardClassIds.List.toLookupTag(),
+        arrayOf(ConeClassLikeTypeImpl(StandardClassIds.Nothing.toLookupTag(), arrayOf(), isMarkedNullable = false)),
+        isMarkedNullable = false
+    )
+
     fun generateCollectionCall(
         arrayLiteral: FirArrayLiteral,
         expectedTypeConeType: ConeKotlinType,
@@ -219,11 +224,17 @@ class FirSyntheticCallGenerator(
                     components.scopeSession,
                     withForcedTypeCalculator = false,
                     FirResolvePhase.BODY_RESOLVE
-                ) ?: error("todo scope == null")
+                )
                 val name = Name.identifier("of")
-                val ofFunction =
-                    scope.getFunctions(name).singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
-                        ?: error("todo: ofFunction == null")
+                val ofFunction = scope?.getFunctions(name)?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
+                if (ofFunction == null) {
+                    if (listOfNothingConeType.isSubtypeOf(expectedTypeConeType, session)) {
+                        return generateCollectionOfCall(Name.identifier("listOf"), arrayLiteral, context, resolutionMode)
+                    } else {
+                        error("todo report a diagnostic: Can't find of function in the class")
+                    }
+                }
+
                 buildFunctionCall {
                     argumentList = arrayLiteral.argumentList
                     source = arrayLiteral.source
