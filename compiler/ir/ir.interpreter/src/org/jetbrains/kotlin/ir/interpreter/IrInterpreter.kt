@@ -297,7 +297,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             val unsignedClass = expression.type.classOrNull!!
             val constructor = unsignedClass.constructors.single().owner
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            constructorCall.putValueArgument(0, expression.value.toIrConst(signedType))
+            constructorCall.arguments[0] = expression.value.toIrConst(signedType)
 
             return callStack.pushCompoundInstruction(constructorCall)
         }
