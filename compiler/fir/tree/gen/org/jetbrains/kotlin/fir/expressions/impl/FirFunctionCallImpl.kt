@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
-open class FirFunctionCallImpl @FirImplementationDetail constructor( // Foo.Compaino.of == Foo.of
+open class FirFunctionCallImpl @FirImplementationDetail constructor(
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
