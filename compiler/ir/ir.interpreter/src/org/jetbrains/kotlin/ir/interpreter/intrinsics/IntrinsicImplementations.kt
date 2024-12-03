@@ -71,7 +71,7 @@ internal object ArrayOfNulls : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val size = environment.callStack.loadState(irFunction.valueParameters.first().symbol).asInt()
+        val size = environment.callStack.loadState(irFunction.parameters[0].symbol).asInt()
         val array = arrayOfNulls<Any?>(size)
         val typeArgument = irFunction.typeParameters.map { environment.callStack.loadState(it.symbol) }.single() as KTypeState
         val returnType = (irFunction.returnType as IrSimpleType).buildSimpleType {
