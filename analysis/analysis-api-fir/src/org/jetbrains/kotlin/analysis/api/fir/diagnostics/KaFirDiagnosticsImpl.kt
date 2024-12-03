@@ -4809,6 +4809,13 @@ internal class TypeMismatchWhenFlexibilityChangesImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeMismatchWhenFlexibilityChanges
 
+internal class JavaClassOnCompanionImpl(
+    override val actualType: KaType,
+    override val expectedType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaClassOnCompanion
+
 internal class UpperBoundCannotBeArrayImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

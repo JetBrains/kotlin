@@ -107,6 +107,10 @@ object JvmStandardClassIds {
     object Java {
         val Record = "Record".javaLangId()
     }
+
+    object Callables {
+        val JavaClass = CallableId(BASE_JVM_PACKAGE, Name.identifier("javaClass"))
+    }
 }
 
 private fun String.jvmId() = ClassId(JvmStandardClassIds.BASE_JVM_PACKAGE, Name.identifier(this))

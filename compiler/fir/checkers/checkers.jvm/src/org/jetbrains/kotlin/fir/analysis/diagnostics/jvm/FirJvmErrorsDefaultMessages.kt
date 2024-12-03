@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INLINE_FRO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_ON_COMPANION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
@@ -136,6 +137,13 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             }.",
             RENDER_TYPE,
             RENDER_TYPE,
+        )
+        map.put(
+            JAVA_CLASS_ON_COMPANION,
+            "The resulting type of this ''javaClass'' call is ''{0}'' and not ''{1}''. " +
+                    "Use ''::class.java'' to access type ''{1}''.",
+            RENDER_TYPE,
+            RENDER_TYPE
         )
 
         map.put(

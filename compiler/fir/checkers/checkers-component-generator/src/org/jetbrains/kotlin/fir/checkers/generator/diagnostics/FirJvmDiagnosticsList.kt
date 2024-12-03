@@ -88,6 +88,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
+
+        val JAVA_CLASS_ON_COMPANION by warning<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
+            parameter<ConeKotlinType>("actualType")
+            parameter<ConeKotlinType>("expectedType")
+        }
     }
 
     val TYPE_PARAMETERS by object : DiagnosticGroup("Type parameters") {

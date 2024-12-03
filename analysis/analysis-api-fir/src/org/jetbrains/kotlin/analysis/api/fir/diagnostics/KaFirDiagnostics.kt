@@ -3992,6 +3992,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val actualType: KaType
     }
 
+    interface JavaClassOnCompanion : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JavaClassOnCompanion::class
+        val actualType: KaType
+        val expectedType: KaType
+    }
+
     interface UpperBoundCannotBeArray : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UpperBoundCannotBeArray::class
     }
