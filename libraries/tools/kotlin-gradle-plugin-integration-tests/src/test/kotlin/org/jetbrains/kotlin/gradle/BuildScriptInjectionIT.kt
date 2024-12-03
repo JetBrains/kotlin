@@ -13,6 +13,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import java.io.File
+import java.io.Serializable
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
@@ -59,6 +60,10 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                 with(kotlinMultiplatform) {
                     linuxArm64()
                     linuxX64()
+
+                    sourceSets.all {
+                        it.addIdentifierClass(SourceSetIdentifier(it.name))
+                    }
                 }
 
                 val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
@@ -69,8 +74,18 @@ class BuildScriptInjectionIT : KGPBaseTest() {
 
             build("publishAllPublicationsToMavenRepository")
 
-            val publicationRepoPath: File = buildScriptReturn {
-                project.publicationRepo().asFile
+            data class PublishedProject(
+                val repository: File,
+                val sourceSets: Map<String, SourceSetIdentifier>
+            ) : Serializable
+
+            val publishedProject = buildScriptReturn {
+                PublishedProject(
+                    project.publicationRepo().asFile,
+                    kotlinMultiplatform.sourceSets.map {
+                        it.name to SourceSetIdentifier(it.name)
+                    }.toMap()
+                )
             }.buildAndReturn()
 
             project(
@@ -86,19 +101,27 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     project.plugins.apply("maven-publish")
 
                     project.repositories.maven {
-                        it.setUrl(publicationRepoPath)
+                        it.setUrl(publishedProject.repository)
                     }
 
                     with(kotlinMultiplatform) {
                         linuxArm64()
                         linuxX64()
 
+                        sourceSets.all {
+                            it.consumeIdentifierClass(
+                                publishedProject.sourceSets[it.name] ?: error(
+                                    "Consuming project is expected to have a symmetric layout with the producing project. Missing source set in the producing project with name: ${it.name}"
+                                )
+                            )
+                        }
+
                         sourceSets.commonMain.dependencies {
                             implementation("${publisherGroup}:${publisherName}:${publisherVersion}")
                         }
                     }
                 }
-                val metadataTaskName = buildScriptReturn {
+                val metadataTransformationTaskName = buildScriptReturn {
                     with(kotlinMultiplatform) {
                         project.locateOrRegisterMetadataDependencyTransformationTask(
                             sourceSets.commonMain.get()
@@ -112,14 +135,15 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                             sourceSets.commonMain.get()
                         ).get().allTransformedLibraries().get()
                     }
-                }.buildAndReturn(metadataTaskName)
+                }.buildAndReturn(metadataTransformationTaskName)
 
                 assertEquals(
                     listOf(
                         listOf("foo", "producer", "1.0", "linuxMain"),
+                        listOf("foo", "producer", "1.0", "nativeMain"),
                         listOf("foo", "producer", "1.0", "commonMain"),
                     ),
-                    transformedFiles.map { it.nameWithoutExtension.split("-").dropLast(1) },
+                    transformedFiles.map { it.nameWithoutExtension.split("-").take(4) },
                 )
             }
         }
