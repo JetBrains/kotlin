@@ -1,0 +1,1 @@
+/differentNamesInSupertypesDiagnostic.fir.kt:(200,201): warning: The corresponding parameter in the supertype 'D' is named 'b'. This may cause problems when calling this function with named arguments.

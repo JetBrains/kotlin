@@ -1,0 +1,7 @@
+/namedArgumentsInOverrides.fir.kt:(290,292): warning: The corresponding parameter in the supertype 'C' is named 'a1'. This may cause problems when calling this function with named arguments.
+
+/namedArgumentsInOverrides.fir.kt:(299,301): warning: The corresponding parameter in the supertype 'C' is named 'a2'. This may cause problems when calling this function with named arguments.
+
+/namedArgumentsInOverrides.fir.kt:(391,393): error: Named argument is prohibited for parameter with an ambiguous name.
+
+/namedArgumentsInOverrides.fir.kt:(399,401): error: Named argument is prohibited for parameter with an ambiguous name.
