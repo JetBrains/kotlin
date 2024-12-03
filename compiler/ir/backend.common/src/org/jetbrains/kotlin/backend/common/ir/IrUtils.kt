@@ -92,13 +92,7 @@ fun IrExpression?.isPure(
                                 operator == IrTypeOperator.REINTERPRET_CAST ||
                                 operator == IrTypeOperator.NOT_INSTANCEOF
                         ) && argument.isPure(anyVariable, checkFields, symbols)
-            is IrCall -> if (symbols?.isSideEffectFree(this) == true) {
-                arguments.zip(symbol.owner.parameters)
-                    .none { (argument, parameter) ->
-                        parameter.kind in listOf(IrParameterKind.Regular, IrParameterKind.Context) &&
-                                !argument.isPure(anyVariable, checkFields, symbols)
-                    }
-            } else false
+            is IrCall -> symbols?.isSideEffectFree(this) == true && arguments.all { it.isPure(anyVariable, checkFields, symbols) }
             is IrGetObjectValue -> type.isUnit()
             is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, symbols) == true }
             else -> false
