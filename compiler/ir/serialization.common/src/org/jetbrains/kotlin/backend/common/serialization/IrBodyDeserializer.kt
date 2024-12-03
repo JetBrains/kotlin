@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -154,6 +156,21 @@ class IrBodyDeserializer(
         val symbol = deserializeTypedSymbol<IrReturnableBlockSymbol>(proto.symbol, fallbackSymbolKind = null)
         return withDeserializedBlock(proto.base) { origin, statements ->
             IrReturnableBlockImpl(start, end, type, symbol, origin, statements)
+        }
+    }
+
+    private fun deserializeInlinedFunctionBlock(
+        proto: ProtoInlinedFunctionBlock,
+        start: Int,
+        end: Int,
+        type: IrType,
+    ): IrInlinedFunctionBlock {
+        val inlineFunctionSymbol = runIf(proto.hasInlineFunctionSymbol()) {
+            deserializeTypedSymbol<IrFunctionSymbol>(proto.inlineFunctionSymbol, FUNCTION_SYMBOL)
+        }
+        val fileEntry = deserializeFileEntry(proto.fileEntry)
+        return withDeserializedBlock(proto.base) { origin, statements ->
+            IrInlinedFunctionBlockImpl(start, end, type, inlineFunctionSymbol, fileEntry, origin, statements)
         }
     }
 
@@ -802,6 +819,7 @@ class IrBodyDeserializer(
         when (proto.operationCase!!) {
             BLOCK -> deserializeBlock(proto.block, start, end, type)
             RETURNABLE_BLOCK -> deserializeReturnableBlock(proto.returnableBlock, start, end, type)
+            INLINED_FUNCTION_BLOCK -> deserializeInlinedFunctionBlock(proto.inlinedFunctionBlock, start, end, type)
             BREAK -> deserializeBreak(proto.`break`, start, end, type)
             CLASS_REFERENCE -> deserializeClassReference(proto.classReference, start, end, type)
             CALL -> deserializeCall(proto.call, start, end, type)

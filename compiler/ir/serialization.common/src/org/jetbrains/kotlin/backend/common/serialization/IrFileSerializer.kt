@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -37,6 +36,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as Pr
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock as ProtoInlinedFunctionBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -496,6 +496,14 @@ open class IrFileSerializer(
         val proto = ProtoReturnableBlock.newBuilder()
         proto.symbol = serializeIrSymbol(returnableBlock.symbol)
         proto.base = serializeBlock(returnableBlock)
+        return proto.build()
+    }
+
+    private fun serializeInlinedFunctionBlock(inlinedFunctionBlock: IrInlinedFunctionBlock): ProtoInlinedFunctionBlock {
+        val proto = ProtoInlinedFunctionBlock.newBuilder()
+        inlinedFunctionBlock.inlineFunctionSymbol?.let { proto.setInlineFunctionSymbol(serializeIrSymbol(it)) }
+        proto.fileEntry = serializeFileEntry(inlinedFunctionBlock.fileEntry)
+        proto.base = serializeBlock(inlinedFunctionBlock)
         return proto.build()
     }
 
@@ -985,8 +993,10 @@ open class IrFileSerializer(
         // TODO: make me a visitor.
         when (expression) {
             is IrBlock -> {
-                if (settings.allow220Nodes && expression is IrReturnableBlock) {
+                if (expression is IrReturnableBlock && settings.allow220Nodes) {
                     operationProto.returnableBlock = serializeReturnableBlock(expression)
+                } else if (expression is IrInlinedFunctionBlock && settings.allow220Nodes) {
+                    operationProto.inlinedFunctionBlock = serializeInlinedFunctionBlock(expression)
                 } else {
                     operationProto.block = serializeBlock(expression)
                 }
