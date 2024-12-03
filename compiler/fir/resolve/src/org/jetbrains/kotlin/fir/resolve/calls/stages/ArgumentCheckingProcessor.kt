@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -22,9 +24,13 @@ import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionT
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
@@ -107,23 +113,27 @@ internal object ArgumentCheckingProcessor {
                 is FirCallableReferenceAccess -> preprocessCallableReference(atom)
             }
             is ConeCollectionLiteralResolutionAtom -> {
-                val context = this@resolveArgumentExpression
-                val newContext = context.copy(
-                    expectedType = context.expectedType?.arrayElementType(collectionLiteral = true)
-                        ?: error("Unsupported parameter type: ${context.expectedType} ${context.expectedType?.let { it::class }}")
+                val collectionLiteralArgumentContext = this@resolveArgumentExpression
+                val symbol = collectionLiteralArgumentContext.expectedType?.toSymbol(session)
+                val clazz = symbol?.fir as? FirRegularClass ?: error("WTF ${collectionLiteralArgumentContext.expectedType} ${symbol?.fir} ${symbol?.fir?.let { it::class }}")
+                val companion = clazz.companionObjectSymbol
+                val scope = companion?.unsubstitutedScope(
+                    session,
+                    scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession,
+                    withForcedTypeCalculator = false,
+                    FirResolvePhase.BODY_RESOLVE
                 )
-                // val newContext = when {
-                //     context.expectedType?.isList == true || context.expectedType?.isSet == true ->
-                //         context.copy(expectedType = context.expectedType.typeArguments.single() as ConeClassLikeType)
-                //     context.expectedType?.isArrayType == true ->
-                //         context.copy(
-                //             expectedType = context.expectedType.typeArguments.singleOrNull() as? ConeKotlinType
-                //                 ?: createClassLikeType(StandardClassIds.Int)
-                //         )
-                //     else -> error("Unsupported parameter type: ${context.expectedType} ${context.expectedType?.let { it::class }}")
-                // }
+                val ofFunction =
+                    scope?.getFunctions(Name.identifier("of"))?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
+                if (ofFunction == null) {
+                    val diag = ArgumentTypeMismatch(expectedType, expectedType, atom.expression, isMismatchDueToNullability = false)
+                    reportDiagnostic(diag) // todo create new diagnostic
+                    return
+                }
+                val collectionElementType = ofFunction.valueParameterSymbols.single().resolvedReturnType.arrayElementType()!!
+                val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(expectedType = collectionElementType)
                 for (atom in atom.subAtoms) {
-                    newContext.resolvePlainExpressionArgument(atom)
+                    collectionLiteralElementContext.resolveArgumentExpression(atom)
                 }
             }
 

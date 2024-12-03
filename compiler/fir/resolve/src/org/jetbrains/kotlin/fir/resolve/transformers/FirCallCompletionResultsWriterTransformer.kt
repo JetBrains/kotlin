@@ -85,7 +85,7 @@ class FirCallCompletionResultsWriterTransformer(
     private val mode: Mode = Mode.Normal,
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
 
-    val resolutionContext: ResolutionContext = ResolutionContext(session, components, context)
+    private val resolutionContext: ResolutionContext = ResolutionContext(session, components, context)
 
     private fun finallySubstituteOrNull(
         type: ConeKotlinType,
