@@ -240,7 +240,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 if (invalidConstructorDelegation != null) {
                     // Drop invalid delegating constructor call. Otherwise it may break some lowerings.
-                    blockBody.statements.removeIf { it is IrDelegatingConstructorCall }
+                    blockBody.statements.removeAll { it is IrDelegatingConstructorCall }
                 }
 
                 // IMPORTANT: Unlike it's done for IrSimpleFunction don't clean-up statements. Insert PL linkage as the first one.
@@ -1154,7 +1154,7 @@ internal class PartiallyLinkedIrTreePatcher(
          */
         private fun MutableList<IrStatement>.eliminateDeadCodeStatements() {
             var hasPartialLinkageRuntimeError = false
-            removeIf { statement ->
+            removeAll { statement ->
                 val needToRemove = when (statement) {
                     is IrInstanceInitializerCall,
                     is IrDelegatingConstructorCall,
