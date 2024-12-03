@@ -219,7 +219,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretConstructorCall(constructorCall: IrFunctionAccessExpression) {
         val constructor = constructorCall.symbol.owner
-        val valueArguments = constructor.valueParameters.map { callStack.popState() }.reversed()
+        val nonDispatchArguments = constructor.nonDispatchParameters.map { callStack.popState() }.reversed()
         val irClass = constructor.parentAsClass
         val receiverSymbol = constructor.dispatchReceiverParameter?.symbol
 
@@ -242,7 +242,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
 
         callStack.storeState(constructorCall.getThisReceiver(), objectState)
-        constructor.valueParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, valueArguments[i]) }
+        constructor.nonDispatchParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, nonDispatchArguments[i]) }
         callStack.storeState(constructor.symbol, KTypeState(returnType, environment.kTypeClass.owner))
 
         val superReceiver = when (val irStatement = constructor.body?.statements?.getOrNull(0)) {
@@ -267,7 +267,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             }
         }
 
-        callInterceptor.interceptConstructor(constructorCall, valueArguments) {
+        callInterceptor.interceptConstructor(constructorCall, nonDispatchArguments) {
             callStack.pushCompoundInstruction(constructor)
         }
 
