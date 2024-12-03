@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
@@ -183,11 +184,11 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private fun calculateRangeTo(type: IrType, args: List<State>) {
         val constructor = type.classOrNull!!.owner.constructors.first()
         val constructorCall = constructor.createConstructorCall()
-        val constructorValueParameters = constructor.valueParameters.map { it.symbol }
+        val constructorValueParameters = constructor.parameters.map { it.symbol }
 
         val primitiveValueParameters = args.map { it as Primitive }
         primitiveValueParameters.forEachIndexed { index, primitive ->
-            constructorCall.putValueArgument(index, primitive.value.toIrConst(constructorValueParameters[index].owner.type))
+            constructorCall.arguments[index] = primitive.value.toIrConst(constructorValueParameters[index].owner.type)
         }
 
         callStack.pushCompoundInstruction(constructorCall)
