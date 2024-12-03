@@ -453,7 +453,9 @@ private class InteropTransformerPart1(
     private fun generateOutletSetterImp(property: IrProperty): IrSimpleFunction {
         require(property.isVar) { renderCompilerError(property) }
         val getter = property.getter!!
-        require(getter.extensionReceiverParameter == null) { renderCompilerError(property) }
+        require(getter.parameters.all { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.DispatchReceiver }) {
+            renderCompilerError(property)
+        }
         require(getter.returnType.isObjCObjectType()) { renderCompilerError(property) }
 
         val name = property.name.asString()
