@@ -59,7 +59,7 @@ internal object ArrayOf : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val elementsSymbol = irFunction.valueParameters.single().symbol
+        val elementsSymbol = irFunction.parameters[0].symbol
         val varargVariable = environment.callStack.loadState(elementsSymbol)
         environment.callStack.pushState(varargVariable)
     }
