@@ -24,12 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
-import org.jetbrains.kotlin.ir.expressions.IrComposite
-import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -185,20 +180,31 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
 
         val implicitReceiversFieldsWithParameters = makeImplicitReceiversFieldsWithParameters(irScriptClass, typeRemapper, irScript)
 
+        val targetClassReceiver: IrValueParameter =
+            irScript.thisReceiver!!.also {
+                it.type = IrSimpleTypeImpl(irScriptClass.symbol, false, emptyList(), emptyList())
+            }
+
+        val accessCallsGenerator =
+            ScriptAccessCallsGenerator(
+                context, targetClassReceiver, implicitReceiversFieldsWithParameters, irScript, earlierScriptField
+            )
+
         val scriptTransformer = ScriptToClassTransformer(
+            context,
             irScript,
             irScriptClass,
+            targetClassReceiver,
             typeRemapper,
-            context,
+            accessCallsGenerator,
             capturingClasses,
-            earlierScriptField,
-            implicitReceiversFieldsWithParameters
         )
+
         val lambdaPatcher = ScriptFixLambdasTransformer(irScriptClass)
 
-        patchDeclarationsDispatchReceiver(irScript.statements, context, scriptTransformer.targetClassReceiver.type)
+        patchDeclarationsDispatchReceiver(irScript.statements, context, targetClassReceiver.type)
 
-        irScriptClass.thisReceiver = scriptTransformer.targetClassReceiver
+        irScriptClass.thisReceiver = targetClassReceiver
 
         fun <E : IrElement> E.patchDeclarationForClass(): IrElement {
             val rootContext =
@@ -530,52 +536,13 @@ private fun makeImplicitReceiversFieldsWithParameters(irScriptClass: IrClass, ty
         }
     }
 
-internal class ScriptToClassTransformer(
-    val irScript: IrScript,
-    irScriptClass: IrClass,
-    typeRemapper: TypeRemapper,
+private class ScriptAccessCallsGenerator(
     context: JvmBackendContext,
-    capturingClasses: Set<IrClassImpl>,
+    targetClassReceiver: IrValueParameter,
+    implicitReceiversFieldsWithParameters: ArrayList<Pair<IrField, IrValueParameter>>,
+    val irScript: IrScript,
     val earlierScriptsField: IrField?,
-    implicitReceiversFieldsWithParameters: Collection<Pair<IrField, IrValueParameter>>
-) : ScriptLikeToClassTransformer(
-    irScript,
-    irScriptClass,
-    typeRemapper,
-    context,
-    capturingClasses,
-    implicitReceiversFieldsWithParameters,
-    needsReceiverProcessing = irScript.needsReceiverProcessing
-) {
-    override val targetClassReceiver: IrValueParameter =
-        irScript.thisReceiver!!.let {
-            it.type = IrSimpleTypeImpl(irTargetClass.symbol, false, emptyList(), emptyList())
-            it.transform(this, ScriptLikeToClassTransformerContext(null, null, null, false))
-        }
-
-    override fun visitGetValue(expression: IrGetValue, data: ScriptLikeToClassTransformerContext): IrExpression {
-        val correspondingVariable = expression.symbol.owner as? IrVariable
-        return if (correspondingVariable != null && irScript.explicitCallParameters.contains(correspondingVariable)) {
-            val builder = context.createIrBuilder(expression.symbol)
-            val newExpression =
-                if (data.isInScriptConstructor) {
-                    val correspondingCtorParam = irTargetClass.constructors.single().valueParameters.find {
-                        it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
-                    } ?: error("script explicit parameter ${correspondingVariable.name.asString()} not found")
-                    builder.irGet(correspondingCtorParam.type, correspondingCtorParam.symbol)
-                } else {
-                    val correspondingField = irTargetClass.declarations.find {
-                        it is IrField && it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
-                    } ?: error("script explicit parameter ${correspondingVariable.name.asString()} corresponding property not found")
-                    val scriptReceiver =
-                        getAccessCallForSelf(data, expression.startOffset, expression.endOffset, expression.origin, null)
-                    builder.irGetField(scriptReceiver, correspondingField as IrField)
-                }
-            super.visitExpression(newExpression, data)
-        } else {
-            super.visitGetValue(expression, data)
-        }
-    }
+) : ScriptLikeAccessCallsGenerator(context, targetClassReceiver, implicitReceiversFieldsWithParameters) {
 
     override fun getAccessCallForImplicitReceiver(
         data: ScriptLikeToClassTransformerContext,
@@ -631,6 +598,52 @@ internal class ScriptToClassTransformer(
             else builder.irImplicitCast(getPrevScriptObjectExpression, prevScriptClassType.defaultType)
         }
         return null
+    }
+
+}
+
+private class ScriptToClassTransformer(
+    context: JvmBackendContext,
+    val irScript: IrScript,
+    irScriptClass: IrClass,
+    targetClassReceiver: IrValueParameter,
+    typeRemapper: TypeRemapper,
+    accessCallsGenerator: ScriptLikeAccessCallsGenerator,
+    capturingClasses: Set<IrClassImpl>,
+) : ScriptLikeToClassTransformer(
+    context,
+    irScript,
+    irScriptClass,
+    targetClassReceiver,
+    typeRemapper,
+    accessCallsGenerator,
+    capturingClasses,
+    needsReceiverProcessing = irScript.needsReceiverProcessing
+) {
+    override fun visitGetValue(expression: IrGetValue, data: ScriptLikeToClassTransformerContext): IrExpression {
+        val correspondingVariable = expression.symbol.owner as? IrVariable
+        return if (correspondingVariable != null && irScript.explicitCallParameters.contains(correspondingVariable)) {
+            val builder = context.createIrBuilder(expression.symbol)
+            val newExpression =
+                if (data.isInScriptConstructor) {
+                    val correspondingCtorParam = irTargetClass.constructors.single().valueParameters.find {
+                        it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
+                    } ?: error("script explicit parameter ${correspondingVariable.name.asString()} not found")
+                    builder.irGet(correspondingCtorParam.type, correspondingCtorParam.symbol)
+                } else {
+                    val correspondingField = irTargetClass.declarations.find {
+                        it is IrField && it.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER && it.name == correspondingVariable.name
+                    } ?: error("script explicit parameter ${correspondingVariable.name.asString()} corresponding property not found")
+                    val scriptReceiver =
+                        accessCallsGenerator.getAccessCallForSelf(
+                            data, expression.startOffset, expression.endOffset, expression.origin, null
+                        )
+                    builder.irGetField(scriptReceiver, correspondingField as IrField)
+                }
+            super.visitExpression(newExpression, data)
+        } else {
+            super.visitGetValue(expression, data)
+        }
     }
 
     override fun isValidNameForReceiver(name: Name) =

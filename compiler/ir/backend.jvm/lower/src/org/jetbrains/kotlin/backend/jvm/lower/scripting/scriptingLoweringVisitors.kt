@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.TypeRemapper
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.propertyIfAccessor
+import org.jetbrains.kotlin.ir.util.withinScope
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -55,14 +58,98 @@ internal data class ScriptFixLambdasTransformerContext(
     val valueParameterToReplaceWithScript: IrValueParameter? = null
 )
 
+internal open class ScriptLikeAccessCallsGenerator(
+    val context: JvmBackendContext,
+    val targetClassReceiver: IrValueParameter,
+    val implicitReceiversFieldsWithParameters: Collection<Pair<IrField, IrValueParameter>>,
+) {
+
+    internal fun getDispatchReceiverExpression(
+        data: ScriptLikeToClassTransformerContext,
+        expression: IrDeclarationReference,
+        receiverType: IrType,
+        origin: IrStatementOrigin?,
+        originalReceiverParameter: IrValueParameter?,
+    ): IrExpression? {
+        return if (receiverType == targetClassReceiver.type) {
+            getAccessCallForSelf(data, expression.startOffset, expression.endOffset, origin, originalReceiverParameter)
+        } else {
+            getAccessCallForImplicitReceiver(data, expression, receiverType, origin, originalReceiverParameter)
+        }
+    }
+
+    internal fun getAccessCallForSelf(
+        data: ScriptLikeToClassTransformerContext,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrStatementOrigin?,
+        originalReceiverParameter: IrValueParameter?
+    ): IrExpression? = when {
+        // do not touch receiver of a different type
+        originalReceiverParameter != null && originalReceiverParameter.type != targetClassReceiver.type ->
+            null
+
+        data.fieldForScriptThis != null ->
+            IrGetFieldImpl(
+                startOffset, endOffset,
+                data.fieldForScriptThis,
+                targetClassReceiver.type,
+                origin
+            ).apply {
+                receiver =
+                    IrGetValueImpl(
+                        startOffset, endOffset,
+                        data.valueParameterForFieldReceiver!!.owner.type,
+                        data.valueParameterForFieldReceiver,
+                        origin
+                    )
+            }
+
+        data.valueParameterForScriptThis != null ->
+            IrGetValueImpl(
+                startOffset, endOffset,
+                targetClassReceiver.type,
+                data.valueParameterForScriptThis,
+                origin
+            )
+
+        else -> error("Unexpected script transformation state: $data")
+    }
+
+    open fun getAccessCallForImplicitReceiver(
+        data: ScriptLikeToClassTransformerContext,
+        expression: IrDeclarationReference,
+        receiverType: IrType,
+        expressionOrigin: IrStatementOrigin?,
+        originalReceiverParameter: IrValueParameter?
+    ): IrExpression? {
+        // implicit receivers have priority (as per descriptor outer scopes)
+        implicitReceiversFieldsWithParameters.firstOrNull {
+            if (originalReceiverParameter != null) it.second == originalReceiverParameter
+            else it.second.type == receiverType
+        }?.let { (field, param) ->
+            val builder = context.createIrBuilder(expression.symbol)
+            return if (data.isInScriptConstructor) {
+                builder.irGet(param.type, param.symbol)
+            } else {
+                val selfReceiver =
+                    getAccessCallForSelf(data, expression.startOffset, expression.endOffset, expressionOrigin, null)
+                builder.irGetField(selfReceiver, field)
+            }
+        }
+        return null
+    }
+}
+
 internal abstract class ScriptLikeToClassTransformer(
+    val context: JvmBackendContext,
     val irScriptLike: IrDeclaration,
     val irTargetClass: IrClass,
+    val targetClassReceiver: IrValueParameter,
     val typeRemapper: TypeRemapper,
-    val context: JvmBackendContext,
+    open val accessCallsGenerator: ScriptLikeAccessCallsGenerator,
     val capturingClasses: Set<IrClassImpl>,
-    val implicitReceiversFieldsWithParameters: Collection<Pair<IrField, IrValueParameter>>,
-    val needsReceiverProcessing: Boolean
+    val needsReceiverProcessing: Boolean,
 ) : IrTransformer<ScriptLikeToClassTransformerContext>() {
 
     private fun IrType.remapType() = typeRemapper.remapType(this)
@@ -76,8 +163,6 @@ internal abstract class ScriptLikeToClassTransformer(
             }
         }
     }
-
-    abstract val targetClassReceiver: IrValueParameter
 
     private fun IrDeclaration.transformParent() {
         if (parent == irScriptLike) {
@@ -255,11 +340,11 @@ internal abstract class ScriptLikeToClassTransformer(
             }
             val dispatchReceiver =
                 if (memberAccessTargetReceiverType != null && memberAccessTargetReceiverType != targetClassReceiver.type)
-                    getAccessCallForImplicitReceiver(
+                    accessCallsGenerator.getAccessCallForImplicitReceiver(
                         data, expression, memberAccessTargetReceiverType, expression.origin, originalReceiverParameter = null
                     )
                 else
-                    getAccessCallForSelf(
+                    accessCallsGenerator.getAccessCallForSelf(
                         data, expression.startOffset, expression.endOffset, expression.origin, originalReceiverParameter = null
                     )
             expression.insertDispatchReceiver(dispatchReceiver)
@@ -270,7 +355,7 @@ internal abstract class ScriptLikeToClassTransformer(
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: ScriptLikeToClassTransformerContext): IrExpression {
         if (expression.receiver == null && expression.symbol.owner.parent.let { it == irScriptLike || it == irTargetClass }) {
             expression.receiver =
-                getAccessCallForSelf(
+                accessCallsGenerator.getAccessCallForSelf(
                     data, expression.startOffset, expression.endOffset, expression.origin, originalReceiverParameter = null
                 )
         }
@@ -285,7 +370,9 @@ internal abstract class ScriptLikeToClassTransformer(
             val ctorDispatchReceiverType = expression.symbol.owner.dispatchReceiverParameter?.type
                 ?: if (capturingClassesConstructors.keys.any { it.symbol == expression.symbol }) targetClassReceiver.type else null
             if (ctorDispatchReceiverType != null) {
-                getDispatchReceiverExpression(data, expression, ctorDispatchReceiverType, expression.origin, null)?.let {
+                accessCallsGenerator.getDispatchReceiverExpression(
+                    data, expression, ctorDispatchReceiverType, expression.origin, null
+                )?.let {
                     expression.insertDispatchReceiver(it)
                 }
             }
@@ -293,87 +380,11 @@ internal abstract class ScriptLikeToClassTransformer(
         return super.visitConstructorCall(expression, data) as IrExpression
     }
 
-    private fun getDispatchReceiverExpression(
-        data: ScriptLikeToClassTransformerContext,
-        expression: IrDeclarationReference,
-        receiverType: IrType,
-        origin: IrStatementOrigin?,
-        originalReceiverParameter: IrValueParameter?,
-    ): IrExpression? {
-        return if (receiverType == targetClassReceiver.type) {
-            getAccessCallForSelf(data, expression.startOffset, expression.endOffset, origin, originalReceiverParameter)
-        } else {
-            getAccessCallForImplicitReceiver(data, expression, receiverType, origin, originalReceiverParameter)
-        }
-    }
-
-    protected fun getAccessCallForSelf(
-        data: ScriptLikeToClassTransformerContext,
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrStatementOrigin?,
-        originalReceiverParameter: IrValueParameter?
-    ): IrExpression? = when {
-        // do not touch receiver of a different type
-        originalReceiverParameter != null && originalReceiverParameter.type != targetClassReceiver.type ->
-            null
-
-        data.fieldForScriptThis != null ->
-            IrGetFieldImpl(
-                startOffset, endOffset,
-                data.fieldForScriptThis,
-                targetClassReceiver.type,
-                origin
-            ).apply {
-                receiver =
-                    IrGetValueImpl(
-                        startOffset, endOffset,
-                        data.valueParameterForFieldReceiver!!.owner.type,
-                        data.valueParameterForFieldReceiver,
-                        origin
-                    )
-            }
-
-        data.valueParameterForScriptThis != null ->
-            IrGetValueImpl(
-                startOffset, endOffset,
-                targetClassReceiver.type,
-                data.valueParameterForScriptThis,
-                origin
-            )
-
-        else -> error("Unexpected script transformation state: $data")
-    }
-
-    protected open fun getAccessCallForImplicitReceiver(
-        data: ScriptLikeToClassTransformerContext,
-        expression: IrDeclarationReference,
-        receiverType: IrType,
-        expressionOrigin: IrStatementOrigin?,
-        originalReceiverParameter: IrValueParameter?
-    ): IrExpression? {
-        // implicit receivers have priority (as per descriptor outer scopes)
-        implicitReceiversFieldsWithParameters.firstOrNull {
-            if (originalReceiverParameter != null) it.second == originalReceiverParameter
-            else it.second.type == receiverType
-        }?.let { (field, param) ->
-            val builder = context.createIrBuilder(expression.symbol)
-            return if (data.isInScriptConstructor) {
-                builder.irGet(param.type, param.symbol)
-            } else {
-                val selfReceiver =
-                    getAccessCallForSelf(data, expression.startOffset, expression.endOffset, expressionOrigin, null)
-                builder.irGetField(selfReceiver, field)
-            }
-        }
-        return null
-    }
-
     override fun visitGetValue(expression: IrGetValue, data: ScriptLikeToClassTransformerContext): IrExpression {
         val correspondingValueParameter = expression.symbol.owner as? IrValueParameter
         when {
             correspondingValueParameter != null && needsReceiverProcessing && isValidNameForReceiver(correspondingValueParameter.name) -> {
-                val newExpression = getDispatchReceiverExpression(
+                val newExpression = accessCallsGenerator.getDispatchReceiverExpression(
                     data, expression, correspondingValueParameter.type, expression.origin, correspondingValueParameter
                 )
                 if (newExpression != null) {
