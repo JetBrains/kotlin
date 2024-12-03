@@ -593,7 +593,10 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             name = Name.identifier("invoke")
             returnType = info.originalResultType
         }.apply {
-            parameters += buildReceiverParameter(IrDeclarationOrigin.DEFINED, closureClass.defaultType)
+            parameters += buildReceiverParameter {
+                origin = IrDeclarationOrigin.DEFINED
+                type = closureClass.defaultType
+            }
             info.originalParameterTypes.forEachIndexed { index, irType ->
                 addValueParameter {
                     name = Name.identifier("p$index")

@@ -179,11 +179,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         modality = Modality.OPEN
         if (this is IrSimpleFunction) {
             val dispatchReceiver = createDispatchReceiverParameterWithClassParent()
-            parameters = if (dispatchReceiverParameter != null) {
-                listOf(dispatchReceiver) + parameters.drop(1)
-            } else {
-                listOf(dispatchReceiver) + parameters
-            }
+            parameters = listOf(dispatchReceiver) + nonDispatchParameters
         }
     }
 

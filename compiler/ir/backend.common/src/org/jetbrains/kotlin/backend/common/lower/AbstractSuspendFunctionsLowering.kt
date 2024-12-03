@@ -244,8 +244,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
                 this.parameters += this.createDispatchReceiverParameterWithClassParent()
 
-                this.parameters += stateMachineFunction.parameters
-                    .filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+                this.parameters += stateMachineFunction.nonDispatchParameters
                     .memoryOptimizedMap { parameter ->
                         parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
                     }

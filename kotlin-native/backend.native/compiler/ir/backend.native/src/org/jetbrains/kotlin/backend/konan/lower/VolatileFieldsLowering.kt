@@ -66,12 +66,12 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
         require(scope is IrClass || scope is IrFile)
         parent = scope
         if (scope is IrClass) {
-            parameters += buildReceiverParameter(
-                    origin = IrDeclarationOrigin.DEFINED,
-                    type = scope.defaultType,
-                    startOffset = irField.startOffset,
-                    endOffset = irField.endOffset,
-            )
+            parameters += buildReceiverParameter {
+                origin = IrDeclarationOrigin.DEFINED
+                type = scope.defaultType
+                startOffset = irField.startOffset
+                endOffset = irField.endOffset
+            }
         }
         builder()
         annotations += buildSimpleAnnotation(context.irBuiltIns,

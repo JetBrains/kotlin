@@ -259,8 +259,7 @@ abstract class AbstractSuspendFunctionsLowering<C : JsCommonBackendContext>(val 
 
                 parameters += createDispatchReceiverParameterWithClassParent()
 
-                parameters += stateMachineFunction.parameters
-                    .filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+                parameters += stateMachineFunction.nonDispatchParameters
                     .memoryOptimizedMap { parameter ->
                         parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
                     }

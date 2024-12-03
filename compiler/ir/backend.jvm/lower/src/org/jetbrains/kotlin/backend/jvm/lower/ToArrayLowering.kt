@@ -65,7 +65,10 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
                     superTypes.add(context.irBuiltIns.anyNType)
                 }
                 returnType = context.irBuiltIns.arrayClass.typeWith(elementType.defaultType)
-                val receiver = buildReceiverParameter(JvmLoweredDeclarationOrigin.TO_ARRAY, irClass.defaultType)
+                val receiver = buildReceiverParameter {
+                    origin = JvmLoweredDeclarationOrigin.TO_ARRAY
+                    type = irClass.defaultType
+                }
                 parameters += receiver
                 val prototype = addValueParameter("array", returnType, JvmLoweredDeclarationOrigin.TO_ARRAY)
                 body = context.createIrBuilder(symbol).irBlockBody {
@@ -91,7 +94,10 @@ internal class ToArrayLowering(private val context: JvmBackendContext) : ClassLo
                 modality = if (bridge != null) Modality.FINAL else Modality.OPEN
                 returnType = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType)
             }.apply {
-                val receiver = buildReceiverParameter(JvmLoweredDeclarationOrigin.TO_ARRAY, irClass.defaultType)
+                val receiver = buildReceiverParameter {
+                    origin = JvmLoweredDeclarationOrigin.TO_ARRAY
+                    type = irClass.defaultType
+                }
                 parameters += receiver
                 body = context.createIrBuilder(symbol).irBlockBody {
                     if (bridge == null) {

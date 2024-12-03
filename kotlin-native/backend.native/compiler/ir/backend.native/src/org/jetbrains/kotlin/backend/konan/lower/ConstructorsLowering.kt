@@ -51,7 +51,10 @@ internal fun Context.getLoweredConstructorFunction(irConstructor: IrConstructor)
                 parent = parentClass
                 originalConstructor = irConstructor
 
-                parameters += buildReceiverParameter(JvmLoweredDeclarationOrigin.TO_ARRAY, parentClass.defaultType)
+                parameters += buildReceiverParameter {
+                    origin = JvmLoweredDeclarationOrigin.TO_ARRAY
+                    type = parentClass.defaultType
+                }
 
                 require(irConstructor.extensionReceiverParameter == null) { "A constructor with an extension receiver: ${irConstructor.render()}" }
                 irConstructor.dispatchReceiverParameter?.let { outerReceiverParameter ->
