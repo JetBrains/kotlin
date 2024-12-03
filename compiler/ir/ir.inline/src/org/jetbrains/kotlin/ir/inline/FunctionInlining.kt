@@ -650,6 +650,7 @@ open class FunctionInlining(
                 )
             } else if (callSite.extensionReceiver != null) {
                 // Special case: usual lambda is called as lambda with receiver:
+                error ("ACHTUNG!! callSite=${callSite.render()}\ncallee=${callee.render()}")
                 valueArguments.add(0, callSite.extensionReceiver!!)
             }
 
