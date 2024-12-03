@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
 import org.jetbrains.kotlin.ir.util.isUnsigned
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 
 internal class CommonProxy private constructor(override val state: Common, override val callInterceptor: CallInterceptor) : Proxy {
     private fun defaultEquals(other: Any?): Boolean = if (other is Proxy) this.state === other.state else false
@@ -86,7 +87,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
                         val irFunction = commonProxy.state.getIrFunction(method)
                             ?: return@newProxyInstance commonProxy.fallbackIfMethodNotFound(method)
                         val valueArguments = mutableListOf<State>(commonProxy.state)
-                        valueArguments += irFunction.valueParameters.mapIndexed { index, parameter ->
+                        valueArguments += irFunction.nonDispatchParameters.mapIndexed { index, parameter ->
                             callInterceptor.environment.convertToState(args[index], parameter.type)
                         }
                         callInterceptor.interceptProxy(irFunction, valueArguments, method.returnType)
