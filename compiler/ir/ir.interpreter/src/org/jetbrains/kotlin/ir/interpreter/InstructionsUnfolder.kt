@@ -191,7 +191,7 @@ private fun unfoldEnumConstructorCall(element: IrEnumConstructorCall, environmen
         val enumObject = environment.callStack.loadState(element.getThisReceiver())
         environment.irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().forEachIndexed { index, it ->
             val field = enumObject.getField(it.symbol) as Primitive
-            constructorCallCopy.putValueArgument(index, field.value.toIrConst(field.type))
+            constructorCallCopy.arguments[index] = field.value.toIrConst(field.type)
         }
         return unfoldValueParameters(constructorCallCopy, environment)
     }
