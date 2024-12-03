@@ -21,6 +21,12 @@ class FirBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) :
     session, scopeSession, FirResolvePhase.BODY_RESOLVE
 ) {
     override val transformer: FirBodyResolveTransformerAdapter = FirBodyResolveTransformerAdapter(session, scopeSession)
+
+    override fun processFile(file: FirFile) {
+        val before = Unit
+        super.processFile(file)
+        val after = Unit
+    }
 }
 
 @AdapterForResolveProcessor
