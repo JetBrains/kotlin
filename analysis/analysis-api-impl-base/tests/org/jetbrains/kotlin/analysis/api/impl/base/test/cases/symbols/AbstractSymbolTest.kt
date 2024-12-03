@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.isNonLocal
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
@@ -327,6 +326,15 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         disablePsiBasedLogic: Boolean,
         analyzeContext: KtElement?,
     ) {
+        fun KaSymbol.isLocal(): Boolean {
+            return when (this) {
+                is KaCallableSymbol -> this.callableId?.isLocal == true
+                is KaClassLikeSymbol -> this.classId?.isLocal == true
+                is KaClassInitializerSymbol -> (this.psi as? KtClassInitializer)?.containingDeclaration?.getClassId()?.isLocal == true
+                is KaScriptSymbol, is KaFileSymbol, is KaPackageSymbol -> false
+                else -> true
+            }
+        }
         if (pointers.isEmpty()) return
 
         analyseForTest(analyzeContext ?: ktFile) {
@@ -335,14 +343,13 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                     restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
                 val secondRestore =
                     restoreSymbol(pointer, disablePsiBasedLogic) ?: error("Unexpectedly non-restored symbol pointer: ${it::class}")
-                if (firstRestore.isNonLocal) {
+                if (!firstRestore.isLocal()) {
                     testServices.assertions.assertTrue(firstRestore === secondRestore) {
                         "${pointer::class} does not support symbol caching"
                     }
                 }
             }
         }
-
     }
 
     private fun compareRestoredSymbols(

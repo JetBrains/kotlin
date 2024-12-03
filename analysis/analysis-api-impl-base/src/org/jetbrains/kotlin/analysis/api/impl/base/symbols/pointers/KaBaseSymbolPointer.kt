@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.isNonLocal
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.psi.KtClassInitializer
 import java.lang.ref.WeakReference
 
 abstract class KaBaseSymbolPointer<out S : KaSymbol>(originalSymbol: S?) : KaSymbolPointer<S>() {
@@ -18,24 +18,44 @@ abstract class KaBaseSymbolPointer<out S : KaSymbol>(originalSymbol: S?) : KaSym
      * then the [cachedSymbol] will be immediately returned.
      * Otherwise, the new symbol is built from data stored in the pointer, which takes a bit more resources.
      * After each successful build-from-scratch operation, the cached reference is updated and points to the newly constructed symbol.
+     *
+     * Currently, symbol caching is only supported for non-local declarations.
+     * The invalidation process for local declarations is bulky, as the lifetime token stays the same on in-block modifications.
      */
     final override fun restoreSymbol(analysisSession: KaSession): S? {
-        val cached = cachedSymbol?.get()
+        @Suppress("UNCHECKED_CAST")
+        val cached = (cachedSymbol as? WeakReference<*>)?.get() as? S
         val lifetimeToken = cached?.token
         if (lifetimeToken == analysisSession.token) {
             return cached
-        } else {
-            cachedSymbol = null
         }
 
         return restoreIfNotCached(analysisSession)?.also {
-            if (it.isNonLocal) cachedSymbol = WeakReference(it)
+            runCaching(it)
         }
     }
 
-    private var cachedSymbol: WeakReference<@UnsafeVariance S>? = originalSymbol?.let {
-        if (it.isNonLocal) WeakReference(it) else null
+    private var cachedSymbol: Any? = originalSymbol?.let {
+        runCaching(it)
     }
+
+    private fun runCaching(symbol: S) {
+        if (cachedSymbol === IS_LOCAL) return
+        if (!symbol.isLocal) cachedSymbol = WeakReference(symbol) else IS_LOCAL
+    }
+
+    private companion object {
+        const val IS_LOCAL = "IS_LOCAL"
+    }
+
+    private val KaSymbol.isLocal: Boolean
+        get() = when(this) {
+            is KaCallableSymbol -> this.callableId?.isLocal == true
+            is KaClassLikeSymbol -> this.classId?.isLocal == true
+            is KaClassInitializerSymbol -> (this.psi as? KtClassInitializer)?.containingDeclaration?.getClassId()?.isLocal == true
+            is KaScriptSymbol, is KaFileSymbol, is KaPackageSymbol -> false
+            else -> true
+        }
 
     protected abstract fun restoreIfNotCached(analysisSession: KaSession): S?
 }
