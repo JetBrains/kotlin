@@ -10,14 +10,13 @@ enum class TargetBackend(
     private val compatibleWithTargetBackend: TargetBackend? = null
 ) {
     ANY(false),
-    JVM(false),
-    JVM_IR(true, JVM),
+    JVM_IR(true),
     JVM_IR_SERIALIZE(true, JVM_IR),
     JS_IR(true),
     JS_IR_ES6(true, JS_IR),
     WASM(true),
     WASM_WASI(true),
-    ANDROID(false, JVM),
+    ANDROID(false),
     ANDROID_IR(true, JVM_IR),
     NATIVE(true),
     JVM_IR_WITH_OLD_EVALUATOR(true),
