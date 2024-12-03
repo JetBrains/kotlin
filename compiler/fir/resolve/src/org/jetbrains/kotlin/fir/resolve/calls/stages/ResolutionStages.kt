@@ -303,15 +303,11 @@ object CheckDslScopeViolation : ResolutionStage() {
             val expression = atom.expression
             val symbol = expression.implicitlyReferencedSymbolOrNull() ?: return
             checkImpl(
+                atom,
                 candidate,
                 sink,
                 context,
-                { getDslMarkersOfImplicitValue(symbol.containingDeclaration(), expression.resolvedType, context) }
-            ) {
-                // Here we rely on the fact that receiver expression of implicit receiver value cannot be changed
-                //   during resolution of one single call
-                it.computeExpression() == expression
-            }
+            ) { getDslMarkersOfImplicitValue(symbol.containingDeclaration(), expression.resolvedType, context) }
         }
 
         candidate.dispatchReceiver?.let(::check)
@@ -353,13 +349,12 @@ object CheckDslScopeViolation : ResolutionStage() {
         ) {
             for (atom in candidate.argumentMapping.keys) {
                 val expression = atom.expression
-                val symbol = expression.implicitlyReferencedSymbolOrNull() ?: continue
                 checkImpl(
+                    atom,
                     candidate,
                     sink,
                     context,
-                    { expression.getDslMarkersOfExpression(context) }
-                ) { it.boundSymbol == symbol }
+                ) { expression.getDslMarkersOfExpression(context) }
             }
         }
     }
@@ -377,35 +372,38 @@ object CheckDslScopeViolation : ResolutionStage() {
      */
     @OptIn(ImplicitValue.ImplicitValueInternals::class)
     private fun checkImpl(
+        receiverValueToCheck: ConeResolutionAtom,
         candidate: Candidate,
         sink: CheckerSink,
         context: ResolutionContext,
         dslMarkersProvider: () -> Set<ClassId>,
-        isImplicitMatching: (ImplicitValue) -> Boolean,
     ) {
+        val boundSymbolOfReceiverToCheck = receiverValueToCheck.expression.implicitlyReferencedSymbolOrNull() ?: return
+        // Values are sorted in a quite reversed order, so the first element is the furthest in the scope tower
         val implicitValues = context.bodyResolveContext.implicitValueStorage.implicitValues
 
-        val (matchingIndex, referenced) = implicitValues.withIndex().firstOrNull { isImplicitMatching(it.value) } ?: return
-        val containingDeclaration = referenced.boundSymbol.containingDeclaration()
+        // Drop all the receivers/values that in the scope tower stay after ones introduced with `boundSymbolOfReceiverToCheck`.
+        // So from "[irrelevantValue1, .., irrelevantValue2, firstValueBoundToSymbol, ...]" we would leave a sub-list
+        // starting from `firstValueBoundToSymbol`
+        val closerOrOnTheSameLevelImplicitValues =
+            implicitValues.dropWhile { it.boundSymbol != boundSymbolOfReceiverToCheck }.ifEmpty { return }
 
-        val closerImplicits = implicitValues.drop(matchingIndex + 1).ifEmpty { return }
         val dslMarkers = dslMarkersProvider().ifEmpty { return }
 
-        if (closerImplicits.any { it.leadsToDslError(containingDeclaration, dslMarkers, context) }) {
+        if (closerOrOnTheSameLevelImplicitValues.any {
+                receiverValueToCheck.expression != it.computeExpression()
+                        && it.leadsToDslError(dslMarkers, context)
+            }) {
             sink.reportDiagnostic(DslScopeViolation(candidate.symbol))
         }
     }
 
     private fun ImplicitValue.leadsToDslError(
-        initialContainingDeclaration: FirBasedSymbol<*>,
-        dslMarkers: Set<ClassId>,
+        dslMarkersOfChosenReceiver: Set<ClassId>,
         context: ResolutionContext,
     ): Boolean {
         val containingDeclaration = boundSymbol.containingDeclaration()
-        // If a function has a receiver and context parameter, they shouldn't cause DSL errors.
-        // That's why we need to check that the implicit values come from different containing declarations.
-        return containingDeclaration != initialContainingDeclaration &&
-                getDslMarkersOfImplicitValue(containingDeclaration, type, context).any { it in dslMarkers }
+        return getDslMarkersOfImplicitValue(containingDeclaration, type, context).any { it in dslMarkersOfChosenReceiver }
     }
 
     private fun FirBasedSymbol<*>.containingDeclaration(): FirBasedSymbol<*> {

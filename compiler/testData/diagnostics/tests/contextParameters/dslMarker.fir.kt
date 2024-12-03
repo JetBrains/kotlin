@@ -70,11 +70,11 @@ fun test() {
 
     annotatedFunctionTypeWithContext {
         // NO DSL_SCOPE_VIOLATION because receiver and context parameter come from the same scope
-        contextFun()
+        <!DSL_SCOPE_VIOLATION!>contextFun<!>()
     }
 
     context(DslReceiver(), Other()) {
-        contextFun()
+        <!DSL_SCOPE_VIOLATION!>contextFun<!>()
     }
 }
 
