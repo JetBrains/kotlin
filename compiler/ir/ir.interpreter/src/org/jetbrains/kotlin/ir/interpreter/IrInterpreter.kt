@@ -162,13 +162,12 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         val owner = call.symbol.owner
         // 1. load evaluated arguments from stack
-        val valueArguments = owner.valueParameters.map { callStack.popState() }.reversed()
-        val extensionReceiver = owner.getExtensionReceiver()?.let { callStack.popState() }
-        val dispatchReceiver = owner.getDispatchReceiver()?.let { callStack.popState() }
+        val nonDispatchArguments = owner.nonDispatchParameters.map { callStack.popState() }.reversed()
+        val dispatchReceiver = owner.dispatchReceiverParameter?.let { callStack.popState() }
 
         // 2. get correct function for interpretation
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(call) ?: call.symbol.owner
-        val args = listOfNotNull(dispatchReceiver.getThisOrSuperReceiver(irFunction), extensionReceiver) + valueArguments
+        val args = listOfNotNull(dispatchReceiver.getThisOrSuperReceiver(irFunction)) + nonDispatchArguments
 
         // 3. evaluate reified type arguments; must do it here, before new frame, because outer type arguments can be loaded at this point
         val reifiedTypeArguments = environment.loadReifiedTypeArguments(call)
@@ -178,13 +177,11 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
         // 4. load up values onto stack; do it at first to set low priority of these variables
         if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
-        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
         if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
 
         // 5. store arguments in memory (remap args on actual names)
-        irFunction.getDispatchReceiver()?.let { callStack.storeState(it, dispatchReceiver) }
-        irFunction.getExtensionReceiver()?.let { callStack.storeState(it, extensionReceiver) }
-        irFunction.valueParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, valueArguments[i]) }
+        irFunction.dispatchReceiverParameter?.let { callStack.storeState(it.symbol, dispatchReceiver) }
+        irFunction.nonDispatchParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, nonDispatchArguments[i]) }
         // `call.type` is used in check cast and emptyArray
         callStack.storeState(irFunction.symbol, KTypeState(call.type, environment.kTypeClass.owner))
 
