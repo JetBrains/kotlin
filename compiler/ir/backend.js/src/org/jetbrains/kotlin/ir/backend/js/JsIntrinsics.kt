@@ -418,7 +418,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
                 // When compiling the standard library, `symbolFinder.findFunctions(...)` returns two symbols
                 // for `kotlin.enums.enumEntriesIntrinsic`: one for the `expect` declaration, and one for `actual`.
                 // We're not interested in the `expect` one.
-                !it.owner.isExpect
+                !it.isBound || !it.owner.isExpect
             }
 
     private fun getFunctionInKotlinPackage(name: String): IrSimpleFunctionSymbol =
