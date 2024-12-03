@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
@@ -32,8 +31,6 @@ class FirOverloadByLambdaReturnTypeResolver(
     private val session = components.session
     private val callCompleter: FirCallCompleter
         get() = components.callCompleter
-    private val inferenceSession: FirInferenceSession
-        get() = components.transformer.context.inferenceSession
 
     fun <T> reduceCandidates(
         qualifiedAccess: T,
