@@ -527,6 +527,19 @@ public final class IrOperation extends
             operationCase_ = 36;
             break;
           }
+          case 298: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.Builder subBuilder = null;
+            if (operationCase_ == 37) {
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock) operation_).toBuilder();
+            }
+            operation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock) operation_);
+              operation_ = subBuilder.buildPartial();
+            }
+            operationCase_ = 37;
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -602,6 +615,7 @@ public final class IrOperation extends
     ERROR_EXPRESSION(34),
     ERROR_CALL_EXPRESSION(35),
     RETURNABLE_BLOCK(36),
+    INLINED_FUNCTION_BLOCK(37),
     OPERATION_NOT_SET(0);
     private int value = 0;
     private OperationCase(int value) {
@@ -645,6 +659,7 @@ public final class IrOperation extends
         case 34: return ERROR_EXPRESSION;
         case 35: return ERROR_CALL_EXPRESSION;
         case 36: return RETURNABLE_BLOCK;
+        case 37: return INLINED_FUNCTION_BLOCK;
         case 0: return OPERATION_NOT_SET;
         default: throw new java.lang.IllegalArgumentException(
           "Value is undefined for this oneof enum.");
@@ -1289,6 +1304,23 @@ public final class IrOperation extends
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock.getDefaultInstance();
   }
 
+  public static final int INLINED_FUNCTION_BLOCK_FIELD_NUMBER = 37;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+   */
+  public boolean hasInlinedFunctionBlock() {
+    return operationCase_ == 37;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getInlinedFunctionBlock() {
+    if (operationCase_ == 37) {
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock) operation_;
+    }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.getDefaultInstance();
+  }
+
   private void initFields() {
   }
   private byte memoizedIsInitialized = -1;
@@ -1507,6 +1539,12 @@ public final class IrOperation extends
         return false;
       }
     }
+    if (hasInlinedFunctionBlock()) {
+      if (!getInlinedFunctionBlock().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -1621,6 +1659,9 @@ public final class IrOperation extends
     }
     if (operationCase_ == 36) {
       output.writeMessage(36, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
+    }
+    if (operationCase_ == 37) {
+      output.writeMessage(37, (org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock) operation_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -1774,6 +1815,10 @@ public final class IrOperation extends
     if (operationCase_ == 36) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(36, (org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock) operation_);
+    }
+    if (operationCase_ == 37) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(37, (org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock) operation_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -2009,6 +2054,9 @@ public final class IrOperation extends
       if (operationCase_ == 36) {
         result.operation_ = operation_;
       }
+      if (operationCase_ == 37) {
+        result.operation_ = operation_;
+      }
       result.bitField0_ = to_bitField0_;
       result.bitField1_ = to_bitField1_;
       result.operationCase_ = operationCase_;
@@ -2160,6 +2208,10 @@ public final class IrOperation extends
         }
         case RETURNABLE_BLOCK: {
           mergeReturnableBlock(other.getReturnableBlock());
+          break;
+        }
+        case INLINED_FUNCTION_BLOCK: {
+          mergeInlinedFunctionBlock(other.getInlinedFunctionBlock());
           break;
         }
         case OPERATION_NOT_SET: {
@@ -2378,6 +2430,12 @@ public final class IrOperation extends
       }
       if (hasReturnableBlock()) {
         if (!getReturnableBlock().isInitialized()) {
+          
+          return false;
+        }
+      }
+      if (hasInlinedFunctionBlock()) {
+        if (!getInlinedFunctionBlock().isInitialized()) {
           
           return false;
         }
@@ -4764,6 +4822,70 @@ public final class IrOperation extends
      */
     public Builder clearReturnableBlock() {
       if (operationCase_ == 36) {
+        operationCase_ = 0;
+        operation_ = null;
+        
+      }
+      return this;
+    }
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+     */
+    public boolean hasInlinedFunctionBlock() {
+      return operationCase_ == 37;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getInlinedFunctionBlock() {
+      if (operationCase_ == 37) {
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock) operation_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.getDefaultInstance();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+     */
+    public Builder setInlinedFunctionBlock(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      operation_ = value;
+
+      operationCase_ = 37;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+     */
+    public Builder setInlinedFunctionBlock(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.Builder builderForValue) {
+      operation_ = builderForValue.build();
+
+      operationCase_ = 37;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+     */
+    public Builder mergeInlinedFunctionBlock(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock value) {
+      if (operationCase_ == 37 &&
+          operation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.getDefaultInstance()) {
+        operation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock) operation_)
+            .mergeFrom(value).buildPartial();
+      } else {
+        operation_ = value;
+      }
+
+      operationCase_ = 37;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+     */
+    public Builder clearInlinedFunctionBlock() {
+      if (operationCase_ == 37) {
         operationCase_ = 0;
         operation_ = null;
         

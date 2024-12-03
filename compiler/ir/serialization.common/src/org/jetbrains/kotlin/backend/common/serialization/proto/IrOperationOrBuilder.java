@@ -346,4 +346,13 @@ public interface IrOperationOrBuilder extends
    * </pre>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock getReturnableBlock();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+   */
+  boolean hasInlinedFunctionBlock();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getInlinedFunctionBlock();
 }
