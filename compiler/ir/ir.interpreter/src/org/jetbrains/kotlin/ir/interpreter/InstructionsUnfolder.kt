@@ -97,7 +97,7 @@ private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) 
             val receiverState = callStack.loadState(receiverSymbol)
 
             irClass.declarations.filterIsInstance<IrProperty>().forEach { property ->
-                val parameter = constructor.valueParameters.singleOrNull { it.name == property.name }
+                val parameter = constructor.nonDispatchParameters.singleOrNull { it.name == property.name }
                 val state = parameter?.let { callStack.loadState(it.symbol) } ?: Primitive.nullStateOfType(property.getter!!.returnType)
                 receiverState.setField(property.symbol, state)
             }
