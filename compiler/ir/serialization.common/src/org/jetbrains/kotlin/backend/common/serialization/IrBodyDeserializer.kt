@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -144,15 +145,23 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeBlock(proto: ProtoBlock, start: Int, end: Int, type: IrType): IrBlock {
-        val statements = mutableListOf<IrStatement>()
-        val statementProtos = proto.statementList
-        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
-
-        statementProtos.forEach {
-            statements.add(deserializeStatement(it) as IrStatement)
+        return withDeserializedBlock(proto) { origin, statements ->
+            IrBlockImpl(start, end, type, origin, statements)
         }
+    }
 
-        return IrBlockImpl(start, end, type, origin, statements)
+    private fun deserializeReturnableBlock(proto: ProtoReturnableBlock, start: Int, end: Int, type: IrType): IrReturnableBlock {
+        val symbol = deserializeTypedSymbol<IrReturnableBlockSymbol>(proto.symbol, fallbackSymbolKind = null)
+        return withDeserializedBlock(proto.base) { origin, statements ->
+            IrReturnableBlockImpl(start, end, type, symbol, origin, statements)
+        }
+    }
+
+    private inline fun <T> withDeserializedBlock(proto: ProtoBlock, block: (IrStatementOrigin?, List<IrStatement>) -> T): T {
+        val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
+        val statements = proto.statementList.map { deserializeStatement(it) as IrStatement }
+
+        return block(origin, statements)
     }
 
     private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommon) {
@@ -792,6 +801,7 @@ class IrBodyDeserializer(
     private fun deserializeOperation(proto: ProtoOperation, start: Int, end: Int, type: IrType): IrExpression =
         when (proto.operationCase!!) {
             BLOCK -> deserializeBlock(proto.block, start, end, type)
+            RETURNABLE_BLOCK -> deserializeReturnableBlock(proto.returnableBlock, start, end, type)
             BREAK -> deserializeBreak(proto.`break`, start, end, type)
             CLASS_REFERENCE -> deserializeClassReference(proto.classReference, start, end, type)
             CALL -> deserializeCall(proto.call, start, end, type)

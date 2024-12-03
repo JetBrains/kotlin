@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.IrFileEntry
 
@@ -35,4 +36,13 @@ class IrSerializationSettings(
     val bodiesOnlyForInlines: Boolean = false,
     val shouldCheckSignaturesOnUniqueness: Boolean = true,
     val reuseExistingSignaturesForSymbols: Boolean = false,
-)
+) {
+    /**
+     * This is a special temporary setting to allow serializing some types of IR entities, which were supposed to appear only in 2.2.0,
+     * already in 2.1.20. This property should be used with care, and should be switched on in 2.1.20 only when
+     * [LanguageFeature.IrInlinerBeforeKlibSerialization] experimental language feature is also turned on.
+     * In 2.2.0, this setting should be removed leaving `true` value effectively everywhere it was checked before.
+     * TODO: KT-73676, drop this flag
+     */
+    val allow220Nodes: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
+}

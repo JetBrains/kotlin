@@ -590,6 +590,7 @@ sealed class IdSignature {
 
     /**
      * Used to reference local declarations like a variable, value parameters, or anonymous initializers.
+     * Also used as a signature for [org.jetbrains.kotlin.ir.expressions.IrReturnableBlock].
      *
      * This signature is not navigatable through files.
      */

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -108,7 +109,7 @@ internal fun referenceDeserializedSymbol(
         BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
         BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
         BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL -> IrLocalDelegatedPropertySymbolImpl()
+        BinarySymbolData.SymbolKind.RETURNABLE_BLOCK_SYMBOL -> IrReturnableBlockSymbolImpl()
         BinarySymbolData.SymbolKind.FILE_SYMBOL -> fileSymbol ?: error("File symbol is not provided")
-        else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
     }
 }

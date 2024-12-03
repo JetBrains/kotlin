@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 
@@ -54,7 +55,7 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
     class Default(globalTable: GlobalDeclarationTable) : DeclarationTable<GlobalDeclarationTable>(globalTable)
 
     val mangler = globalDeclarationTable.mangler
-    protected val table: MutableMap<IrDeclaration, IdSignature> = Object2ObjectOpenHashMap()
+    protected val table: MutableMap<IrSymbolOwner, IdSignature> = Object2ObjectOpenHashMap()
 
     private val fileLocalIdSignatureComputer = FileLocalIdSignatureComputer(mangler) { declaration, compatibleMode ->
         signatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector = false)
@@ -77,6 +78,9 @@ abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarat
             globalDeclarationTable.computeSignatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector)
         }
     }
+
+    fun signatureByReturnableBlock(returnableBlock: IrReturnableBlock): IdSignature =
+        table.getOrPut(returnableBlock) { fileLocalIdSignatureComputer.generateScopeLocalSignature("RB") }
 }
 
 // This is what we pre-populate tables with

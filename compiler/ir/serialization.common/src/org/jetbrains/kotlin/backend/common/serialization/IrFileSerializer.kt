@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as Prot
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock as ProtoReturnableBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
@@ -278,15 +279,21 @@ open class IrFileSerializer(
             ?: when (symbol) {
                 is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
                 else -> {
-                    val declaration = symbol.owner as? IrDeclaration
-                        ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
+                    val symbolOwner = symbol.owner
 
                     // Compute the signature:
-                    declarationTable.signatureByDeclaration(
-                        declaration,
-                        settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
-                        recordInSignatureClashDetector = isDeclared
-                    )
+                    when {
+                        symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
+                            symbolOwner,
+                            settings.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations,
+                            recordInSignatureClashDetector = isDeclared
+                        )
+
+                        symbolOwner is IrReturnableBlock && settings.allow220Nodes ->
+                            declarationTable.signatureByReturnableBlock(symbolOwner)
+
+                        else -> error("Expected symbol owner: ${symbolOwner.render()}")
+                    }
                 }
             }
 
@@ -482,6 +489,13 @@ open class IrFileSerializer(
         block.statements.forEach {
             proto.addStatement(serializeStatement(it))
         }
+        return proto.build()
+    }
+
+    private fun serializeReturnableBlock(returnableBlock: IrReturnableBlock): ProtoReturnableBlock {
+        val proto = ProtoReturnableBlock.newBuilder()
+        proto.symbol = serializeIrSymbol(returnableBlock.symbol)
+        proto.base = serializeBlock(returnableBlock)
         return proto.build()
     }
 
@@ -970,7 +984,13 @@ open class IrFileSerializer(
 
         // TODO: make me a visitor.
         when (expression) {
-            is IrBlock -> operationProto.block = serializeBlock(expression)
+            is IrBlock -> {
+                if (settings.allow220Nodes && expression is IrReturnableBlock) {
+                    operationProto.returnableBlock = serializeReturnableBlock(expression)
+                } else {
+                    operationProto.block = serializeBlock(expression)
+                }
+            }
             is IrBreak -> operationProto.`break` = serializeBreak(expression)
             is IrClassReference -> operationProto.classReference = serializeClassReference(expression)
             is IrCall -> operationProto.call = serializeCall(expression)

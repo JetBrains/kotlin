@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -215,9 +216,9 @@ class FileLocalIdSignatureComputer(
     }
 
     fun computeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature = when (declaration) {
-        is IrValueDeclaration -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
-        is IrAnonymousInitializer -> IdSignature.ScopeLocalDeclaration(scopeIndex++, "ANON INIT")
-        is IrLocalDelegatedProperty -> IdSignature.ScopeLocalDeclaration(scopeIndex++, declaration.name.asString())
+        is IrValueDeclaration -> generateScopeLocalSignature(declaration.name.asString())
+        is IrAnonymousInitializer -> generateScopeLocalSignature("ANON INIT")
+        is IrLocalDelegatedProperty -> generateScopeLocalSignature(declaration.name.asString())
 
         is IrSimpleFunction -> IdSignature.FileLocalSignature(
             container = computeContainerIdSignature(declaration, compatibleMode),
@@ -245,6 +246,9 @@ class FileLocalIdSignatureComputer(
             description = declaration.render()
         )
     }
+
+    fun generateScopeLocalSignature(description: String): IdSignature =
+        IdSignature.ScopeLocalDeclaration(scopeIndex++, description)
 
     /**
      * We shall have stable indices for local fake override functions/properties.
