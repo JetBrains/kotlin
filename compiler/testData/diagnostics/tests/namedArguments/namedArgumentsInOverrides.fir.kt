@@ -8,7 +8,7 @@ interface B {
     fun foo(b1: Int, b2: Double)
 }
 
-interface C : A, B { // Warning here, this is correct, C.foo has no named parameters
+<!DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES!>interface C<!> : A, B { // Warning here, this is correct, C.foo has no named parameters
 }
 
 interface D : C {

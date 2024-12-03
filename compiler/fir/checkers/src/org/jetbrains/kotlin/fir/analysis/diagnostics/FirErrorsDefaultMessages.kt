@@ -713,6 +713,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
@@ -2042,6 +2043,15 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     "This may cause problems when calling this function with named arguments.",
             DECLARATION_NAME,
             VARIABLE_NAME,
+        )
+        map.put(
+            DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES,
+            "Names ''{0}'' and ''{1}'' of parameter #{2} conflict in the following members of supertypes: {3}. " +
+                    "This may cause problems when calling this function with named arguments.",
+            DECLARATION_NAME,
+            DECLARATION_NAME,
+            TO_STRING,
+            commaSeparated(SYMBOL_WITH_CONTAINING_DECLARATION),
         )
         map.put(
             DATA_CLASS_OVERRIDE_CONFLICT,

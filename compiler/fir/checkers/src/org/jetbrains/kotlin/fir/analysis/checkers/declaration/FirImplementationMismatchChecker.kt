@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -76,6 +77,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         for (name in classScope.getCallableNames()) {
             classScope.processFunctionsByName(name) {
                 checkInheritanceClash(declaration, context, dedupReporter, typeCheckerState, it, classScope)
+                checkDifferentNamesForTheSameParameterInSupertypes(declaration, context, dedupReporter, it, classScope)
             }
             classScope.processPropertiesByName(name) {
                 checkInheritanceClash(declaration, context, dedupReporter, typeCheckerState, it, classScope)
@@ -215,6 +217,41 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
                 ?: return
 
         reporter.reportOn(containingClass.source, FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, symbol, overriddenVar, context)
+    }
+
+    private fun checkDifferentNamesForTheSameParameterInSupertypes(
+        containingClass: FirClass,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        functionSymbol: FirNamedFunctionSymbol,
+        classScope: FirTypeScope,
+    ) {
+        if (functionSymbol !is FirIntersectionCallableSymbol) return
+
+        val overriddenFunctions = classScope.getDirectOverriddenFunctions(functionSymbol)
+        for (currentIndex in overriddenFunctions.indices) {
+            val currentFunctionSymbol = overriddenFunctions[currentIndex].takeIf { it.resolvedStatus.hasStableParameterNames }
+                ?: continue
+
+            for (otherIndex in currentIndex + 1 until overriddenFunctions.size) {
+                val otherFunctionSymbol = overriddenFunctions[otherIndex].takeIf { it.resolvedStatus.hasStableParameterNames }
+                    ?: continue
+
+                currentFunctionSymbol.checkValueParameterNamesWith(
+                    otherFunctionSymbol
+                ) { currentParameter, otherParameter, parameterIndex ->
+                    reporter.reportOn(
+                        containingClass.source,
+                        FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES,
+                        currentParameter,
+                        otherParameter,
+                        parameterIndex,
+                        listOf(currentFunctionSymbol, otherFunctionSymbol),
+                        context
+                    )
+                }
+            }
+        }
     }
 
     private fun FirTypeScope.collectCallablesNamed(

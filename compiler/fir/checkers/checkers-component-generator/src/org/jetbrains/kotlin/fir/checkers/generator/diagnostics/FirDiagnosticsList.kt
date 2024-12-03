@@ -1211,6 +1211,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirRegularClassSymbol>("superType")
             parameter<FirValueParameterSymbol>("conflictingParameter")
         }
+        val DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES by warning<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirValueParameterSymbol>("currentParameter")
+            parameter<FirValueParameterSymbol>("conflictingParameter")
+            parameter<Int>("parameterNumber")
+            parameter<List<FirNamedFunctionSymbol>>("conflictingFunctions")
+        }
     }
 
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {
