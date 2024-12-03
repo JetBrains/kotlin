@@ -21,14 +21,16 @@ public interface KaImportOptimizer {
     public fun analyzeImportsToOptimize(file: KtFile): KaImportOptimizerResult
 
     /**
-     * A [FqName] which can be used to import the given symbol or `null` if the symbol cannot be imported.
+     * A [FqName] which can be used to import the given symbol, or `null` if the symbol cannot be imported.
      */
     @KaIdeApi
     public val KaSymbol.importableFqName: FqName?
 }
 
 /**
- * Result of the import directive analysis.
+ * The result of the import directive analysis.
+ *
+ * @see KaImportOptimizer.analyzeImportsToOptimize
  */
 @KaIdeApi
 public class KaImportOptimizerResult(

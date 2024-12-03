@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 
 public interface KaExpressionTypeProvider {
     /**
-     * The expression type, or `null` if the given expression does not contribute a value.
+     * The type of the given [KtExpression], or `null` if it does not have a type.
      *
      * Particularly, the method returns:
      *

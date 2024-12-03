@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 public interface KaEvaluator {
     /**
-     * Evaluates the given expression.
-     * Returns a [KaConstantValue] if the expression evaluates to a compile-time constant, otherwise returns `null`.
+     * Attempts to evaluate the given [KtExpression] to a [compile-time constant value][KaConstantValue], or returns `null` if this is not
+     * possible.
      */
     public fun KtExpression.evaluate(): KaConstantValue?
 
     /**
-     * Returns a [KaConstantValue] if the expression evaluates to a value that can be used as an annotation parameter value
-     * (such as an array or constants). If the expression is not a valid annotation parameter value, returns `null`.
+     * Attempts to evaluate the given [KtExpression] to an [annotation value][KaAnnotationValue] (a constant value which can be used as an
+     * annotation argument), or returns `null` if this is not possible.
      */
     @KaExperimentalApi
     public fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue?

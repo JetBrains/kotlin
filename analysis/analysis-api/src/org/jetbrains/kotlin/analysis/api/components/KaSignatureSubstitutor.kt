@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 @KaExperimentalApi
 public interface KaSignatureSubstitutor {
     /**
-     * Applies a [substitutor] to the given symbol and return a signature with substituted types.
+     * Applies a [substitutor] to the given symbol and returns a [KaCallableSignature] with substituted types.
      *
      * @see KaSubstitutor.substitute
      */
@@ -25,7 +25,7 @@ public interface KaSignatureSubstitutor {
     public fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S>
 
     /**
-     * Applies a [substitutor] to the given symbol and return a signature with substituted types.
+     * Applies a [substitutor] to the given symbol and returns a [KaFunctionSignature] with substituted types.
      *
      * @see KaSubstitutor.substitute
      */
@@ -33,7 +33,7 @@ public interface KaSignatureSubstitutor {
     public fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionSignature<S>
 
     /**
-     * Applies a [substitutor] to the given symbols and return a signature with substituted types.
+     * Applies a [substitutor] to the given symbol and returns a [KaVariableSignature] with substituted types.
      *
      * @see KaSubstitutor.substitute
      */
@@ -41,19 +41,19 @@ public interface KaSignatureSubstitutor {
     public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableSignature<S>
 
     /**
-     * Creates a new [KaCallableSignature] by given symbol and leave all types intact
+     * Creates a new [KaCallableSignature] for the given symbol and leaves all types unsubstituted.
      */
     @KaExperimentalApi
     public fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S>
 
     /**
-     * Creates a new [KaCallableSignature] by given symbol and leave all types intact
+     * Creates a new [KaFunctionSignature] for the given symbol and leaves all types unsubstituted.
      */
     @KaExperimentalApi
     public fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S>
 
     /**
-     * Creates a new [KaCallableSignature] by given symbol and leave all types intact
+     * Creates a new [KaVariableSignature] for the given symbol and leaves all types unsubstituted.
      */
     @KaExperimentalApi
     public fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S>

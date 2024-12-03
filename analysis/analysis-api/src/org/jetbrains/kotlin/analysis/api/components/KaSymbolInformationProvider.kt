@@ -22,26 +22,36 @@ public interface KaSymbolInformationProvider {
     @KaExperimentalApi
     public val KaSymbol.deprecationStatus: DeprecationInfo?
 
-    @KaExperimentalApi
-    public fun KaNamedFunctionSymbol.canBeOperator(): Boolean
-
     /**
-     * The deprecation status of the given symbol related to the [annotationUseSiteTarget], or `null` if the declaration is not deprecated.
+     * The deprecation status of the given symbol for the given [annotation use-site target](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets),
+     * or `null` if the declaration is not deprecated.
      */
     @KaExperimentalApi
     public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo?
 
     /**
-     * Deprecation status of the given property getter, or `null` if the getter is not deprecated.
+     * The deprecation status of the given property getter, or `null` if the getter is not deprecated.
      */
     @KaExperimentalApi
     public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
 
     /**
-     * Deprecation status of the given property setter, or `null` if the setter is not deprecated or the property does not have a setter.
+     * The deprecation status of the given property setter, or `null` if the setter is not deprecated or doesn't exist.
      */
     @KaExperimentalApi
     public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
+
+    /**
+     * Whether the function symbol *could* be declared as an [operator function](https://kotlinlang.org/docs/operator-overloading.html).
+     *
+     * In Kotlin, the set of functions which can be declared as an operator is predefined. [canBeOperator] not only checks the name of a
+     * potential operator function, but also its signature, depending on the operator.
+     *
+     * [canBeOperator] does not determine whether the function symbol is declared as an operator. For this purpose, use
+     * [KaNamedFunctionSymbol.isOperator] instead.
+     */
+    @KaExperimentalApi
+    public fun KaNamedFunctionSymbol.canBeOperator(): Boolean
 
     /**
      * A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class.

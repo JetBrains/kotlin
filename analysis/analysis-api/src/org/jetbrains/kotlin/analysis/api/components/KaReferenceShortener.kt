@@ -127,9 +127,9 @@ public interface KaReferenceShortener {
      * shorten enum entries.  In case of KDoc shortens reference only if it is already imported.
      *
      * N.B. This API is not implemented for the FE10 implementation!
-     * For a K1- and K2-compatible API, use [org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility].
+     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
      *
-     * Also see [org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences] and functions around it.
+     * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
      */
     @KaIdeApi
     public fun collectPossibleReferenceShortenings(
@@ -145,9 +145,9 @@ public interface KaReferenceShortener {
      * class and does not shorten enum entries.
      *
      * N.B. This API is not implemented for the FE10 implementation!
-     * For a K1- and K2-compatible API, use [org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility].
+     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
      *
-     * Also see [org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences] and functions around it.
+     * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
      */
     @KaIdeApi
     public fun collectPossibleReferenceShorteningsInElement(

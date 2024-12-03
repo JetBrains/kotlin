@@ -19,126 +19,166 @@ import org.jetbrains.kotlin.name.ClassId
 
 public interface KaTypeInformationProvider {
     /**
-     * `true` if this type is denotable.
-     * A denotable type is a type that can be written in Kotlin by a developer.
-     *
-     * See the [Kotlin language specification](https://kotlinlang.org/spec/type-system.html#type-kinds) for more details.
+     * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
+     * Kotlin code, as opposed to being only constructible via compiler type operations (such as type inference).
      */
     public val KaType.isDenotable: Boolean
 
     /**
-     * `true` if this type is a functional interface type, a.k.a. SAM type, e.g., [Runnable].
+     * Whether the [KaType] is a [functional interface type](https://kotlinlang.org/docs/fun-interfaces.html), such as [Runnable]. Such
+     * types are also known as SAM types.
      */
     public val KaType.isFunctionalInterface: Boolean
 
     /**
-     * A [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
+     * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
      */
     @KaExperimentalApi
     public val KaType.functionTypeKind: FunctionTypeKind?
 
     /**
-     * `true` if this type is a [kotlin.Function] type.
+     * Whether the [KaType] is a [kotlin.Function] type.
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.Function }
 
     /**
-     * `true` if this type is a [kotlin.reflect.KFunction] type.
+     * Whether the [KaType] is a [kotlin.reflect.KFunction] type.
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isKFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KFunction }
 
     /**
-     * `true` if this type is a [kotlin.coroutines.SuspendFunction] type.
+     * Whether the [KaType] is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions)
+     * type.
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isSuspendFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.SuspendFunction }
 
     /**
-     * `true` if this type is a [kotlin.reflect.KSuspendFunction] type.
+     * Whether the [KaType] is a `KSuspendFunction` type.
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isKSuspendFunctionType: Boolean
         get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KSuspendFunction }
 
     /**
-     * `true` if a public value of this type can potentially be `null`.
+     * Whether a public value of the [KaType] can potentially be `null`.
      *
-     * This means this type is not a subtype of [Any].
-     * However, it does not mean one can assign `null` to a variable of this type because it may be unknown if this type can accept `null`.
+     * If a type can be `null`, it means that this type is not a subtype of [Any]. However, it does not mean one can assign `null` to a
+     * variable of this type. It may be unknown whether this type can accept `null`.
      *
-     * For example, a public value of type `T:Any?` can potentially be null.
-     * But one cannot assign `null` to such a variable because the instantiated type may not be nullable.
+     * #### Example
+     *
+     * A public value of type `T : Any?` can potentially be `null`. But one cannot assign `null` to such a variable because the instantiated
+     * type may not be nullable.
      */
     public val KaType.canBeNull: Boolean
 
     /**
-     * `true` if the type is explicitly marked as nullable.
-     * This means it is safe to assign `null` to a variable with this type.
+     * Whether the [KaType] is explicitly marked as nullable. This means it is safe to assign `null` to a variable with this type.
      * */
     public val KaType.isMarkedNullable: Boolean
         get() = withValidityAssertion { this.nullability == KaTypeNullability.NULLABLE }
 
-    /** `true` if the type is a flexible (platform) type, can both safe and ordinary calls are valid on it. */
+    /**
+     * Whether the [KaType] is a [flexible type](https://kotlinlang.org/spec/type-system.html#flexible-types), and both safe and ordinary
+     * calls are valid on it.
+     */
     public val KaType.hasFlexibleNullability: Boolean
         get() = withValidityAssertion { this is KaFlexibleType && this.upperBound.isMarkedNullable != this.lowerBound.isMarkedNullable }
 
-    /** `true` if the type is a [Unit] type. */
+    /**
+     * Whether the [KaType] is a [Unit] type.
+     */
     public val KaType.isUnitType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.UNIT) }
 
-    /** `true` if the type is an [Int] type. */
+    /**
+     * Whether the [KaType] is an [Int] type.
+     */
     public val KaType.isIntType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.INT) }
 
-    /** `true` if the type is a [Long] type. */
+    /**
+     * Whether the [KaType] is a [Long] type.
+     */
     public val KaType.isLongType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.LONG) }
 
-    /** `true` if the type is a [Short] type. */
+    /**
+     * Whether the [KaType] is a [Short] type.
+     */
     public val KaType.isShortType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.SHORT) }
 
-    /** `true` if the type is a [Byte] type. */
+    /**
+     * Whether the [KaType] is a [Byte] type.
+     */
     public val KaType.isByteType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.BYTE) }
 
-    /** `true` if the type is a [Float] type. */
+    /**
+     * Whether the [KaType] is a [Float] type.
+     */
     public val KaType.isFloatType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.FLOAT) }
 
-    /** `true` if the type is a [Double] type. */
+    /**
+     * Whether the [KaType] is a [Double] type.
+     */
     public val KaType.isDoubleType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.DOUBLE) }
 
-    /** `true` if the type is a [Char] type. */
+    /**
+     * Whether the [KaType] is a [Char] type.
+     */
     public val KaType.isCharType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.CHAR) }
 
-    /** `true` if the type is a [Boolean] type. */
+    /**
+     * Whether the [KaType] is a [Boolean] type.
+     */
     public val KaType.isBooleanType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.BOOLEAN) }
 
-    /** `true` if the type is a [String] type. */
+    /**
+     * Whether the [KaType] is a [String] type.
+     */
     public val KaType.isStringType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.STRING) }
 
-    /** `true` if the type is a [CharSequence] type. */
+    /**
+     * Whether the [KaType] is a [CharSequence] type.
+     */
     public val KaType.isCharSequenceType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.CHAR_SEQUENCE) }
 
-    /** `true` if the type is an [Any] type. */
+    /**
+     * Whether the [KaType] is an [Any] type.
+     */
     public val KaType.isAnyType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.ANY) }
 
-    /** `true` if the type is a [Nothing] type. */
+    /**
+     * Whether the [KaType] is a [Nothing] type.
+     */
     public val KaType.isNothingType: Boolean get() = withValidityAssertion { isClassType(DefaultTypeClassIds.NOTHING) }
 
-    /** `true` if the type is a [UInt] type. */
+    /**
+     * Whether the [KaType] is a [UInt] type.
+     */
     public val KaType.isUIntType: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uInt) }
 
-    /** `true` if the type is a [ULong] type. */
+    /**
+     * Whether the [KaType] is a [ULong] type.
+     */
     public val KaType.isULongType: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uLong) }
 
-    /** `true` if the type is a [UShort] type. */
+    /**
+     * Whether the [KaType] is a [UShort] type.
+     */
     public val KaType.isUShortType: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uShort) }
 
-    /** `true` if the type is a [UByte] type. */
+    /**
+     * Whether the [KaType] is a [UByte] type.
+     */
     public val KaType.isUByteType: Boolean get() = withValidityAssertion { isClassType(StandardNames.FqNames.uByte) }
 
-    /** The class symbol backing the given type, if available. */
+    /**
+     * The class symbol backing the given [KaType], if available.
+     */
     public val KaType.expandedSymbol: KaClassSymbol?
         get() = withValidityAssertion {
             return when (this) {
@@ -151,9 +191,14 @@ public interface KaTypeInformationProvider {
         }
 
     /**
-     * Unwraps type aliases.
+     * The type that corresponds to the given [KaType] with fully expanded type aliases.
      *
-     * Example:
+     * Type aliases are usually expanded immediately by the compiler, so most [KaType]s should already present in their expanded forms.
+     * Nonetheless, it is possible to obtain unexpanded types from the Analysis API, and [fullyExpandedType] may be used to expand type
+     * aliases in such types.
+     *
+     * #### Example
+     *
      * ```kotlin
      * interface Base
      *
@@ -164,16 +209,18 @@ public interface KaTypeInformationProvider {
      * ```
      *
      * The return type of `foo()` will be `@Anno3 @Anno2 @Anno1 Base` instead of `@Anno3 SecondAlias`
+     *
+     * @see KaType.abbreviation
      */
     public val KaType.fullyExpandedType: KaType
 
     /**
-     * `true` if the given [KaType] is an array or a primitive array type.
+     * Whether the [KaType] is an array or a primitive array type.
      */
     public val KaType.isArrayOrPrimitiveArray: Boolean
 
     /**
-     * `true` if the given [KaType] is an array or a primitive array type, and if its element is also an array type.
+     * Whether the [KaType] is an array or a primitive array type, and its element is also an array type.
      */
     public val KaType.isNestedArray: Boolean
 
@@ -186,7 +233,7 @@ public interface KaTypeInformationProvider {
     }
 
     /**
-     * `true` if the given [KaType] is a primitive type.
+     * Whether the [KaType] is a primitive type.
      */
     public val KaType.isPrimitive: Boolean
         get() = withValidityAssertion {
@@ -195,7 +242,7 @@ public interface KaTypeInformationProvider {
         }
 
     /**
-     * A stub default initializer for the given type, or `null` if the type is neither a primitive nor a string.
+     * The default initializer for the given [KaType], or `null` if the type is neither nullable, a primitive, nor a string.
      */
     @KaExperimentalApi
     public val KaType.defaultInitializer: String?
@@ -219,45 +266,45 @@ public interface KaTypeInformationProvider {
 }
 
 public object DefaultTypeClassIds {
-    /** The [Unit] class id. */
+    /** The [Unit] class ID. */
     public val UNIT: ClassId = ClassId.topLevel(StandardNames.FqNames.unit.toSafe())
 
-    /** The [Int] class id. */
+    /** The [Int] class ID. */
     public val INT: ClassId = ClassId.topLevel(StandardNames.FqNames._int.toSafe())
 
-    /** The [Long] class id. */
+    /** The [Long] class ID. */
     public val LONG: ClassId = ClassId.topLevel(StandardNames.FqNames._long.toSafe())
 
-    /** The [Short] class id. */
+    /** The [Short] class ID. */
     public val SHORT: ClassId = ClassId.topLevel(StandardNames.FqNames._short.toSafe())
 
-    /** The [Byte] class id. */
+    /** The [Byte] class ID. */
     public val BYTE: ClassId = ClassId.topLevel(StandardNames.FqNames._byte.toSafe())
 
-    /** The [Float] class id. */
+    /** The [Float] class ID. */
     public val FLOAT: ClassId = ClassId.topLevel(StandardNames.FqNames._float.toSafe())
 
-    /** The [Double] class id. */
+    /** The [Double] class ID. */
     public val DOUBLE: ClassId = ClassId.topLevel(StandardNames.FqNames._double.toSafe())
 
-    /** The [Char] class id. */
+    /** The [Char] class ID. */
     public val CHAR: ClassId = ClassId.topLevel(StandardNames.FqNames._char.toSafe())
 
-    /** The [Boolean] class id. */
+    /** The [Boolean] class ID. */
     public val BOOLEAN: ClassId = ClassId.topLevel(StandardNames.FqNames._boolean.toSafe())
 
-    /** The [String] class id. */
+    /** The [String] class ID. */
     public val STRING: ClassId = ClassId.topLevel(StandardNames.FqNames.string.toSafe())
 
-    /** The [CharSequence] class id. */
+    /** The [CharSequence] class ID. */
     public val CHAR_SEQUENCE: ClassId = ClassId.topLevel(StandardNames.FqNames.charSequence.toSafe())
 
-    /** The [Any] class id. */
+    /** The [Any] class ID. */
     public val ANY: ClassId = ClassId.topLevel(StandardNames.FqNames.any.toSafe())
 
-    /** The [Nothing] class id. */
+    /** The [Nothing] class ID. */
     public val NOTHING: ClassId = ClassId.topLevel(StandardNames.FqNames.nothing.toSafe())
 
-    /** A set of primitive class ids. */
+    /** A set of primitive class IDs. */
     public val PRIMITIVES: Set<ClassId> = setOf(INT, LONG, SHORT, BYTE, FLOAT, DOUBLE, CHAR, BOOLEAN)
 }

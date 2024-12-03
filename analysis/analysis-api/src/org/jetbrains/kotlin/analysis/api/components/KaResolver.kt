@@ -15,21 +15,22 @@ public interface KaResolver {
     /**
      * Resolves the given [KtReference] to symbols.
      *
-     * Returns an empty collection if a reference cannot be resolved.
-     * The function may return multiple symbols if the reference is ambiguous.
+     * Returns an empty collection if the reference cannot be resolved, or multiple symbols if the reference is ambiguous.
      */
     public fun KtReference.resolveToSymbols(): Collection<KaSymbol>
 
     /**
      * Resolves the given [KtReference] to a symbol.
-     * Returns `null` if a reference cannot be resolved, or resolved to multiple symbols because of ambiguity.
+     *
+     * Returns `null` if the reference cannot be resolved, or resolves to multiple symbols due to being ambiguous.
      */
     public fun KtReference.resolveToSymbol(): KaSymbol?
 
     /**
-     * Checks if the reference is an implicit reference to a companion object via the containing class.
+     * Checks if the [KtReference] is an implicit reference to a companion object via the containing class.
      *
-     * Example:
+     * #### Example
+     *
      * ```
      * class A {
      *    companion object {
@@ -38,16 +39,13 @@ public interface KaResolver {
      * }
      * ```
      *
-     * For the case provided, inside the call `A.foo()`,
-     * the `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`
-     *
-     * @return `true` if the reference is an implicit reference to a companion object, `false` otherwise.
+     * Given a call `A.foo()`, `A` is an implicit reference to the companion object, so `isImplicitReferenceToCompanion` returns `true`.
      */
     public fun KtReference.isImplicitReferenceToCompanion(): Boolean
 
     /**
-     * Resolves the given [KtElement] to a [KaCallInfo] object.
-     * [KaCallInfo] either contains a successfully resolved call or an error with a list of candidate calls and a diagnostic.
+     * Resolves the given [KtElement] to a [KaCallInfo] object. [KaCallInfo] either contains a successfully resolved call or an error with
+     * a list of candidate calls and a diagnostic.
      *
      * Returns `null` if the element does not correspond to a call.
      */
@@ -57,8 +55,8 @@ public interface KaResolver {
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html) for the call
      * corresponding to this [KtElement].
      *
-     * To compare, the [resolveToCall] function only returns the final result of overload resolution,
-     * i.e., the most specific callable passing all compatibility checks.
+     * To compare, the [resolveToCall] function only returns the final result of overload resolution, i.e. the most specific callable
+     * passing all compatibility checks.
      */
     public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>
 }
