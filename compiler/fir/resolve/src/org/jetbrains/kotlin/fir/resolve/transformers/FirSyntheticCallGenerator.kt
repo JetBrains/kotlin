@@ -213,8 +213,6 @@ class FirSyntheticCallGenerator(
                 val toSymbol = expectedTypeConeType.toSymbol(session) ?: error("todo: expectedTypeConeType.toSymbol == null")
                 val klass = toSymbol.fir as? FirRegularClass ?: error("todo ${toSymbol.fir::class} is not FirRegularClass")
                 val classId = klass.classId
-                // val staticScope = klass.staticScope(session, components.scopeSession)
-                // val companionProperty = staticScope?.getProperties(Name.identifier("Companion"))?.singleOrNull()!!
                 val companionObjectSymbol = klass.companionObjectSymbol
                 val scope = companionObjectSymbol?.unsubstitutedScope(
                     session,
@@ -226,7 +224,7 @@ class FirSyntheticCallGenerator(
                 val ofFunction =
                     scope.getFunctions(name).singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
                         ?: error("todo: ofFunction == null")
-                val function = buildFunctionCall {
+                buildFunctionCall {
                     argumentList = arrayLiteral.argumentList
                     source = arrayLiteral.source
 
@@ -235,42 +233,11 @@ class FirSyntheticCallGenerator(
                         symbol = companionObjectSymbol
                         packageFqName = classId.packageFqName
                         relativeClassFqName = classId.relativeClassName
-
-                        // calleeReference = buildSimpleNamedReference {
-                        //     source = arrayLiteral.source
-                        //     this.name = Name.identifier("Foo") // todo different package
-                        // }
-
-                        // calleeReference = generateCalleeReferenceWithCandidate(
-                        //     arrayLiteral,
-                        //     klass.symbol,
-                        //     FirEmptyArgumentList,
-                        //     Name.identifier("Foo"),
-                        //     callKind = CallKind.VariableAccess,
-                        //     context,
-                        //     resolutionMode
-                        // )
-
-                        // calleeReference = generateCalleeReferenceWithCandidate(
-                        //     arrayLiteral,
-                        //     companionObjectSymbol,
-                        //     FirEmptyArgumentList,
-                        //     Name.identifier("Companion"),
-                        //     callKind = CallKind.VariableAccess,
-                        //     // callKind = CallKind.Function,
-                        //     context,
-                        //     resolutionMode
-                        // )
-
+                        coneTypeOrNull = companionObjectSymbol.defaultType()
                     }
 
                     explicitReceiver = receiver
                     dispatchReceiver = receiver
-
-                    // calleeReference = buildSimpleNamedReference {
-                    //     source = arrayLiteral.source
-                    //     this.name = Name.identifier("of")
-                    // }
 
                     calleeReference = generateCalleeReferenceWithCandidate(
                         arrayLiteral,
@@ -280,11 +247,11 @@ class FirSyntheticCallGenerator(
                         callKind = CallKind.Function,
                         context,
                         resolutionMode,
+                        dispatchReceiver = receiver
                     )
 
-                    // origin = FirFunctionCallOrigin.Operator
+                    origin = FirFunctionCallOrigin.Operator
                 }
-                function
             }
         }
     }
@@ -498,9 +465,10 @@ class FirSyntheticCallGenerator(
         callKind: CallKind = CallKind.SyntheticSelect,
         context: ResolutionContext,
         resolutionMode: ResolutionMode,
+        dispatchReceiver: FirExpression? = null,
     ): FirNamedReferenceWithCandidate {
         val callInfo = generateCallInfo(callSite, name, argumentList, callKind, resolutionMode)
-        val candidate = generateCandidate(callInfo, function, context)
+        val candidate = generateCandidate(callInfo, function, dispatchReceiver, context)
         val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
         val source = callSite.source?.fakeElement(KtFakeSourceElementKind.SyntheticCall)
         if (!candidate.isSuccessful) {
@@ -516,13 +484,18 @@ class FirSyntheticCallGenerator(
         return FirNamedReferenceWithCandidate(source, name, candidate)
     }
 
-    private fun generateCandidate(callInfo: CallInfo, function: FirBasedSymbol<*>, context: ResolutionContext): Candidate {
+    private fun generateCandidate(
+        callInfo: CallInfo,
+        function: FirBasedSymbol<*>,
+        dispatchReceiver: FirExpression?,
+        context: ResolutionContext,
+    ): Candidate {
         val candidateFactory = CandidateFactory(context, callInfo)
         return candidateFactory.createCandidate(
             callInfo,
             symbol = function,
-            explicitReceiverKind = if (callInfo.name.asString() == "of") ExplicitReceiverKind.DISPATCH_RECEIVER else ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-            // explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            explicitReceiverKind = if (dispatchReceiver != null) ExplicitReceiverKind.DISPATCH_RECEIVER else ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            dispatchReceiver = dispatchReceiver,
             scope = null
         )
     }

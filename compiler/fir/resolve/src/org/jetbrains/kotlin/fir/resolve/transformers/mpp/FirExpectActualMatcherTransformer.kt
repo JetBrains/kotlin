@@ -29,9 +29,6 @@ class FirExpectActualMatcherProcessor(
     override val transformer: FirTransformer<Nothing?> = FirExpectActualMatcherTransformer(session, scopeSession)
 
     override fun processFile(file: FirFile) {
-        // println("--- ${file.name}")
-        // println(file.renderWithType())
-        println()
         if (!enabled) return
         super.processFile(file)
     }
