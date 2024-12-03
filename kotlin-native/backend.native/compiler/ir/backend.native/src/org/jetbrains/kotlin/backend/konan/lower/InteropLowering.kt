@@ -397,37 +397,27 @@ private class InteropTransformerPart1(
 
         // Generate `override fun init...(...) = this.initBy(...)`:
 
-        return context.irFactory.createSimpleFunction(
-                constructor.startOffset,
-                constructor.endOffset,
-                OVERRIDING_INITIALIZER_BY_CONSTRUCTOR,
-                initMethod.name,
-                DescriptorVisibilities.PUBLIC,
-                isInline = false,
-                isExpect = false,
-                irClass.defaultType,
-                Modality.OPEN,
-                IrSimpleFunctionSymbolImpl(),
-                isTailrec = false,
-                isSuspend = false,
-                isOperator = false,
-                isInfix = false,
-        ).also { result ->
+        return context.irFactory.buildFun {
+            startOffset = constructor.startOffset
+            endOffset = constructor.endOffset
+            origin = OVERRIDING_INITIALIZER_BY_CONSTRUCTOR
+            name = initMethod.name
+            modality = Modality.OPEN
+            returnType = irClass.defaultType
+        }.also { result ->
             result.parent = irClass
+            result.parameters = constructor.parameters.map { it.copyTo(result) }
             result.createDispatchReceiverParameter()
-            result.valueParameters += constructor.valueParameters.map { it.copyTo(result) }
 
             result.overriddenSymbols += initMethod.symbol
 
             result.body = context.createIrBuilder(result.symbol).irBlockBody(result) {
                 +irReturn(
-                    irCallWithSubstitutedType(symbols.interopObjCObjectInitBy, listOf(irClass.defaultType)).apply {
-                            extensionReceiver = irGet(result.dispatchReceiverParameter!!)
-                            putValueArgument(0, irCall(constructor).also {
-                                result.valueParameters.forEach { parameter ->
-                                    it.putValueArgument(parameter.indexInOldValueParameters, irGet(parameter))
-                                }
-                            })
+                        irCallWithSubstitutedType(symbols.interopObjCObjectInitBy, listOf(irClass.defaultType)).apply {
+                            arguments[0] = irGet(result.parameters[0])
+                            arguments[1] = irCall(constructor).also {
+                                result.parameters.drop(1).forEachIndexed { index, parameter -> it.arguments[index] = irGet(parameter) }
+                            }
                         }
                 )
             }
