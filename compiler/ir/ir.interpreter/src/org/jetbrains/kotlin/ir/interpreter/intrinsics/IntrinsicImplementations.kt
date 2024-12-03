@@ -170,7 +170,7 @@ internal object EnumIntrinsics : IntrinsicBase() {
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         val callStack = environment.callStack
-        val enumEntry = callStack.loadState(irFunction.dispatchReceiverParameter!!.symbol)
+        val enumEntry = callStack.loadState(irFunction.parameters[0].symbol)
         when (irFunction.name.asString()) {
             "<get-name>", "<get-ordinal>" -> {
                 val symbol = irFunction.property!!.symbol
@@ -178,13 +178,13 @@ internal object EnumIntrinsics : IntrinsicBase() {
             }
             "compareTo" -> {
                 val ordinalSymbol = enumEntry.irClass.getOriginalPropertyByName("ordinal").symbol
-                val other = callStack.loadState(irFunction.valueParameters.single().symbol)
+                val other = callStack.loadState(irFunction.parameters[1].symbol)
                 val compareTo = enumEntry.getField(ordinalSymbol)!!.asInt().compareTo(other.getField(ordinalSymbol)!!.asInt())
                 callStack.pushState(environment.convertToState(compareTo, irFunction.returnType))
             }
             // TODO "clone" -> throw exception
             "equals" -> {
-                val other = callStack.loadState(irFunction.valueParameters.single().symbol)
+                val other = callStack.loadState(irFunction.parameters[1].symbol)
                 callStack.pushState(environment.convertToState((enumEntry === other), irFunction.returnType))
             }
             "hashCode" -> callStack.pushState(environment.convertToState(enumEntry.hashCode(), irFunction.returnType))
