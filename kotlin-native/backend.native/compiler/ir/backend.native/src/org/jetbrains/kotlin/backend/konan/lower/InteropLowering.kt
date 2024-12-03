@@ -465,12 +465,15 @@ private class InteropTransformerPart1(
     }
 
     private fun getMethodSignatureEncoding(function: IrFunction): String {
-        require(function.extensionReceiverParameter == null) { renderCompilerError(function) }
-        require(function.valueParameters.all { it.type.isObjCObjectType() }) { renderCompilerError(function) }
+        require(function.parameters.all {
+            it.kind == IrParameterKind.DispatchReceiver || (it.kind == IrParameterKind.Regular && it.type.isObjCObjectType())
+        }) {
+            renderCompilerError(function)
+        }
         require(function.returnType.isUnit()) { renderCompilerError(function) }
 
         // Note: these values are valid for x86_64 and arm64.
-        return when (function.valueParameters.size) {
+        return when (function.parameters.count { it.kind == IrParameterKind.Regular }) {
             0 -> "v16@0:8"
             1 -> "v24@0:8@16"
             2 -> "v32@0:8@16@24"
