@@ -150,7 +150,18 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
     val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")
-    val enumEntriesIntrinsic = getFunctionInEnumPackage("enumEntriesIntrinsic")
+
+    private val _enumEntriesIntrinsics =
+        symbolFinder.findFunctions(Name.identifier("enumEntriesIntrinsic"), StandardClassIds.BASE_ENUMS_PACKAGE)
+
+    val enumEntriesIntrinsic: IrSimpleFunctionSymbol by lazy(LazyThreadSafetyMode.NONE) {
+        _enumEntriesIntrinsics.single {
+            // When compiling the standard library, `symbolFinder.findFunctions(...)` returns two symbols
+            // for `kotlin.enums.enumEntriesIntrinsic`: one for the `expect` declaration, and one for `actual`.
+            // We're not interested in the `expect` one.
+            !it.owner.isExpect
+        }
+    }
 
 
     // Other:
@@ -411,15 +422,6 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     private fun getCoroutineIntrinsic(name: String): Iterable<IrSimpleFunctionSymbol> =
         symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_COROUTINES_INTRINSICS_PACKAGE)
-
-    private fun getFunctionInEnumPackage(name: String): IrSimpleFunctionSymbol =
-        symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_ENUMS_PACKAGE)
-            .single {
-                // When compiling the standard library, `symbolFinder.findFunctions(...)` returns two symbols
-                // for `kotlin.enums.enumEntriesIntrinsic`: one for the `expect` declaration, and one for `actual`.
-                // We're not interested in the `expect` one.
-                !it.isBound || !it.owner.isExpect
-            }
 
     private fun getFunctionInKotlinPackage(name: String): IrSimpleFunctionSymbol =
         symbolFinder.findFunctions(Name.identifier(name), StandardClassIds.BASE_KOTLIN_PACKAGE).single()
