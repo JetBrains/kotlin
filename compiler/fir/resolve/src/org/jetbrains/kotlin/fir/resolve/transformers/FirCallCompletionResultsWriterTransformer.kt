@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
+import org.jetbrains.kotlin.fir.resolve.calls.stages.getCollectionLiteralElementType
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirTypeVariablesAfterPCLATransformer
@@ -1190,12 +1191,12 @@ class FirCallCompletionResultsWriterTransformer(
 
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ExpectedArgumentType?): FirStatement {
         if (arrayLiteral.isResolved) return arrayLiteral
-        val expectedArrayType = data?.getExpectedType(arrayLiteral)
-        val expectedArrayElementType = expectedArrayType?.arrayElementType(collectionLiteral = true)
+        val expectedArrayType = data?.getExpectedType(arrayLiteral)!!
+        val expectedArrayElementType = getCollectionLiteralElementType(expectedArrayType, session, scopeSession)
         arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType())
         val call = components.syntheticCallGenerator.generateCollectionCall(
             arrayLiteral,
-            expectedArrayType!!,
+            expectedArrayType,
             resolutionContext,
             resolutionMode = ResolutionMode.ContextIndependent
         )

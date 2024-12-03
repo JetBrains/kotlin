@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -114,24 +116,21 @@ internal object ArgumentCheckingProcessor {
             }
             is ConeCollectionLiteralResolutionAtom -> {
                 val collectionLiteralArgumentContext = this@resolveArgumentExpression
-                val symbol = collectionLiteralArgumentContext.expectedType?.toSymbol(session)
-                val clazz = symbol?.fir as? FirRegularClass ?: error("WTF ${collectionLiteralArgumentContext.expectedType} ${symbol?.fir} ${symbol?.fir?.let { it::class }}")
-                val companion = clazz.companionObjectSymbol
-                val scope = companion?.unsubstitutedScope(
+                collectionLiteralArgumentContext.expectedType ?: error("WTF1 ${collectionLiteralArgumentContext.expectedType}")
+                val collectionLiteralElementType = getCollectionLiteralElementType(
+                    collectionLiteralArgumentContext.expectedType,
                     session,
-                    scopeSession = collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession,
-                    withForcedTypeCalculator = false,
-                    FirResolvePhase.BODY_RESOLVE
+                    collectionLiteralArgumentContext.context.bodyResolveComponents.scopeSession
                 )
-                val ofFunction =
-                    scope?.getFunctions(Name.identifier("of"))?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
-                if (ofFunction == null) {
+                if (collectionLiteralElementType == null) {
+                    if (listOfNothingConeType.isSubtypeOf(expectedType, session)) {
+                        return // Just don't infer anything. The candidate is successful
+                    }
                     val diag = ArgumentTypeMismatch(expectedType, expectedType, atom.expression, isMismatchDueToNullability = false)
                     reportDiagnostic(diag) // todo create new diagnostic
                     return
                 }
-                val collectionElementType = ofFunction.valueParameterSymbols.single().resolvedReturnType.arrayElementType()!!
-                val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(expectedType = collectionElementType)
+                val collectionLiteralElementContext = collectionLiteralArgumentContext.copy(expectedType = collectionLiteralElementType)
                 for (atom in atom.subAtoms) {
                     collectionLiteralElementContext.resolveArgumentExpression(atom)
                 }
@@ -496,3 +495,32 @@ internal object ArgumentCheckingProcessor {
     private val ConeResolutionAtomWithPostponedChild.callableReferenceExpression: FirCallableReferenceAccess
         get() = expression as? FirCallableReferenceAccess ?: error("Expected callable reference")
 }
+
+fun getCollectionLiteralElementType(expectedType: ConeKotlinType, session: FirSession, scopeSession: ScopeSession): ConeKotlinType? {
+    if (expectedType.isList || expectedType.isMutableList || expectedType.isSet || expectedType.isMutableSet || expectedType.isArrayType) {
+        return expectedType.typeArguments.firstOrNull()?.type
+    }
+    val symbol = expectedType.toSymbol(session)
+    val clazz = symbol?.fir as? FirRegularClass
+        ?: error("WTF2 $expectedType ${symbol?.fir} ${symbol?.fir?.let { it::class }}")
+    val companion = clazz.companionObjectSymbol
+    val scope = companion?.unsubstitutedScope(
+        session,
+        scopeSession = scopeSession,
+        withForcedTypeCalculator = false,
+        FirResolvePhase.BODY_RESOLVE
+    )
+    val ofFunction =
+        scope?.getFunctions(Name.identifier("of"))?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
+    if (ofFunction == null) {
+        return null
+    }
+    val collectionElementType = ofFunction.valueParameterSymbols.single().resolvedReturnType.arrayElementType()!!
+    return collectionElementType
+}
+
+internal val listOfNothingConeType = ConeClassLikeTypeImpl(
+    StandardClassIds.List.toLookupTag(),
+    arrayOf(ConeClassLikeTypeImpl(StandardClassIds.Nothing.toLookupTag(), arrayOf(), isMarkedNullable = false)),
+    isMarkedNullable = false
+)

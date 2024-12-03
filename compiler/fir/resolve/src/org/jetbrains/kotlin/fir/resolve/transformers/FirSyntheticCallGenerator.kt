@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.calls.stages.listOfNothingConeType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
@@ -195,12 +196,6 @@ class FirSyntheticCallGenerator(
             )
         }
     }
-
-    private val listOfNothingConeType = ConeClassLikeTypeImpl(
-        StandardClassIds.List.toLookupTag(),
-        arrayOf(ConeClassLikeTypeImpl(StandardClassIds.Nothing.toLookupTag(), arrayOf(), isMarkedNullable = false)),
-        isMarkedNullable = false
-    )
 
     fun generateCollectionCall(
         arrayLiteral: FirArrayLiteral,
