@@ -86,11 +86,7 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
             startOffset = 0
             endOffset = fileEntry.maxOffset
             origin = IrDeclarationOrigin.SCRIPT_CLASS
-            name = irScript.name.let {
-                if (it.isSpecial) {
-                    NameUtils.getScriptNameForFile(it.asStringStripSpecialMarkers().removePrefix("script-"))
-                } else it
-            }
+            name = NameUtils.getScriptTargetClassName(irScript.name)
             kind = ClassKind.CLASS
             visibility = DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
