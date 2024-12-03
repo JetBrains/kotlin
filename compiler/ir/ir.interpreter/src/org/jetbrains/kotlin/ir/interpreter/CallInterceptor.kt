@@ -94,7 +94,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             irClass.defaultType.isUnsignedType() -> {
                 val propertyName = irClass.inlineClassRepresentation?.underlyingPropertyName
                 val propertySymbol = irClass.declarations.filterIsInstance<IrProperty>()
-                    .single { it.name == propertyName && it.getter?.extensionReceiverParameter == null }
+                    .single { it.name == propertyName && it.getter?.hasShape(dispatchReceiver = true) ?: true }
                     .symbol
                 callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
             }
