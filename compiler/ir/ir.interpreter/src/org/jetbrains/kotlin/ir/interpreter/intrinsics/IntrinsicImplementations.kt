@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
@@ -227,14 +228,14 @@ internal object ArrayConstructor : IntrinsicBase() {
     }
 
     override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
-        if (irFunction.valueParameters.size == 1) return super.unwind(irFunction, environment)
+        if (irFunction.hasShape(regularParameters = 1)) return super.unwind(irFunction, environment)
         val callStack = environment.callStack
         val instructions = super.unwind(irFunction, environment).toMutableList()
 
-        val sizeSymbol = irFunction.valueParameters[0].symbol
+        val sizeSymbol = irFunction.parameters[0].symbol
         val size = callStack.loadState(sizeSymbol).asInt()
 
-        val initSymbol = irFunction.valueParameters[1].symbol
+        val initSymbol = irFunction.parameters[1].symbol
         val state = callStack.loadState(initSymbol).let {
             (it as? KFunctionState) ?: (it as KPropertyState).getterState!!
         }
@@ -243,8 +244,8 @@ internal object ArrayConstructor : IntrinsicBase() {
 
         for (i in size - 1 downTo 0) {
             val call = (state.invokeSymbol.owner as IrSimpleFunction).createCall()
-            call.dispatchReceiver = initSymbol.owner.createGetValue()
-            call.putValueArgument(0, i.toIrConst(environment.irBuiltIns.intType))
+            call.arguments[0] = initSymbol.owner.createGetValue()
+            call.arguments[1] = i.toIrConst(environment.irBuiltIns.intType)
             instructions += CompoundInstruction(call)
         }
 
