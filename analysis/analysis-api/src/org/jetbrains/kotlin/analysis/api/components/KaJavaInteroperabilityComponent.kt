@@ -21,29 +21,31 @@ import org.jetbrains.org.objectweb.asm.Type
 
 public interface KaJavaInteroperabilityComponent {
     /**
-     * Converts the given [KaType] to [PsiType] under [useSitePosition] context.
+     * Converts the given [KaType] to a [PsiType] in the context of the [useSitePosition].
      *
-     * Note: [PsiType] is JVM conception, so this method will return `null` for non-JVM platforms, unless [allowNonJvmPlatforms] is set.
+     * [PsiType] is JVM conception, so this method will return `null` for non-JVM platforms, unless [allowNonJvmPlatforms] is set.
      *
-     * @receiver type to convert
+     * @receiver The [KaType] to convert.
      *
-     * @param useSitePosition is used to determine if the given [KaType] needs to be approximated.
-     * For instance, if the given type is local yet available in the same scope of use site,
-     * we can still use such a local type.
-     * Otherwise, e.g., exposed to public as a return type, the resulting type will be approximated accordingly.
+     * @param useSitePosition Determines whether the given [KaType] needs to be approximated.
+     * For instance, if the given type is local but the use site is in the same local scope, we do not need to approximate the local type.
+     * However, when exposed to the public as a return type, the resulting type must be approximated accordingly.
      *
-     * @param allowErrorTypes if **false** the result will be null in the case of an error type inside the [type][this].
-     * Erroneous types will be replaced with `error.NonExistentClass` type.
+     * @param allowErrorTypes Determines whether the [KaType] should still be converted if it contains an error type. When this option is
+     * `false`, the result will be `null` if the [KaType] contains an error type. When `true`, erroneous types will be replaced with the
+     * `error.NonExistentClass` type.
      *
-     * @param suppressWildcards indicates whether wild cards in type arguments need to be suppressed or not,
-     * e.g., according to the annotation on the containing declarations.
+     * @param suppressWildcards Indicates whether wildcards in type arguments should be suppressed. This option works similar to adding a
+     * [JvmSuppressWildcards] annotation to the containing declaration.
+     *
      * - `true` means they should be suppressed.
      * - `false` means they should appear.
-     * - `null` is no-op by default, i.e., their suppression/appearance is determined by type annotations.
+     * - `null` means that the default applies, where wildcard suppression/appearance is determined by type annotations.
      *
-     * @param preserveAnnotations if **true** the result [PsiType] will have converted annotations from the original [type][this]
+     * @param preserveAnnotations Whether annotations from the original [KaType] should be included in the resulting [PsiType] with an
+     * appropriate conversion.
      *
-     * @param allowNonJvmPlatforms if **true** the resulting type is computed even for non-JVM modules. The flag provides no validity
+     * @param allowNonJvmPlatforms Whether the [PsiType] should be computed even for non-JVM modules. The flag provides no validity
      * guarantees – the returned type may be unresolvable from Java, or `null`.
      */
     @KaExperimentalApi
@@ -58,13 +60,14 @@ public interface KaJavaInteroperabilityComponent {
     ): PsiType?
 
     /**
-     * Converts given [PsiType] to [KaType].
+     * Converts the given [PsiType] to a [KaType] in the context of the [useSitePosition].
      *
-     * [useSitePosition] may be used to clarify how to resolve some parts of [PsiType].
-     * For instance, it can be used to collect type parameters and use them during the conversion.
+     * [useSitePosition] clarifies how to resolve some parts of the [PsiType]. For instance, it can be used to collect type parameters and
+     * apply them during the conversion.
      *
-     * @receiver [PsiType] to be converted.
-     * @return The converted [KaType], or null if conversion is not possible e.g., [PsiType] is not resolved
+     * @receiver The [PsiType] to be converted.
+     *
+     * @return The converted [KaType], or `null` if conversion is not possible. For example, [PsiType] might not be resolvable.
      */
     @KaExperimentalApi
     public fun PsiType.asKaType(useSitePosition: PsiElement): KaType?
@@ -78,7 +81,7 @@ public interface KaJavaInteroperabilityComponent {
     public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type
 
     /**
-     * `true` if the given type is backed by a single JVM primitive type.
+     * Whether the given [KaType] is backed by a single JVM primitive type.
      */
     @KaExperimentalApi
     public val KaType.isPrimitiveBacked: Boolean
@@ -98,7 +101,7 @@ public interface KaJavaInteroperabilityComponent {
      * The containing JVM class name for the given [KaCallableSymbol].
      *
      * The property works for both source and library declarations.
-     * The returned JVM class name is a fully qualified name separated by dots, e.g., `foo.bar.Baz.Companion`.
+     * The returned JVM class name is a fully qualified name separated by dots, such as `foo.bar.Baz.Companion`.
      *
      * Applicable only to JVM modules, and common modules with JVM targets.
      * [containingJvmClassName] is always `null` all other kinds of modules.

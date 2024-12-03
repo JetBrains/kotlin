@@ -12,16 +12,16 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
 public interface KaAnalysisScopeProvider {
     /**
-     * A [GlobalSearchScope] containing files analyzable by the current [KaSession].
-     * It means that [KaSymbol]s can be built for declarations from the scope.
+     * A [GlobalSearchScope] which spans the files that can be analyzed by the current [KaSession].
+     *
+     * For example, [KaSymbol]s can only be built for declarations which are in the analysis scope.
      */
     public val analysisScope: GlobalSearchScope
 
     /**
-     * Checks whether the receiver [PsiElement] is inside the analysis scope.
-     * It means that a [KaSymbol] can be potentially built using this [PsiElement].
+     * Checks whether the [PsiElement] is inside the [analysisScope].
      *
-     * @see analysisScope
+     * For example, a [KaSymbol] can only be built for this [PsiElement] if it can be analyzed.
      */
     public fun PsiElement.canBeAnalysed(): Boolean
 }

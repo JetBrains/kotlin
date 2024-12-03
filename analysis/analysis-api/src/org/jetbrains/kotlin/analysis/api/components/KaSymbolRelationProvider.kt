@@ -122,14 +122,14 @@ public interface KaSymbolRelationProvider {
     /**
      * Checks if [this] class has [superClass] as its superclass somewhere in the inheritance hierarchy.
      *
-     * N.B. The class is not considered to be a subclass of itself, so `myClass.isSubClassOf(myClass)` is always `false`.
+     * The class is not considered to be a subclass of itself, so `myClass.isSubClassOf(myClass)` is always `false`.
      */
     public fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean
 
     /**
      * Checks if [this] class has [superClass] listed as its direct superclass.
      *
-     * N.B. The class is not considered to be a direct subclass of itself, so `myClass.isDirectSubClassOf(myClass)` is always `false`.
+     * The class is not considered to be a direct subclass of itself, so `myClass.isDirectSubClassOf(myClass)` is always `false`.
      */
     public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean
 
@@ -158,8 +158,8 @@ public interface KaSymbolRelationProvider {
     public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
 
     /**
-     * Returns the [ImplementationStatus] of the [this] member symbol in the given [parentClassSymbol],
-     * or `null` if this symbol is not a member.
+     * Returns the [ImplementationStatus] of the given [KaCallableSymbol] in the given [parentClassSymbol], or `null` if this symbol is not
+     * a member.
      */
     @KaExperimentalApi
     public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus?
@@ -192,16 +192,19 @@ public interface KaSymbolRelationProvider {
     public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
 
     /**
-     * Returns `expect` symbols for the given `actual` one if it is available.
-     *
-     * @return a single expect declaration that corresponds to the [KaDeclarationSymbol] on valid code,
-     * or multiple `expect`s in a case of erroneous code with multiple `expect`s.
+     * Returns an `expect` symbol for the given `actual` symbol, if it is available. The function may return multiple `expect` symbols in
+     * case of ambiguity errors.
      **/
     @KaExperimentalApi
     public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol>
 
     /**
-     * Inheritors of the given sealed class.
+     * The inheritors of the given sealed class.
+     *
+     * The result is limited to class symbols which are [analyzable][KaAnalysisScopeProvider.analysisScope] in the use-site [KaModule].
+     * While sealed class inheritors can usually only be defined in the same module, there are more complex [rules](https://kotlinlang.org/docs/sealed-classes.html#inheritance-in-multiplatform-projects)
+     * around multiplatform projects. If the use-site module is a common source set and additional sealed inheritors are declared in a
+     * platform source set, [sealedClassInheritors] will not include those additional platform sealed inheritors.
      *
      * @throws IllegalArgumentException if the given class is not a sealed class.
      */
