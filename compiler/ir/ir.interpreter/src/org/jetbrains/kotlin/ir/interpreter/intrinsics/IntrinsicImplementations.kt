@@ -253,7 +253,7 @@ internal object ArrayConstructor : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val sizeDescriptor = irFunction.valueParameters[0].symbol
+        val sizeDescriptor = irFunction.parameters[0].symbol
         val size = environment.callStack.loadState(sizeDescriptor).asInt()
         val arrayValue = MutableList<Any?>(size) {
             when {
@@ -263,7 +263,7 @@ internal object ArrayConstructor : IntrinsicBase() {
             }
         }
 
-        if (irFunction.valueParameters.size == 2) {
+        if (irFunction.hasShape(regularParameters = 2)) {
             for (i in size - 1 downTo 0) {
                 arrayValue[i] = environment.callStack.popState().let {
                     // TODO may be use wrap
