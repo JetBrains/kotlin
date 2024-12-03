@@ -5,6 +5,8 @@
 
 package test.io
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 import java.io.File
 import java.io.Reader
@@ -15,6 +17,8 @@ import java.util.ArrayList
 private fun sample(): Reader = StringReader("Hello\nWorld");
 
 class ReadWriteTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun testAppendText() {
         val file = File.createTempFile("temp", System.nanoTime().toString())
         file.writeText("Hello\n")

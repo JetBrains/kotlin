@@ -7,6 +7,8 @@
 
 package test.enums
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import test.collections.behaviors.listBehavior
 import test.collections.compare
@@ -18,6 +20,8 @@ import kotlin.test.assertEquals
 
 @Suppress("UNUSED_EXPRESSION", "EnumValuesSoftDeprecate") // <- Used deliberately as a sanity check for tests
 class EnumEntriesJvmTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     enum class EmptyEnum
 
     enum class NonEmptyEnum {

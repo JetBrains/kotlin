@@ -5,6 +5,8 @@
 
 package test.io
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import test.assertArrayContentEquals
 import java.io.*
 import kotlin.io.walkTopDown
@@ -12,6 +14,7 @@ import kotlin.random.Random
 import kotlin.test.*
 
 class FilesTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private val isCaseInsensitiveFileSystem = File("C:/") == File("c:/")
     private val isBackslashSeparator = File.separatorChar == '\\'

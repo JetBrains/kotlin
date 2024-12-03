@@ -5,10 +5,13 @@
 
 package test.collections
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 
 class MutableCollectionJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun shuffledRnd() {
         val rnd1 = java.util.Random(42L)

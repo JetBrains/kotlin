@@ -16,12 +16,15 @@
 
 package kotlin.jdk8.streams.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.streams.*
 import org.junit.Test
 import java.util.stream.*
 import kotlin.test.*
 
 class StreamsTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun toList() {
         val data = arrayOf<Any?>(1, 2L, 1.23, null)

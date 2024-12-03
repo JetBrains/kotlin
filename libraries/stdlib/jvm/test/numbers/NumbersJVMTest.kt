@@ -5,9 +5,12 @@
 
 package test.numbers
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class NumbersJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test
     fun floatToBits() {

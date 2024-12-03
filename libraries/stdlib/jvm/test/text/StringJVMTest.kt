@@ -5,6 +5,8 @@
 
 package test.text
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import test.collections.assertArrayNotSameButEquals
 import test.platformNull
 import java.util.*
@@ -12,6 +14,7 @@ import kotlin.test.*
 
 
 class StringJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun testSplitByPattern() = withOneCharSequenceArg("ab1cd2def3") { s ->
         val isDigit = "\\d".toRegex()

@@ -6,6 +6,8 @@
 @file:Suppress("DEPRECATION", "DEPRECATED_JAVA_ANNOTATION")
 package test.reflection
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 @Retention(AnnotationRetention.RUNTIME)
@@ -17,6 +19,8 @@ class AnnotatedClass
 
 
 class AnnotationTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun annotationType() {
         val kAnnotations = AnnotatedClass::class.java.annotations.map { it!!.annotationClass }
         val jAnnotations = AnnotatedClass::class.java.annotations.map { it!!.annotationClass.java }

@@ -5,11 +5,15 @@
 
 package test.time
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.concurrent.TimeUnit
 import kotlin.test.*
 import kotlin.time.*
 
 class DurationUnitJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun conversionFromTimeUnit() {
         for (unit in DurationUnit.entries) {

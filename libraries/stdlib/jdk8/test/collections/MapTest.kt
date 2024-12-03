@@ -16,12 +16,15 @@
 
 package kotlin.jdk8.collections.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.util.function.BiFunction
 import kotlin.test.*
 import kotlin.jdk8.collections.*
 
 class MapTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun getOrDefault() {
         val map = mapOf("x" to 1, "z" to null)

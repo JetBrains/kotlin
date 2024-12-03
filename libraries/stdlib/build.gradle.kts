@@ -1,13 +1,11 @@
 @file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING", "DEPRECATION")
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8Plugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
@@ -391,6 +389,7 @@ kotlin {
             }
             dependencies {
                 api(kotlinTest("junit"))
+                implementation(project(":compiler:tests-mutes:mutes-junit4"))
             }
             kotlin.srcDir("jvm/test")
             kotlin.srcDir("jdk7/test")
@@ -743,6 +742,9 @@ tasks {
 
     val jvmTest by existing(Test::class)
 
+    jvmTest.configure {
+        muteWithDatabase()
+    }
     listOf(JdkMajorVersion.JDK_9_0, JdkMajorVersion.JDK_11_0).forEach { jvmVersion ->
         val jvmVersionTest = register("jvm${jvmVersion.majorVersion}Test", Test::class) {
             group = "verification"
@@ -751,7 +753,7 @@ tasks {
             // after KMP plugin stopped applying java plugin
             classpath = jvmTest.get().classpath
             testClassesDirs = jvmTest.get().testClassesDirs
-
+            muteWithDatabase()
         }
         check.configure { dependsOn(jvmVersionTest) }
     }
@@ -823,7 +825,9 @@ tasks {
             }
         }
     }
-
+    withType<Test>().configureEach {
+        muteWithDatabase()
+    }
 }
 
 

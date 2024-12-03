@@ -5,11 +5,14 @@
 
 package kotlin.jdk7.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import test.platformNull
 import java.io.*
 import kotlin.test.*
 
 class UseAutoCloseableResourceJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     class Resource : AutoCloseable {
         override fun close() {

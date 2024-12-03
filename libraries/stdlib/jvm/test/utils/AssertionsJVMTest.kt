@@ -5,9 +5,12 @@
 
 package test.utils
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.test.*
 
 class AssertionsJVMTest() {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun passingAssert() {
         assert(true)

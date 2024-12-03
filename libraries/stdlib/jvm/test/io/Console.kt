@@ -7,6 +7,8 @@
 
 package test.io
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import java.nio.charset.Charset
 import kotlin.random.Random
@@ -14,6 +16,8 @@ import kotlin.random.nextInt
 import kotlin.test.*
 
 class ConsoleTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val linuxLineSeparator: String = "\n"
     private val windowsLineSeparator: String = "\r\n"
 

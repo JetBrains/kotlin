@@ -5,6 +5,8 @@
 
 package test.io
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.io.*
 import kotlin.test.*
 
@@ -29,6 +31,8 @@ private class OldSchoolSingleton private constructor() : Serializable {
 
 
 class SerializableTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test fun testClosure() {
         val tuple = Triple("Ivan", 12, Serial("serial"))
         val fn = @JvmSerializableLambda { tuple.toString() }

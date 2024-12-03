@@ -5,6 +5,8 @@
 
 package test.uuid
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import test.io.serializeAndDeserialize
 import java.nio.BufferOverflowException
 import java.nio.BufferUnderflowException
@@ -16,6 +18,8 @@ import kotlin.uuid.*
 typealias JavaUUID = java.util.UUID
 
 class UuidJVMTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val uuidByteArray = byteArrayOf(
         0x55, 0x0e, 0x84.toByte(), 0x00, 0xe2.toByte(), 0x9b.toByte(), 0x41, 0xd4.toByte(),
         0xa7.toByte(), 0x16, 0x44, 0x66, 0x55, 0x44, 0x00, 0x00
