@@ -260,7 +260,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
 
     /**
      * Returns a view with the [JsArray] methods to consume it in JavaScript as a regular array.
-     * Structural changes in the base list are synchronized with the view, and vice verse.
+     * Structural changes in the base list are synchronized with the view, and vice versa.
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
@@ -330,7 +330,7 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     /**
      * Returns a view with the [JsSet] methods to consume it in JavaScript as a regular Set.
-     * Structural changes in the base set are synchronized with the view, and vice verse.
+     * Structural changes in the base set are synchronized with the view, and vice versa.
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
@@ -484,7 +484,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
 
     /**
      * Returns a view with the [JsMap] methods to consume it in JavaScript as a regular Map.
-     * Structural changes in the base map are synchronized with the view, and vice verse.
+     * Structural changes in the base map are synchronized with the view, and vice versa.
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
