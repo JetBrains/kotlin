@@ -484,7 +484,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
 
     /**
      * Returns a view with the [JsMap] methods to consume it in JavaScript as a regular Map.
-     * Structural changes in the base map are synchronized with the view, and vice verse.
+     * Structural changes in the base map are synchronized with the view, and vice versa.
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
