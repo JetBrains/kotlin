@@ -5,6 +5,8 @@
 
 package test.enums
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
@@ -12,6 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.time.DurationUnit
 
 class EnumDeclaringJavaClassTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     private enum class TestEnum {
         E
