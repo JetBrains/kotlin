@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 internal fun IrExpression.handleAndDropResult(callStack: CallStack) {
     val dropResult = fun() { callStack.popState() }
@@ -133,7 +134,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
         }
 
         // if some arguments are not defined, then it is necessary to create temp function where defaults will be evaluated
-        val actualParameters = MutableList<IrValueDeclaration?>(expression.valueArgumentsCount) { null }
+        val actualParameters = MutableList<IrValueDeclaration?>(expression.arguments.size) { null }
         val ownerWithDefaults = expression.getFunctionThatContainsDefaults()
         val visibility = when (expression) {
             is IrEnumConstructorCall, is IrDelegatingConstructorCall -> DescriptorVisibilities.LOCAL
@@ -145,18 +146,15 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
             origin = IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, visibility
         ).apply {
             this.parent = ownerWithDefaults.parent
-            this.dispatchReceiverParameter = ownerWithDefaults.dispatchReceiverParameter?.deepCopyWithSymbols(this)
-            this.extensionReceiverParameter = ownerWithDefaults.extensionReceiverParameter?.deepCopyWithSymbols(this)
-            (0 until expression.valueArgumentsCount).forEach { index ->
-                val originalParameter = ownerWithDefaults.valueParameters[index]
+            for (originalParameter in ownerWithDefaults.parameters) {
                 val copiedParameter = originalParameter.deepCopyWithSymbols(this)
-                this.valueParameters += copiedParameter
-                actualParameters[index] = if (copiedParameter.defaultValue != null || copiedParameter.isVararg) {
+                this.parameters += copiedParameter
+                actualParameters[originalParameter.indexInParameters] = if (copiedParameter.defaultValue != null || copiedParameter.isVararg) {
                     copiedParameter.type = copiedParameter.type.makeNullable() // make nullable type to keep consistency; parameter can be null if it is missing
                     val irGetParameter = copiedParameter.createGetValue()
                     // if parameter is vararg and it is missing, then create constructor call for empty array
                     val defaultInitializer = originalParameter.getDefaultWithActualParameters(this@apply, actualParameters)
-                        ?: environment.irBuiltIns.emptyArrayConstructor(expression.getVarargType(index)!!.getTypeIfReified(callStack))
+                        ?: environment.irBuiltIns.emptyArrayConstructor(expression.getVarargType(originalParameter.indexInParameters)!!.getTypeIfReified(callStack))
 
                     copiedParameter.createTempVariable().apply variable@{
                         this@variable.initializer = environment.irBuiltIns.irIfNullThenElse(irGetParameter, defaultInitializer, irGetParameter)
@@ -168,9 +166,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
         }
 
         val callWithAllArgs = expression.shallowCopy() // just a copy of given call, but with all arguments in place
-        expression.dispatchReceiver?.let { callWithAllArgs.dispatchReceiver = defaultFun.dispatchReceiverParameter!!.createGetValue() }
-        expression.extensionReceiver?.let { callWithAllArgs.extensionReceiver = defaultFun.extensionReceiverParameter!!.createGetValue() }
-        (0 until expression.valueArgumentsCount).forEach { callWithAllArgs.putValueArgument(it, actualParameters[it]?.createGetValue()) }
+        callWithAllArgs.arguments.assignFrom(actualParameters.map { it?.createGetValue() } )
         defaultFun.body = (actualParameters.filterIsInstance<IrVariable>() + defaultFun.createReturn(callWithAllArgs)).wrapWithBlockBody()
 
         val callToDefault = environment.setCachedFunction(
