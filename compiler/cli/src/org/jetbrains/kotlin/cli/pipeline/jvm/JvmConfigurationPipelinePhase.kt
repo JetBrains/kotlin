@@ -74,6 +74,8 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         configuration.configureKlibPaths(arguments)
         if (arguments.expression == null) {
             configuration.setupModuleChunk(arguments)
+        } else {
+            configuration.configureContentRootsFromClassPath(arguments)
         }
         if (arguments.script || arguments.expression != null) {
             configuration.scriptMode = arguments.script
