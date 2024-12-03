@@ -339,7 +339,7 @@ internal object DataClassArrayToString : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
-        val array = environment.callStack.loadState(irFunction.valueParameters.single().symbol) as Primitive
+        val array = environment.callStack.loadState(irFunction.parameters[0].symbol) as Primitive
         environment.callStack.pushState(environment.convertToState(arrayToString(array.value), irFunction.returnType))
     }
 }
