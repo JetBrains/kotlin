@@ -6,6 +6,7 @@
 package kotlin.internal
 
 import java.lang.reflect.Method
+import java.util.concurrent.ConcurrentMap
 import java.util.regex.MatchResult
 import kotlin.random.FallbackThreadLocalRandom
 import kotlin.random.Random
@@ -48,6 +49,10 @@ internal open class PlatformImplementations {
 
     public open fun getSystemClock(): Clock {
         throw UnsupportedOperationException("getSystemClock should not be called on the base PlatformImplementations.")
+    }
+
+    public open fun <K, V, NewV : V & Any> computeIfAbsent(map: ConcurrentMap<K, V>, key: K, newValue: NewV): V {
+        throw UnsupportedOperationException("computeIfAbsent should not be called on the base PlatformImplementations.")
     }
 }
 

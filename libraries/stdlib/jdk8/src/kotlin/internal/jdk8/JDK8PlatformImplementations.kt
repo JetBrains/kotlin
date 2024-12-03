@@ -17,6 +17,7 @@
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
 package kotlin.internal.jdk8
 
+import java.util.concurrent.ConcurrentMap
 import java.util.regex.MatchResult
 import java.util.regex.Matcher
 import kotlin.internal.jdk7.JDK7PlatformImplementations
@@ -71,4 +72,15 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
                 Instant.fromEpochMilliseconds(System.currentTimeMillis())
         }
     }
+
+    // computeIfAbsent doesn't put the newValue if it's null, hence require non-null newValue
+    override fun <K, V, NewV : V & Any> computeIfAbsent(map: ConcurrentMap<K, V>, key: K, newValue: NewV): V =
+        if (sdkIsNullOrAtLeast(24)) {
+            // computeIfAbsent is available since Android SDK 24.
+            map.computeIfAbsent(key) { newValue }
+        } else {
+            // Use putIfAbsent for older SDKs as a fallback.
+            // Note: If the key was mapped to a null value, putIfAbsent won't replace it, but the new value will still be returned.
+            map.putIfAbsent(key, newValue) ?: newValue
+        }
 }

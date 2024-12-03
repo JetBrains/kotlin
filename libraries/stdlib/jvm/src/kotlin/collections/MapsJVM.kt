@@ -14,6 +14,7 @@ import java.util.SortedMap
 import java.util.TreeMap
 import java.util.concurrent.ConcurrentMap
 import kotlin.collections.builders.MapBuilder
+import kotlin.internal.IMPLEMENTATIONS
 
 /**
  * Returns a new read-only map, mapping only the specified key to the
@@ -63,36 +64,41 @@ internal fun <K, V> build(builder: MutableMap<K, V>): Map<K, V> {
  *
  * Returns the value for the given [key] if the value is present and not `null`.
  * Otherwise, calls the [defaultValue] function,
- * puts its result into the map under the given key and returns the call result.
+ * puts its result into the map under the given key, and returns the call result.
+ *
+ * The result of [defaultValue] is put into the map even if it is `null`.
+ * If [defaultValue] throws an exception, the exception is rethrown.
  *
  * This function guarantees not to put the new value into the map if the key is already
- * mapped to a non-null value. However, the [defaultValue] function may still be invoked.
+ * associated with a non-null value. However, the [defaultValue] function may still be invoked.
  *
- * This function relies on [ConcurrentMap.computeIfAbsent]. Hence, the `ConcurrentMap` implementations
- * that support `null` values must override the default `computeIfAbsent` implementation.
+ * This function relies on [ConcurrentMap.computeIfAbsent]. Therefore, `ConcurrentMap` implementations
+ * that support `null` values must override the default `computeIfAbsent` implementation, so that
+ * the result of the `mappingFunction` is put into the map both when there is no existing value for the key
+ * and when the key is associated with a `null` value.
+ *
+ * @throws NullPointerException if the specified [key] or the result of [defaultValue] is `null`,
+ *   and this concurrent map does not support `null` keys or values.
  *
  * @sample samples.collections.Maps.Usage.getOrPut
  */
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
-    // Do not use computeIfAbsent on JVM8 as it would change locking behavior
-    this.get(key)?.let { return it }
-
-    val newValue = defaultValue()
-    return try {
-        // computeIfAbsent doesn't put the newValue if it's null
-        if (newValue == null) {
-            this.putIfAbsent(key, newValue) ?: newValue
-        } else {
-            this.computeIfAbsent(key) { newValue }
-        }
-    } catch (e: LinkageError) {
-        // In Android projects without the desugared library, computeIfAbsent is available since SDK 24.
-        // See https://developer.android.com/studio/write/java8-support-table for more info.
-        // Use putIfAbsent as a fallback in this case.
-        // Note: If the key was mapped to a null value, putIfAbsent won't replace it, but the new value will still be returned.
-        this.putIfAbsent(key, newValue) ?: newValue
-    }
+    // Do not call defaultValue() inside computeIfAbsent mappingFunction as it would change locking behavior
+    return this.get(key) ?: this.internalGetOrPutIfNull(key, newValue = defaultValue())
 }
+
+@PublishedApi
+internal fun <K, V> ConcurrentMap<K, V>.internalGetOrPutIfNull(key: K, newValue: V): V =
+    if (newValue != null) {
+        // Returns the current (existing or computed) value associated with the specified key
+        IMPLEMENTATIONS.computeIfAbsent(this, key, newValue)
+    } else {
+        // Returns the previous value associated with the specified key.
+        //   If the key is already mapped, returns the mapped value;
+        //   otherwise, puts the newValue and returns null, which is the value that was put.
+        @Suppress("UNCHECKED_CAST")
+        this.putIfAbsent(key, newValue) as V
+    }
 
 
 /**

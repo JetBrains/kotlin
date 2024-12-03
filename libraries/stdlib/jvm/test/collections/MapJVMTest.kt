@@ -7,6 +7,7 @@ package test.collections
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
+import java.util.function.Function
 import kotlin.test.*
 
 class MapJVMTest {
@@ -63,16 +64,123 @@ class MapJVMTest {
         assertEquals(listOf(1, 3, 5), map.keys.toList())
         assertEquals(listOf('b', 'd', 'f'), map.values.toList())
     }
-    
-    @Test fun getOrPutFailsOnConcurrentMap() {
-        val map = ConcurrentHashMap<String, Int>()
 
-        // not an error anymore
-        expect(1) {
-            map.getOrPut("x") { 1 }
+    @Test
+    fun getOrPutOnConcurrentHashMap() {
+        val map = ConcurrentHashMap<String?, String?>()
+
+        assertEquals("v1", map.getOrPut("k1") { "v1" })
+        assertEquals("v1", map.getOrPut("k1") { "newV1" })
+        // Doesn't throw because defaultValue() wasn't called or its result wasn't tried to be put
+        assertEquals("v1", map.getOrPut("k1") { null })
+
+        // Doesn't support null values
+        assertFailsWith<NullPointerException> {
+            map.getOrPut("k2") { null }
         }
-        expect(1) {
-            (map as MutableMap<String, Int>).getOrPut("x") { 1 }
+        assertFalse(map.containsKey("k2"))
+        assertEquals("v2", map.getOrPut("k2") { "v2" })
+        // Doesn't throw because defaultValue() wasn't called or its result wasn't tried to be put
+        assertEquals("v2", map.getOrPut("k2") { null })
+
+        // Doesn't support null keys
+        assertFailsWith<NullPointerException> {
+            map.getOrPut(null) { "v3" }
         }
+        // Doesn't support null keys and values
+        assertFailsWith<NullPointerException> {
+            map.getOrPut(null) { null }
+        }
+
+        val expected = setOf(
+            "k1" to "v1",
+            "k2" to "v2"
+        )
+        assertEquals(expected, map.entries.map { it.toPair() }.toSet())
     }
+
+    @Test
+    fun getOrPutOnConcurrentMap() {
+        val map = SimpleConcurrentMap<String?, String?>()
+
+        assertEquals("v1", map.getOrPut("k1") { "v1" })
+        assertEquals("v1", map.getOrPut("k1") { "newV1" })
+        assertEquals("v1", map.getOrPut("k1") { null })
+
+        assertEquals(null, map.getOrPut("k2") { null })
+        assertTrue(map.containsKey("k2"))
+        assertEquals("v2", map.getOrPut("k2") { "v2" }) // replace null value
+        assertEquals("v2", map.getOrPut("k2") { null })
+
+        assertEquals("v3", map.getOrPut(null) { "v3" })
+        assertEquals("v3", map.getOrPut(null) { "newV3" })
+        assertEquals("v3", map.getOrPut(null) { null })
+
+        val expected = listOf(
+            "k1" to "v1",
+            "k2" to "v2",
+            null to "v3"
+        )
+        assertContentEquals(expected, map.entries.map { it.toPair() })
+    }
+}
+
+
+// Allows null values. Not actually multi-thread safe.
+private class SimpleConcurrentMap<K, V> : AbstractMutableMap<K, V>(), ConcurrentMap<K, V> {
+    private val backing = mutableMapOf<K, V>()
+
+    override val size: Int get() = backing.size
+
+    override fun get(key: K): V? =
+        backing[key]
+
+    override fun getOrDefault(key: K, defaultValue: V): V =
+        if (backing.containsKey(key)) {
+            @Suppress("UNCHECKED_CAST")
+            backing[key] as V
+        } else {
+            defaultValue
+        }
+
+    override fun put(key: K, value: V): V? =
+        backing.put(key, value)
+
+    override fun putIfAbsent(key: K, value: V): V? =
+        if (!backing.containsKey(key)) {
+            backing.put(key, value)
+        } else {
+            backing.get(key)
+        }
+
+    // Implementations which support null values must override this default implementation.
+    override fun computeIfAbsent(key: K, mappingFunction: Function<in K, out V>): V =
+        backing.get(key) ?: run {
+            val newValue = mappingFunction.apply(key)
+            if (newValue != null) {
+                backing.put(key, newValue)
+            }
+            newValue
+        }
+
+    override fun remove(key: K, value: V): Boolean =
+        backing.remove(key, value)
+
+    override fun replace(key: K, oldValue: V, newValue: V): Boolean =
+        if (backing.containsKey(key) && backing[key] == oldValue) {
+            backing.put(key, newValue)
+            true
+        } else {
+            false
+        }
+
+    override fun replace(key: K, value: V): V? =
+        if (backing.containsKey(key)) {
+            backing.put(key, value)
+        } else {
+            null
+        }
+
+    override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+        get() = backing.entries
 }
