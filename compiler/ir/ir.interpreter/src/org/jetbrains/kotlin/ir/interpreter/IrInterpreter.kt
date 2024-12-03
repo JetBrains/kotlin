@@ -138,12 +138,12 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
     private fun interpretValueParameter(valueParameter: IrValueParameter) {
         val irFunction = valueParameter.parent as IrFunction
-        fun isReceiver() = irFunction.dispatchReceiverParameter == valueParameter || irFunction.extensionReceiverParameter == valueParameter
-
         val state = callStack.popState()
 
         state.checkNullability(valueParameter.type, environment) {
-            if (isReceiver()) return@checkNullability NullPointerException()
+            if (valueParameter.kind == IrParameterKind.DispatchReceiver || valueParameter.kind == IrParameterKind.ExtensionReceiver)
+                return@checkNullability NullPointerException()
+
             val method = irFunction.getCapitalizedFileName() + "." + irFunction.fqName
             val parameter = valueParameter.name
             IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")
