@@ -432,10 +432,10 @@ private class InteropTransformerPart1(
     }
 
     private fun IrConstructor.overridesConstructor(other: IrConstructor): Boolean {
-        return this.valueParameters.size == other.valueParameters.size &&
-                this.valueParameters.all {
-                    val otherParameter = other.valueParameters[it.index]
-                    it.name == otherParameter.name && it.type == otherParameter.type
+        return this.parameters.size == other.parameters.size &&
+                this.parameters.withIndex().all {
+                    val otherParameter = other.parameters[it.index]
+                    it.value.name == otherParameter.name && it.value.type == otherParameter.type
                 }
     }
 
