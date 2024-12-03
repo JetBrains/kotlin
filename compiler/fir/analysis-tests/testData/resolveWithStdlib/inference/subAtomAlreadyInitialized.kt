@@ -2,7 +2,7 @@
 // ISSUE: KT-71704
 
 fun testIt(l: List<Int>) {
-    l.flatMap {
-        f -> {}
+    l.<!CANNOT_INFER_PARAMETER_TYPE!>flatMap<!> {
+        f -> <!ARGUMENT_TYPE_MISMATCH!>{}<!>
     }
 }

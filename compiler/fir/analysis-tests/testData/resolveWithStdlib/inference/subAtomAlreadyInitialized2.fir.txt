@@ -1,0 +1,16 @@
+FILE: subAtomAlreadyInitialized2.kt
+    @R|kotlin/OverloadResolutionByLambdaReturnType|() public final inline fun <T, R> R|kotlin/collections/Iterable<T>|.foo(transform: R|(T) -> kotlin/collections/Iterable<R>|): R|kotlin/collections/List<R>| {
+        ^foo R|kotlin/collections/listOf|<R|R|>()
+    }
+    public final inline fun <T, R> R|kotlin/collections/Iterable<T>|.foo(transform: R|(T) -> @ExtensionFunctionType kotlin/Function1<kotlin/collections/MutableList<R>, kotlin/Unit>|): R|kotlin/collections/List<R>| {
+        ^foo R|kotlin/collections/listOf|<R|R|>()
+    }
+    public final fun testIt(l: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/l|.R|/foo<CS errors: /foo>#|<R|kotlin/Int|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(<L> = foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/collections/MutableList<ERROR CLASS: Cannot infer argument for type parameter R>.() -> kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            ^ foo@fun <ERROR TYPE REF: Cannot infer type for receiver parameter>.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                <Unresolved name: add>#(R|<local>/it|)
+            }
+
+        }
+        )
+    }
