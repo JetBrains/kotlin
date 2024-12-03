@@ -124,9 +124,9 @@ internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive {
 }
 
 fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
-    val varargType = this.symbol.owner.valueParameters[index].varargElementType ?: return null
-    varargType.classOrNull?.let { return this.symbol.owner.valueParameters[index].type }
-    val type = this.symbol.owner.valueParameters[index].type as? IrSimpleType ?: return null
+    val varargType = this.symbol.owner.parameters[index].varargElementType ?: return null
+    varargType.classOrNull?.let { return this.symbol.owner.parameters[index].type }
+    val type = this.symbol.owner.parameters[index].type as? IrSimpleType ?: return null
     return type.buildSimpleType {
         val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
         arguments = listOf(makeTypeProjection(typeArguments[typeParameter.index]!!, Variance.OUT_VARIANCE))
