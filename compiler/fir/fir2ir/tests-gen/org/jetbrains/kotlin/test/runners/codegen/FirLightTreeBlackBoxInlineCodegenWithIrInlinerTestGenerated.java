@@ -3125,6 +3125,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
       }
 
       @Test
+      @TestMetadata("lambdaReceiverVsArgument.kt")
+      public void testLambdaReceiverVsArgument() {
+        runTest("compiler/testData/codegen/boxInline/lambdaTransformation/lambdaReceiverVsArgument.kt");
+      }
+
+      @Test
       @TestMetadata("regeneratedLambdaName.kt")
       public void testRegeneratedLambdaName() {
         runTest("compiler/testData/codegen/boxInline/lambdaTransformation/regeneratedLambdaName.kt");
