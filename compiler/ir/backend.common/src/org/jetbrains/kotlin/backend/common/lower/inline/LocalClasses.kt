@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -100,8 +101,9 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                             (0 until expression.valueArgumentsCount).forEach { index ->
                                 val argument = expression.getValueArgument(index)
                                 val parameter = callee.valueParameters[index]
-                                // Skip adapted function references - they will be inlined later.
-                                if (parameter.isInlineParameter() && argument?.isAdaptedFunctionReference() == true)
+                                // Skip adapted function references and inline lambdas - they will be inlined later.
+                                val shouldSkip = argument != null && (argument.isAdaptedFunctionReference() || argument.isInlineLambdaBlock())
+                                if (parameter.isInlineParameter() && shouldSkip)
                                     adaptedFunctions += (argument as IrBlock).statements[0] as IrSimpleFunction
                                 else
                                     argument?.acceptVoid(this)
