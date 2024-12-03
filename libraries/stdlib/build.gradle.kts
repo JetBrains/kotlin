@@ -390,6 +390,7 @@ kotlin {
             }
             dependencies {
                 api(kotlinTest("junit"))
+                implementation(project(":compiler:tests-mutes:mutes-junit5"))
             }
             kotlin.srcDir("jvm/test")
             kotlin.srcDir("jdk7/test")
@@ -818,7 +819,9 @@ tasks {
             }
         }
     }
-
+    withType<Test>().configureEach {
+        muteWithDatabase()
+    }
 }
 
 

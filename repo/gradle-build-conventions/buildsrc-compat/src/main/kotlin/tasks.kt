@@ -14,13 +14,20 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import java.io.File
 import java.lang.Character.isLowerCase
@@ -28,6 +35,7 @@ import java.lang.Character.isUpperCase
 import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
+import javax.inject.Inject
 
 val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-assignment",
@@ -115,6 +123,31 @@ enum class JUnitMode {
     JUnit4, JUnit5
 }
 
+abstract class TestArgumentProvider @Inject constructor(project: Project) : CommandLineArgumentProvider {
+    @get:Internal
+    val ideaBuildNumberFile: Property<RegularFile> = project.objects.fileProperty()
+
+    @get:Input
+    val buildNumber: Provider<String> = ideaBuildNumberFile.flatMap { project.providers.fileContents(it).asText }
+
+    override fun asArguments(): Iterable<String?>? =
+        listOf("idea.home.path", ideaBuildNumberFile.get().asFile.parentFile.canonicalPath)
+}
+
+fun Test.withIdeaHomeForTests() {
+    dependsOn(":createIdeaHomeForTests") //this should be an artifact from a dependency
+    jvmArgumentProviders.add(project.objects.newInstance<TestArgumentProvider>().apply {
+        ideaBuildNumberFile.set(project.rootProject.ideaBuildNumberFileForTests())
+    })
+}
+
+fun Test.muteWithDatabase() {
+    systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (project.rootProject.hasProperty("skipMutedTests")) "true" else "false")
+    // This system property is only useful for JUnit Platform, but it does no harm on JUnit4
+    systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+    inputs.file(File(project.rootDir, "tests/mute-common.csv")).withPathSensitivity(PathSensitivity.NONE).withPropertyName("muteDatabase")
+}
+
 /**
  * @param parallel is redundant if @param jUnit5Enabled is true, because
  *   JUnit5 supports parallel test execution by itself, without gradle help
@@ -141,12 +174,8 @@ fun Project.projectTest(
         evaluationDependsOn(":test-instrumenter")
     }
     return getOrCreateTask<Test>(taskName) {
-        dependsOn(":createIdeaHomeForTests")
-        inputs.dir(File(rootDir, "build/ideaHomeForTests")).withPathSensitivity(PathSensitivity.RELATIVE)
-        if (jUnitMode == JUnitMode.JUnit5) {
-            systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
-        }
-        inputs.file(File(rootDir, "tests/mute-common.csv")).withPathSensitivity(PathSensitivity.NONE).withPropertyName("muteDatabase")
+        withIdeaHomeForTests()
+        muteWithDatabase()
 
         doFirst {
             if (jUnitMode == JUnitMode.JUnit5) return@doFirst
@@ -242,14 +271,12 @@ fun Project.projectTest(
         }
 
         systemProperty("idea.is.unit.test", "true")
-        systemProperty("idea.home.path", project.ideaHomePathForTests().get().asFile.canonicalPath)
         systemProperty("idea.use.native.fs.for.win", false)
         systemProperty("java.awt.headless", "true")
         environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
         environment("PROJECT_CLASSES_DIRS", project.testSourceSet.output.classesDirs.asPath)
         environment("PROJECT_BUILD_DIR", project.layout.buildDirectory.get().asFile)
         systemProperty("jps.kotlin.home", project.rootProject.extra["distKotlinHomeDir"]!!)
-        systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (project.rootProject.hasProperty("skipMutedTests")) "true" else "false")
         systemProperty("kotlin.test.update.test.data", if (project.rootProject.hasProperty("kotlin.test.update.test.data")) "true" else "false")
         systemProperty("cacheRedirectorEnabled", project.rootProject.findProperty("cacheRedirectorEnabled")?.toString() ?: "false")
         project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution?.let { n ->
@@ -323,7 +350,7 @@ val totalMaxMemoryForTestsMb: Int
 val Test.commandLineIncludePatterns: Set<String>
     get() = (filter as? DefaultTestFilter)?.commandLineIncludePatterns.orEmpty()
 
-private inline fun String.isFirstChar(f: (Char) -> Boolean) = isNotEmpty() && f(first())
+inline fun String.isFirstChar(f: (Char) -> Boolean) = isNotEmpty() && f(first())
 
 inline fun <reified T : Task> Project.getOrCreateTask(taskName: String, noinline body: T.() -> Unit): TaskProvider<T> =
     if (tasks.names.contains(taskName)) tasks.named(taskName, T::class.java).apply { configure(body) }
@@ -333,7 +360,7 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
     val firPluginJvmAnnotations: Configuration by configurations.creating
     val firPluginJsAnnotations: Configuration by configurations.creating {
         attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_RUNTIME))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         }
     }
