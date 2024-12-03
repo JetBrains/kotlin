@@ -93,6 +93,19 @@ public inline infix fun BigInteger.shl(n: Int): BigInteger = this.shiftLeft(n)
 @kotlin.internal.InlineOnly
 public inline infix fun BigInteger.shr(n: Int): BigInteger = this.shiftRight(n)
 
+/**
+ * Returns the value of this [Byte] number as a [BigInteger].
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun Byte.toBigInteger(): BigInteger = BigInteger.valueOf(this.toLong())
+
+/**
+ * Returns the value of this [Short] number as a [BigInteger].
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun Short.toBigInteger(): BigInteger = BigInteger.valueOf(this.toLong())
 
 /**
  * Returns the value of this [Int] number as a [BigInteger].
