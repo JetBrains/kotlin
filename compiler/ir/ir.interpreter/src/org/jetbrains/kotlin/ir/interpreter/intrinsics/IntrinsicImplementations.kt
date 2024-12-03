@@ -206,12 +206,12 @@ internal object JsPrimitives : IntrinsicBase() {
     override fun evaluate(irFunction: IrFunction, environment: IrInterpreterEnvironment) {
         when (irFunction.fqName) {
             "kotlin.Long.<init>" -> {
-                val low = environment.callStack.loadState(irFunction.valueParameters[0].symbol).asInt()
-                val high = environment.callStack.loadState(irFunction.valueParameters[1].symbol).asInt()
+                val low = environment.callStack.loadState(irFunction.parameters[0].symbol).asInt()
+                val high = environment.callStack.loadState(irFunction.parameters[1].symbol).asInt()
                 environment.callStack.pushState(environment.convertToState((high.toLong().shl(32) + low), irFunction.returnType))
             }
             "kotlin.Char.<init>" -> {
-                val value = environment.callStack.loadState(irFunction.valueParameters[0].symbol).asInt()
+                val value = environment.callStack.loadState(irFunction.parameters[0].symbol).asInt()
                 environment.callStack.pushState(environment.convertToState(value.toChar(), irFunction.returnType))
             }
         }
