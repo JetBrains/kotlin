@@ -996,24 +996,28 @@ internal class PartiallyLinkedIrTreePatcher(
     private sealed interface ReturnTargetContext {
         val validReturnTargets: Set<IrReturnTargetSymbol>
 
-        data object Empty : ReturnTargetContext {
-            override val validReturnTargets: Set<IrReturnTargetSymbol> get() = emptySet()
-        }
+        data class Default(
+            override val validReturnTargets: Set<IrReturnTargetSymbol>
+        ) : ReturnTargetContext
 
-        class InFunction(
+        data class InFunction(
             override val validReturnTargets: Set<IrReturnTargetSymbol>,
             val function: IrFunction,
             val isInlined: Boolean
         ) : ReturnTargetContext
 
-        class InFunctionBody(
+        data class InFunctionBody(
             override val validReturnTargets: Set<IrReturnTargetSymbol>
         ) : ReturnTargetContext
 
-        class InInlinedCall(
+        data class InInlinedCall(
             override val validReturnTargets: Set<IrReturnTargetSymbol>,
             val inlinedLambdaArgumentsWithPermittedNonLocalReturns: Set<IrFunctionSymbol>
         ) : ReturnTargetContext
+
+        companion object {
+            val Empty = Default(emptySet())
+        }
     }
 
     private inner class NonLocalReturnsPatcher(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
@@ -1092,6 +1096,18 @@ internal class PartiallyLinkedIrTreePatcher(
                 )
             }
         ) { super.visitFunctionAccess(expression) }
+
+        override fun visitReturnableBlock(expression: IrReturnableBlock) = withContext(
+            { oldContext ->
+                val newValidReturnTargets = oldContext.validReturnTargets + expression.symbol
+                when (oldContext) {
+                    is ReturnTargetContext.Default -> oldContext.copy(validReturnTargets = newValidReturnTargets)
+                    is ReturnTargetContext.InFunction -> oldContext.copy(validReturnTargets = newValidReturnTargets)
+                    is ReturnTargetContext.InFunctionBody -> oldContext.copy(validReturnTargets = newValidReturnTargets)
+                    is ReturnTargetContext.InInlinedCall -> oldContext.copy(validReturnTargets = newValidReturnTargets)
+                }
+            }
+        ) { super.visitReturnableBlock(expression) }
 
         override fun visitReturn(expression: IrReturn) = withContext { context ->
             expression.maybeThrowLinkageError(
