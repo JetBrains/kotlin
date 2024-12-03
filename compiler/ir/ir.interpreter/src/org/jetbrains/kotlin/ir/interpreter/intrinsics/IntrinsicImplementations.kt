@@ -129,7 +129,7 @@ internal object EnumValueOf : IntrinsicBase() {
 
     private fun getEnumEntryByName(irFunction: IrFunction, environment: IrInterpreterEnvironment): IrEnumEntry? {
         val enumClass = getEnumClass(irFunction, environment)
-        val enumEntryName = environment.callStack.loadState(irFunction.valueParameters.first().symbol).asString()
+        val enumEntryName = environment.callStack.loadState(irFunction.parameters[0].symbol).asString()
         val enumEntry = enumClass.declarations.filterIsInstance<IrEnumEntry>().singleOrNull { it.name.asString() == enumEntryName }
         if (enumEntry == null) {
             IllegalArgumentException("No enum constant ${enumClass.fqName}.$enumEntryName").handleUserException(environment)
