@@ -13243,6 +13243,12 @@ public class TieredBackendJvmPsiTestGenerated extends AbstractTieredBackendJvmPs
       }
 
       @Test
+      @TestMetadata("differentNamesForTheSameParametersInSupertypesForLibraryDependency.kt")
+      public void testDifferentNamesForTheSameParametersInSupertypesForLibraryDependency() {
+        runTest("compiler/testData/diagnostics/tests/namedArguments/differentNamesForTheSameParametersInSupertypesForLibraryDependency.kt");
+      }
+
+      @Test
       @TestMetadata("namedArgumentsInOverloads.kt")
       public void testNamedArgumentsInOverloads() {
         runTest("compiler/testData/diagnostics/tests/namedArguments/namedArgumentsInOverloads.kt");

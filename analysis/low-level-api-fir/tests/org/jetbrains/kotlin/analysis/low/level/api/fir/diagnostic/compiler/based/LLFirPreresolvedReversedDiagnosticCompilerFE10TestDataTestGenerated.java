@@ -30517,6 +30517,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("differentNamesForTheSameParametersInSupertypesForLibraryDependency.kt")
+      public void testDifferentNamesForTheSameParametersInSupertypesForLibraryDependency() {
+        runTest("compiler/testData/diagnostics/tests/namedArguments/differentNamesForTheSameParametersInSupertypesForLibraryDependency.kt");
+      }
+
+      @Test
       @TestMetadata("disallowForDelegationToJavaMethods.kt")
       public void testDisallowForDelegationToJavaMethods() {
         runTest("compiler/testData/diagnostics/tests/namedArguments/disallowForDelegationToJavaMethods.kt");
