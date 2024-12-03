@@ -1,6 +1,7 @@
-/differentNamesInSupertypesDiagnostic.kt:11:1: warning: names of the parameter #1 conflict in the following members of supertypes: 'public abstract fun foo(a: Int): Unit defined in C, public abstract fun foo(b: Int): Unit defined in D'. This may cause problems when calling this function with named arguments.
+/differentNamesInSupertypesDiagnostic.kt:12:1: warning: names of the parameter #1 conflict in the following members of supertypes: 'public abstract fun foo(a: Int): Unit defined in C, public abstract fun foo(b: Int): Unit defined in D'. This may cause problems when calling this function with named arguments.
 interface E : C, D
 ^^^^^^^^^^^
-/differentNamesInSupertypesDiagnostic.kt:14:22: warning: the corresponding parameter in the supertype 'D' is named 'b'. This may cause problems when calling this function with named arguments.
+/differentNamesInSupertypesDiagnostic.kt:15:22: warning: the corresponding parameter in the supertype 'D' is named 'b'. This may cause problems when calling this function with named arguments.
     override fun foo(a : Int) {
                      ^
+

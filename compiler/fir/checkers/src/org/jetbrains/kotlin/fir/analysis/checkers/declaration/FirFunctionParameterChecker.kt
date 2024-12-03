@@ -155,31 +155,20 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun checkParameterNameChangedOnOverride(
-        function: FirFunction,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
-    ) {
+    private fun checkParameterNameChangedOnOverride(function: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         if (function !is FirSimpleFunction || !function.hasStableParameterNames) return
-
-        val currentScope =
-            function.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return
-        val overriddenFunctions = currentScope.getDirectOverriddenFunctions(function.symbol)
-
-        for (overriddenFunction in overriddenFunctions) {
-            if (!overriddenFunction.resolvedStatus.hasStableParameterNames) continue
-
-            val valueParameterPairs = function.symbol.valueParameterSymbols.zip(overriddenFunction.valueParameterSymbols)
-            for ((currentValueParameter, overriddenValueParameter) in valueParameterPairs) {
-                if (currentValueParameter.name != overriddenValueParameter.name) {
-                    reporter.reportOn(
-                        currentValueParameter.source,
-                        FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE,
-                        overriddenFunction.getContainingClassSymbol() as FirRegularClassSymbol,
-                        overriddenValueParameter,
-                        context,
-                    )
-                }
+        val currentScope = function
+            .containingClassLookupTag()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context) ?: return
+        for (overriddenFunctionSymbol in currentScope.getDirectOverriddenFunctions(function.symbol)) {
+            if (!overriddenFunctionSymbol.resolvedStatus.hasStableParameterNames) continue
+            function.symbol.checkValueParameterNamesWith(overriddenFunctionSymbol) { currentParameter, overriddenParameter, _ ->
+                reporter.reportOn(
+                    currentParameter.source,
+                    FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE,
+                    overriddenParameter.containingDeclarationSymbol.getContainingClassSymbol() as FirRegularClassSymbol,
+                    overriddenParameter,
+                    context,
+                )
             }
         }
     }

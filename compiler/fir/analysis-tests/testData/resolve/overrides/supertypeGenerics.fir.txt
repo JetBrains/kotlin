@@ -8,7 +8,7 @@ FILE: supertypeGenerics.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun <D : R|kotlin/Comparable<D>|> f(t: R|kotlin/collections/List<D>|, e: R|kotlin/collections/List<E>|): R|kotlin/Unit| {
+        public final fun <D : R|kotlin/Comparable<D>|> f(t: R|kotlin/collections/List<D>|, f: R|kotlin/collections/List<E>|): R|kotlin/Unit| {
         }
 
     }
