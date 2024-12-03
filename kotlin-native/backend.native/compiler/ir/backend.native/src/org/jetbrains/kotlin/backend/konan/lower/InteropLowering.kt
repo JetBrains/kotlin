@@ -440,8 +440,11 @@ private class InteropTransformerPart1(
     }
 
     private fun generateActionImp(function: IrSimpleFunction): IrSimpleFunction {
-        require(function.extensionReceiverParameter == null) { renderCompilerError(function) }
-        require(function.valueParameters.all { it.type.isObjCObjectType() }) { renderCompilerError(function) }
+        require(function.parameters.all {
+            it.kind == IrParameterKind.DispatchReceiver || (it.kind == IrParameterKind.Regular && it.type.isObjCObjectType())
+        }) {
+            renderCompilerError(function)
+        }
         require(function.returnType.isUnit()) { renderCompilerError(function) }
 
         return generateFunctionImp(inferObjCSelector(function), function)
