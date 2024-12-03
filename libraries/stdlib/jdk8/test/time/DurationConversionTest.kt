@@ -5,6 +5,8 @@
 
 package kotlin.jdk8.time.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import kotlin.random.Random
 import kotlin.test.*
 import kotlin.time.*
@@ -14,6 +16,8 @@ import kotlin.time.Duration.Companion.nanoseconds
 import java.time.Duration as JTDuration
 
 class DurationConversionTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     @Test
     fun twoWayConversion() {
         fun test(days: Int, hours: Int, minutes: Int, seconds: Int, millis: Int, nanos: Int) {

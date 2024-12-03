@@ -5,6 +5,8 @@
 
 package kotlin.jdk7.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import java.nio.file.Path
 import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.deleteIfExists
@@ -12,6 +14,8 @@ import kotlin.io.path.deleteRecursively
 import kotlin.test.AfterTest
 
 abstract class AbstractPathTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
+
     private val cleanUpActions = mutableListOf<Pair<Path, (Path) -> Unit>>()
 
     fun Path.cleanup(): Path {

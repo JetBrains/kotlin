@@ -16,11 +16,14 @@
 
 package kotlin.jdk8.collections.test
 
+import org.jetbrains.kotlin.test.MuteableTestRule
+import org.junit.Rule
 import org.junit.Test
 import kotlin.test.*
 import java.util.function.UnaryOperator
 
 class ListTest {
+    @get:Rule val muteableTestRule = MuteableTestRule()
 
     @Test fun replaceAll() {
         val list = mutableListOf("ab", "cde", "x")
