@@ -7,11 +7,37 @@ package org.jetbrains.kotlin.analysis.api.lifetime
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 
+/**
+ * A token which is used as an anchor for determining the lifetime of a [session][org.jetbrains.kotlin.analysis.api.KaSession]'s
+ * [lifetime owner][KaLifetimeOwner].
+ *
+ * See the documentation for [KaSession][org.jetbrains.kotlin.analysis.api.KaSession] and [KaLifetimeOwner] to find out more about lifetime
+ * management.
+ */
 public abstract class KaLifetimeToken {
+    /**
+     * Whether the lifetime token is valid, i.e. the underlying information is still up-to-date. Invalidation most often occurs after
+     * modification, such as source code or project structure changes.
+     *
+     * Invalidity should be stable: once the lifetime token is invalid, it should not become valid again.
+     */
     public abstract fun isValid(): Boolean
+
+    /**
+     * Returns the reason why [isValid] is `false`. The function should only be called when the lifetime token is actually invalid.
+     */
     public abstract fun getInvalidationReason(): String
 
+    /**
+     * Whether the lifetime token is currently accessible. Depending on the Analysis API platform, there are certain requirements to access
+     * the Analysis API. For example, in IntelliJ, the Analysis API must be invoked with read access.
+     */
     public abstract fun isAccessible(): Boolean
+
+    /**
+     * Returns the reason why [isAccessible] is `false`. The function should only be called when the lifetime token is actually
+     * inaccessible.
+     */
     public abstract fun getInaccessibilityReason(): String
 }
 
