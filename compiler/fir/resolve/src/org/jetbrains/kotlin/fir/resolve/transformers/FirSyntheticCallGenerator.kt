@@ -25,13 +25,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.references.isError
@@ -44,7 +45,10 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateErr
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -94,7 +98,7 @@ class FirSyntheticCallGenerator(
         }
         val reference = generateCalleeReferenceWithCandidate(
             whenExpression,
-            whenSelectFunction,
+            whenSelectFunction.symbol,
             argumentList,
             SyntheticCallableId.WHEN.callableName,
             context = context,
@@ -122,7 +126,7 @@ class FirSyntheticCallGenerator(
 
         val reference = generateCalleeReferenceWithCandidate(
             tryExpression,
-            trySelectFunction,
+            trySelectFunction.symbol,
             argumentList,
             SyntheticCallableId.TRY.callableName,
             context = context,
@@ -141,7 +145,7 @@ class FirSyntheticCallGenerator(
 
         val reference = generateCalleeReferenceWithCandidate(
             checkNotNullCall,
-            checkNotNullFunction,
+            checkNotNullFunction.symbol,
             checkNotNullCall.argumentList,
             SyntheticCallableId.CHECK_NOT_NULL.callableName,
             context = context,
@@ -164,7 +168,7 @@ class FirSyntheticCallGenerator(
         }
         val reference = generateCalleeReferenceWithCandidate(
             elvisExpression,
-            elvisFunction,
+            elvisFunction.symbol,
             argumentList,
             SyntheticCallableId.ELVIS_NOT_NULL.callableName,
             context = context,
@@ -182,7 +186,7 @@ class FirSyntheticCallGenerator(
             this.argumentList = argumentList
             calleeReference = generateCalleeReferenceWithCandidate(
                 arrayLiteral,
-                idFunction,
+                idFunction.symbol,
                 argumentList,
                 SyntheticCallableId.ID.callableName,
                 context = context,
@@ -203,7 +207,75 @@ class FirSyntheticCallGenerator(
             expectedTypeConeType.isSet -> generateCollectionOfCall(Name.identifier("setOf"), arrayLiteral, context, resolutionMode)
             expectedTypeConeType.isMutableSet -> generateCollectionOfCall(Name.identifier("mutableSetOf"), arrayLiteral, context, resolutionMode)
             expectedTypeConeType.isArrayType -> generateArrayOfCall(arrayLiteral, expectedTypeConeType, context, resolutionMode)
-            else -> TODO("nested static of is not yet supported")
+            else -> {
+                val toSymbol = expectedTypeConeType.toSymbol(session) ?: error("todo: expectedTypeConeType.toSymbol == null")
+                val klass = toSymbol.fir as? FirRegularClass ?: error("todo ${toSymbol.fir::class} is not FirRegularClass")
+                // val staticScope = klass.staticScope(session, components.scopeSession)
+                // val companionProperty = staticScope?.getProperties(Name.identifier("Companion"))?.singleOrNull()!!
+                val companionObjectSymbol = klass.companionObjectSymbol
+                val scope = companionObjectSymbol?.unsubstitutedScope(
+                    session,
+                    components.scopeSession,
+                    withForcedTypeCalculator = false,
+                    FirResolvePhase.BODY_RESOLVE
+                ) ?: error("todo scope == null")
+                val name = Name.identifier("of")
+                val ofFunction =
+                    scope.getFunctions(name).singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
+                        ?: error("todo: ofFunction == null")
+                val function = buildFunctionCall {
+                    argumentList = arrayLiteral.argumentList
+                    source = arrayLiteral.source
+                    // explicitReceiver = buildPropertyAccessExpression {
+                    //     source = arrayLiteral.source
+                    //
+                    //     calleeReference = buildSimpleNamedReference {
+                    //         source = arrayLiteral.source
+                    //         this.name = Name.identifier("Foo") // todo different package
+                    //     }
+                    //
+                    //     // calleeReference = generateCalleeReferenceWithCandidate(
+                    //     //     arrayLiteral,
+                    //     //     klass.symbol,
+                    //     //     FirEmptyArgumentList,
+                    //     //     Name.identifier("Foo"),
+                    //     //     callKind = CallKind.VariableAccess,
+                    //     //     context,
+                    //     //     resolutionMode
+                    //     // )
+                    //
+                    //     // calleeReference = generateCalleeReferenceWithCandidate(
+                    //     //     arrayLiteral,
+                    //     //     companionObjectSymbol,
+                    //     //     FirEmptyArgumentList,
+                    //     //     Name.identifier("Companion"),
+                    //     //     callKind = CallKind.VariableAccess,
+                    //     //     // callKind = CallKind.Function,
+                    //     //     context,
+                    //     //     resolutionMode
+                    //     // )
+                    //
+                    // }
+
+                    // calleeReference = buildSimpleNamedReference {
+                    //     source = arrayLiteral.source
+                    //     this.name = Name.identifier("of")
+                    // }
+
+                    calleeReference = generateCalleeReferenceWithCandidate(
+                        arrayLiteral,
+                        ofFunction.fir.symbol,
+                        argumentList,
+                        name,
+                        callKind = CallKind.Function,
+                        context,
+                        resolutionMode,
+                    )
+
+                    // origin = FirFunctionCallOrigin.Operator
+                }
+                function
+            }
         }
     }
 
@@ -221,7 +293,7 @@ class FirSyntheticCallGenerator(
             this.argumentList = argumentList
             calleeReference = generateCalleeReferenceWithCandidate(
                 arrayLiteral,
-                symbol.fir,
+                symbol,
                 argumentList,
                 name,
                 callKind = CallKind.Function,
@@ -245,7 +317,7 @@ class FirSyntheticCallGenerator(
             calleeReference = arrayOfSymbol?.let {
                 generateCalleeReferenceWithCandidate(
                     arrayLiteral,
-                    it.fir,
+                    it,
                     argumentList,
                     ArrayFqNames.ARRAY_OF_FUNCTION,
                     callKind = CallKind.Function,
@@ -399,7 +471,7 @@ class FirSyntheticCallGenerator(
 
         return generateCalleeReferenceWithCandidate(
             callableReferenceAccess,
-            function,
+            function.symbol,
             argumentList,
             callableId.callableName,
             CallKind.SyntheticIdForCallableReferencesResolution,
@@ -410,7 +482,7 @@ class FirSyntheticCallGenerator(
 
     private fun generateCalleeReferenceWithCandidate(
         callSite: FirExpression,
-        function: FirSimpleFunction,
+        function: FirBasedSymbol<*>,
         argumentList: FirArgumentList,
         name: Name,
         callKind: CallKind = CallKind.SyntheticSelect,
@@ -434,12 +506,13 @@ class FirSyntheticCallGenerator(
         return FirNamedReferenceWithCandidate(source, name, candidate)
     }
 
-    private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate {
+    private fun generateCandidate(callInfo: CallInfo, function: FirBasedSymbol<*>, context: ResolutionContext): Candidate {
         val candidateFactory = CandidateFactory(context, callInfo)
         return candidateFactory.createCandidate(
             callInfo,
-            symbol = function.symbol,
-            explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            symbol = function,
+            explicitReceiverKind = if (callInfo.name.asString() == "of") ExplicitReceiverKind.DISPATCH_RECEIVER else ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+            // explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             scope = null
         )
     }

@@ -41,6 +41,10 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor( // Foo.Comp
     override val origin: FirFunctionCallOrigin,
 ) : FirFunctionCall() {
 
+    init {
+        println(calleeReference.name)
+    }
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         contextArguments.forEach { it.accept(visitor, data) }
