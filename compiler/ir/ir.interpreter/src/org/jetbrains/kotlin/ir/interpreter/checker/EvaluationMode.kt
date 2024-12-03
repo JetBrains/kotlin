@@ -125,12 +125,8 @@ sealed class EvaluationMode {
             }
         }
 
-        private fun IrCall.hasUnsignedArgs(): Boolean {
-            fun IrExpression?.hasUnsignedType() = this != null && type.isUnsigned()
-            if (dispatchReceiver.hasUnsignedType() || extensionReceiver.hasUnsignedType()) return true
-            if ((0 until this.valueArgumentsCount).any { getValueArgument(it)?.type?.isUnsigned() == true }) return true
-            return false
-        }
+        private fun IrCall.hasUnsignedArgs(): Boolean =
+            arguments.any { it != null && it.type.isUnsigned() }
     }
 
     class OnlyIntrinsicConst(private val isFloatingPointOptimizationDisabled: Boolean = false) : EvaluationMode() {
