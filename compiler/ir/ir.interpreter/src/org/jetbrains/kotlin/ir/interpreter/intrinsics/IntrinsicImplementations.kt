@@ -297,9 +297,9 @@ internal object AssertIntrinsic : IntrinsicBase() {
     }
 
     override fun unwind(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction> {
-        if (irFunction.valueParameters.size == 1) return super.unwind(irFunction, environment)
+        if (irFunction.hasShape(regularParameters = 1)) return super.unwind(irFunction, environment)
 
-        val lambdaParameter = irFunction.valueParameters.last()
+        val lambdaParameter = irFunction.parameters[1]
         val lambdaState = environment.callStack.loadState(lambdaParameter.symbol) as KFunctionState
         val call = (lambdaState.invokeSymbol.owner as IrSimpleFunction).createCall()
         call.dispatchReceiver = lambdaParameter.createGetValue()
