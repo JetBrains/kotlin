@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// RENDER_DIAGNOSTICS_FULL_TEXT
 interface A {
     fun foo(a1: Int, a2: Double)
 }

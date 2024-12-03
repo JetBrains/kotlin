@@ -1,0 +1,3 @@
+/changeOnOverrideDiagnostic.kt:(169,170): warning: The corresponding parameter in the supertype 'A' is named 'a'. This may cause problems when calling this function with named arguments.
+
+/changeOnOverrideDiagnostic.kt:(218,219): warning: The corresponding parameter in the supertype 'A' is named 'a'. This may cause problems when calling this function with named arguments.
