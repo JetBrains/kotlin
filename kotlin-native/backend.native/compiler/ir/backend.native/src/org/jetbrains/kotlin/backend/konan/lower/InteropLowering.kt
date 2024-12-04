@@ -695,9 +695,8 @@ private class InteropTransformerPart1(
         val callee = expression.symbol.owner
         val initMethod = callee.getObjCInitMethod()
         if (initMethod != null) {
-            val arguments = callee.valueParameters.map { expression.getValueArgument(it.indexInOldValueParameters) }
-            require(expression.extensionReceiver == null) { renderCompilerError(expression) }
-            require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
+            val arguments = expression.arguments
+            require(callee.parameters.all { it.kind == IrParameterKind.Regular }) { renderCompilerError(expression) }
 
             val constructedClass = callee.constructedClass
             val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
