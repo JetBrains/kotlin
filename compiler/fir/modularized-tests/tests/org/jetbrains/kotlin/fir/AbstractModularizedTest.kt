@@ -51,9 +51,10 @@ data class JavaSourceRootData<Path : Any>(val path: Path, val packagePrefix: Str
 
 internal fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))
 
-private val ROOT_PATH_PREFIX:String = System.getProperty("fir.bench.prefix", "/")
-private val OUTPUT_DIR_REGEX_FILTER:String = System.getProperty("fir.bench.filter", ".*")
+private val ROOT_PATH_PREFIX: String = System.getProperty("fir.bench.prefix", "/")
+private val OUTPUT_DIR_REGEX_FILTER: String = System.getProperty("fir.bench.filter", ".*")
 private val MODULE_NAME_FILTER: String? = System.getProperty("fir.bench.filter.name")
+private val ENABLE_SLOW_ASSERTIONS: Boolean = System.getProperty("fir.bench.enable.slow.assertions") == "true"
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
     private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
@@ -76,13 +77,17 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
     override fun setUp() {
         super.setUp()
-        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = false
+        if (!ENABLE_SLOW_ASSERTIONS) {
+            AbstractTypeChecker.RUN_SLOW_ASSERTIONS = false
+        }
         reportDate = detectReportDate()
     }
 
     override fun tearDown() {
         super.tearDown()
-        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
+        if (!ENABLE_SLOW_ASSERTIONS) {
+            AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
+        }
     }
 
     private fun loadModule(moduleElement: Element): ModuleData {
