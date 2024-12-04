@@ -26,7 +26,6 @@ public object DataCopyBootstrap {
         vararg givenComponents: Int,
     ): CallSite? {
         // requirements
-        val kotlinKlass = klass.kotlin
         require(name == "copy") { "Only copy is supported" }
         val copyHandle = klass.declaredMethods.singleOrNull { it.name == "copy" }
         require(copyHandle != null) { "No copy method found" }
@@ -35,9 +34,12 @@ public object DataCopyBootstrap {
         val components = mutableListOf<MethodHandle>()
         val reordering = mutableListOf<Int>(0) // always start with 'this'
         for (componentIndex in 1 .. MAX_COMPONENT_INDEX) {
-            val componentNMethod = klass.getDeclaredMethod("component$componentIndex")
-            // if this componentN does not exist, we're done
-            if (componentNMethod == null) break
+            val componentNMethod = try {
+                klass.getDeclaredMethod("component$componentIndex")
+            } catch (_: NoSuchMethodException) {
+                // if this componentN does not exist, we're done
+                break
+            }
             when (val givenIndex = givenComponents.indexOf(componentIndex)) {
                 -1 -> {
                     components += lookup.unreflect(componentNMethod)
@@ -49,8 +51,6 @@ public object DataCopyBootstrap {
                     reordering += givenIndex + 1
                 }
             }
-
-
         }
 
         // create the body of the MethodHandle

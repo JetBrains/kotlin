@@ -71,7 +71,7 @@ object DataCopy : IntrinsicMethod() {
         Opcodes.H_INVOKESTATIC,
         "kotlin/internal/DataCopyBootstrap",
         "bootstrap",
-        "(Ljava/lang/invoke/MethodHandles\$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class;[I;)Ljava/lang/invoke/CallSite;",
+        "(Ljava/lang/invoke/MethodHandles\$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/Class<*>;[I)Ljava/lang/invoke/CallSite;",
         false
     )
 
