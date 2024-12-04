@@ -25314,6 +25314,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         public void testForSyntheticPropertyOverrides() {
           runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forSyntheticPropertyOverrides.kt");
         }
+
+        @Test
+        @TestMetadata("hiddenJavaClass.kt")
+        public void testHiddenJavaClass() {
+          runTest("compiler/testData/diagnostics/tests/j+k/deprecations/hiddenJavaClass.kt");
+        }
+
+        @Test
+        @TestMetadata("javaWithHiddenDeprecation.kt")
+        public void testJavaWithHiddenDeprecation() {
+          runTest("compiler/testData/diagnostics/tests/j+k/deprecations/javaWithHiddenDeprecation.kt");
+        }
       }
 
       @Nested
