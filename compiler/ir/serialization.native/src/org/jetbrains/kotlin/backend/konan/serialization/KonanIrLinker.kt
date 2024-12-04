@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
-import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -261,7 +260,7 @@ class KonanIrLinker(
         friendModules: Map<String, Collection<String>>,
         private val forwardModuleDescriptor: ModuleDescriptor?,
         private val stubGenerator: DeclarationStubGenerator,
-        private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
+        private val cenumsProvider: IrProviderForCEnumAndCStructStubsBase,
         exportedDependencies: List<ModuleDescriptor>,
         override val partialLinkageSupport: PartialLinkageSupportForLinker,
         private val cachedLibraries: CachedLibraries,

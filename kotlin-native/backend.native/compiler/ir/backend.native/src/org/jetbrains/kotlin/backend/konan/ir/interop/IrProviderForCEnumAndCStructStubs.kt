@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumCompanionGenerat
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumVarClassGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cstruct.CStructVarClassGenerator
 import org.jetbrains.kotlin.backend.konan.ir.interop.cstruct.CStructVarCompanionGenerator
+import org.jetbrains.kotlin.backend.konan.serialization.IrProviderForCEnumAndCStructStubsBase
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 internal class IrProviderForCEnumAndCStructStubs(
         context: GeneratorContext,
         symbols: KonanSymbols
-) {
+): IrProviderForCEnumAndCStructStubsBase {
 
     /**
      *  TODO: integrate this provider into [KonanIrLinker.KonanInteropModuleDeserializer]
@@ -56,7 +57,7 @@ internal class IrProviderForCEnumAndCStructStubs(
     private val cStructClassGenerator =
             CStructVarClassGenerator(context, cStructCompanionGenerator, symbols)
 
-    fun isCEnumOrCStruct(declarationDescriptor: DeclarationDescriptor): Boolean =
+    override fun isCEnumOrCStruct(declarationDescriptor: DeclarationDescriptor): Boolean =
             declarationDescriptor.run { findCEnumDescriptor() ?: findCStructDescriptor() } != null
 
     fun referenceAllEnumsAndStructsFrom(interopModule: ModuleDescriptor) = interopModule.getPackageFragments()
@@ -89,7 +90,7 @@ internal class IrProviderForCEnumAndCStructStubs(
         cStructCompanionGenerator.invokePostLinkageSteps()
     }
 
-    fun getDeclaration(descriptor: DeclarationDescriptor, idSignature: IdSignature, file: IrFile, symbolKind: BinarySymbolData.SymbolKind): IrSymbolOwner {
+    override fun getDeclaration(descriptor: DeclarationDescriptor, idSignature: IdSignature, file: IrFile, symbolKind: BinarySymbolData.SymbolKind): IrSymbolOwner {
         return symbolTable.run {
             when (symbolKind) {
                 BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> descriptorExtension.declareConstructorFromLinker(descriptor as ClassConstructorDescriptor, idSignature) { s: IrConstructorSymbol ->
