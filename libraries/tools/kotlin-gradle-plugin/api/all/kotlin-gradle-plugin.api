@@ -1851,9 +1851,11 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinJsCompilation : org/je
 	public fun getCompileTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
 	public final fun getNpmAggregatedConfigurationName ()Ljava/lang/String;
-	public final fun getOutputModuleName ()Lorg/gradle/api/provider/Property;
+	public final fun getOutputModuleName ()Lorg/gradle/api/provider/Provider;
 	public fun getProcessResourcesTaskName ()Ljava/lang/String;
 	public final fun getPublicPackageJsonConfigurationName ()Ljava/lang/String;
+	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public fun getTarget ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;
 	public final fun packageJson (Lgroovy/lang/Closure;)V
 	public final fun packageJson (Lorg/gradle/api/Action;)V
 }
@@ -3447,6 +3449,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 	public abstract fun getBinaries ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsBinaryContainer;
 	public abstract fun getCompilations ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public abstract fun getModuleName ()Ljava/lang/String;
+	public abstract fun getOutputModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getTestRuns ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public abstract fun passAsArgumentToMainFunction (Ljava/lang/String;)V
 	public abstract fun produceExecutable ()V
@@ -5001,7 +5004,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCom
 	public final fun getProjectResolver ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinProjectNpmResolver;
 	public final fun getPublicPackageJsonTaskHolder ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun getRootResolver ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinRootNpmResolver;
-	public final fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public final fun getTarget ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;
 	public final fun setRootResolver (Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinRootNpmResolver;)V
 	public fun toString ()Ljava/lang/String;
 }

@@ -35,7 +35,7 @@ class NodeJsEnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
                 sourceMapStackTraces = false
             }
 
-            val inputFile = if ((compilation.target as KotlinJsIrTarget).wasmTargetType == KotlinWasmTargetType.WASI) {
+            val inputFile = if (compilation.target.wasmTargetType == KotlinWasmTargetType.WASI) {
                 if (binary is ExecutableWasm && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
                     dependsOn(binary.optimizeTask)
                     binary.mainOptimizedFile

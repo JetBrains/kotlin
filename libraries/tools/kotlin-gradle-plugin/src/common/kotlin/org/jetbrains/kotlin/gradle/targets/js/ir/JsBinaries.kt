@@ -147,7 +147,7 @@ sealed class JsIrBinary(
         )
 
     val target: KotlinJsIrTarget
-        get() = compilation.target as KotlinJsIrTarget
+        get() = compilation.target
 
     val project: Project
         get() = target.project
@@ -159,7 +159,7 @@ sealed class JsIrBinary(
                 it.libraries.from(project.filesProvider { compilation.runtimeDependencyFiles })
             }
             configAction.configureTask { task ->
-                val targetCompilerOptions = (compilation.target as KotlinJsIrTarget).compilerOptions
+                val targetCompilerOptions = compilation.target.compilerOptions
                 KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
                     targetCompilerOptions,
                     task.compilerOptions
@@ -211,7 +211,7 @@ internal fun TaskProvider<BinaryenExec>.configureOptimizeTask(binary: WasmBinary
         )
     }
 
-    val target = binary.compilation.target as KotlinJsIrTarget
+    val target = binary.compilation.target
     val compilation = binary.compilation
 
     if (compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {

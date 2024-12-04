@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
@@ -29,7 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -66,20 +63,11 @@ constructor(
     override var wasmTargetType: KotlinWasmTargetType? = null
         internal set
 
-    override var moduleName: String? = null
+    @Deprecated("Use outputModuleName with Provider API instead")
+    override var moduleName: String?
+        get() = outputModuleName.get()
         set(value) {
-            field = value
-            compilations.all { compilation ->
-                val compilationName = if (compilation.name != MAIN_COMPILATION_NAME) {
-                    compilation.name
-                } else null
-
-                val name = sequenceOf(moduleName, compilationName)
-                    .filterNotNull()
-                    .joinToString("-")
-
-                compilation.outputModuleName.set(name)
-            }
+            outputModuleName.set(value)
         }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
@@ -351,6 +339,35 @@ constructor(
         .apply {
             configureJsDefaultOptions()
         }
+
+    internal companion object {
+        private val DECAMELIZE_REGEX = "([A-Z])".toRegex()
+
+        internal fun buildNpmProjectName(project: Project, targetName: String): String {
+            val rootProjectName = project.rootProject.name
+
+            val localName = if (project != project.rootProject) {
+                (rootProjectName + project.path).replace(":", "-")
+            } else rootProjectName
+
+            val targetPartName = if (targetName.isNotEmpty() && targetName.toLowerCaseAsciiOnly() != "js") {
+                targetName
+                    .replace(DECAMELIZE_REGEX) {
+                        it.groupValues
+                            .drop(1)
+                            .joinToString(prefix = "-", separator = "-")
+                    }
+                    .toLowerCaseAsciiOnly()
+            } else null
+
+            return sequenceOf(
+                localName,
+                targetPartName
+            )
+                .filterNotNull()
+                .joinToString("-")
+        }
+    }
 }
 
 fun KotlinJsIrTarget.wasmDecamelizedDefaultNameOrNull(): String? = if (platformType == KotlinPlatformType.wasm) {

@@ -1717,4 +1717,27 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Changed output module name")
+    @GradleTest
+    fun testChangedOutputModuleName(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            val moduleName = "hello"
+            subProject("app").buildGradleKts.modify {
+                it.replace(
+                    "target {",
+                    """
+                        target {
+                            outputModuleName.set("$moduleName")
+                    """.trimIndent()
+                )
+            }
+
+            build("assemble") {
+                assertFileExists(
+                    subProject("app").projectPath.resolve("build/compileSync/js/main/productionExecutable/kotlin/$moduleName.mjs")
+                )
+            }
+        }
+    }
 }
