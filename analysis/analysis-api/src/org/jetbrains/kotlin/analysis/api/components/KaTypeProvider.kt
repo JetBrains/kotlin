@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 
-public interface KaTypeProvider {
+public interface KaTypeProvider : KaSessionComponent {
     /**
      * [builtinTypes] provides [KaType] instances for built-in types.
      */

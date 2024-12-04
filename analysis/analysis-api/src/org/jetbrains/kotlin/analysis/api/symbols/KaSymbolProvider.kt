@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.psi.*
  *
  * @see org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
  */
-public interface KaSymbolProvider {
+public interface KaSymbolProvider : KaSessionComponent {
     /**
      * A [KaDeclarationSymbol] for the given [KtDeclaration].
      *

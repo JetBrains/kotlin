@@ -137,7 +137,7 @@ public val KaCompilerTarget.classBuilderFactory: ClassBuilderFactory
     }
 
 @KaExperimentalApi
-public interface KaCompilerFacility {
+public interface KaCompilerFacility : KaSessionComponent {
     @KaExperimentalApi
     public companion object {
         /** Simple class name for the code fragment facade class. */

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
-public interface KaVisibilityChecker {
+public interface KaVisibilityChecker : KaSessionComponent {
     /**
      * Checks whether the [candidateSymbol] is visible in the [useSiteFile] from the given [position].
      *

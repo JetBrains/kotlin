@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 
 @KaExperimentalApi
-public interface KaSignatureSubstitutor {
+public interface KaSignatureSubstitutor : KaSessionComponent {
     /**
      * Applies a [substitutor] to the given symbol and returns a [KaCallableSignature] with substituted types.
      *

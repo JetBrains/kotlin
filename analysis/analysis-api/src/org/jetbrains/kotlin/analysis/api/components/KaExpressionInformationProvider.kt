@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
-public interface KaExpressionInformationProvider {
+public interface KaExpressionInformationProvider : KaSessionComponent {
     /**
      * The [symbol][KaCallableSymbol] of the callable which the given [KtReturnExpression] returns from.
      */

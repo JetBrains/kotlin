@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-public interface KaDiagnosticProvider {
+public interface KaDiagnosticProvider : KaSessionComponent {
     /**
      * Collects diagnostics for the given element.
      *

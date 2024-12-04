@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 
 @KaExperimentalApi
-public interface KaSymbolInformationProvider {
+public interface KaSymbolInformationProvider : KaSessionComponent {
     /**
      * The deprecation status of the given symbol, or `null` if the declaration is not deprecated.
      */

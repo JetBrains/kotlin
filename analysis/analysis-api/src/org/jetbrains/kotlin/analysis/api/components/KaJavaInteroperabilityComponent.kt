@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Type
 
-public interface KaJavaInteroperabilityComponent {
+public interface KaJavaInteroperabilityComponent : KaSessionComponent {
     /**
      * Converts the given [KaType] to a [PsiType] in the context of the [useSitePosition].
      *

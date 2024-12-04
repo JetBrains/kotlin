@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 
-public interface KaTypeRelationChecker {
+public interface KaTypeRelationChecker : KaSessionComponent {
     /**
      * Returns whether this [KaType] is semantically equal to [other].
      *

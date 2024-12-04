@@ -20,7 +20,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KaExperimentalApi
-public interface KaSubstitutorProvider {
+public interface KaSubstitutorProvider : KaSessionComponent {
     /**
      * Creates a [KaSubstitutor] based on the given [mappings].
      *

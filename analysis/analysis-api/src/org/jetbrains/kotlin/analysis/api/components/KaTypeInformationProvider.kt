@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 
-public interface KaTypeInformationProvider {
+public interface KaTypeInformationProvider : KaSessionComponent {
     /**
      * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
      * Kotlin code, as opposed to being only constructible via compiler type operations (such as type inference).

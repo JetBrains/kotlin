@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
 
-public interface KaResolver {
+public interface KaResolver : KaSessionComponent {
     /**
      * Resolves the given [KtReference] to symbols.
      *

@@ -121,7 +121,7 @@ public enum class ShortenStrategy {
 }
 
 @KaIdeApi
-public interface KaReferenceShortener {
+public interface KaReferenceShortener : KaSessionComponent {
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
      * shorten enum entries.  In case of KDoc shortens reference only if it is already imported.

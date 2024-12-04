@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
-public interface KaScopeProvider {
+public interface KaScopeProvider : KaSessionComponent {
     /**
      * A [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
      * (classes and objects) of the given [KaDeclarationContainerSymbol]. The scope includes members inherited from the symbol's supertypes,

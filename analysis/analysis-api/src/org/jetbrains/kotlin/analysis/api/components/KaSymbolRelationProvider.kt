@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.util.ImplementationStatus
 
-public interface KaSymbolRelationProvider {
+public interface KaSymbolRelationProvider : KaSessionComponent {
     /**
      * The [KaSymbol] which contains this symbol, or `null` if there is no containing declaration:
      *
