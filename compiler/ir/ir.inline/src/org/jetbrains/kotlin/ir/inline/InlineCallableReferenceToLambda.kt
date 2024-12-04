@@ -59,9 +59,9 @@ abstract class InlineCallableReferenceToLambdaPhase(
         expression.transformChildren(this, data)
         if (inlineFunctionResolver.needsInlining(expression)) {
             val function = expression.symbol.owner
-            for (parameter in function.valueParameters) {
+            for (parameter in function.parameters) {
                 if (parameter.isInlineParameter()) {
-                    expression.putValueArgument(parameter.indexInOldValueParameters, expression.getValueArgument(parameter.indexInOldValueParameters)?.transformToLambda(data))
+                    expression.arguments[parameter] = expression.arguments[parameter]?.transformToLambda(data)
                 }
             }
         }
@@ -108,7 +108,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             returnType = field.type
         }.apply {
             body = context.createIrBuilder(symbol).run {
-                val boundReceiver = dispatchReceiver ?: extensionReceiver
+                val boundReceiver = boundReceiver()
                 val fieldReceiver = when {
                     field.isStatic -> null
                     boundReceiver != null -> irGet(addExtensionReceiver(boundReceiver.type))
@@ -131,10 +131,10 @@ abstract class InlineCallableReferenceToLambdaPhase(
             isSuspend = referencedFunction.isSuspend
         }.apply {
             body = context.createIrBuilder(symbol, startOffset, endOffset).run {
-                val boundReceiver = dispatchReceiver ?: extensionReceiver
+                val boundReceiver = boundReceiver()
                 val boundReceiverParameter = when {
                     dispatchReceiver != null -> referencedFunction.dispatchReceiverParameter
-                    extensionReceiver != null -> referencedFunction.extensionReceiverParameter
+                    boundReceiver != null -> referencedFunction.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
                     else -> null
                 }
 
@@ -153,7 +153,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
                     val exprToReturn = irCall(referencedFunction.symbol, returnType).apply {
                         copyTypeArgumentsFrom(this@wrapFunction)
                         for (parameter in referencedFunction.explicitParameters) {
-                            val next = valueParameters.size
+                            val next = parameters.count { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
                             val getOnNewParameter = when {
                                 boundReceiverParameter == parameter -> irGet(addExtensionReceiver(boundReceiver!!.type))
                                 next >= argumentTypes.size ->
@@ -168,7 +168,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
                                     error("Callable reference with vararg should not appear at this stage.\n${this@wrapFunction.render()}")
                                 else -> irGet(addValueParameter("p$next", argumentTypes[next]))
                             }
-                            putArgument(referencedFunction, parameter, getOnNewParameter)
+                            arguments[parameter] = getOnNewParameter
                         }
                     }
                     +irReturn(exprToReturn)
@@ -189,11 +189,14 @@ abstract class InlineCallableReferenceToLambdaPhase(
                 if (original is IrFunctionReference) {
                     // It is required to copy value arguments if any.
                     // Don't need to copy the dispatch receiver because it was remapped on extension receiver.
-                    for (i in 0..<original.valueArgumentsCount) {
-                        putValueArgument(i, original.getValueArgument(i))
+                    original.symbol.owner.parameters.zip(original.arguments).forEach { (parameter, argument) ->
+                        if (parameter.kind == IrParameterKind.Regular || parameter.kind == IrParameterKind.Context) {
+                            arguments[parameter.indexInParameters] = argument
+                        }
                     }
                 }
-                extensionReceiver = original.dispatchReceiver ?: original.extensionReceiver
+                val receiver = original.boundReceiver()
+                receiver?.let { arguments[0] = it }
             }
         }
 }
@@ -207,3 +210,20 @@ private fun IrType.convertKPropertyToKFunction(irBuiltIns: IrBuiltIns): IrType {
 
     return this.toBuilder().apply { classifier = irBuiltIns.functionN(arguments.size - 1).symbol }.buildSimpleType()
 }
+
+// Returns dispatch or extension receiver of function or property reference, if any. Otherwise, return null.
+fun IrCallableReference<*>.boundReceiver(): IrExpression? =
+    when (val owner = symbol.owner) {
+        is IrFunction -> arguments.getOrNull(owner.parameters.indexOfFirst {
+            it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver
+        })
+        is IrProperty -> {
+            val boundArgs = arguments.filterNotNull()
+            when (boundArgs.size) {
+                0 -> null
+                1 -> boundArgs[0]
+                else -> error("Several bound arguments is not supported yet")
+            }
+        }
+        else -> null
+    }

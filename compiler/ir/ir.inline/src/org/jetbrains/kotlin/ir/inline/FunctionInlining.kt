@@ -203,8 +203,8 @@ open class FunctionInlining(
 
         withinScope(actualCallee) {
             actualCallee.body?.transformChildrenVoid()
-            actualCallee.valueParameters.forEachIndexed { index, param ->
-                if (expression.getValueArgument(index) == null) {
+            actualCallee.parameters.forEachIndexed { index, param ->
+                if (expression.arguments[index] == null) {
                     // Default values can recursively reference [callee] - transform only needed.
                     param.defaultValue = param.defaultValue?.transform(this@FunctionInlining, null)
                 }
@@ -511,10 +511,9 @@ open class FunctionInlining(
                         }
                         val parameterToSet = when (parameter) {
                             function.dispatchReceiverParameter -> inlinedFunction.dispatchReceiverParameter!!
-                            function.extensionReceiverParameter -> inlinedFunction.extensionReceiverParameter!!
-                            else -> inlinedFunction.valueParameters[parameter.indexInOldValueParameters]
+                            else -> inlinedFunction.parameters[parameter.indexInParameters]
                         }
-                        putArgument(parameterToSet, argument.doImplicitCastIfNeededTo(parameterToSet.type))
+                        arguments[parameterToSet] = argument.doImplicitCastIfNeededTo(parameterToSet.type)
                     }
                     assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
                     for (index in 0 until irFunctionReference.typeArgumentsCount)
@@ -689,7 +688,7 @@ open class FunctionInlining(
 
                     else -> {
                         val message = "Incomplete expression: call to ${callee.render()} " +
-                                "has no argument at index ${parameter.indexInOldValueParameters}"
+                                "has no argument at index ${parameter.indexInParameters}"
                         throw Error(message)
                     }
                 }
@@ -735,8 +734,7 @@ open class FunctionInlining(
                 }
                 when (it.parameter) {
                     referenced.dispatchReceiverParameter -> reference.dispatchReceiver = newArgument
-                    referenced.extensionReceiverParameter -> reference.extensionReceiver = newArgument
-                    else -> reference.putValueArgument(it.parameter.indexInOldValueParameters, newArgument)
+                    else -> reference.arguments[it.parameter] = newArgument
                 }
             }
             return evaluationStatements
@@ -828,7 +826,7 @@ open class FunctionInlining(
                     statements.add(variableInitializer.doImplicitCastIfNeededTo(parameter.type))
                 },
                 isMutable = false,
-                origin = if (parameter == callee.extensionReceiverParameter) {
+                origin = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
                     IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
                 } else {
                     IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
