@@ -35860,6 +35860,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("dslMarkerOnExpectedTypeForInvokeExtensionCall.kt")
+        public void testDslMarkerOnExpectedTypeForInvokeExtensionCall() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/dslMarkerOnExpectedTypeForInvokeExtensionCall.kt");
+        }
+
+        @Test
         @TestMetadata("dslMarkerOnTypealias.kt")
         public void testDslMarkerOnTypealias() {
           runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/dslMarkerOnTypealias.kt");
