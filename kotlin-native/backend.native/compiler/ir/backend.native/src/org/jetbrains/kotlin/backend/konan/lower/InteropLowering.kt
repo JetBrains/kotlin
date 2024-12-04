@@ -486,13 +486,7 @@ private class InteropTransformerPart1(
     private fun generateFunctionImp(selector: String, function: IrFunction): IrSimpleFunction {
         val signatureEncoding = getMethodSignatureEncoding(function)
 
-        val nativePtrType = context.ir.symbols.nativePtrType
-
-        val parameterTypes = mutableListOf(nativePtrType) // id self
-
-        parameterTypes.add(nativePtrType) // SEL _cmd
-
-        function.parameters.filter { it.kind == IrParameterKind.Regular }.mapTo(parameterTypes) { nativePtrType }
+        val parameterTypes = (0..function.parameters.size).map { context.ir.symbols.nativePtrType } // id self, SEL _cmd, ...
 
         val newFunction = context.irFactory.buildFun {
             startOffset = function.startOffset
