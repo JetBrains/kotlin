@@ -92,7 +92,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
                 configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
 
-        configuration.put(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG, createFlexiblePhaseConfig(arguments))
+        configuration.phaseConfig = createPhaseConfig(arguments)
 
         /* Set default version of metadata version */
         val metadataVersionString = arguments.metadataVersion
