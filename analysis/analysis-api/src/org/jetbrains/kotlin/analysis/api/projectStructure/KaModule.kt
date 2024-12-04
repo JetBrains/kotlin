@@ -20,73 +20,89 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.nio.file.Path
 
 /**
- * Represents a module inside a project.
+ * [KaModule] is the Analysis API's view on a module inside a project. A [KaModule] represents a [source set][KaSourceModule] (with
+ * production and test sources being separate modules), [script][KaScriptModule], [library][KaLibraryModule], and various niche concepts
+ * such as [dangling files][KaDanglingFileModule].
  *
- * [KaModule] is a Source Set (or considering a new project model naming a Fragment).
- * Some examples of a module: main source set, test source set, library, JDK.
+ * As an Analysis API user, you will mainly interact with [KaModule]s indirectly when providing a use-site module to an
+ * [analyze][org.jetbrains.kotlin.analysis.api.analyze] call (usually derived from the use-site [KtElement][org.jetbrains.kotlin.psi.KtElement]
+ * instead). However, it is possible to utilize the Analysis API's module support to explore the project structure and retrieve information
+ * about individual modules when needed.
+ *
+ * Modules are crucial to establish the use-site view of [analysis sessions][org.jetbrains.kotlin.analysis.api.KaSession]. An analysis
+ * session always exists in the context of a particular use-site module. The module determines the session's [resolution scope][org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider.analysisScope],
+ * and generally the content and dependencies from which [symbols][org.jetbrains.kotlin.analysis.api.symbols.KaSymbol] are resolved.
+ *
+ * Individual [KaModule]s for specific [PsiElements][com.intellij.psi.PsiElement] can be retrieved from [KaModuleProvider]. The
+ * implementation of this provider, and the project structure in general, are provided by the [Analysis API platform](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api-platform-interface),
+ * such as IntelliJ or Standalone. As such, [KaModule] implementations are not provided by the Analysis API engine (in contrast to most of
+ * the Analysis API surface), but rather by individual platforms.
+ *
+ * Modules are also the Analysis API's unit of modification. When a code change has possible non-local consequences (i.e. it happens outside
+ * an isolated function or property body), the resulting cache invalidation occurs on the level of a module and its dependents. While
+ * modification handling overall is an Analysis API *platform* topic, it is important to establish this basic fact.
  */
 public interface KaModule {
     /**
-     * A list of Regular dependencies. Regular dependency allows the current module to see symbols from the dependent module. In the case
-     * of a source set, it can be either the source set it depends on, a library, or an SDK.
+     * The module's regular dependencies. Regular dependencies allow the current module to use symbols from the dependency module.
      *
-     * The dependencies list is non-transitive and does not include the current module.
+     * The resulting list is not transitive and does not include the current module.
      */
     public val directRegularDependencies: List<KaModule>
 
     /**
-     * A list of `dependsOn` dependencies. (Kotlin MPP projects only.)
+     * The module's [`dependsOn` dependencies](https://kotlinlang.org/api/kotlin-gradle-plugin/kotlin-gradle-plugin-api/org.jetbrains.kotlin.gradle.plugin/-kotlin-source-set/depends-on.html).
      *
      * A `dependsOn` dependency expresses that the current module can provide `actual` declarations for `expect` declarations from the
-     * dependent module, as well as see internal symbols of the dependent module.
+     * dependency module, as well as see internal symbols of the dependency module. As such, `dependsOn` dependencies are a Kotlin
+     * Multiplatform concept.
      *
-     * `dependsOn` dependencies are transitive, but the list is not a transitive closure. The list does not include the current module.
+     * `dependsOn` dependencies in general are transitive, but the resulting list is not a transitive closure. To get all transitive
+     * `dependsOn` dependencies, [transitiveDependsOnDependencies] should be used. The list also does not include the current module.
      */
     public val directDependsOnDependencies: List<KaModule>
 
     /**
-     * A list of [directDependsOnDependencies] and all of their parents (directly and indirectly), sorted topologically with the nearest
-     * dependencies first in the list. The list does not include the current module.
+     * A list of [directDependsOnDependencies] and all of their own `dependsOn` dependencies (directly and indirectly), sorted topologically
+     * with the nearest dependencies first in the list. The list does not include the current module.
      */
     public val transitiveDependsOnDependencies: List<KaModule>
 
     /**
-     * A list of Friend dependencies. Friend dependencies express that the current module may see internal symbols of the dependent module.
+     * The module's friend dependencies. Friend dependencies allow the current module to use internal symbols from the dependency module.
      *
-     * The dependencies list is non-transitive and does not include the current module.
+     * The resulting list is not transitive and does not include the current module.
      */
     public val directFriendDependencies: List<KaModule>
 
     /**
-     * A [GlobalSearchScope] which belongs to a module content.
-     *
-     * Contract: `module.contentScope.contains(file) <=> file belongs to this module`
+     * A [GlobalSearchScope] which determines all the files that are contained in the module.
      */
     public val contentScope: GlobalSearchScope
 
     /**
-     * A platform (e.g, JVM, JS, Native) which the current module represents.
+     * A platform which the module represents (e.g, JVM, JS, Native).
      *
      * @see [TargetPlatform]
      */
     public val targetPlatform: TargetPlatform
 
     /**
-     * [Project] to which the current module belongs.
+     * The [Project] to which the module belongs.
      *
-     * If the current module depends on some other modules, all those modules should have the same [Project] as the current one.
+     * All the module's dependencies should belong to the same [Project] as the module itself.
      */
     public val project: Project
 
     /**
-     * A human-readable description of the current module. E.g, "main sources of module 'analysis-api'".
+     * A human-readable description of the module, such as "main sources of module 'analysis-api'".
      */
     @KaExperimentalApi
     public val moduleDescription: String
 
     /**
-     * A stable binary name of module from the *Kotlin* point of view.
-     * Having correct module name is critical for `internal`-visibility mangling. See [org.jetbrains.kotlin.asJava.mangleInternalName]
+     * A stable binary name of module from the *Kotlin* point of view. Having a correct module name is critical for `internal`-visibility
+     * mangling.
      *
      * NOTE: [stableModuleName] will be removed in the future and replaced with a platform interface service.
      */
@@ -96,35 +112,52 @@ public interface KaModule {
 }
 
 /**
- * A module which consists of a set of source declarations inside a project.
+ * A [KaModule] representing a set of source declarations.
  *
- * Generally, a main or test Source Set.
+ * The Analysis API distinguishes between production and test source sets. As such, the `src` and `test` source sets of a "module" are
+ * actually different [KaSourceModule]s. To allow a test source module to use the declarations from the production source module, the test
+ * source module generally defines a [friend dependency][directFriendDependencies] on the production source module.
  */
 public interface KaSourceModule : KaModule {
+    /**
+     * The name of the module.
+     *
+     * In practice, the specific format of the [name] depends on the Analysis API platform which provides the [KaSourceModule]
+     * implementation.
+     */
     public val name: String
+
+    /**
+     * A set of Kotlin language settings, such as the API version, supported features, and flags.
+     */
+    public val languageVersionSettings: LanguageVersionSettings
+
+    /**
+     * The PSI-specific view on the source roots of the module.
+     */
+    @KaExperimentalApi
+    public val psiRoots: List<PsiFileSystemItem>
+        get() = listOf()
 
     @KaExperimentalApi
     override val moduleDescription: String
         get() = "Sources of $name"
-
-    /**
-     * A set of Kotlin settings, like API version, supported features and flags.
-     */
-    public val languageVersionSettings: LanguageVersionSettings
-
-    @KaExperimentalApi
-    public val psiRoots: List<PsiFileSystemItem>
-        get() = listOf()
 }
 
 /**
- * A module which represents a binary library, e.g. JAR or KLIB.
+ * A module which represents a binary library, such as a JAR or KLIB.
  */
 public interface KaLibraryModule : KaModule {
+    /**
+     * The name of the library.
+     *
+     * In practice, the specific format of the [libraryName] depends on the Analysis API platform which provides the [KaLibraryModule]
+     * implementation.
+     */
     public val libraryName: String
 
     /**
-     * A list of binary files which constitute the library. The list can contain JARs, KLIBs, folders with `.class` files, and so on.
+     * A list of binary roots which constitute the library. The list can contain JARs, KLIBs, folders with `.class` files, and so on.
      *
      * The paths should be consistent with the [contentScope], so the following equivalence should hold:
      *
@@ -135,13 +168,15 @@ public interface KaLibraryModule : KaModule {
     public val binaryRoots: Collection<Path>
 
     /**
-     * A list of binary files in [VirtualFile] form if the library module represents a library in in-memory file system.
+     * A list of binary files in [VirtualFile] form if the library module represents a library in an in-memory file system.
      */
     @KaExperimentalApi
     public val binaryVirtualFiles: Collection<VirtualFile>
 
     /**
-     * A library source, if any. If current module is a binary JAR, then [librarySources] corresponds to the sources JAR.
+     * The library sources for the binary library, if any.
+     *
+     * For example, if this module is a binary JAR, then [librarySources] corresponds to the sources JAR.
      */
     public val librarySources: KaLibrarySourceModule?
 
@@ -160,14 +195,24 @@ public interface KaLibraryModule : KaModule {
 }
 
 /**
- * Sources for some [KaLibraryModule].
+ * A module which represents the sources for a [KaLibraryModule].
+ *
+ * For example, when viewing a library file in an IDE, the library sources are usually preferred over the library's binary files (if
+ * available). The [KaLibrarySourceModule] represents exactly such sources.
  */
 public interface KaLibrarySourceModule : KaModule {
+    /**
+     * The name of the library sources.
+     *
+     * In practice, the specific format of the [libraryName] depends on the Analysis API platform which provides the [KaLibraryModule]
+     * implementation.
+     */
     public val libraryName: String
 
     /**
-     * A library binary corresponding to the current library source.
-     * If the current module is a source JAR, then [binaryLibrary] corresponds to the binaries JAR.
+     * The [binary library][KaLibraryModule] which corresponds to the library sources.
+     *
+     * For example, if this module is a source JAR, then [binaryLibrary] corresponds to the binary JAR.
      */
     public val binaryLibrary: KaLibraryModule
 
@@ -177,7 +222,7 @@ public interface KaLibrarySourceModule : KaModule {
 }
 
 /**
- * A module which contains kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for a specific platform.
+ * A module which contains Kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for a specific platform.
  */
 @KaPlatformInterface
 public interface KaBuiltinsModule : KaModule {
@@ -196,12 +241,12 @@ public interface KaBuiltinsModule : KaModule {
 @KaExperimentalApi
 public interface KaScriptModule : KaModule {
     /**
-     * A script PSI.
+     * The [KtFile] which contains the Kotlin script.
      */
     public val file: KtFile
 
     /**
-     * A set of Kotlin settings, like API version, supported features and flags.
+     * A set of Kotlin language settings, such as the API version, supported features, and flags.
      */
     public val languageVersionSettings: LanguageVersionSettings
 
@@ -210,26 +255,26 @@ public interface KaScriptModule : KaModule {
 }
 
 /**
- * A module for Kotlin script dependencies.
- * Must be either a [KaLibraryModule] or [KaLibrarySourceModule].
+ * A module for Kotlin script dependencies. Must either be a [KaLibraryModule] or [KaLibrarySourceModule].
  */
 @KaPlatformInterface
 public interface KaScriptDependencyModule : KaModule {
     /**
-     * A `VirtualFile` that backs the dependent script PSI, or `null` if the module is for project-level dependencies.
+     * The [KtFile] that backs the PSI of the script dependency, or `null` if the module is for project-level dependencies.
      */
     public val file: KtFile?
 }
 
 /**
  * A module for a dangling file. Such files are usually temporary and are stored in-memory.
+ *
  * Dangling files may be created for various purposes, such as: a code fragment for the evaluator, a sandbox for testing code modification
- * applicability, etc.
+ * applicability, and so on.
  */
 @KaPlatformInterface
 public interface KaDanglingFileModule : KaModule {
     /**
-     * A temporary file PSI.
+     * The dangling file.
      */
     public val file: KtFile
 
@@ -239,13 +284,14 @@ public interface KaDanglingFileModule : KaModule {
     public val contextModule: KaModule
 
     /**
-     * A way of resolving references to non-local declarations in the dangling file.
+     * The mode which determines how references to non-local declarations in the dangling file are resolved.
      */
     public val resolutionMode: KaDanglingFileResolutionMode
 
     /**
-     * True if the [file] is a code fragment.
-     * Useful to recognize code fragments when their PSI was collected.
+     * Whether the [file] is a code fragment.
+     *
+     * This is useful to recognize code fragments when their PSI was collected.
      */
     public val isCodeFragment: Boolean
 
@@ -255,25 +301,25 @@ public interface KaDanglingFileModule : KaModule {
 }
 
 /**
- * True if the dangling file module supports partial invalidation on PSI modifications.
- * Sessions for such modules can be cached for longer time.
+ * Whether the dangling file module supports partial invalidation on PSI modifications. The sessions for such modules can be cached for a
+ * longer time.
  */
 public val KaDanglingFileModule.isStable: Boolean
     get() = file.isPhysical && file.viewProvider.isEventSystemEnabled
 
 /**
- * A set of sources which live outside the project content root. E.g, testdata files or source files of some other project.
+ * A module which represents a source file living outside the project's content root. For example, test data files, or the source files of
+ * another project.
  */
 @KaPlatformInterface
 public interface KaNotUnderContentRootModule : KaModule {
     /**
-     * Human-readable module name.
+     * A human-readable module name.
      */
     public val name: String
 
     /**
-     * Module owner file.
-     * A separate module is created for each file outside a content root.
+     * The [PsiFile] which this module represents. A separate module is created for each file outside a content root.
      */
     public val file: PsiFile?
         get() = null
