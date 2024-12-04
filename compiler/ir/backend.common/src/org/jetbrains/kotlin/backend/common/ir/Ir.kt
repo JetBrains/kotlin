@@ -246,11 +246,8 @@ abstract class Symbols(
                 function.name.asString() == "<get-isInitialized>" &&
                         function.isTopLevel &&
                         function.getPackageFragment().packageFqName.asString() == "kotlin" &&
-                        function.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }.isEmpty() &&
-                        symbol.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classOrNull?.owner
-                            .let { receiverClass ->
-                                receiverClass?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
-                            }
+                        function.hasShape(extensionReceiver = true) &&
+                        function.parameters[0].type.classOrNull?.owner?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
             }
 
         fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
