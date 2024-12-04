@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -490,44 +492,30 @@ private class InteropTransformerPart1(
 
         parameterTypes.add(nativePtrType) // SEL _cmd
 
-        function.valueParameters.mapTo(parameterTypes) { nativePtrType }
+        function.parameters.filter { it.kind == IrParameterKind.Regular }.mapTo(parameterTypes) { nativePtrType }
 
-        val newFunction =
-            context.irFactory.createSimpleFunction(
-                    function.startOffset,
-                    function.endOffset,
-                    // The generated function is called by ObjC and contains Kotlin code, so
-                    // it must switch thread state and potentially initialize runtime on this thread.
-                    CBridgeOrigin.C_TO_KOTLIN_BRIDGE,
-                    ("imp:$selector").synthesizedName,
-                    DescriptorVisibilities.PRIVATE,
-                    isInline = false,
-                    isExpect = false,
-                    function.returnType,
-                    Modality.FINAL,
-                    IrSimpleFunctionSymbolImpl(),
-                    isTailrec = false,
-                    isSuspend = false,
-                    isOperator = false,
-                    isInfix = false,
+        val newFunction = context.irFactory.buildFun {
+            startOffset = function.startOffset
+            endOffset = function.endOffset
+            // The generated function is called by ObjC and contains Kotlin code, so
+            // it must switch thread state and potentially initialize runtime on this thread.
+            origin = CBridgeOrigin.C_TO_KOTLIN_BRIDGE
+            name = ("imp:$selector").synthesizedName
+            visibility = DescriptorVisibilities.PRIVATE
+            returnType = function.returnType
+        }
+
+        newFunction.parameters = parameterTypes.mapIndexed { index, parameterType ->
+            context.irFactory.buildValueParameter(
+                    IrValueParameterBuilder().apply {
+                        startOffset = function.startOffset
+                        endOffset = function.endOffset
+                        name = Name.identifier("p$index")
+                        kind = IrParameterKind.Regular
+                        type = parameterType
+                    },
+                    newFunction
             )
-
-        newFunction.valueParameters += parameterTypes.mapIndexed { index, type ->
-            context.irFactory.createValueParameter(
-                    startOffset = function.startOffset,
-                    endOffset = function.endOffset,
-                    origin = IrDeclarationOrigin.DEFINED,
-                    name = Name.identifier("p$index"),
-                    type = type,
-                    isAssignable = false,
-                    symbol = IrValueParameterSymbolImpl(),
-                    varargElementType = null,
-                    isCrossinline = false,
-                    isNoinline = false,
-                    isHidden = false,
-            ).apply {
-                parent = newFunction
-            }
         }
 
         // Annotations to be detected in KotlinObjCClassInfoGenerator:
@@ -538,17 +526,11 @@ private class InteropTransformerPart1(
         val builder = context.createIrBuilder(newFunction.symbol)
         newFunction.body = builder.irBlockBody(newFunction) {
             +irCall(function).apply {
-                dispatchReceiver = interpretObjCPointer(
-                        irGet(newFunction.valueParameters[0]),
-                        function.dispatchReceiverParameter!!.type
-                )
-
-                function.valueParameters.forEachIndexed { index, parameter ->
-                    putValueArgument(index,
-                            interpretObjCPointer(
-                                    irGet(newFunction.valueParameters[index + 2]),
-                                    parameter.type
-                            )
+                function.parameters.forEachIndexed { index, parameter ->
+                    val shift = if (index == 0) 0 else 1
+                    arguments[index] = interpretObjCPointer(
+                            irGet(newFunction.parameters[index + shift]),
+                            parameter.type
                     )
                 }
             }
