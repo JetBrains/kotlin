@@ -604,73 +604,60 @@ open class FunctionInlining(
 
             val parameterToArgument = mutableListOf<ParameterToArgument>()
 
-            if (callSite.dispatchReceiver != null && callee.dispatchReceiverParameter != null)
-                parameterToArgument += ParameterToArgument(
-                    parameter = callee.dispatchReceiverParameter!!,
-                    originalArgumentExpression = callSite.dispatchReceiver!!
-                ).andAllOuterClasses()
-
-            val valueArguments =
-                callSite.symbol.owner.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
-                    .map { callSite.arguments[it] }.toMutableList()
-
-            val extensionReceiverParameter = callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
-            val extensionReceiver: IrExpression? =
-                callSite.arguments.getOrNull(callSite.symbol.owner.parameters.indexOfFirst { it.kind == IrParameterKind.ExtensionReceiver })
-            if (extensionReceiverParameter != null) {
-                parameterToArgument += ParameterToArgument(
-                    parameter = extensionReceiverParameter,
-                    originalArgumentExpression = extensionReceiver
-                        ?: valueArguments.removeAt(0)!! // Special case: lambda with receiver is called as usual lambda:
-                )
-            } else extensionReceiver?.let {
-                // Special case: usual lambda is called as lambda with receiver:
-                valueArguments.add(0, it)
-            }
-
             val parametersWithDefaultToArgument = mutableListOf<ParameterToArgument>()
-            callee.parameters
-                .filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
-                .zip(valueArguments)
-                .forEach { (parameter, argument) ->
-                    when {
-                        argument != null -> {
-                            parameterToArgument += ParameterToArgument(
-                                parameter = parameter,
-                                originalArgumentExpression = argument
-                            )
-                        }
-
-                        // After ExpectDeclarationsRemoving pass default values from expect declarations
-                        // are represented correctly in IR.
-                        parameter.defaultValue != null -> {  // There is no argument - try default value.
-                            parametersWithDefaultToArgument += ParameterToArgument(
-                                parameter = parameter,
-                                originalArgumentExpression = parameter.defaultValue!!.expression,
-                                isDefaultArg = true
-                            )
-                        }
-
-                        parameter.varargElementType != null -> {
-                            val emptyArray = IrVarargImpl(
-                                startOffset = callSite.startOffset,
-                                endOffset = callSite.endOffset,
-                                type = parameter.type,
-                                varargElementType = parameter.varargElementType!!
-                            )
-                            parameterToArgument += ParameterToArgument(
-                                parameter = parameter,
-                                originalArgumentExpression = emptyArray
-                            )
-                        }
-
-                        else -> {
-                            val message = "Incomplete expression: call to ${callee.render()} " +
-                                    "has no argument at index ${parameter.indexInParameters}"
-                            throw Error(message)
+            val arguments =
+                if (callSite.dispatchReceiver != null && callee.dispatchReceiverParameter != null)
+                    callSite.arguments
+                else {
+                    callSite.symbol.owner.parameters
+                        .filter { it.kind != IrParameterKind.DispatchReceiver }
+                        .map { callSite.arguments[it] }
+                }
+            for ((parameter, argument) in callee.parameters.zip(arguments)) {
+                when {
+                    argument != null -> {
+                        val parameterToArgument1 = ParameterToArgument(
+                            parameter = parameter,
+                            originalArgumentExpression = argument
+                        )
+                        // TODO: Don't call `.andAllOuterClasses()` after KT-70452 is fixed
+                        if (parameter.kind == IrParameterKind.DispatchReceiver) {
+                            parameterToArgument += parameterToArgument1.andAllOuterClasses()
+                        } else {
+                            parameterToArgument += parameterToArgument1
                         }
                     }
+
+                    // After ExpectDeclarationsRemoving pass default values from expect declarations
+                    // are represented correctly in IR.
+                    parameter.defaultValue != null -> {  // There is no argument - try default value.
+                        parametersWithDefaultToArgument += ParameterToArgument(
+                            parameter = parameter,
+                            originalArgumentExpression = parameter.defaultValue!!.expression,
+                            isDefaultArg = true
+                        )
+                    }
+
+                    parameter.varargElementType != null -> {
+                        val emptyArray = IrVarargImpl(
+                            startOffset = callSite.startOffset,
+                            endOffset = callSite.endOffset,
+                            type = parameter.type,
+                            varargElementType = parameter.varargElementType!!
+                        )
+                        parameterToArgument += ParameterToArgument(
+                            parameter = parameter,
+                            originalArgumentExpression = emptyArray
+                        )
+                    }
+
+                    else -> {
+                        val message = "Incomplete expression: call to ${callee.render()} " +
+                                "has no argument at index ${parameter.indexInOldValueParameters}"
+                        throw Error(message)
+                    }
                 }
+            }
             // All arguments except default are evaluated at callsite,
             // but default arguments are evaluated inside callee.
             return parameterToArgument + parametersWithDefaultToArgument
