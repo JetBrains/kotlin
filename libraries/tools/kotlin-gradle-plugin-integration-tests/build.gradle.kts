@@ -411,7 +411,8 @@ tasks.withType<Test>().configureEach {
     onlyIf { !noTestProperty.isPresent }
 
     // Trigger task timeout earlier than TC timeout, so we could collect more info what went wrong with IT tests
-    timeout.set(Duration.ofHours(2))
+    // The longest one are on MacOS/X64 agents in release configurations
+    timeout.set(Duration.ofHours(7))
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
