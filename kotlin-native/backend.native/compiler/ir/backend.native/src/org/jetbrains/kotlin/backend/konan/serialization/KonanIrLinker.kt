@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -258,7 +257,6 @@ internal object EagerInitializedPropertySerializer {
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class KonanIrLinker(
         private val currentModule: ModuleDescriptor,
-        override val translationPluginContext: TranslationPluginContext?,
         messageCollector: MessageCollector,
         builtIns: IrBuiltIns,
         symbolTable: SymbolTable,

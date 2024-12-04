@@ -83,7 +83,6 @@ class Psi2IrTranslator(
         context: GeneratorContext,
         ktFiles: Collection<KtFile>,
         irProviders: List<IrProvider>,
-        linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
         fragmentInfo: EvaluatorFragmentInfo? = null
     ): IrModuleFragment {
 
@@ -94,7 +93,7 @@ class Psi2IrTranslator(
         val irModule = moduleGenerator.generateModuleFragment(ktFiles)
 
         val deserializers = irProviders.filterIsInstance<IrDeserializer>()
-        deserializers.forEach { it.init(irModule, linkerExtensions) }
+        deserializers.forEach { it.init(irModule) }
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 

@@ -252,7 +252,6 @@ fun getIrModuleInfoForKlib(
             builtIns = irBuiltIns,
             messageCollector = messageCollector
         ),
-        translationPluginContext = null,
         icData = null,
         friendModules = friendModules
     )
@@ -271,7 +270,7 @@ fun getIrModuleInfoForKlib(
 
     val moduleFragment = deserializedModuleFragments.last()
 
-    irLinker.init(null, emptyList())
+    irLinker.init(null)
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(inOrAfterLinkageStep = true)
 
@@ -300,10 +299,6 @@ fun getIrModuleInfoForSourceFiles(
     mapping: (KotlinLibrary) -> ModuleDescriptor
 ): IrModuleInfo {
     val irBuiltIns = psi2IrContext.irBuiltIns
-    val feContext = psi2IrContext.run {
-        JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
-    }
-
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,
         messageCollector = messageCollector,
@@ -314,7 +309,6 @@ fun getIrModuleInfoForSourceFiles(
             builtIns = irBuiltIns,
             messageCollector = messageCollector
         ),
-        translationPluginContext = feContext,
         icData = null,
         friendModules = friendModules,
     )
@@ -384,7 +378,6 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
     stubGenerator: DeclarationStubGenerator? = null
 ): Pair<IrModuleFragment, IrPluginContext> {
     val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration, messageCollector::checkNoUnboundSymbols)
-    val extensions = IrGenerationExtension.getInstances(project)
 
     // plugin context should be instantiated before postprocessing steps
     val pluginContext = IrPluginContextImpl(
@@ -397,27 +390,19 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         linker = irLinker,
         messageCollector
     )
-    if (extensions.isNotEmpty()) {
-        for (extension in extensions) {
-            psi2Ir.addPostprocessingStep { module ->
-                val old = stubGenerator?.unboundSymbolGeneration
-                try {
-                    stubGenerator?.unboundSymbolGeneration = true
-                    extension.generate(module, pluginContext)
-                } finally {
-                    stubGenerator?.unboundSymbolGeneration = old!!
-                }
+    for (extension in IrGenerationExtension.getInstances(project)) {
+        psi2Ir.addPostprocessingStep { module ->
+            val old = stubGenerator?.unboundSymbolGeneration
+            try {
+                stubGenerator?.unboundSymbolGeneration = true
+                extension.generate(module, pluginContext)
+            } finally {
+                stubGenerator?.unboundSymbolGeneration = old!!
             }
         }
-
     }
 
-    return psi2Ir.generateModuleFragment(
-        this,
-        files,
-        listOf(stubGenerator ?: irLinker),
-        extensions
-    ) to pluginContext
+    return psi2Ir.generateModuleFragment(this, files, listOf(stubGenerator ?: irLinker)) to pluginContext
 }
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}

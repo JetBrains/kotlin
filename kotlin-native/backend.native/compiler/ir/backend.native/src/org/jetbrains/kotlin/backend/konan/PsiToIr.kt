@@ -24,18 +24,14 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
@@ -122,17 +118,6 @@ internal fun PsiToIrContext.psiToIr(
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext, symbols)
 
-        val translationContext = object : TranslationPluginContext {
-            override val moduleDescriptor: ModuleDescriptor
-                get() = generatorContext.moduleDescriptor
-            override val symbolTable: ReferenceSymbolTable
-                get() = symbolTable
-            override val typeTranslator: TypeTranslator
-                get() = generatorContext.typeTranslator
-            override val irBuiltIns: IrBuiltIns
-                get() = generatorContext.irBuiltIns
-        }
-
         val friendModules = config.resolvedLibraries.getFullList()
                 .filter { it.libraryFile in config.friendModuleFiles }
                 .map { it.uniqueName }
@@ -144,7 +129,6 @@ internal fun PsiToIrContext.psiToIr(
 
         KonanIrLinker(
                 currentModule = moduleDescriptor,
-                translationPluginContext = translationContext,
                 messageCollector = messageCollector,
                 builtIns = generatorContext.irBuiltIns,
                 symbolTable = symbolTable,
@@ -222,12 +206,7 @@ internal fun PsiToIrContext.psiToIr(
         }
     }
 
-    val mainModule = translator.generateModuleFragment(
-            generatorContext,
-            environment.getSourceFiles(),
-            irProviders = listOf(irDeserializer),
-            linkerExtensions = pluginExtensions,
-    )
+    val mainModule = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), listOf(irDeserializer))
 
     irDeserializer.postProcess(inOrAfterLinkageStep = true)
 

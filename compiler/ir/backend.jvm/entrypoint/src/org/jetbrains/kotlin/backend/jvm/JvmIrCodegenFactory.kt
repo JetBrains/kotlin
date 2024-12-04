@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.ir.isJvmBuiltin
 import org.jetbrains.kotlin.backend.common.ir.isBytecodeGenerationSuppressed
+import org.jetbrains.kotlin.backend.common.ir.isJvmBuiltin
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.jvm.codegen.EnumEntriesIntrinsicMappingsCacheImpl
@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
-import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -45,9 +44,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
@@ -174,22 +171,11 @@ open class JvmIrCodegenFactory(
                 DescriptorByIdSignatureFinderImpl(psi2irContext.moduleDescriptor, mangler),
                 jvmGeneratorExtensions
             )
-        val frontEndContext = object : TranslationPluginContext {
-            override val moduleDescriptor: ModuleDescriptor
-                get() = psi2irContext.moduleDescriptor
-            override val symbolTable: ReferenceSymbolTable
-                get() = symbolTable
-            override val typeTranslator: TypeTranslator
-                get() = psi2irContext.typeTranslator
-            override val irBuiltIns: IrBuiltIns
-                get() = psi2irContext.irBuiltIns
-        }
         val irLinker = JvmIrLinker(
             psi2irContext.moduleDescriptor,
             messageCollector,
             JvmIrTypeSystemContext(psi2irContext.irBuiltIns),
             symbolTable,
-            frontEndContext,
             stubGenerator,
             mangler,
             enableIdSignatures,
@@ -247,14 +233,7 @@ open class JvmIrCodegenFactory(
             symbolTable.referenceUndiscoveredExpectSymbols(input.files, input.bindingContext)
         }
 
-        val irModuleFragment =
-            psi2ir.generateModuleFragment(
-                psi2irContext,
-                input.files,
-                irProviders,
-                pluginExtensions,
-                fragmentInfo = evaluatorFragmentInfoForPsi2Ir
-            )
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, input.files, irProviders, evaluatorFragmentInfoForPsi2Ir)
 
         irLinker.postProcess(inOrAfterLinkageStep = true)
         irLinker.clear()
