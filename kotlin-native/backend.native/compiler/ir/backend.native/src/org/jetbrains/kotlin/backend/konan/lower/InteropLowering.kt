@@ -607,17 +607,17 @@ private class InteropTransformerPart1(
             }
         }
 
-        val delegatingCallConstructingClass = expression.symbol.owner.constructedClass
+        val constructor = expression.symbol.owner
+        val delegatingCallConstructingClass = constructor.constructedClass
         if (!constructedClass.isExternalObjCClass() &&
-            delegatingCallConstructingClass.isExternalObjCClass()) {
+                delegatingCallConstructingClass.isExternalObjCClass()) {
 
-            expression.symbol.owner.getObjCInitMethod()?.let { initMethod ->
+            constructor.getObjCInitMethod()?.let { initMethod ->
                 // Calling super constructor from Kotlin Objective-C class.
 
                 require(constructedClass.getSuperClassNotAny() == delegatingCallConstructingClass) { renderCompilerError(expression) }
-                require(expression.symbol.owner.objCConstructorIsDesignated()) { renderCompilerError(expression) }
-                require(expression.dispatchReceiver == null) { renderCompilerError(expression) }
-                require(expression.extensionReceiver == null) { renderCompilerError(expression) }
+                require(constructor.objCConstructorIsDesignated()) { renderCompilerError(expression) }
+                require(constructor.parameters.all { it.kind == IrParameterKind.Regular }) { renderCompilerError(expression) }
 
                 val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
 
@@ -625,20 +625,20 @@ private class InteropTransformerPart1(
                         initMethodInfo,
                         superQualifier = delegatingCallConstructingClass.symbol,
                         receiver = builder.irGet(constructedClass.thisReceiver!!),
-                        arguments = initMethod.valueParameters.map { expression.getValueArgument(it.indexInOldValueParameters) },
+                        arguments = expression.arguments,
                         call = expression,
                         method = initMethod
                 )
 
                 val superConstructor = delegatingCallConstructingClass
-                        .constructors.single { it.valueParameters.size == 0 }
+                        .constructors.single { it.parameters.isEmpty() }
 
                 return builder.irBlock(expression) {
                     // Required for the IR to be valid, will be ignored in codegen:
                     +irDelegatingConstructorCall(superConstructor)
                     +irCall(symbols.interopObjCObjectSuperInitCheck).apply {
-                        extensionReceiver = irGet(constructedClass.thisReceiver!!)
-                        putValueArgument(0, initCall)
+                        arguments[0] = irGet(constructedClass.thisReceiver!!)
+                        arguments[1] = initCall
                     }
                 }
             }
