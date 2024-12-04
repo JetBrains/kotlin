@@ -14,8 +14,8 @@ public class Intermediate extends Base {
 }
 
 // FILE: main.kt
-class Final(val i: Intermediate) : Intermediate(i.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>foo<!>)
+class Final(val i: Intermediate) : Intermediate(i.<!FUNCTION_CALL_EXPECTED!>foo<!>)
 
 fun test(x: Final) {
-    x.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>foo<!>
+    x.<!FUNCTION_CALL_EXPECTED!>foo<!>
 }

@@ -25576,6 +25576,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("syntheticPropertyFromKotlin_error.kt")
+        public void testSyntheticPropertyFromKotlin_error() {
+          runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlin_error.kt");
+        }
+
+        @Test
         @TestMetadata("syntheticPropertyFromKotlin_k1Like.kt")
         public void testSyntheticPropertyFromKotlin_k1Like() {
           runTest("compiler/testData/diagnostics/tests/j+k/properties/syntheticPropertyFromKotlin_k1Like.kt");

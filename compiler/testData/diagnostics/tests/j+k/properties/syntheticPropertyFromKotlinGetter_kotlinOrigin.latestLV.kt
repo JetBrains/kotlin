@@ -38,22 +38,22 @@ fun test_1(a: A) {
 }
 
 fun test_2(b: B) {
-    b.<!UNRESOLVED_REFERENCE!>x1<!>
-    b.<!UNRESOLVED_REFERENCE!>x2<!>
-    b.<!UNRESOLVED_REFERENCE!>x3<!>
-    b.<!UNRESOLVED_REFERENCE!>x4<!>
+    b.<!FUNCTION_CALL_EXPECTED!>x1<!>
+    b.<!FUNCTION_CALL_EXPECTED!>x2<!>
+    b.<!FUNCTION_CALL_EXPECTED!>x3<!>
+    b.<!FUNCTION_CALL_EXPECTED!>x4<!>
 }
 
 fun test_3(c: C) {
-    c.<!UNRESOLVED_REFERENCE!>x1<!>
-    c.<!UNRESOLVED_REFERENCE!>x2<!>
-    c.<!UNRESOLVED_REFERENCE!>x3<!>
-    c.<!UNRESOLVED_REFERENCE!>x4<!>
+    c.<!FUNCTION_CALL_EXPECTED!>x1<!>
+    c.<!FUNCTION_CALL_EXPECTED!>x2<!>
+    c.<!FUNCTION_CALL_EXPECTED!>x3<!>
+    c.<!FUNCTION_CALL_EXPECTED!>x4<!>
 }
 
 fun test_4(d: D) {
-    d.<!UNRESOLVED_REFERENCE!>x1<!>
-    d.<!UNRESOLVED_REFERENCE!>x2<!>
-    d.<!UNRESOLVED_REFERENCE!>x3<!>
-    d.<!UNRESOLVED_REFERENCE!>x4<!>
+    d.<!FUNCTION_CALL_EXPECTED!>x1<!>
+    d.<!FUNCTION_CALL_EXPECTED!>x2<!>
+    d.<!FUNCTION_CALL_EXPECTED!>x3<!>
+    d.<!FUNCTION_CALL_EXPECTED!>x4<!>
 }
