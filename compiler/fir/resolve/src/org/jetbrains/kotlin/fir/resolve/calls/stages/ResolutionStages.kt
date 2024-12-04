@@ -300,14 +300,12 @@ object CheckDslScopeViolation : ResolutionStage() {
 
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         fun check(atom: ConeResolutionAtom) {
-            val expression = atom.expression
-            val symbol = expression.implicitlyReferencedSymbolOrNull() ?: return
             checkImpl(
                 atom,
                 candidate,
                 sink,
                 context,
-            ) { getDslMarkersOfImplicitValue(symbol.containingDeclaration(), expression.resolvedType, context) }
+            )
         }
 
         candidate.dispatchReceiver?.let(::check)
@@ -348,13 +346,12 @@ object CheckDslScopeViolation : ResolutionStage() {
             && (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
         ) {
             for (atom in candidate.argumentMapping.keys) {
-                val expression = atom.expression
                 checkImpl(
                     atom,
                     candidate,
                     sink,
                     context,
-                ) { expression.getDslMarkersOfExpression(context) }
+                )
             }
         }
     }
@@ -376,9 +373,15 @@ object CheckDslScopeViolation : ResolutionStage() {
         candidate: Candidate,
         sink: CheckerSink,
         context: ResolutionContext,
-        dslMarkersProvider: () -> Set<ClassId>,
     ) {
         val boundSymbolOfReceiverToCheck = receiverValueToCheck.expression.implicitlyReferencedSymbolOrNull() ?: return
+        val dslMarkers =
+            getDslMarkersOfImplicitValue(
+                boundSymbolOfReceiverToCheck.containingDeclaration(),
+                receiverValueToCheck.expression.resolvedType,
+                context
+            ).ifEmpty { return }
+
         // Values are sorted in a quite reversed order, so the first element is the furthest in the scope tower
         val implicitValues = context.bodyResolveContext.implicitValueStorage.implicitValues
 
@@ -387,8 +390,6 @@ object CheckDslScopeViolation : ResolutionStage() {
         // starting from `firstValueBoundToSymbol`
         val closerOrOnTheSameLevelImplicitValues =
             implicitValues.dropWhile { it.boundSymbol != boundSymbolOfReceiverToCheck }.ifEmpty { return }
-
-        val dslMarkers = dslMarkersProvider().ifEmpty { return }
 
         if (closerOrOnTheSameLevelImplicitValues.any {
                 receiverValueToCheck.expression != it.computeExpression()
@@ -441,12 +442,6 @@ object CheckDslScopeViolation : ResolutionStage() {
 
             // Collect annotations on the actual receiver type.
             collectDslMarkerAnnotations(context, type)
-        }
-    }
-
-    private fun FirExpression.getDslMarkersOfExpression(context: ResolutionContext): Set<ClassId> {
-        return buildSet {
-            collectDslMarkerAnnotations(context, resolvedType)
         }
     }
 
