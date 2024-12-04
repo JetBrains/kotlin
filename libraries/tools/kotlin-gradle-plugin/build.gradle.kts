@@ -505,6 +505,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
         implementation("org.reflections:reflections:0.10.2")
         implementation(project(":compose-compiler-gradle-plugin"))
+        implementation("org.apache.commons:commons-compress:1.26.0")
     }
 
     tasks.named("check") {
