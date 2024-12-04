@@ -105,7 +105,8 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             dynamicType,
             createTypeParameters(propertyDescriptor, call),
             createDynamicDispatchReceiverParameter(propertyDescriptor),
-            null
+            null,
+            emptyList()
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
@@ -128,6 +129,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
         functionDescriptor.initialize(
             null,
             createDynamicDispatchReceiverParameter(functionDescriptor),
+            emptyList(),
             createTypeParameters(functionDescriptor, call),
             createValueParameters(functionDescriptor, call),
             dynamicType,
@@ -184,9 +186,11 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             val funLiteral = funLiteralExpr.functionLiteral
 
             val receiverType = funLiteral.receiverTypeReference?.let { dynamicType }
+            val contextReceiversTypes = funLiteral.contextReceivers.map { dynamicType }
+
             val parameterTypes = funLiteral.valueParameters.map { dynamicType }
 
-            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, parameterTypes, null, dynamicType)
+            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, contextReceiversTypes, parameterTypes, null, dynamicType)
         }
 
         for (arg in call.valueArguments) {
@@ -220,7 +224,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
                 for (funLiteralArg in call.functionLiteralArguments) {
                     addParameter(
                         funLiteralArg,
-                        funLiteralArg.getLambdaExpression()?.let { getFunctionType(it) } ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE,
+                        funLiteralArg.getLambdaExpression()?.let { getFunctionType(it) } ?: TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE,
                         null)
                 }
 

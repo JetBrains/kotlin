@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.cre
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.Paths
@@ -24,17 +23,17 @@ import java.util.*
 abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTest() {
     lateinit var klibName: String
     lateinit var outputDir: File
-
-    override val backend = TargetBackend.JVM_IR
+    lateinit var klibPath: String
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         outputDir = javaSourcesOutputDirectory
-        klibName = Paths.get(outputDir.toString(), wholeFile.name.toString().replace(".kt", ".klib")).toString()
+        klibName = wholeFile.nameWithoutExtension
+        klibPath = Paths.get(outputDir.toString(), klibName + ".klib").toString()
 
         val classpath: MutableList<File> = ArrayList()
         classpath.add(KtTestUtil.getAnnotationsJar())
         val configuration = createConfiguration(
-            configurationKind, getTestJdkKind(files), backend, classpath, listOf(outputDir), files
+            configurationKind, getTestJdkKind(files), classpath, listOf(outputDir), files
         )
         myEnvironment = createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -55,7 +54,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         super.updateConfiguration(configuration)
-        configuration.put(JVMConfigurationKeys.KLIB_PATHS, listOf(klibName + ".klib"))
+        configuration.put(JVMConfigurationKeys.KLIB_PATHS, listOf(klibName))
     }
 
     // We need real (as opposed to virtual) files in order to produce a Klib.
@@ -76,9 +75,10 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
             K2JSCompiler(),
             listOf(
-                "-output", klibName,
+                "-ir-output-dir", outputDir.normalize().absolutePath,
+                "-ir-output-name", klibName,
                 "-Xir-produce-klib-file",
-                "-libraries", "libraries/stdlib/js-ir/build/classes/kotlin/js/main/"
+                "-libraries", "libraries/stdlib/build/classes/kotlin/js/main/"
             ) + sourceFiles
         )
         if (exitCode != ExitCode.OK) {

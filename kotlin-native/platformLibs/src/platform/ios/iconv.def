@@ -3,3 +3,10 @@ package = platform.iconv
 headers = iconv.h
 headerFilter = **
 linkerOpts = -liconv
+allowedOverloadsForCFunctions = iconv iconvctl iconv_close
+
+---
+typedef void* __kotlin_iconv_t;
+size_t __attribute__((overloadable)) iconv(__kotlin_iconv_t, char **, size_t *, char **, size_t *) asm("_iconv");
+int __attribute__((overloadable)) iconvctl(__kotlin_iconv_t, int, void *) asm("_iconvctl");
+int __attribute__((overloadable)) iconv_close(__kotlin_iconv_t) asm("_iconv_close");

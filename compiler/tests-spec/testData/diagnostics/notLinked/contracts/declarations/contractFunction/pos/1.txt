@@ -8,3 +8,23 @@ public fun case_2_1(/*0*/ x: kotlin.Number?): kotlin.Unit
 public fun case_2_2(/*0*/ x: kotlin.Any?): kotlin.Unit
     Returns(WILDCARD) -> x != null
 
+public open class Base {
+    public constructor Base()
+    public final fun case_3_2(/*0*/ x: kotlin.Any?): kotlin.Boolean
+        Returns(TRUE) -> x is String
+
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Child : Base {
+    public constructor Child()
+    public final fun case_3_1(/*0*/ x: kotlin.Any?): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ fun case_3_2(/*0*/ x: kotlin.Any?): kotlin.Boolean
+        Returns(TRUE) -> x is String
+
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

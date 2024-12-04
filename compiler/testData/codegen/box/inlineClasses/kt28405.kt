@@ -1,21 +1,18 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_TEXT
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 import kotlin.test.*
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class TestUIntArrayW(val x: UIntArray)
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class InlineCharArray(val x: CharArray) {
     override fun toString(): String = x.contentToString()
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class TestInlineCharArrayW(val x: InlineCharArray)
 
 fun box(): String {

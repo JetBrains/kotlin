@@ -1,0 +1,2 @@
+KtLabelReferenceExpression(47,51): '@foo'
+  null

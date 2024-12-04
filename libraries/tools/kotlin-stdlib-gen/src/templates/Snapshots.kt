@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,6 +35,20 @@ object Snapshots : TemplateGroupBase() {
         }
     }
 
+    private fun optimizedSequenceToCollection(emptyFactory: String, singleElementFactory: String, dstType: String) =
+        """
+        val it = iterator()
+        if (!it.hasNext())
+            return $emptyFactory()
+        val element = it.next()
+        if (!it.hasNext())
+            return $singleElementFactory(element)
+        val dst = $dstType<T>()
+        dst.add(element)
+        while (it.hasNext()) dst.add(it.next())
+        return dst
+        """
+
     val f_toSet = fn("toSet()") {
         includeDefault()
         include(CharSequences)
@@ -59,8 +73,7 @@ object Snapshots : TemplateGroupBase() {
             return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()
             """
         }
-        body(Sequences) { "return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()" }
-
+        body(Sequences) { optimizedSequenceToCollection("emptySet", "setOf", "LinkedHashSet") }
         body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
             val size = f.code.size
             val capacity = if (f == CharSequences || primitive == PrimitiveType.Char) "$size.coerceAtMost(128)" else size
@@ -169,6 +182,7 @@ object Snapshots : TemplateGroupBase() {
             }
             """
         }
+        body(Sequences) { optimizedSequenceToCollection("emptyList", "listOf", "ArrayList") }
         specialFor(Maps) {
             doc { "Returns a [List] containing all key-value pairs." }
             returns("List<Pair<K, V>>")

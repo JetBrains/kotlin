@@ -1,0 +1,27 @@
+package
+
+public abstract class None</*0*/ out T : kotlin.Any> : Optional<T> {
+    private constructor None</*0*/ out T : kotlin.Any>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun valueOrThrow(): T
+    public open override /*1*/ fun valueOrThrow(/*0*/ exp: kotlin.Throwable): kotlin.Nothing
+
+    public companion object Companion : None<kotlin.Nothing> {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun valueOrThrow(): kotlin.Nothing
+        public open override /*1*/ /*fake_override*/ fun valueOrThrow(/*0*/ exp: kotlin.Throwable): kotlin.Nothing
+    }
+}
+
+public interface Optional</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open fun valueOrThrow(): T
+    @kotlin.js.JsName(name = "valueOrThrowException") public abstract fun valueOrThrow(/*0*/ exp: kotlin.Throwable): T
+}

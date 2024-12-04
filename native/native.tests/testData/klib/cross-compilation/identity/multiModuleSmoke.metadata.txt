@@ -1,0 +1,151 @@
+// MODULE: lib1
+library {
+  // module name: <lib1>
+
+  library fragment {
+    // package name: lib1
+
+    // class name: lib1/I
+    // class name: lib1/I.Companion
+
+    public abstract interface lib1/I : kotlin/Any {
+
+      public abstract fun interfaceFun(default: kotlin/Int /* = ... */): kotlin/Unit
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object lib1/I.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val companionObjectVal: kotlin/String /* = ... */
+        public final get
+    }
+
+    package {
+
+      public final fun functionCalls(i: lib1/I): kotlin/Unit
+
+      public final fun getBoolean(): kotlin/Boolean
+
+      public final fun <T#0 /* T */> take(x: T#0): kotlin/Unit
+    }
+  }
+}
+
+// MODULE: lib2
+library {
+  // module name: <lib2>
+
+  library fragment {
+    // package name: lib2
+
+    // class name: lib2/Object
+    // class name: lib2/Object.PrivateObject
+    // class name: lib2/SealedInterface
+    // class name: lib2/SealedInterface.Enum
+    // class name: lib2/SealedInterface.Object
+
+    public final object lib2/Object : kotlin/Any {
+
+      private constructor()
+
+      // nested class: PrivateObject
+    }
+
+    private final object lib2/Object.PrivateObject : kotlin/Any {
+
+      private constructor()
+
+      public final fun foo(): kotlin/Nothing
+    }
+
+    public sealed interface lib2/SealedInterface : kotlin/Any {
+
+      public abstract val v: kotlin/collections/HashSet<kotlin/Pair<kotlin/String, kotlin/Number>>
+        public abstract get
+
+      // nested class: Enum
+
+      // nested class: Object
+
+      // sealed subclass: lib2/SealedInterface.Enum
+
+      // sealed subclass: lib2/SealedInterface.Object
+    }
+
+    public final enum class lib2/SealedInterface.Enum : lib2/SealedInterface, kotlin/Enum<lib2/SealedInterface.Enum> {
+
+      private constructor()
+
+      public open val v: kotlin/collections/HashSet<kotlin/Pair<kotlin/String, kotlin/Number>>
+        public open /* non-default */ get
+
+      FOO,
+
+      BAR,
+
+      // has Enum.entries
+    }
+
+    public final data object lib2/SealedInterface.Object : lib2/SealedInterface {
+
+      private constructor()
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public open /* delegated */ val v: kotlin/collections/HashSet<kotlin/Pair<kotlin/String, kotlin/Number>>
+        public open /* non-default */ get
+    }
+  }
+}
+
+// MODULE: lib3
+library {
+  // module name: <lib3>
+
+  library fragment {
+    // package name: lib3
+
+    // class name: lib3/IImpl
+
+    public final class lib3/IImpl : lib1/I {
+
+      public constructor()
+
+      public open fun interfaceFun(default: kotlin/Int): kotlin/Unit
+    }
+
+    package {
+
+      public final inline fun doStuff(): kotlin/Unit
+
+      public final const val BAR: kotlin/Int /* = 3 */
+        public final get
+
+      public final const val FOO: kotlin/String /* = "BAR" */
+        public final get
+    }
+  }
+}
+
+// MODULE: app
+library {
+  // module name: <app>
+
+  library fragment {
+    // package name: app
+
+    package {
+
+      public final fun main(): kotlin/Unit
+    }
+  }
+}

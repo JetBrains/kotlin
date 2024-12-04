@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.typeUtil.contains
 
@@ -117,7 +118,7 @@ fun ResolvedCall<*>.hasInferredReturnType(): Boolean {
     if (isNewNotCompleted()) return false
 
     val returnType = this.resultingDescriptor.returnType ?: return false
-    return !returnType.contains { ErrorUtils.isUninferredParameter(it) }
+    return !returnType.contains { ErrorUtils.isUninferredTypeVariable(it) }
 }
 
 fun CandidateApplicability.toResolutionStatus(): ResolutionStatus = when (this) {

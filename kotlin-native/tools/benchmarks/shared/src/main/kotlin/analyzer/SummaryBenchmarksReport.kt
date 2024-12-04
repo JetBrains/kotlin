@@ -268,12 +268,8 @@ class SummaryBenchmarksReport(val currentReport: BenchmarksReport,
                 name to benchmarks.filter { it.metric == metric }
             }?.filter { it.second.isNotEmpty() }?.toMap()
             metric to DetailedBenchmarksReport(
-                    currentReport.benchmarks.map { (name, benchmarks) ->
-                        name to benchmarks.filter { it.metric == metric }
-                    }.filter { it.second.isNotEmpty() }.toMap(),
-                    previousReport?.benchmarks?.map { (name, benchmarks) ->
-                        name to benchmarks.filter { it.metric == metric }
-                    }?.filter { it.second.isNotEmpty() }?.toMap(),
+                    currentBenchmarks,
+                    previousBenchmarks,
                     meaningfulChangesValue
             )
         }.toMap()

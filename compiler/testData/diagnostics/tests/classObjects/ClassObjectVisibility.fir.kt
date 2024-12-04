@@ -1,11 +1,13 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package foo
 
 fun test() {
   A.d
   A.Companion.<!INVISIBLE_REFERENCE!>f<!>
-  B.D
-  CCC
+  B.<!INVISIBLE_REFERENCE!>D<!>
+  <!INVISIBLE_REFERENCE!>CCC<!>
   CCC.<!INVISIBLE_REFERENCE!>classObjectVar<!>
+  E.F.G
 }
 
 class A() {
@@ -27,4 +29,11 @@ class CCC() {
   private companion object {
     val classObjectVar = 3
   }
+}
+
+class E {
+    class F {
+        companion object G
+    }
+    private companion object
 }

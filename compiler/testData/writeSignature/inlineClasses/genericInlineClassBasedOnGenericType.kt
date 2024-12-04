@@ -1,5 +1,4 @@
-// !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
+// LANGUAGE: +InlineClasses
 
 inline class Foo<T>(val x: List<T>)
 
@@ -12,15 +11,15 @@ object Test {
 
 // method: Test::nonNullTypeArgument-GWb7d6U
 // jvm signature: (Ljava/util/List;)V
-// generic signature: (Ljava/util/List<Ljava/lang/Integer;>;)V
+// generic signature: (Ljava/util/List<+TT;>;)V
 
 // method: Test::nullableTypeArgument-GWb7d6U
 // jvm signature: (Ljava/util/List;)V
-// generic signature: (Ljava/util/List<Ljava/lang/String;>;)V
+// generic signature: (Ljava/util/List<+TT;>;)V
 
 // method: Test::nullableValue-N3I3QIo
 // jvm signature: (Ljava/util/List;)V
-// generic signature: (Ljava/util/List<Ljava/lang/Long;>;)V
+// generic signature: (Ljava/util/List<+TT;>;)V
 
 // method: Foo::box-impl
 // jvm signature: (Ljava/util/List;)LFoo;
@@ -28,4 +27,4 @@ object Test {
 
 // method: Foo::unbox-impl
 // jvm signature: ()Ljava/util/List;
-// generic signature: ()Ljava/util/List<TT;>;
+// generic signature: null

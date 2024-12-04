@@ -24,3 +24,4 @@ public open class BaseClass {
     public open fun loadCache(/*0*/ @org.checkerframework.checker.nullness.qual.NonNull vararg args: @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any /*kotlin.Array<(out) @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any>!*/): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

@@ -6,21 +6,32 @@ plugins {
 dependencies {
     api(project(":compiler:cli"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    compileOnly(intellijCore())
 
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler"))
-    testApi(commonDep("junit:junit"))
+    testImplementation(intellijCore())
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 testsJar()
 
 projectTest {
+    useJUnitPlatform()
     workingDir = rootDir
     dependsOn(":dist")
+    val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+    doFirst {
+        environment("JAVA_HOME", jdkHome.get())
+    }
 }

@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Test {
     @`InnerAnnotation` <!REPEATED_ANNOTATION!>@InnerAnnotation<!>
-    companion object : StaticClass(), <!MANY_CLASSES_IN_SUPERTYPE_LIST, UNRESOLVED_REFERENCE!>InnerClass<!>() {
+    companion object : StaticClass(), <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER, MANY_CLASSES_IN_SUPERTYPE_LIST!>InnerClass<!>() {
 
     }
 

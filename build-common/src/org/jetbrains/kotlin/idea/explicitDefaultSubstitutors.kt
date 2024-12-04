@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.config.JvmTarget
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.jvm.javaField
 
-val defaultSubstitutors: Map<KClass<out CommonToolArguments>, Collection<ExplicitDefaultSubstitutor>> =
-    mapOf(K2JVMCompilerArguments::class to listOf(JvmTargetDefaultSubstitutor))
+//used by IJ facet import
+@SuppressWarnings("unused")
+val defaultSubstitutors: Map<KClass<out CommonToolArguments>, Collection<ExplicitDefaultSubstitutor>> = emptyMap()
 
 sealed class ExplicitDefaultSubstitutor {
     abstract val substitutedProperty: KProperty1<out CommonToolArguments, String?>
@@ -23,10 +25,12 @@ sealed class ExplicitDefaultSubstitutor {
     abstract fun isSubstitutable(args: List<String>): Boolean
 
     protected val argument: Argument by lazy {
-        substitutedProperty.findAnnotation() ?: error("Property \"${substitutedProperty.name}\" has no Argument annotation")
+        substitutedProperty.javaField?.getAnnotation(Argument::class.java)
+            ?: error("Property \"${substitutedProperty.name}\" has no Argument annotation")
     }
 }
 
+@Deprecated(message = "Minimal supported jvmTarget version is 1.8")
 object JvmTargetDefaultSubstitutor : ExplicitDefaultSubstitutor() {
     override val substitutedProperty
         get() = K2JVMCompilerArguments::jvmTarget

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: NATIVE
-
 open class MyLogic {
     protected open val postfix = "ZZZ"
     open fun String.foo(prefix: String = "XXX"): String = transform(prefix + this + postfix)

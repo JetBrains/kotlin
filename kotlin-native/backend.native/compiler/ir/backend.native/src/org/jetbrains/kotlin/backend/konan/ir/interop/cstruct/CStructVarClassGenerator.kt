@@ -1,16 +1,17 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
-import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -18,7 +19,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
-import org.jetbrains.kotlin.ir.interpreter.toIrConst
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
+import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -27,9 +29,9 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CStructVarClassGenerator(
         context: GeneratorContext,
-        private val interopBuiltIns: InteropBuiltIns,
         private val companionGenerator: CStructVarCompanionGenerator,
         private val symbols: KonanSymbols
 ) : DescriptorToIrTranslationMixin {
@@ -41,7 +43,7 @@ internal class CStructVarClassGenerator(
     override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
 
     fun findOrGenerateCStruct(classDescriptor: ClassDescriptor, parent: IrDeclarationContainer): IrClass {
-        val irClassSymbol = symbolTable.referenceClass(classDescriptor)
+        val irClassSymbol = symbolTable.descriptorExtension.referenceClass(classDescriptor)
         return if (!irClassSymbol.isBound) {
             provideIrClassForCStruct(classDescriptor).also {
                 it.patchDeclarationParents(parent)
@@ -101,7 +103,7 @@ internal class CStructVarClassGenerator(
 
         val getPtr = symbols.interopGetPtr
 
-        destroy.body = irBuilder(irBuiltIns, destroy.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+        destroy.body = irBuiltIns.createIrBuilder(destroy.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                 .irBlockBody {
                     +irCall(companionDestroy).apply {
                         dispatchReceiver = irGetObject(irClass.companionObject()!!.symbol)
@@ -148,7 +150,7 @@ internal class CStructVarClassGenerator(
 
         val managedValType = managedVal.getter!!.returnType
 
-        managedVal.backingField = symbolTable.declareField(
+        managedVal.backingField = symbolTable.descriptorExtension.declareField(
                 SYNTHETIC_OFFSET,
                 SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
@@ -157,31 +159,31 @@ internal class CStructVarClassGenerator(
                 DescriptorVisibilities.PRIVATE
         ).also {
             it.parent = irClass
-            it.initializer = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+            it.initializer = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
                 irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[1]))
             }
         }
 
-        managedVal.getter!!.body = irBuilder(irBuiltIns, managedVal.getter!!.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+        managedVal.getter!!.body = irBuiltIns.createIrBuilder(managedVal.getter!!.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                 .irBlockBody {
                     +irReturn(irGetField(irGet(managedVal.getter!!.dispatchReceiverParameter!!), managedVal.backingField!!))
 
                 }
 
         val cleanerField = irFactory.createField(
-                SYNTHETIC_OFFSET,
-                SYNTHETIC_OFFSET,
-                IrDeclarationOrigin.DEFINED,
-                IrFieldSymbolImpl(),
-                Name.identifier("cleaner"),
-                symbols.createCleaner.owner.returnType,
-                DescriptorVisibilities.PRIVATE,
+                startOffset = SYNTHETIC_OFFSET,
+                endOffset = SYNTHETIC_OFFSET,
+                origin = IrDeclarationOrigin.DEFINED,
+                name = Name.identifier("cleaner"),
+                visibility = DescriptorVisibilities.PRIVATE,
+                symbol = IrFieldSymbolImpl(),
+                type = symbols.createCleaner.owner.returnType,
                 isFinal = true,
+                isStatic = false,
                 isExternal = false,
-                isStatic = false
         ).also { field ->
             field.parent = irClass
-            field.initializer = irBuilder(irBuiltIns, field.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+            field.initializer = irBuiltIns.createIrBuilder(field.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
                 val lambda = context.irFactory.buildFun {
                     startOffset = SYNTHETIC_OFFSET
                     endOffset = SYNTHETIC_OFFSET
@@ -195,12 +197,11 @@ internal class CStructVarClassGenerator(
                             buildValueParameter(this) {
                                 origin = IrDeclarationOrigin.DEFINED
                                 name = Name.identifier("field")
-                                index = 0
                                 type = cppType
                             }
                     )
                     body = irBlockBody {
-                        val itCpp = irGet(valueParameters.single())
+                        val itCpp = valueParameters.single()
                         if (traceCleaners) {
                             +irCall(symbols.println).apply {
                                 putValueArgument(0,
@@ -214,7 +215,7 @@ internal class CStructVarClassGenerator(
                                     .filterIsInstance<IrSimpleFunction>()
                                     .single { it.name.toString() == "unref" }
                             +irCall(unref).apply {
-                                dispatchReceiver = itCpp
+                                dispatchReceiver = this@irBlockBody.irGet(itCpp)
                             }
                         } else {
                             val destroy = cppClass.declarations
@@ -222,7 +223,7 @@ internal class CStructVarClassGenerator(
                                     .singleOrNull() { it.name.toString() == "__destroy__" }
                             if (destroy!= null) {
                                 +irCall(destroy).apply {
-                                    dispatchReceiver = itCpp
+                                    dispatchReceiver = this@irBlockBody.irGet(itCpp)
                                 }
                             }
                             val nativeHeap = symbols.nativeHeap
@@ -233,7 +234,7 @@ internal class CStructVarClassGenerator(
                                 dispatchReceiver = irGetObject(nativeHeap)
                                 putValueArgument(0,
                                         irCall(symbols.interopNativePointedGetRawPointer).apply {
-                                            extensionReceiver = itCpp
+                                            extensionReceiver = this@irBlockBody.irGet(itCpp)
                                         }
                                 )
                             }
@@ -266,37 +267,31 @@ internal class CStructVarClassGenerator(
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
         if (!irClass.descriptor.annotations.hasAnnotation(RuntimeNames.managedType)) {
-            val cStructVarConstructorSymbol = symbolTable.referenceConstructor(
-                    interopBuiltIns.cStructVar.unsubstitutedPrimaryConstructor!!
-            )
             return createConstructor(irClass.descriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
                 postLinkageSteps.add {
-                    irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset,
-                                context.irBuiltIns.unitType, cStructVarConstructorSymbol
+                                context.irBuiltIns.unitType, symbols.cStructVarConstructorSymbol
                         ).also {
                             it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
                         }
-                        +irInstanceInitializer(symbolTable.referenceClass(irClass.descriptor))
+                        +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(irClass.descriptor))
                     }
                 }
             }
         } else {
             return createConstructor(irClass.descriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
-                val managedTypeConstructor = symbolTable.referenceConstructor(
-                        interopBuiltIns.managedType.unsubstitutedPrimaryConstructor!!
-                )
                 postLinkageSteps.add {
-                    irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset,
-                                context.irBuiltIns.unitType, managedTypeConstructor
+                                context.irBuiltIns.unitType, symbols.managedTypeConstructor
                         ).also {
                                 it.putTypeArgument(0, irConstructor.valueParameters[0].type)
                                 it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
                         }
-                        +irInstanceInitializer(symbolTable.referenceClass(irClass.descriptor))
+                        +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(irClass.descriptor))
                     }
                 }
             }
@@ -306,7 +301,7 @@ internal class CStructVarClassGenerator(
     private fun createSecondaryConstructor(descriptor: ClassConstructorDescriptor): IrConstructor {
         return createConstructor(descriptor).also {
             postLinkageSteps.add {
-                it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                it.body = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     // Empty. The real body is constructed at the call site by the interop lowering phase.
                 }
             }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-352 Function variable declaration type isn't checked inside a function body
 
 package kt352
@@ -14,7 +15,7 @@ class A() {
 
 //more tests
 val g : () -> Unit = { 42 }
-val gFunction : () -> Unit = fun(): Int = 1
+val gFunction : () -> Unit = fun(): Int = <!RETURN_TYPE_MISMATCH!>1<!>
 
 val h : () -> Unit = { doSmth() }
 

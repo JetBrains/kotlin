@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.asJava.elements
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightSimpleAnnotation
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
@@ -20,10 +18,11 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.utils.KOTLIN_TO_JAVA_ANNOTATION_TARGETS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 internal const val KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER = "kotlin.jvm.internal.RepeatableContainer"
 
@@ -55,29 +54,14 @@ private fun PsiAnnotation.extractArrayAnnotationFqNames(attributeName: String): 
                 .map { "${it.first.asSingleFqName().asString()}.${it.second.identifier}" }
         }
 
-private val targetMappings = EnumMap<JvmTarget, Map<String, EnumValue>>(JvmTarget::class.java).also { result ->
+private val targetMapping = run {
     val javaAnnotationElementTypeId = ClassId.fromString(JvmAnnotationNames.ELEMENT_TYPE_ENUM.asString())
-    val jdk6 = hashMapOf(
-        "kotlin.annotation.AnnotationTarget.CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE")),
-        "kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("ANNOTATION_TYPE")),
-        "kotlin.annotation.AnnotationTarget.FIELD" to EnumValue(javaAnnotationElementTypeId, Name.identifier("FIELD")),
-        "kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE" to EnumValue(javaAnnotationElementTypeId, Name.identifier("LOCAL_VARIABLE")),
-        "kotlin.annotation.AnnotationTarget.VALUE_PARAMETER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("PARAMETER")),
-        "kotlin.annotation.AnnotationTarget.CONSTRUCTOR" to EnumValue(javaAnnotationElementTypeId, Name.identifier("CONSTRUCTOR")),
-        "kotlin.annotation.AnnotationTarget.FUNCTION" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
-        "kotlin.annotation.AnnotationTarget.PROPERTY_GETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
-        "kotlin.annotation.AnnotationTarget.PROPERTY_SETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD"))
-    )
-    val jdk8AndLater = HashMap(jdk6).apply {
-        put("kotlin.annotation.AnnotationTarget.TYPE_PARAMETER", EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_PARAMETER")))
-        put("kotlin.annotation.AnnotationTarget.TYPE", EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_USE")))
-    }
-    for (target in JvmTarget.values()) {
-        result[target] = if (target >= JvmTarget.JVM_1_8) jdk8AndLater else jdk6
+    KOTLIN_TO_JAVA_ANNOTATION_TARGETS.entries.associate { (key, value) ->
+        "kotlin.annotation.AnnotationTarget.$key" to EnumValue(javaAnnotationElementTypeId, Name.identifier(value))
     }
 }
 
-internal fun PsiAnnotation.tryConvertAsTarget(support: KtUltraLightSupport): KtLightAbstractAnnotation? {
+internal fun PsiAnnotation.tryConvertAsTarget(): KtLightAbstractAnnotation? {
 
     if (FqNames.target.asString() != qualifiedName) return null
 
@@ -86,16 +70,13 @@ internal fun PsiAnnotation.tryConvertAsTarget(support: KtUltraLightSupport): KtL
 
     attributeValues ?: return null
 
-    val targetMapping = targetMappings.getValue(support.typeMapper.jvmTarget)
     val convertedValues = attributeValues.mapNotNull { targetMapping[it] }.distinct()
 
     val targetAttributes = "value" to ArrayValue(convertedValues) { module -> module.builtIns.array.defaultType }
 
-    return KtUltraLightSimpleAnnotation(
+    return asUltraLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_TARGET,
         listOf(targetAttributes),
-        support,
-        parent
     )
 }
 
@@ -107,34 +88,37 @@ private val retentionMapping = hashMapOf(
 )
 
 
-internal fun createRetentionRuntimeAnnotation(support: KtUltraLightSupport, parent: PsiElement) = KtUltraLightSimpleAnnotation(
+internal fun createRetentionRuntimeAnnotation(parent: PsiElement) = KtUltraLightSimpleAnnotation(
     JAVA_LANG_ANNOTATION_RETENTION,
     listOf("value" to retentionMapping["kotlin.annotation.AnnotationRetention.RUNTIME"]!!),
-    support,
-    parent
+    parent,
 )
 
-internal fun PsiAnnotation.tryConvertAsRetention(support: KtUltraLightSupport): KtLightAbstractAnnotation? {
+internal fun PsiAnnotation.asUltraLightSimpleAnnotation(
+    qualifier: String,
+    argumentsList: List<Pair<String, ConstantValue<*>>>,
+): KtLightAbstractAnnotation = KtUltraLightSimpleAnnotation(
+    annotationFqName = qualifier,
+    argumentsList = argumentsList,
+    parent = parent,
+    nameReferenceElementProvider = { nameReferenceElement },
+)
+
+internal fun PsiAnnotation.tryConvertAsRetention(): KtLightAbstractAnnotation? {
     if (FqNames.retention.asString() != qualifiedName) return null
     val convertedValue = extractAnnotationFqName("value")?.let { retentionMapping[it] } ?: return null
-    return KtUltraLightSimpleAnnotation(
+    return asUltraLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_RETENTION,
         listOf("value" to convertedValue),
-        support,
-        parent
     )
 }
 
-internal fun PsiAnnotation.tryConvertAsMustBeDocumented(support: KtUltraLightSupport): KtLightAbstractAnnotation? = tryConvertAs(
-    support,
+internal fun PsiAnnotation.tryConvertAsMustBeDocumented(): KtLightAbstractAnnotation? = tryConvertAs(
     FqNames.mustBeDocumented,
     JvmAnnotationNames.DOCUMENTED_ANNOTATION.asString(),
 )
 
-internal fun PsiAnnotation.tryConvertAsRepeatable(
-    support: KtUltraLightSupport,
-    owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>,
-): KtLightAbstractAnnotation? {
+internal fun PsiAnnotation.tryConvertAsRepeatable(owner: KtLightElement<KtModifierListOwner, PsiModifierListOwner>): KtLightAbstractAnnotation? {
     if (FqNames.repeatable.asString() != qualifiedName) return null
     val value = owner.kotlinOrigin
         ?.safeAs<KtClass>()
@@ -145,14 +129,12 @@ internal fun PsiAnnotation.tryConvertAsRepeatable(
     return KtUltraLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_REPEATABLE,
         listOfNotNull(value),
-        support,
         parent,
     ) {
         safeAs<KtLightAnnotationForSourceEntry>()?.kotlinOrigin?.safeAs<KtAnnotationEntry>()?.let {
             KtLightPsiJavaCodeReferenceElement(
                 ktElement = it,
                 reference = { null },
-                clsDelegateProvider = { null },
                 customReferenceName = JAVA_LANG_ANNOTATION_REPEATABLE_SHORT_NAME,
             )
         }
@@ -161,16 +143,12 @@ internal fun PsiAnnotation.tryConvertAsRepeatable(
 
 internal val JAVA_LANG_ANNOTATION_REPEATABLE_SHORT_NAME: String get() = FqNames.repeatable.shortName().asString()
 
-internal fun PsiAnnotation.tryConvertAsRepeatableContainer(support: KtUltraLightSupport): KtLightAbstractAnnotation? = tryConvertAs(
-    support,
+internal fun PsiAnnotation.tryConvertAsRepeatableContainer(): KtLightAbstractAnnotation? = tryConvertAs(
     FqNames.repeatable,
     KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER,
 )
 
-private fun PsiAnnotation.tryConvertAs(
-    support: KtUltraLightSupport,
-    from: FqName,
-    to: String,
-): KtLightAbstractAnnotation? = takeIf { from.asString() == qualifiedName }?.let {
-    KtUltraLightSimpleAnnotation(to, emptyList(), support, parent)
-}
+private fun PsiAnnotation.tryConvertAs(from: FqName, to: String): KtLightAbstractAnnotation? =
+    takeIf { from.asString() == qualifiedName }?.let {
+        asUltraLightSimpleAnnotation(to, emptyList())
+    }

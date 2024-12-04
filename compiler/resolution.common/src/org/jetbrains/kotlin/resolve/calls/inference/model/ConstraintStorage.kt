@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 /**
  * Every type variable can be in the following states:
@@ -42,6 +46,37 @@ interface ConstraintStorage {
     val postponedTypeVariables: List<TypeVariableMarker>
     val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker>
     val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
+    val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>>
+
+    /**
+     * For a type variable X (its type constructor) as a key, the map contains a set of type variables
+     * that may have constraints referring to X (containing it inside the type).
+     *
+     * Mostly, this property is necessary for the sake of incorporation optimizations.
+     *
+     * Note that the resulting set might contain some false positives, i.e., there might be some variables that actually don't contain
+     * the constraints containing the requested variable X. That situation might occur due to a situation
+     * when constraints have been added and then removed during a transaction rollback.
+     */
+    val typeVariableDependencies: Map<TypeConstructorMarker, Set<TypeConstructorMarker>>
+
+    /**
+     *  Outer system for a call means some set of variables defined beside it/its arguments
+     *
+     *  In case some candidate's CS is built in the context of some outer CS, first [outerSystemVariablesPrefixSize] in the list
+     *  of [allTypeVariables] belong to the outer CS.
+     *
+     *  That information is very limitedly used in a couple of cases when we need to separate those kinds of variables
+     *   - When completing `provideDelegate` calls, we assume outer variables as proper types
+     *   (see fixInnerVariablesForProvideDelegateIfNeeded).
+     *   - When checking consistency of collected variables for the inner candidate
+     *   (see checkNotFixedTypeVariablesCountConsistency).
+     *
+     *  Also, see docs/fir/delegated_property_inference.md
+     */
+    val outerSystemVariablesPrefixSize: Int
+
+    val usesOuterCs: Boolean
 
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
@@ -55,6 +90,13 @@ interface ConstraintStorage {
         override val postponedTypeVariables: List<TypeVariableMarker> get() = emptyList()
         override val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker> = emptyMap()
         override val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> = emptyMap()
+        override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = emptyList()
+
+        override val typeVariableDependencies: Map<TypeConstructorMarker, Set<TypeConstructorMarker>> get() = emptyMap()
+
+        override val outerSystemVariablesPrefixSize: Int get() = 0
+
+        override val usesOuterCs: Boolean get() = false
     }
 }
 
@@ -80,6 +122,10 @@ class Constraint(
     val position: IncorporationConstraintPosition,
     val typeHashCode: Int = type.hashCode(),
     val derivedFrom: Set<TypeVariableMarker>,
+    // This value is true for constraints of the form `Nothing? <: Tv`
+    // that have been created during incorporation phase of the constraint of the form `Kv? <: Tv` (where `Kv` another type variable).
+    // The main idea behind that parameter is that we don't consider such constraints as proper (signifying that variable is ready for completion).
+    // And also, there is additional logic in K1 that doesn't allow to fix variable into `Nothing?` if we had only that kind of lower constraints
     val isNullabilityConstraint: Boolean,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null
 ) {
@@ -105,6 +151,11 @@ class Constraint(
 interface VariableWithConstraints {
     val typeVariable: TypeVariableMarker
     val constraints: List<Constraint>
+
+    /**
+     * Only necessary for incorporation optimization
+     */
+    fun getConstraintsContainedSpecifiedTypeVariable(typeVariableConstructor: TypeConstructorMarker): Collection<Constraint>
 }
 
 class InitialConstraint(
@@ -113,14 +164,16 @@ class InitialConstraint(
     val constraintKind: ConstraintKind, // see [checkConstraint]
     val position: ConstraintPosition
 ) {
-    override fun toString(): String {
+    override fun toString(): String = "${asStringWithoutPosition()} from $position"
+
+    fun asStringWithoutPosition(): String {
         val sign =
             when (constraintKind) {
                 ConstraintKind.EQUALITY -> "=="
                 ConstraintKind.LOWER -> ":>"
                 ConstraintKind.UPPER -> "<:"
             }
-        return "$a $sign $b from $position"
+        return "$a $sign $b"
     }
 }
 

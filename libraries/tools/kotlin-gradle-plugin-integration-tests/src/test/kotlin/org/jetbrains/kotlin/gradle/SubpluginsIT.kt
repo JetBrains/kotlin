@@ -5,299 +5,261 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
-import org.jetbrains.kotlin.gradle.util.AGPVersion
+import org.gradle.api.logging.LogLevel
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
-import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.junit.Test
-import java.io.File
-import kotlin.test.assertTrue
+import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.junit.jupiter.api.DisplayName
 
-class SubpluginsIT : BaseGradleIT() {
+@DisplayName("Other plugins tests")
+class SubpuginsIT : KGPBaseTest() {
 
-    override fun defaultBuildOptions(): BuildOptions {
-        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
-    }
-
-    @Test
-    fun testGradleSubplugin() {
-        val project = Project("kotlinGradleSubplugin")
-
-        project.build("compileKotlin", "build") {
-            assertSuccessful()
-            assertContains("ExampleSubplugin loaded")
-            assertContains("ExampleLegacySubplugin loaded")
-            assertContains("Project component registration: exampleValue")
-            assertContains("Project component registration: exampleLegacyValue")
-            assertTasksExecuted(":compileKotlin")
-        }
-
-        project.build("compileKotlin", "build") {
-            assertSuccessful()
-            assertContains("ExampleSubplugin loaded")
-            assertContains("ExampleLegacySubplugin loaded")
-            assertNotContains("Project component registration: exampleValue")
-            assertNotContains("Project component registration: exampleLegacyValue")
-            assertTasksUpToDate(":compileKotlin")
-        }
-    }
-
-    @Test
-    fun testAllOpenPlugin() {
-        Project("allOpenSimple").build("build") {
-            assertSuccessful()
-
-            val classesDir = File(project.projectDir, kotlinClassesDir())
-            val openClass = File(classesDir, "test/OpenClass.class")
-            val closedClass = File(classesDir, "test/ClosedClass.class")
-            assertTrue(openClass.exists())
-            assertTrue(closedClass.exists())
-
-            checkBytecodeContains(
-                openClass,
-                "public class test/OpenClass {",
-                "public method()V"
-            )
-
-            checkBytecodeContains(
-                closedClass,
-                "public final class test/ClosedClass {",
-                "public final method()V"
-            )
-        }
-    }
-
-    @Test
-    fun testKotlinSpringPlugin() {
-        Project("allOpenSpring").build("build") {
-            assertSuccessful()
-
-            val classesDir = File(project.projectDir, kotlinClassesDir())
-            val openClass = File(classesDir, "test/OpenClass.class")
-            val closedClass = File(classesDir, "test/ClosedClass.class")
-            assertTrue(openClass.exists())
-            assertTrue(closedClass.exists())
-
-            checkBytecodeContains(
-                openClass,
-                "public class test/OpenClass {",
-                "public method()V"
-            )
-
-            checkBytecodeContains(
-                closedClass,
-                "public final class test/ClosedClass {",
-                "public final method()V"
-            )
-        }
-    }
-
-    @Test
-    fun testKotlinJpaPlugin() {
-        Project("noArgJpa").build("build") {
-            assertSuccessful()
-
-            val classesDir = File(project.projectDir, kotlinClassesDir())
-
-            fun checkClass(name: String) {
-                val testClass = File(classesDir, "test/$name.class")
-                assertTrue(testClass.exists())
-                checkBytecodeContains(testClass, "public <init>()V")
+    @OtherGradlePluginTests
+    @DisplayName("Subplugin example works as expected")
+    @GradleTest
+    fun testGradleSubplugin(gradleVersion: GradleVersion) {
+        project("kotlinGradleSubplugin", gradleVersion) {
+            build("compileKotlin", "build") {
+                assertTasksExecuted(":compileKotlin")
+                assertOutputContains("ExampleSubplugin loaded")
+                assertOutputContains("Project component registration: exampleValue")
             }
 
-            checkClass("Test")
-            checkClass("Test2")
-        }
-    }
-
-    @Test
-    fun testNoArgKt18668() {
-        Project("noArgKt18668").build("build") {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testSamWithReceiverSimple() {
-        Project("samWithReceiverSimple").build("build") {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testScripting() {
-        Project("scripting").build("build") {
-            assertSuccessful()
-            assertCompiledKotlinSources(
-                listOf("app/src/main/kotlin/world.greet.kts", "script-template/src/main/kotlin/GreetScriptTemplate.kt")
-            )
-            assertFileExists("${kotlinClassesDir("app", "main")}World_greet.class")
-        }
-    }
-
-    @Test
-    fun testScriptingCustomExtensionNonIncremental() {
-        testScriptingCustomExtensionImpl(withIC = false)
-    }
-
-    @Test
-    fun testScriptingCustomExtensionIncremental() {
-        testScriptingCustomExtensionImpl(withIC = true)
-    }
-
-    private fun testScriptingCustomExtensionImpl(withIC: Boolean) {
-        val project = Project("scriptingCustomExtension")
-        val options = defaultBuildOptions().copy(incremental = withIC)
-
-        project.setupWorkingDir()
-        val bobGreet = project.projectFile("bob.greet")
-        val aliceGreet = project.projectFile("alice.greet")
-        val worldGreet = project.projectFile("world.greet")
-        val greetScriptTemplateKt = project.projectFile("GreetScriptTemplate.kt")
-
-        var isFailed = false
-        project.build("build", options = options) {
-            val classesDir = kotlinClassesDir("app", "main")
-            assertSuccessful()
-            assertFileExists("${classesDir}World.class")
-            assertFileExists("${classesDir}Alice.class")
-            assertFileExists("${classesDir}Bob.class")
-
-            if (withIC) {
-                // compile iterations are not logged when IC is disabled
-                assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
-            }
-        }
-
-        if (!isFailed) {
-            bobGreet.modify { it.replace("Bob", "Uncle Bob") }
-            project.build("build", options = options) {
-                assertSuccessful()
-
-                if (withIC) {
-                    assertCompiledKotlinSources(project.relativize(bobGreet))
-                }
+            build("compileKotlin", "build") {
+                assertTasksUpToDate(":compileKotlin")
+                assertOutputContains("ExampleSubplugin loaded")
+                assertOutputDoesNotContain("Project component registration: exampleValue")
             }
         }
     }
 
-    @Test
-    fun testAllOpenFromNestedBuildscript() {
-        Project("allOpenFromNestedBuildscript").build("build") {
-            assertSuccessful()
-            assertFileExists("${kotlinClassesDir(subproject = "a/b", sourceSet = "main")}MyClass.class")
-            assertFileExists("${kotlinClassesDir(subproject = "a/b", sourceSet = "test")}MyTestClass.class")
-        }
-    }
+    @OtherGradlePluginTests
+    @DisplayName("Allopen plugin opens classes and methods")
+    @GradleTest
+    fun testAllOpenPlugin(gradleVersion: GradleVersion) {
+        project("allOpenSimple", gradleVersion) {
+            build("assemble") {
+                val classesDir = kotlinClassesDir()
+                val openClass = classesDir.resolve("test/OpenClass.class")
+                val closedClass = classesDir.resolve("test/ClosedClass.class")
+                assertFileExists(openClass)
+                assertFileExists(closedClass)
 
-    @Test
-    fun testAllopenFromScript() {
-        Project("allOpenFromScript").build("build") {
-            assertSuccessful()
-            assertFileExists("${kotlinClassesDir(sourceSet = "main")}MyClass.class")
-            assertFileExists("${kotlinClassesDir(sourceSet = "test")}MyTestClass.class")
-        }
-    }
+                checkBytecodeContains(
+                    openClass.toFile(),
+                    "public class test/OpenClass {",
+                    "public method()V"
+                )
 
-    @Test
-    fun testKotlinVersionDowngradeInSupbrojectKt39809() = with(
-        Project(
-            "android-dagger",
-            directoryPrefix = "kapt2"
-        )
-    ) {
-        setupWorkingDir()
-
-        gradleBuildScript("app").modify {
-            """
-                buildscript {
-                	repositories {
-                		mavenCentral()
-                	}
-                	dependencies {
-                		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
-                	}
-                }
-                
-                $it
-            """.trimIndent()
-        }
-        build(
-            ":app:compileDebugKotlin",
-            options = defaultBuildOptions().copy(
-                androidGradlePluginVersion = AGPVersion.v4_2_0,
-                androidHome = KtTestUtil.findAndroidSdk()
-            )
-        ) {
-            assertSuccessful()
-        }
-    }
-
-    @Test
-    fun testKotlinVersionDowngradeWithNewerSubpluginsKt39809() = with(Project("multiprojectWithDependency")) {
-        setupWorkingDir()
-
-        val subprojectBuildGradle = projectDir.resolve("projA/build.gradle")
-        val originalScript = subprojectBuildGradle.readText()
-
-        listOf("allopen", "noarg", "sam-with-receiver", "serialization").forEach { plugin ->
-            projectDir.resolve("projA/build.gradle").modify {
-                """
-                    buildscript {
-                        repositories {
-                            mavenLocal()
-                            mavenCentral()
-                        }
-                        dependencies {
-                            classpath("org.jetbrains.kotlin:kotlin-$plugin:${defaultBuildOptions().kotlinVersion}")
-                        }
-                    }
-                    
-                    apply plugin: "org.jetbrains.kotlin.plugin.${plugin.replace("-", ".")}"
-                    
-                    $originalScript
-                """.trimIndent()
-            }
-            build(":projA:compileKotlin", options = defaultBuildOptions().copy(kotlinVersion = "1.3.72")) {
-                assertFailed()
-                assertContains(
-                    "This version of the kotlin-$plugin Gradle plugin is built for a newer Kotlin version. " +
-                            "Please use an older version of kotlin-$plugin or upgrade the Kotlin Gradle plugin version to make them match."
+                checkBytecodeContains(
+                    closedClass.toFile(),
+                    "public final class test/ClosedClass {",
+                    "public final method()V"
                 )
             }
         }
     }
 
-    @Test
-    fun testLombokPlugin() {
-        Project("lombokProject").build("build") {
-            assertSuccessful()
-        }
+    @OtherGradlePluginTests
+    @DisplayName("Kotlin Spring plugin opens classes and methods")
+    @GradleTest
+    fun testKotlinSpringPlugin(gradleVersion: GradleVersion) {
+        project("allOpenSpring", gradleVersion) {
+            build("assemble") {
 
+                val classesDir = kotlinClassesDir()
+                val openClass = classesDir.resolve("test/OpenClass.class")
+                val closedClass = classesDir.resolve("test/ClosedClass.class")
+
+                assertFileExists(openClass)
+                assertFileExists(closedClass)
+
+                checkBytecodeContains(
+                    openClass.toFile(),
+                    "public class test/OpenClass {",
+                    "public method()V"
+                )
+
+                checkBytecodeContains(
+                    closedClass.toFile(),
+                    "public final class test/ClosedClass {",
+                    "public final method()V"
+                )
+            }
+        }
     }
 
-    @Test // KT-47921
-    fun testSerializationPluginOrderedFirst() = with(Project("allOpenSimple")) {
-        setupWorkingDir()
-        // Ensure that there are also allopen, noarg, and serialization plugins applied:
-        gradleBuildScript().appendText(
-            """
-            buildscript {
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-noarg:${defaultBuildOptions().kotlinVersion}")                
-                    classpath("org.jetbrains.kotlin:kotlin-serialization:${defaultBuildOptions().kotlinVersion}")                
+    @OtherGradlePluginTests
+    @DisplayName("Jpa plugin generates no-arg constructor")
+    @GradleTest
+    fun testKotlinJpaPlugin(gradleVersion: GradleVersion) {
+        project("noArgJpa", gradleVersion) {
+            build("assemble") {
+                val classesDir = kotlinClassesDir()
+
+                fun checkClass(name: String) {
+                    val testClass = classesDir.resolve("test/$name.class")
+                    assertFileExists(testClass)
+                    checkBytecodeContains(testClass.toFile(), "public <init>()V")
+                }
+
+                checkClass("Test")
+                checkClass("Test2")
+            }
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("NoArg: Don't invoke initializers by default")
+    @GradleTest
+    fun testNoArgKt18668(gradleVersion: GradleVersion) {
+        project("noArgKt18668", gradleVersion) {
+            build("assemble")
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("sam-with-receiver works")
+    @GradleTest
+    fun testSamWithReceiverSimple(gradleVersion: GradleVersion) {
+        project("samWithReceiverSimple", gradleVersion) {
+            build("assemble")
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("assignment works")
+    @GradleTest
+    fun testAssignmentSimple(gradleVersion: GradleVersion) {
+        project("assignmentSimple", gradleVersion) {
+            build("assemble")
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("Allopen plugin works when classpath dependency is not declared in current or root project ")
+    @GradleTest
+    fun testAllOpenFromNestedBuildscript(gradleVersion: GradleVersion) {
+        project("allOpenFromNestedBuildscript", gradleVersion) {
+            build("testClasses") {
+                val nestedSubproject = subProject("a/b")
+                assertFileExists(nestedSubproject.kotlinClassesDir().resolve("MyClass.class"))
+                assertFileExists(nestedSubproject.kotlinClassesDir("test").resolve("MyTestClass.class"))
+            }
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("Allopen applied from script works")
+    @GradleTest
+    fun testAllopenFromScript(gradleVersion: GradleVersion) {
+        project("allOpenFromScript", gradleVersion) {
+            build("testClasses") {
+                assertFileExists(kotlinClassesDir().resolve("MyClass.class"))
+                assertFileExists(kotlinClassesDir(sourceSet = "test").resolve("MyTestClass.class"))
+            }
+        }
+    }
+
+    @AndroidGradlePluginTests
+    @DisplayName("KT-39809: kapt subplugin legacy loading does not fail the build")
+    @GradleAndroidTest
+    fun testKotlinVersionDowngradeInSupbrojectKt39809(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "kapt2/android-dagger",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = providedJdk.location
+        ) {
+            subProject("app").buildGradle.modify {
+                """
+                buildscript {
+                	repositories {
+                		mavenCentral()
+                	}
+                	dependencies {
+                		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${TestVersions.Kotlin.STABLE_RELEASE}")
+                	}
+                }
+
+                $it
+                """.trimIndent()
+            }
+
+            build(":app:compileDebugKotlin")
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("Lombok plugin is working")
+    @GradleTest
+    fun testLombokPlugin(gradleVersion: GradleVersion) {
+        project("lombokProject", gradleVersion) {
+            listOf(
+                subProject("yeskapt").buildGradle,
+                subProject("nokapt").buildGradle,
+                subProject("withconfig").buildGradle
+            ).forEach { buildGradle ->
+                buildGradle.modify {
+                    val freefairLombokVersion = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
+                        "5.3.3.3"
+                    } else {
+                        "8.4"
+                    }
+                    it.replace("<freefair_lombok_version>", freefairLombokVersion)
                 }
             }
-            apply plugin: "org.jetbrains.kotlin.plugin.noarg"
-            apply plugin: "org.jetbrains.kotlin.plugin.serialization"
-        """.trimIndent()
-        )
+            build("build")
+        }
+    }
 
-        build("compileKotlin") {
-            assertSuccessful()
-            val xPlugin = output.split(" ").single { it.startsWith("-Xplugin") }.substringAfter("-Xplugin").split(",")
-            assertTrue("Expected serialization plugin to go first; actual order: $xPlugin") { xPlugin.first().contains("serialization") }
+    @OtherGradlePluginTests
+    @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
+    @GradleTest
+    fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
+        project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion) {
+            val languageVersionConfiguration = if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_7_6)) {
+                """
+                afterEvaluate {
+                    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+                        // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
+                        compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
+                        compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7)
+                    }
+                }
+                """.trimIndent()
+            } else {
+                ""
+            }
+            subProject("buildSrc").buildGradleKts.modify {
+                //language=kts
+                """
+                ${it.substringBefore("}")}
+                }
+                
+                buildscript {
+                    val kotlin_version: String by extra
+                    repositories {
+                        mavenLocal()
+                    }
+                    
+                    dependencies {
+                        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
+                    }
+                }
+                
+                $languageVersionConfiguration
+                
+                ${it.substringAfter("}")}
+                """.trimIndent()
+            }
+
+            build("assemble")
         }
     }
 }

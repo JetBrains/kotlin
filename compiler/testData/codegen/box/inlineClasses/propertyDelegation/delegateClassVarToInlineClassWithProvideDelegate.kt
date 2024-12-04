@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class Foo {
     var a: Int = 42
@@ -8,8 +10,7 @@ class Foo {
 var provideDelegateInvoked = 0
 var setterInvoked = 0
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class DelegateFactory(val default: Int) {
     operator fun provideDelegate(thisRef: Any?, prop: Any?): Delegate {
         provideDelegateInvoked++
@@ -17,8 +18,7 @@ value class DelegateFactory(val default: Int) {
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Delegate(val default: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =

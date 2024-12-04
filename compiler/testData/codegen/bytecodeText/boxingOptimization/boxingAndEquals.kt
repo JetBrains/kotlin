@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 
 // https://youtrack.jetbrains.com/issue/KT-15871
 

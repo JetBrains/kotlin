@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -67,7 +68,7 @@ abstract class IrDelegateDescriptorBase(
         /* isDelegated = */ true
     ) {
     init {
-        setType(delegateType, emptyList(), (containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter, null)
+        setType(delegateType, emptyList(), (containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter, null, emptyList())
     }
 
     final override fun setOutType(outType: KotlinType?) {
@@ -75,6 +76,8 @@ abstract class IrDelegateDescriptorBase(
     }
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
+
+    override fun cleanCompileTimeInitializerCache() {}
 
     override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.PRIVATE
 
@@ -95,7 +98,7 @@ class IrPropertyDelegateDescriptorImpl(
 ) :
     IrDelegateDescriptorBase(
         correspondingProperty.containingDeclaration,
-        getDelegateName(correspondingProperty.name),
+        NameUtils.propertyDelegateName(correspondingProperty.name),
         delegateType,
         correspondingProperty.delegateField?.annotations ?: Annotations.EMPTY
     ),
@@ -109,13 +112,10 @@ class IrImplementingDelegateDescriptorImpl(
 ) :
     IrDelegateDescriptorBase(
         containingDeclaration,
-        Name.identifier("\$\$delegate_$number"),
+        NameUtils.delegateFieldName(number),
         delegateType
     ),
     IrImplementingDelegateDescriptor
-
-internal fun getDelegateName(name: Name): Name =
-    Name.identifier(name.asString() + "\$delegate")
 
 class IrLocalDelegatedPropertyDelegateDescriptorImpl(
     override val correspondingLocalProperty: VariableDescriptorWithAccessors,
@@ -125,15 +125,16 @@ class IrLocalDelegatedPropertyDelegateDescriptorImpl(
     VariableDescriptorImpl(
         correspondingLocalProperty.containingDeclaration,
         Annotations.EMPTY,
-        getDelegateName(correspondingLocalProperty.name),
+        NameUtils.propertyDelegateName(correspondingLocalProperty.name),
         delegateType,
-        org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE
+        SourceElement.NO_SOURCE
     ) {
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
+    override fun cleanCompileTimeInitializerCache() {}
     override fun isVar(): Boolean = false
     override fun isLateInit(): Boolean = false
-    override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? = throw UnsupportedOperationException()
+    override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor = throw UnsupportedOperationException()
     override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.LOCAL
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =

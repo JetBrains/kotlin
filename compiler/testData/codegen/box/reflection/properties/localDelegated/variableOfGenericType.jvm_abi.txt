@@ -1,0 +1,14 @@
+MODULE main
+	CLASS A$B.class
+		CLASS METADATA
+			LOCAL DELEGATED PROPERTY c
+				Property: class.metadata.property.typeParameters
+					K1
+						<T#0 /* Z */, T#1 /* Y */, T#2 /* X */>
+					K2
+						<T#0 /* X */, T#1 /* Y */, T#2 /* Z */>
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/collections/Map<kotlin/Pair<T#2, T#1>, T#0>
+					K2
+						kotlin/collections/Map<kotlin/Pair<T#0, T#1>, T#2>

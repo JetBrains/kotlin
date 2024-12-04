@@ -1,6 +1,6 @@
 package
 
 package kt41 {
-    public fun aaa(): [ERROR : Error function type]
+    public fun aaa(): [Error type: Return type for function cannot be resolved]
     public fun bbb(): kotlin.Unit
 }

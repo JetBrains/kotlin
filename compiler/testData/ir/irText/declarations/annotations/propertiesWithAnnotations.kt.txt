@@ -1,17 +1,18 @@
+@TestAnn(x = "testVal.property")
+val testVal: String
+  field = ""
+  get
+
 open annotation class TestAnn : Annotation {
+  val x: String
+    field = x
+    get
+
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: String
-    field = x
-    get
-
 }
 
-@TestAnn(x = "testVal.property")
-val testVal: String
-  field = ""
-  get

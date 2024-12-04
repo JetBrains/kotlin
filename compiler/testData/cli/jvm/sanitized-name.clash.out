@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/sanitized-name.clash.kt:1:1: error: duplicate JVM class name 'Sanitized_name_clashKt' generated from: Sanitized_name_clashKt, Sanitized_name_clashKt
 class SanitizedNameClash
-^
+^^^^^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/sanitized-name.clash.kt:3:1: error: duplicate JVM class name 'Sanitized_name_clashKt' generated from: Sanitized_name_clashKt, Sanitized_name_clashKt
 class Sanitized_name_clashKt
-^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

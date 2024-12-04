@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // FULL_JDK
 
 abstract class A : MutableList<String> {

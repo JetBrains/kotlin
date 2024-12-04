@@ -1,0 +1,13 @@
+Diagnostics from elements:
+  for PSI element of type KtConstantExpression at (5,12-13)
+    CONSTANT_EXPECTED_TYPE_MISMATCH      text ranges: [(68,69)]
+      PSI: KtConstantExpression at (5,12-13)
+  for PSI element of type KtNameReferenceExpression at (4,9-10)
+    TYPE_MISMATCH      text ranges: [(54,55)]
+      PSI: KtNameReferenceExpression at (4,9-10)
+  for PSI element of type KtStringTemplateExpression at (1,14-16)
+    TYPE_MISMATCH      text ranges: [(13,15)]
+      PSI: KtStringTemplateExpression at (1,14-16)
+  for PSI element of type KtParameter at (3,9-18)
+    UNUSED_PARAMETER      text ranges: [(25,26)]
+      PSI: KtParameter at (3,9-18)

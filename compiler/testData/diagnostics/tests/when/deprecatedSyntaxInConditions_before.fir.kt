@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitConfusingSyntaxInWhenBranches
 // DIAGNOSTICS: -INCOMPATIBLE_TYPES, -NON_EXHAUSTIVE_WHEN_STATEMENT, -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // ISSUE: KT-48385
@@ -57,8 +58,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x in x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x !in x<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>x is String<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>x !is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x !is String<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x < x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x > x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x <= x<!> -> {}
@@ -72,8 +73,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         (x in x) -> {}
         (x !in x) -> {}
-        (x is String) -> {}
-        (x !is String) -> {}
+        (<!USELESS_IS_CHECK!>x is String<!>) -> {}
+        (<!USELESS_IS_CHECK!>x !is String<!>) -> {}
         (x < x) -> {}
         (x > x) -> {}
         (x <= x) -> {}
@@ -87,12 +88,12 @@ fun testWithSubject_bad_1(x: A) {
 
 fun testWithSubject_bad_2(b: Boolean) {
     // bad
-    when (b) {
+    <!NO_ELSE_IN_WHEN!>when<!> (b) {
         <!CONFUSING_BRANCH_CONDITION_WARNING!>b && b<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>b || b<!> -> {}
     }
     // ok
-    when (b) {
+    <!NO_ELSE_IN_WHEN!>when<!> (b) {
         (b && b) -> {}
         (b || b) -> {}
     }
@@ -122,12 +123,12 @@ fun testWithSubject_bad_4(b: B) {
     }
     // also bad
     when (b) {
-        <!EXPRESSION_EXPECTED!>(x = b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b += b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b -= b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b *= b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b /= b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b %= b)<!> -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>x = b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b += b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b -= b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b *= b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b /= b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b %= b<!>) -> {}
     }
 }
 
@@ -161,8 +162,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x in x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x !in x<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_WARNING!>x is String<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_WARNING!>x !is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x !is String<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x < x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x > x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x <= x<!> -> {}
@@ -176,8 +177,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in (x in x) -> {}
         in (x !in x) -> {}
-        in (x is String) -> {}
-        in (x !is String) -> {}
+        in (<!USELESS_IS_CHECK!>x is String<!>) -> {}
+        in (<!USELESS_IS_CHECK!>x !is String<!>) -> {}
         in (x < x) -> {}
         in (x > x) -> {}
         in (x <= x) -> {}
@@ -191,12 +192,12 @@ fun testWithRange_bad_1(x: A) {
 
 fun testWithRange_bad_2(b: Boolean) {
     // bad
-    when (b) {
+    <!NO_ELSE_IN_WHEN!>when<!> (b) {
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>b && b<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>b || b<!> -> {}
     }
     // ok
-    when (b) {
+    <!NO_ELSE_IN_WHEN!>when<!> (b) {
         in (b && b) -> {}
         in (b || b) -> {}
     }
@@ -226,11 +227,11 @@ fun testWithRange_bad_4(b: B) {
     }
     // also bad
     when (b) {
-        in <!EXPRESSION_EXPECTED!>(x = b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b += b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b -= b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b *= b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b /= b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b %= b)<!> -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>x = b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b += b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b -= b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b *= b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b /= b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b %= b<!>) -> {}
     }
 }

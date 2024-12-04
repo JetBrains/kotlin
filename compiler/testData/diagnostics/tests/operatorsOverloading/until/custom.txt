@@ -1,0 +1,11 @@
+package
+
+public fun main(/*0*/ n: A, /*1*/ f: A): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun rangeUntil(/*0*/ other: A): kotlin.collections.Iterable<A>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

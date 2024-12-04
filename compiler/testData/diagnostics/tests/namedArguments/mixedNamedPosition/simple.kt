@@ -1,5 +1,6 @@
-// !LANGUAGE: +NewInference +MixedNamedArgumentsInTheirOwnPosition
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 fun foo(
@@ -15,6 +16,6 @@ fun main() {
 
     foo(p1 = 1, p2 = "2", 3.0)
 
-    foo(1, p3 = 2.0, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>""<!><!NO_VALUE_FOR_PARAMETER!>)<!>
-    foo(1, p3 = 2.0, <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>3.0<!><!NO_VALUE_FOR_PARAMETER!>)<!>
+    foo(1, p3 = 2.0, <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>""<!>)<!>
+    foo(1, p3 = 2.0, <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>3.0<!>)<!>
 }

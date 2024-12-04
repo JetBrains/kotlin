@@ -1,0 +1,4 @@
+FILE: alwaysRenderFullExpansions.kt
+    public final fun test(): R|{kotlin/collections/ArrayList<kotlin/Int>=} java/util/ArrayList<kotlin/Int>| {
+        ^test R|kotlin/collections/arrayListOf|<R|kotlin/Int|>(vararg(Int(1), Int(2)))
+    }

@@ -67,7 +67,8 @@ class CommonizerFacadeTest {
 
         private fun Map<String, List<String>>.toCommonizerParameters(
             resultsConsumer: ResultsConsumer,
-            manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
+            manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) },
+            commonizerSettings: CommonizerSettings = DefaultCommonizerSettings,
         ): CommonizerParameters {
             val targetDependentModuleNames = mapKeys { (targetName, _) -> LeafCommonizerTarget(targetName) }.toTargetDependent()
             val sharedTarget = SharedCommonizerTarget(targetDependentModuleNames.targets.allLeaves())
@@ -83,6 +84,7 @@ class CommonizerFacadeTest {
                     )
                 },
                 resultsConsumer = resultsConsumer,
+                settings = commonizerSettings,
             )
         }
 
@@ -133,10 +135,7 @@ class CommonizerFacadeTest {
             val actualMissingModuleNames = mutableSetOf<String>()
 
             actualModuleResults.forEach { moduleResult ->
-                when (moduleResult) {
-                    is ModuleResult.Commonized -> actualCommonizedModuleNames += moduleResult.libraryName
-                    is ModuleResult.Missing -> actualMissingModuleNames += moduleResult.libraryName
-                }
+                actualCommonizedModuleNames += moduleResult.libraryName
             }
 
             assertEquals(expectedCommonizedModuleNames.size + expectedMissingModuleNames.size, actualModuleResults.size)

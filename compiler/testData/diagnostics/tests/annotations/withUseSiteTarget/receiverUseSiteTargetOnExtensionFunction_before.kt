@@ -1,4 +1,5 @@
-// !LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 annotation class Fancy

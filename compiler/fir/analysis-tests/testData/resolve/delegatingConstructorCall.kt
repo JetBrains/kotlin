@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <K> materialize(): K = null!!
 
 open class A1(val x: String)
@@ -23,5 +24,5 @@ open class A5 {
     constructor(x: Short)
 }
 
-class B5_1 : <!NONE_APPLICABLE!>A5<!>(1 + 1)
-class B5_2 : <!NONE_APPLICABLE!>A5<!>(100 * 2)
+class B5_1 : A5(<!ARGUMENT_TYPE_MISMATCH!>1 + 1<!>)
+class B5_2 : A5(<!ARGUMENT_TYPE_MISMATCH!>100 * 2<!>)

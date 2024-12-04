@@ -8,19 +8,13 @@ dependencies {
     api(project(":compiler:frontend"))
     api(project(":compiler:backend-common"))
     api(project(":compiler:ir.tree"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
+
+optInToUnsafeDuringIrConstructionAPI()
+optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-
-tasks {
-    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
-        }
-    }
-}
-

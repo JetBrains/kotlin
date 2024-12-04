@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents a JavaScript catch clause.
  */
-public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
+public class JsCatch extends SourceInfoAwareJsNode {
 
     protected final JsCatchScope scope;
     private JsBlock body;
@@ -42,7 +42,6 @@ public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
         return body;
     }
 
-    @Override
     public JsExpression getCondition() {
         return condition;
     }
@@ -59,7 +58,6 @@ public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
         this.body = body;
     }
 
-    @Override
     public void setCondition(JsExpression condition) {
         this.condition = condition;
     }

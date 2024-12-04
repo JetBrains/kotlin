@@ -4,21 +4,26 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.common.Symbol;
-import org.jetbrains.kotlin.js.util.AstUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.util.AstUtil;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 public final class JsFunction extends JsLiteral implements HasName {
+    public enum Modifier { STATIC, GET, SET, GENERATOR }
+
     @NotNull
     private JsBlock body;
     private List<JsParameter> params;
     @NotNull
     private final JsFunctionScope scope;
     private JsName name;
+    private Set<Modifier> modifiers;
+    private boolean isEs6Arrow;
 
     public JsFunction(@NotNull JsScope parentScope, @NotNull String description) {
         this(parentScope, description, null);
@@ -29,7 +34,11 @@ public final class JsFunction extends JsLiteral implements HasName {
         this.body = body;
     }
 
-    private JsFunction(@NotNull JsScope parentScope, @NotNull String description, @Nullable JsName name) {
+    private JsFunction(
+            @NotNull JsScope parentScope,
+            @NotNull String description,
+            @Nullable JsName name
+    ) {
         this.name = name;
         scope = new JsFunctionScope(parentScope, name == null ? description : name.getIdent());
     }
@@ -44,11 +53,6 @@ public final class JsFunction extends JsLiteral implements HasName {
         return name;
     }
 
-    @Override
-    public Symbol getSymbol() {
-        return name;
-    }
-
     @NotNull
     public List<JsParameter> getParameters() {
         if (params == null) {
@@ -60,6 +64,41 @@ public final class JsFunction extends JsLiteral implements HasName {
     @NotNull
     public JsFunctionScope getScope() {
         return scope;
+    }
+
+    public boolean isStatic() {
+        return modifiers != null && modifiers.contains(Modifier.STATIC);
+    }
+
+    public boolean isGetter() {
+        return modifiers != null && modifiers.contains(Modifier.GET);
+    }
+
+    public boolean isSetter() {
+        return modifiers != null && modifiers.contains(Modifier.SET);
+    }
+
+    public boolean isGenerator() {
+        return modifiers != null && modifiers.contains(Modifier.GENERATOR);
+    }
+
+    @NotNull
+    public Set<Modifier> getModifiers() {
+        if (modifiers == null) {
+            modifiers = EnumSet.noneOf(Modifier.class);
+        }
+        return modifiers;
+    }
+
+    public boolean isEs6Arrow() {
+        return isEs6Arrow;
+    }
+
+    public void setEs6Arrow(boolean es6Arrow) {
+        if (es6Arrow && name != null) {
+            throw new IllegalArgumentException("Only anonymous function can be made an ES6 arrow");
+        }
+        isEs6Arrow = es6Arrow;
     }
 
     public void setBody(@NotNull JsBlock body) {
@@ -98,6 +137,8 @@ public final class JsFunction extends JsLiteral implements HasName {
         functionCopy.getScope().copyOwnNames(scope);
         functionCopy.setBody(body.deepCopy());
         functionCopy.params = AstUtil.deepCopy(params);
+        functionCopy.modifiers = modifiers == null ? null : EnumSet.copyOf(modifiers);
+        functionCopy.isEs6Arrow = isEs6Arrow;
 
         return functionCopy.withMetadataFrom(this);
     }

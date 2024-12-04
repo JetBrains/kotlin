@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun exc(flag: Boolean) {
     if (flag) throw Exception()
 }
@@ -13,7 +14,7 @@ fun f1(flag: Boolean) {
     }
     catch (e: Exception) {
         // KT-13612: reassignment
-        n = 3
+        <!VAL_REASSIGNMENT!>n<!> = 3
     }
     <!UNINITIALIZED_VARIABLE!>n<!>.hashCode()
 }
@@ -30,7 +31,7 @@ fun f2(flag: Boolean) {
         }
         catch (e: Exception) {
             // KT-13612: reassignment
-            n = 3
+            <!VAL_REASSIGNMENT!>n<!> = 3
         }
         <!UNINITIALIZED_VARIABLE!>n<!>.hashCode()
     }
@@ -48,7 +49,7 @@ fun f3(flag: Boolean) {
         }
         catch (e: Exception) {
             // KT-13612: reassignment
-            n = 3
+            <!VAL_REASSIGNMENT!>n<!> = 3
         }
         <!UNINITIALIZED_VARIABLE!>n<!>.hashCode()
     }

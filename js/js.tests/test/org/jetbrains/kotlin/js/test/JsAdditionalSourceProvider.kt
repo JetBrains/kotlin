@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.JavaScript
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -18,6 +20,11 @@ import java.io.FileFilter
 
 class JsAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+        if (JsEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return emptyList()
+        // Add the files only to common modules with no dependencies, otherwise they'll produce "IrSymbol is already bound"
+        if (module.allDependencies.isNotEmpty()) {
+            return emptyList()
+        }
         return getAdditionalKotlinFiles(module.files.first().originalFile.parent).map { it.toTestFile() }
     }
 

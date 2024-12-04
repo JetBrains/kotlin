@@ -1,11 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
 
 android {
+    namespace "com.example.dagger.kotlin"
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
+
+    kotlin {
+        jvmToolchain(8)
+    }
 
     defaultConfig {
         applicationId "com.example.dagger.kotlin"
@@ -14,6 +17,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -28,9 +32,11 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:23.3.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    implementation 'com.google.dagger:dagger:2.6.1'
-    kapt 'com.google.dagger:dagger-compiler:2.6.1'
+    implementation 'com.google.dagger:dagger:2.9'
+    kapt 'com.google.dagger:dagger-compiler:2.9'
+    kapt 'javax.annotation:javax.annotation-api:1.3.2'
+    kaptAndroidTest 'com.google.dagger:dagger-compiler:2.9'
+    kaptAndroidTest 'javax.annotation:javax.annotation-api:1.3.2'
     compileOnly  'org.glassfish:javax.annotation:10.0-b28'
 }

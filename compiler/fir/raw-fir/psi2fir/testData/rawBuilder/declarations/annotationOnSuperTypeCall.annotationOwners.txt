@@ -1,0 +1,39 @@
+@Target(AnnotationTarget#.TYPE#)
+owner -> FirRegularClassSymbol util/Anno
+context -> FirRegularClassSymbol util/Anno
+
+@Anno(<strcat>(String(MyClassWithoutConstructor nested nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithoutConstructor
+context -> FirConstructorSymbol util/MyClassWithoutConstructor.MyClassWithoutConstructor
+context -> FirConstructorSymbol util/MyClassWithoutConstructor.MyClassWithoutConstructor
+context -> FirRegularClassSymbol util/MyClassWithoutConstructor
+
+@Anno(<strcat>(String(MyClassWithoutConstructor nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithoutConstructor
+context -> FirConstructorSymbol util/MyClassWithoutConstructor.MyClassWithoutConstructor
+context -> FirConstructorSymbol util/MyClassWithoutConstructor.MyClassWithoutConstructor
+context -> FirRegularClassSymbol util/MyClassWithoutConstructor
+
+@Anno(<strcat>(String(MyClassWithoutConstructor super type call ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithoutConstructor
+context -> FirConstructorSymbol util/MyClassWithoutConstructor.MyClassWithoutConstructor
+context -> FirConstructorSymbol util/MyClassWithoutConstructor.MyClassWithoutConstructor
+context -> FirRegularClassSymbol util/MyClassWithoutConstructor
+
+@Anno(<strcat>(String(MyClassWithConstructor nested nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithConstructor
+context -> FirConstructorSymbol util/MyClassWithConstructor.MyClassWithConstructor
+context -> FirConstructorSymbol util/MyClassWithConstructor.MyClassWithConstructor
+context -> FirRegularClassSymbol util/MyClassWithConstructor
+
+@Anno(<strcat>(String(MyClassWithConstructor nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithConstructor
+context -> FirConstructorSymbol util/MyClassWithConstructor.MyClassWithConstructor
+context -> FirConstructorSymbol util/MyClassWithConstructor.MyClassWithConstructor
+context -> FirRegularClassSymbol util/MyClassWithConstructor
+
+@Anno(<strcat>(String(MyClassWithConstructor super type call ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithConstructor
+context -> FirConstructorSymbol util/MyClassWithConstructor.MyClassWithConstructor
+context -> FirConstructorSymbol util/MyClassWithConstructor.MyClassWithConstructor
+context -> FirRegularClassSymbol util/MyClassWithConstructor

@@ -1,0 +1,26 @@
+Module: common
+FILE: common.kt
+    public final expect fun replaceMeWithDefault(s: R|kotlin/String| = String(OK)): R|kotlin/String|
+    public final fun commonBox(): R|kotlin/String| {
+        ^commonBox R|/replaceMeWithDefault|(String(Fail))
+    }
+FILE: main.kt
+    public final actual fun replaceMeWithDefault(s: R|kotlin/String|): R|kotlin/String| {
+        ^replaceMeWithDefault R|<local>/s|
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|/commonBox|()
+    }
+Module: jvm
+FILE: common.kt
+    public final expect fun replaceMeWithDefault(s: R|kotlin/String| = String(OK)): R|kotlin/String|
+    public final fun commonBox(): R|kotlin/String| {
+        ^commonBox R|/replaceMeWithDefault|(String(Fail))
+    }
+FILE: main.kt
+    public final actual fun replaceMeWithDefault(s: R|kotlin/String|): R|kotlin/String| {
+        ^replaceMeWithDefault R|<local>/s|
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|/commonBox|()
+    }

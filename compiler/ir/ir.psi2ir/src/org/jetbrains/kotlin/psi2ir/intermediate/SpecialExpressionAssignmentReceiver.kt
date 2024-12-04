@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi2ir.generators.StatementGenerator
 
-class SpecialExpressionAssignmentReceiver(
+internal class SpecialExpressionAssignmentReceiver(
     private val statementGenerator: StatementGenerator,
     private val ktExpression: KtExpression,
     private val origin: IrStatementOrigin,

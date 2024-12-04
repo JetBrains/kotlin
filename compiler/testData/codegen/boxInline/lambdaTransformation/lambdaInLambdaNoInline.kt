@@ -54,7 +54,7 @@ inline fun test2(crossinline param: () -> String): String {
 
 inline fun test22(crossinline param: () -> String): String {
     var result = "fail1"
-    {{result = param()}()}()
+    { { result = param() }.let { it() } }.let { it() }
 
     return result
 }

@@ -42,7 +42,7 @@ import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.E
 
 public class CompileEnvironmentUtil {
 
-    public static long DOS_EPOCH = new GregorianCalendar(1980, Calendar.JANUARY, 1, 0, 0, 0).getTimeInMillis();
+    public static final long DOS_EPOCH = 315532800000L; // 1980-01-01T00:00:00Z
 
     @NotNull
     public static ModuleChunk loadModuleChunk(File buildFile, MessageCollector messageCollector) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
@@ -157,6 +158,10 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.mapTo(des
 /**
  * Returns `true` if all entries match the given [predicate].
  * 
+ * Note that if the map contains no entries, the function returns `true`
+ * because there are no entries in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <K, V> Map<out K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
@@ -211,11 +216,19 @@ public inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit
     for (element in this) action(element)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+/**
+ * Returns the first entry yielding the largest value of the given function.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxByOrThrow")
 @kotlin.internal.InlineOnly
-public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
-    return maxByOrNull(selector)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V> {
+    return entries.maxBy(selector)
 }
 
 /**
@@ -341,11 +354,17 @@ public inline fun <K, V, R> Map<out K, V>.maxOfWithOrNull(comparator: Comparator
     return entries.maxOfWithOrNull(comparator, selector)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+/**
+ * Returns the first entry having the largest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxWithOrThrow")
 @kotlin.internal.InlineOnly
-public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
-    return maxWithOrNull(comparator)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V> {
+    return entries.maxWith(comparator)
 }
 
 /**
@@ -357,10 +376,19 @@ public inline fun <K, V> Map<out K, V>.maxWithOrNull(comparator: Comparator<in M
     return entries.maxWithOrNull(comparator)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
-    return minByOrNull(selector)
+/**
+ * Returns the first entry yielding the smallest value of the given function.
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minByOrThrow")
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V> {
+    return entries.minBy(selector)
 }
 
 /**
@@ -486,10 +514,17 @@ public inline fun <K, V, R> Map<out K, V>.minOfWithOrNull(comparator: Comparator
     return entries.minOfWithOrNull(comparator, selector)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-public fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
-    return minWithOrNull(comparator)
+/**
+ * Returns the first entry having the smallest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the map is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minWithOrThrow")
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V> {
+    return entries.minWith(comparator)
 }
 
 /**
@@ -550,6 +585,8 @@ public inline fun <K, V> Map<out K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
 
 /**
  * Creates a [Sequence] instance that wraps the original map returning its entries when being iterated.
+ * 
+ * @sample samples.collections.Sequences.Building.sequenceFromMap
  */
 public fun <K, V> Map<out K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
     return entries.asSequence()

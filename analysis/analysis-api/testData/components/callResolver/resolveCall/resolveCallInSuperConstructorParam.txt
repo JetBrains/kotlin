@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = { 2 -> (other: kotlin.Int) }
-targetFunction = /to(<extension receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-substitutor = <map substitutor: {A = kotlin/Int, B = kotlin/Int}>

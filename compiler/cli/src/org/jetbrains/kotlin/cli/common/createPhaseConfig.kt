@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.cli.common
 
-import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
-import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.config.phaser.AnyNamedPhase
+import org.jetbrains.kotlin.config.phaser.CompilerPhase
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -21,7 +21,7 @@ fun createPhaseConfig(
     fun report(message: String) = messageCollector.report(CompilerMessageSeverity.ERROR, message)
 
     val phases = compoundPhase.toPhaseMap()
-    val enabled = computeEnabled(phases, arguments.disablePhases, ::report).toMutableSet()
+    val disabled = computeDisabled(phases, arguments.disablePhases, ::report).toMutableSet()
     val verbose = phaseSetFromArguments(phases, arguments.verbosePhases, ::report)
 
     val beforeDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpBefore, ::report)
@@ -37,41 +37,50 @@ fun createPhaseConfig(
     val toValidateStateBefore = beforeValidateSet + bothValidateSet
     val toValidateStateAfter = afterValidateSet + bothValidateSet
 
-    val namesOfElementsExcludedFromDumping = arguments.namesExcludedFromDumping?.toSet() ?: emptySet()
-
     val needProfiling = arguments.profilePhases
     val checkConditions = arguments.checkPhaseConditions
     val checkStickyConditions = arguments.checkStickyPhaseConditions
 
     return PhaseConfig(
-        compoundPhase,
-        phases,
-        enabled,
+        disabled,
         verbose,
         toDumpStateBefore,
         toDumpStateAfter,
-        dumpDirectory,
-        dumpOnlyFqName,
         toValidateStateBefore,
         toValidateStateAfter,
-        namesOfElementsExcludedFromDumping,
+        dumpDirectory,
+        dumpOnlyFqName,
         needProfiling,
         checkConditions,
         checkStickyConditions
     ).also {
         if (arguments.listPhases) {
-            it.list()
+            list(compoundPhase, disabled, verbose)
         }
     }
 }
 
-private fun computeEnabled(
+private fun list(
+    compoundPhase: CompilerPhase<*, *, *>,
+    disabled: Set<AnyNamedPhase> = mutableSetOf(),
+    verbose: Set<AnyNamedPhase> = mutableSetOf(),
+) {
+    for ((depth, phase) in compoundPhase.getNamedSubphases()) {
+        println(buildString {
+            append("    ".repeat(depth))
+            append(phase.name)
+            if (phase in disabled) append(" (Disabled)")
+            if (phase in verbose) append(" (Verbose)")
+        })
+    }
+}
+
+private fun computeDisabled(
     phases: MutableMap<String, AnyNamedPhase>,
     namesOfDisabled: Array<String>?,
     report: (String) -> Unit
 ): Set<AnyNamedPhase> {
-    val disabledPhases = phaseSetFromArguments(phases, namesOfDisabled, report)
-    return phases.values.toSet() - disabledPhases
+    return phaseSetFromArguments(phases, namesOfDisabled, report)
 }
 
 private fun phaseSetFromArguments(

@@ -5,6 +5,9 @@
 package org.jetbrains.kotlin.js.backend.ast;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface JsNode {
     /**
@@ -19,16 +22,14 @@ public interface JsNode {
     /**
      * Return the source info associated with this object.
      */
-    Object getSource();
+    @Nullable JsLocationWithSource getSource();
 
     /**
      * Set the source info associated with this object.
      *
      * @param info
      */
-    void setSource(Object info);
-
-    JsNode source(Object info);
+    void setSource(@Nullable JsLocationWithSource info);
 
     @NotNull
     JsNode deepCopy();
@@ -40,4 +41,12 @@ public interface JsNode {
      * @param ctx the context of an existing traversal
      */
     void traverse(JsVisitorWithContext visitor, JsContext ctx);
+
+    List<JsComment> getCommentsBeforeNode();
+
+    List<JsComment> getCommentsAfterNode();
+
+    void setCommentsBeforeNode(List<JsComment> comment);
+
+    void setCommentsAfterNode(List<JsComment> comment);
 }

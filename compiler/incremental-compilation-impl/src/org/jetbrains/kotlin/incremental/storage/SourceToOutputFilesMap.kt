@@ -5,24 +5,22 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
-import org.jetbrains.kotlin.incremental.dumpCollection
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import java.io.File
 
 class SourceToOutputFilesMap(
     storageFile: File,
-    private val pathConverter: FileToPathConverter
-) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
-
-    operator fun set(sourceFile: File, outputFiles: Collection<File>) {
-        storage[pathConverter.toPath(sourceFile)] = outputFiles.map(pathConverter::toPath)
+    icContext: IncrementalCompilationContext,
+) : AppendableSetBasicMap<File, File>(
+    storageFile,
+    icContext.fileDescriptorForSourceFiles,
+    icContext.fileDescriptorForOutputFiles,
+    icContext
+) {
+    @Synchronized
+    fun getAndRemove(sourceFile: File): Set<File>? {
+        return get(sourceFile).also {
+            remove(sourceFile)
+        }
     }
-
-    operator fun get(sourceFile: File): Collection<File> =
-        storage[pathConverter.toPath(sourceFile)].orEmpty().map(pathConverter::toFile)
-
-    override fun dumpValue(value: Collection<String>) =
-        value.dumpCollection()
-
-    fun remove(file: File): Collection<File> =
-        get(file).also { storage.remove(pathConverter.toPath(file)) }
 }

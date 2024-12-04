@@ -7,9 +7,9 @@ public final fun isDynamic(): dynamic
 public final fun </*0*/ T0> foo(): dynamic
 public final fun isDynamic(): dynamic
 public final var foo: dynamic
-    public final fun <get-foo>(): dynamic
-    public final fun <set-foo>(/*0*/ <set-?>: dynamic): kotlin.Unit
+    public final fun `<get-foo>`(): dynamic
+    public final fun `<set-foo>`(/*0*/ `<set-?>`: dynamic): kotlin.Unit
 public final fun isDynamic(): dynamic
 public final var foo: dynamic
-    public final fun <get-foo>(): dynamic
-    public final fun <set-foo>(/*0*/ <set-?>: dynamic): kotlin.Unit
+    public final fun `<get-foo>`(): dynamic
+    public final fun `<set-foo>`(/*0*/ `<set-?>`: dynamic): kotlin.Unit

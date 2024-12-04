@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -DEPRECATION
+// FIR_IDENTICAL
+// DIAGNOSTICS: -DEPRECATION
 @nativeInvoke
 fun Int.foo(a: String): Int = definedExternally
 

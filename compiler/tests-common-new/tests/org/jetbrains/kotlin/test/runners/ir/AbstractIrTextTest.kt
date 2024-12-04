@@ -5,120 +5,183 @@
 
 package org.jetbrains.kotlin.test.runners.ir
 
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.HandlersStepBuilder
+import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest.KlibFacades
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
-    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
-{
+abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
+    protected val targetPlatform: TargetPlatform,
+    targetBackend: TargetBackend
+) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontend: FrontendKind<*>
-    abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val converter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+    abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
+    abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
+
+    data class KlibFacades(
+        val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+        val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
+    )
+
+    /**
+     * Facades for serialization and deserialization to/from klibs.
+     */
+    open val klibFacades: KlibFacades?
+        get() = null
+
+    open fun TestConfigurationBuilder.applyConfigurators() {}
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
-            frontend = this@AbstractIrTextTestBase.frontend
-            targetPlatform = JvmPlatforms.defaultJvmPlatform
-            artifactKind = BinaryKind.NoArtifact
-            targetBackend = TargetBackend.JVM_IR
-            dependencyKind = DependencyKind.Source
+            frontend = this@AbstractIrTextTest.frontend
+            targetPlatform = this@AbstractIrTextTest.targetPlatform
         }
 
-        defaultDirectives {
-            +DUMP_IR
-            +DUMP_KT_IR
-        }
-
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JvmEnvironmentConfigurator
-        )
+        applyConfigurators()
 
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
             ::CoroutineHelpersSourceFilesProvider,
-            ::CodegenHelpersSourceFilesProvider,
         )
 
         facadeStep(frontendFacade)
         classicFrontendHandlersStep {
             useHandlers(
-                ::NoCompilationErrorsHandler
+                ::NoCompilationErrorsHandler,
+                ::ClassicDiagnosticsHandler
             )
         }
-
         firHandlersStep {
             useHandlers(
-                ::NoFirCompilationErrorsHandler
+                ::NoFirCompilationErrorsHandler,
+                ::FirDiagnosticsHandler
             )
         }
 
-        facadeStep(converter)
+        configureAbstractIrTextSettings(
+            targetBackend, converter, klibFacades,
+            includeAllDumpHandlers = true,
+        )
+    }
 
-        irHandlersStep {
-            useHandlers(
-                ::IrTextDumpHandler,
-                ::IrTreeVerifierHandler,
-                ::IrPrettyKotlinDumpHandler
+    protected fun TestConfigurationBuilder.commonConfigurationForK2(parser: FirParser) {
+        configureFirParser(parser)
+
+        configureFirHandlersStep {
+            useHandlersAtFirst(
+                ::FirDumpHandler,
+                ::FirScopeDumpHandler,
             )
+        }
+
+        forTestsMatching("compiler/testData/ir/irText/properties/backingField/*") {
+            defaultDirectives {
+                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+            }
         }
     }
 }
 
-open class AbstractIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArtifact>() {
-    override val frontend: FrontendKind<*>
-        get() = FrontendKinds.ClassicFrontend
-    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
-    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
-        get() = ::ClassicFrontend2IrConverter
+fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.useIrTextHandlers(
+    testConfigurationBuilder: TestConfigurationBuilder,
+    includeAllDumpHandlers: Boolean = true,
+) where InputArtifactKind : BackendKind<IrBackendInput> {
+    useHandlers(
+        ::IrTextDumpHandler,
+        ::IrTreeVerifierHandler,
+        ::IrPrettyKotlinDumpHandler,
+    )
+    if (includeAllDumpHandlers) {
+        useHandlers(
+            ::IrSourceRangesDumpHandler,
+        )
+    }
+    testConfigurationBuilder.useAfterAnalysisCheckers(
+        ::FirIrDumpIdenticalChecker,
+    )
 }
 
-open class AbstractFir2IrTextTest : AbstractIrTextTestBase<FirOutputArtifact>() {
-    override val frontend: FrontendKind<*>
-        get() = FrontendKinds.FIR
-    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
-    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter
+fun <FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> TestConfigurationBuilder.configureAbstractIrTextSettings(
+    targetBackend: TargetBackend,
+    converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>,
+    klibFacades: KlibFacades?,
+    /**
+     * When tiered tests are implemented, runners of later tiers may be run for test data
+     * originally designed for lower tiers, but sometimes handlers interfere with one another.
+     * Until this is fixed, tiered runners will need a workaround.
+     * See: KT-67281.
+     */
+    includeAllDumpHandlers: Boolean,
+) {
+    globalDefaults {
+        artifactKind = BinaryKind.NoArtifact
+        this.targetBackend = targetBackend
+        dependencyKind = when (targetBackend) {
+            TargetBackend.JS_IR, TargetBackend.WASM -> DependencyKind.KLib // these irText pipelines register Klib artifacts during *KlibSerializerFacade
+            else -> DependencyKind.Source
+        }
+    }
 
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            useAfterAnalysisCheckers(
-                ::FirIrDumpIdenticalChecker,
-                ::BlackBoxCodegenSuppressor
-            )
+    defaultDirectives {
+        +DUMP_IR
+        +DUMP_KT_IR
+        +LINK_VIA_SIGNATURES_K1
+        +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+        DIAGNOSTICS with "-warnings"
+        DUMP_KLIB_ABI with KlibAbiDumpMode.DEFAULT
+    }
 
-            forTestsMatching("compiler/fir/fir2ir/testData/ir/irText/properties/backingField/*") {
-                defaultDirectives {
-                    LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
-                }
-            }
+    useAfterAnalysisCheckers(
+        ::BlackBoxCodegenSuppressor
+    )
+
+    enableMetaInfoHandler()
+
+    useAdditionalSourceProviders(
+        ::CodegenHelpersSourceFilesProvider,
+    )
+
+    facadeStep(converter)
+
+    irHandlersStep { useIrTextHandlers(this@configureAbstractIrTextSettings, includeAllDumpHandlers) }
+
+    if (klibFacades != null) {
+        irHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = false) })
+        }
+
+        facadeStep(klibFacades.serializerFacade)
+        klibArtifactsHandlersStep {
+            useHandlers(::KlibAbiDumpHandler)
+        }
+        facadeStep(klibFacades.deserializerFacade)
+
+        deserializedIrHandlersStep {
+            useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) })
         }
     }
 }

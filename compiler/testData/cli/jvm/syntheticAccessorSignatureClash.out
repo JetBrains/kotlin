@@ -1,31 +1,31 @@
-compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:7: error: accidental override: The following declarations have the same JVM signature (access$foo(LDerived;)V):
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:1: error: accidental override: The following declarations have the same JVM signature (access$foo(LDerived;)V):
     fun `access$foo`(d: Derived): Unit defined in Derived
     fun `access$foo`(`$this`: Derived): Unit defined in Derived
 class Derived : Base() {
-      ^
-compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:7: error: accidental override: The following declarations have the same JVM signature (access$getBar$p(LDerived;)I):
+^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:1: error: accidental override: The following declarations have the same JVM signature (access$getBar$p(LDerived;)I):
     fun `access$getBar$p`(d: Derived): Int defined in Derived
     fun `access$getBar$p`(`$this`: Derived): Int defined in Derived
 class Derived : Base() {
-      ^
-compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:7: error: accidental override: The following declarations have the same JVM signature (access$setBar$p(LDerived;I)V):
+^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:1: error: accidental override: The following declarations have the same JVM signature (access$setBar$p(LDerived;I)V):
     fun `access$setBar$p`(d: Derived, i: Int): Unit defined in Derived
     fun `access$setBar$p`(`$this`: Derived, `<set-?>`: Int): Unit defined in Derived
 class Derived : Base() {
-      ^
-compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:7: error: accidental override: The following declarations have the same JVM signature (access$getBaz$p(LDerived;)I):
+^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:1: error: accidental override: The following declarations have the same JVM signature (access$getBaz$p(LDerived;)I):
     fun `access$getBaz$p`(d: Derived): Int defined in Derived
     fun `access$getBaz$p`(`$this`: Derived): Int defined in Derived
 class Derived : Base() {
-      ^
-compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:7: error: accidental override: The following declarations have the same JVM signature (access$getBoo$p(LDerived;)I):
+^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:1: error: accidental override: The following declarations have the same JVM signature (access$getBoo$p(LDerived;)I):
     fun `access$getBoo$p`(d: Derived): Int defined in Derived
     fun `access$getBoo$p`(`$this`: Derived): Int defined in Derived
 class Derived : Base() {
-      ^
-compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:7: error: accidental override: The following declarations have the same JVM signature (access$setBar1$p(LDerived;I)V):
+^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:14:1: error: accidental override: The following declarations have the same JVM signature (access$setBar1$p(LDerived;I)V):
     fun `access$setBar1$p`(d: Derived, i: Int): Unit defined in Derived
     fun `access$setBar1$p`(`$this`: Derived, `<set-?>`: Int): Unit defined in Derived
 class Derived : Base() {
-      ^
+^
 COMPILATION_ERROR

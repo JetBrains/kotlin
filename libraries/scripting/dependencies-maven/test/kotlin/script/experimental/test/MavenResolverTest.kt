@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Ignore
 import java.io.File
+import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -21,6 +22,8 @@ import kotlin.script.experimental.dependencies.impl.SimpleExternalDependenciesRe
 import kotlin.script.experimental.dependencies.impl.makeExternalDependenciesResolverOptions
 import kotlin.script.experimental.dependencies.impl.set
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
+import kotlin.script.experimental.dependencies.maven.impl.createMavenSettings
+import kotlin.system.measureTimeMillis
 
 @ExperimentalContracts
 class MavenResolverTest : ResolversTestBase() {
@@ -51,7 +54,14 @@ class MavenResolverTest : ResolversTestBase() {
         })
     }
 
+    private fun parseOptions(options: String) = SimpleExternalDependenciesResolverOptionsParser(options).valueOrThrow()
+
     private val resolvedKotlinVersion = "1.5.31"
+
+    fun testDefaultSettings() {
+        val settings = createMavenSettings()
+        assertNotNull(settings.localRepository)
+    }
 
     fun testResolveSimple() {
         resolveAndCheck("org.jetbrains.kotlin:kotlin-annotations-jvm:$resolvedKotlinVersion") { files ->
@@ -77,7 +87,6 @@ class MavenResolverTest : ResolversTestBase() {
         val dependency = "junit:junit:4.11"
 
         var transitiveFiles: Iterable<File>
-        fun parseOptions(options: String) = SimpleExternalDependenciesResolverOptionsParser(options).valueOrThrow()
 
         resolveAndCheck(dependency, options = parseOptions("transitive=true")) { files ->
             transitiveFiles = files
@@ -96,6 +105,16 @@ class MavenResolverTest : ResolversTestBase() {
 
         assertTrue(ntCount < tCount)
         assertEquals("jar", artifact.extension)
+    }
+
+    fun testSourcesResolution() {
+        resolveAndCheck("junit:junit:4.11", options = parseOptions("classifier=sources extension=jar")) { files ->
+            assertEquals(2, files.count())
+            files.forEach {
+                assertTrue(it.name.endsWith("-sources.jar"))
+            }
+            true
+        }
     }
 
     fun testResolveVersionsRange() {
@@ -122,6 +141,101 @@ class MavenResolverTest : ResolversTestBase() {
             resolver.resolve("com.jetbrains:space-sdk:1.0-dev")
         }.valueOrThrow()
         assertTrue(files.any { it.name.startsWith("space-sdk") })
+    }
+
+    fun testAuthFailure() {
+        val resolver = MavenDependenciesResolver()
+        val options = buildOptions(
+            DependenciesResolverOptionsName.USERNAME to "invalid name",
+            DependenciesResolverOptionsName.PASSWORD to "invalid password",
+        )
+        resolver.addRepository("https://packages.jetbrains.team/maven/p/crl/maven/", options)
+        // If the real space-sdk is in Maven Local, test will not fail
+        val result = runBlocking {
+            resolver.resolve("com.jetbrains:fake-space-sdk:1.0-dev")
+        } as ResultWithDiagnostics.Failure
+
+        assertEquals(1, result.reports.size)
+        val diagnostic = result.reports.single()
+        assertEquals(
+            "ArtifactResolutionException: The following artifacts could not be resolved: com.jetbrains:fake-space-sdk:pom:1.0-dev (absent): " +
+                    "Could not transfer artifact com.jetbrains:fake-space-sdk:pom:1.0-dev from/to https___packages.jetbrains.team_maven_p_crl_maven_ (https://packages.jetbrains.team/maven/p/crl/maven/): " +
+                    "authentication failed for https://packages.jetbrains.team/maven/p/crl/maven/com/jetbrains/fake-space-sdk/1.0-dev/fake-space-sdk-1.0-dev.pom, " +
+                    "status: 401 Unauthorized",
+            diagnostic.message
+        )
+        assertNotNull(diagnostic.exception)
+    }
+
+    fun testAuthIncorrectEnvUsage() {
+        val resolver = MavenDependenciesResolver()
+        val options = buildOptions(
+            DependenciesResolverOptionsName.USERNAME to "\$MY_USERNAME_XXX",
+            DependenciesResolverOptionsName.KEY_PASSPHRASE to "\$MY_KEY_PASSPHRASE_YYY",
+        )
+        val result = resolver.addRepository("https://packages.jetbrains.team/maven/p/crl/maven/", options) as ResultWithDiagnostics.Failure
+
+        val messages = result.reports.map { it.message }
+        assertEquals(
+            listOf(
+                "Environment variable `MY_USERNAME_XXX` for username is not set",
+                "Environment variable `MY_KEY_PASSPHRASE_YYY` for private key passphrase is not set"
+            ),
+            messages
+        )
+    }
+
+    fun testMultipleDependencies() {
+        val resolver = MavenDependenciesResolver()
+        val sourceOptions = buildOptions(
+            DependenciesResolverOptionsName.PARTIAL_RESOLUTION to "true",
+            DependenciesResolverOptionsName.CLASSIFIER to "sources",
+            DependenciesResolverOptionsName.EXTENSION to "jar",
+        )
+        val multipleDependencies = listOf(
+            "commons-io:commons-io:2.18.0",
+            "org.jetbrains.kotlin:kotlin-reflect:1.8.20",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20",
+        ).map { ArtifactWithLocation(it, null) }
+
+        val result = TreeSet<String>()
+        fun addToResult(resultFiles: ResultWithDiagnostics<List<File>>) {
+            if (resultFiles is ResultWithDiagnostics.Success) {
+                for (file in resultFiles.value) {
+                    result.add(file.absolutePath)
+                }
+            }
+        }
+
+        val timeMs = measureTimeMillis {
+            runBlocking {
+                addToResult(resolver.resolve(multipleDependencies))
+                addToResult(resolver.resolve(multipleDependencies, sourceOptions))
+            }
+        }
+        println("Test time: $timeMs ms")
+        println("Deps size: ${result.size}")
+        println(result.joinToString("\n"))
+
+        assertEquals(14, result.size)
+    }
+
+    @Ignore("ignored because spark is a very heavy dependency")
+    fun ignore_testPartialResolution() {
+        val resolver = MavenDependenciesResolver()
+        val options = buildOptions(
+            DependenciesResolverOptionsName.PARTIAL_RESOLUTION to "true",
+            DependenciesResolverOptionsName.CLASSIFIER to "sources",
+            DependenciesResolverOptionsName.EXTENSION to "jar",
+        )
+
+        val result = runBlocking {
+            resolver.resolve("org.jetbrains.kotlinx.spark:kotlin-spark-api_3.3.0_2.13:1.2.1", options)
+        }
+
+        result as ResultWithDiagnostics.Success
+        assertTrue(result.reports.isNotEmpty())
+        assertTrue(result.value.isNotEmpty())
     }
 
     // Ignored - tests with custom repos often break the CI due to the caching issues

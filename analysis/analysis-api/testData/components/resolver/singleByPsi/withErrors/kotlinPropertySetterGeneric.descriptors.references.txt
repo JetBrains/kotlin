@@ -1,0 +1,6 @@
+KtNameReferenceExpression(51,56): 'value'
+  KtSimpleNameReference:
+    (in ROOT) var <T : kotlin.Int> CInt32VarX<T>.value: T
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

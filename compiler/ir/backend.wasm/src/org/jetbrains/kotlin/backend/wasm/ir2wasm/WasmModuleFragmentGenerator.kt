@@ -6,36 +6,122 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class WasmModuleFragmentGenerator(
-    backendContext: WasmBackendContext,
-    wasmModuleFragment: WasmCompiledModuleFragment
+    private val backendContext: WasmBackendContext,
+    private val wasmModuleMetadataCache: WasmModuleMetadataCache,
+    private val idSignatureRetriever: IdSignatureRetriever,
+    private val allowIncompleteImplementations: Boolean,
 ) {
-    private val declarationGenerator =
-        DeclarationGenerator(
-            WasmModuleCodegenContextImpl(
-                backendContext,
-                wasmModuleFragment
-            )
-        )
+    fun generateModuleAsSingleFileFragment(irModuleFragment: IrModuleFragment): WasmCompiledFileFragment {
+        val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
+        val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
+        val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
 
-    fun generateModule(irModuleFragment: IrModuleFragment) {
         for (irFile in irModuleFragment.files) {
-            generatePackageFragment(irFile)
+            compileIrFile(
+                irFile,
+                backendContext,
+                wasmModuleMetadataCache,
+                allowIncompleteImplementations,
+                wasmFileCodegenContext,
+                wasmModuleTypeTransformer,
+            )
         }
+        return wasmFileFragment
+    }
+}
+
+internal fun compileIrFile(
+    irFile: IrFile,
+    backendContext: WasmBackendContext,
+    idSignatureRetriever: IdSignatureRetriever,
+    wasmModuleMetadataCache: WasmModuleMetadataCache,
+    allowIncompleteImplementations: Boolean,
+    fragmentTag: String?,
+): WasmCompiledFileFragment {
+    val wasmFileFragment = WasmCompiledFileFragment(fragmentTag)
+    val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
+    val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
+    compileIrFile(
+        irFile,
+        backendContext,
+        wasmModuleMetadataCache,
+        allowIncompleteImplementations,
+        wasmFileCodegenContext,
+        wasmModuleTypeTransformer,
+    )
+    return wasmFileFragment
+}
+
+private fun compileIrFile(
+    irFile: IrFile,
+    backendContext: WasmBackendContext,
+    wasmModuleMetadataCache: WasmModuleMetadataCache,
+    allowIncompleteImplementations: Boolean,
+    wasmFileCodegenContext: WasmFileCodegenContext,
+    wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+) {
+    val generator = DeclarationGenerator(
+        backendContext,
+        wasmFileCodegenContext,
+        wasmModuleTypeTransformer,
+        wasmModuleMetadataCache,
+        allowIncompleteImplementations,
+    )
+    for (irDeclaration in irFile.declarations) {
+        irDeclaration.acceptVoid(generator)
     }
 
-    fun generatePackageFragment(irPackageFragment: IrPackageFragment) {
-        for (irDeclaration in irPackageFragment.declarations) {
-            generateDeclaration(irDeclaration)
-        }
+    val testFun = backendContext.testFunsPerFile[irFile]
+    if (testFun != null) {
+        wasmFileCodegenContext.defineTestFun(testFun.symbol)
     }
 
-    fun generateDeclaration(irDeclaration: IrDeclaration) {
-        irDeclaration.acceptVoid(declarationGenerator)
+    val fileContext = backendContext.getFileContext(irFile)
+    fileContext.mainFunctionWrapper?.apply {
+        wasmFileCodegenContext.addMainFunctionWrapper(symbol)
+    }
+    fileContext.closureCallExports.forEach { (exportSignature, function) ->
+        wasmFileCodegenContext.addEquivalentFunction("<1>_$exportSignature", function.symbol)
+    }
+    fileContext.kotlinClosureToJsConverters.forEach { (exportSignature, function) ->
+        wasmFileCodegenContext.addEquivalentFunction("<2>_$exportSignature", function.symbol)
+    }
+    fileContext.jsClosureCallers.forEach { (exportSignature, function) ->
+        wasmFileCodegenContext.addEquivalentFunction("<3>_$exportSignature", function.symbol)
+    }
+    fileContext.jsToKotlinClosures.forEach { (exportSignature, function) ->
+        wasmFileCodegenContext.addEquivalentFunction("<4>_$exportSignature", function.symbol)
+    }
+
+    fileContext.classAssociatedObjects.forEach { (klass, associatedObjects) ->
+        val associatedObjectsInstanceGetters = associatedObjects.map { (key, obj) ->
+            backendContext.mapping.objectToGetInstanceFunction[obj]?.let {
+                AssociatedObjectBySymbols(key.symbol, it.symbol, false)
+            } ?: backendContext.mapping.wasmExternalObjectToGetInstanceFunction[obj]?.let {
+                AssociatedObjectBySymbols(key.symbol, it.symbol, true)
+            } ?: error("Could not find instance getter for $obj")
+        }
+        wasmFileCodegenContext.addClassAssociatedObjects(klass.symbol, associatedObjectsInstanceGetters)
+    }
+
+    fileContext.jsModuleAndQualifierReferences.forEach { reference ->
+        wasmFileCodegenContext.addJsModuleAndQualifierReferences(reference)
+    }
+
+    val tryGetAssociatedObjectFunction = backendContext.wasmSymbols.tryGetAssociatedObject
+    if (irFile == tryGetAssociatedObjectFunction.owner.fileOrNull) {
+        wasmFileCodegenContext.defineTryGetAssociatedObjectFun(tryGetAssociatedObjectFunction)
+    }
+
+    if (backendContext.isWasmJsTarget) {
+        val jsToKotlinAnyAdapter = backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
+        if (irFile == jsToKotlinAnyAdapter.owner.fileOrNull) {
+            wasmFileCodegenContext.defineJsToKotlinAnyAdapterFun(jsToKotlinAnyAdapter)
+        }
     }
 }

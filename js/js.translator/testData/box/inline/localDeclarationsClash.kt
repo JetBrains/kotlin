@@ -1,5 +1,3 @@
-// SKIP_IR_INCREMENTAL_CHECKS
-// EXPECTED_REACHABLE_NODES: 1281
 // FILE: 1.kt
 
 package o
@@ -27,6 +25,8 @@ inline fun run(): String {
 
 // FILE: 3.kt
 
+// CHECK_BREAKS_COUNT: function=ok count=0
+// CHECK_LABELS_COUNT: function=ok name=$l$block count=0
 fun ok() = o.run() + k.run()
 
 // FILE: main.kt

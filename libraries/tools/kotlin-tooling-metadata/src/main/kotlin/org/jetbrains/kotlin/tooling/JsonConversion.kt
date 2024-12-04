@@ -30,6 +30,7 @@ private fun KotlinToolingMetadata.ProjectSettings.toJsonObject(): JsonObject {
     return JsonObject().apply {
         addProperty("isHmppEnabled", isHmppEnabled)
         addProperty("isCompatibilityMetadataVariantEnabled", isCompatibilityMetadataVariantEnabled)
+        addProperty("isKPMEnabled", isKPMEnabled)
     }
 }
 
@@ -138,7 +139,8 @@ private fun JsonObject.toKotlinToolingMetadataOrThrow(): KotlinToolingMetadata {
 private fun JsonObject.toProjectSettingsOrThrow(): KotlinToolingMetadata.ProjectSettings {
     return KotlinToolingMetadata.ProjectSettings(
         isHmppEnabled = getOrThrow("isHmppEnabled").asBoolean,
-        isCompatibilityMetadataVariantEnabled = getOrThrow("isCompatibilityMetadataVariantEnabled").asBoolean
+        isCompatibilityMetadataVariantEnabled = getOrThrow("isCompatibilityMetadataVariantEnabled").asBoolean,
+        isKPMEnabled = get("isKPMEnabled")?.asBoolean ?: false
     )
 }
 

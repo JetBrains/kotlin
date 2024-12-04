@@ -1,23 +1,46 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: java/lang/String
+KaNamedClassSymbol:
+  annotations: []
+  classId: java/lang/String
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: String
-  origin: JAVA
+  origin: JAVA_LIBRARY
   superTypes: [
-    kotlin/Any
-    java/io/Serializable
-    kotlin/Comparable<ft<kotlin/String, kotlin/String?>>
-    kotlin/CharSequence
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: java/io/Serializable
+    KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaFlexibleType:
+          annotations: []
+          type: kotlin/String!
+      ]
+      type: kotlin/Comparable<kotlin/String!>
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/CharSequence
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "SDK jdk"
+  annotationApplicableTargets: null
   deprecationStatus: null

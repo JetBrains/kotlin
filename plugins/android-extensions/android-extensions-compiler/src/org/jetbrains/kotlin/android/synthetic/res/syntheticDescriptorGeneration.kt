@@ -28,12 +28,8 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.StarProjectionImpl
+import org.jetbrains.kotlin.types.*
 
 private class XmlSourceElement(override val psi: PsiElement) : PsiSourceElement
 
@@ -49,7 +45,7 @@ internal fun genClearCacheFunction(packageFragmentDescriptor: PackageFragmentDes
     val unitType = packageFragmentDescriptor.builtIns.unitType
     return function.initialize(
         DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, Annotations.EMPTY),
-        null, emptyList(), emptyList(), unitType, Modality.FINAL, DescriptorVisibilities.PUBLIC
+        null, emptyList(), emptyList(), emptyList(), unitType, Modality.FINAL, DescriptorVisibilities.PUBLIC
     )
 }
 
@@ -70,7 +66,7 @@ internal fun genPropertyForWidget(
         }
         else {
             KotlinTypeFactory.simpleNotNullType(
-                    Annotations.EMPTY, classDescriptor, defaultType.constructor.parameters.map(::StarProjectionImpl))
+                TypeAttributes.Empty, classDescriptor, defaultType.constructor.parameters.map(::StarProjectionImpl))
         }
     } ?: context.view
 
@@ -113,7 +109,6 @@ private fun genProperty(
             /* isDelegated = */ false
     ) {
         override val errorType = errorType
-        override val shouldBeCached = type.shouldBeCached
         override val resource = resource
     }
 
@@ -123,7 +118,8 @@ private fun genProperty(
             flexibleType,
             emptyList<TypeParameterDescriptor>(),
             null,
-            DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, Annotations.EMPTY)
+            DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, Annotations.EMPTY),
+            emptyList<ReceiverParameterDescriptor>()
     )
 
     val getter = PropertyGetterDescriptorImpl(
@@ -146,22 +142,12 @@ private fun genProperty(
     return property
 }
 
-private val SimpleType.shouldBeCached: Boolean
-    get() {
-        val viewClassFqName = constructor.declarationDescriptor?.fqNameUnsafe?.asString() ?: return false
-        return viewClassFqName != AndroidConst.VIEWSTUB_FQNAME
-    }
-
 interface AndroidSyntheticFunction
 
 interface AndroidSyntheticProperty {
     val resource: AndroidResource
 
     val errorType: String?
-
-    // True if the View should be cached.
-    // Some views (such as ViewStub) should not be cached.
-    val shouldBeCached: Boolean
 }
 
 val AndroidSyntheticProperty.isErrorType: Boolean

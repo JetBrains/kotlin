@@ -42,9 +42,10 @@ fun case_3(value_1: SealedClass?): String = when (value_1) {
  * ISSUES: KT-22996
  */
 fun case_4(value_1: SealedClass?) {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_1) {
+    when (value_1) {
         !is SealedChild2 -> {} // including null
         <!USELESS_IS_CHECK!>is SealedChild2?<!> -> {} // redundant nullable type check
+        else -> {}
     }
 }
 

@@ -1,0 +1,6 @@
+depends = CoreFoundationBase darwin posix
+language = Objective-C
+package = platform.CoreGraphics
+headers = CoreFoundation/CFCGTypes.h
+headerFilter = CoreFoundation/CFCGTypes.h
+

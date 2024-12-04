@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 
-object FirReifiedTypeParameterChecker : FirTypeParameterChecker() {
+object FirReifiedTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isReified) return
         val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
@@ -23,6 +24,10 @@ object FirReifiedTypeParameterChecker : FirTypeParameterChecker() {
 
         if (forbidReified) {
             reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_NO_INLINE, context)
+        }
+
+        if (containingDeclaration is FirTypeAlias) {
+            reporter.reportOn(declaration.source, FirErrors.REIFIED_TYPE_PARAMETER_ON_ALIAS, context)
         }
     }
 

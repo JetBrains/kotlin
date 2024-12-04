@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.getAbbreviation
 import org.jetbrains.kotlin.types.model.AnnotationMarker
@@ -36,6 +36,7 @@ interface AnnotationDescriptor : AnnotationMarker {
     val allValueArguments: Map<Name, ConstantValue<*>>
 
     val source: SourceElement
+
 }
 
 val AnnotationDescriptor.abbreviationFqName: FqName?

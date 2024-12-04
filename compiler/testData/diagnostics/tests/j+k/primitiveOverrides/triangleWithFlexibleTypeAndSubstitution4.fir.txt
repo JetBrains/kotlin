@@ -1,0 +1,24 @@
+FILE: main.kt
+    public abstract interface B<T> : R|kotlin/Any| {
+        public open fun foo(x: R|T|): R|kotlin/String| {
+            ^foo String(B)
+        }
+
+    }
+    public open class C : R|A<kotlin/Int>| {
+        public constructor(): R|C| {
+            super<R|A<kotlin/Int>|>()
+        }
+
+    }
+    public abstract interface D : R|B<kotlin/Int>| {
+    }
+    public final class E : R|C|, R|D| {
+        public constructor(): R|E| {
+            super<R|C|>()
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/E.E|().R|/D.foo|(Int(42))
+    }

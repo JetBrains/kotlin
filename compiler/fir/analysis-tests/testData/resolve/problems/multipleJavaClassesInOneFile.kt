@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-4455
+
 // FILE: foo/Some.java
 
 package foo;

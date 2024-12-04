@@ -1,0 +1,4 @@
+package
+
+public fun testOnClass(/*0*/ rootClass: java.lang.Class<kotlin.Any>): kotlin.Int
+public fun testOnKClass(/*0*/ rootClass: kotlin.reflect.KClass<kotlin.Any>): kotlin.Int

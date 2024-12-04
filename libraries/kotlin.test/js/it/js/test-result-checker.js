@@ -70,6 +70,7 @@ Tester.prototype.printResult = function () {
     }
 
     fs.writeFileSync('build/tc-' + this._frameworkName + '.log', message);
+    fs.writeFileSync('build/test-' + this._frameworkName + '.exit-code', this.exitCode().toString());
 };
 
 Tester.prototype.exitCode = function () {

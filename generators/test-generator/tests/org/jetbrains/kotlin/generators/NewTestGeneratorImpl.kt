@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators
 import org.jetbrains.kotlin.generators.impl.SimpleTestClassModelTestAllFilesPresentMethodGenerator
 import org.jetbrains.kotlin.generators.impl.SimpleTestMethodGenerator
 import org.jetbrains.kotlin.generators.impl.SingleClassTestModelAllFilesPresentedMethodGenerator
+import org.jetbrains.kotlin.generators.impl.TransformingTestMethodGenerator
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.TestMetadata
@@ -18,17 +19,18 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.IOException
-import java.util.*
-
-private const val TEST_GENERATOR_NAME = "GenerateNewCompilerTests.kt"
 
 private val METHOD_GENERATORS = listOf(
     SimpleTestClassModelTestAllFilesPresentMethodGenerator,
     SimpleTestMethodGenerator,
-    SingleClassTestModelAllFilesPresentedMethodGenerator
+    SingleClassTestModelAllFilesPresentedMethodGenerator,
+    TransformingTestMethodGenerator,
 )
 
-object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
+class NewTestGeneratorImpl(
+    additionalMethodGenerators: List<MethodGenerator<Nothing>>
+) : TestGenerator(METHOD_GENERATORS + additionalMethodGenerators) {
+
     private val GENERATED_FILES = HashSet<String>()
 
     private fun Printer.generateMetadata(testDataSource: TestEntityModel) {
@@ -72,29 +74,32 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         println("@SuppressWarnings(\"all\")")
     }
 
-    override fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean): GenerationResult {
+    override fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean, mainClassName: String?): GenerationResult {
         val generatorInstance = TestGeneratorInstance(
             testClass.baseDir,
             testClass.suiteTestClassName,
             testClass.baseTestClassName,
             testClass.testModels,
-            methodGenerators
+            methodGenerators,
+            mainClassName,
         )
         return generatorInstance.generateAndSave(dryRun)
     }
 
-    private class TestGeneratorInstance(
+    private inner class TestGeneratorInstance(
         baseDir: String,
         suiteTestClassFqName: String,
         baseTestClassFqName: String,
         private val testClassModels: Collection<TestClassModel>,
-        private val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>>
+        private val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>>,
+        private val mainClassName: String?
     ) {
         private val baseTestClassPackage: String = baseTestClassFqName.substringBeforeLast('.', "")
         private val baseTestClassName: String = baseTestClassFqName.substringAfterLast('.', baseTestClassFqName)
         private val suiteClassPackage: String = suiteTestClassFqName.substringBeforeLast('.', baseTestClassPackage)
         private val suiteClassName: String = suiteTestClassFqName.substringAfterLast('.', suiteTestClassFqName)
-        private val testSourceFilePath: String = baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java"
+        private val testSourceFilePath: String =
+            baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java"
 
         init {
             if (!GENERATED_FILES.add(testSourceFilePath)) {
@@ -107,19 +112,19 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             val generatedCode = generate()
 
             val testSourceFile = File(testSourceFilePath)
-            val changed =
-                GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, generatedCode)
-            if (!dryRun) {
+            val changed = if (!dryRun) {
                 GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, generatedCode, false)
+            } else {
+                GeneratorsFileUtil.isFileContentChangedIgnoringLineSeparators(testSourceFile, generatedCode)
             }
             return GenerationResult(changed, testSourceFilePath)
         }
 
         private fun generate(): String {
             val out = StringBuilder()
-            val p = Printer(out)
+            val p = Printer(out, indentUnit = Printer.TWO_SPACE_INDENT)
 
-            val copyright = File("license/COPYRIGHT_HEADER.txt").readText()
+            val copyright = File("license/COPYRIGHT_HEADER.txt").takeIf { it.exists() }?.readText() ?: ""
             p.println(copyright)
             p.println()
             p.println("package $suiteClassPackage;")
@@ -128,7 +133,12 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             p.println("import ${KtTestUtil::class.java.canonicalName};")
 
             for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
-                p.println("import ${clazz.name};")
+                val realName = when (clazz) {
+                    TransformingTestMethodModel.TransformerFunctionsClassPlaceHolder::class.java ->
+                        "org.jetbrains.kotlin.test.utils.TransformersFunctions"
+                    else -> clazz.canonicalName
+                }
+                p.println("import $realName;")
             }
 
             if (suiteClassPackage != baseTestClassPackage) {
@@ -136,7 +146,12 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             }
 
             p.println("import ${TestMetadata::class.java.canonicalName};")
-            p.println("import ${Nested::class.java.canonicalName};")
+
+            // Don't import an unneeded `@Nested` annotation to avoid unused import warnings in the IDE.
+            if (testClassModels.requiresNestedAnnotation()) {
+                p.println("import ${Nested::class.java.canonicalName};")
+            }
+
             p.println("import ${Test::class.java.canonicalName};")
             if (testClassModels.any { it.containsTags() }) {
                 p.println("import ${Tag::class.java.canonicalName};")
@@ -145,7 +160,7 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             p.println("import java.io.File;")
             p.println("import java.util.regex.Pattern;")
             p.println()
-            p.println("/** This class is generated by {@link ", TEST_GENERATOR_NAME, "}. DO NOT MODIFY MANUALLY */")
+            p.println("/** This class is generated by {@link ", mainClassName, "}. DO NOT MODIFY MANUALLY */")
 
             p.generateSuppressAllWarnings()
 
@@ -186,11 +201,62 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
                 }
             }
 
-            generateTestClass(p, model, false)
+            generateTestClass(
+                p, model, false,
+                deepEmptyModels = when {
+                    model.innerTestClasses.any { !it.generateEmptyTestClasses } -> model.assessDeepEmptiness()
+                    else -> null
+                },
+            )
             return out.toString()
         }
 
-        private fun generateTestClass(p: Printer, testClassModel: TestClassModel, isNested: Boolean) {
+        private val TestClassModel.generateEmptyTestClasses get() = this !is SimpleTestClassModel || generateEmptyTestClasses
+
+        private fun TestClassModel.assessDeepEmptiness(): Set<TestClassModel> {
+            val result = mutableSetOf<TestClassModel>()
+            val reversedBfsInners = collectThisAndInnerClassesInBfsOrder().asReversed()
+
+            for (model in reversedBfsInners) {
+                val isDeeplyEmpty = model.methods.size == 1 && model.innerTestClasses.all { it in result }
+
+                if (isDeeplyEmpty) {
+                    result.add(model)
+                }
+            }
+
+            return result
+        }
+
+        private fun TestClassModel.collectThisAndInnerClassesInBfsOrder(): List<TestClassModel> {
+            val result = mutableListOf(this)
+            var index = 0
+
+            while (index < result.size) {
+                val testClassModel = result[index]
+
+                for (inner in testClassModel.innerTestClasses) {
+                    result.add(inner)
+                }
+
+                index++
+            }
+
+            return result
+        }
+
+        private fun generateTestClass(
+            p: Printer,
+            testClassModel: TestClassModel,
+            isNested: Boolean,
+            /**
+             * Makes test class models that don't have actual `test` methods
+             * and thus will not be generated.
+             * Used for test runners that have a high change of not running many
+             * of the tests lying in the directories they are generated for.
+             */
+            deepEmptyModels: Set<TestClassModel>?,
+        ) {
             p.generateNestedAnnotation(isNested)
             p.generateTags(testClassModel)
             p.generateMetadata(testClassModel)
@@ -207,9 +273,20 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
 
             var first = true
 
+            val transformers = testClassModel.predefinedNativeTransformers(false)
+
+            if (transformers.isNotEmpty()) {
+                p.println("public ${testClassModel.name}() {")
+                p.pushIndent()
+                transformers.forEach { (path, transformer) -> p.println("register(\"$path\", $transformer);") }
+                p.popIndent()
+                p.println("}")
+                first = false
+            }
+
             for (methodModel in testMethods) {
-                if (methodModel is RunTestMethodModel) continue
-                if (!methodModel.shouldBeGenerated()) continue
+                if (methodModel is RunTestMethodModel) continue // should also skip its imports
+                if (!methodModel.shouldBeGenerated()) continue // should also skip its imports
 
                 if (first) {
                     first = false
@@ -221,6 +298,10 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             }
 
             for (innerTestClass in innerTestClasses) {
+                if (deepEmptyModels != null && innerTestClass in deepEmptyModels) {
+                    continue
+                }
+
                 if (!innerTestClass.isEmpty) {
                     if (first) {
                         first = false
@@ -228,7 +309,7 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
                         p.println()
                     }
 
-                    generateTestClass(p, innerTestClass, true)
+                    generateTestClass(p, innerTestClass, true, deepEmptyModels)
                 }
             }
 
@@ -239,9 +320,11 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         private fun generateTestMethod(p: Printer, methodModel: MethodModel) {
             val generator = methodGenerators.getValue(methodModel.kind)
 
-            p.generateTestAnnotation()
-            p.generateTags(methodModel)
-            p.generateMetadata(methodModel)
+            if (methodModel.isTestMethod()) {
+                p.generateTestAnnotation()
+                p.generateTags(methodModel)
+                p.generateMetadata(methodModel)
+            }
             generator.hackyGenerateSignature(methodModel, p)
             p.printWithNoIndent(" {")
             p.println()
@@ -265,6 +348,14 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         }
     }
 
+    private fun Collection<TestClassModel>.requiresNestedAnnotation(): Boolean {
+        // Multiple test class models are generated as inner (nested) test class models of a fake root test class model, see
+        // `TestGeneratorInstance.generate`.
+        return size > 1 || singleOrNull()?.requiresNestedAnnotation() == true
+    }
+
+    private fun TestClassModel.requiresNestedAnnotation(): Boolean = innerTestClasses.isNotEmpty()
+
     private fun TestEntityModel.containsTags(): Boolean {
         if (this.tags.isNotEmpty()) return true
         if (this is TestClassModel) {
@@ -273,4 +364,11 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         }
         return false
     }
+
+    private fun TestClassModel.predefinedNativeTransformers(recursive: Boolean): List<Pair<String, String>> =
+        methods.mapNotNull { method ->
+            (method as? TransformingTestMethodModel)
+                ?.takeIf { it.registerInConstructor && it.shouldBeGenerated() }
+                ?.let { it.source.file.invariantSeparatorsPath to it.transformer }
+        } + if (recursive) innerTestClasses.flatMap { it.predefinedNativeTransformers(true) } else listOf()
 }

@@ -1,4 +1,4 @@
-// !API_VERSION: 1.3
+// API_VERSION: 1.3
 
 // This test simply checks that we still generate correct calls to PropertyReference1Impl constructors for API version < 1.4,
 // where we added and started using new constructors which take j.l.Class+int instead of KDeclarationContainer.

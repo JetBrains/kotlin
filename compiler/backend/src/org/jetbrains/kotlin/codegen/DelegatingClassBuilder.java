@@ -75,8 +75,8 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     }
 
     @Override
-    public void done() {
-        getDelegate().done();
+    public void done(boolean generateSmapCopyToAnnotation) {
+        getDelegate().done(generateSmapCopyToAnnotation);
     }
 
     @NotNull

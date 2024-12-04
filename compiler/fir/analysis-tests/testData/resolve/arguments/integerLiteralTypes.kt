@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun takeInt(x: Int) {}
 fun takeLong(x: Long) {}
 fun takeByte(x: Byte) {}

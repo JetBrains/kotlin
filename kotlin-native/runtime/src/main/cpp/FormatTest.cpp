@@ -10,7 +10,7 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-#include "cpp_support/Span.hpp"
+#include "std_support/Span.hpp"
 
 using namespace kotlin;
 

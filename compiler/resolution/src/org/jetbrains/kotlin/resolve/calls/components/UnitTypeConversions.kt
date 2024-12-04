@@ -51,7 +51,10 @@ object UnitTypeConversions : ParameterTypeConversion {
         isUnit() || isDynamic() || isNothing()
 
 
-    override fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean =
+    override fun conversionIsNeededBeforeSubtypingCheck(
+        argument: KotlinCallArgument,
+        areSuspendOnlySamConversionsSupported: Boolean
+    ): Boolean =
         argument is SimpleKotlinCallArgument && argument.receiver.stableType.isFunctionType
 
     override fun conversionIsNeededAfterSubtypingCheck(argument: KotlinCallArgument): Boolean {
@@ -78,6 +81,7 @@ object UnitTypeConversions : ParameterTypeConversion {
             candidate.callComponents.builtIns,
             expectedParameterType.annotations,
             expectedParameterType.getReceiverTypeFromFunctionType(),
+            expectedParameterType.getContextReceiverTypesFromFunctionType(),
             expectedParameterType.getValueParameterTypesFromFunctionType().map { it.type },
             parameterNames = null,
             candidate.callComponents.builtIns.nullableAnyType,

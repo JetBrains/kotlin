@@ -32,7 +32,6 @@ class Test {
     }
 
     val concreteDelegate: Int by ConcreteDelegate()
-
 }
 
 var delegate by object {

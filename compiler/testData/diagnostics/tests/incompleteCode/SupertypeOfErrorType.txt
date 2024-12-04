@@ -1,7 +1,7 @@
 package
 
 package a {
-    public fun bar(/*0*/ i: kotlin.Int, /*1*/ a: [ERROR : U]): kotlin.Unit
+    public fun bar(/*0*/ i: kotlin.Int, /*1*/ a: [Error type: Unresolved type for U]): kotlin.Unit
     public inline fun </*0*/ T> comparator(/*0*/ fn: (T, T) -> kotlin.Int): java.util.Comparator<T>
     public fun foo(): kotlin.Unit
 }

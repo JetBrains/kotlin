@@ -27,6 +27,8 @@ enum class ReplEscapeType {
     COMPILE_ERROR,
     RUNTIME_ERROR,
     INTERNAL_ERROR,
+    ERRORS_REPORTED, // should be send after reporting all errors caused by the current command
+                     // e.g. IDE uses it to recognize the end of command processing
     SUCCESS;
 
     companion object {

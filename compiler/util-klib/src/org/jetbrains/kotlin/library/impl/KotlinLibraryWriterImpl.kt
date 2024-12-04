@@ -24,7 +24,7 @@ open class KotlinLibraryLayoutForWriter(
         get() = File(unzippedDir, KLIB_MANIFEST_FILE_NAME)
 }
 
-open class BaseWriterImpl(
+class BaseWriterImpl(
     val libraryLayout: KotlinLibraryLayoutForWriter,
     moduleName: String,
     _versions: KotlinLibraryVersioning,
@@ -43,14 +43,26 @@ open class BaseWriterImpl(
         klibFile.deleteRecursively()
         klibFile.parentFile.run { if (!exists) mkdirs() }
         libraryLayout.resourcesDir.mkdirs()
-        // TODO: <name>:<hash> will go somewhere around here.
+        initManifestProperties(moduleName, versions, builtInsPlatform, nativeTargets, shortName)
+    }
+
+    private fun initManifestProperties(
+        moduleName: String,
+        _versions: KotlinLibraryVersioning,
+        builtInsPlatform: BuiltInsPlatform,
+        nativeTargets: List<String>,
+        shortName: String?
+    ) {
         manifestProperties.setProperty(KLIB_PROPERTY_UNIQUE_NAME, moduleName)
+
         manifestProperties.writeKonanLibraryVersioning(_versions)
 
         if (builtInsPlatform != BuiltInsPlatform.COMMON) {
             manifestProperties.setProperty(KLIB_PROPERTY_BUILTINS_PLATFORM, builtInsPlatform.name)
-            if (builtInsPlatform == BuiltInsPlatform.NATIVE)
-                manifestProperties.setProperty(KLIB_PROPERTY_NATIVE_TARGETS, nativeTargets.joinToString(" "))
+        }
+
+        if (builtInsPlatform == BuiltInsPlatform.NATIVE) {
+            manifestProperties.setProperty(KLIB_PROPERTY_NATIVE_TARGETS, nativeTargets.joinToString(" "))
         }
 
         shortName?.let { manifestProperties.setProperty(KLIB_PROPERTY_SHORT_NAME, it) }
@@ -62,16 +74,8 @@ open class BaseWriterImpl(
             // make sure there are no leftovers from the .def file.
             return
         } else {
-            val newValue = libraries.joinToString(" ") { it.uniqueName }
+            val newValue = libraries.map { it.uniqueName }.toSpaceSeparatedString()
             manifestProperties.setProperty(KLIB_PROPERTY_DEPENDS, newValue)
-            libraries.forEach { it ->
-                if (it.versions.libraryVersion != null) {
-                    manifestProperties.setProperty(
-                        "${KLIB_PROPERTY_DEPENDENCY_VERSION}_${it.uniqueName}",
-                        it.versions.libraryVersion
-                    )
-                }
-            }
         }
     }
 
@@ -102,8 +106,6 @@ class KotlinLibraryWriterImpl(
     val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrMonoliticWriterImpl(layout)
-//    ir: IrWriter = IrPerFileWriterImpl(layout)
-
 ) : BaseWriter by base, MetadataWriter by metadata, IrWriter by ir, KotlinLibraryWriter
 
 fun buildKotlinLibrary(
@@ -116,7 +118,6 @@ fun buildKotlinLibrary(
     nopack: Boolean,
     perFile: Boolean,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray?,
     builtInsPlatform: BuiltInsPlatform,
     nativeTargets: List<String> = emptyList()
 ): KotlinLibraryLayout {
@@ -143,7 +144,6 @@ fun buildKotlinLibrary(
 
     manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
-    dataFlowGraph?.let { library.addDataFlowGraph(it) }
 
     library.commit()
     return library.layout
@@ -177,9 +177,13 @@ class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: Ko
 }
 
 enum class BuiltInsPlatform {
-    JVM, JS, NATIVE, COMMON;
+    JVM, JS, NATIVE, WASM, COMMON;
 
     companion object {
         fun parseFromString(name: String): BuiltInsPlatform? = values().firstOrNull { it.name == name }
     }
+}
+
+fun List<String>.toSpaceSeparatedString(): String = joinToString(separator = " ") {
+    if (it.contains(" ")) "\"$it\"" else it
 }

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.codegen.inline.coroutines
 
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.asSequence
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -92,6 +92,7 @@ class CoroutineTransformer(
                 // TODO: this linenumbers might not be correct and since they are used only for step-over, check them.
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
+                config = state.config,
             )
 
             if (generateForInline)
@@ -123,9 +124,9 @@ class CoroutineTransformer(
                 reportSuspensionPointInsideMonitor = { sourceCompilerForInline.reportSuspensionPointInsideMonitor(it) },
                 lineNumber = inliningContext.callSiteInfo.lineNumber,
                 sourceFile = inliningContext.callSiteInfo.file?.name ?: "",
+                config = state.config,
                 needDispatchReceiver = true,
                 internalNameForDispatchReceiver = classBuilder.thisName,
-                putContinuationParameterToLvt = !state.isIrBackend,
             )
 
             if (generateForInline)
@@ -142,7 +143,7 @@ class CoroutineTransformer(
     }
 
     fun replaceFakesWithReals(node: MethodNode) {
-        findFakeContinuationConstructorClassName(node)?.let(::unregisterClassBuilder)?.let(ClassBuilder::done)
+        findFakeContinuationConstructorClassName(node)?.let(::unregisterClassBuilder)?.done(state.config.generateSmapCopyToAnnotation)
         replaceFakeContinuationsWithRealOnes(
             node, if (!inliningContext.isContinuation) getLastParameterIndex(node.desc, node.access) else 0
         )
@@ -195,7 +196,7 @@ fun surroundInvokesWithSuspendMarkersIfNeeded(node: MethodNode) {
     val sourceFrames = MethodTransformer.analyze("fake", node, CapturedLambdaInterpreter())
     val loads = markers.map { marker ->
         val arity = (marker.next as MethodInsnNode).owner.removePrefix(NUMBERED_FUNCTION_PREFIX).toInt()
-        var receiver = sourceFrames[node.instructions.indexOf(marker) + 1].getSource(arity)
+        var receiver = sourceFrames[node.instructions.indexOf(marker) + 1]?.getSource(arity)
         // Navigate the ALOAD+GETFIELD+... chain to the first instruction. We need to insert a stack
         // spilling marker before it starts.
         while (receiver?.opcode == Opcodes.GETFIELD) {

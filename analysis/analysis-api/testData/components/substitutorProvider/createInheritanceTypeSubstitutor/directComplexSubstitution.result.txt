@@ -1,0 +1,3 @@
+Substitutor: <map substitutor: {Q = kotlin/collections/List<T>, R = kotlin/collections/Map<S, kotlin/Int>, T = S}>
+Substituted callables:
+  foo(): Triple<List<T>, Map<S, Int>, S>

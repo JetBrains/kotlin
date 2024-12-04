@@ -1,0 +1,35 @@
+/**
+ * public final class AuthenticationViewModel : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(authRepo: kotlin/String)
+ *
+ *   // field: authRepo:Ljava/lang/String;
+ *   private final val authRepo: kotlin/String
+ *     private final get
+ *
+ *   // field: isLoggedIn:Ljava/lang/String;
+ *   // getter: isLoggedIn()Ljava/lang/String;
+ *   public final val isLoggedIn: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class AuthenticationViewModel {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String authRepo = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String isLoggedIn = null;
+
+    public AuthenticationViewModel(@org.jetbrains.annotations.NotNull()
+    java.lang.String authRepo) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String isLoggedIn() {
+        return null;
+    }
+}

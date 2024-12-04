@@ -9,9 +9,13 @@ import java.io.File
 import java.nio.file.Path
 
 abstract class Assertions {
+    val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
+
     fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String = { it }) {
         assertEqualsToFile(expectedFile, actual, sanitizer) { "Actual data differs from file content" }
     }
+
+    abstract fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String = { it }): Boolean
 
     fun assertEqualsToFile(expectedFile: Path, actual: String, sanitizer: (String) -> String = { it }) {
         assertEqualsToFile(expectedFile.toFile(), actual, sanitizer)
@@ -23,6 +27,15 @@ abstract class Assertions {
         sanitizer: (String) -> String = { it },
         message: (() -> String)
     )
+
+    fun assertFileDoesntExist(file: File, errorMessage: () -> String) {
+        if (file.exists()) {
+            if (!isTeamCityBuild) {
+                file.delete()
+            }
+            fail(errorMessage)
+        }
+    }
 
     abstract fun assertEquals(expected: Any?, actual: Any?, message: (() -> String)? = null)
     abstract fun assertNotEquals(expected: Any?, actual: Any?, message: (() -> String)? = null)
@@ -49,7 +62,12 @@ abstract class Assertions {
         return collection.joinToString("\n")
     }
 
-    abstract fun assertAll(exceptions: List<Throwable>)
+    abstract fun failAll(exceptions: List<Throwable>)
+    abstract fun assertAll(conditions: List<() -> Unit>)
+
+    fun assertAll(vararg conditions: () -> Unit) {
+        assertAll(conditions.toList())
+    }
 
     abstract fun fail(message: () -> String): Nothing
 }

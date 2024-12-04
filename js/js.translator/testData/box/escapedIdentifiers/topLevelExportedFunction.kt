@@ -1,13 +1,12 @@
-// IGNORE_BACKEND: JS
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
-// !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
+// LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 // MODULE: export_invalid_name_function
 // FILE: lib.kt
 
 @JsExport
-fun `@do something like-this`(): Int = 42
+fun `@do something like-this`(`test value`: Int = 42): Int = `test value`
 
 // FILE: test.js
 function box() {

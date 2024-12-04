@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.commonizer.konan
 
 import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
 import org.jetbrains.kotlin.commonizer.repository.Repository
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.utils.progress
@@ -18,7 +19,8 @@ internal class LibraryCommonizer internal constructor(
     private val dependencies: Repository,
     private val resultsConsumer: ResultsConsumer,
     private val statsCollector: StatsCollector?,
-    private val logger: Logger
+    private val logger: Logger,
+    private val settings: CommonizerSettings,
 ) {
 
     fun run() {
@@ -54,7 +56,8 @@ internal class LibraryCommonizer internal constructor(
                 dependenciesProvider = createDependenciesProvider(),
                 resultsConsumer = resultsConsumer,
                 statsCollector = statsCollector,
-                logger = logger
+                logger = logger,
+                settings = settings,
             )
         )
     }
@@ -72,7 +75,7 @@ internal class LibraryCommonizer internal constructor(
 
     private fun createDependenciesProvider(): TargetDependent<ModulesProvider?> {
         return TargetDependent(outputTargets + outputTargets.allLeaves()) { target ->
-            DefaultModulesProvider.create(dependencies.getLibraries(target))
+            DefaultModulesProvider.forDependencies(dependencies.getLibraries(target), logger)
         }
     }
 
@@ -92,8 +95,8 @@ internal class LibraryCommonizer internal constructor(
     private fun checkPreconditions() {
         outputTargets.forEach { outputTarget ->
             when (outputTarget.allLeaves().size) {
-                0 -> logger.fatal("No targets specified")
-                1 -> logger.fatal("Too few targets specified: $outputTarget")
+                0 -> logger.errorAndExitJvmProcess("No targets specified")
+                1 -> logger.errorAndExitJvmProcess("Too few targets specified: $outputTarget")
             }
         }
     }

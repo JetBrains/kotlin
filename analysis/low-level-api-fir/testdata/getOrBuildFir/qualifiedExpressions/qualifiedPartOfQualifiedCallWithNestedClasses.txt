@@ -1,5 +1,0 @@
-KT element: KtDotQualifiedExpression
-FIR element: FirResolvedQualifierImpl
-
-FIR element rendered:
-Q|A.B|

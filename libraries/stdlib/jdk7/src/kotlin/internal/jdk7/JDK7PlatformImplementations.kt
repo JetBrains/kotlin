@@ -10,8 +10,28 @@ import kotlin.internal.PlatformImplementations
 
 internal open class JDK7PlatformImplementations : PlatformImplementations() {
 
-    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-    override fun addSuppressed(cause: Throwable, exception: Throwable) = (cause as java.lang.Throwable).addSuppressed(exception)
+    private object ReflectSdkVersion {
+        @JvmField
+        public val sdkVersion: Int? = try {
+            Class.forName("android.os.Build\$VERSION").getField("SDK_INT").get(null) as? Int
+        } catch (e: Throwable) {
+            null
+        }?.takeIf { it > 0 }
+    }
 
-    override fun getSuppressed(exception: Throwable): List<Throwable> = exception.suppressed.asList()
+    private fun sdkIsNullOrAtLeast(version: Int): Boolean = ReflectSdkVersion.sdkVersion == null || ReflectSdkVersion.sdkVersion >= version
+
+
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+    override fun addSuppressed(cause: Throwable, exception: Throwable) =
+        if (sdkIsNullOrAtLeast(19))
+            (cause as java.lang.Throwable).addSuppressed(exception)
+        else
+            super.addSuppressed(cause, exception)
+
+    override fun getSuppressed(exception: Throwable): List<Throwable> =
+        if (sdkIsNullOrAtLeast(19))
+            exception.suppressed.asList()
+        else
+            super.getSuppressed(exception)
 }

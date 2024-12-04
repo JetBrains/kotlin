@@ -6,7 +6,7 @@ public fun </*0*/ O> makeOutProjection(/*0*/ arg: O): Inv<out O>
 public fun makeStarProjection(): Inv<*>
 public fun test(): kotlin.Unit
 public fun testDeeplyNested(): Inv<Inv<Inv<Bound1>>>
-public fun testErrorType(): [ERROR : Error function type]
+public fun testErrorType(): [Error type: Return type for function cannot be resolved]
 public fun testIn(): In<Bound1>
 public fun testInProjection(): Inv<in Bound1>
 public fun testInv(): Inv<Bound1>

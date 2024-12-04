@@ -1,9 +1,6 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: SuspendConversionOnVarargElementsKt$box$2 cannot be cast to kotlin.jvm.functions.Function1
 
 fun useSuspendVararg(vararg sfn: suspend () -> Unit) {}
 

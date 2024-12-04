@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    final val x // /A.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /A.x.<get-x>|<get-x>(){}[0]
+    final val y // /A.y|{}y[0]
+        final fun <get-y>(): kotlin/Int // /A.y.<get-y>|<get-y>(){}[0]
+    constructor <init>(kotlin/Int, kotlin/Int) // /A.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
+    final fun component1(): kotlin/Int // /A.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // /A.component2|component2(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ...): /A // /A.copy|copy(kotlin.Int;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /A.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /A.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /A.toString|toString(){}[0]
+}
+final var /fn // /fn|{}fn[0]
+    final fun <get-fn>(): kotlin/Function1</A, kotlin/Int> // /fn.<get-fn>|<get-fn>(){}[0]
+    final fun <set-fn>(kotlin/Function1</A, kotlin/Int>) // /fn.<set-fn>|<set-fn>(kotlin.Function1<A,kotlin.Int>){}[0]

@@ -1,5 +1,13 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, common
+ * NUMBER: 5
+ * DESCRIPTION: contracts with not allowed expressions in implies.
+ */
 
 import kotlin.contracts.*
 
@@ -11,7 +19,7 @@ fun case_1(): Boolean {
 
 // TESTCASE NUMBER: 2
 fun case_2(): Boolean {
-    contract { returnsNotNull() implies (return return return true) }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsNotNull() implies (return return return true)<!> }
     return true
 }
 
@@ -38,7 +46,7 @@ fun case_5(): Boolean? {
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Boolean): Boolean? {
-    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies <!ARGUMENT_TYPE_MISMATCH!>contract { returns(null) implies (!value_1) }<!><!> }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies <!ARGUMENT_TYPE_MISMATCH!><!CONTRACT_NOT_ALLOWED!>contract<!> { returns(null) implies (!value_1) }<!><!> }
     return null
 }
 

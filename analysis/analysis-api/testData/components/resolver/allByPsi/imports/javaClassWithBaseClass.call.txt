@@ -1,0 +1,239 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(38,50): 'package main'
+  null
+
+KtNameReferenceExpression(46,50): 'main'
+  null
+
+KtImportList(52,362): 'import one.two.BaseClass.baseFoo'
+  null
+
+KtImportDirective(52,84): 'import one.two.BaseClass.baseFoo'
+  null
+
+KtDotQualifiedExpression(59,84): 'one.two.BaseClass.baseFoo'
+  null
+
+KtDotQualifiedExpression(59,76): 'one.two.BaseClass'
+  null
+
+KtDotQualifiedExpression(59,66): 'one.two'
+  null
+
+KtNameReferenceExpression(59,62): 'one'
+  null
+
+KtNameReferenceExpression(63,66): 'two'
+  null
+
+KtNameReferenceExpression(67,76): 'BaseClass'
+  null
+
+KtNameReferenceExpression(77,84): 'baseFoo'
+  null
+
+KtImportDirective(85,117): 'import one.two.BaseClass.baseBar'
+  null
+
+KtDotQualifiedExpression(92,117): 'one.two.BaseClass.baseBar'
+  null
+
+KtDotQualifiedExpression(92,109): 'one.two.BaseClass'
+  null
+
+KtDotQualifiedExpression(92,99): 'one.two'
+  null
+
+KtNameReferenceExpression(92,95): 'one'
+  null
+
+KtNameReferenceExpression(96,99): 'two'
+  null
+
+KtNameReferenceExpression(100,109): 'BaseClass'
+  null
+
+KtNameReferenceExpression(110,117): 'baseBar'
+  null
+
+KtImportDirective(119,155): 'import one.two.BaseClass.NestedClass'
+  null
+
+KtDotQualifiedExpression(126,155): 'one.two.BaseClass.NestedClass'
+  null
+
+KtDotQualifiedExpression(126,143): 'one.two.BaseClass'
+  null
+
+KtDotQualifiedExpression(126,133): 'one.two'
+  null
+
+KtNameReferenceExpression(126,129): 'one'
+  null
+
+KtNameReferenceExpression(130,133): 'two'
+  null
+
+KtNameReferenceExpression(134,143): 'BaseClass'
+  null
+
+KtNameReferenceExpression(144,155): 'NestedClass'
+  null
+
+KtImportDirective(156,196): 'import one.two.BaseClass.NestedClass.foo'
+  null
+
+KtDotQualifiedExpression(163,196): 'one.two.BaseClass.NestedClass.foo'
+  null
+
+KtDotQualifiedExpression(163,192): 'one.two.BaseClass.NestedClass'
+  null
+
+KtDotQualifiedExpression(163,180): 'one.two.BaseClass'
+  null
+
+KtDotQualifiedExpression(163,170): 'one.two'
+  null
+
+KtNameReferenceExpression(163,166): 'one'
+  null
+
+KtNameReferenceExpression(167,170): 'two'
+  null
+
+KtNameReferenceExpression(171,180): 'BaseClass'
+  null
+
+KtNameReferenceExpression(181,192): 'NestedClass'
+  null
+
+KtNameReferenceExpression(193,196): 'foo'
+  null
+
+KtImportDirective(197,237): 'import one.two.BaseClass.NestedClass.bar'
+  null
+
+KtDotQualifiedExpression(204,237): 'one.two.BaseClass.NestedClass.bar'
+  null
+
+KtDotQualifiedExpression(204,233): 'one.two.BaseClass.NestedClass'
+  null
+
+KtDotQualifiedExpression(204,221): 'one.two.BaseClass'
+  null
+
+KtDotQualifiedExpression(204,211): 'one.two'
+  null
+
+KtNameReferenceExpression(204,207): 'one'
+  null
+
+KtNameReferenceExpression(208,211): 'two'
+  null
+
+KtNameReferenceExpression(212,221): 'BaseClass'
+  null
+
+KtNameReferenceExpression(222,233): 'NestedClass'
+  null
+
+KtNameReferenceExpression(234,237): 'bar'
+  null
+
+KtImportDirective(239,271): 'import one.two.JavaClass.baseFoo'
+  null
+
+KtDotQualifiedExpression(246,271): 'one.two.JavaClass.baseFoo'
+  null
+
+KtDotQualifiedExpression(246,263): 'one.two.JavaClass'
+  null
+
+KtDotQualifiedExpression(246,253): 'one.two'
+  null
+
+KtNameReferenceExpression(246,249): 'one'
+  null
+
+KtNameReferenceExpression(250,253): 'two'
+  null
+
+KtNameReferenceExpression(254,263): 'JavaClass'
+  null
+
+KtNameReferenceExpression(264,271): 'baseFoo'
+  null
+
+KtImportDirective(272,304): 'import one.two.JavaClass.baseBar'
+  null
+
+KtDotQualifiedExpression(279,304): 'one.two.JavaClass.baseBar'
+  null
+
+KtDotQualifiedExpression(279,296): 'one.two.JavaClass'
+  null
+
+KtDotQualifiedExpression(279,286): 'one.two'
+  null
+
+KtNameReferenceExpression(279,282): 'one'
+  null
+
+KtNameReferenceExpression(283,286): 'two'
+  null
+
+KtNameReferenceExpression(287,296): 'JavaClass'
+  null
+
+KtNameReferenceExpression(297,304): 'baseBar'
+  null
+
+KtImportDirective(305,333): 'import one.two.JavaClass.foo'
+  null
+
+KtDotQualifiedExpression(312,333): 'one.two.JavaClass.foo'
+  null
+
+KtDotQualifiedExpression(312,329): 'one.two.JavaClass'
+  null
+
+KtDotQualifiedExpression(312,319): 'one.two'
+  null
+
+KtNameReferenceExpression(312,315): 'one'
+  null
+
+KtNameReferenceExpression(316,319): 'two'
+  null
+
+KtNameReferenceExpression(320,329): 'JavaClass'
+  null
+
+KtNameReferenceExpression(330,333): 'foo'
+  null
+
+KtImportDirective(334,362): 'import one.two.JavaClass.bar'
+  null
+
+KtDotQualifiedExpression(341,362): 'one.two.JavaClass.bar'
+  null
+
+KtDotQualifiedExpression(341,358): 'one.two.JavaClass'
+  null
+
+KtDotQualifiedExpression(341,348): 'one.two'
+  null
+
+KtNameReferenceExpression(341,344): 'one'
+  null
+
+KtNameReferenceExpression(345,348): 'two'
+  null
+
+KtNameReferenceExpression(349,358): 'JavaClass'
+  null
+
+KtNameReferenceExpression(359,362): 'bar'
+  null

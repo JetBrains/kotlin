@@ -2,23 +2,23 @@ package
 
 public final class C : O.B {
     public constructor C()
-    public final val a: [ERROR : Type for A::foo]
-    public final val b: [ERROR : Type for A::foo]
+    public final val a: [Error type: Not found recorded type for A::foo]
+    public final val b: [Error type: Not found recorded type for A::foo]
     public final val c: kotlin.reflect.KFunction1<O.A.FromA, kotlin.Int>
     public final val d: kotlin.reflect.KFunction1<O.B.FromB, kotlin.Int>
-    public final val e: [ERROR : Type for FromCompanionA::foo]
-    public final val f: [ERROR : Type for FromCompanionB::foo]
-    public final val g: [ERROR : Type for Alpha::foo]
-    public final val h: [ERROR : Type for Beta::foo]
-    public final val i: [ERROR : Type for Gamma::foo]
-    public final val k: [ERROR : Type for FromAlpha::foo]
-    public final val l: [ERROR : Type for FromBeta::foo]
-    public final val m: [ERROR : Type for FromGamma::foo]
+    public final val e: [Error type: Not found recorded type for FromCompanionA::foo]
+    public final val f: [Error type: Not found recorded type for FromCompanionB::foo]
+    public final val g: [Error type: Not found recorded type for Alpha::foo]
+    public final val h: [Error type: Not found recorded type for Beta::foo]
+    public final val i: [Error type: Not found recorded type for Gamma::foo]
+    public final val k: [Error type: Not found recorded type for FromAlpha::foo]
+    public final val l: [Error type: Not found recorded type for FromBeta::foo]
+    public final val m: [Error type: Not found recorded type for FromGamma::foo]
     public final val n: kotlin.reflect.KFunction1<C.Companion.FromCompanionC, kotlin.Int>
-    public final val o: [ERROR : Type for FromCompanionAlpha::foo]
-    public final val p: [ERROR : Type for FromCompanionBeta::foo]
-    public final val q: [ERROR : Type for FromCompanionGamma::foo]
-    public final val r: [ERROR : Type for FromDelta::foo]
+    public final val o: [Error type: Not found recorded type for FromCompanionAlpha::foo]
+    public final val p: [Error type: Not found recorded type for FromCompanionBeta::foo]
+    public final val q: [Error type: Not found recorded type for FromCompanionGamma::foo]
+    public final val r: [Error type: Not found recorded type for FromDelta::foo]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

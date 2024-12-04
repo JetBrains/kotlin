@@ -37,7 +37,7 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
         val resultType = defaultResult?.type
 
         return when {
-            insn.opcode == Opcodes.ACONST_NULL ->
+            insn.opcode == Opcodes.ACONST_NULL && !insn.isTypeOf() ->
                 NullBasicValue
             insn.opcode == Opcodes.NEW ->
                 NotNullBasicValue(resultType)
@@ -70,6 +70,12 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
         }
     }
 
+    private fun AbstractInsnNode.isTypeOf(): Boolean {
+        val marker = previous as? MethodInsnNode ?: return false
+        return ReifiedTypeInliner.isOperationReifiedMarker(previous)
+                && marker.operationKind == ReifiedTypeInliner.OperationKind.TYPE_OF
+    }
+
     private fun AbstractInsnNode.isReifiedSafeAs(): Boolean {
         val marker = previous as? MethodInsnNode ?: return false
         return ReifiedTypeInliner.isOperationReifiedMarker(marker)
@@ -96,20 +102,21 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
 
     override fun merge(v: BasicValue, w: BasicValue): BasicValue =
         when {
-            v is NullBasicValue && w is NullBasicValue ->
-                NullBasicValue
-            v is NullBasicValue || w is NullBasicValue ->
-                StrictBasicValue.REFERENCE_VALUE
-            v is ProgressionIteratorBasicValue && w is ProgressionIteratorBasicValue ->
-                mergeNotNullValuesOfSameKind(v, w)
-            v is ProgressionIteratorBasicValue && w is NotNullBasicValue ->
-                NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
-            w is ProgressionIteratorBasicValue && v is NotNullBasicValue ->
-                NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
-            v is NotNullBasicValue && w is NotNullBasicValue ->
-                mergeNotNullValuesOfSameKind(v, w)
-            else ->
-                super.merge(v, w)
+            v === NullBasicValue -> if (w === NullBasicValue) NullBasicValue else StrictBasicValue.REFERENCE_VALUE
+
+            w === NullBasicValue -> StrictBasicValue.REFERENCE_VALUE
+
+            v is ProgressionIteratorBasicValue -> when (w) {
+                is ProgressionIteratorBasicValue -> mergeNotNullValuesOfSameKind(v, w)
+                is NotNullBasicValue -> NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
+                else -> super.merge(v, w)
+            }
+            v is NotNullBasicValue -> when (w) {
+                is ProgressionIteratorBasicValue -> NotNullBasicValue.NOT_NULL_REFERENCE_VALUE
+                is NotNullBasicValue -> mergeNotNullValuesOfSameKind(v, w)
+                else -> super.merge(v, w)
+            }
+            else -> super.merge(v, w)
         }
 
     private fun mergeNotNullValuesOfSameKind(v: StrictBasicValue, w: StrictBasicValue) =

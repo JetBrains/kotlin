@@ -1,7 +1,7 @@
 package com.example.databinding
 
 import android.content.res.Resources
-import android.databinding.BaseObservable
+import androidx.databinding.BaseObservable
 
 class UserProfile : BaseObservable() {
     open var gender: Gender = Gender.Female

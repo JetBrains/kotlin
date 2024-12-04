@@ -1,0 +1,25 @@
+FILE: emptySelectorInQualifiedExpression.kt
+    public final fun foo(action: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^ Unit
+    }
+    ): R|kotlin/Int| {
+        ^foo Int(0)
+    }
+    public final fun usageResolved1(): R|kotlin/Unit| {
+        ERROR_EXPR(Qualified expression without selector)
+    }
+    public final fun usageResolved2(): R|kotlin/Unit| {
+        ERROR_EXPR(Qualified expression without selector)
+    }
+    public final fun usageResolved3(): R|kotlin/Unit| {
+        ERROR_EXPR(Qualified expression without selector)
+    }
+    public final fun usageUnresolved1(): R|kotlin/Unit| {
+        ERROR_EXPR(Qualified expression without selector)
+    }
+    public final fun usageUnresolved2(): R|kotlin/Unit| {
+        ERROR_EXPR(Qualified expression without selector)
+    }
+    public final fun usageUnresolved3(): R|kotlin/Unit| {
+        ERROR_EXPR(Qualified expression without selector)
+    }

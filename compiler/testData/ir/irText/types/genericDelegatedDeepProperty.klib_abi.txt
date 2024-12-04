@@ -1,0 +1,38 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /CR : /IR<#A> { // /CR|null[0]
+    final val r // /CR.r|{}r[0]
+        final fun <get-r>(): #A // /CR.r.<get-r>|<get-r>(){}[0]
+    constructor <init>(#A) // /CR.<init>|<init>(1:0){}[0]
+    final fun foo(): #A // /CR.foo|foo(){}[0]
+}
+abstract interface <#A: kotlin/Any?, #B: kotlin/Any?> /IDelegate1 { // /IDelegate1|null[0]
+    abstract fun getValue(#A, kotlin.reflect/KProperty<*>): #B // /IDelegate1.getValue|getValue(1:0;kotlin.reflect.KProperty<*>){}[0]
+}
+abstract interface <#A: kotlin/Any?, #B: kotlin/Any?> /IDelegate2 { // /IDelegate2|null[0]
+    abstract fun getValue(#A, kotlin.reflect/KProperty<*>): #B // /IDelegate2.getValue|getValue(1:0;kotlin.reflect.KProperty<*>){}[0]
+}
+abstract interface <#A: kotlin/Any?> /IR { // /IR|null[0]
+    abstract fun foo(): #A // /IR.foo|foo(){}[0]
+}
+final class <#A: kotlin/Any?, #B: kotlin/Any?> /P { // /P|null[0]
+    final val p1 // /P.p1|{}p1[0]
+        final fun <get-p1>(): #A // /P.p1.<get-p1>|<get-p1>(){}[0]
+    final val p2 // /P.p2|{}p2[0]
+        final fun <get-p2>(): #B // /P.p2.<get-p2>|<get-p2>(){}[0]
+    constructor <init>(#A, #B) // /P.<init>|<init>(1:0;1:1){}[0]
+}
+final class <#A: kotlin/Any?, #B: /IR<#A>> /Value { // /Value|null[0]
+    final var value1 // /Value.value1|{}value1[0]
+        final fun <get-value1>(): #A // /Value.value1.<get-value1>|<get-value1>(){}[0]
+        final fun <set-value1>(#A) // /Value.value1.<set-value1>|<set-value1>(1:0){}[0]
+    final val value2 // /Value.value2|{}value2[0]
+        final fun <get-value2>(): #B // /Value.value2.<get-value2>|<get-value2>(){}[0]
+    constructor <init>(#A, #B) // /Value.<init>|<init>(1:0;1:1){}[0]
+}
+final val /additionalText // /additionalText|@Value<0:0,CR<0:0>>{0§<kotlin.Any?>}additionalText[0]
+    final fun <#A1: kotlin/Any?> (/Value<#A1, /CR<#A1>>).<get-additionalText>(): /P<#A1, #A1> // /additionalText.<get-additionalText>|<get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}[0]

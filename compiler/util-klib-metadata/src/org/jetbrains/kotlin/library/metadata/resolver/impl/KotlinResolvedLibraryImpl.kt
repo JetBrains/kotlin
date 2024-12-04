@@ -1,12 +1,10 @@
-package org.jetbrains.kotlin.library.resolver.impl
+package org.jetbrains.kotlin.library.metadata.resolver.impl
 
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
-import org.jetbrains.kotlin.library.metadata.parsePackageFragment
-import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
-import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
-class KotlinResolvedLibraryImpl(override val library: KotlinLibrary): KotlinResolvedLibrary {
+class KotlinResolvedLibraryImpl(override val library: KotlinLibrary) : KotlinResolvedLibrary {
 
     private val _resolvedDependencies = mutableListOf<KotlinResolvedLibrary>()
     private val _emptyPackages by lazy { parseModuleHeader(library.moduleHeaderData).emptyPackageList }
@@ -24,10 +22,11 @@ class KotlinResolvedLibraryImpl(override val library: KotlinLibrary): KotlinReso
 
     override fun markNeededForLink(
         library: KotlinLibrary,
-        fqName: String
+        fqName: String,
     ) {
         if (!isNeededForLink // fast path
-            && !_emptyPackages.contains(fqName)) {
+            && !_emptyPackages.contains(fqName)
+        ) {
             isNeededForLink = true
         }
     }

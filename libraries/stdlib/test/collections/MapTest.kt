@@ -7,6 +7,9 @@ package test.collections
 
 import kotlin.test.*
 import test.*
+import test.collections.js.linkedStringMapOf
+import test.collections.js.stringMapOf
+import kotlin.math.pow
 
 class MapTest {
 
@@ -400,17 +403,17 @@ class MapTest {
         assertEquals(3, filteredByValue["b"])
     }
 
+    class SimpleEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
+        override fun toString(): String = "$key=$value"
+        override fun hashCode(): Int = key.hashCode() xor value.hashCode()
+        override fun equals(other: Any?): Boolean =
+            other is Map.Entry<*, *> && key == other.key && value == other.value
+    }
+
     @Test
     fun entriesCovariantContains() {
         // Based on https://youtrack.jetbrains.com/issue/KT-42428.
         fun doTest(implName: String, map: Map<String, Int>, key: String, value: Int) {
-            class SimpleEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
-                override fun toString(): String = "$key=$value"
-                override fun hashCode(): Int = key.hashCode() xor value.hashCode()
-                override fun equals(other: Any?): Boolean =
-                    other is Map.Entry<*, *> && key == other.key && value == other.value
-            }
-
             val mapDescription = "$implName: ${map::class}"
 
             assertTrue(map.keys.contains(key), mapDescription)
@@ -437,18 +440,14 @@ class MapTest {
             doTest("MapBuilder", this, "z", 25)
         }
         doTest("built Map", builtMap, "y", 24)
+
+        doTest("stringMapOf", mapLetterToIndex.toMap(stringMapOf()), "x", 23)
+        doTest("linkedStringMapOf", mapLetterToIndex.toMap(linkedStringMapOf()), "w", 22)
     }
 
     @Test
     fun entriesCovariantRemove() {
         fun doTest(implName: String, map: MutableMap<String, Int>, key: String, value: Int) {
-            class SimpleEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
-                override fun toString(): String = "$key=$value"
-                override fun hashCode(): Int = key.hashCode() xor value.hashCode()
-                override fun equals(other: Any?): Boolean =
-                    other is Map.Entry<*, *> && key == other.key && value == other.value
-            }
-
             val mapDescription = "$implName: ${map::class}"
 
             assertTrue(map.entries.toMutableSet().remove(SimpleEntry(key, value) as Map.Entry<*, *>), "$mapDescription: reference")
@@ -466,6 +465,114 @@ class MapTest {
         buildMap {
             putAll(mapLetterToIndex)
             doTest("MapBuilder", this, "z", 25)
+        }
+
+        doTest("stringMapOf", mapLetterToIndex.toMap(stringMapOf()), "x", 23)
+        doTest("linkedStringMapOf", mapLetterToIndex.toMap(linkedStringMapOf()), "w", 22)
+    }
+
+    @Test
+    fun nullKeyAndValue() {
+        fun doTest(implName: String, map: MutableMap<String?, Int?>, key: String?, value: Int?) {
+            val mapDescription = "$implName: ${map::class}, key=$key, value=$value"
+
+            map[key] = value
+
+            assertTrue(map.contains(key), "$mapDescription: contains")
+            assertTrue(map.containsKey(key), "$mapDescription: containsKey")
+            assertTrue(map.containsValue(value), "$mapDescription: containsValue")
+            assertTrue(map.keys.contains(key), "$mapDescription: keys.contains")
+            assertTrue(map.values.contains(value), "$mapDescription: values.contains")
+            assertTrue(map.entries.contains(SimpleEntry(key, value) as Map.Entry<*, *>), "$mapDescription: entries.contains")
+
+            assertEquals(value, map.remove(key), "$mapDescription: remove")
+
+            map[key] = value
+            assertTrue(map.keys.remove(key), "$mapDescription: keys.remove")
+
+            map[key] = value
+            assertTrue(map.values.remove(value), "$mapDescription: values.remove")
+
+            map[key] = value
+            assertTrue(map.entries.remove(SimpleEntry(key, value) as Map.Entry<*, *>), "$mapDescription: entries.remove")
+        }
+
+        val mapLetterToIndex = ('a'..'z').mapIndexed { i, c -> "$c" to i }.toMap()
+        val combinations = listOf(
+            "A" to null,
+            null to 100,
+            null to null,
+        )
+
+        for ((key, value) in combinations) {
+            doTest("default mutable", mapLetterToIndex.toMutableMap(), key, value)
+            doTest("HashMap", mapLetterToIndex.toMap(HashMap()), key, value)
+            doTest("LinkedHashMap", mapLetterToIndex.toMap(LinkedHashMap()), key, value)
+
+            buildMap {
+                putAll(mapLetterToIndex)
+                doTest("MapBuilder", this, key, value)
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            if (key != null) {
+                doTest("stringMapOf", mapLetterToIndex.toMap(stringMapOf()) as MutableMap<String?, Int?>, key, value)
+                doTest("linkedStringMapOf", mapLetterToIndex.toMap(linkedStringMapOf()) as MutableMap<String?, Int?>, key, value)
+            }
+        }
+    }
+
+    // KT-52181
+    @Test
+    fun modifiedBackingMapOfEntry() {
+        fun testEntryFunctionsFail(mapLabel: String, entry: MutableMap.MutableEntry<String, Int>) {
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.key }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.value }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.setValue(200) }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.hashCode() }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.toString() }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.equals(SimpleEntry("b", 20)) }
+        }
+
+        testExceptOn(TestPlatform.Jvm) {
+            val entries = arrayOf("a" to 1, "b" to 2, "c" to 3)
+            val maps = listOf(
+                "HashMap" to hashMapOf(*entries),
+                "LinkedHashMap" to linkedMapOf(*entries),
+                "StringMap" to stringMapOf(*entries),
+                "LinkedStringMap" to linkedStringMapOf(*entries),
+            )
+
+            for ((label, map) in maps) {
+                val entry = map.entries.first { it.key == "b" }
+
+                // Non-structural modifications
+                map["c"] = 30
+                map["b"] = 20
+                assertEquals("b", entry.key, label)
+                assertEquals(20, entry.value, label)
+
+                // Structural modification
+                map["d"] = 4
+                testEntryFunctionsFail(label, entry)
+            }
+        }
+
+        buildMap {
+            this["a"] = 1
+            this["b"] = 2
+            this["c"] = 3
+            val builderEntry = this.entries.first { it.key == "b" }
+
+            // Non-structural modifications
+            this["c"] = 30
+            this["b"] = 20
+            assertEquals("b", builderEntry.key)
+            assertEquals(20, builderEntry.value)
+
+            // Structural modification
+            this["d"] = 4
+            testEntryFunctionsFail("MapBuilder", builderEntry)
         }
     }
 
@@ -603,4 +710,272 @@ class MapTest {
     @Test fun plusAssignEmptySet() = testIdempotentAssign { it += setOf() }
 
 
+    private fun <K, V> expectMinMaxWith(min: Pair<K, V>, max: Pair<K, V>, elements: Map<K, V>, comparator: Comparator<Map.Entry<K, V>>) {
+        assertEquals(min, elements.minWithOrNull(comparator)?.toPair())
+        assertEquals(max, elements.maxWithOrNull(comparator)?.toPair())
+        assertEquals(min, elements.minWith(comparator).toPair())
+        assertEquals(max, elements.maxWith(comparator).toPair())
+    }
+
+    @Test
+    fun minMaxWith() {
+        val map = listOf("a", "bcd", "Ef").associateWith { it.length }
+        expectMinMaxWith("Ef" to 2, "bcd" to 3, map, compareBy { it.key })
+        expectMinMaxWith("a" to 1, "Ef" to 2, map, compareBy(String.CASE_INSENSITIVE_ORDER) { it.key })
+        expectMinMaxWith("a" to 1, "bcd" to 3, map, compareBy { it.value })
+
+    }
+
+    @Test
+    fun minMaxWithEmpty() {
+        val empty = mapOf<Int, Int>()
+        val comparator = compareBy<Map.Entry<Int, Int>> { it.value }
+        assertNull(empty.minWithOrNull(comparator))
+        assertNull(empty.maxWithOrNull(comparator))
+        assertFailsWith<NoSuchElementException> { empty.minWith(comparator) }
+        assertFailsWith<NoSuchElementException> { empty.maxWith(comparator) }
+    }
+
+
+    private inline fun <K, V, R : Comparable<R>> expectMinMaxBy(min: Pair<K, V>, max: Pair<K, V>, elements: Map<K, V>, selector: (Map.Entry<K, V>) -> R) {
+        assertEquals(min, elements.minBy(selector).toPair())
+        assertEquals(min, elements.minByOrNull(selector)?.toPair())
+        assertEquals(max, elements.maxBy(selector).toPair())
+        assertEquals(max, elements.maxByOrNull(selector)?.toPair())
+    }
+
+    @Test
+    fun minMaxBy() {
+        val map = listOf("a", "bcd", "Ef").associateWith { it.length }
+        expectMinMaxBy("Ef" to 2, "bcd" to 3, map, { it.key })
+        expectMinMaxBy("a" to 1, "Ef" to 2, map, { it.key.lowercase() })
+        expectMinMaxBy("a" to 1, "bcd" to 3, map, { it.value })
+    }
+
+    @Test
+    fun minMaxByEmpty() {
+        val empty = mapOf<Int, Int>()
+        assertNull(empty.minByOrNull { it.toString() })
+        assertNull(empty.maxByOrNull { it.toString() })
+        assertFailsWith<NoSuchElementException> { empty.minBy { it.toString() } }
+        assertFailsWith<NoSuchElementException> { empty.maxBy { it.toString() } }
+    }
+
+    @Test fun minBySelectorEvaluateOnce() {
+        val source = listOf(1, 2, 3).associateWith { it }
+        var c = 0
+        source.minBy { c++ }
+        assertEquals(3, c)
+        c = 0
+        source.minByOrNull { c++ }
+        assertEquals(3, c)
+    }
+
+    @Test fun maxBySelectorEvaluateOnce() {
+        val source = listOf(1, 2, 3).associateWith { it }
+        var c = 0
+        source.maxBy { c++ }
+        assertEquals(3, c)
+        c = 0
+        source.maxByOrNull { c++ }
+        assertEquals(3, c)
+    }
+
+    private inline fun <K, V, R : Comparable<R>> expectMinMaxOf(min: R, max: R, elements: Map<K, V>, selector: (Map.Entry<K, V>) -> R) {
+        assertEquals(min, elements.minOf(selector))
+        assertEquals(min, elements.minOfOrNull(selector))
+        assertEquals(max, elements.maxOf(selector))
+        assertEquals(max, elements.maxOfOrNull(selector))
+    }
+
+    @Test
+    fun minMaxOf() {
+        val maps = (1..3).map { size -> listOf("a", "bcd", "Ef").take(size).associateWith { it.length } }
+
+        expectMinMaxOf("a=1", "a=1", maps[0], { it.toString() })
+        expectMinMaxOf("a=1", "bcd=3", maps[1], { it.toString() })
+        expectMinMaxOf("Ef=2", "bcd=3",  maps[2], { it.toString() })
+    }
+
+    @Test
+    fun minMaxOfDouble() {
+        val items = mapOf("a" to 0.0, "b" to 1.0, "c" to -1.0)
+        assertTrue(items.minOf { it.value.pow(0.5) }.isNaN())
+        assertTrue(items.minOfOrNull { it.value.pow(0.5) }!!.isNaN())
+        assertTrue(items.maxOf { it.value.pow(0.5) }.isNaN())
+        assertTrue(items.maxOfOrNull { it.value.pow(0.5) }!!.isNaN())
+
+        assertIsNegativeZero(items.minOf { it.value * 0.0 })
+        assertIsNegativeZero(items.minOfOrNull { it.value * 0.0 }!!)
+        assertIsPositiveZero(items.maxOf { it.value * 0.0 })
+        assertIsPositiveZero(items.maxOfOrNull { it.value * 0.0 }!!)
+    }
+
+    @Test
+    fun minMaxOfFloat() {
+        val items = mapOf("a" to 0.0F, "b" to 1.0F, "c" to -1.0F)
+        assertTrue(items.minOf { it.value.pow(0.5F) }.isNaN())
+        assertTrue(items.minOfOrNull { it.value.pow(0.5F) }!!.isNaN())
+        assertTrue(items.maxOf { it.value.pow(0.5F) }.isNaN())
+        assertTrue(items.maxOfOrNull { it.value.pow(0.5F) }!!.isNaN())
+
+        assertIsNegativeZero(items.minOf { it.value * 0.0F }.toDouble())
+        assertIsNegativeZero(items.minOfOrNull { it.value * 0.0F }!!.toDouble())
+        assertIsPositiveZero(items.maxOf { it.value * 0.0F }.toDouble())
+        assertIsPositiveZero(items.maxOfOrNull { it.value * 0.0F }!!.toDouble())
+    }
+
+    @Test
+    fun minMaxOfEmpty() {
+        val empty = mapOf<Int, Int>()
+
+        assertNull(empty.minOfOrNull { it.toString() })
+        assertNull(empty.maxOfOrNull { it.toString() })
+        assertFailsWith<NoSuchElementException> { empty.minOf { it.toString() } }
+        assertFailsWith<NoSuchElementException> { empty.maxOf { it.toString() } }
+
+
+        assertNull(empty.minOfOrNull { 0.0 })
+        assertNull(empty.maxOfOrNull { 0.0 })
+        assertFailsWith<NoSuchElementException> { empty.minOf { 0.0 } }
+        assertFailsWith<NoSuchElementException> { empty.maxOf { 0.0 } }
+
+
+        assertNull(empty.minOfOrNull { 0.0F })
+        assertNull(empty.maxOfOrNull { 0.0F })
+        assertFailsWith<NoSuchElementException> { empty.minOf { 0.0F } }
+        assertFailsWith<NoSuchElementException> { empty.maxOf { 0.0F } }
+    }
+
+
+    private inline fun <K, V, R> expectMinMaxOfWith(min: R, max: R, elements: Map<K, V>, comparator: Comparator<R>, selector: (Map.Entry<K, V>) -> R) {
+        assertEquals(min, elements.minOfWith(comparator, selector))
+        assertEquals(min, elements.minOfWithOrNull(comparator, selector))
+        assertEquals(max, elements.maxOfWith(comparator, selector))
+        assertEquals(max, elements.maxOfWithOrNull(comparator, selector))
+    }
+
+    @Test
+    fun minMaxOfWith() {
+        val maps = (1..3).map { size -> listOf("a", "bcd", "Ef").take(size).associateWith { it.length } }
+        val comparator = String.CASE_INSENSITIVE_ORDER
+        expectMinMaxOfWith("a=1", "a=1", maps[0], comparator, { it.toString() })
+        expectMinMaxOfWith("a=1", "bcd=3", maps[1], comparator, { it.toString() })
+        expectMinMaxOfWith("a=1", "Ef=2", maps[2], comparator, { it.toString() })
+    }
+
+    @Test
+    fun minMaxOfWithEmpty() {
+        val empty = mapOf<Int, Int>()
+        assertNull(empty.minOfWithOrNull(naturalOrder()) { it.toString() })
+        assertNull(empty.maxOfWithOrNull(naturalOrder()) { it.toString() })
+        assertFailsWith<NoSuchElementException> { empty.minOfWith(naturalOrder()) { it.toString() } }
+        assertFailsWith<NoSuchElementException> { empty.maxOfWith(naturalOrder()) { it.toString() } }
+    }
+
+    @Test
+    fun constructorWithCapacity() {
+        assertFailsWith<IllegalArgumentException> {
+            HashMap<String, String>(/*initialCapacity = */-1)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            HashMap<String, String>(/*initialCapacity = */-1, /*loadFactor = */0.5f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            HashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */0.0f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            HashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */Float.NaN)
+        }
+        assertEquals(0, HashMap<String, String>(/*initialCapacity = */0).size)
+        assertEquals(0, HashMap<String, String>(/*initialCapacity = */10).size)
+        assertEquals(0, HashMap<String, String>(/*initialCapacity = */0, /*loadFactor = */0.5f).size)
+        assertEquals(0, HashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */1.5f).size)
+
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashMap<String, String>(/*initialCapacity = */-1)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashMap<String, String>(/*initialCapacity = */-1, /*loadFactor = */0.5f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */0.0f)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LinkedHashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */Float.NaN)
+        }
+        assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */0).size)
+        assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */10).size)
+        assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */0, /*loadFactor = */0.5f).size)
+        assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */1.5f).size)
+    }
+
+    @OptIn(ExperimentalUnsignedTypes::class)
+    @Test
+    fun kClassAsMapKey() {
+        class A
+        class B
+
+        val kclasses = mapOf(
+            String::class to 1,
+            Char::class to 2,
+            CharArray::class to 3,
+            Double::class to 4,
+            DoubleArray::class to 5,
+            Float::class to 6,
+            FloatArray::class to 7,
+            Long::class to 8,
+            LongArray::class to 9,
+            ULong::class to 10,
+            ULongArray::class to 11,
+            Int::class to 12,
+            IntArray::class to 13,
+            UInt::class to 14,
+            UIntArray::class to 15,
+            Short::class to 16,
+            ShortArray::class to 17,
+            UShort::class to 18,
+            UShortArray::class to 19,
+            Byte::class to 20,
+            ByteArray::class to 21,
+            UByte::class to 22,
+            UByteArray::class to 23,
+            Boolean::class to 24,
+            BooleanArray::class to 25,
+            Unit::class to 26,
+            Nothing::class to 27,
+            A::class to 28,
+            B::class to 29
+        )
+
+        assertEquals(kclasses[String::class], 1)
+        assertEquals(kclasses[Char::class], 2)
+        assertEquals(kclasses[CharArray::class], 3)
+        assertEquals(kclasses[Double::class], 4)
+        assertEquals(kclasses[DoubleArray::class], 5)
+        assertEquals(kclasses[Float::class], 6)
+        assertEquals(kclasses[FloatArray::class], 7)
+        assertEquals(kclasses[Long::class], 8)
+        assertEquals(kclasses[LongArray::class], 9)
+        assertEquals(kclasses[ULong::class], 10)
+        assertEquals(kclasses[ULongArray::class], 11)
+        assertEquals(kclasses[Int::class], 12)
+        assertEquals(kclasses[IntArray::class], 13)
+        assertEquals(kclasses[UInt::class], 14)
+        assertEquals(kclasses[UIntArray::class], 15)
+        assertEquals(kclasses[Short::class], 16)
+        assertEquals(kclasses[ShortArray::class], 17)
+        assertEquals(kclasses[UShort::class], 18)
+        assertEquals(kclasses[UShortArray::class], 19)
+        assertEquals(kclasses[Byte::class], 20)
+        assertEquals(kclasses[ByteArray::class], 21)
+        assertEquals(kclasses[UByte::class], 22)
+        assertEquals(kclasses[UByteArray::class], 23)
+        assertEquals(kclasses[Boolean::class], 24)
+        assertEquals(kclasses[BooleanArray::class], 25)
+        assertEquals(kclasses[Unit::class], 26)
+        assertEquals(kclasses[Nothing::class], 27)
+        assertEquals(kclasses[A::class], 28)
+        assertEquals(kclasses[B::class], 29)
+    }
 }

@@ -1,0 +1,16 @@
+KtNameReferenceExpression(60,69): 'JavaClass'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = JavaClass<kotlin.Int>
+          symbol = <constructor>(): JavaClass<TT>
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testArrayAccess1(array: Array<Any>) {
     array<!UNREACHABLE_CODE!>[<!>todo()<!UNREACHABLE_CODE!>]<!>

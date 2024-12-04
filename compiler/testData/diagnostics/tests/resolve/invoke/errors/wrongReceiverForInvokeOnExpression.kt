@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_DUMP
+
 fun test1() {
     1. <!FUNCTION_EXPECTED!>(fun String.(i: Int) = i )<!>(1)
     1.<!FUNCTION_EXPECTED!>(label@ fun String.(i: Int) = i )<!>(1)

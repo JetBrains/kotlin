@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: WASM
 
 object Foo {
     fun foo(result: Result<String>) {

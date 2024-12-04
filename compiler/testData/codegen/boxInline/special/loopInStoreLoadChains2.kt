@@ -14,7 +14,7 @@ inline fun test(crossinline foo: String.() -> String): String {
 
     {
         cycle.foo()
-    }()
+    }.let { it() }
 
 
     return cycle.foo()

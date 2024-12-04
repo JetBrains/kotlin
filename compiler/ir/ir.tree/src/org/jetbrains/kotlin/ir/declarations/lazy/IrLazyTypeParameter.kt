@@ -23,10 +23,10 @@ class IrLazyTypeParameter(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
     override val descriptor: TypeParameterDescriptor,
-    override val name: Name,
-    override val index: Int,
-    override val isReified: Boolean,
-    override val variance: Variance,
+    override var name: Name,
+    override var index: Int,
+    override var isReified: Boolean,
+    override var variance: Variance,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrTypeParameter(), IrLazyDeclarationBase {
@@ -34,13 +34,10 @@ class IrLazyTypeParameter(
         symbol.bind(this)
     }
 
-    override var parent: IrDeclarationParent by createLazyParent()
-
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override var superTypes: List<IrType> by lazyVar(stubGenerator.lock) {
         typeTranslator.buildWithScope(this.parent as IrTypeParametersContainer) {
-            val descriptor = symbol.descriptor
             descriptor.upperBounds.mapTo(arrayListOf()) { it.toIrType() }
         }
     }

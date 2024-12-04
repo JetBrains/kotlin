@@ -17,12 +17,4 @@ public interface JsOperator {
     boolean isKeyword();
 
     boolean isLeftAssociative();
-
-    boolean isPrecedenceLessThan(JsOperator other);
-
-    boolean isValidInfix();
-
-    boolean isValidPostfix();
-
-    boolean isValidPrefix();
 }

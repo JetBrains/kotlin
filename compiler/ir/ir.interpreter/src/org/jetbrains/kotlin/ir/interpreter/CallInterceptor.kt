@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.isUnsignedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.isJs
 import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
@@ -50,7 +51,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     override fun interceptProxy(irFunction: IrFunction, valueArguments: List<State>, expectedResultClass: Class<*>): Any? {
         val irCall = irFunction.createCall()
         return interpreter.withNewCallStack(irCall) {
-            this@withNewCallStack.environment.callStack.pushInstruction(SimpleInstruction(irCall))
+            this@withNewCallStack.environment.callStack.pushSimpleInstruction(irCall)
             valueArguments.forEach { this@withNewCallStack.environment.callStack.pushState(it) }
         }.wrap(this@DefaultCallInterceptor, remainArraysAsIs = false, extendFrom = expectedResultClass)
     }
@@ -64,9 +65,11 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             Wrapper.mustBeHandledWithWrapper(irFunction) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, args)
             handleIntrinsicMethods(irFunction) -> return
             receiver.mustBeHandledAsReflection(call) -> Wrapper.getReflectionMethod(irFunction).invokeMethod(irFunction, args)
-            receiver is Primitive<*> -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
-            irFunction.body == null ->
-                irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction, args)
+            receiver is Primitive -> calculateBuiltIns(irFunction, args) // check for js char, js long and get field for primitives
+            // TODO try to save fields in Primitive -> then it is possible to move up next branch
+            // TODO try to create backing field if it is missing
+            irFunction.body == null && irFunction.isAccessorOfPropertyWithBackingField() -> callStack.pushCompoundInstruction(irFunction.createGetField())
+            irFunction.body == null -> irFunction.trySubstituteFunctionBody() ?: calculateBuiltIns(irFunction, args)
             else -> defaultAction()
         }
     }
@@ -89,7 +92,10 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
-                val propertySymbol = irClass.declarations.single { it is IrProperty }.symbol
+                val propertyName = irClass.inlineClassRepresentation?.underlyingPropertyName
+                val propertySymbol = irClass.declarations.filterIsInstance<IrProperty>()
+                    .single { it.name == propertyName && it.getter?.extensionReceiverParameter == null }
+                    .symbol
                 callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
             }
             else -> defaultAction()
@@ -113,7 +119,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         when {
             Wrapper.mustBeHandledWithWrapper(enumClass) -> {
                 val enumEntryName = environment.convertToState(enumEntry.name.asString(), environment.irBuiltIns.stringType)
-                val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
+                val valueOfFun = enumClass.functions.single { it.name.asString() == "valueOf" }
                 Wrapper.getEnumEntry(enumClass).invokeMethod(valueOfFun, listOf(enumEntryName))
                 environment.mapOfEnums[enumEntry.symbol] = callStack.popState() as Complex
             }
@@ -124,7 +130,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     override fun interceptJavaStaticField(expression: IrGetField) {
         val field = expression.symbol.owner
         verify(field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic)
-        verify(field.initializer?.expression !is IrConst<*>)
+        verify(field.initializer?.expression !is IrConst)
         callStack.pushState(environment.convertToState(Wrapper.getStaticGetter(field).invokeWithArguments(), field.type))
     }
 
@@ -143,34 +149,35 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         return true
     }
 
+    private data class Signature(var name: String, var args: List<Arg>)
+    private data class Arg(var type: String, var value: Any?)
+
     private fun calculateBuiltIns(irFunction: IrFunction, args: List<State>) {
-        val methodName = when (val property = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol) {
+        val methodName = when (val property = irFunction.property) {
             null -> irFunction.name.asString()
-            else -> property.owner.name.asString()
+            else -> property.name.asString()
         }
 
         val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
+        val argsType = (listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }).map { it.fqNameWithNullability() }
         val argsValues = args.wrap(this, irFunction)
 
-        // TODO replace unary, binary, ternary functions with vararg
         withExceptionHandler(environment) {
-            val result = when (argsType.size) {
-                1 -> interpretUnaryFunction(methodName, argsType[0].getOnlyName(), argsValues[0])
-                2 -> when (methodName) {
-                    "rangeTo" -> return calculateRangeTo(irFunction.returnType, args)
-                    else -> interpretBinaryFunction(
-                        methodName, argsType[0].getOnlyName(), argsType[1].getOnlyName(), argsValues[0], argsValues[1]
-                    )
-                }
-                3 -> interpretTernaryFunction(
-                    methodName, argsType[0].getOnlyName(), argsType[1].getOnlyName(), argsType[2].getOnlyName(),
-                    argsValues[0], argsValues[1], argsValues[2]
-                )
-                else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin function: $methodName")
-            }
+            if (methodName == "rangeTo") return calculateRangeTo(irFunction.returnType, args)
+            val result = interpretBuiltinFunction(Signature(methodName, argsType.zip(argsValues).map { Arg(it.first, it.second) }))
             // TODO check "result is Unit"
             callStack.pushState(environment.convertToState(result, result.getType(irFunction.returnType)))
+        }
+    }
+
+    private fun interpretBuiltinFunction(signature: Signature): Any? {
+        val name = signature.name
+        val args = signature.args
+        return when (args.size) {
+            1 -> interpretUnaryFunction(name, args[0].type, args[0].value)
+            2 -> interpretBinaryFunction(name, args[0].type, args[1].type, args[0].value, args[1].value)
+            3 -> interpretTernaryFunction(name, args[0].type, args[1].type, args[2].type, args[0].value, args[1].value, args[2].value)
+            else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin function: $name")
         }
     }
 
@@ -179,12 +186,12 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val constructorCall = constructor.createConstructorCall()
         val constructorValueParameters = constructor.valueParameters.map { it.symbol }
 
-        val primitiveValueParameters = args.map { it as Primitive<*> }
+        val primitiveValueParameters = args.map { it as Primitive }
         primitiveValueParameters.forEachIndexed { index, primitive ->
             constructorCall.putValueArgument(index, primitive.value.toIrConst(constructorValueParameters[index].owner.type))
         }
 
-        callStack.pushInstruction(CompoundInstruction(constructorCall))
+        callStack.pushCompoundInstruction(constructorCall)
     }
 
     private fun Any?.getType(defaultType: IrType): IrType {
@@ -206,14 +213,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
     private fun IrFunction.trySubstituteFunctionBody(): IrElement? {
         val signature = this.symbol.signature ?: return null
         this.body = bodyMap[signature] ?: return null
-        callStack.pushInstruction(CompoundInstruction(this))
+        callStack.pushCompoundInstruction(this)
         return body
-    }
-
-    // TODO fix in FIR2IR; const val getter must have body with IrGetField node
-    private fun IrFunction.tryCalculateLazyConst(): IrExpression? {
-        if (this !is IrSimpleFunction) return null
-        val expression = this.correspondingPropertySymbol?.owner?.backingField?.initializer?.expression
-        return expression?.apply { callStack.pushInstruction(CompoundInstruction(this)) }
     }
 }

@@ -1,5 +1,0 @@
-KT element: KtTypeProjection
-FIR element: FirTypeProjectionWithVarianceImpl
-
-FIR element rendered:
-R|kotlin/collections/List<kotlin/Int>|

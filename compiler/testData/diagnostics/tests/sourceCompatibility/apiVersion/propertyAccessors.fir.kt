@@ -1,4 +1,5 @@
-// !API_VERSION: 1.0
+// RUN_PIPELINE_TILL: FRONTEND
+// API_VERSION: 1.0
 
 val v1: String
     @SinceKotlin("1.1")
@@ -34,15 +35,15 @@ val v7: String
     get() = ""
 
 fun test() {
-    v1
-    v2
-    v3
+    <!UNRESOLVED_REFERENCE!>v1<!>
+    <!UNRESOLVED_REFERENCE!>v2<!>
+    <!UNRESOLVED_REFERENCE!>v3<!>
     v3 = ""
     v4
-    v4 = ""
-    v5
-    v5 = ""
-    v6
-    v6 = ""
-    v7
+    <!UNRESOLVED_REFERENCE!>v4<!> = ""
+    <!UNRESOLVED_REFERENCE!>v5<!>
+    <!UNRESOLVED_REFERENCE!>v5<!> = ""
+    <!UNRESOLVED_REFERENCE!>v6<!>
+    <!UNRESOLVED_REFERENCE!>v6<!> = ""
+    <!UNRESOLVED_REFERENCE!>v7<!>
 }

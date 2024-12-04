@@ -20,7 +20,7 @@ fun box(): String {
             {
                 value
                 gene = "OK"
-            }()
+            }.let { it() }
         }
     }
 

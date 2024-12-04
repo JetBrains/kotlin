@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /baz // /baz|@kotlin.String?{}baz[0]
+    final fun (kotlin/String?).<get-baz>(): kotlin/String // /baz.<get-baz>|<get-baz>@kotlin.String?(){}[0]
+final fun /bar(kotlin/String?, kotlin/String?): kotlin/String // /bar|bar(kotlin.String?;kotlin.String?){}[0]
+final fun /foo(kotlin/String?): kotlin/String // /foo|foo(kotlin.String?){}[0]

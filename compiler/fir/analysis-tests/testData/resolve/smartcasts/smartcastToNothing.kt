@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun getNothing(): Nothing = throw Exception()
 fun getNullableNothing(): Nothing? = null
 
@@ -21,4 +22,14 @@ fun test_0(results: List<Nothing>) {
         }
     }
     s?.let { it.a }
+}
+
+fun test_1(a: String?) {
+    if (a is Nothing?) {
+        val b = a?.length
+    }
+
+    if (a is Nothing) {
+        val b = a.length
+    }
 }

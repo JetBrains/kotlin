@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test(value: Int) {
     when (value) {
         0 -> {}

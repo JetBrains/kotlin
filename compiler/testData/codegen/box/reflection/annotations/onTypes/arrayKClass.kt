@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: Fail: class kotlin.reflect.KClass
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 

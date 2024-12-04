@@ -1,16 +1,26 @@
-// FIR_IDE_IGNORE
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, initialization
+ * NUMBER: 3
+ * DESCRIPTION: val/var reassignment and/or uninitialized variable usages with compelx control flow inside/outside lambda of contract function with CallsInPlace effect
+ * HELPERS: enumClasses, contractFunctions
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: EnumClass?) {
     val value_2: Int
 
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_1) {
+    when (value_1) {
         EnumClass.NORTH -> funWithExactlyOnceCallsInPlace { value_2 = 1 }
         EnumClass.SOUTH -> funWithExactlyOnceCallsInPlace { value_2 = 2 }
         EnumClass.EAST -> funWithExactlyOnceCallsInPlace { value_2 = 4 }
         null -> funWithExactlyOnceCallsInPlace { value_2 = 5 }
+        else -> {}
     }
 
     <!UNINITIALIZED_VARIABLE!>value_2<!>.inc()
@@ -40,7 +50,7 @@ class case_3(value_1: Any?) {
     init {
         if (value_1 is String) {
             funWithUnknownCallsInPlace { value_2 = 0 }
-            value_2.div(10)
+            <!UNINITIALIZED_VARIABLE!>value_2<!>.div(10)
         } else if (value_1 == null) {
             funWithAtLeastOnceCallsInPlace { value_2 = 1 }
             value_2.div(10)
@@ -48,7 +58,7 @@ class case_3(value_1: Any?) {
             value_2 = 2
         }
 
-        value_2.div(10)
+        <!UNINITIALIZED_VARIABLE!>value_2<!>.div(10)
     }
 }
 

@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -9,7 +10,7 @@ interface Inv<T> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <K> foo(@BuilderInference block: Inv<K>.() -> Unit) {}
+fun <K> foo(block: Inv<K>.() -> Unit) {}
 
 fun test(i: Int) {
     foo {

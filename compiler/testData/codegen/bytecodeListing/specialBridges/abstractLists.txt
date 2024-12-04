@@ -7,10 +7,7 @@ public abstract class ALA {
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public abstract method indexOf(p0: java.lang.Object): int
-    public abstract method lastIndexOf(p0: java.lang.Object): int
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
     public method remove(p0: int): java.lang.Object
@@ -33,10 +30,7 @@ public abstract class ALAN {
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public abstract method indexOf(p0: java.lang.Object): int
-    public abstract method lastIndexOf(p0: java.lang.Object): int
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
     public method remove(p0: int): java.lang.Object
@@ -56,8 +50,8 @@ public abstract class ALI {
     public method <init>(): void
     public method add(p0: int): boolean
     public method add(p0: int, p1: int): void
-    public synthetic method add(p0: int, p1: java.lang.Object): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
@@ -71,12 +65,12 @@ public abstract class ALI {
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
     public method remove(p0: int): int
-    public synthetic method remove(p0: int): java.lang.Object
+    public synthetic bridge method remove(p0: int): java.lang.Object
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public method set(p0: int, p1: int): java.lang.Integer
-    public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
     public bridge final method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public method toArray(): java.lang.Object[]
@@ -88,9 +82,9 @@ public abstract class ALIN {
     // source: 'abstractLists.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Integer): void
-    public synthetic method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge method add(p0: int, p1: java.lang.Object): void
     public method add(p0: java.lang.Integer): boolean
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
@@ -104,12 +98,12 @@ public abstract class ALIN {
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
     public method remove(p0: int): java.lang.Integer
-    public synthetic method remove(p0: int): java.lang.Object
+    public synthetic bridge method remove(p0: int): java.lang.Object
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public method set(p0: int, p1: java.lang.Integer): java.lang.Integer
-    public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
     public bridge final method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public method toArray(): java.lang.Object[]
@@ -120,9 +114,9 @@ public abstract class ALIN {
 public abstract class ALS {
     // source: 'abstractLists.kt'
     public method <init>(): void
-    public synthetic method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge method add(p0: int, p1: java.lang.Object): void
     public method add(p0: int, p1: java.lang.String): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
@@ -136,12 +130,12 @@ public abstract class ALS {
     public abstract method lastIndexOf(p0: java.lang.String): int
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
-    public synthetic method remove(p0: int): java.lang.Object
+    public synthetic bridge method remove(p0: int): java.lang.Object
     public method remove(p0: int): java.lang.String
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
     public method set(p0: int, p1: java.lang.String): java.lang.String
     public bridge final method size(): int
     public method subList(p0: int, p1: int): java.util.List
@@ -153,9 +147,9 @@ public abstract class ALS {
 public abstract class ALSN {
     // source: 'abstractLists.kt'
     public method <init>(): void
-    public synthetic method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge method add(p0: int, p1: java.lang.Object): void
     public method add(p0: int, p1: java.lang.String): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
@@ -169,12 +163,12 @@ public abstract class ALSN {
     public abstract method lastIndexOf(p0: java.lang.String): int
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
-    public synthetic method remove(p0: int): java.lang.Object
+    public synthetic bridge method remove(p0: int): java.lang.Object
     public method remove(p0: int): java.lang.String
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
     public method set(p0: int, p1: java.lang.String): java.lang.String
     public bridge final method size(): int
     public method subList(p0: int, p1: int): java.util.List
@@ -191,10 +185,7 @@ public abstract class ALT {
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public abstract method indexOf(p0: java.lang.Object): int
-    public abstract method lastIndexOf(p0: java.lang.Object): int
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
     public method remove(p0: int): java.lang.Object

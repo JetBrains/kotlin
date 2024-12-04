@@ -26,6 +26,9 @@ enum class CompilerOutputKind {
     BITCODE {
         override fun suffix(target: KonanTarget?) = ".bc"
     },
+    TEST_BUNDLE {
+        override fun suffix(target: KonanTarget?): String = ".xctest"
+    },
 
     DYNAMIC_CACHE {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.dynamicSuffix}"
@@ -34,6 +37,9 @@ enum class CompilerOutputKind {
     STATIC_CACHE {
         override fun suffix(target: KonanTarget?) = ".${target!!.family.staticSuffix}"
         override fun prefix(target: KonanTarget?) = target!!.family.staticPrefix
+    },
+    HEADER_CACHE {
+        override fun suffix(target: KonanTarget?) = ".header"
     };
 
     abstract fun suffix(target: KonanTarget? = null): String

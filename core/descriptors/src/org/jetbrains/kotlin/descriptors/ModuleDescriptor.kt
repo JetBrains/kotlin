@@ -37,7 +37,7 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
 
-    override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
+    override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R? {
         return visitor.visitModuleDeclaration(this, data)
     }
 

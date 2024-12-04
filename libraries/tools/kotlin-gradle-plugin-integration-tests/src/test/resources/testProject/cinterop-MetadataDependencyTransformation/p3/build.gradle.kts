@@ -9,12 +9,6 @@ class SourceSetHierarchyBuilder(private val node: KotlinSourceSet) {
     operator fun KotlinSourceSet.unaryMinus() = this.dependsOn(node)
 }
 
-repositories {
-    maven {
-        url = rootProject.buildDir.resolve("repo").toURI()
-    }
-}
-
 plugins {
     kotlin("multiplatform")
 }
@@ -22,9 +16,10 @@ plugins {
 kotlin {
     jvm()
     linuxX64()
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
     mingwX64("windowsX64")
-    mingwX86("windowsX86")
 
     val commonMain by sourceSets.getting
     val commonTest by sourceSets.getting
@@ -37,14 +32,16 @@ kotlin {
     val windowsAndLinuxTest by sourceSets.creating
     val linuxX64Main by sourceSets.getting
     val linuxX64Test by sourceSets.getting
-    val iosMain by sourceSets.getting
-    val iosTest by sourceSets.getting
-    val windowsMain by sourceSets.creating
-    val windowsTest by sourceSets.creating
+    val iosMain by sourceSets.creating
+    val iosTest by sourceSets.creating
+    val iosX64Main by sourceSets.getting
+    val iosArm64Main by sourceSets.getting
+    val iosSimulatorArm64Main by sourceSets.getting
+    val iosX64Test by sourceSets.getting
+    val iosArm64Test by sourceSets.getting
+    val iosSimulatorArm64Test by sourceSets.getting
     val windowsX64Main by sourceSets.getting
     val windowsX64Test by sourceSets.getting
-    val windowsX86Main by sourceSets.getting
-    val windowsX86Test by sourceSets.getting
 
     commonMain {
         -jvmMain
@@ -56,7 +53,11 @@ kotlin {
             - Does not include linuxArm64
              */
             -appleAndLinuxMain {
-                -iosMain
+                -iosMain {
+                    -iosX64Main
+                    -iosArm64Main
+                    -iosSimulatorArm64Main
+                }
                 -linuxX64Main
             }
 
@@ -67,13 +68,8 @@ kotlin {
             Expected to see p1:nativeMain cinterops
             */
             -windowsAndLinuxMain {
-                -windowsMain
-                -linuxX64Main
-            }
-
-            -windowsMain {
                 -windowsX64Main
-                -windowsX86Main
+                -linuxX64Main
             }
         }
     }
@@ -81,23 +77,26 @@ kotlin {
     commonTest {
         -nativeTest {
             -appleAndLinuxTest {
-                -iosTest
+                -iosTest {
+                    -iosX64Test
+                    -iosArm64Test
+                    -iosSimulatorArm64Test
+                }
                 -linuxX64Test
             }
 
             -windowsAndLinuxTest {
-                -windowsTest
-                -linuxX64Test
-            }
-
-            -windowsTest {
                 -windowsX64Test
-                -windowsX86Test
+                -linuxX64Test
             }
         }
     }
 
     sourceSets.commonMain.get().dependencies {
         implementation(project(":p2"))
+    }
+
+    sourceSets.all {
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
     }
 }

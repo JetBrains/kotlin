@@ -1,7 +1,7 @@
 FILE: main.kt
     @R|Ann|(value = vararg(String(a), String(b))) public final fun test_1(): R|kotlin/Unit| {
     }
-    @R|Ann|(value = <implicitArrayOf>(String(a), String(b))) public final fun test_2(): R|kotlin/Unit| {
+    @R|Ann|(value = vararg(<implicitArrayOf>(String(a), String(b)))) public final fun test_2(): R|kotlin/Unit| {
     }
     @R|Ann|(value = vararg(*<implicitArrayOf>(String(a), String(b)))) public final fun test_3(): R|kotlin/Unit| {
     }

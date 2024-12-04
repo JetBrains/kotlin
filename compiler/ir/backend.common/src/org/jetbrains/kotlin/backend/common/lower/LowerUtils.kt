@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.linkage.partial.isPartialLinkageRuntimeError
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.name.Name
 
 class DeclarationIrBuilder(
     generatorContext: IrGeneratorContext,
@@ -64,7 +63,7 @@ fun IrBuiltIns.createIrBuilder(
 ) =
     DeclarationIrBuilder(IrGeneratorContextBase(this), symbol, startOffset, endOffset)
 
-fun BackendContext.createIrBuilder(
+fun LoweringContext.createIrBuilder(
     symbol: IrSymbol,
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
@@ -95,7 +94,7 @@ inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockB
     this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
 
 fun IrBuilderWithScope.irIfThen(condition: IrExpression, thenPart: IrExpression) =
-    IrIfThenElseImpl(startOffset, endOffset, context.irBuiltIns.unitType).apply {
+    IrWhenImpl(startOffset, endOffset, context.irBuiltIns.unitType).apply {
         branches += IrBranchImpl(condition, thenPart)
     }
 
@@ -105,8 +104,8 @@ fun IrBuilderWithScope.irNot(arg: IrExpression) =
 fun IrBuilderWithScope.irThrow(arg: IrExpression) =
     IrThrowImpl(startOffset, endOffset, context.irBuiltIns.nothingType, arg)
 
-fun IrBuilderWithScope.irCatch(catchParameter: IrVariable, result: IrExpression): IrCatch =
-    IrCatchImpl(startOffset, endOffset, catchParameter, result)
+fun IrBuilderWithScope.irCatch(catchParameter: IrVariable, result: IrExpression, origin: IrStatementOrigin? = null): IrCatch =
+    IrCatchImpl(startOffset, endOffset, catchParameter, result, origin)
 
 fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
     IrTypeOperatorCallImpl(
@@ -115,7 +114,7 @@ fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
         arg
     )
 
-open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {
+open class IrBuildingTransformer(private val context: LoweringContext) : IrElementTransformerVoid() {
     private var currentBuilder: IrBuilderWithScope? = null
 
     protected val builder: IrBuilderWithScope
@@ -163,14 +162,26 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
     }
 }
 
-fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
+enum class ConstructorDelegationKind {
+    /** Calls another constructor of the same class. */
+    CALLS_THIS,
+
+    /** Calls the constructor of the super class. */
+    CALLS_SUPER,
+
+    /** The actual delegation is not known. The constructor call was replaced by a partial linkage error. */
+    PARTIAL_LINKAGE_ERROR
+}
+
+fun IrConstructor.delegationKind(irBuiltIns: IrBuiltIns): ConstructorDelegationKind {
     val constructedClass = parent as IrClass
     val superClass = constructedClass.superTypes
         .mapNotNull { it as? IrSimpleType }
         .firstOrNull { (it.classifier.owner as IrClass).run { kind == ClassKind.CLASS || kind == ClassKind.ANNOTATION_CLASS || kind == ClassKind.ENUM_CLASS } }
         ?: irBuiltIns.anyType
     var callsSuper = false
-    var numberOfCalls = 0
+    var numberOfDelegatingCalls = 0
+    var hasPartialLinkageError = false
     acceptChildrenVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
@@ -181,7 +192,7 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
         }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-            assert(++numberOfCalls == 1) { "More than one delegating constructor call: ${symbol.owner}" }
+            numberOfDelegatingCalls++
             val delegatingClass = expression.symbol.owner.parent as IrClass
             // TODO: figure out why Lazy IR multiplies Declarations for descriptors and fix it
             // It happens because of IrBuiltIns whose IrDeclarations are different for runtime and test
@@ -193,25 +204,21 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
                             " call to super class constructor. But was: $delegatingClass with '${delegatingClass.name}' name"
                 )
         }
-    })
-    assert(numberOfCalls == 1) { "Expected exactly one delegating constructor call but none encountered: ${symbol.owner}" }
-    return callsSuper
-}
 
-fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int, name: Name = this.name) = when (this) {
-    is ValueParameterDescriptor -> this.copy(newOwner, name, index)
-    is ReceiverParameterDescriptor -> ValueParameterDescriptorImpl(
-        containingDeclaration = newOwner,
-        original = null,
-        index = index,
-        annotations = annotations,
-        name = name,
-        outType = type,
-        declaresDefaultValue = false,
-        isCrossinline = false,
-        isNoinline = false,
-        varargElementType = null,
-        source = source
-    )
-    else -> throw Error("Unexpected parameter descriptor: $this")
+        override fun visitExpression(expression: IrExpression) {
+            hasPartialLinkageError = hasPartialLinkageError || expression.isPartialLinkageRuntimeError()
+            super.visitExpression(expression)
+        }
+    })
+
+    val delegationKind: ConstructorDelegationKind? = when (numberOfDelegatingCalls) {
+        0 -> if (hasPartialLinkageError) ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR else null
+        1 -> if (callsSuper) ConstructorDelegationKind.CALLS_SUPER else ConstructorDelegationKind.CALLS_THIS
+        else -> null
+    }
+
+    if (delegationKind != null)
+        return delegationKind
+    else
+        throw AssertionError("Expected exactly one delegating constructor call but $numberOfDelegatingCalls encountered: ${symbol.owner}")
 }

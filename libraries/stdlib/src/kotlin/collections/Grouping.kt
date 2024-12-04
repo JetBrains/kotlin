@@ -26,9 +26,9 @@ package kotlin.collections
 @SinceKotlin("1.1")
 public interface Grouping<T, out K> {
     /** Returns an [Iterator] over the elements of the source of this grouping. */
-    fun sourceIterator(): Iterator<T>
+    public fun sourceIterator(): Iterator<T>
     /** Extracts the key of an [element]. */
-    fun keyOf(element: T): K
+    public fun keyOf(element: T): K
 }
 
 /**

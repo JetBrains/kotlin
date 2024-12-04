@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArguments
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -110,15 +112,16 @@ class CandidateResolver(
             val typeArguments = ArrayList<KotlinType>()
             for (projection in ktTypeArguments) {
                 val type = projection.typeReference?.let { trace.bindingContext.get(BindingContext.TYPE, it) }
-                        ?: ErrorUtils.createErrorType("Star projection in a call")
+                    ?: ErrorUtils.createErrorType(ErrorTypeKind.STAR_PROJECTION_IN_CALL)
                 typeArguments.add(type)
             }
 
             val expectedTypeArgumentCount = candidateDescriptor.typeParameters.size
-            for (index in ktTypeArguments.size..expectedTypeArgumentCount - 1) {
+            for (index in ktTypeArguments.size until expectedTypeArgumentCount) {
                 typeArguments.add(
                     ErrorUtils.createErrorType(
-                        "Explicit type argument expected for " + candidateDescriptor.typeParameters[index].name
+                        ErrorTypeKind.MISSED_TYPE_ARGUMENT_FOR_TYPE_PARAMETER,
+                        candidateDescriptor.typeParameters[index].name.toString()
                     )
                 )
             }
@@ -138,7 +141,7 @@ class CandidateResolver(
 
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.mapArguments() = check {
         val argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
-            call, tracing, candidateCall
+            call, tracing, candidateCall, languageVersionSettings
         )
         if (!argumentMappingStatus.isSuccess) {
             candidateCall.addStatus(ARGUMENTS_MAPPING_ERROR)
@@ -274,7 +277,7 @@ class CandidateResolver(
         val expression = candidateCall.call.calleeExpression
 
         if (expression is KtSimpleNameExpression) {
-            // 'B' in 'class A: B()' is JetConstructorCalleeExpression
+            // 'B' in 'class A: B()' is KtConstructorCalleeExpression
             if (descriptor is ConstructorDescriptor) {
                 val modality = descriptor.constructedClass.modality
                 if (modality == Modality.ABSTRACT) {
@@ -370,7 +373,7 @@ class CandidateResolver(
                         } else {
                             resultingType = smartCast
                         }
-                    } else if (ErrorUtils.containsUninferredParameter(expectedType)) {
+                    } else if (ErrorUtils.containsUninferredTypeVariable(expectedType)) {
                         matchStatus = ArgumentMatchStatus.MATCH_MODULO_UNINFERRED_TYPES
                     }
 
@@ -386,7 +389,7 @@ class CandidateResolver(
                         }
                     }
                 }
-                argumentTypes.add(resultingType)
+                if (resultingType != null) argumentTypes.add(resultingType)
                 candidateCall.recordArgumentMatchStatus(argument, matchStatus)
             }
         }

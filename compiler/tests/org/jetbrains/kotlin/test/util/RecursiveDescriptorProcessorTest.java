@@ -40,11 +40,11 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
     }
 
     public void testRecursive() throws Exception {
-        File ktFile = new File("compiler/testData/recursiveProcessor/declarations.kt");
+        File file = new File("compiler/testData/recursiveProcessor/declarations.kt");
         File txtFile = new File("compiler/testData/recursiveProcessor/declarations.txt");
-        String text = FileUtil.loadFile(ktFile, true);
-        KtFile jetFile = KtTestUtil.createFile("declarations.kt", text, getEnvironment().getProject());
-        AnalysisResult result = KotlinTestUtils.analyzeFile(jetFile, getEnvironment());
+        String text = FileUtil.loadFile(file, true);
+        KtFile ktFile = KtTestUtil.createFile("declarations.kt", text, getEnvironment().getProject());
+        AnalysisResult result = KotlinTestUtils.analyzeFile(ktFile, getEnvironment());
         PackageViewDescriptor testPackage = result.getModuleDescriptor().getPackage(FqName.topLevel(Name.identifier("test")));
 
         List<String> descriptors = recursivelyCollectDescriptors(testPackage);

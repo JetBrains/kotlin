@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportInfo
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 
 class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
@@ -29,7 +29,7 @@ class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
 
     override fun getExtraImports(ktFile: KtFile): Collection<KtImportInfo> =
         ktFile.takeIf { runReadAction { it.isScript() } }?.let { file ->
-            val refinedConfiguration = ScriptDependenciesProvider.getInstance(file.project)
+            val refinedConfiguration = ScriptConfigurationsProvider.getInstance(file.project)
                 ?.getScriptConfiguration(file.originalFile as KtFile)
             refinedConfiguration?.defaultImports?.map {
                 ScriptExtraImportImpl(

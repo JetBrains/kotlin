@@ -1,0 +1,4 @@
+[IncompatibleAgpVersionTooLowFatalError | FATAL] Kotlin Gradle Plugin <-> Android Gradle Plugin compatibility issue:
+The applied Android Gradle Plugin version (7.2.0) is lower than the minimum supported 7.3.1.
+
+Please update the Android Gradle Plugin version to at least 7.3.1.

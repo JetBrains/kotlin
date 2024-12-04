@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 interface A {
     fun foo()
 }
@@ -69,8 +70,8 @@ fun test_6(d1: D) {
 }
 
 fun test_7(d1: D, d2: D) {
-    val a = <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>d1<!UNNECESSARY_SAFE_CALL!>?.<!>any<!>
-    val b = <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>d2<!UNNECESSARY_SAFE_CALL!>?.<!>any<!>
+    val a = d1<!UNNECESSARY_SAFE_CALL!>?.<!>any
+    val b = d2<!UNNECESSARY_SAFE_CALL!>?.<!>any
     a as A
     a.foo() // should be OK
     b as B

@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.test.services.ModuleStructureExtractor
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestServices
 
-typealias Constructor<T> = (TestServices) -> T
+typealias Constructor<R> = (TestServices) -> R
+
+typealias Constructor2<T, R> = (TestServices, T) -> R
 
 abstract class TestConfiguration {
     abstract val rootDisposable: Disposable
@@ -44,6 +46,6 @@ abstract class TestConfiguration {
 
 // ---------------------------- Utils ----------------------------
 
-fun <T, R> ((TestServices, T) -> R).bind(value: T): Constructor<R> {
-    return { this.invoke(it, value) }
+fun <R> (() -> R).coerce(): Constructor<R> {
+    return { this.invoke() }
 }

@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.NO_SMAP_DUMP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SMAP_DUMPS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
+import java.io.File
 
 class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
@@ -39,7 +41,7 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
         val originalFileNames = module.files.map { it.name }
 
         val compiledSmaps = CommonSMAPTestUtil.extractSMAPFromClasses(info.classFileFactory.getClassFiles()).mapNotNull {
-            val name = it.sourceFile.removePrefix("/")
+            val name = File(it.sourceFile).name
             val index = originalFileNames.indexOf(name)
             val testFile = module.files[index]
             if (NO_SMAP_DUMP in testFile.directives) return@mapNotNull null
@@ -57,15 +59,13 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
 
         dumper.builderForModule(module).apply {
             for (source in compiledData.values) {
-                appendLine("// FILE: ${source.sourceFile.removePrefix("/")}")
+                appendLine("// FILE: ${File(source.sourceFile).name}")
                 appendLine(source.smap ?: "")
             }
         }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
-
         val separateDumpEnabled = separateDumpsEnabled()
         val isSeparateCompilation = isSeparateCompilation()
 
@@ -76,7 +76,17 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
         }
 
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val expectedFile = testDataFile.withExtension(extension)
+        val firExpectedFile = testDataFile.withExtension("fir.$extension")
+        val expectedFile =
+            if (testServices.moduleStructure.modules.first().frontendKind == FrontendKinds.FIR && firExpectedFile.exists())
+                firExpectedFile
+            else testDataFile.withExtension(extension)
+
+        if (dumper.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile, DUMP_SMAP)
+            return
+        }
+
         assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
 
         if (separateDumpEnabled && isSeparateCompilation) {

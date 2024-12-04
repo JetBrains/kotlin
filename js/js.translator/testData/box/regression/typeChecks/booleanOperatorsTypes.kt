@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JS
-// EXPECTED_REACHABLE_NODES: 1281
-
 package foo
 
 fun check(x: Any?) {

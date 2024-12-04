@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * Here we desugar b.text += "" into b.text = b.text + ""
  *                                    ^1       ^2
@@ -11,7 +12,7 @@
 public class B {
     public void setText(String text) {}
     public String getText() {
-        return ""
+        return "";
     }
 }
 

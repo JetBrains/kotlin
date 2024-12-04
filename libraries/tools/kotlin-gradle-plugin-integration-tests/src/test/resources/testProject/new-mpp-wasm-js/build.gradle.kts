@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform").version("<pluginMarkerVersion>")
+    kotlin("multiplatform")
 }
 
 repositories {
@@ -8,9 +8,9 @@ repositories {
 }
 
 kotlin {
-    wasm {
+    wasmJs {
         moduleName = "redefined-wasm-module-name"
-        browser {
+        <JsEngine> {
         }
         binaries.executable()
     }

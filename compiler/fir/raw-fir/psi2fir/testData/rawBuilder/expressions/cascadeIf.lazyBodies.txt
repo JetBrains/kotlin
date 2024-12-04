@@ -1,0 +1,3 @@
+FILE: cascadeIf.kt
+    public? final? fun foo(first: Boolean, second: Boolean, third: Boolean): Int { LAZY_BLOCK }
+    public? final? fun example(): R|kotlin/Unit| { LAZY_BLOCK }

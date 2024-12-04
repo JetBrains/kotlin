@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ClassifierAliasingPackageFragmentDescriptor
-import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -79,8 +77,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         assertEquals(sharedTarget, results.sharedTarget)
 
         val sharedModuleAsExpected: SerializedMetadata = analyzedModules.commonizedModules.getValue(sharedTarget)
-        val sharedModuleByCommonizer: SerializedMetadata =
-            (results.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).metadata
+        val sharedModuleByCommonizer: SerializedMetadata = results.modulesByTargets.getValue(sharedTarget).single().metadata
 
         assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, sharedTarget)
     }
@@ -194,7 +191,8 @@ private class AnalyzedModules(
 
     fun toCommonizerParameters(
         resultsConsumer: ResultsConsumer,
-        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
+        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) },
+        commonizerSettings: CommonizerSettings = DefaultCommonizerSettings,
     ) = CommonizerParameters(
         outputTargets = setOf(SharedCommonizerTarget(leafTargets.toSet())),
         manifestProvider = TargetDependent(sharedTarget.withAllLeaves(), manifestDataProvider),
@@ -211,6 +209,7 @@ private class AnalyzedModules(
             )
         },
         resultsConsumer = resultsConsumer,
+        settings = commonizerSettings,
     )
 
     companion object {
@@ -390,7 +389,6 @@ private object PatchingTestDescriptorVisitor : DeclarationDescriptorVisitorEmpty
         fun recurse(packageFqName: FqName) {
             val ownPackageMemberScopes = packageFragmentProvider.packageFragments(packageFqName)
                 .asSequence()
-                .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor && it !is ClassifierAliasingPackageFragmentDescriptor }
                 .map { it.getMemberScope() }
                 .filter { it != MemberScope.Empty }
                 .toList()

@@ -17,41 +17,40 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.js.di.createContainerForJS
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
-import org.jetbrains.kotlin.utils.JsMetadataVersion
 
-abstract class AbstractTopDownAnalyzerFacadeForJS {
+abstract class AbstractTopDownAnalyzerFacadeForWeb {
+    abstract val analyzerServices: PlatformDependentAnalyzerServices
+    abstract val platform: TargetPlatform
 
     fun analyzeFiles(
         files: Collection<KtFile>,
         project: Project,
         configuration: CompilerConfiguration,
-        moduleDescriptors: List<ModuleDescriptorImpl>,
-        friendModuleDescriptors: List<ModuleDescriptorImpl>,
+        moduleDescriptors: List<ModuleDescriptor>,
+        friendModuleDescriptors: List<ModuleDescriptor>,
         targetEnvironment: TargetEnvironment,
         thisIsBuiltInsModule: Boolean = false,
-        customBuiltInsModule: ModuleDescriptorImpl? = null
+        customBuiltInsModule: ModuleDescriptor? = null
     ): JsAnalysisResult {
         require(!thisIsBuiltInsModule || customBuiltInsModule == null) {
             "Can't simultaneously use custom built-ins module and set current module as built-ins"
@@ -68,7 +67,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
             ProjectContext(project, "TopDownAnalyzer for JS"),
             Name.special("<$moduleName>"),
             builtIns,
-            platform = JsPlatforms.defaultJsPlatform
+            platform = platform
         )
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
@@ -79,11 +78,12 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         }
 
         val dependencies = mutableSetOf(context.module) + moduleDescriptors + builtIns.builtInsModule
-        context.module.setDependencies(dependencies.toList(), friendModuleDescriptors.toSet())
+        @Suppress("UNCHECKED_CAST")
+        context.module.setDependencies(dependencies.toList() as List<ModuleDescriptorImpl>, friendModuleDescriptors.toSet() as Set<ModuleDescriptorImpl>)
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
-        val trace = BindingTraceContext()
+        val trace = BindingTraceContext(project)
         trace.record(MODULE_KIND, context.module, moduleKind)
         return analyzeFilesWithGivenTrace(files, trace, context, configuration, targetEnvironment, project, additionalPackages)
     }
@@ -102,11 +102,12 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         configuration: CompilerConfiguration,
         targetEnvironment: TargetEnvironment,
         project: Project,
-        additionalPackages: List<PackageFragmentProvider> = emptyList()
+        additionalPackages: List<PackageFragmentProvider> = emptyList(),
     ): JsAnalysisResult {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
         val inlineConstTracker = configuration.get(CommonConfigurationKeys.INLINE_CONST_TRACKER) ?: InlineConstTracker.DoNothing
+        val enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER) ?: EnumWhenTracker.DoNothing
         val languageVersionSettings = configuration.languageVersionSettings
         val packageFragment = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER]?.let {
             loadIncrementalCacheMetadata(it, moduleContext, lookupTracker, languageVersionSettings)
@@ -119,8 +120,11 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
             lookupTracker,
             expectActualTracker,
             inlineConstTracker,
+            enumWhenTracker,
             additionalPackages + listOfNotNull(packageFragment),
             targetEnvironment,
+            analyzerServices,
+            platform
         )
 
         val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
@@ -156,61 +160,13 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         }
     }
 
-    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext, errorPolicy: ErrorTolerancePolicy): Boolean {
-        var hasErrors = false
-        try {
-            AnalyzingUtils.throwExceptionOnErrors(bindingContext)
-        } catch (ex: Exception) {
-            if (!errorPolicy.allowSemanticErrors) {
-                throw ex
-            } else {
-                hasErrors = true
-            }
+    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext): Boolean {
+        AnalyzingUtils.throwExceptionOnErrors(bindingContext)
+
+        for (file in allFiles) {
+            AnalyzingUtils.checkForSyntacticErrors(file)
         }
 
-        try {
-            for (file in allFiles) {
-                AnalyzingUtils.checkForSyntacticErrors(file)
-            }
-        } catch (ex: Exception) {
-            if (!errorPolicy.allowSyntaxErrors) {
-                throw ex
-            } else {
-                hasErrors = true
-            }
-        }
-
-        return hasErrors
-    }
-}
-
-object TopDownAnalyzerFacadeForJS : AbstractTopDownAnalyzerFacadeForJS() {
-
-    override fun loadIncrementalCacheMetadata(
-        incrementalData: IncrementalDataProvider,
-        moduleContext: ModuleContext,
-        lookupTracker: LookupTracker,
-        languageVersionSettings: LanguageVersionSettings
-    ): PackageFragmentProvider {
-        val metadata = PackagesWithHeaderMetadata(
-            incrementalData.headerMetadata,
-            incrementalData.compiledPackageParts.values.map { it.metadata },
-            JsMetadataVersion(*incrementalData.metadataVersion)
-        )
-        return KotlinJavascriptSerializationUtil.readDescriptors(
-            metadata, moduleContext.storageManager, moduleContext.module,
-            CompilerDeserializationConfiguration(languageVersionSettings), lookupTracker
-        )
-    }
-
-    @JvmStatic
-    fun analyzeFiles(
-        files: Collection<KtFile>,
-        config: JsConfig
-    ): JsAnalysisResult {
-        config.init()
-        return analyzeFiles(
-            files, config.project, config.configuration, config.moduleDescriptors, config.friendModuleDescriptors, config.targetEnvironment,
-        )
+        return false
     }
 }

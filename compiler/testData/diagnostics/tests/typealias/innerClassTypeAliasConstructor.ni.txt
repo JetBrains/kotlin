@@ -4,7 +4,7 @@ public fun test1(/*0*/ x: Outer): OI /* = Outer.Inner */
 public fun test2(/*0*/ x: Generic<kotlin.Int>): GI<kotlin.Int> /* = Generic<kotlin.Int>.Inner */
 public fun </*0*/ T> test3(/*0*/ x: Generic<T>): GI<T> /* = Generic<T>.Inner */
 public fun </*0*/ T> test4(/*0*/ x: Generic<kotlin.collections.List<T>>): GI<kotlin.collections.List<T>> /* = Generic<kotlin.collections.List<T>>.Inner */
-public fun </*0*/ T> test5(/*0*/ x: Generic<T>): [ERROR : Error function type]
+public fun </*0*/ T> test5(/*0*/ x: Generic<T>): [Error type: Return type for function cannot be resolved]
 public fun Generic<kotlin.Int>.test6(): GIntI /* = Generic<kotlin.Int>.Inner */
 
 public final class Generic</*0*/ T> {

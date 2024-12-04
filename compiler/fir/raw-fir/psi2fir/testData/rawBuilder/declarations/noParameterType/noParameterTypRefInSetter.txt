@@ -1,0 +1,5 @@
+FILE: noParameterTypRefInSetter.kt
+    public? final? var x: Int
+        public? get(): Int
+        public? set(value: Int): R|kotlin/Unit| {
+        }

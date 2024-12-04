@@ -2,7 +2,7 @@ package
 
 package kt799 {
     public val a: kotlin.Nothing
-    public val b: [ERROR : Return not allowed]
+    public val b: [Error type: Return not allowed]
     public val c: kotlin.Unit
     public fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit
     public fun f(/*0*/ mi: kotlin.Int = ...): kotlin.Unit

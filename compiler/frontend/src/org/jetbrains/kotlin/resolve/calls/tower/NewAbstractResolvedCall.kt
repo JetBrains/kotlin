@@ -36,6 +36,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
     abstract val psiKotlinCall: PSIKotlinCall
     abstract val typeApproximator: TypeApproximator
     abstract val freshSubstitutor: FreshVariableNewTypeSubstitutor?
+    abstract val diagnostics: Collection<KotlinCallDiagnostic>
 
     protected open val positionDependentApproximation = false
 
@@ -46,6 +47,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
 
     abstract fun updateDispatchReceiverType(newType: KotlinType)
     abstract fun updateExtensionReceiverType(newType: KotlinType)
+    abstract fun updateContextReceiverTypes(newTypes: List<KotlinType>)
     abstract fun containsOnlyOnlyInputTypesErrors(): Boolean
     abstract fun setResultingSubstitutor(substitutor: NewTypeSubstitutor?)
     abstract fun argumentToParameterMap(

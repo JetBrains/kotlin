@@ -1,41 +1,46 @@
-interface In<in T : Any?> {
-
+interface A {
 }
 
-inline fun <reified T : Any?> In<T>.isT(): Boolean {
-  return <this> is T
+interface A1 : A {
+}
+
+interface A2 : A {
+}
+
+interface B {
+}
+
+interface In<in T : Any?> {
+}
+
+interface Z1 : A, B {
+}
+
+interface Z2 : A, B {
 }
 
 inline fun <reified T : Any?> In<T>.asT() {
   <this> as T /*~> Unit */
 }
 
+inline fun <reified T : Any?> In<T>.isT(): Boolean {
+  return <this> is T
+}
+
 fun <S : Any?> sel(x: S, y: S): S {
   return x
 }
 
-interface A {
-
+fun testInAs1(x: In<A>, y: In<B>) {
+  return sel<In<Nothing>>(x = x, y = y).asT<Any>()
 }
 
-interface B {
-
+fun testInAs2(x: In<Z1>, y: In<Z2>) {
+  return sel<In<Nothing>>(x = x, y = y).asT<Any>()
 }
 
-interface A1 : A {
-
-}
-
-interface A2 : A {
-
-}
-
-interface Z1 : A, B {
-
-}
-
-interface Z2 : A, B {
-
+fun testInAs3(x: In<A1>, y: In<A2>) {
+  return sel<In<Nothing>>(x = x, y = y).asT<A>()
 }
 
 fun testInIs1(x: In<A>, y: In<B>): Boolean {
@@ -50,14 +55,3 @@ fun testInIs3(x: In<A1>, y: In<A2>): Boolean {
   return sel<In<Nothing>>(x = x, y = y).isT<A>()
 }
 
-fun testInAs1(x: In<A>, y: In<B>) {
-  return sel<In<Nothing>>(x = x, y = y).asT<Any>()
-}
-
-fun testInAs2(x: In<Z1>, y: In<Z2>) {
-  return sel<In<Nothing>>(x = x, y = y).asT<Any>()
-}
-
-fun testInAs3(x: In<A1>, y: In<A2>) {
-  return sel<In<Nothing>>(x = x, y = y).asT<A>()
-}

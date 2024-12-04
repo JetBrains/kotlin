@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1284
 // JS: generate wrong code for nested if
 // http://youtrack.jetbrains.com/issue/KT-5576
 

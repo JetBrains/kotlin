@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import org.jetbrains.kotlin.types.TypeRefinement
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 interface CapturedTypeConstructor : CapturedTypeConstructorMarker, TypeConstructor {
@@ -75,14 +76,16 @@ class CapturedType(
     val typeProjection: TypeProjection,
     override val constructor: CapturedTypeConstructor = CapturedTypeConstructorImpl(typeProjection),
     override val isMarkedNullable: Boolean = false,
-    override val annotations: Annotations = Annotations.EMPTY
+    override val attributes: TypeAttributes = TypeAttributes.Empty
 ) : SimpleType(), SubtypingRepresentatives, CapturedTypeMarker {
+
     override val arguments: List<TypeProjection>
         get() = listOf()
 
     override val memberScope: MemberScope
         get() = ErrorUtils.createErrorScope(
-            "No member resolution should be done on captured type, it used only during constraint system resolution", true
+            ErrorScopeKind.CAPTURED_TYPE_SCOPE,
+            throwExceptions = true
         )
 
     override val subTypeRepresentative: KotlinType
@@ -100,15 +103,15 @@ class CapturedType(
 
     override fun makeNullableAsSpecified(newNullability: Boolean): CapturedType {
         if (newNullability == isMarkedNullable) return this
-        return CapturedType(typeProjection, constructor, newNullability, annotations)
+        return CapturedType(typeProjection, constructor, newNullability, attributes)
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations): CapturedType =
-        CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations)
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
+        CapturedType(typeProjection, constructor, isMarkedNullable, newAttributes)
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
-        CapturedType(typeProjection.refine(kotlinTypeRefiner), constructor, isMarkedNullable, annotations)
+        CapturedType(typeProjection.refine(kotlinTypeRefiner), constructor, isMarkedNullable, attributes)
 }
 
 fun createCapturedType(typeProjection: TypeProjection): KotlinType = CapturedType(typeProjection)

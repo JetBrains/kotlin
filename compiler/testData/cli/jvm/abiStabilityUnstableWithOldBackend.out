@@ -1,4 +1,0 @@
-warning: language version is automatically inferred to 1.5 when using the old JVM backend. Consider specifying -language-version explicitly, or remove -Xuse-old-backend
-warning: -Xuse-old-backend is deprecated and will be removed in a future release
-error: -Xabi-stability=unstable is not supported in the old JVM backend
-COMPILATION_ERROR

@@ -10,6 +10,9 @@ package org.jetbrains.kotlin.scripting.ide_common.idea.util
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
 import org.jetbrains.kotlin.types.typeUtil.substitute
@@ -69,10 +72,10 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
         return AbbreviatedType(it.expandedType, it.abbreviation.approximateNonDynamicFlexibleTypes(preferNotNull))
     }
     return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-        annotations,
+        attributes,
         constructor,
         arguments.map { it.substitute { type -> type.approximateFlexibleTypes(preferNotNull = true) } },
         isMarkedNullable,
-        ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
+        ErrorUtils.createErrorScope(ErrorScopeKind.UNSUPPORTED_TYPE_SCOPE, true)
     )
 }

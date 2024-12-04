@@ -5,14 +5,17 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
-import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
+import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
 import org.junit.Assert
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Test
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
@@ -21,22 +24,37 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
-fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<EvaluationResult> =
+fun evalFile(
+    scriptFile: File,
+    cacheDir: File? = null,
+    compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
+): ResultWithDiagnostics<EvaluationResult> =
     withProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY, cacheDir?.absolutePath ?: "") {
-        val scriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>(
-            evaluation = {
-                jvm {
-                    baseClassLoader(null)
-                }
-                constructorArgs(emptyArray<String>())
-                enableScriptsInstancesSharing()
-            }
-        )
-
-        BasicJvmScriptingHost().eval(
-            scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration
-        )
+        evalFileWithConfigurations(scriptFile, compilation, evaluation)
     }
+
+fun evalFileWithConfigurations(
+    scriptFile: File,
+    compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
+): ResultWithDiagnostics<EvaluationResult> {
+    val scriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>(
+        compilation = compilation,
+        evaluation = {
+            evaluation()
+            jvm {
+                baseClassLoader(null)
+            }
+            constructorArgs(emptyArray<String>())
+            enableScriptsInstancesSharing()
+        }
+    )
+
+    return BasicJvmScriptingHost().eval(
+        scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration
+    )
+}
 
 
 const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
@@ -44,6 +62,12 @@ val OUT_FROM_IMPORT_TEST = listOf("Hi from common", "Hi from middle", "Hi from m
 
 
 class MainKtsTest {
+
+    @Test
+    fun testEmptyFile() {
+        val res = evalFile(File("$TEST_DATA_ROOT/empty.main.kts"))
+        assertSucceeded(res)
+    }
 
     @Test
     fun testResolveJunit() {
@@ -59,7 +83,7 @@ class MainKtsTest {
         val resErr = evalFile(File("$TEST_DATA_ROOT/resolve-error-hamcrest-via-junit.main.kts"))
         Assert.assertTrue(
             resErr is ResultWithDiagnostics.Failure &&
-                    resErr.reports.any { it.message == "Unresolved reference: hamcrest" }
+                    resErr.reports.any { it.message.contains("Unresolved reference") && it.message.contains("hamcrest") }
         )
     }
 
@@ -96,7 +120,7 @@ class MainKtsTest {
     @Test
     fun testUnresolvedJunit() {
         val res = evalFile(File("$TEST_DATA_ROOT/hello-unresolved-junit.main.kts"))
-        assertFailed("Unresolved reference: junit", res)
+        assertFailed("Unresolved reference 'junit'.", res)
     }
 
     @Test
@@ -123,6 +147,17 @@ class MainKtsTest {
     }
 
     @Test
+    fun testImportWithCapture() {
+
+        val out = captureOut {
+            val res = evalFile(File("$TEST_DATA_ROOT/import-with-capture-test.main.kts"))
+            assertSucceeded(res)
+        }.lines()
+
+        Assert.assertEquals(OUT_FROM_IMPORT_TEST, out)
+    }
+
+    @Test
     fun testDuplicateImportError() {
         val res = evalFile(File("$TEST_DATA_ROOT/import-duplicate-test.main.kts"))
         assertFailed("Duplicate imports:", res)
@@ -131,19 +166,27 @@ class MainKtsTest {
     @Test
     fun testCyclicImportError() {
         val res = evalFile(File("$TEST_DATA_ROOT/import-cycle-1.main.kts"))
-        assertFailed("Unable to handle recursive script dependencies", res)
+        // TODO: the second error is due to the late cycle detection, see TODO in makeCompiledScript$makeOtherScripts
+        // TODO: third error is due to the early IR backend error, consider processing it in makeCompiledScript$makeOtherScripts
+        assertFailedAny("Unable to handle recursive script dependencies", "is already bound", "Duplicate JVM class name", res = res)
     }
 
     @Test
     fun testCompilerOptions() {
-
         val out = captureOut {
-            val res = evalFile(File("$TEST_DATA_ROOT/compile-java6.main.kts"))
+            val res = evalFile(File("$TEST_DATA_ROOT/compiler-options.main.kts"))
             assertSucceeded(res)
-            assertIsJava6Bytecode(res)
+
+            // `-Xabi-stability=unstable` unsets 5th bit in `Metadata.extraInt` (see kdoc). Let's check that it had effect.
+            val scriptClass = res.valueOrThrow().returnValue.scriptClass!!.java
+            val metadata = scriptClass.declaredAnnotations.single { it.annotationClass.java.name == "kotlin.Metadata" }
+            val extraInt = metadata.javaClass.getDeclaredMethod("xi").invoke(metadata) as Int
+            assertTrue(extraInt and (1 shl 5) == 0) {
+                "Incorrect value of Metadata.extraInt; probably the compiler flag -Xabi-stability=unstable wasn't recognized: $extraInt"
+            }
         }.lines()
 
-        Assert.assertEquals(listOf("Hi from sub", "Hi from super", "Hi from random"), out)
+        assertEquals(listOf("Hi from sub", "Hi from super", "Hi from random"), out)
     }
 
     @Test
@@ -195,7 +238,8 @@ class MainKtsTest {
     }
 
     @Test
-    fun testScriptFileLocationDefaultVariableRedefinition() {
+    @Ignore // Overriding provided properties is no supported yet, the test was working by errorneous coincidence. See #KT-52986
+    fun ignore_testScriptFileLocationDefaultVariableRedefinition() {
         val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-redefine-variable.kts"))
         assertSucceeded(resOk)
         val resultValue = resOk.valueOrThrow().returnValue
@@ -205,35 +249,87 @@ class MainKtsTest {
         assertEquals("success", value)
     }
 
-    private fun assertIsJava6Bytecode(res: ResultWithDiagnostics<EvaluationResult>) {
-        val scriptClassResource = res.valueOrThrow().returnValue.scriptClass!!.java.run {
-            getResource("$simpleName.class")
-        }
+    @Test
+    fun testKt48812() {
+        val res = evalFile(File("$TEST_DATA_ROOT/kt48812.main.kts"))
+        assertSucceeded(res)
+    }
 
-        DataInputStream(ByteArrayInputStream(scriptClassResource.readBytes())).use { stream ->
-            val header = stream.readInt()
-            if (0xCAFEBABE.toInt() != header) throw IOException("Invalid header class header: $header")
-            @Suppress("UNUSED_VARIABLE")
-            val minor = stream.readUnsignedShort()
-            val major = stream.readUnsignedShort()
-            Assert.assertTrue(major == 50)
-        }
+    @Test
+    fun testHelloSerialization() {
+        // the embeddable plugin is needed for this test, because embeddable compiler is used.
+        val serializationPluginClasspath = System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
+        val out = captureOut {
+            val res = evalFile(
+                File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts"),
+                compilation = {
+                    compilerOptions(
+                        "-Xplugin=$serializationPluginClasspath"
+                    )
+                }
+            )
+            assertSucceeded(res)
+        }.lines()
+        assertEquals(
+            listOf("""{"firstName":"James","lastName":"Bond"}""", "User(firstName=James, lastName=Bond)"),
+            out
+        )
+    }
+
+    @Test
+    fun testUtf8Bom() {
+        val scriptPath = "$TEST_DATA_ROOT/utf8bom.main.kts"
+        Assert.assertTrue("Expect file '$scriptPath' to start with UTF-8 BOM", File(scriptPath).readText().startsWith(UTF8_BOM))
+        val res = evalFile(File(scriptPath))
+        assertSucceeded(res)
+    }
+
+    @Test
+    fun testUseSlf4j() {
+        val err = captureOutAndErr {
+            val res = evalFile(File("$TEST_DATA_ROOT/use-slf4j.main.kts"))
+            assertSucceeded(res)
+        }.second
+        Assert.assertTrue(
+            "Expect info log line with \"test-slf4j\" text, got:\n$err",
+            err.contains("INFO  - test-slf4j")
+        )
     }
 
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
         Assert.assertTrue(
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
+            "test failed:\n  ${res.reports.joinToString("\n  ") { it.severity.name + ": " + it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
             res is ResultWithDiagnostics.Success
         )
     }
 
     private fun assertFailed(expectedError: String, res: ResultWithDiagnostics<EvaluationResult>) {
+        assertFailedAny(expectedError, res = res)
+    }
+
+    private fun assertFailedAny(vararg expectedErrors: String, res: ResultWithDiagnostics<EvaluationResult>) {
+        val reports = res.reports.map { diag ->
+            diag.message +
+                    generateSequence(diag.exception) { it.cause }
+                        .filter { !(it.message != null && diag.message.contains(it.message!!)) }
+                        .joinToString("\n  Caused by: ", "\n  ") { it.message ?: it.toString() }
+        }
+        val expected = when (expectedErrors.size) {
+            0 -> ""
+            1 -> " with the message \"${expectedErrors[0]}\""
+            else -> " with any of the messages: ${expectedErrors.joinToString("\", \"", "\"", "\";")}"
+        }
         Assert.assertTrue(
-            "test failed - expecting a failure with the message \"$expectedError\" but received " +
+            "test failed - expecting a failure$expected but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
-                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("$expectedError") }
+                    ":\n  ${reports.joinToString("\n  ")}",
+            res is ResultWithDiagnostics.Failure && reports.any { report -> expectedErrors.any { report.containsIgnoringPunctuation(it) } }
         )
+    }
+
+    private val regexNonWord = "\\W".toRegex()
+    private fun String.containsIgnoringPunctuation(it: String): Boolean {
+        return this.replace(regexNonWord, "").contains(it.replace(regexNonWord, ""))
     }
 
     private fun evalSuccessWithOut(scriptFile: File, cacheDir: File? = null): List<String> =
@@ -329,17 +425,24 @@ class CacheDirectoryDetectorTest {
     private val directories = Directories(systemProperties, environment)
 }
 
-internal fun captureOut(body: () -> Unit): String {
+internal fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
+
+internal fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
     val outStream = ByteArrayOutputStream()
+    val errStream = ByteArrayOutputStream()
     val prevOut = System.out
+    val prevErr = System.err
     System.setOut(PrintStream(outStream))
+    System.setErr(PrintStream(errStream))
     try {
         body()
     } finally {
         System.out.flush()
+        System.err.flush()
         System.setOut(prevOut)
+        System.setErr(prevErr)
     }
-    return outStream.toString().trim()
+    return outStream.toString().trim() to errStream.toString().trim()
 }
 
 internal fun <T> withProperty(name: String, value: String?, body: () -> T): T {

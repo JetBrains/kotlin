@@ -1,4 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -9,7 +10,7 @@ class Outer <!WRONG_MODIFIER_TARGET!>expect<!> constructor() {
 
     <!WRONG_MODIFIER_TARGET!>expect<!> init {}
 
-    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!><!WRONG_MODIFIER_TARGET!>expect<!> fun foo()<!>
+    <!WRONG_MODIFIER_TARGET!>expect<!> <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun foo()<!>
     <!WRONG_MODIFIER_TARGET!>expect<!> val bar: Int
 }
 
@@ -23,7 +24,7 @@ fun foo() {
 // FILE: jvm.kt
 
 class Outer <!ACTUAL_WITHOUT_EXPECT!>actual constructor()<!> {
-    actual class Nested
+    actual class <!ACTUAL_WITHOUT_EXPECT!>Nested<!>
 
     <!WRONG_MODIFIER_TARGET!>actual<!> init {}
 }

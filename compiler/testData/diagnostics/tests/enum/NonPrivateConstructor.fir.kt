@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class E <!NON_PRIVATE_CONSTRUCTOR_IN_ENUM!>public constructor(val x: Int)<!> {
     FIRST();
 

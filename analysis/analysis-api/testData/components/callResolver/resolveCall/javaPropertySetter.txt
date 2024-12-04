@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = { 42 -> (v: kotlin.Int) }
-targetFunction = /JavaClass.setFoo(<dispatch receiver>: JavaClass, v: kotlin.Int): kotlin.Unit
-substitutor = <empty substitutor>

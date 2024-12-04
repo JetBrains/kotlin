@@ -1,12 +1,12 @@
-// !LANGUAGE: +RepeatableAnnotations
-// !OPT_IN: kotlin.ExperimentalStdlibApi
+// LANGUAGE: +RepeatableAnnotations
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // FULL_JDK
 // WITH_REFLECT
 
-// Test failed to run to completion. Reason: 'Instrumentation run failed due to 'Native crash''. Check device logcat for details
-// IGNORE_BACKEND: ANDROID
+// In light analysis mode, repeated annotations are not wrapped into the container. This is by design, so that in kapt stubs repeated
+// annotations will be visible unwrapped.
+// IGNORE_LIGHT_ANALYSIS
 
 import kotlin.annotation.AnnotationTarget.*
 import kotlin.reflect.KAnnotatedElement
@@ -31,7 +31,7 @@ fun check(element: KAnnotatedElement) {
 }
 
 @Repeatable
-@Target(CLASS, FUNCTION, PROPERTY, TYPE)
+@Target(CLASS, FUNCTION, PROPERTY)
 annotation class A(val value: String)
 
 @A("O") @A("") @A("K")
@@ -43,12 +43,9 @@ var p = 1
 @A("O") @A("K")
 class Z
 
-fun g(): @A("O") @A("K") @A("") Unit {}
-
 fun box(): String {
     check(::f)
     check(::p)
     check(Z::class)
-    check(::g.returnType)
     return "OK"
 }

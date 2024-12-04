@@ -1,11 +1,11 @@
 FILE: localConstructor.kt
     public final fun test(): R|kotlin/Unit| {
         local final class Local : R|kotlin/Any| {
-            public constructor(): R|Local| {
+            public constructor(): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        lval l: R|Local| = R|/Local.Local|()
+        lval l: R|<local>/Local| = R|<local>/Local.Local|()
     }

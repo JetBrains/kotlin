@@ -1,4 +1,4 @@
-depends = CoreFoundation Foundation Network Security darwin posix
+depends = CFCGTypes CoreFoundation CoreFoundationBase Foundation Network Security darwin posix
 language = Objective-C
 package = platform.NetworkExtension
 modules = NetworkExtension

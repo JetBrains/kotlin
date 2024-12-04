@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.*
-import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
-import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -17,20 +15,19 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for progressions built using the `downTo` extension function. */
-internal class DownToHandler(private val context: CommonBackendContext) :
-    ProgressionHandler {
-
+internal class DownToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
-
     private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
-    override val matcher = SimpleCalleeMatcher {
-        singleArgumentExtension(FqName("kotlin.ranges.downTo"), progressionElementTypes)
-        parameterCount { it == 1 }
-        parameter(0) { it.type in progressionElementTypes }
+    override fun matchIterable(expression: IrCall): Boolean {
+        val callee = expression.symbol.owner
+        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
+                callee.extensionReceiverParameter?.type in progressionElementTypes &&
+                callee.kotlinFqName == FqName("kotlin.ranges.downTo")
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =
@@ -67,38 +64,38 @@ internal class DownToHandler(private val context: CommonBackendContext) :
             if (preferJavaLikeCounterLoop || this.constLongValue == 0L) return null
         }
 
-        val irConst = this as? IrConst<*> ?: return null
+        val irConst = this as? IrConst ?: return null
         return when (irConst.kind) {
             IrConstKind.Char -> {
-                val charValue = IrConstKind.Char.valueOf(irConst)
+                val charValue = irConst.value as Char
                 if (charValue != Char.MIN_VALUE)
                     IrConstImpl.char(startOffset, endOffset, type, charValue.dec())
                 else
                     null
             }
             IrConstKind.Byte -> {
-                val byteValue = IrConstKind.Byte.valueOf(irConst)
+                val byteValue = irConst.value as Byte
                 if (byteValue != Byte.MIN_VALUE)
                     IrConstImpl.byte(startOffset, endOffset, type, byteValue.dec())
                 else
                     null
             }
             IrConstKind.Short -> {
-                val shortValue = IrConstKind.Short.valueOf(irConst)
+                val shortValue = irConst.value as Short
                 if (shortValue != Short.MIN_VALUE)
                     IrConstImpl.short(startOffset, endOffset, type, shortValue.dec())
                 else
                     null
             }
             IrConstKind.Int -> {
-                val intValue = IrConstKind.Int.valueOf(irConst)
+                val intValue = irConst.value as Int
                 if (intValue != Int.MIN_VALUE)
                     IrConstImpl.int(startOffset, endOffset, type, intValue.dec())
                 else
                     null
             }
             IrConstKind.Long -> {
-                val longValue = IrConstKind.Long.valueOf(irConst)
+                val longValue = irConst.value as Long
                 if (longValue != Long.MIN_VALUE)
                     IrConstImpl.long(startOffset, endOffset, type, longValue.dec())
                 else

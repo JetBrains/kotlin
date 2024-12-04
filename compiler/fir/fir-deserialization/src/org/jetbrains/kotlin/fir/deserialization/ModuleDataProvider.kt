@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.utils.addToStdlib.same
 import java.nio.file.Path
 
 abstract class ModuleDataProvider {
     abstract val platform: TargetPlatform
-    abstract val analyzerServices: PlatformDependentAnalyzerServices
     abstract val allModuleData: Collection<FirModuleData>
 
     abstract fun getModuleData(path: Path?): FirModuleData?
@@ -22,8 +20,6 @@ abstract class ModuleDataProvider {
 class SingleModuleDataProvider(private val moduleData: FirModuleData) : ModuleDataProvider() {
     override val platform: TargetPlatform
         get() = moduleData.platform
-    override val analyzerServices: PlatformDependentAnalyzerServices
-        get() = moduleData.analyzerServices
     override val allModuleData: Collection<FirModuleData>
         get() = listOf(moduleData)
 
@@ -35,23 +31,24 @@ class SingleModuleDataProvider(private val moduleData: FirModuleData) : ModuleDa
 class MultipleModuleDataProvider(private val moduleDataWithFilters: Map<FirModuleData, LibraryPathFilter>) : ModuleDataProvider() {
     init {
         require(moduleDataWithFilters.isNotEmpty()) { "ModuleDataProvider must contain at least one module data" }
-        require(moduleDataWithFilters.keys.same { it.platform }) { "All module data should have same target platform" }
-        require(moduleDataWithFilters.keys.same { it.analyzerServices }) { "All module data should have same analyzerServices" }
+        require(moduleDataWithFilters.keys.same { it.platform }) {
+            "All module data should have same target platform, but was: ${moduleDataWithFilters.keys.joinToString { "${it.name.asString()}: ${it.platform}" }}"
+        }
     }
 
     override val platform: TargetPlatform = allModuleData.first().platform
-
-    override val analyzerServices: PlatformDependentAnalyzerServices = allModuleData.first().analyzerServices
 
     override val allModuleData: Collection<FirModuleData>
         get() = moduleDataWithFilters.keys
 
     override fun getModuleData(path: Path?): FirModuleData? {
+        val normalizedPath = path?.normalize()
         for ((session, filter) in moduleDataWithFilters.entries) {
-            if (filter.accepts(path)) {
+            if (filter.accepts(normalizedPath)) {
                 return session
             }
         }
         return null
     }
 }
+

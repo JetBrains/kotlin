@@ -7,29 +7,43 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.test.KtAssert
 import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class BytecodeListingTextCollectingVisitor(
     val filter: Filter,
+    val allClasses: Map<Type, ClassNode>,
     val withSignatures: Boolean,
-    api: Int = Opcodes.API_VERSION,
-    val withAnnotations: Boolean = true
-) : ClassVisitor(api) {
+    val withAnnotations: Boolean = true,
+    val sortDeclarations: Boolean = true,
+) : ClassVisitor(Opcodes.API_VERSION) {
     companion object {
         @JvmOverloads
         fun getText(
             factory: ClassFileFactory,
             filter: Filter = Filter.EMPTY,
             withSignatures: Boolean = false,
-            withAnnotations: Boolean = true
-        ) = factory.getClassFiles()
-            .sortedBy { it.relativePath }
-            .mapNotNull {
-                val cr = ClassReader(it.asByteArray())
-                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures, withAnnotations = withAnnotations)
-                cr.accept(visitor, ClassReader.SKIP_CODE)
+            withAnnotations: Boolean = true,
+            sortDeclarations: Boolean = true,
+        ): String {
+            val classes = factory.getClassFiles()
+                .sortedBy { it.relativePath }
+                .map {
+                    ClassNode(Opcodes.API_VERSION).also { node ->
+                        ClassReader(it.asByteArray()).accept(node, ClassReader.SKIP_CODE)
+                    }
+                }
 
-                if (!filter.shouldWriteClass(cr.access, cr.className)) null else visitor.text
+            val allClasses = classes.associateBy { Type.getObjectType(it.name) }
+
+            return classes.mapNotNull { node ->
+                val visitor = BytecodeListingTextCollectingVisitor(
+                    filter, allClasses, withSignatures, withAnnotations = withAnnotations, sortDeclarations = sortDeclarations
+                )
+                node.accept(visitor)
+
+                if (!filter.shouldWriteClass(node)) null else visitor.text
             }.joinToString("\n\n", postfix = "\n")
+        }
 
         private val CLASS_OR_FIELD_OR_METHOD = setOf(ModifierTarget.CLASS, ModifierTarget.FIELD, ModifierTarget.METHOD)
         private val CLASS_OR_METHOD = setOf(ModifierTarget.CLASS, ModifierTarget.METHOD)
@@ -60,23 +74,28 @@ class BytecodeListingTextCollectingVisitor(
     }
 
     interface Filter {
-        fun shouldWriteClass(access: Int, name: String): Boolean
+        fun shouldWriteClass(node: ClassNode): Boolean
         fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean
         fun shouldWriteField(access: Int, name: String, desc: String): Boolean
-        fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?): Boolean
+        fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int): Boolean
+        val shouldTransformAnonymousTypes: Boolean
 
         object EMPTY : Filter {
-            override fun shouldWriteClass(access: Int, name: String) = true
+            override fun shouldWriteClass(node: ClassNode) = true
             override fun shouldWriteMethod(access: Int, name: String, desc: String) = true
             override fun shouldWriteField(access: Int, name: String, desc: String) = true
-            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?) = true
+            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int) = true
+            override val shouldTransformAnonymousTypes: Boolean get() = false
         }
 
         object ForCodegenTests : Filter {
-            override fun shouldWriteClass(access: Int, name: String): Boolean = !name.startsWith("helpers/")
+            override fun shouldWriteClass(node: ClassNode): Boolean = !node.name.startsWith("helpers/")
             override fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean = true
             override fun shouldWriteField(access: Int, name: String, desc: String): Boolean = true
-            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?): Boolean = true
+            override fun shouldWriteInnerClass(name: String, outerName: String?, innerName: String?, access: Int): Boolean =
+                !name.startsWith("helpers/")
+
+            override val shouldTransformAnonymousTypes: Boolean get() = false
         }
     }
 
@@ -150,7 +169,9 @@ class BytecodeListingTextCollectingVisitor(
             append(className)
             if (declarationsInsideClass.isNotEmpty()) {
                 append(" {\n")
-                for (declaration in declarationsInsideClass.sortedBy { it.text }) {
+                val orderedDeclarations =
+                    if (sortDeclarations) declarationsInsideClass.sortedBy { it.text } else declarationsInsideClass
+                for (declaration in orderedDeclarations) {
                     append("    ").append(declaration.annotations.joinToString("")).append(declaration.text).append("\n")
                 }
                 append("}")
@@ -176,7 +197,7 @@ class BytecodeListingTextCollectingVisitor(
             return null
         }
 
-        val returnType = Type.getReturnType(desc).className
+        val returnType = transformAnonymousTypeIfNeeded(Type.getReturnType(desc)).className
         val parameterTypes = Type.getArgumentTypes(desc).map { it.className }
         val methodAnnotations = arrayListOf<String>()
         val parameterAnnotations = hashMapOf<Int, MutableList<String>>()
@@ -228,12 +249,11 @@ class BytecodeListingTextCollectingVisitor(
             return null
         }
 
-        val type = Type.getType(desc).className
+        val type = transformAnonymousTypeIfNeeded(Type.getType(desc)).className
         val fieldSignature = if (withSignatures) "<$signature> " else ""
         val fieldDeclaration = Declaration("field $fieldSignature$name: $type")
         declarationsInsideClass.add(fieldDeclaration)
         handleModifiers(ModifierTarget.FIELD, access)
-        if (access and Opcodes.ACC_VOLATILE != 0) addModifier("volatile", fieldDeclaration.annotations)
 
         return object : FieldVisitor(Opcodes.API_VERSION) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
@@ -245,7 +265,9 @@ class BytecodeListingTextCollectingVisitor(
 
     override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
         visitAnnotationImpl { args ->
-            classAnnotations.add("@" + renderAnnotation(desc, args))
+            renderClassAnnotation(desc, args)?.let {
+                classAnnotations.add("@$it")
+            }
         }
 
     private fun visitAnnotationImpl(end: (List<String>) -> Unit): AnnotationVisitor? =
@@ -283,7 +305,7 @@ class BytecodeListingTextCollectingVisitor(
                         if (name != null) "$name=$rendered" else rendered
                 }
 
-            override fun visitArray(name: String): AnnotationVisitor? =
+            override fun visitArray(name: String?): AnnotationVisitor? =
                 visitAnnotationImpl { args ->
                     arguments += "$name=[${args.joinToString(", ")}]"
                 }
@@ -295,11 +317,24 @@ class BytecodeListingTextCollectingVisitor(
 
     private fun renderAnnotation(desc: String, args: List<String>): String {
         val name = Type.getType(desc).className
-        return if (args.isEmpty() || desc == "Lkotlin/Metadata;" || desc == "Lkotlin/coroutines/jvm/internal/DebugMetadata;")
-            name
-        else
-            "$name(${args.joinToString(", ")})"
+        return renderAnnotationArguments(args, name)
     }
+
+    private fun renderClassAnnotation(desc: String, args: List<String>): String? {
+        // Don't render @SourceDebugExtension to avoid difference in text dumps of full and light analysis, because the compiler never
+        // generates it in the light analysis mode (since method bodies are not analyzed and we don't know if there's an inline call there).
+        if (desc == "Lkotlin/jvm/internal/SourceDebugExtension;") return null
+
+        val name = Type.getType(desc).className
+
+        // Don't render contents of @Metadata/@DebugMetadata because they're binary.
+        if (desc == "Lkotlin/Metadata;" || desc == "Lkotlin/coroutines/jvm/internal/DebugMetadata;") return name
+
+        return renderAnnotationArguments(args, name)
+    }
+
+    private fun renderAnnotationArguments(args: List<String>, name: String): String =
+        if (args.isEmpty()) name else "$name(${args.joinToString(", ")})"
 
     override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
         className = name
@@ -318,7 +353,7 @@ class BytecodeListingTextCollectingVisitor(
     }
 
     override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
-        if (!filter.shouldWriteInnerClass(name, outerName, innerName)) {
+        if (!filter.shouldWriteInnerClass(name, outerName, innerName, access)) {
             return
         }
 
@@ -340,5 +375,21 @@ class BytecodeListingTextCollectingVisitor(
                 declarationsInsideClass.add(Declaration("inner (unrecognized) class $name $outerName $innerName"))
             }
         }
+    }
+
+    private fun transformAnonymousTypeIfNeeded(type: Type): Type {
+        if (filter.shouldTransformAnonymousTypes) {
+            val node = allClasses[type]
+            if (node != null && isAnonymousClass(node)) {
+                return Type.getObjectType(node.interfaces.singleOrNull() ?: node.superName)
+            }
+        }
+
+        return type
+    }
+
+    private fun isAnonymousClass(node: ClassNode): Boolean {
+        val innerClassAttr = node.innerClasses.find { it.name == node.name }
+        return innerClassAttr != null && innerClassAttr.innerName == null && innerClassAttr.outerName == null
     }
 }

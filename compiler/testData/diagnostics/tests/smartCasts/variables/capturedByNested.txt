@@ -1,0 +1,6 @@
+package
+
+@kotlin.Suppress(names = {"OPT_IN_USAGE_ERROR", "OPT_IN_USAGE_FUTURE_ERROR"}) public fun exactlyOnce(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(f, EXACTLY_ONCE)
+
+public fun test(): kotlin.Unit

@@ -1,46 +1,26 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
-import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.context.CodegenContext
-import org.jetbrains.kotlin.codegen.context.CodegenContextUtil
-import org.jetbrains.kotlin.codegen.context.InlineLambdaContext
-import org.jetbrains.kotlin.codegen.context.MethodContext
-import org.jetbrains.kotlin.codegen.coroutines.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass
-import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -51,16 +31,15 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 import java.io.PrintWriter
 import java.io.StringWriter
 import kotlin.math.max
-import kotlin.math.min
 
 const val GENERATE_SMAP = true
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
 const val INLINE_FUN_VAR_SUFFIX = "\$iv"
 
 internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
-internal const val SPECIAL_TRANSFORMATION_NAME = "\$special"
+const val SPECIAL_TRANSFORMATION_NAME = "\$special"
 const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
-internal const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$$INLINE_TRANSFORMATION_SUFFIX"
+const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$$INLINE_TRANSFORMATION_SUFFIX"
 internal const val INLINE_FUN_THIS_0_SUFFIX = "\$inline_fun"
 internal const val DEFAULT_LAMBDA_FAKE_CALL = "$$\$DEFAULT_LAMBDA_FAKE_CALL$$$"
 internal const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
@@ -83,6 +62,7 @@ private const val INLINE_MARKER_BEFORE_INLINE_SUSPEND_ID = 6
 private const val INLINE_MARKER_AFTER_INLINE_SUSPEND_ID = 7
 private const val INLINE_MARKER_BEFORE_UNBOX_INLINE_CLASS = 8
 private const val INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS = 9
+private const val INLINE_MARKER_SUSPEND_LAMBDA_PARAMETER = 10
 
 internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossinline match: (Method) -> Boolean): SMAPAndMethodNode? {
     var node: MethodNode? = null
@@ -104,28 +84,18 @@ internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossin
         }
     }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 
-    return node?.let{
-        val (first, last) = listOfNotNull(it).lineNumberRange()
-        SMAPAndMethodNode(it, SMAPParser.parseOrCreateDefault(sourceMap, sourceFile, classType.internalName, first, last))
+    return node?.let {
+        val parsedSourceMap = sourceMap?.let(SMAPParser::parseOrNull)
+            ?: SMAP.identityMapping(sourceFile, classType.internalName, listOfNotNull(it))
+        SMAPAndMethodNode(it, parsedSourceMap)
     }
 }
 
 internal fun getMethodNode(classData: ByteArray, classType: Type, method: Method): SMAPAndMethodNode? =
     getMethodNode(classData, classType) { it == method }
 
-internal fun Collection<MethodNode>.lineNumberRange(): Pair<Int, Int> {
-    var minLine = Int.MAX_VALUE
-    var maxLine = Int.MIN_VALUE
-    for (node in this) {
-        for (insn in node.instructions.asSequence()) {
-            if (insn is LineNumberNode) {
-                minLine = min(minLine, insn.line)
-                maxLine = max(maxLine, insn.line)
-            }
-        }
-    }
-    return minLine to maxLine
-}
+fun argumentsSize(descriptor: String, isStatic: Boolean): Int =
+    (Type.getArgumentsAndReturnSizes(descriptor) shr 2) - (if (isStatic) 1 else 0)
 
 internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
     return VirtualFileFinder.getInstance(state.project, state.module).findVirtualFileWithHeader(classId)
@@ -137,51 +107,6 @@ internal fun findVirtualFileImprecise(state: GenerationState, internalClassName:
     //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
     // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE
     return findVirtualFile(state, ClassId(packageFqName, Name.identifier(classNameWithDollars)))
-}
-
-internal fun getInlineName(codegenContext: CodegenContext<*>, typeMapper: KotlinTypeMapper): String =
-    getInlineName(codegenContext, codegenContext.contextDescriptor, typeMapper)
-
-private fun getInlineName(
-    codegenContext: CodegenContext<*>,
-    currentDescriptor: DeclarationDescriptor,
-    typeMapper: KotlinTypeMapper
-): String {
-    when (currentDescriptor) {
-        is PackageFragmentDescriptor -> {
-            val file = DescriptorToSourceUtils.getContainingFile(codegenContext.contextDescriptor)
-
-            val implementationOwnerInternalName: String? =
-                if (file == null) {
-                    CodegenContextUtil.getImplementationOwnerClassType(codegenContext)?.internalName
-                } else JvmFileClassUtil.getFileClassInternalName(file)
-
-            if (implementationOwnerInternalName == null) {
-                val contextDescriptor = codegenContext.contextDescriptor
-                throw RuntimeException(
-                    "Couldn't find declaration for " +
-                            contextDescriptor.containingDeclaration!!.name + "." + contextDescriptor.name +
-                            "; context: " + codegenContext
-                )
-            }
-
-            return implementationOwnerInternalName
-        }
-        is ClassifierDescriptor -> {
-            return typeMapper.mapClass(currentDescriptor).internalName
-        }
-        is FunctionDescriptor -> {
-            val descriptor = typeMapper.bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, currentDescriptor)
-            if (descriptor != null) {
-                return typeMapper.mapClass(descriptor).internalName
-            }
-        }
-    }
-
-    //TODO: add suffix for special case
-    val suffix = if (currentDescriptor.name.isSpecial) "" else currentDescriptor.name.asString()
-
-    return getInlineName(codegenContext, currentDescriptor.containingDeclaration!!, typeMapper) + "$" + suffix
 }
 
 internal fun isInvokeOnLambda(owner: String, name: String): Boolean {
@@ -229,6 +154,19 @@ internal fun isAnonymousClass(internalName: String) =
 
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =
     MaxStackFrameSizeAndLocalsCalculator(Opcodes.API_VERSION, methodNode.access, methodNode.desc, methodNode)
+
+inline fun newMethodNodeWithCorrectStackSize(block: (InstructionAdapter) -> Unit): MethodNode {
+    val newMethodNode = MethodNode(Opcodes.API_VERSION, "fake", "()V", null, null)
+    val mv = wrapWithMaxLocalCalc(newMethodNode)
+    block(InstructionAdapter(mv))
+
+    // Adding a fake return (and removing it below) to trigger maxStack calculation
+    mv.visitInsn(Opcodes.RETURN)
+    mv.visitMaxs(-1, -1)
+
+    newMethodNode.instructions.apply { remove(last) }
+    return newMethodNode
+}
 
 private fun String.isInteger(radix: Int = 10) = toIntOrNull(radix) != null
 
@@ -282,13 +220,6 @@ fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnN
 }
 
 fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
-
-internal fun createFakeContinuationMethodNodeForInline(): MethodNode {
-    val methodNode = createEmptyMethodNode()
-    val v = InstructionAdapter(methodNode)
-    addFakeContinuationMarker(v)
-    return methodNode
-}
 
 internal fun firstLabelInChain(node: LabelNode): LabelNode {
     var curNode = node
@@ -364,7 +295,7 @@ fun MethodNode.dumpBody(): String {
     }
 
     for ((i, insn) in this.instructions.toArray().withIndex()) {
-        when (insn.type) {
+        when (insn.nodeType) {
             AbstractInsnNode.INSN ->
                 pw.println("$i\t${Printer.OPCODES[insn.opcode]}")
             AbstractInsnNode.INT_INSN ->
@@ -500,8 +431,6 @@ private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
     return INLINE_MARKER_CLASS_NAME == node.owner && name == node.name
 }
 
-internal fun isFinallyMarkerRequired(context: MethodContext) = context.isInlineMethodContext || context is InlineLambdaContext
-
 fun getConstant(ins: AbstractInsnNode): Int {
     val opcode = ins.opcode
     return when (opcode) {
@@ -538,13 +467,6 @@ fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     )
 }
 
-internal fun addUnboxInlineClassMarkersIfNeeded(v: InstructionAdapter, descriptor: CallableDescriptor, typeMapper: KotlinTypeMapper) {
-    val inlineClass = (descriptor as? FunctionDescriptor)?.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(typeMapper)
-    if (inlineClass != null) {
-        generateResumePathUnboxing(v, inlineClass, typeMapper)
-    }
-}
-
 fun generateResumePathUnboxing(v: InstructionAdapter, inlineClass: KotlinTypeMarker, typeMapper: KotlinTypeMapperBase) {
     addBeforeUnboxInlineClassMarker(v)
     StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, inlineClass, v, typeMapper)
@@ -564,29 +486,11 @@ private fun addAfterUnboxInlineClassMarker(v: InstructionAdapter) {
     v.emitInlineMarker(INLINE_MARKER_AFTER_UNBOX_INLINE_CLASS)
 }
 
-internal fun addReturnsUnitMarkerIfNecessary(v: InstructionAdapter, resolvedCall: ResolvedCall<*>) {
-    val wrapperDescriptor = resolvedCall.candidateDescriptor.safeAs<FunctionDescriptor>() ?: return
-    val unsubstitutedDescriptor = wrapperDescriptor.unwrapInitialDescriptorForSuspendFunction()
-
-    val typeSubstitutor = TypeSubstitutor.create(
-        unsubstitutedDescriptor.typeParameters
-            .withIndex()
-            .associateBy({ it.value.typeConstructor }) {
-                TypeProjectionImpl(resolvedCall.typeArguments[wrapperDescriptor.typeParameters[it.index]] ?: return)
-            }
-    )
-
-    val substitutedDescriptor = unsubstitutedDescriptor.substitute(typeSubstitutor) ?: return
-    val returnType = substitutedDescriptor.returnType ?: return
-
-    if (KotlinBuiltIns.isUnit(returnType)) {
-        addReturnsUnitMarker(v)
-    }
+fun addSuspendLambdaParameterMarker(v: InstructionAdapter) {
+    v.emitInlineMarker(INLINE_MARKER_SUSPEND_LAMBDA_PARAMETER)
 }
 
-fun addReturnsUnitMarker(v: InstructionAdapter) {
-    v.emitInlineMarker(INLINE_MARKER_RETURNS_UNIT)
-}
+fun isSuspendLambdaParameterMarker(insn: AbstractInsnNode): Boolean = isSuspendMarker(insn, INLINE_MARKER_SUSPEND_LAMBDA_PARAMETER)
 
 fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean, inlinable: Boolean = false) {
     val marker = when {
@@ -637,6 +541,9 @@ internal fun isBeforeFakeContinuationConstructorCallMarker(insn: AbstractInsnNod
 internal fun isAfterFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
     isSuspendMarker(insn, INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
 
+internal fun isSuspendInlineMarker(insn: AbstractInsnNode) =
+    isInlineMarker(insn, "mark")
+
 private fun isSuspendMarker(insn: AbstractInsnNode, id: Int) =
     isInlineMarker(insn, "mark") && insn.previous.intConstant == id
 
@@ -679,49 +586,14 @@ internal fun calcMarkerShift(parameters: Parameters, node: MethodNode): Int {
 private fun getIndexAfterLastMarker(node: MethodNode): Int {
     var result = -1
     for (variable in node.localVariables) {
-        if (isFakeLocalVariableForInline(variable.name)) {
+        if (JvmAbi.isFakeLocalVariableForInline(variable.name)) {
             result = max(result, variable.index + 1)
         }
     }
     return result
 }
 
-fun isFakeLocalVariableForInline(name: String): Boolean {
-    return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
-}
-
 internal fun isThis0(name: String): Boolean = AsmUtil.CAPTURED_THIS_FIELD == name
-
-class InlineOnlySmapSkipper(codegen: BaseExpressionCodegen) {
-    private val callLineNumber = codegen.lastLineNumber
-
-    companion object {
-        const val LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER = 1
-    }
-
-    fun onInlineLambdaStart(mv: MethodVisitor, lambda: MethodNode, smap: SourceMapper) {
-        val firstLine = lambda.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
-        if (callLineNumber >= 0 && firstLine == callLineNumber) {
-            // We want the debugger to be able to break both on the inline call itself, plus on each
-            // invocation of the inline lambda passed to it. For that to happen there needs to be at least
-            // one different line number in between those breakpoints for the VM to emit a locatable event.
-            // @InlineOnly functions, however, contain no line numbers, so if the lambda is single-line,
-            // the entire call will "meld" into a single region. To break it up, we insert a different line
-            // number that is remapped by the SMAP to a line that does not exist.
-            val label = Label()
-            mv.visitLabel(label)
-            mv.visitLineNumber(smap.mapSyntheticLineNumber(LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER), label)
-        }
-    }
-
-    fun onInlineLambdaEnd(mv: MethodVisitor) {
-        if (callLineNumber >= 0) {
-            val label = Label()
-            mv.visitLabel(label)
-            mv.visitLineNumber(callLineNumber, label)
-        }
-    }
-}
 
 fun MethodNode.preprocessSuspendMarkers(forInline: Boolean, keepFakeContinuation: Boolean = true) {
     if (instructions.first == null) return

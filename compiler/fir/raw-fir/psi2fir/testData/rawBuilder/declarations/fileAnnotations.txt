@@ -1,0 +1,5 @@
+FILE: fileAnnotations.kt
+    @FILE:FileAnnotation(String(file annotation))
+    @FILE:Annotation1(String(foo))
+    @FILE:Annotation2()
+    @WithouTarget(String(argument))

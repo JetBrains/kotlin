@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtElement
 
 class DuplicatedFirSourceElementsException(
@@ -25,7 +25,7 @@ class DuplicatedFirSourceElementsException(
        | ${newFir.render().trim()}
        |
        |PSI element is $psi with text in context:
-       |${psi.getElementTextInContext()}""".trimMargin()
+       |${psi.getElementTextWithContext()}""".trimMargin()
 
 
     companion object {

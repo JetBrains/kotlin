@@ -1,0 +1,3 @@
+KtNameReferenceExpression(39,42): 'Foo'
+  KtSimpleNameReference:
+    (in Foo) constructor() [lib.kt]

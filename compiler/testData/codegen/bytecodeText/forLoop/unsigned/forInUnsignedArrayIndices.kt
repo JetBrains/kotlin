@@ -21,15 +21,6 @@ fun test(uis: UIntArray): UInt {
 // 0 getStart
 // 0 getEnd
 
-// JVM_TEMPLATES
-// 1 getFirst
-// 1 getLast
-// 0 IF_ICMPGE
-// 1 IF_ICMPGT
-// 0 IF_ICMPLE
-// 2 IF
-
-// JVM_IR_TEMPLATES
 // 0 getFirst
 // 0 getLast
 // 1 IF_ICMPGE
@@ -37,7 +28,6 @@ fun test(uis: UIntArray): UInt {
 // 0 IF_ICMPLE
 // 1 IF
 
-// JVM_IR_TEMPLATES
 // 5 ILOAD
 // 4 ISTORE
 // 1 IADD

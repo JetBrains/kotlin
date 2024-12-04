@@ -6,30 +6,26 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.frontend.AbstractFailingTestSuppressor
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.firTestDataFile
+import java.io.File
 
-class FirFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val testFile = testServices.moduleStructure.originalTestDataFiles.first().firTestDataFile
-        val failFile = testFile.parentFile.resolve("${testFile.nameWithoutExtension}.fail").takeIf { it.exists() }
-            ?: return failedAssertions
-        val failReason = failFile.readText().trim()
-        val hasFail = failedAssertions.any {
+class FirFailingTestSuppressor(testServices: TestServices) : AbstractFailingTestSuppressor(testServices) {
+
+    override fun testFile(): File {
+        return testServices.moduleStructure.originalTestDataFiles.first().firTestDataFile
+    }
+
+    override fun hasFailure(failedAssertions: List<WrappedException>): Boolean {
+        return failedAssertions.any {
             when (it) {
                 is WrappedException.FromFacade -> it.facade is FirFrontendFacade
                 is WrappedException.FromHandler -> it.handler.artifactKind == FrontendKinds.FIR
                 else -> false
             }
         }
-        if (hasFail || failReason == INCONSISTENT_DIAGNOSTICS) return emptyList()
-        return failedAssertions + AssertionError("Fail file exists but no exception was thrown. Please remove ${failFile.name}").wrap()
-    }
-
-    companion object {
-        const val INCONSISTENT_DIAGNOSTICS = "INCONSISTENT_DIAGNOSTICS"
     }
 }

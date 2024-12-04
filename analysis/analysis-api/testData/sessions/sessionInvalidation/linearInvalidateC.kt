@@ -1,0 +1,14 @@
+// MODULE: L1
+// MODULE_KIND: LibraryBinary
+// FILE: l1.kt
+
+// MODULE: E(L1)
+
+// MODULE: D(E)
+
+// MODULE: C(D)
+// WILDCARD_MODIFICATION_EVENT
+
+// MODULE: B(C)
+
+// MODULE: A(B)

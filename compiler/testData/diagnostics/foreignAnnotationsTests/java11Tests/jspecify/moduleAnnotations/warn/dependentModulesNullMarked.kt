@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: warn
 // ALLOW_KOTLIN_PACKAGE
 
@@ -8,7 +9,7 @@ module module1 {
 
 // MODULE: module2(module1)
 // FILE: module2/module-info.java
-import org.jspecify.nullness.NullMarked;
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 module module2 {

@@ -1,6 +1,7 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: +JvmStaticInInterface
-// !JVM_TARGET: 1.8
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +JvmStaticInInterface
+// JVM_TARGET: 1.8
 interface B {
     companion object {
         @JvmStatic fun a1() {

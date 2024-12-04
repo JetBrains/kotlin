@@ -1,0 +1,32 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final value class /IT { // /IT|null[0]
+    final val x // /IT.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /IT.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // /IT.<init>|<init>(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /IT.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /IT.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /IT.toString|toString(){}[0]
+}
+final value class /InlineMutableSet : kotlin.collections/MutableSet</IT> { // /InlineMutableSet|null[0]
+    final val size // /InlineMutableSet.size|{}size[0]
+        final fun <get-size>(): kotlin/Int // /InlineMutableSet.size.<get-size>|<get-size>(){}[0]
+    constructor <init>(kotlin.collections/MutableSet</IT>) // /InlineMutableSet.<init>|<init>(kotlin.collections.MutableSet<IT>){}[0]
+    final fun add(/IT): kotlin/Boolean // /InlineMutableSet.add|add(IT){}[0]
+    final fun addAll(kotlin.collections/Collection</IT>): kotlin/Boolean // /InlineMutableSet.addAll|addAll(kotlin.collections.Collection<IT>){}[0]
+    final fun clear() // /InlineMutableSet.clear|clear(){}[0]
+    final fun contains(/IT): kotlin/Boolean // /InlineMutableSet.contains|contains(IT){}[0]
+    final fun containsAll(kotlin.collections/Collection</IT>): kotlin/Boolean // /InlineMutableSet.containsAll|containsAll(kotlin.collections.Collection<IT>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /InlineMutableSet.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /InlineMutableSet.hashCode|hashCode(){}[0]
+    final fun isEmpty(): kotlin/Boolean // /InlineMutableSet.isEmpty|isEmpty(){}[0]
+    final fun iterator(): kotlin.collections/MutableIterator</IT> // /InlineMutableSet.iterator|iterator(){}[0]
+    final fun remove(/IT): kotlin/Boolean // /InlineMutableSet.remove|remove(IT){}[0]
+    final fun removeAll(kotlin.collections/Collection</IT>): kotlin/Boolean // /InlineMutableSet.removeAll|removeAll(kotlin.collections.Collection<IT>){}[0]
+    final fun retainAll(kotlin.collections/Collection</IT>): kotlin/Boolean // /InlineMutableSet.retainAll|retainAll(kotlin.collections.Collection<IT>){}[0]
+    final fun toString(): kotlin/String // /InlineMutableSet.toString|toString(){}[0]
+}

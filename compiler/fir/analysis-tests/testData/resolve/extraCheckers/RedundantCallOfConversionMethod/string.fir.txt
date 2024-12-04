@@ -1,0 +1,3 @@
+FILE: string.kt
+    public final val foo: R|kotlin/String| = String().R|kotlin/String.toString|()
+        public get(): R|kotlin/String|

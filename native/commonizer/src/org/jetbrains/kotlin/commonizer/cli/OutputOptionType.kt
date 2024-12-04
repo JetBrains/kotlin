@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.commonizer.cli
 
 import java.io.File
 
-internal object OutputOptionType : OptionType<File>("output-path", "Destination for commonized libraries") {
+internal object OutputOptionType : OptionType<File>(OUTPUT_PATH_ALIAS, "Destination for commonized libraries") {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<File> {
         val file = File(rawValue)
 

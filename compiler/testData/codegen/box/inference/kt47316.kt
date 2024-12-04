@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProperTypeInferenceConstraintsProcessing
+// LANGUAGE: -ProperTypeInferenceConstraintsProcessing
 // TARGET_BACKEND: JVM
 
 // FILE: GoBuildingRunningState.java

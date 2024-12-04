@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: assertEquals fails
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 

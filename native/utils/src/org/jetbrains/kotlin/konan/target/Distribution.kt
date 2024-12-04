@@ -10,21 +10,27 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.nio.file.Path
 
-class Distribution(
-        val konanHome: String,
-        private val onlyDefaultProfiles: Boolean = false,
-        private val runtimeFileOverride: String? = null,
-        private val propertyOverrides: Map<String, String>? = null
-) {
+class Distribution private constructor(private val serialized: Serialized) : java.io.Serializable {
+    constructor(
+        konanHome: String,
+        onlyDefaultProfiles: Boolean = false,
+        runtimeFileOverride: String? = null,
+        propertyOverrides: Map<String, String>? = null,
+        konanDataDir: String? = null
+    ) : this(Serialized(konanHome, onlyDefaultProfiles, runtimeFileOverride, propertyOverrides, konanDataDir))
 
-    val localKonanDir = DependencyDirectories.localKonanDir
+    val konanHome by serialized::konanHome
+    private val onlyDefaultProfiles by serialized::onlyDefaultProfiles
+    private val runtimeFileOverride by serialized::runtimeFileOverride
+    private val propertyOverrides by serialized::propertyOverrides
+    private val konanDataDir by serialized::konanDataDir
+
+    val localKonanDir = DependencyDirectories.getLocalKonanDir(konanDataDir)
 
     val konanSubdir = "$konanHome/konan"
     val mainPropertyFileName = "$konanSubdir/konan.properties"
-    val experimentalEnabled by lazy {
-        File("$konanSubdir/experimentalTargetsEnabled").exists
-    }
 
     private fun propertyFilesFromConfigDir(configDir: String, genericName: String): List<File> {
         val directory = File(configDir, "platforms/$genericName")
@@ -56,12 +62,6 @@ class Distribution(
 
         loadPropertiesSafely(File(mainPropertyFileName))
 
-        HostManager.knownTargetTemplates.forEach { targetTemplate ->
-            additionalPropertyFiles(targetTemplate).forEach {
-                loadPropertiesSafely(it)
-            }
-        }
-
         if (onlyDefaultProfiles) {
             result.keepOnlyDefaultProfiles()
         }
@@ -80,9 +80,15 @@ class Distribution(
     val stdlib = "$klib/common/stdlib"
     val stdlibDefaultComponent = "$stdlib/default"
 
+    val kotlinRuntimeForSwiftHome = "$konanHome/konan/swift_export/kotlin_runtime"
+    val kotlinRuntimeForSwiftModuleMap = "$kotlinRuntimeForSwiftHome/module.modulemap"
+
     fun defaultNatives(target: KonanTarget) = "$konanHome/konan/targets/${target.visibleName}/native"
 
-    fun runtime(target: KonanTarget) = runtimeFileOverride ?: "$stdlibDefaultComponent/targets/${target.visibleName}/native/runtime.bc"
+    fun runtime(target: KonanTarget) = runtimeFileOverride ?: "${defaultNatives(target)}/runtime.bc"
+
+    fun compilerInterface(target: KonanTarget) =
+        runtimeFileOverride ?: "${defaultNatives(target)}/compiler_interface.bc"
 
     fun platformDefs(target: KonanTarget) = "$konanHome/konan/platformDef/${target.visibleName}"
 
@@ -90,12 +96,9 @@ class Distribution(
 
     val launcherFiles = listOf("launcher.bc")
 
-    val dependenciesDir = DependencyDirectories.defaultDependenciesRoot.absolutePath
-
-    val subTargetProvider = object: SubTargetProvider {
-        override fun availableSubTarget(genericName: String) =
-                additionalPropertyFiles(genericName).map { it.name }
-    }
+    val dependenciesDir = DependencyDirectories
+        .getDependenciesRoot(konanDataDir)
+        .absolutePath
 
     companion object {
         /**
@@ -110,9 +113,25 @@ class Distribution(
         fun getCompilerVersion(propertyVersion: String?, konanHome: String): String? =
             propertyVersion ?: getBundleVersion(konanHome)
     }
+
+    private fun writeReplace(): Any = serialized
+
+    private data class Serialized(
+        val konanHome: String,
+        val onlyDefaultProfiles: Boolean,
+        val runtimeFileOverride: String?,
+        val propertyOverrides: Map<String, String>?,
+        val konanDataDir: String?,
+    ) : java.io.Serializable {
+        companion object {
+            private const val serialVersionUID: Long = 0L
+        }
+
+        private fun readResolve(): Any = Distribution(this)
+    }
 }
 
 // TODO: Move into K/N?
-fun buildDistribution(konanHome: String) = Distribution(konanHome,true, null)
+fun buildDistribution(konanHome: String, konanDataDir: String? = null) = Distribution(konanHome,true, null, konanDataDir = konanDataDir)
 
-fun customerDistribution(konanHome: String) = Distribution(konanHome,false, null)
+fun customerDistribution(konanHome: String, konanDataDir: String? = null) = Distribution(konanHome,false, null, konanDataDir = konanDataDir)

@@ -1,0 +1,4 @@
+package
+
+public val f: (kotlin.String.() -> kotlin.String)? = null
+public fun box(): kotlin.String

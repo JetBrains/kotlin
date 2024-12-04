@@ -1,0 +1,1 @@
+@PROPERTY_GETTER:MyAnno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): Int

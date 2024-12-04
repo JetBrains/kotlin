@@ -1,9 +1,9 @@
 FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
   PROPERTY name:test visibility:public modality:FINAL [val]
-    FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:java.lang.Class<*>) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Field?>?
+    FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:java.lang.Class<*>) returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Field?>?
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
       $receiver: VALUE_PARAMETER name:<this> type:java.lang.Class<*>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test> (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Field?>? declared in <root>'
-          CALL 'public open fun getDeclaredFields (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Field?>? declared in java.lang.Class' type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Field?>? origin=GET_PROPERTY
+        RETURN type=kotlin.Nothing from='public final fun <get-test> (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Field?>? declared in <root>'
+          CALL 'public open fun getDeclaredFields (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Field?>? declared in java.lang.Class' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.reflect.Field?>? origin=GET_PROPERTY
             $this: GET_VAR '<this>: java.lang.Class<*> declared in <root>.<get-test>' type=java.lang.Class<*> origin=null

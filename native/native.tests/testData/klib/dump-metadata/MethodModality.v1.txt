@@ -1,0 +1,64 @@
+library {
+  // module name: <MethodModality.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: AbstractClass
+    // class name: FinalClass
+    // class name: Interface
+    // class name: OpenClass
+
+    // signature: /AbstractClass|null[0]
+    public abstract class AbstractClass : Interface {
+
+      // signature: /AbstractClass.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /AbstractClass.abstractFun|-8137574360252002020[0]
+      public abstract fun abstractFun(): kotlin/Unit
+
+      // signature: /AbstractClass.interfaceFun|2213060701516703022[0]
+      public open fun interfaceFun(): kotlin/Unit
+    }
+
+    // signature: /FinalClass|null[0]
+    public final class FinalClass : OpenClass {
+
+      // signature: /FinalClass.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /FinalClass.openFun1|-6191809905018816441[0]
+      public open fun openFun1(): kotlin/Unit
+
+      // signature: /FinalClass.openFun2|-6569900631812216745[0]
+      public final fun openFun2(): kotlin/Unit
+    }
+
+    // signature: /Interface|null[0]
+    public abstract interface Interface : kotlin/Any {
+
+      // signature: /Interface.interfaceFun|2213060701516703022[0]
+      public abstract fun interfaceFun(): kotlin/Unit
+    }
+
+    // signature: /OpenClass|null[0]
+    public open class OpenClass : AbstractClass {
+
+      // signature: /OpenClass.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /OpenClass.abstractFun|-8137574360252002020[0]
+      public open fun abstractFun(): kotlin/Unit
+
+      // signature: /OpenClass.finalFun|3657632771909858561[0]
+      public final fun finalFun(): kotlin/Unit
+
+      // signature: /OpenClass.openFun1|-6191809905018816441[0]
+      public open fun openFun1(): kotlin/Unit
+
+      // signature: /OpenClass.openFun2|-6569900631812216745[0]
+      public open fun openFun2(): kotlin/Unit
+    }
+  }
+}

@@ -1,63 +1,24 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCallBuilder
+import org.jetbrains.kotlin.fir.expressions.builder.FirImplicitInvokeCallBuilder
+import org.jetbrains.kotlin.fir.expressions.builder.buildImplicitInvokeCall
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
+import org.jetbrains.kotlin.fir.resolve.directExpansionType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-
-fun FirFunctionCall.copy(
-    annotations: List<FirAnnotation> = this.annotations,
-    argumentList: FirArgumentList = this.argumentList,
-    calleeReference: FirNamedReference = this.calleeReference,
-    explicitReceiver: FirExpression? = this.explicitReceiver,
-    dispatchReceiver: FirExpression = this.dispatchReceiver,
-    extensionReceiver: FirExpression = this.extensionReceiver,
-    source: KtSourceElement? = this.source,
-    typeArguments: List<FirTypeProjection> = this.typeArguments,
-    resultType: FirTypeRef = this.typeRef
-): FirFunctionCall {
-    val builder = if (this is FirIntegerOperatorCall) {
-        FirIntegerOperatorCallBuilder().apply {
-            this.calleeReference = calleeReference
-        }
-    } else {
-        FirFunctionCallBuilder().apply {
-            this.calleeReference = calleeReference
-        }
-    }
-    builder.apply {
-        this.source = source
-        this.annotations.addAll(annotations)
-        this.argumentList = argumentList
-        this.explicitReceiver = explicitReceiver
-        this.dispatchReceiver = dispatchReceiver
-        this.extensionReceiver = extensionReceiver
-        this.typeArguments.addAll(typeArguments)
-        this.typeRef = resultType
-    }
-    return (builder as FirCallBuilder).build() as FirFunctionCall
-}
+import org.jetbrains.kotlin.name.ClassId
 
 inline fun FirFunctionCall.copyAsImplicitInvokeCall(
     setupCopy: FirImplicitInvokeCallBuilder.() -> Unit
@@ -78,143 +39,105 @@ inline fun FirFunctionCall.copyAsImplicitInvokeCall(
     }
 }
 
-fun FirAnonymousFunction.copy(
-    receiverTypeRef: FirTypeRef? = this.receiverTypeRef,
-    source: KtSourceElement? = this.source,
-    moduleData: FirModuleData = this.moduleData,
-    origin: FirDeclarationOrigin = this.origin,
-    returnTypeRef: FirTypeRef = this.returnTypeRef,
-    valueParameters: List<FirValueParameter> = this.valueParameters,
-    body: FirBlock? = this.body,
-    annotations: List<FirAnnotation> = this.annotations,
-    typeRef: FirTypeRef = this.typeRef,
-    label: FirLabel? = this.label,
-    controlFlowGraphReference: FirControlFlowGraphReference? = this.controlFlowGraphReference,
-    invocationKind: EventOccurrencesRange? = this.invocationKind
-): FirAnonymousFunction {
-    return buildAnonymousFunction {
-        this.source = source
-        this.moduleData = moduleData
-        this.origin = origin
-        this.returnTypeRef = returnTypeRef
-        this.receiverTypeRef = receiverTypeRef
-        symbol = this@copy.symbol
-        isLambda = this@copy.isLambda
-        hasExplicitParameterList = this@copy.hasExplicitParameterList
-        this.valueParameters.addAll(valueParameters)
-        this.body = body
-        this.annotations.addAll(annotations)
-        this.typeRef = typeRef
-        this.label = label
-        this.controlFlowGraphReference = controlFlowGraphReference
-        this.invocationKind = invocationKind
-    }
-}
-
 fun FirTypeRef.resolvedTypeFromPrototype(
-    type: ConeKotlinType
+    type: ConeKotlinType,
+    fallbackSource: KtSourceElement? = null,
 ): FirResolvedTypeRef {
-    return if (type is ConeKotlinErrorType) {
+    if (this is FirResolvedTypeRef) {
+        return withReplacedSourceAndType(this@resolvedTypeFromPrototype.source ?: fallbackSource, type)
+    }
+    return if (type is ConeErrorType) {
         buildErrorTypeRef {
-            source = this@resolvedTypeFromPrototype.source
-            this.type = type
+            source = this@resolvedTypeFromPrototype.source ?: fallbackSource
+            this.coneType = type
             diagnostic = type.diagnostic
+            annotations += this@resolvedTypeFromPrototype.annotations
         }
     } else {
         buildResolvedTypeRef {
-            source = this@resolvedTypeFromPrototype.source
-            this.type = type
+            source = this@resolvedTypeFromPrototype.source ?: fallbackSource
+            this.coneType = type
+            delegatedTypeRef = this@resolvedTypeFromPrototype as? FirUserTypeRef
             annotations += this@resolvedTypeFromPrototype.annotations
         }
     }
 }
 
-fun FirTypeRef.errorTypeFromPrototype(
-    diagnostic: ConeDiagnostic
-): FirErrorTypeRef {
-    return buildErrorTypeRef {
-        source = this@errorTypeFromPrototype.source
-        this.diagnostic = diagnostic
+/**
+ * [shouldExpandTypeAliases] should be set to `false` if this function is called during deserialization of some binary declaration
+ * For details see KT-57876
+ */
+fun List<FirAnnotation>.computeTypeAttributes(
+    session: FirSession,
+    predefined: List<ConeAttribute<*>> = emptyList(),
+    allowExtensionFunctionType: Boolean = true,
+    shouldExpandTypeAliases: Boolean
+): ConeAttributes {
+    if (this.isEmpty()) {
+        if (predefined.isEmpty()) return ConeAttributes.Empty
+        return ConeAttributes.create(predefined)
     }
-}
-
-fun FirTypeParameter.copy(
-    bounds: List<FirTypeRef> = this.bounds,
-    annotations: List<FirAnnotation> = this.annotations
-): FirTypeParameter {
-    return buildTypeParameter {
-        source = this@copy.source
-        resolvePhase = this@copy.resolvePhase
-        moduleData = this@copy.moduleData
-        name = this@copy.name
-        symbol = this@copy.symbol
-        variance = this@copy.variance
-        isReified = this@copy.isReified
-        this.bounds += bounds
-        this.annotations += annotations
-    }
-}
-
-fun FirWhenExpression.copy(
-    resultType: FirTypeRef = this.typeRef,
-    calleeReference: FirReference = this.calleeReference,
-    annotations: List<FirAnnotation> = this.annotations
-): FirWhenExpression = buildWhenExpression {
-    source = this@copy.source
-    subject = this@copy.subject
-    subjectVariable = this@copy.subjectVariable
-    this.calleeReference = calleeReference
-    branches += this@copy.branches
-    typeRef = resultType
-    this.annotations += annotations
-    usedAsExpression = this@copy.usedAsExpression
-    exhaustivenessStatus = this@copy.exhaustivenessStatus
-}
-
-fun FirTryExpression.copy(
-    resultType: FirTypeRef = this.typeRef,
-    calleeReference: FirReference = this.calleeReference,
-    annotations: List<FirAnnotation> = this.annotations
-): FirTryExpression = buildTryExpression {
-    source = this@copy.source
-    tryBlock = this@copy.tryBlock
-    finallyBlock = this@copy.finallyBlock
-    this.calleeReference = calleeReference
-    catches += this@copy.catches
-    typeRef = resultType
-    this.annotations += annotations
-}
-
-fun FirCheckNotNullCall.copy(
-    resultType: FirTypeRef = this.typeRef,
-    calleeReference: FirReference = this.calleeReference,
-    annotations: List<FirAnnotation> = this.annotations
-): FirCheckNotNullCall = buildCheckNotNullCall {
-    source = this@copy.source
-    this.calleeReference = calleeReference
-    argumentList = this@copy.argumentList
-    this.typeRef = resultType
-    this.annotations += annotations
-}
-
-fun FirDeclarationStatus.copy(
-    isExpect: Boolean = this.isExpect,
-    newModality: Modality? = null,
-    newVisibility: Visibility? = null,
-    newEffectiveVisibility: EffectiveVisibility? = null,
-    isOperator: Boolean = this.isOperator
-): FirDeclarationStatus {
-    return if (this.isExpect == isExpect && newModality == null && newVisibility == null && this.isOperator == isOperator) {
-        this
-    } else {
-        require(this is FirDeclarationStatusImpl) { "Unexpected class ${this::class}" }
-        this.resolved(
-            newVisibility ?: visibility,
-            newModality ?: modality!!,
-            newEffectiveVisibility ?: EffectiveVisibility.Public
-        ).apply {
-            this.isExpect = isExpect
-            this.isOperator = isOperator
+    val attributes = mutableListOf<ConeAttribute<*>>()
+    var parameterName: ParameterNameTypeAttribute? = null
+    attributes += predefined
+    val customAnnotations = mutableListOf<FirAnnotation>()
+    for (annotation in this) {
+        val classId = when (shouldExpandTypeAliases) {
+            true -> annotation.tryExpandClassId(session)
+            false -> annotation.resolvedType.classId
+        }
+        when (classId) {
+            CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
+            CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
+            CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> when {
+                allowExtensionFunctionType -> attributes += CompilerConeAttributes.ExtensionFunctionType
+            }
+            CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID ->
+                attributes +=
+                    CompilerConeAttributes.ContextFunctionTypeParams(
+                        annotation.extractContextParameterCount() ?: 0
+                    )
+            ParameterNameTypeAttribute.ANNOTATION_CLASS_ID -> {
+                // ConeAttributes.create() will always take the last attribute of a given type,
+                // where ParameterName should prefer the first annotation.
+                if (parameterName == null) {
+                    parameterName = ParameterNameTypeAttribute(annotation)
+                } else {
+                    // Preserve repeated ParameterName annotations to check for repeated errors.
+                    parameterName = ParameterNameTypeAttribute(parameterName.annotation, parameterName.others + annotation)
+                }
+            }
+            CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
+            CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.EnhancedNullability
+            else -> {
+                val attributeFromPlugin = session.extensionService.typeAttributeExtensions.firstNotNullOfOrNull {
+                    it.extractAttributeFromAnnotation(annotation)
+                }
+                if (attributeFromPlugin != null) {
+                    attributes += attributeFromPlugin
+                } else {
+                    customAnnotations += annotation
+                }
+            }
         }
     }
+
+    if (parameterName != null) {
+        attributes += parameterName
+    }
+    if (customAnnotations.isNotEmpty()) {
+        attributes += CustomAnnotationTypeAttribute(customAnnotations)
+    }
+
+    return ConeAttributes.create(attributes)
 }
+
+private fun FirAnnotation.tryExpandClassId(session: FirSession): ClassId? {
+    return when (val directlyExpanded = unexpandedConeClassLikeType?.directExpansionType(session) { it.expandedConeType }) {
+        null -> unexpandedConeClassLikeType?.classId // mutually recursive typealiases
+        else -> directlyExpanded.fullyExpandedType(session).classId
+    }
+}
+
+private fun FirAnnotation.extractContextParameterCount() =
+    (argumentMapping.mapping[StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME] as? FirLiteralExpression)?.value as? Int

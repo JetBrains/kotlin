@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-js")
 }
 
 repositories {
@@ -16,6 +17,7 @@ kotlin {
         useCommonJs()
         binaries.executable()
         nodejs {
+            passProcessArgvToMainFunction()
         }
     }
 }

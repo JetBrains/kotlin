@@ -1,11 +1,10 @@
 // WITH_STDLIB
-
-@file:Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS")
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses, +ValueClassesSecondaryConstructorWithBody
 
 var global = "wrong"
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Foo(val x: String) {
     constructor(y: Int) : this(y.toString())
     constructor(z: Long) : this(z.toInt() + 1)

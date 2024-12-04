@@ -2,7 +2,7 @@ apply plugin: 'kotlin'
 
 dependencies {
     api project(':kotlin-stdlib-jdk8')
-    testApi project(':kotlin-test:kotlin-test-junit')
+    testApi RepoDependencies.kotlinTest(project, "junit")
 }
 
 sourceSets {
@@ -10,11 +10,10 @@ sourceSets {
 }
 
 compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs = [
-                "-opt-in=kotlin.ExperimentalStdlibApi",
-                "-opt-in=kotlin.ExperimentalUnsignedTypes",
-                "-opt-in=kotlin.time.ExperimentalTime",
-        ]
+    compilerOptions {
+        optIn.addAll([
+                "kotlin.ExperimentalStdlibApi",
+                "kotlin.ExperimentalUnsignedTypes",
+        ])
     }
 }

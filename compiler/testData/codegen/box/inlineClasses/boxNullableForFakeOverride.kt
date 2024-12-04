@@ -1,11 +1,13 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 abstract class C<T> {
     fun foo(v: T?, x: (T) -> Any?) = v?.let { x(it) }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class V(val value: Any?)
 
 class D : C<V>()

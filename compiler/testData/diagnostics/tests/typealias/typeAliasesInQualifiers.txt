@@ -1,6 +1,6 @@
 package
 
-public fun foo(/*0*/ a0: test.ClassSample.Nested, /*1*/ a1: [ERROR : test.ClassAlias.Nested], /*2*/ b0: test.ObjectSample.Nested, /*3*/ b1: [ERROR : test.ObjectAlias.Nested], /*4*/ c0: test.EnumSample.Nested, /*5*/ c1: [ERROR : test.EnumAlias.Nested]): kotlin.Unit
+public fun foo(/*0*/ a0: test.ClassSample.Nested, /*1*/ a1: [Error type: Unresolved type for test.ClassAlias.Nested], /*2*/ b0: test.ObjectSample.Nested, /*3*/ b1: [Error type: Unresolved type for test.ObjectAlias.Nested], /*4*/ c0: test.EnumSample.Nested, /*5*/ c1: [Error type: Unresolved type for test.EnumAlias.Nested]): kotlin.Unit
 
 package test {
 
@@ -24,7 +24,7 @@ package test {
         enum entry Entry
 
         private constructor EnumSample()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.EnumSample): kotlin.Int
@@ -44,6 +44,7 @@ package test {
         }
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.EnumSample>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumSample
         public final /*synthesized*/ fun values(): kotlin.Array<test.EnumSample>
     }

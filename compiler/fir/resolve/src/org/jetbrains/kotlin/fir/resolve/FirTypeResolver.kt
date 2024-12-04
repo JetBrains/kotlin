@@ -19,9 +19,17 @@ abstract class FirTypeResolver : FirSessionComponent {
         scopeClassDeclaration: ScopeClassDeclaration,
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
+        resolveDeprecations: Boolean,
+        // Note: sometimes we don't have useSiteFile in IDE context
         useSiteFile: FirFile?,
-        supertypeSupplier: SupertypeSupplier
-    ): Pair<ConeKotlinType, ConeDiagnostic?>
+        supertypeSupplier: SupertypeSupplier,
+        expandTypeAliases: Boolean = true,
+    ): FirTypeResolutionResult
 }
+
+data class FirTypeResolutionResult(
+    val type: ConeKotlinType,
+    val diagnostic: ConeDiagnostic?,
+)
 
 val FirSession.typeResolver: FirTypeResolver by FirSession.sessionComponentAccessor()

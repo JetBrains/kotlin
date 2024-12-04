@@ -17,6 +17,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven(url = "file://${projectDir.absolutePath.replace('\\', '/')}/../repo")
+        maven("<localRepo>")
     }
 }

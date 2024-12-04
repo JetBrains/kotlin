@@ -20,6 +20,7 @@ package kotlin
 @SinceKotlin("1.1") public actual typealias NumberFormatException = java.lang.NumberFormatException
 @SinceKotlin("1.1") public actual typealias NullPointerException = java.lang.NullPointerException
 @SinceKotlin("1.1") public actual typealias ClassCastException = java.lang.ClassCastException
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")
 @SinceKotlin("1.1") public actual typealias AssertionError = java.lang.AssertionError
 
 @SinceKotlin("1.1") public actual typealias NoSuchElementException = java.util.NoSuchElementException

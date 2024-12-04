@@ -1,0 +1,43 @@
+@kotlin.Metadata
+public final class IC$Companion {
+    // source: 'initInCompanion.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getOk(): java.lang.String
+    public final inner class IC$Companion
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class IC {
+    // source: 'initInCompanion.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: IC$Companion
+    private final static @org.jetbrains.annotations.NotNull field ok: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    static method <clinit>(): void
+    private synthetic method <init>(p0: java.lang.String): void
+    public synthetic final static method access$getOk$cp(): java.lang.String
+    public synthetic final static method box-impl(p0: java.lang.String): IC
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+    public final inner class IC$Companion
+}
+
+@kotlin.Metadata
+public final class InitInCompanionKt {
+    // source: 'initInCompanion.kt'
+    private static @org.jetbrains.annotations.NotNull field res: java.lang.String
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getRes(): java.lang.String
+    public final static method setRes(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final inner class IC$Companion
+}

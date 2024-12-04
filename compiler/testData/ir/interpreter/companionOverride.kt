@@ -27,6 +27,6 @@ class C {
     }
 }
 
-const val a = A.<!EVALUATED: `A`!>get()<!>
-const val c1 = C.<!EVALUATED: `Object`!>defaultGet()<!>
-const val c2 = C.<!EVALUATED: `Default: Object; from super B: B; from current:  companion C`!>get()<!>
+const val a = <!EVALUATED: `A`!>A.get()<!>
+const val c1 = <!EVALUATED: `Object`!>C.defaultGet()<!>
+const val c2 = <!EVALUATED: `Default: Object; from super B: B; from current:  companion C`!>C.get()<!>

@@ -1,0 +1,14 @@
+MODULE main
+	CLASS App$Companion.class
+		CLASS METADATA
+			PROPERTY instance
+				Property: class.metadata.property.setterModifiers
+					K1
+						private final /* non-default */
+					K2
+						private final
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: App
+					K2
+						---

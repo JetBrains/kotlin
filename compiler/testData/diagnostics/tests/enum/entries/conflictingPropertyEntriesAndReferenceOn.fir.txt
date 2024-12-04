@@ -1,0 +1,25 @@
+FILE: conflictingPropertyEntriesAndReferenceOn.kt
+    public final enum class E : R|kotlin/Enum<E>| {
+        private constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final val entries: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int|
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E>|
+            public get(): R|kotlin/enums/EnumEntries<E>|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|E|::R|/E.entries|
+        lval ref: R|kotlin/reflect/KProperty1<E, kotlin/Int>| = Q|E|::R|/E.entries|
+        lval refType: R|(E) -> kotlin/Int| = Q|E|::R|/E.entries|
+        lval refTypeWithAnyExpectedType: R|kotlin/Any| = Q|E|::R|/E.entries|
+    }

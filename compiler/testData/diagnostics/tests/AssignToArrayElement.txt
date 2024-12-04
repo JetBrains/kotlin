@@ -3,3 +3,5 @@ package
 public fun fn(): kotlin.Unit
 public fun getArray(): kotlin.Array<kotlin.Int>
 public fun getList(): kotlin.collections.MutableList<kotlin.Int>
+public fun getNullableList(): kotlin.collections.MutableList<kotlin.Int>?
+

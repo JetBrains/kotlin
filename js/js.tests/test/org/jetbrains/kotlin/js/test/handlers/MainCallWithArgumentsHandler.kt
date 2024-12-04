@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.js.test.utils.getOnlyJsFilesForRunner
-import org.jetbrains.kotlin.js.test.utils.getTestChecker
+import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
@@ -21,6 +21,6 @@ class MainCallWithArgumentsHandler(testServices: TestServices) : AbstractJsArtif
         }
         val allJsFiles = getOnlyJsFilesForRunner(testServices, modulesToArtifact)
 
-        getTestChecker(testServices).checkStdout(allJsFiles, expectedFile.readText())
+        V8JsTestChecker.checkStdout(allJsFiles, expectedFile.readText())
     }
 }

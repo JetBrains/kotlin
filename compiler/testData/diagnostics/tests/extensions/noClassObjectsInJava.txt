@@ -1,7 +1,7 @@
 package
 
-public fun f1(): [ERROR : Error function type]
-public fun f2(): [ERROR : Error function type]
+public fun f1(): [Error type: Return type for function cannot be resolved]
+public fun f2(): [Error type: Return type for function cannot be resolved]
 public fun kotlin.Any?.bar(): kotlin.Int
 
 public open class A {

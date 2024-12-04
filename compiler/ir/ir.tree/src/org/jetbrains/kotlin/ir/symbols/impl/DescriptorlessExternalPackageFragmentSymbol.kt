@@ -30,4 +30,6 @@ class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSym
     override fun bind(owner: IrExternalPackageFragment) {
         _owner = owner
     }
+
+    override var privateSignature: IdSignature? = null
 }

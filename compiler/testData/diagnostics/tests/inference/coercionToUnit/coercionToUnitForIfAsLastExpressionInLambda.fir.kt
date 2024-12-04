@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// RUN_PIPELINE_TILL: FRONTEND
 
 class Obj
 
@@ -12,7 +12,7 @@ fun foo(): String? {
     run {
         if (true) return@run
 
-        if (true) return <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>Obj()<!> // correct error, type check against return type of function "foo"
+        if (true) return <!RETURN_TYPE_MISMATCH!>Obj()<!> // correct error, type check against return type of function "foo"
     }
 
     run {

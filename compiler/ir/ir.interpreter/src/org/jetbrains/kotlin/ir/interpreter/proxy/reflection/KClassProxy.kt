@@ -61,7 +61,7 @@ internal class KClassProxy(
     override val isFun: Boolean
         get() = state.classReference.isFun
     override val isValue: Boolean
-        get() = state.classReference.isInline
+        get() = state.classReference.isValue
 
     override fun isInstance(value: Any?): Boolean {
         verify(value is State) { "Cannot interpret `isInstance` method for $value" }

@@ -8,8 +8,16 @@
 
 #include <cstddef>
 
+#include "AllocatorImpl.hpp"
+#include "concurrent/UtilityThread.hpp"
+#include "FinalizerProcessor.hpp"
+#include "GC.hpp"
 #include "GCScheduler.hpp"
-#include "ObjectFactory.hpp"
+#include "GCState.hpp"
+#include "GlobalData.hpp"
+#include "IntrusiveList.hpp"
+#include "MainThreadFinalizerProcessor.hpp"
+#include "ObjectData.hpp"
 #include "Types.h"
 #include "Utils.hpp"
 
@@ -21,64 +29,76 @@ class ThreadData;
 
 namespace gc {
 
-// Stop-the-world Mark-and-Sweep that runs on mutator threads. Can support targets that do not have threads.
+// Stop-the-world mark & sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
+// TODO: Rename to StopTheWorldMarkAndSweep.
 class SameThreadMarkAndSweep : private Pinned {
 public:
-    enum class SafepointFlag {
-        kNone,
-        kNeedsSuspend,
-        kNeedsGC,
-    };
-
-    class ObjectData {
-    public:
-        enum class Color {
-            kWhite = 0, // Initial color at the start of collection cycles. Objects with this color at the end of GC cycle are collected.
-                        // All new objects are allocated with this color.
-            kBlack, // Objects encountered during mark phase.
-        };
-
-        Color color() const noexcept { return color_; }
-        void setColor(Color color) noexcept { color_ = color; }
-
-    private:
-        Color color_ = Color::kWhite;
-    };
+    using MarkQueue = intrusive_forward_list<GC::ObjectData>;
 
     class ThreadData : private Pinned {
     public:
-        using ObjectData = SameThreadMarkAndSweep::ObjectData;
-
-        explicit ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
+        ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept {}
         ~ThreadData() = default;
-
-        void SafePointFunctionPrologue() noexcept;
-        void SafePointLoopBody() noexcept;
-        void SafePointExceptionUnwind() noexcept;
-        void SafePointAllocation(size_t size) noexcept;
-
-        void PerformFullGC() noexcept;
-
-        void OnOOM(size_t size) noexcept;
-
     private:
-        void SafePointRegular(size_t weight) noexcept;
-        void SafePointSlowPath(SafepointFlag flag) noexcept;
-
-        SameThreadMarkAndSweep& gc_;
-        mm::ThreadData& threadData_;
     };
 
-    SameThreadMarkAndSweep() noexcept;
-    ~SameThreadMarkAndSweep() = default;
+    SameThreadMarkAndSweep(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept;
+
+    ~SameThreadMarkAndSweep();
+
+    void StartFinalizerThreadIfNeeded() noexcept;
+    void StopFinalizerThreadIfRunning() noexcept;
+    bool FinalizersThreadIsRunning() noexcept;
+
+    GCStateHolder& state() noexcept { return state_; }
+    alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& mainThreadFinalizerProcessor() noexcept {
+        return mainThreadFinalizerProcessor_;
+    }
 
 private:
-    // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
-    bool PerformFullGC() noexcept;
+    void PerformFullGC(int64_t epoch) noexcept;
 
-    size_t epoch_ = 0;
-    uint64_t lastGCTimestampUs_ = 0;
+    alloc::Allocator& allocator_;
+    gcScheduler::GCScheduler& gcScheduler_;
+
+    GCStateHolder state_;
+    UtilityThread gcThread_;
+    FinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> finalizerProcessor_;
+    alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> mainThreadFinalizerProcessor_;
+
+    MarkQueue markQueue_;
 };
+
+namespace internal {
+
+struct MarkTraits {
+    using MarkQueue = gc::SameThreadMarkAndSweep::MarkQueue;
+
+    static constexpr auto kAllowHeapToStackRefs = true;
+
+    static void clear(MarkQueue& queue) noexcept { queue.clear(); }
+
+    static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
+        if (auto* top = queue.try_pop_front()) {
+            return alloc::objectForObjectData(*top);
+        }
+        return nullptr;
+    }
+
+    static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+        return queue.try_push_front(alloc::objectDataForObject(object));
+    }
+
+    static bool tryMark(ObjHeader* object) noexcept { return alloc::objectDataForObject(object).tryMark(); }
+
+    static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+        auto process = object->type_info()->processObjectInMark;
+        RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
+        process(static_cast<void*>(&markQueue), object);
+    }
+};
+
+} // namespace internal
 
 } // namespace gc
 } // namespace kotlin

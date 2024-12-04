@@ -1,93 +1,143 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 
-fun takeInt(x: Int) {}
+import kotlin.contracts.*
+
+fun <T> unknown(x: () -> T): T {
+    contract { callsInPlace(x, InvocationKind.UNKNOWN) }
+    return x()
+}
+
+fun <T> atLeastOnce(x: () -> T): T {
+    contract { callsInPlace(x, InvocationKind.AT_LEAST_ONCE) }
+    return x()
+}
+
+fun <T> exactlyOnce(x: () -> T): T {
+    contract { callsInPlace(x, InvocationKind.EXACTLY_ONCE) }
+    return x()
+}
+
+fun <T> atMostOnce(x: () -> T): T {
+    contract { callsInPlace(x, InvocationKind.AT_MOST_ONCE) }
+    return x()
+}
+
+fun <T> noContract(x: () -> T): T = x()
 
 fun <K> select(vararg x: K): K = x[0]
 fun <T> id(x: T): T = x
 fun <K> materialize(): K = null!!
 
-fun <R> myRun(block: () -> R): R = block()
-
-fun test_1(x: Any) {
-    run {
-        x as Int
-    }
-    takeInt(x) // OK
+fun basic(x: Any?) {
+    exactlyOnce { x as Int }
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
 }
 
-fun test_2(x: Any, y: Any) {
-    val a = select(
-        id(
-            run {
-                y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
-                x as Int
-            }
-        ),
+fun completedCallExactlyOnce(x: Any?, y: Any?) {
+    select(
+        // The value of the type argument is known, so the call is complete and the data can flow.
+        id(exactlyOnce { y.<!UNRESOLVED_REFERENCE!>inc<!>(); x as Int }),
         y as Int,
-        run {
-            x.inc() // Should be "Bad" but "OK" is fine
-            y.inc() // OK
-            1
-        }
-    )
-    takeInt(x) // OK
-    takeInt(y) // OK
-    takeInt(a) // OK
+        exactlyOnce { x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
+    y.inc() // OK
 }
 
-fun test_3(x: Any, y: Any) {
-    val a = select(
-        id(
-            run {
-                y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
-                x as Int
-                materialize()
-            }
-        ),
-        run {
-            y as Int
-            x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
-            y.inc() // OK
-            1
-        }
-    )
-    takeInt(x) // OK
-    takeInt(y) // OK
-    takeInt(a) // OK
-}
-
-fun test_4(x: Any, y: Any) {
-    val a = select(
-        id(
-            myRun {
-                y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
-                x as Int
-            }
-        ),
+fun completedCallAtLeastOnce(x: Any?, y: Any?) {
+    select(
+        id(atLeastOnce { y.<!UNRESOLVED_REFERENCE!>inc<!>(); x as Int }),
         y as Int,
-        myRun {
-            x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
-            y.inc() // OK
-            1
-        }
-
-    )
-    takeInt(<!ARGUMENT_TYPE_MISMATCH!>x<!>) // Bad
-    takeInt(y) // OK
-    takeInt(a) // Bad
+        atLeastOnce { x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
+    y.inc() // OK
 }
 
-fun test_5() {
+fun completedCallAtMostOnce(x: Any?, y: Any?) {
+    select(
+        id(atMostOnce { y.<!UNRESOLVED_REFERENCE!>inc<!>(); x as Int }),
+        y as Int,
+        atMostOnce { x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: x as Int might not have executed
+    y.inc() // OK
+}
+
+fun completedCallUnknown(x: Any?, y: Any?) {
+    select(
+        id(unknown { y.<!UNRESOLVED_REFERENCE!>inc<!>(); x as Int }),
+        y as Int,
+        unknown { x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: x as Int might not have executed
+    y.inc() // OK
+}
+
+fun completedCallNoContract(x: Any, y: Any) {
+    select(
+        id(noContract { y.<!UNRESOLVED_REFERENCE!>inc<!>(); x as Int }),
+        y as Int,
+        noContract { x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: x as Int might not have executed
+    y.inc() // OK
+}
+
+fun incompleteCallExactlyOnce(x: Any, y: Any) {
+    select(
+        // The type argument is uninferred, so the two lambdas are concurrent by data flow.
+        id(exactlyOnce { x as Int; y.<!UNRESOLVED_REFERENCE!>inc<!>(); x.inc(); materialize() }),
+        exactlyOnce { y as Int; x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
+    y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
+}
+
+fun incompleteCallAtLeastOnce(x: Any, y: Any) {
+    select(
+        id(atLeastOnce { x as Int; y.<!UNRESOLVED_REFERENCE!>inc<!>(); x.inc(); materialize() }),
+        atLeastOnce { y as Int; x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
+    y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: KT-37838 -> OK
+}
+
+fun incompleteCallAtMostOnce(x: Any, y: Any) {
+    select(
+        id(atMostOnce { x as Int; y.<!UNRESOLVED_REFERENCE!>inc<!>(); x.inc(); materialize() }),
+        atMostOnce { y as Int; x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: x as Int might not have executed
+    y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: y as Int might not have executed
+}
+
+fun incompleteCallUnknown(x: Any, y: Any) {
+    select(
+        id(unknown { x as Int; y.<!UNRESOLVED_REFERENCE!>inc<!>(); x.inc(); materialize() }),
+        unknown { y as Int; x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: x as Int might not have executed
+    y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: y as Int might not have executed
+}
+
+fun incompleteCallNoContract(x: Any, y: Any) {
+    select(
+        id(noContract { x as Int; y.<!UNRESOLVED_REFERENCE!>inc<!>(); x.inc(); materialize() }),
+        noContract { y as Int; x.<!UNRESOLVED_REFERENCE!>inc<!>(); y.inc(); 1 }
+    ).inc() // OK
+    x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: x as Int might not have executed
+    y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad: y as Int might not have executed
+}
+
+fun expectedType() {
     val x: Int = select(run { materialize() }, run { materialize() })
-    takeInt(x)
+    x.inc()
 }
 
-fun test_6() {
-    val x: String = id(
-        myRun {
-            run {
-                materialize()
-            }
-        }
-    )
+fun expectedTypeNested() {
+    val x: Int = id(noContract { run { materialize() } })
+    x.inc()
 }

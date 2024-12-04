@@ -1,0 +1,26 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /testSimpleUIntLiteral // /testSimpleUIntLiteral|{}testSimpleUIntLiteral[0]
+    final fun <get-testSimpleUIntLiteral>(): kotlin/UInt // /testSimpleUIntLiteral.<get-testSimpleUIntLiteral>|<get-testSimpleUIntLiteral>(){}[0]
+final val /testSimpleUIntLiteralWithOverflow // /testSimpleUIntLiteralWithOverflow|{}testSimpleUIntLiteralWithOverflow[0]
+    final fun <get-testSimpleUIntLiteralWithOverflow>(): kotlin/UInt // /testSimpleUIntLiteralWithOverflow.<get-testSimpleUIntLiteralWithOverflow>|<get-testSimpleUIntLiteralWithOverflow>(){}[0]
+final val /testToUByte // /testToUByte|{}testToUByte[0]
+    final fun <get-testToUByte>(): kotlin/UByte // /testToUByte.<get-testToUByte>|<get-testToUByte>(){}[0]
+final val /testToUInt // /testToUInt|{}testToUInt[0]
+    final fun <get-testToUInt>(): kotlin/UInt // /testToUInt.<get-testToUInt>|<get-testToUInt>(){}[0]
+final val /testToULong // /testToULong|{}testToULong[0]
+    final fun <get-testToULong>(): kotlin/ULong // /testToULong.<get-testToULong>|<get-testToULong>(){}[0]
+final val /testToUShort // /testToUShort|{}testToUShort[0]
+    final fun <get-testToUShort>(): kotlin/UShort // /testToUShort.<get-testToUShort>|<get-testToUShort>(){}[0]
+final val /testUByteWithExpectedType // /testUByteWithExpectedType|{}testUByteWithExpectedType[0]
+    final fun <get-testUByteWithExpectedType>(): kotlin/UByte // /testUByteWithExpectedType.<get-testUByteWithExpectedType>|<get-testUByteWithExpectedType>(){}[0]
+final val /testUIntWithExpectedType // /testUIntWithExpectedType|{}testUIntWithExpectedType[0]
+    final fun <get-testUIntWithExpectedType>(): kotlin/UInt // /testUIntWithExpectedType.<get-testUIntWithExpectedType>|<get-testUIntWithExpectedType>(){}[0]
+final val /testULongWithExpectedType // /testULongWithExpectedType|{}testULongWithExpectedType[0]
+    final fun <get-testULongWithExpectedType>(): kotlin/ULong // /testULongWithExpectedType.<get-testULongWithExpectedType>|<get-testULongWithExpectedType>(){}[0]
+final val /testUShortWithExpectedType // /testUShortWithExpectedType|{}testUShortWithExpectedType[0]
+    final fun <get-testUShortWithExpectedType>(): kotlin/UShort // /testUShortWithExpectedType.<get-testUShortWithExpectedType>|<get-testUShortWithExpectedType>(){}[0]

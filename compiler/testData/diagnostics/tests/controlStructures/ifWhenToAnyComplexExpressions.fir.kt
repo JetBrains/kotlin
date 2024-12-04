@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun println() {}
 fun foo(x: Any) {}
@@ -18,7 +19,7 @@ fun testMixedIfAndWhen() =
 fun testWrappedExpressions() =
         if (true) {
             println()
-            if (true) {
+            <!INVALID_IF_AS_EXPRESSION!>if<!> (true) {
                 println()
                 if (true) {
                     println()

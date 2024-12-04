@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 import kotlin.reflect.KClass
 
 annotation class Ann(

@@ -1,6 +1,6 @@
 package
 
-public final class A : I<[ERROR : Nested], [ERROR : Interface], [ERROR : Inner]> {
+public final class A : I<[Error type: Unresolved type for Nested], [Error type: Unresolved type for Interface], [Error type: Unresolved type for Inner]> {
     public constructor A(/*0*/ impl: A.Interface)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

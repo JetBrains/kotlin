@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1
 // FILE: a.kt
 package a
@@ -71,5 +72,5 @@ fun test(b: B) {
     b_3.m2()
 
     val b_4 = <!UNRESOLVED_REFERENCE!>a<!>.B()
-    b_4.<!UNRESOLVED_REFERENCE!>m2<!>()
+    b_4.m2()
 }

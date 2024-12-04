@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.spec.utils.models.LinkedSpecTest
 import org.jetbrains.kotlin.spec.utils.models.SpecPlace
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
 import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns
+import org.jetbrains.kotlin.test.utils.isCustomTestData
 import java.io.File
 
 object TestsJsonMapGenerator {
@@ -65,10 +66,10 @@ object TestsJsonMapGenerator {
         testOrigin: TestOrigin,
     ) {
         val isImplementationTest = testOrigin == TestOrigin.IMPLEMENTATION
-        TestArea.values().forEach { testArea ->
+        TestArea.entries.forEach { testArea ->
             File(testOrigin.getFilePath(testArea)).walkTopDown()
                 .forEach testFiles@{ file ->
-                    if (!file.isFile || file.extension != "kt" || file.name.endsWith(".fir.kt")) return@testFiles
+                    if (!file.isFile || file.extension != "kt" || file.isCustomTestData) return@testFiles
                     if (isImplementationTest && !LinkedSpecTestPatterns.testInfoPattern.matcher(file.readText()).find())
                         return@testFiles
 

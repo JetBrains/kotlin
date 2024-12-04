@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.synthetic.FunctionInterfaceConstructorDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 
-interface SamConstructorDescriptor : SimpleFunctionDescriptor, FunctionInterfaceConstructorDescriptor
+interface SamConstructorDescriptor : SimpleFunctionDescriptor, FunctionInterfaceConstructorDescriptor {
+    fun getSingleAbstractMethod(): CallableMemberDescriptor
+}
 
 class SamConstructorDescriptorImpl(
     containingDeclaration: DeclarationDescriptor,
@@ -28,6 +30,9 @@ class SamConstructorDescriptorImpl(
 ), SamConstructorDescriptor {
     override val baseDescriptorForSynthetic: ClassDescriptor
         get() = samInterface
+
+    override fun getSingleAbstractMethod(): CallableMemberDescriptor =
+        getAbstractMembers(samInterface).single()
 }
 
 object SamConstructorDescriptorKindExclude : DescriptorKindExclude() {

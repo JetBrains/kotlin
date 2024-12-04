@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun eat(value: Any) {}
 
@@ -11,5 +12,5 @@ fun test(param: String) {
     val lambda = { -> }
     val g = ::<!UNSUPPORTED!>lambda<!>
 
-    <!INAPPLICABLE_CANDIDATE!>eat<!>(::<!UNSUPPORTED!>param<!>)
+    eat(::<!UNSUPPORTED!>param<!>)
 }

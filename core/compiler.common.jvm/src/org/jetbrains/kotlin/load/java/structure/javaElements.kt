@@ -25,6 +25,7 @@ interface JavaElement
 
 interface JavaNamedElement : JavaElement {
     val name: Name
+    val isFromSource: Boolean
 }
 
 interface JavaAnnotationOwner : JavaElement {
@@ -52,6 +53,10 @@ interface JavaAnnotation : JavaElement {
         get() = false
     val isFreshlySupportedTypeUseAnnotation: Boolean
         get() = false
+
+    fun isResolvedTo(fqName: FqName) : Boolean {
+        return classId?.asSingleFqName() == fqName
+    }
 
     fun resolve(): JavaClass?
 }
@@ -97,7 +102,7 @@ interface JavaClass : JavaClassifier, JavaTypeParameterListOwner, JavaModifierLi
     val isEnum: Boolean
     val isRecord: Boolean
     val isSealed: Boolean
-    val permittedTypes: Collection<JavaClassifierType>
+    val permittedTypes: Sequence<JavaClassifierType>
     val lightClassOriginKind: LightClassOriginKind?
 
     val methods: Collection<JavaMethod>
@@ -145,6 +150,7 @@ interface JavaValueParameter : JavaAnnotationOwner {
     val name: Name?
     val type: JavaType
     val isVararg: Boolean
+    val isFromSource: Boolean
 }
 
 interface JavaRecordComponent : JavaMember {

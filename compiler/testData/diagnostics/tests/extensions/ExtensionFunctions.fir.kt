@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package outer
 
@@ -9,7 +10,7 @@ fun <T: Any, E> T.foo(x : E, y : A) : T   {
   y plus 1
   y + 1.0
 
-  <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>minus<T>(this)<!>
+  this<!UNNECESSARY_SAFE_CALL!>?.<!>minus<T>(this)
 
   return this
 }
@@ -19,7 +20,7 @@ class A
 infix operator fun A.plus(a : Any) {
 
   1.foo()
-  true.foo(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
+  true.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!><!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>()<!>
 
   1
 }
@@ -51,7 +52,7 @@ import outer.*
           val foo : Int = 0
         }
 
-        fun Any.equals(other : Any?) : Boolean = true
+        fun Any.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(other : Any?) : Boolean = true
         fun Any?.equals1(other : Any?) : Boolean = true
         fun Any.equals2(other : Any?) : Boolean = true
 
@@ -69,7 +70,7 @@ import outer.*
             command?.equals1(null)
 
             val c = Command()
-            <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)<!>
+            c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)
 
             if (command == null) 1
         }

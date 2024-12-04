@@ -1,5 +1,13 @@
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-435
+ * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 7
+ * NUMBER: 2
+ * DESCRIPTION: 'When' without bound value and with 'else' branch not in the last position.
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int): String = when {

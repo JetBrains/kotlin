@@ -53,6 +53,7 @@ internal class KFunctionProxy(
         var index = 0
         val dispatchReceiver = state.irFunction.dispatchReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
         val extensionReceiver = state.irFunction.extensionReceiverParameter?.let { environment.convertToState(args[index++], it.type) }
+        // TODO context receivers
         val argsVariables = state.irFunction.valueParameters.map { parameter ->
             environment.convertToState(args[index++], parameter.type)
         }
@@ -84,7 +85,7 @@ internal class KFunctionProxy(
         if (!state.hasTheSameFieldsWith(other.state)) return false
 
         return when {
-            state.irFunction.isAdapter() && other.state.irFunction.isAdapter() -> state.irFunction.eqaulsByAdapteeCall(other.state.irFunction)
+            state.irFunction.isAdapter() && other.state.irFunction.isAdapter() -> state.irFunction.equalsByAdapteeCall(other.state.irFunction)
             else -> state.irFunction == other.state.irFunction
         }
     }
@@ -113,7 +114,7 @@ internal class KFunctionProxy(
         return (call as? IrFunctionAccessExpression)?.symbol
     }
 
-    private fun IrFunction.eqaulsByAdapteeCall(other: IrFunction): Boolean {
+    private fun IrFunction.equalsByAdapteeCall(other: IrFunction): Boolean {
         if (!this.isAdapter() || !other.isAdapter()) return false
 
         val statement = this.body!!.statements.single()

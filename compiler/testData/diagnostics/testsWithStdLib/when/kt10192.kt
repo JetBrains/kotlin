@@ -1,8 +1,9 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 fun test1() {
     if (true) {
-        <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (true) {
+        <!NO_ELSE_IN_WHEN!>when<!> (true) {
             true -> println()
         }
     } else {
@@ -13,7 +14,7 @@ fun test1() {
 fun test2() {
     val mlist = arrayListOf("")
     if (true) {
-        <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (true) {
+        <!NO_ELSE_IN_WHEN!>when<!> (true) {
             true -> println()
         }
     } else {

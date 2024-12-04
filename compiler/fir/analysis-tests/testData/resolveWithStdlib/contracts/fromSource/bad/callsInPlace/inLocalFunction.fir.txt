@@ -5,7 +5,13 @@ FILE: inLocalFunction.kt
             CallsInPlace(a, AT_MOST_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/a|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+            }
+            )
+        }
+
         local final fun localFun(): R|kotlin/Unit| {
             R|<local>/a|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             R|<local>/a|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()

@@ -1,6 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-
-// DONT_RUN_GENERATED_CODE: JS
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 tailrec infix fun Int.foo(x: Int) {
     if (x == 0) return

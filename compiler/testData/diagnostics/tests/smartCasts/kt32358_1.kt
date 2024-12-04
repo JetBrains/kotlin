@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// RUN_PIPELINE_TILL: BACKEND
 
 class MyChild {
     val nullableString: String? = null

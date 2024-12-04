@@ -3,8 +3,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace "org.example.inter.project.ic"
+
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "org.example.inter.project.ic"
@@ -12,7 +13,10 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
+    }
+
+    kotlin {
+        jvmToolchain(8)
     }
 }
 

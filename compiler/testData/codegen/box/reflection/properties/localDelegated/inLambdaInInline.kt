@@ -12,7 +12,7 @@ inline operator fun String.getValue(t:Any?, p: KProperty<*>): String =
 inline fun foo(crossinline f: () -> String) = {
     val x by f()
     x
-}()
+}.let { it() }
 
 // FILE: 2.kt
 import test.*

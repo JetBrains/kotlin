@@ -1,3 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-56744
+// SKIP_TXT
+
 fun test() {
     var a: Any? = null
     var b = a
@@ -22,7 +26,7 @@ fun test() {
         b.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.length // OK, since `c` is aliased to `a`
     }
-    if (b is String) {
+    if (<!USELESS_IS_CHECK!>b is String<!>) {
         a.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
@@ -32,11 +36,11 @@ fun test() {
     }
 
     a = 2 // break `c` -> `a`
-    if (a is String) {
+    if (<!USELESS_IS_CHECK!>a is String<!>) {
         b.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
-    if (b is String) {
+    if (<!USELESS_IS_CHECK!>b is String<!>) {
         a.<!UNRESOLVED_REFERENCE!>length<!> // error
         c.<!UNRESOLVED_REFERENCE!>length<!> // error
     }
@@ -62,4 +66,21 @@ fun test2() {
     a = 3
     b.length // OK
     b.<!UNRESOLVED_REFERENCE!>unaryPlus<!>() // error
+}
+
+fun test3() {
+    var a: Any? = null
+    val b = a
+    val c = a
+    if (a is String) {
+        a.length // ok
+        b.length // ok
+        c.length // ok
+    }
+    a = null // b and c are still aliases to the same old value
+    if (b is String) {
+        a.<!UNRESOLVED_REFERENCE!>length<!> // error
+        b.length // ok
+        c.length // ok
+    }
 }

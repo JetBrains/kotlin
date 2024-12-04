@@ -1,4 +1,8 @@
 open class Base {
+  open val bar: String
+    field = ""
+    open get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,17 +11,6 @@ open class Base {
 
   open fun foo() {
   }
-
-  open val bar: String
-    field = ""
-    open get
-
-}
-
-interface BaseI {
-  abstract fun foo()
-  abstract val bar: String
-    abstract get
 
 }
 
@@ -29,12 +22,21 @@ class Derived : Base, BaseI {
   }
 
   override fun foo() {
-    super.foo()
+    super<Base>.foo()
   }
 
   override val bar: String
     override get(): String {
-      return super.<get-bar>()
+      return super<Base>.<get-bar>()
     }
 
 }
+
+interface BaseI {
+  abstract fun foo()
+
+  abstract val bar: String
+    abstract get
+
+}
+

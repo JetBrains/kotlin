@@ -60,8 +60,8 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             cursor = 5
             expect {
                 addCompletion("listOf(", "listOf(T)", "List<T>", "method")
-                addCompletion("listOf()", "listOf()", "List<T>", "method")
                 addCompletion("listOf(", "listOf(vararg T)", "List<T>", "method")
+                addCompletion("listOf()", "listOf()", "List<T>", "method")
                 addCompletion("listOfNotNull(", "listOfNotNull(T?)", "List<T>", "method")
                 addCompletion("listOfNotNull(", "listOfNotNull(vararg T?)", "List<T>", "method")
             }
@@ -442,6 +442,39 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         }
     }
 
+    @Test
+    fun testProtectedInheritedMemberCompletion() = test {
+        run {
+            code = """
+                open class Base {
+                    private val xyz1: Float = 7.0f
+                    protected val xyz2: Int = 42
+                    internal val xyz3: String = ""
+                    public val xyz4: Byte = 8
+                }
+            """.trimIndent()
+            doCompile
+        }
+
+        run {
+            val definition = "val c = x"
+            code = """
+                object : Base() {
+                    fun g() {
+                        $definition
+                    }
+                }
+            """.trimIndent()
+            cursor = code.indexOf(definition) + definition.length
+
+            expect {
+                addCompletion("xyz2", "xyz2", "Int", "property")
+                addCompletion("xyz3", "xyz3", "String", "property")
+                addCompletion("xyz4", "xyz4", "Byte", "property")
+            }
+        }
+    }
+
     @Ignore("Should be fixed by KT-39314")
     @Test
     fun ignore_testDefaultImportsNotFirst() = test {
@@ -469,42 +502,6 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                 doCompile
 
                 loggingInfo = CSVLoggingInfo(compile = CSVLoggingInfoItem(compileWriter, i, "compile;"))
-            }
-        }
-    }
-
-    @Test
-    fun testLongRunningCompilationWithReceiver() = test {
-        // This test normally completes in about 8-13s
-        // Removing skip* configuration parameters should slow down the test (2-3 times)
-
-        val conf = ScriptCompilationConfiguration {
-            jvm {
-                updateClasspath(classpathFromClass<TestReceiver1>())
-            }
-            implicitReceivers(TestReceiver1::class, TestReceiver2::class)
-            skipExtensionsResolutionForImplicits(KotlinType(TestReceiver1::class))
-            skipExtensionsResolutionForImplicitsExceptInnermost(KotlinType(TestReceiver2::class))
-        }
-
-        val writer = System.out.writer()
-        for (i in 1..200) {
-            run(longCompilationRun(writer, i, conf))
-            run {
-                compilationConfiguration = conf
-
-                code = """
-                    val x = xyz
-                """.trimIndent()
-                cursor = 11
-
-                expect {
-                    completions.mode = ComparisonType.EQUALS
-                    addCompletion("xyz1", "xyz1", "Int", "property")
-                    addCompletion("xyz2", "xyz2", "Int", "property")
-                }
-
-                loggingInfo = CSVLoggingInfo(complete = CSVLoggingInfoItem(writer, i, "complete;"))
             }
         }
     }
@@ -597,3 +594,41 @@ private fun longCompletionRun(writer: Writer, i: Int, conf: ScriptCompilationCon
     }
 }
 
+class ReplCompletionAndErrorsAnalysisLongRunningTest1 : TestCase() {
+
+    @Test
+    fun testLongRunningCompilationWithReceiver() = test {
+        // This test normally completes in about 8-13s
+        // Removing skip* configuration parameters should slow down the test (2-3 times)
+
+        val conf = ScriptCompilationConfiguration {
+            jvm {
+                updateClasspath(classpathFromClass<TestReceiver1>())
+            }
+            implicitReceivers(TestReceiver1::class, TestReceiver2::class)
+            skipExtensionsResolutionForImplicits(KotlinType(TestReceiver1::class))
+            skipExtensionsResolutionForImplicitsExceptInnermost(KotlinType(TestReceiver2::class))
+        }
+
+        val writer = System.out.writer()
+        for (i in 1..200) {
+            run(longCompilationRun(writer, i, conf))
+            run {
+                compilationConfiguration = conf
+
+                code = """
+                    val x = xyz
+                """.trimIndent()
+                cursor = 11
+
+                expect {
+                    completions.mode = ComparisonType.EQUALS
+                    addCompletion("xyz1", "xyz1", "Int", "property")
+                    addCompletion("xyz2", "xyz2", "Int", "property")
+                }
+
+                loggingInfo = CSVLoggingInfo(complete = CSVLoggingInfoItem(writer, i, "complete;"))
+            }
+        }
+    }
+}

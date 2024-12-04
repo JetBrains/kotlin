@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,96 @@ package kotlin.ranges
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
+
+/**
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the progression is empty.
+ */
+@SinceKotlin("1.7")
+public fun UIntProgression.first(): UInt {
+    if (isEmpty())
+        throw NoSuchElementException("Progression $this is empty.")
+    return this.first
+}
+
+/**
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the progression is empty.
+ */
+@SinceKotlin("1.7")
+public fun ULongProgression.first(): ULong {
+    if (isEmpty())
+        throw NoSuchElementException("Progression $this is empty.")
+    return this.first
+}
+
+/**
+ * Returns the first element, or `null` if the progression is empty.
+ */
+@SinceKotlin("1.7")
+public fun UIntProgression.firstOrNull(): UInt? {
+    return if (isEmpty()) null else this.first
+}
+
+/**
+ * Returns the first element, or `null` if the progression is empty.
+ */
+@SinceKotlin("1.7")
+public fun ULongProgression.firstOrNull(): ULong? {
+    return if (isEmpty()) null else this.first
+}
+
+/**
+ * Returns the last element.
+ * 
+ * @throws NoSuchElementException if the progression is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
+ */
+@SinceKotlin("1.7")
+public fun UIntProgression.last(): UInt {
+    if (isEmpty())
+        throw NoSuchElementException("Progression $this is empty.")
+    return this.last
+}
+
+/**
+ * Returns the last element.
+ * 
+ * @throws NoSuchElementException if the progression is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
+ */
+@SinceKotlin("1.7")
+public fun ULongProgression.last(): ULong {
+    if (isEmpty())
+        throw NoSuchElementException("Progression $this is empty.")
+    return this.last
+}
+
+/**
+ * Returns the last element, or `null` if the progression is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
+ */
+@SinceKotlin("1.7")
+public fun UIntProgression.lastOrNull(): UInt? {
+    return if (isEmpty()) null else this.last
+}
+
+/**
+ * Returns the last element, or `null` if the progression is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
+ */
+@SinceKotlin("1.7")
+public fun ULongProgression.lastOrNull(): ULong? {
+    return if (isEmpty()) null else this.last
+}
 
 /**
  * Returns a random element from this range.
@@ -257,6 +346,8 @@ public fun ULongProgression.reversed(): ULongProgression {
 
 /**
  * Returns a progression that goes over the same range with the given step.
+ * 
+ * @sample samples.ranges.Ranges.stepUInt
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
@@ -267,6 +358,8 @@ public infix fun UIntProgression.step(step: Int): UIntProgression {
 
 /**
  * Returns a progression that goes over the same range with the given step.
+ * 
+ * @sample samples.ranges.Ranges.stepULong
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //val x = lazy { "Hello" }.getValue(null, throw null)
 val x by lazy { "Hello" }
 

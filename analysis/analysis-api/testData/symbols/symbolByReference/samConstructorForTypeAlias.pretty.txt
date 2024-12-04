@@ -1,0 +1,1 @@
+MyTypeAlias(function: () -> kotlin.Unit): MyTypeAlias /* = MyInterface */

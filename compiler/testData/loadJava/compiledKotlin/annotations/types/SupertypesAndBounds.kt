@@ -1,5 +1,6 @@
-//ALLOW_AST_ACCESS
-
+// PLATFORM_DEPENDANT_METADATA
+// ALLOW_AST_ACCESS
+// TARGET_BACKEND: JVM_IR
 package test
 
 import java.io.Serializable

@@ -1,0 +1,11 @@
+package
+
+public final class Aaa {
+    public constructor Aaa()
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "a") public final val a: kotlin.Int = 1
+    public final val a: kotlin.Int = 1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

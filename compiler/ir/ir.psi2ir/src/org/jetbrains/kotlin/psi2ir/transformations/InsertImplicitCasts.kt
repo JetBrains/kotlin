@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi2ir.transformations
@@ -29,12 +18,11 @@ import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImplWithShape
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
@@ -57,7 +45,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-fun insertImplicitCasts(file: IrFile, context: GeneratorContext) {
+internal fun insertImplicitCasts(file: IrFile, context: GeneratorContext) {
     InsertImplicitCasts(
         context.irBuiltIns,
         context.typeTranslator,
@@ -156,7 +144,8 @@ internal class InsertImplicitCasts(
         return expression.transformPostfix {
             transformReceiverArguments(substitutedDescriptor)
             for (index in substitutedDescriptor.valueParameters.indices) {
-                val argument = getValueArgument(index) ?: continue
+                val irIndex = index + substitutedDescriptor.contextReceiverParameters.size
+                val argument = getValueArgument(irIndex) ?: continue
                 val parameterType = substitutedDescriptor.valueParameters[index].type
                 val originalParameterType = substitutedDescriptor.original.valueParameters[index].type
 
@@ -168,7 +157,7 @@ internal class InsertImplicitCasts(
                     else
                         parameterType
 
-                putValueArgument(index, argument.cast(expectedType, originalExpectedType = originalParameterType))
+                putValueArgument(irIndex, argument.cast(expectedType, originalExpectedType = originalParameterType))
             }
         }
     }
@@ -416,7 +405,7 @@ internal class InsertImplicitCasts(
             this is IrCall && preventDeprecatedIntegerValueTypeLiteralConversion()
         ) return this
 
-        return if (this is IrConst<*>) {
+        return if (this is IrConst) {
             val value = this.value as Int
             val irType = targetType.toIrType()
             when {
@@ -468,11 +457,15 @@ internal class InsertImplicitCasts(
 
     private fun IrExpression.invokeIntegerCoercionFunction(targetType: KotlinType, coercionFunName: String): IrExpression {
         val coercionFunction = irBuiltIns.intClass.descriptor.unsubstitutedMemberScope.findSingleFunction(Name.identifier(coercionFunName))
-        return IrCallImpl(
+        return IrCallImplWithShape(
             startOffset, endOffset,
             targetType.toIrType(),
-            symbolTable.referenceSimpleFunction(coercionFunction),
-            typeArgumentsCount = 0, valueArgumentsCount = 0
+            symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = true,
+            hasExtensionReceiver = false,
         ).also { irCall ->
             irCall.dispatchReceiver = this
         }
@@ -490,11 +483,15 @@ internal class InsertImplicitCasts(
                 extensionReceiver != null && extensionReceiver.type.isInt()
             }
             ?: throw AssertionError("Coercion function '$coercionFunName' not found")
-        return IrCallImpl(
+        return IrCallImplWithShape(
             startOffset, endOffset,
             targetType.toIrType(),
-            symbolTable.referenceSimpleFunction(coercionFunction),
-            typeArgumentsCount = 0, valueArgumentsCount = 0
+            symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = true,
         ).also { irCall ->
             irCall.extensionReceiver = this
         }
@@ -527,6 +524,7 @@ internal class InsertImplicitCasts(
     // This is a kludge to remove IR-based descriptors where possible.
     private fun KotlinType.toNonIrBased(): KotlinType {
         if (this !is SimpleType) return this
+        if (this.isError) return this
         val newDescriptor = constructor.declarationDescriptor?.let {
             if (it is IrBasedDeclarationDescriptor<*> && it.owner.symbol.hasDescriptor)
                 it.owner.symbol.descriptor as ClassifierDescriptor

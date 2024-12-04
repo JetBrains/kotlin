@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +SafeCastCheckBoundSmartCasts
+// LANGUAGE: +SafeCastCheckBoundSmartCasts
 // See KT-20752
 
 class Unstable {

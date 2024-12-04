@@ -1,4 +1,4 @@
-# Module stdlib
+# Module kotlin-stdlib
 
 ## Kotlin Standard Library
 
@@ -28,11 +28,11 @@ Collection types, such as [Iterable][kotlin.collections.Iterable], [Collection][
 
 # Package kotlin.comparisons
 
-Helper functions for creating [Comparator][java.util.Comparator] instances.
+Helper functions for creating [Comparator][kotlin.Comparator] instances.
 
 # Package kotlin.concurrent
 
-Utility functions for concurrent programming.
+Low-level building blocks and utility functions for concurrent programming.
 
 # Package kotlin.contracts
 
@@ -47,9 +47,17 @@ Basic primitives for creating and suspending coroutines: [Continuation][kotlin.c
 
 Low-level building blocks for libraries that provide coroutine-based APIs.
 
+# Package kotlin.coroutines.cancellation
+
+Provides exceptions arising on suspended coroutine cancellation. 
+
 # Package kotlin.dom
 
 Utility functions for working with the browser DOM.
+
+# Package kotlin.enums
+
+Utilities for working with Kotlin enum classes.
 
 # Package kotlin.experimental
 
@@ -63,13 +71,25 @@ IO API for working with files and streams.
 
 Convenient extensions for working with file system using [java.nio.file.Path][java.nio.file.Path].
 
+# Package kotlin.io.encoding
+
+API for encoding and decoding data using various encoding schemes, such as [Base64][kotlin.io.encoding.Base64].
+
 # Package kotlin.js
 
 Functions and other APIs specific to the JavaScript platform.
 
+# Package kotlin.js.collections
+
+JavaScript-specific collection types, such as [JsArray][kotlin.js.collections.JsArray] and [JsReadonlyMap][kotlin.js.collections.JsReadonlyMap].
+
 # Package kotlin.jvm
 
 Functions and annotations specific to the Java platform.
+
+# Package kotlin.jvm.optionals
+
+Convenience extension functions for `java.util.Optional` to simplify Kotlin-Java interop.
 
 # Package kotlin.math
 
@@ -77,9 +97,26 @@ Mathematical functions and constants.
 
 The functions include trigonometric, hyperbolic, exponentiation and power, logarithmic, rounding, sign and absolute value.
 
+# Package kotlin.native
+
+Provides functions and types specific to Kotlin/Native, as well as means for interoperability with an underlying platform
+and other languages.
+
+# Package kotlin.native.concurrent
+
+Kotlin/Native-specific concurrency primitives and utility functions for concurrent programming.
+
+# Package kotlin.native.ref
+
+API for object life-cycle and references management.
+
+# Package kotlin.native.runtime
+
+Allows to query information from and interact with the Kotlin/Native runtime. 
+
 # Package kotlin.properties
 
-Standard implementations of delegates for [delegated properties](/docs/reference/delegated-properties.html)
+Standard implementations of delegates for [delegated properties](https://kotlinlang.org/docs/delegated-properties.html)
 and helper functions for implementing custom delegates.
 
 # Package kotlin.random
@@ -88,19 +125,19 @@ Provides the default generator of pseudo-random values, the repeatable generator
 
 # Package kotlin.ranges
 
-[Ranges](/docs/reference/ranges.html), Progressions and related top-level and extension functions.
+[Ranges](https://kotlinlang.org/docs/ranges.html), Progressions and related top-level and extension functions.
 
 # Package kotlin.reflect
 
-Runtime API for [Kotlin reflection](/docs/reference/reflection.html)
+Runtime API for [Kotlin reflection](https://kotlinlang.org/docs/reflection.html)
 
 # Package kotlin.reflect.full
 
-Extensions for [Kotlin reflection](/docs/reference/reflection.html) provided by `kotlin-reflect` library.
+Extensions for [Kotlin reflection](https://kotlinlang.org/docs/reflection.html) provided by `kotlin-reflect` library.
 
 # Package kotlin.reflect.jvm
 
-Runtime API for interoperability between [Kotlin reflection](/docs/reference/reflection.html) and
+Runtime API for interoperability between [Kotlin reflection](https://kotlinlang.org/docs/reflection.html) and
 Java reflection provided by `kotlin-reflect` library.
 
 # Package kotlin.sequences
@@ -141,7 +178,18 @@ Functions for working with text and regular expressions.
 
 # Package kotlin.time
 
-API for representing [Duration][kotlin.time.Duration] values and experimental API for measuring time intervals.
+API for measuring time intervals and calculating durations.
+
+For more information, see our [Time measurement](https://kotlinlang.org/docs/time-measurement.html) guide.
+
+# Package kotlin.uuid
+
+Multiplatform `Uuid` class and utility functions for working with UUIDs.
+
+# Package kotlinx.cinterop
+
+Experimental API for working with unmanaged and foreign memory, as well as for interoperability with other languages,
+such as Objective-C and C.
 
 # Package org.khronos.webgl
 

@@ -1,5 +1,0 @@
-package = curl
-headers = curl.h
-linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lcurl
-compilerOpts = -std=c89
-compilerOpts.linux = -I/usr/include/x86_64-linux-gnu/curl

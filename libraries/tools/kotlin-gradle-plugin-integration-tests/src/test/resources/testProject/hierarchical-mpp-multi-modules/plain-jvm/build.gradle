@@ -12,10 +12,12 @@ dependencies {
     api project(":bottom-mpp")
 }
 
+kotlin.jvmToolchain(8)
+
 [compileKotlin, compileTestKotlin]*.configure {
     kotlinOptions {
         kotlinOptions.jvmTarget = "1.8"
-        freeCompilerArgs += ["-progressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions"]
+        freeCompilerArgs += ["-progressive", "-XXLanguage:+SamConversionForKotlinFunctions"]
     }
 }
 
@@ -34,5 +36,7 @@ publishing {
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
 configurations.all {
-    attributes { attribute(complexLibAttribute, 'jvmWithJava') }
+    if (isCanBeResolved()) {
+        attributes { attribute(complexLibAttribute, 'jvmWithJava') }
+    }
 }

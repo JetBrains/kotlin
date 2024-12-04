@@ -1,18 +1,3 @@
-pluginManagement {
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id == "kotlin2js") {
-                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
-            }
-        }
-    }
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-enableFeaturePreview('GRADLE_METADATA')
+rootProject.name = "kt-27059-pom-rewriting"
 
 include(":mpp-lib", ":jvm-app", ":js-app")

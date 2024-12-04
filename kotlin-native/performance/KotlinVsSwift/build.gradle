@@ -1,11 +1,5 @@
 buildscript {
     apply from: "$rootProject.projectDir/../gradle/kotlinGradlePlugin.gradle"
-    repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/jcenter'
-        }
-        jcenter()
-    }
 }
 
 def rootBuildDirectory = rootProject.projectDir
@@ -26,9 +20,7 @@ task clean {
     subprojects.each {
         dependsOn it.getTasksByName('clean', true)[0]
     }
-    doLast {
-        delete "${buildDir.absolutePath}"
-    }
+    delete(layout.buildDirectory)
 }
 
 defaultTasks 'konanRun'

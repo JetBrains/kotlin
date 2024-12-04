@@ -1,0 +1,77 @@
+abstract class Bar<T : Any> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract fun bar()
+
+}
+
+interface Foo<out T : Any?> {
+  abstract fun foo()
+
+}
+
+fun <T : Any> Bar<T>.extBar() {
+}
+
+fun <T : Any?> Foo<T>.extFoo() {
+}
+
+fun <K : Any?> materialize(): K {
+  return CHECK_NOT_NULL<Nothing>(arg0 = null)
+}
+
+fun test_1(x: Any) {
+  x as Bar<Any> /*~> Unit */
+  x as Foo<Any> /*~> Unit */
+  x /*as Foo<Any> */.foo()
+  x /*as Bar<Any> */.bar()
+  x /*as Foo<Any> */.extFoo<Any>()
+  x /*as Bar<Any> */.extBar<Any>()
+}
+
+fun test_2(x: Any) {
+  x as Bar<Any>? /*~> Unit */
+  x as Foo<Any>? /*~> Unit */
+  CHECK_NOT_NULL<Any>(arg0 = x) /*as Foo<Any> */.foo()
+  CHECK_NOT_NULL<Any>(arg0 = x) /*as Bar<Any> */.bar()
+  CHECK_NOT_NULL<Any>(arg0 = x) /*as Foo<Any> */.extFoo<Any>()
+  CHECK_NOT_NULL<Any>(arg0 = x) /*as Bar<Any> */.extBar<Any>()
+}
+
+fun test_3(x: Any) {
+  x as Bar<Any>? /*~> Unit */
+  x as Foo<Any>? /*~> Unit */
+  { // BLOCK
+    val tmp_0: Any = x
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> materialize<Any>()
+      else -> tmp_0
+    }
+  } /*as Foo<Any> */.foo()
+  { // BLOCK
+    val tmp_1: Any = x
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> materialize<Any>()
+      else -> tmp_1
+    }
+  } /*as Bar<Any> */.bar()
+  { // BLOCK
+    val tmp_2: Any = x
+    when {
+      EQEQ(arg0 = tmp_2, arg1 = null) -> materialize<Any>()
+      else -> tmp_2
+    }
+  } /*as Foo<Any> */.extFoo<Any>()
+  { // BLOCK
+    val tmp_3: Any = x
+    when {
+      EQEQ(arg0 = tmp_3, arg1 = null) -> materialize<Any>()
+      else -> tmp_3
+    }
+  } /*as Bar<Any> */.extBar<Any>()
+}
+

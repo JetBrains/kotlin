@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.common.bridges
 
 import org.jetbrains.kotlin.utils.DFS
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 interface FunctionHandle {
     val isDeclaration: Boolean
@@ -35,19 +34,17 @@ interface FunctionHandle {
     val mightBeIncorrectCode: Boolean get() = false
 }
 
-data class Bridge<out Signature, out Function : FunctionHandle>(
+data class Bridge<out Signature>(
     val from: Signature,
     val to: Signature,
-    val originalFunctions: Set<Function>
 ) {
     override fun toString() = "$from -> $to"
 }
 
-
 fun <Function : FunctionHandle, Signature> generateBridges(
     function: Function,
     signature: (Function) -> Signature
-): Set<Bridge<Signature, Function>> {
+): Set<Bridge<Signature>> {
     // If it's an abstract function, no bridges are needed: when an implementation will appear in some concrete subclass, all necessary
     // bridges will be generated there
     if (function.isAbstract) return setOf()
@@ -78,11 +75,7 @@ fun <Function : FunctionHandle, Signature> generateBridges(
 
     val method = signature(implementation)
     bridgesToGenerate.remove(method)
-    return bridgesToGenerate.entries
-        .map { (overriddenSignature, overriddenFunctions) ->
-            Bridge(overriddenSignature, method, overriddenFunctions.toSet())
-        }
-        .toSet()
+    return bridgesToGenerate.entries.map { (overriddenSignature, _) -> Bridge(overriddenSignature, method) }.toSet()
 }
 
 fun <Function : FunctionHandle> findAllReachableDeclarations(function: Function): MutableSet<Function> {

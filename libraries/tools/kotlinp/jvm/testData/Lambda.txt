@@ -1,0 +1,16 @@
+// LambdaKt.class
+// ------------------------------------------
+package {
+
+  // signature: test()V
+  public final fun test(): kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    LambdaKt
+  }
+}

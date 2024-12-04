@@ -4,26 +4,38 @@ plugins {
     kotlin("multiplatform")
 }
 
-kotlin {
-    val sdkXCFramework = XCFramework("sdk")
-    val otherXCFramework = XCFramework()
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
 
-    ios {
-        binaries {
-            framework {
-                baseName = "shared"
-                sdkXCFramework.add(this)
+kotlin {
+    val xcf = XCFramework()
+    val otherXCFramework = XCFramework("other")
+
+    val iosX64 = iosX64()
+    val iosArm64 = iosArm64()
+    val iosSimulatorArm64 = iosSimulatorArm64()
+
+    listOf(iosX64, iosArm64, iosSimulatorArm64).forEach { target ->
+        target.binaries.framework {
+            baseName = "shared"
+            xcf.add(this)
+            if (target == iosX64 || target == iosArm64) {
                 otherXCFramework.add(this)
             }
         }
     }
-
-    watchos {
-        binaries {
-            framework {
-                baseName = "shared"
-                sdkXCFramework.add(this)
-            }
+    listOf(
+        watchosArm32(),
+        watchosArm64(),
+        watchosDeviceArm64(),
+        watchosSimulatorArm64(),
+        watchosX64()
+    ).forEach { target ->
+        target.binaries.framework {
+            baseName = "shared"
+            xcf.add(this)
         }
     }
 }

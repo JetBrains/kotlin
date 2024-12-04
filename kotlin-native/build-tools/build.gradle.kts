@@ -3,82 +3,76 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
-plugins {
-    // We explicitly configure versions of plugins in settings.gradle.kts.
-    // due to https://github.com/gradle/gradle/issues/1697.
-    id("kotlin")
-    groovy
-    `java-gradle-plugin`
-}
-
 buildscript {
+    val rootBuildDirectory by extra(project.file("../.."))
+    apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
+
     dependencies {
-        classpath("com.google.code.gson:gson:2.8.6")
+        classpath(libs.gson)
     }
 }
 
-val rootProperties = Properties().apply {
-    rootDir.resolve("../gradle.properties").reader().use(::load)
+repositories {
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+    mavenCentral()
+    gradlePluginPortal()
 }
 
-val kotlinVersion: String by rootProperties
-val konanVersion: String by rootProperties
-val slackApiVersion: String by rootProperties
-val ktorVersion: String by rootProperties
-val shadowVersion: String by rootProperties
-val metadataVersion: String by rootProperties
-
-group = "org.jetbrains.kotlin"
-version = konanVersion
-
-repositories {
-    maven("https://cache-redirector.jetbrains.com/maven-central")
-    mavenCentral()
+plugins {
+    kotlin("jvm")
+    `kotlin-dsl`
 }
 
 dependencies {
-    compileOnly(gradleApi())
+    api(gradleApi())
 
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    implementation("com.ullink.slack:simpleslackapi:$slackApiVersion")
+    api("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}") { isTransitive = false }
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
-    implementation("io.ktor:ktor-client-auth:$ktorVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    // To build Konan Gradle plugin
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 
-    api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
+    implementation(libs.gson)
 
-    // Located in <repo root>/shared and always provided by the composite build.
-    api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
-    implementation("com.github.jengelman.gradle.plugins:shadow:$shadowVersion")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
+    implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
 }
 
-sourceSets["main"].withConvention(KotlinSourceSet::class) {
-    kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src/main/kotlin/report")
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}
+
+val compileKotlin: KotlinCompile by tasks
+
+compileKotlin.apply {
+    compilerOptions {
+        optIn.add("kotlin.ExperimentalStdlibApi")
+        freeCompilerArgs.addAll(
+            listOf(
+                "-Xskip-prerelease-check",
+                "-Xsuppress-version-warnings",
+                "-Xallow-unstable-dependencies"
+            )
+        )
+    }
+}
+
+kotlin {
+    sourceSets {
+        main {
+            kotlin.srcDir("src/main/kotlin")
+        }
+    }
 }
 
 gradlePlugin {
     plugins {
-        create("benchmarkPlugin") {
-            id = "benchmarking"
-            implementationClass = "org.jetbrains.kotlin.benchmark.KotlinNativeBenchmarkingPlugin"
-        }
-        create("compileBenchmarking") {
-            id = "compile-benchmarking"
-            implementationClass = "org.jetbrains.kotlin.benchmark.CompileBenchmarkingPlugin"
-        }
-        create("swiftBenchmarking") {
-            id = "swift-benchmarking"
-            implementationClass = "org.jetbrains.kotlin.benchmark.SwiftBenchmarkingPlugin"
-        }
         create("compileToBitcode") {
             id = "compile-to-bitcode"
             implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
@@ -87,19 +81,29 @@ gradlePlugin {
             id = "runtime-testing"
             implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
         }
+        create("compilationDatabase") {
+            id = "compilation-database"
+            implementationClass = "org.jetbrains.kotlin.cpp.CompilationDatabasePlugin"
+        }
+        create("native-interop-plugin") {
+            id = "native-interop-plugin"
+            implementationClass = "org.jetbrains.kotlin.interop.NativeInteropPlugin"
+        }
+        create("native") {
+            id = "native"
+            implementationClass = "org.jetbrains.kotlin.tools.NativePlugin"
+        }
+        create("nativeDependenciesDownloader") {
+            id = "native-dependencies-downloader"
+            implementationClass = "org.jetbrains.kotlin.dependencies.NativeDependenciesDownloaderPlugin"
+        }
+        create("nativeDependencies") {
+            id = "native-dependencies"
+            implementationClass = "org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin"
+        }
+        create("platformManager") {
+            id = "platform-manager"
+            implementationClass = "org.jetbrains.kotlin.PlatformManagerPlugin"
+        }
     }
-}
-
-val compileKotlin: KotlinCompile by tasks
-val compileGroovy: GroovyCompile by tasks
-
-compileKotlin.apply {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += "-Xskip-prerelease-check"
-}
-
-// Add Kotlin classes to a classpath for the Groovy compiler
-compileGroovy.apply {
-    classpath += project.files(compileKotlin.destinationDir)
-    dependsOn(compileKotlin)
 }

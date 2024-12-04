@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-
 // WITH_STDLIB
 
 import kotlin.test.assertEquals

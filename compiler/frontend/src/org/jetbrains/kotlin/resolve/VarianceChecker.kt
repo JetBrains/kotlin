@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
@@ -40,8 +42,8 @@ import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
-class VarianceChecker(trace: BindingTrace) {
-    private val core = VarianceCheckerCore(trace.bindingContext, trace)
+class VarianceChecker(trace: BindingTrace, languageVersionSettings: LanguageVersionSettings) {
+    private val core = VarianceCheckerCore(trace.bindingContext, trace, languageVersionSettings = languageVersionSettings)
 
     fun check(c: TopDownAnalysisContext) {
         core.check(c)
@@ -57,9 +59,9 @@ class VarianceConflictDiagnosticData(
 class VarianceCheckerCore(
     val context: BindingContext,
     private val diagnosticSink: DiagnosticSink,
-    private val manualVariance: ManualVariance? = null
+    private val manualVariance: ManualVariance? = null,
+    private val languageVersionSettings: LanguageVersionSettings? = null
 ) {
-
     fun check(c: TopDownAnalysisContext) {
         checkClasses(c)
         checkMembers(c)
@@ -152,9 +154,20 @@ class VarianceCheckerCore(
                 && !type.annotations.hasAnnotation(StandardNames.FqNames.unsafeVariance)
             ) {
                 val varianceConflictDiagnosticData = VarianceConflictDiagnosticData(containingType, classifierDescriptor, position)
-                val diagnostic =
-                    if (isInAbbreviation) Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else Errors.TYPE_VARIANCE_CONFLICT
-                diagnosticSink.report(diagnostic.on(psiElement, varianceConflictDiagnosticData))
+                when {
+                    isArgumentFromQualifier ->
+                        diagnosticSink.report(
+                            Errors.TYPE_VARIANCE_CONFLICT.on(
+                                languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT,
+                                psiElement,
+                                varianceConflictDiagnosticData
+                            )
+                        )
+                    isInAbbreviation ->
+                        diagnosticSink.report(Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE.on(psiElement, varianceConflictDiagnosticData))
+                    else ->
+                        diagnosticSink.report(Errors.TYPE_VARIANCE_CONFLICT.errorFactory.on(psiElement, varianceConflictDiagnosticData))
+                }
             }
             return declarationVariance.allowsPosition(position)
         }
@@ -163,11 +176,10 @@ class VarianceCheckerCore(
         for (argument in arguments) {
             if (argument?.typeParameter == null || argument.projection.isStarProjection) continue
 
-            val projectionKind = TypeCheckingProcedure.getEffectiveProjectionKind(argument.typeParameter!!, argument.projection)!!
-            val newPosition = when (projectionKind) {
+            val newPosition = when (TypeCheckingProcedure.getEffectiveProjectionKind(argument.typeParameter!!, argument.projection)!!) {
                 EnrichedProjectionKind.OUT -> position
                 EnrichedProjectionKind.IN -> position.opposite()
-                EnrichedProjectionKind.INV -> Variance.INVARIANT
+                EnrichedProjectionKind.INV -> INVARIANT
                 EnrichedProjectionKind.STAR -> null // CONFLICTING_PROJECTION error was reported
             }
             if (newPosition != null) {

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
+import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -55,8 +56,12 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorScope
+import org.jetbrains.kotlin.types.error.ThrowingScope
+import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.min
 
 class TypeResolver(
@@ -69,13 +74,22 @@ class TypeResolver(
     private val identifierChecker: IdentifierChecker,
     private val platformToKotlinClassMapper: PlatformToKotlinClassMapper,
     private val languageVersionSettings: LanguageVersionSettings,
-    private val upperBoundChecker: UpperBoundChecker
+    private val upperBoundChecker: UpperBoundChecker,
+    private val typeAttributeTranslators: TypeAttributeTranslators
 ) {
     private val isNonParenthesizedAnnotationsOnFunctionalTypesEnabled =
         languageVersionSettings.getFeatureSupport(LanguageFeature.NonParenthesizedAnnotationsOnFunctionalTypes) == LanguageFeature.State.ENABLED
 
     open class TypeTransformerForTests {
         open fun transformType(kotlinType: KotlinType): KotlinType? = null
+    }
+
+    // Entry point for KotlinTypeCheckerTest
+    fun resolveTypeWithPossibleIntersections(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace): KotlinType {
+        return resolveType(
+            TypeResolutionContext(scope, trace, false, false, typeReference.suppressDiagnosticsInDebugMode(), false, true),
+            typeReference
+        )
     }
 
     fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
@@ -93,8 +107,8 @@ class TypeResolver(
         ).unwrap()
         return when (resolvedType) {
             is DynamicType -> {
-                trace.report(Errors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS.on(typeReference, resolvedType))
-                ErrorUtils.createErrorType("dynamic type in wrong context")
+                trace.report(TYPEALIAS_SHOULD_EXPAND_TO_CLASS.on(typeReference, resolvedType))
+                ErrorUtils.createErrorType(ErrorTypeKind.PROHIBITED_DYNAMIC_TYPE)
             }
             is SimpleType -> resolvedType
             else -> error("Unexpected type: $resolvedType")
@@ -103,7 +117,7 @@ class TypeResolver(
 
     fun resolveExpandedTypeForTypeAlias(typeAliasDescriptor: TypeAliasDescriptor): SimpleType {
         val typeAliasExpansion = TypeAliasExpansion.createWithFormalArguments(typeAliasDescriptor)
-        val expandedType = TypeAliasExpander.NON_REPORTING.expandWithoutAbbreviation(typeAliasExpansion, Annotations.EMPTY)
+        val expandedType = TypeAliasExpander.NON_REPORTING.expandWithoutAbbreviation(typeAliasExpansion, TypeAttributes.Empty)
         return expandedType
     }
 
@@ -235,7 +249,7 @@ class TypeResolver(
         val hasSuspendModifier = outerModifierList?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: false
         val suspendModifier by lazy { outerModifierList?.getModifier(KtTokens.SUSPEND_KEYWORD) }
         if (hasSuspendModifier && !typeElement.canHaveFunctionTypeModifiers()) {
-            c.trace.report(Errors.WRONG_MODIFIER_TARGET.on(suspendModifier!!, KtTokens.SUSPEND_KEYWORD, "non-functional type"))
+            c.trace.report(WRONG_MODIFIER_TARGET.on(suspendModifier!!, KtTokens.SUSPEND_KEYWORD, "non-functional type"))
         } else if (hasSuspendModifier) {
             checkCoroutinesFeature(languageVersionSettings, c.trace, suspendModifier!!)
         }
@@ -247,15 +261,18 @@ class TypeResolver(
 
                 if (classifier == null) {
                     val arguments = resolveTypeProjections(
-                        c, ErrorUtils.createErrorType("No type").constructor, qualifierResolutionResult.allProjections
+                        c, ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, typeElement.text).constructor, qualifierResolutionResult.allProjections
                     )
-                    result = type(ErrorUtils.createUnresolvedType(type.getDebugText(), arguments))
+                    val unresolvedType = ErrorUtils.createErrorTypeWithArguments(ErrorTypeKind.UNRESOLVED_TYPE, arguments, type.getDebugText())
+                    result = type(unresolvedType)
                     return
                 }
 
                 val referenceExpression = type.referenceExpression ?: return
 
-                checkReservedYield(referenceExpression, c.trace)
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+                    checkReservedYield(referenceExpression, c.trace)
+                }
                 c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifier)
 
                 result = resolveTypeForClassifier(c, classifier, qualifierResolutionResult, type, annotations)
@@ -311,42 +328,64 @@ class TypeResolver(
                     }
                 }
 
-                if (!languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)) {
-                    c.trace.report(
-                        UNSUPPORTED_FEATURE.on(
-                            intersectionType,
-                            LanguageFeature.DefinitelyNonNullableTypes to languageVersionSettings
+                if (!c.allowIntersectionTypes) {
+                    if (!languageVersionSettings.supportsFeature(LanguageFeature.DefinitelyNonNullableTypes)) {
+                        c.trace.report(
+                            UNSUPPORTED_FEATURE.on(
+                                intersectionType,
+                                LanguageFeature.DefinitelyNonNullableTypes to languageVersionSettings
+                            )
                         )
-                    )
-                    return
+                        return
+                    }
+
+                    if (!leftType.isTypeParameter() || leftType.isMarkedNullable || !leftType.isNullableOrUninitializedTypeParameter()) {
+                        c.trace.report(INCORRECT_LEFT_COMPONENT_OF_INTERSECTION.on(intersectionType.getLeftTypeRef()!!))
+                        return
+                    }
+
+                    if (!rightType.isAny()) {
+                        c.trace.report(INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION.on(intersectionType.getRightTypeRef()!!))
+                        return
+                    }
+
+                    val definitelyNotNullType =
+                        DefinitelyNotNullType.makeDefinitelyNotNull(leftType.unwrap())
+                            ?: error(
+                                "Definitely not-nullable type is not created for type parameter with nullable upper bound ${
+                                    TypeUtils.getTypeParameterDescriptorOrNull(
+                                        leftType
+                                    )!!
+                                }"
+                            )
+
+                    result = type(definitelyNotNullType)
+                } else {
+                    result = type(IntersectionTypeConstructor(listOf(leftType, rightType)).createType())
+                }
+            }
+
+            private fun KotlinType.isNullableOrUninitializedTypeParameter(): Boolean {
+                if ((constructor.declarationDescriptor as? TypeParameterDescriptorImpl)?.isInitialized == false) {
+                    return true
                 }
 
-                if (!leftType.isTypeParameter() || leftType.isMarkedNullable || !TypeUtils.isNullableType(leftType)) {
-                    c.trace.report(INCORRECT_LEFT_COMPONENT_OF_INTERSECTION.on(intersectionType.getLeftTypeRef()!!))
-                    return
-                }
-
-                if (!rightType.isAny()) {
-                    c.trace.report(INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION.on(intersectionType.getRightTypeRef()!!))
-                    return
-                }
-
-                val definitelyNotNullType =
-                    DefinitelyNotNullType.makeDefinitelyNotNull(leftType.unwrap())
-                        ?: error(
-                            "Definitely not-nullable type is not created for type parameter with nullable upper bound ${
-                                TypeUtils.getTypeParameterDescriptorOrNull(
-                                    leftType
-                                )!!
-                            }"
-                        )
-
-                result = type(definitelyNotNullType)
+                return isNullable()
             }
 
             override fun visitFunctionType(type: KtFunctionType) {
                 val receiverTypeRef = type.receiverTypeReference
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
+
+                val contextReceiverList = type.contextReceiverList
+                val contextReceiversTypes = if (contextReceiverList != null) {
+                    checkContextReceiversAreEnabled(c.trace, languageVersionSettings, contextReceiverList)
+                    val types = contextReceiverList.typeReferences().map { typeRef ->
+                        resolveType(c.noBareTypes(), typeRef)
+                    }
+                    checkSubtypingBetweenContextReceivers(c.trace, contextReceiverList, types)
+                    types
+                } else emptyList()
 
                 val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
                 checkParametersOfFunctionType(parameterDescriptors)
@@ -362,7 +401,7 @@ class TypeResolver(
 
                 result = type(
                     createFunctionType(
-                        moduleDescriptor.builtIns, annotations, receiverType,
+                        moduleDescriptor.builtIns, annotations, receiverType, contextReceiversTypes,
                         parameterDescriptors.map { it.type },
                         parameterDescriptors.map { it.name },
                         returnType,
@@ -376,7 +415,7 @@ class TypeResolver(
                 for (parametersGroup in parametersByName.values) {
                     if (parametersGroup.size < 2) continue
                     for (parameter in parametersGroup) {
-                        val ktParameter = parameter.source.getPsi()?.safeAs<KtParameter>() ?: continue
+                        val ktParameter = (parameter.source.getPsi() as? KtParameter) ?: continue
                         c.trace.report(DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE.on(ktParameter))
                     }
                 }
@@ -402,6 +441,8 @@ class TypeResolver(
 
                     override fun getCompileTimeInitializer() = null
 
+                    override fun cleanCompileTimeInitializerCache() {}
+
                     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
                         return visitor.visitVariableDescriptor(this, data)
                     }
@@ -423,6 +464,10 @@ class TypeResolver(
                     c.trace.record(BindingContext.VALUE_PARAMETER, parameter, descriptor)
                     descriptor
                 }
+            }
+
+            override fun visitContextReceiverList(contextReceiverList: KtContextReceiverList) {
+                checkContextReceiversAreEnabled(c.trace, languageVersionSettings, contextReceiverList)
             }
 
             override fun visitDynamicType(type: KtDynamicType) {
@@ -466,7 +511,7 @@ class TypeResolver(
             }
         })
 
-        return result ?: type(ErrorUtils.createErrorType(typeElement?.getDebugText() ?: "No type element"))
+        return result ?: type(ErrorUtils.createErrorType(ErrorTypeKind.NO_TYPE_SPECIFIED, typeElement?.getDebugText() ?: "unknown element"))
     }
 
     private fun KtTypeElement?.canHaveFunctionTypeModifiers(): Boolean =
@@ -481,7 +526,7 @@ class TypeResolver(
         val scopeForTypeParameter = getScopeForTypeParameter(c, typeParameter)
 
         if (typeArgumentList != null) {
-            resolveTypeProjections(c, ErrorUtils.createErrorType("No type").constructor, typeArgumentList.arguments)
+            resolveTypeProjections(c, ErrorUtils.createErrorType(ErrorTypeKind.ERROR_TYPE_PARAMETER).constructor, typeArgumentList.arguments)
             c.trace.report(TYPE_ARGUMENTS_NOT_ALLOWED.on(typeArgumentList, "for type parameters"))
         }
 
@@ -490,11 +535,11 @@ class TypeResolver(
             DescriptorResolver.checkHasOuterClassInstance(c.scope, c.trace, referenceExpression, containing)
         }
 
-        return if (scopeForTypeParameter is ErrorUtils.ErrorScope)
-            ErrorUtils.createErrorType("?")
+        return if (scopeForTypeParameter is ErrorScope && scopeForTypeParameter !is ThrowingScope)
+            ErrorUtils.createErrorType(ErrorTypeKind.ERROR_TYPE_PARAMETER)
         else
             KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                annotations,
+                typeAttributeTranslators.toAttributes(annotations, typeParameter.typeConstructor, containing),
                 typeParameter.typeConstructor,
                 listOf(),
                 false,
@@ -575,7 +620,12 @@ class TypeResolver(
                     " but ${collectedArgumentAsTypeProjections.size} instead of ${parameters.size} found in ${element.text}"
         }
 
-        val resultingType = KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
+        val resultingType =
+            KotlinTypeFactory.simpleNotNullType(
+                typeAttributeTranslators.toAttributes(annotations, classDescriptor.typeConstructor, c.scope.ownerDescriptor),
+                classDescriptor,
+                arguments
+            )
 
         // We create flexible types by convention here
         // This is not intended to be used in normal users' environments, only for tests and debugger etc
@@ -671,12 +721,19 @@ class TypeResolver(
             return createErrorTypeForTypeConstructor(c, projectionFromAllQualifierParts, typeConstructor)
         }
 
+        val attributes = typeAttributeTranslators.toAttributes(annotations, descriptor.typeConstructor, c.scope.ownerDescriptor)
+
         return if (c.abbreviated) {
-            val abbreviatedType = KotlinTypeFactory.simpleType(annotations, descriptor.typeConstructor, arguments, false)
+            val abbreviatedType = KotlinTypeFactory.simpleType(
+                attributes,
+                descriptor.typeConstructor,
+                arguments,
+                false
+            )
             type(abbreviatedType)
         } else {
             val typeAliasExpansion = TypeAliasExpansion.create(null, descriptor, arguments)
-            val expandedType = TypeAliasExpander(reportStrategy, c.checkBounds).expand(typeAliasExpansion, annotations)
+            val expandedType = TypeAliasExpander(reportStrategy, c.checkBounds).expand(typeAliasExpansion, attributes)
             type(expandedType)
         }
     }
@@ -781,8 +838,9 @@ class TypeResolver(
     ): PossiblyBareType =
         type(
             ErrorUtils.createErrorTypeWithArguments(
-                typeConstructor.declarationDescriptor?.name?.asString() ?: typeConstructor.toString(),
-                resolveTypeProjectionsWithErrorConstructor(c, arguments)
+                ErrorTypeKind.TYPE_FOR_ERROR_TYPE_CONSTRUCTOR,
+                resolveTypeProjectionsWithErrorConstructor(c, arguments),
+                typeConstructor.declarationDescriptor?.name?.asString() ?: typeConstructor.toString()
             )
         )
 
@@ -910,7 +968,7 @@ class TypeResolver(
         c: TypeResolutionContext,
         argumentElements: List<KtTypeProjection>,
         message: String = "Error type for resolving type projections"
-    ) = resolveTypeProjections(c, ErrorUtils.createErrorTypeConstructor(message), argumentElements)
+    ) = resolveTypeProjections(c, ErrorUtils.createErrorTypeConstructor(ErrorTypeKind.TYPE_FOR_ERROR_TYPE_CONSTRUCTOR, message), argumentElements)
 
     /**
      * For cases like:
@@ -942,7 +1000,7 @@ class TypeResolver(
                     val parameterDescriptor = parameters[i]
                     TypeUtils.makeStarProjection(parameterDescriptor)
                 } else {
-                    TypeProjectionImpl(OUT_VARIANCE, ErrorUtils.createErrorType("*"))
+                    TypeProjectionImpl(OUT_VARIANCE, ErrorUtils.createErrorType(ErrorTypeKind.ERROR_TYPE_PROJECTION))
                 }
             } else {
                 val type = resolveType(c.noBareTypes(), argumentElement.typeReference!!)

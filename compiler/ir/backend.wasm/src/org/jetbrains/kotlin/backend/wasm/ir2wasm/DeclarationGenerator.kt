@@ -5,35 +5,41 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
-import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.lower.originalFqName
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
-class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVisitorVoid {
+class DeclarationGenerator(
+    private val backendContext: WasmBackendContext,
+    private val wasmFileCodegenContext: WasmFileCodegenContext,
+    private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    private val wasmModuleMetadataCache: WasmModuleMetadataCache,
+    private val allowIncompleteImplementations: Boolean,
+) : IrElementVisitorVoid {
 
     // Shortcuts
-    private val backendContext: WasmBackendContext = context.backendContext
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
     private val unitGetInstanceFunction: IrSimpleFunction by lazy { backendContext.findUnitGetInstanceFunction() }
+    private val unitPrimaryConstructor: IrConstructor? by lazy { backendContext.irBuiltIns.unitClass.owner.primaryConstructor }
 
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
@@ -47,29 +53,18 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         // Type aliases are not material
     }
 
-    private fun jsCodeName(declaration: IrFunction): String {
-        return declaration.fqNameWhenAvailable!!.asString() + "_" + (declaration as IrSimpleFunction).wasmSignature(irBuiltIns).hashCode()
-    }
-
     override fun visitFunction(declaration: IrFunction) {
-        // Inline class constructors are currently empty
-        if (declaration is IrConstructor && backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass))
+        // Constructor of inline class or with `@WasmPrimitiveConstructor` is empty
+        if (declaration is IrConstructor &&
+            (backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass) || declaration.hasWasmPrimitiveConstructorAnnotation())
+        ) {
             return
+        }
 
         val isIntrinsic = declaration.hasWasmNoOpCastAnnotation() || declaration.getWasmOpAnnotation() != null
         if (isIntrinsic) {
             return
         }
-
-        val jsCode = declaration.getJsFunAnnotation() ?: if (declaration.isExternal) declaration.name.asString() else null
-        val importedName = if (jsCode != null) {
-            val jsCodeName = jsCodeName(declaration)
-            context.addJsFun(jsCodeName, jsCode)
-            WasmImportPair("js_code", jsCodeName(declaration))
-        } else {
-            declaration.getWasmImportAnnotation()
-        }
-
 
         if (declaration.isFakeOverride)
             return
@@ -77,50 +72,65 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         // Generate function type
         val watName = declaration.fqNameWhenAvailable.toString()
         val irParameters = declaration.getEffectiveValueParameters()
-        val resultType =
-            when {
-                // Unit_getInstance returns true Unit reference instead of "void"
-                declaration == unitGetInstanceFunction -> context.transformType(declaration.returnType)
-                else -> context.transformResultType(declaration.returnType)
-            }
+        val resultType = when (declaration) {
+            // Unit_getInstance returns true Unit reference instead of "void"
+            unitGetInstanceFunction, unitPrimaryConstructor -> wasmModuleTypeTransformer.transformType(declaration.returnType)
+            else -> wasmModuleTypeTransformer.transformResultType(declaration.returnType)
+        }
 
         val wasmFunctionType =
             WasmFunctionType(
-                name = watName,
-                parameterTypes = irParameters.map { context.transformValueParameterType(it) },
+                parameterTypes = irParameters.map { wasmModuleTypeTransformer.transformValueParameterType(it) },
                 resultTypes = listOfNotNull(resultType)
             )
-        context.defineFunctionType(declaration.symbol, wasmFunctionType)
+        wasmFileCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)
 
-        if (declaration is IrSimpleFunction) {
-            if (declaration.modality == Modality.ABSTRACT) return
-            if (declaration.isOverridableOrOverrides) {
-                // Register function as virtual, meaning this function
-                // will be stored Wasm table and could be called indirectly.
-                context.registerVirtualFunction(declaration.symbol)
-            }
+        if (declaration is IrSimpleFunction && declaration.modality == Modality.ABSTRACT) {
+            return
         }
 
         assert(declaration == declaration.realOverrideTarget) {
             "Sanity check that $declaration is a real function that can be used in calls"
         }
 
+        val functionTypeSymbol = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
+
+        val wasmImportModule = declaration.getWasmImportDescriptor()
+        val jsCode = declaration.getJsFunAnnotation()
+        val importedName = when {
+            wasmImportModule != null -> {
+                check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
+                wasmFileCodegenContext.addJsModuleImport(declaration.symbol, wasmImportModule.moduleName)
+                wasmImportModule
+            }
+            jsCode != null -> {
+                // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
+                require(declaration is IrSimpleFunction)
+                val jsFunName = WasmSymbol(declaration.fqNameWhenAvailable.toString())
+                wasmFileCodegenContext.addJsFun(declaration.symbol, jsFunName, jsCode)
+                WasmImportDescriptor("js_code", jsFunName)
+            }
+            else -> {
+                null
+            }
+        }
         if (importedName != null) {
             // Imported functions don't have bodies. Declaring the signature:
-            context.defineFunction(
+            wasmFileCodegenContext.defineFunction(
                 declaration.symbol,
-                WasmFunction.Imported(watName, wasmFunctionType, importedName)
+                WasmFunction.Imported(watName, functionTypeSymbol, importedName)
             )
             // TODO: Support re-export of imported functions.
             return
         }
 
-        val function = WasmFunction.Defined(watName, wasmFunctionType)
-        val functionCodegenContext = WasmFunctionCodegenContextImpl(
+        val function = WasmFunction.Defined(watName, functionTypeSymbol)
+        val functionCodegenContext = WasmFunctionCodegenContext(
             declaration,
             function,
             backendContext,
-            context
+            wasmFileCodegenContext,
+            wasmModuleTypeTransformer
         )
 
         for (irParameter in irParameters) {
@@ -128,7 +138,17 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         }
 
         val exprGen = functionCodegenContext.bodyGen
-        val bodyBuilder = BodyGenerator(functionCodegenContext)
+        val bodyBuilder = BodyGenerator(
+            backendContext,
+            wasmFileCodegenContext,
+            functionCodegenContext,
+            wasmModuleMetadataCache,
+            wasmModuleTypeTransformer,
+        )
+
+        if (declaration is IrConstructor) {
+            bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
+        }
 
         require(declaration.body is IrBlockBody) { "Only IrBlockBody is supported" }
         declaration.body?.acceptVoid(bodyBuilder)
@@ -137,41 +157,156 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         // variables on constructor call sites.
         // TODO: Redesign construction scheme.
         if (declaration is IrConstructor) {
-            exprGen.buildGetLocal(/*implicit this*/ function.locals[0])
-            exprGen.buildInstr(WasmOp.RETURN)
+            exprGen.buildGetLocal(/*implicit this*/ function.locals[0], SourceLocation.NoLocation("Get implicit dispatch receiver"))
+            exprGen.buildInstr(WasmOp.RETURN, SourceLocation.NoLocation("Implicit return from constructor"))
         }
 
         // Add unreachable if function returns something but not as a last instruction.
         // We can do a separate lowering which adds explicit returns everywhere instead.
         if (wasmFunctionType.resultTypes.isNotEmpty()) {
-            exprGen.buildUnreachable()
+            exprGen.buildUnreachableForVerifier()
         }
 
-        context.defineFunction(declaration.symbol, function)
+        wasmFileCodegenContext.defineFunction(declaration.symbol, function)
 
-        val initPriority = when (declaration) {
-            backendContext.fieldInitFunction -> "0"
-            backendContext.mainCallsWrapperFunction -> "1"
-            else -> null
+        val nameIfExported = when {
+            declaration.isJsExport() -> declaration.getJsNameOrKotlinName().identifier
+            else -> declaration.getWasmExportNameIfWasmExport()
         }
-        if (initPriority != null)
-            context.registerInitFunction(function, initPriority)
 
-        if (declaration.isExported()) {
-            context.addExport(
+        if (nameIfExported != null) {
+            wasmFileCodegenContext.addExport(
                 WasmExport.Function(
                     field = function,
-                    name = declaration.getJsNameOrKotlinName().identifier
+                    name = nameIfExported
                 )
             )
         }
     }
 
+    private fun createVirtualTableStruct(
+        methods: List<VirtualMethodMetadata>,
+        name: String,
+        superType: WasmSymbolReadOnly<WasmTypeDeclaration>? = null,
+        isFinal: Boolean,
+    ): WasmStructDeclaration {
+        val tableFields = methods.map {
+            WasmStructFieldDeclaration(
+                name = it.signature.name.asString(),
+                type = WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceFunctionType(it.function.symbol))),
+                isMutable = false
+            )
+        }
+
+        return WasmStructDeclaration(
+            name = name,
+            fields = tableFields,
+            superType = superType,
+            isFinal = isFinal
+        )
+    }
+
+    private fun createVTable(metadata: ClassMetadata) {
+        val klass = metadata.klass
+        val symbol = klass.symbol
+        val vtableName = "${klass.fqNameWhenAvailable}.vtable"
+        val vtableStruct = createVirtualTableStruct(
+            metadata.virtualMethods,
+            vtableName,
+            superType = metadata.superClass?.klass?.symbol?.let(wasmFileCodegenContext::referenceVTableGcType),
+            isFinal = klass.modality == Modality.FINAL
+        )
+        wasmFileCodegenContext.defineVTableGcType(metadata.klass.symbol, vtableStruct)
+
+        if (klass.isAbstractOrSealed) return
+
+        val vTableTypeReference = wasmFileCodegenContext.referenceVTableGcType(symbol)
+        val vTableRefGcType = WasmRefType(WasmHeapType.Type(vTableTypeReference))
+
+        val initVTableGlobal = buildWasmExpression {
+            val location = SourceLocation.NoLocation("Create instance of vtable struct")
+            metadata.virtualMethods.forEachIndexed { i, method ->
+                if (method.function.modality != Modality.ABSTRACT) {
+                    buildInstr(WasmOp.REF_FUNC, location, WasmImmediate.FuncIdx(wasmFileCodegenContext.referenceFunction(method.function.symbol)))
+                } else {
+                    check(allowIncompleteImplementations) {
+                        "Cannot find class implementation of method ${method.signature} in class ${klass.fqNameWhenAvailable}"
+                    }
+                    //This erased by DCE so abstract version appeared in non-abstract class
+                    buildRefNull(vtableStruct.fields[i].type.getHeapType(), location)
+                }
+            }
+            buildStructNew(vTableTypeReference, location)
+        }
+        wasmFileCodegenContext.defineGlobalVTable(
+            irClass = symbol,
+            wasmGlobal = WasmGlobal(vtableName, vTableRefGcType, false, initVTableGlobal)
+        )
+    }
+
+    private fun addClassInterfaceInheritanceStructure(klass: IrClass) {
+        if (klass.isExternal) return
+        if (klass.getWasmArrayAnnotation() != null) return
+        if (klass.isInterface) return
+        if (klass.isAbstractOrSealed) return
+
+        val classMetadata = wasmModuleMetadataCache.getClassMetadata(klass.symbol)
+        if (classMetadata.interfaces.isNotEmpty()) {
+            wasmFileCodegenContext.addInterfaceUnion(classMetadata.interfaces.map { it.symbol })
+        }
+    }
+
+    private fun createClassITable(metadata: ClassMetadata) {
+        val location = SourceLocation.NoLocation("Create instance of itable struct")
+        val klass = metadata.klass
+        if (klass.isAbstractOrSealed) return
+        val supportedInterface = metadata.interfaces.firstOrNull()?.symbol ?: return
+
+        addClassInterfaceInheritanceStructure(klass)
+
+        val classInterfaceType = wasmFileCodegenContext.referenceClassITableGcType(supportedInterface)
+
+        val initITableGlobal = buildWasmExpression {
+            buildInstr(WasmOp.MACRO_TABLE, location, WasmImmediate.SymbolI32(wasmFileCodegenContext.referenceClassITableInterfaceTableSize(supportedInterface)))
+            for (iFace in metadata.interfaces) {
+                buildInstr(WasmOp.MACRO_TABLE_INDEX, location, WasmImmediate.SymbolI32(wasmFileCodegenContext.referenceClassITableInterfaceSlot(iFace.symbol)))
+
+                val iFaceVTableGcType = wasmFileCodegenContext.referenceVTableGcType(iFace.symbol)
+
+                for (method in wasmModuleMetadataCache.getInterfaceMetadata(iFace.symbol).methods) {
+                    val classMethod: VirtualMethodMetadata? = metadata.virtualMethods
+                        .find { it.signature == method.signature && it.function.modality != Modality.ABSTRACT }  // TODO: Use map
+
+                    if (classMethod == null && !allowIncompleteImplementations && !backendContext.partialLinkageSupport.isEnabled) {
+                        error("Cannot find interface implementation of method ${method.signature} in class ${klass.fqNameWhenAvailable}")
+                    }
+
+                    if (classMethod != null) {
+                        val functionTypeReference = wasmFileCodegenContext.referenceFunction(classMethod.function.symbol)
+                        buildInstr(WasmOp.REF_FUNC, location, WasmImmediate.FuncIdx(functionTypeReference))
+                    } else {
+                        //This erased by DCE so abstract version appeared in non-abstract class
+                        buildRefNull(WasmHeapType.Type(wasmFileCodegenContext.referenceFunctionType(method.function.symbol)), location)
+                    }
+                }
+                buildStructNew(iFaceVTableGcType, location)
+            }
+            buildInstr(WasmOp.MACRO_TABLE_END, location)
+            buildStructNew(classInterfaceType, location)
+        }
+
+        val wasmClassIFaceGlobal = WasmGlobal(
+            name = "${klass.fqNameWhenAvailable.toString()}.classITable",
+            type = WasmRefType(WasmHeapType.Type(classInterfaceType)),
+            isMutable = false,
+            init = initITableGlobal
+        )
+        wasmFileCodegenContext.defineGlobalClassITable(klass.symbol, wasmClassIFaceGlobal)
+    }
+
     override fun visitClass(declaration: IrClass) {
-        if (declaration.isAnnotationClass) return
         if (declaration.isExternal) return
         val symbol = declaration.symbol
-
 
         // Handle arrays
         declaration.getWasmArrayAnnotation()?.let { wasmArrayAnnotation ->
@@ -180,94 +315,52 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 nameStr,
                 WasmStructFieldDeclaration(
                     name = "field",
-                    type = context.transformFieldType(wasmArrayAnnotation.type),
+                    type = wasmModuleTypeTransformer.transformFieldType(wasmArrayAnnotation.type),
                     isMutable = true
                 )
             )
 
-            context.defineGcType(symbol, wasmArrayDeclaration)
+            wasmFileCodegenContext.defineGcType(symbol, wasmArrayDeclaration)
             return
         }
 
+        val nameStr = declaration.fqNameWhenAvailable.toString()
+
         if (declaration.isInterface) {
-            val metadata = InterfaceMetadata(declaration, irBuiltIns)
-            for (method in metadata.methods) {
-                val methodSymbol = method.function.symbol
-                val table = WasmTable(
-                    elementType = WasmRefNullType(WasmHeapType.Type(context.referenceFunctionType(methodSymbol)))
-                )
-                context.defineInterfaceMethodTable(methodSymbol, table)
-            }
-            context.registerInterface(symbol)
+            val vtableStruct = createVirtualTableStruct(
+                methods = wasmModuleMetadataCache.getInterfaceMetadata(symbol).methods,
+                name = "$nameStr.itable",
+                isFinal = true,
+            )
+            wasmFileCodegenContext.defineVTableGcType(symbol, vtableStruct)
         } else {
-            val nameStr = declaration.fqNameWhenAvailable.toString()
+            val metadata = wasmModuleMetadataCache.getClassMetadata(symbol)
+
+            createVTable(metadata)
+            createClassITable(metadata)
+
+            val vtableRefGcType = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.referenceVTableGcType(symbol)))
+            val classITableRefGcType = WasmRefNullType(WasmHeapType.Simple.Struct)
+            val fields = mutableListOf<WasmStructFieldDeclaration>()
+            fields.add(WasmStructFieldDeclaration("vtable", vtableRefGcType, false))
+            fields.add(WasmStructFieldDeclaration("itable", classITableRefGcType, false))
+            declaration.allFields(irBuiltIns).mapTo(fields) {
+                WasmStructFieldDeclaration(
+                    name = it.name.toString(),
+                    type = wasmModuleTypeTransformer.transformFieldType(it.type),
+                    isMutable = true
+                )
+            }
+
+            val superClass = metadata.superClass
             val structType = WasmStructDeclaration(
                 name = nameStr,
-                fields = declaration.allFields(irBuiltIns).map {
-                    WasmStructFieldDeclaration(
-                        name = it.name.toString(),
-                        type = context.transformFieldType(it.type),
-                        isMutable = true
-                    )
-                }
+                fields = fields,
+                superType = superClass?.let { wasmFileCodegenContext.referenceGcType(superClass.klass.symbol) },
+                isFinal = declaration.modality == Modality.FINAL
             )
-
-            context.defineGcType(symbol, structType)
-
-            var depth = 0
-            val metadata = context.getClassMetadata(symbol)
-            var subMetadata = metadata
-            while (true) {
-                subMetadata = subMetadata.superClass ?: break
-                depth++
-            }
-
-            val initBody = mutableListOf<WasmInstr>()
-            val wasmExpressionGenerator = WasmIrExpressionBuilder(initBody)
-
-            val wasmGcType = context.referenceGcType(symbol)
-            val superClass = metadata.superClass
-            if (superClass != null) {
-                val superRTT = context.referenceClassRTT(superClass.klass.symbol)
-                wasmExpressionGenerator.buildGetGlobal(superRTT)
-                wasmExpressionGenerator.buildRttSub(wasmGcType)
-            } else {
-                wasmExpressionGenerator.buildRttCanon(wasmGcType)
-            }
-
-
-            val rtt = WasmGlobal(
-                name = "rtt_of_$nameStr",
-                isMutable = false,
-                type = WasmRtt(depth, WasmSymbol(structType)),
-                init = initBody
-            )
-
-            context.defineRTT(symbol, rtt)
-            context.registerClass(symbol)
-            context.generateTypeInfo(symbol, binaryDataStruct(metadata))
-
-            // New type info model
-            if (declaration.modality != Modality.ABSTRACT) {
-                context.generateInterfaceTable(symbol, interfaceTable(metadata))
-                for (i in metadata.interfaces) {
-                    val interfaceImplementation = InterfaceImplementation(i.symbol, declaration.symbol)
-                    // TODO: Cache it
-                    val interfaceMetadata = InterfaceMetadata(i, irBuiltIns)
-                    val table = interfaceMetadata.methods.associate { method ->
-                        val classMethod: VirtualMethodMetadata =
-                            metadata.virtualMethods
-                                .find { it.signature == method.signature }  // TODO: Use map
-                                ?: error("Cannot find class implementation of method ${method.signature} in class ${declaration.fqNameWhenAvailable}")
-
-                        method.function.symbol as IrFunctionSymbol to context.referenceFunction(classMethod.function.symbol)
-                    }
-                    context.registerInterfaceImplementationMethod(
-                        interfaceImplementation,
-                        table
-                    )
-                }
-            }
+            wasmFileCodegenContext.defineGcType(symbol, structType)
+            wasmFileCodegenContext.generateTypeInfo(symbol, binaryDataStruct(metadata))
         }
 
         for (member in declaration.declarations) {
@@ -276,82 +369,60 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
     }
 
     private fun binaryDataStruct(classMetadata: ClassMetadata): ConstantDataStruct {
-        val invalidIndex = -1
+        val fqnShouldBeEmitted = backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
 
-        val fqnShouldBeEmitted = context.backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
-        //TODO("FqName for inner classes could be invalid due to topping it out from outer class")
-        val packageName = if (fqnShouldBeEmitted) classMetadata.klass.kotlinFqName.parentOrNull()?.asString() ?: "" else ""
-        val simpleName = classMetadata.klass.kotlinFqName.shortName().asString()
+        val klass = classMetadata.klass
+        val qualifier =
+            if (fqnShouldBeEmitted) {
+                (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
+            } else {
+                ""
+            }
+
+        val simpleName = klass.name.asString()
+
+        val (packageNameAddress, packageNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(qualifier)
+        val (simpleNameAddress, simpleNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(simpleName)
+
         val typeInfo = ConstantDataStruct(
-            "TypeInfo",
-            listOf(
-                ConstantDataIntField("TypePackageNameLength", packageName.length),
-                ConstantDataIntField("TypePackageNamePtr", context.referenceStringLiteral(packageName)),
+            name = "TypeInfo",
+            elements = listOf(
+                ConstantDataIntField("TypePackageNameLength", qualifier.length),
+                ConstantDataIntField("TypePackageNameId", packageNamePoolId),
+                ConstantDataIntField("TypePackageNamePtr", packageNameAddress),
                 ConstantDataIntField("TypeNameLength", simpleName.length),
-                ConstantDataIntField("TypeNamePtr", context.referenceStringLiteral(simpleName))
+                ConstantDataIntField("TypeNameId", simpleNamePoolId),
+                ConstantDataIntField("TypeNamePtr", simpleNameAddress)
             )
         )
 
-        val superClass = classMetadata.klass.getSuperClass(context.backendContext.irBuiltIns)
+        val superClass = klass.getSuperClass(backendContext.irBuiltIns)
         val superTypeId = superClass?.let {
-            ConstantDataIntField("SuperTypeId", context.referenceClassId(it.symbol))
+            ConstantDataIntField("SuperTypeId", wasmFileCodegenContext.referenceTypeId(it.symbol))
         } ?: ConstantDataIntField("SuperTypeId", -1)
 
-        val vtableSizeField = ConstantDataIntField(
-            "V-table length",
-            classMetadata.virtualMethods.size
-        )
-
-        val vtableArray = ConstantDataIntArray(
-            "V-table",
-            classMetadata.virtualMethods.map {
-                if (it.function.modality == Modality.ABSTRACT) {
-                    WasmSymbol(invalidIndex)
-                } else {
-                    context.referenceVirtualFunctionId(it.function.symbol)
-                }
-            }
-        )
-
-        val interfaceTablePtr = ConstantDataIntField(
-            "interfaceTablePtr",
-            context.referenceInterfaceTableAddress(classMetadata.klass.symbol)
-        )
+        val typeInfoContent = mutableListOf(typeInfo, superTypeId)
+        if (!klass.isAbstractOrSealed) {
+            typeInfoContent.add(interfaceTable(classMetadata))
+        }
 
         return ConstantDataStruct(
-            "Class TypeInfo: ${classMetadata.klass.fqNameWhenAvailable} ",
-            listOf(
-                typeInfo,
-                superTypeId,
-                interfaceTablePtr,
-                vtableSizeField,
-                vtableArray,
-            )
+            name = "Class TypeInfo: ${klass.fqNameWhenAvailable} ",
+            elements = typeInfoContent
         )
     }
-
 
     private fun interfaceTable(classMetadata: ClassMetadata): ConstantDataStruct {
         val interfaces = classMetadata.interfaces
         val size = ConstantDataIntField("size", interfaces.size)
         val interfaceIds = ConstantDataIntArray(
             "interfaceIds",
-            interfaces.map { context.referenceInterfaceId(it.symbol) },
-        )
-        val interfaceImplementationIds = ConstantDataIntArray(
-            "interfaceImplementationId",
-            interfaces.map {
-                context.referenceInterfaceImplementationId(InterfaceImplementation(it.symbol, classMetadata.klass.symbol))
-            },
+            interfaces.map { wasmFileCodegenContext.referenceTypeId(it.symbol) },
         )
 
         return ConstantDataStruct(
-            "Class interface table: ${classMetadata.klass.fqNameWhenAvailable} ",
-            listOf(
-                size,
-                interfaceIds,
-                interfaceImplementationIds,
-            )
+            name = "Class interface table: ${classMetadata.klass.fqNameWhenAvailable} ",
+            elements = listOf(size, interfaceIds)
         )
     }
 
@@ -360,40 +431,117 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         // Member fields are generated as part of struct type
         if (!declaration.isStatic) return
 
-        val wasmType = context.transformType(declaration.type)
+        val wasmType = wasmModuleTypeTransformer.transformType(declaration.type)
 
         val initBody = mutableListOf<WasmInstr>()
-        val wasmExpressionGenerator = WasmIrExpressionBuilder(initBody)
-        generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
+        val wasmExpressionGenerator = WasmExpressionBuilder(initBody)
+
+        val initValue: IrExpression? = declaration.initializer?.expression
+        if (initValue != null) {
+            if (initValue is IrConst && initValue.kind !is IrConstKind.String) {
+                generateConstExpression(
+                    initValue,
+                    wasmExpressionGenerator,
+                    wasmFileCodegenContext,
+                    backendContext,
+                    declaration.getSourceLocation(declaration.symbol, declaration.fileOrNull)
+                )
+            } else {
+                val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())
+                val functionCodegenContext = WasmFunctionCodegenContext(
+                    null,
+                    stubFunction,
+                    backendContext,
+                    wasmFileCodegenContext,
+                    wasmModuleTypeTransformer
+                )
+                val bodyGenerator = BodyGenerator(
+                    backendContext,
+                    wasmFileCodegenContext,
+                    functionCodegenContext,
+                    wasmModuleMetadataCache,
+                    wasmModuleTypeTransformer,
+                )
+                bodyGenerator.generateExpression(initValue)
+                wasmFileCodegenContext.addFieldInitializer(
+                    declaration.symbol,
+                    stubFunction.instructions,
+                    declaration.isObjectInstanceField()
+                )
+                generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
+            }
+        } else {
+            generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
+        }
 
         val global = WasmGlobal(
             name = declaration.fqNameWhenAvailable.toString(),
             type = wasmType,
             isMutable = true,
-            // All globals are currently initialized in start function
             init = initBody
         )
 
-        context.defineGlobal(declaration.symbol, global)
+        wasmFileCodegenContext.defineGlobalField(declaration.symbol, global)
     }
 }
 
-
-fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) = when (type) {
-    WasmI32 -> g.buildConstI32(0)
-    WasmI64 -> g.buildConstI64(0)
-    WasmF32 -> g.buildConstF32(0f)
-    WasmF64 -> g.buildConstF64(0.0)
-    is WasmRefNullType -> g.buildRefNull(type.heapType)
-    is WasmExternRef, is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
-    WasmUnreachableType -> error("Unreachable type can't be initialized")
-    else -> error("Unknown value type ${type.name}")
-}
+fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) =
+    SourceLocation.NoLocation("Default initializer, usually don't require location").let { location ->
+        when (type) {
+            WasmI32 -> g.buildConstI32(0, location)
+            WasmI64 -> g.buildConstI64(0, location)
+            WasmF32 -> g.buildConstF32(0f, location)
+            WasmF64 -> g.buildConstF64(0.0, location)
+            is WasmRefNullType -> g.buildRefNull(type.heapType, location)
+            is WasmRefNullrefType -> g.buildRefNull(WasmHeapType.Simple.None, location)
+            is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
+            is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
+            is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
+            WasmUnreachableType -> error("Unreachable type can't be initialized")
+            else -> error("Unknown value type ${type.name}")
+        }
+    }
 
 fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
-    val implicitThis = if (this is IrConstructor) parentAsClass.thisReceiver!! else null
+    val implicitThis = when (this) {
+        is IrConstructor -> parentAsClass.thisReceiver!!
+        is IrSimpleFunction -> null
+    }
     return listOfNotNull(implicitThis, dispatchReceiverParameter, extensionReceiverParameter) + valueParameters
 }
 
 fun IrFunction.isExported(): Boolean =
-    isJsExport()
+    isJsExport() || getWasmExportNameIfWasmExport() != null
+
+fun generateConstExpression(
+    expression: IrConst,
+    body: WasmExpressionBuilder,
+    context: WasmFileCodegenContext,
+    backendContext: WasmBackendContext,
+    location: SourceLocation
+) =
+    when (val kind = expression.kind) {
+        is IrConstKind.Null -> {
+            val isExternal = expression.type.getClass()?.isExternal ?: expression.type.erasedUpperBound?.isExternal
+            val bottomType = if (isExternal == true) WasmRefNullExternrefType else WasmRefNullrefType
+            body.buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(bottomType))
+        }
+        is IrConstKind.Boolean -> body.buildConstI32(if (expression.value as Boolean) 1 else 0, location)
+        is IrConstKind.Byte -> body.buildConstI32((expression.value as Byte).toInt(), location)
+        is IrConstKind.Short -> body.buildConstI32((expression.value as Short).toInt(), location)
+        is IrConstKind.Int -> body.buildConstI32(expression.value as Int, location)
+        is IrConstKind.Long -> body.buildConstI64(expression.value as Long, location)
+        is IrConstKind.Char -> body.buildConstI32((expression.value as Char).code, location)
+        is IrConstKind.Float -> body.buildConstF32(expression.value as Float, location)
+        is IrConstKind.Double -> body.buildConstF64(expression.value as Double, location)
+        is IrConstKind.String -> {
+            val stringValue = expression.value as String
+            val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+            body.commentGroupStart { "const string: \"$stringValue\"" }
+            body.buildConstI32Symbol(literalPoolId, location)
+            body.buildConstI32Symbol(literalAddress, location)
+            body.buildConstI32(stringValue.length, location)
+            body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteral), location)
+            body.commentGroupEnd()
+        }
+    }

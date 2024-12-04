@@ -19,9 +19,6 @@ fun f(a: UInt): Int {
     return n
 }
 
-// JVM non-IR uses while.
-// JVM IR uses if + do-while.
-
 // 0 iterator
 // 0 getStart
 // 0 getEnd
@@ -31,15 +28,10 @@ fun f(a: UInt): Int {
 // 0 INVOKESTATIC kotlin/UInt.constructor-impl
 // 0 INVOKE\w+ kotlin/UInt.(un)?box-impl
 
-// JVM_TEMPLATES
 // 1 IF
 
-// JVM_IR_TEMPLATES
-// 1 IF
-
-// JVM_IR_TEMPLATES
-// 5 ILOAD
-// 4 ISTORE
+// 4 ILOAD
+// 3 ISTORE
 // 0 IADD
 // 0 ISUB
 // 2 IINC

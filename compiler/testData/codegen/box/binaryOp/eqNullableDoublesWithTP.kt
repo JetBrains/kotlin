@@ -1,4 +1,6 @@
-// !LANGUAGE: +ProperIeee754Comparisons
+// LANGUAGE: +ProperIeee754Comparisons
+
+// JVM_ABI_K1_K2_DIFF: KT-63855
 
 fun <A: Double, B: Double?> eq_double_doubleN(a: A, b: B) = a == b
 

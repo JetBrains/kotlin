@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -40,8 +41,8 @@ fun test() {
   val s = "";
 
   when (x) {
-    <!INCOMPATIBLE_TYPES!>s<!> -> 1
-    <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES!>""<!> -> 1
+    <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES!>s<!> -> 1
+    <!INCOMPATIBLE_TYPES!>""<!> -> 1
     x -> 1
     1 -> 1
   }

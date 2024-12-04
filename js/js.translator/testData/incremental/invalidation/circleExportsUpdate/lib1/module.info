@@ -1,0 +1,19 @@
+STEP 0:
+    modifications:
+        U : f.0.kt -> f.kt
+    added file: f.kt, f1.kt, f2.kt, f3.kt
+STEP 1:
+    modifications:
+        U : f.1.kt -> f.kt
+    modified ir: f.kt
+    updated exports: f1.kt, f2.kt, f3.kt
+STEP 2:
+    modifications:
+        U : f.0.kt -> f.kt
+    modified ir: f.kt
+    updated exports: f1.kt, f2.kt, f3.kt
+STEP 3:
+    modifications:
+        U : f.1.kt -> f.kt
+    modified ir: f.kt
+    updated exports: f1.kt, f2.kt, f3.kt

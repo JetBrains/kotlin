@@ -34,6 +34,7 @@
                 <select class="custom-select" id="inputGroupTarget">
                     <option value="Linux">Linux</option>
                     <option value="Mac_OS_X">Mac OS X</option>
+                    <option value="Mac_OS_X_Arm64">Mac OS X(Arm64)</option>
                     <option value="Windows_10">Windows 10</option>
                 </select>
             </div>
@@ -78,7 +79,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <h4>Normalized execution time</h4>
+            <h4>Normalized execution time (release binaries)</h4>
             <div id="exec_chart" class="chart"></div>
         </div>
     </div>
@@ -97,7 +98,13 @@
         </div>
     </div>
     <p style="margin-top: 40px">
-
+    <div class="row">
+        <div class="col">
+            <h4>Normalized execution time (debug binaries)</h4>
+            <div id="exec_debug_chart" class="chart"></div>
+        </div>
+    </div>
+    <p style="margin-top: 40px">
     <div class="row">
         <div class="col">
             <h4>Bundle size</h4>

@@ -1,0 +1,24 @@
+FILE: samePackage.kt
+    package example
+
+    public final class KotlinChildOfJavaSuper : R|example/JavaSuper| {
+        public constructor(): R|example/KotlinChildOfJavaSuper| {
+            super<R|example/JavaSuper|>()
+        }
+
+        @R|example/JavaSuper.Foo|(value = String(should work)) public final fun usesFoo(): R|kotlin/String| {
+            ^usesFoo String()
+        }
+
+    }
+FILE: otherPackage.kt
+    public final class KotlinChildOfJavaSuper : R|example/JavaSuper| {
+        public constructor(): R|KotlinChildOfJavaSuper| {
+            super<R|example/JavaSuper|>()
+        }
+
+        @R|example/JavaSuper.Foo|(value = String(should work)) public final fun usesFoo(): R|kotlin/String| {
+            ^usesFoo String()
+        }
+
+    }

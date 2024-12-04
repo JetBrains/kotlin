@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My(var x: String) {
 
     var y: String

@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public interface I {
+    // source: 'privateAccessorNaming.kt'
+    public method bar(): int
+    private method foo(): int
+}

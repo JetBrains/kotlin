@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// KT-55458
 
 val arr = arrayOf("a", "b", "c", "d")
 

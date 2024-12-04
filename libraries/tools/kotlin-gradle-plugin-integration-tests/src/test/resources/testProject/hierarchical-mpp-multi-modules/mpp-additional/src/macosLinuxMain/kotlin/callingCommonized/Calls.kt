@@ -1,4 +1,4 @@
-// !CHECK_HIGHLIGHTING
+// CHECK_HIGHLIGHTING
 package callingCommonized
 
 import platform.posix.ns_r_notauth

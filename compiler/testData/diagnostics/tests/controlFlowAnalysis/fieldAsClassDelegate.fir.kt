@@ -1,5 +1,7 @@
-// See KT-15566
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_STDLIB
 // NI_EXPECTED_FILE
+// ISSUE: KT-15566, KT-56489
 
 import DefaultHttpClient.client
 
@@ -9,7 +11,7 @@ class HttpClientImpl : HttpClient
 
 // Below we should have initialization error for both (!) delegates
 
-object DefaultHttpClient : HttpClient by client {
+object DefaultHttpClient : HttpClient by <!UNINITIALIZED_VARIABLE!>client<!> {
     val client = HttpClientImpl()
 }
 
@@ -22,15 +24,10 @@ object DefaultHttpClientWithFun : HttpClient by fClient() {
 
 private fun fClient() = HttpClientImpl()
 
-private fun <T> lazy(init: () -> T): <!UNRESOLVED_REFERENCE!>kotlin.Lazy<T><!> {
-    init()
-    null!!
-}
-
 object DefaultHttpClientWithBy : HttpClient by client {
     val client by lazy { HttpClientImpl() }
 }
 
-object DefaultFqHttpClient : HttpClient by DefaultFqHttpClient.client {
+object DefaultFqHttpClient : HttpClient by <!UNINITIALIZED_VARIABLE!>DefaultFqHttpClient.client<!> {
     val client = HttpClientImpl()
 }

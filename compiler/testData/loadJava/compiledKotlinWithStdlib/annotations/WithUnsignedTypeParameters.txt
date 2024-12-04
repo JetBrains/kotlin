@@ -1,13 +1,13 @@
 package test
 
 public const val ubyteConst: kotlin.UByte = 10.toUByte()
-    public fun <get-ubyteConst>(): kotlin.UByte
+    public fun `<get-ubyteConst>`(): kotlin.UByte
 public const val uintConst: kotlin.UInt = 30.toUInt()
-    public fun <get-uintConst>(): kotlin.UInt
+    public fun `<get-uintConst>`(): kotlin.UInt
 public const val ulongConst: kotlin.ULong = 40.toULong()
-    public fun <get-ulongConst>(): kotlin.ULong
+    public fun `<get-ulongConst>`(): kotlin.ULong
 public const val ushortConst: kotlin.UShort = 20.toUShort()
-    public fun <get-ushortConst>(): kotlin.UShort
+    public fun `<get-ushortConst>`(): kotlin.UShort
 
 public final class A {
     /*primary*/ public constructor A()
@@ -19,11 +19,11 @@ public final class A {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) public final annotation class Ann : kotlin.Annotation {
     /*primary*/ public constructor Ann(/*0*/ ubyte: kotlin.UByte, /*1*/ ushort: kotlin.UShort, /*2*/ uint: kotlin.UInt, /*3*/ ulong: kotlin.ULong)
     public final val ubyte: kotlin.UByte
-        public final fun <get-ubyte>(): kotlin.UByte
+        public final fun `<get-ubyte>`(): kotlin.UByte
     public final val uint: kotlin.UInt
-        public final fun <get-uint>(): kotlin.UInt
+        public final fun `<get-uint>`(): kotlin.UInt
     public final val ulong: kotlin.ULong
-        public final fun <get-ulong>(): kotlin.ULong
+        public final fun `<get-ulong>`(): kotlin.ULong
     public final val ushort: kotlin.UShort
-        public final fun <get-ushort>(): kotlin.UShort
+        public final fun `<get-ushort>`(): kotlin.UShort
 }

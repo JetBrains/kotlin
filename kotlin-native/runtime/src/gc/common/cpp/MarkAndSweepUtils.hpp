@@ -8,79 +8,188 @@
 
 #include "ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
+#include "GlobalData.hpp"
+#include "GCStatistics.hpp"
+#include "Logging.hpp"
 #include "Memory.h"
+#include "ObjectOps.hpp"
 #include "ObjectTraversal.hpp"
+#include "RootSet.hpp"
 #include "Runtime.h"
+#include "SpecialRefRegistry.hpp"
+#include "ThreadData.hpp"
 #include "Types.h"
 
 namespace kotlin {
 namespace gc {
 
-// TODO: Because of `graySet` this implementation may allocate heap memory during GC.
+namespace internal {
+
 template <typename Traits>
-void Mark(KStdVector<ObjHeader*> graySet) noexcept {
-    while (!graySet.empty()) {
-        ObjHeader* top = graySet.back();
-        graySet.pop_back();
-
-        RuntimeAssert(!isNullOrMarker(top), "Got invalid reference %p in gray set", top);
-
-        if (top->heap()) {
-            if (!Traits::TryMark(top)) {
-                continue;
-            }
+void processFieldInMark(void* state, ObjHeader* object, ObjHeader* field) noexcept {
+    auto& markQueue = *static_cast<typename Traits::MarkQueue*>(state);
+    if (field->heap()) {
+        Traits::tryEnqueue(markQueue, field);
+    }
+    if constexpr (!Traits::kAllowHeapToStackRefs) {
+        if (object->heap()) {
+            RuntimeAssert(!field->local(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
         }
+    }
+}
 
-        if (top->heap() || top->local()) {
-            traverseReferredObjects(top, [&graySet](ObjHeader* field) noexcept {
-                if (!isNullOrMarker(field) && field->heap() && !Traits::IsMarked(field)) {
-                    graySet.push_back(field);
-                }
-            });
+template <typename Traits>
+void processObjectInMark(void* state, ObjHeader* object) noexcept {
+    traverseClassObjectFields(object, [=] (auto fieldAccessor) noexcept {
+        if (ObjHeader* field = fieldAccessor.direct()) {
+            processFieldInMark<Traits>(state, object, field);
         }
+    });
+}
 
+template <typename Traits>
+void processArrayInMark(void* state, ArrayHeader* array) noexcept {
+    traverseArrayOfObjectsElements(array, [=] (auto elemAccessor) noexcept {
+        if (ObjHeader* elem = elemAccessor.direct()) {
+            processFieldInMark<Traits>(state, array->obj(), elem);
+        }
+    });
+}
+
+template <typename Traits>
+bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexcept {
+    if (isNullOrMarker(object))
+        return false;
+
+    if (object->heap()) {
+        Traits::tryEnqueue(markQueue, object);
+    } else {
+        // Each permanent and stack object has own entry in the root set, so it's okay to only process objects in heap.
+        Traits::processInMark(markQueue, object);
+        RuntimeAssert(!object->has_meta_object(), "Non-heap object %p may not have an extra object data", object);
+    }
+    return true;
+}
+
+// TODO: Consider making it noinline to keep loop in `Mark` small.
+template <typename Traits>
+void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
+    if (auto weakReference = extraObjectData.GetRegularWeakReferenceImpl()) {
+        RuntimeAssert(
+                weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d local=%d", object,
+                weakReference, weakReference->permanent(), weakReference->local());
+        // Do not schedule RegularWeakReferenceImpl but process it right away.
+        // This will skip markQueue interaction.
+        if (Traits::tryMark(weakReference)) {
+            markHandle.addObject();
+            // RegularWeakReferenceImpl is empty, but keeping this just in case.
+            Traits::processInMark(markQueue, weakReference);
+        }
+    }
+}
+
+} // namespace internal
+
+template <typename Traits>
+void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
+    auto markHandle = handle.mark();
+    Mark<Traits>(markHandle, markQueue);
+}
+
+template <typename Traits>
+void Mark(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue) noexcept {
+    while (ObjHeader* top = Traits::tryDequeue(markQueue)) {
+        markHandle.addObject();
+
+        Traits::processInMark(markQueue, top);
+
+        // TODO: Consider moving it before processInMark to make the latter something of a tail call.
         if (auto* extraObjectData = mm::ExtraObjectData::Get(top)) {
-            auto weakCounter = extraObjectData->GetWeakReferenceCounter();
-            if (!isNullOrMarker(weakCounter)) {
-                graySet.push_back(weakCounter);
+            internal::processExtraObjectData<Traits>(markHandle, markQueue, *extraObjectData, top);
+        }
+    }
+}
+
+template <typename Traits>
+void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
+    auto handle = gcHandle.collectThreadRoots(thread);
+    // TODO: Remove useless mm::ThreadRootSet abstraction.
+    for (auto value : mm::ThreadRootSet(thread)) {
+        if (internal::collectRoot<Traits>(markQueue, value.object)) {
+            switch (value.source) {
+                case mm::ThreadRootSet::Source::kStack:
+                    handle.addStackRoot();
+                    break;
+                case mm::ThreadRootSet::Source::kTLS:
+                    handle.addThreadLocalRoot();
+                    break;
             }
         }
     }
 }
 
 template <typename Traits>
-void SweepExtraObjects(typename Traits::ExtraObjectsFactory& objectFactory) noexcept {
-    objectFactory.ProcessDeletions();
-    auto iter = objectFactory.LockForIter();
-    for (auto it = iter.begin(); it != iter.end();) {
-        auto &extraObject = *it;
-        if (!Traits::IsMarkedByExtraObject(extraObject)) {
-            extraObject.ClearWeakReferenceCounter();
-            extraObject.DetachAssociatedObject();
+void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQueue) noexcept {
+    auto handle = gcHandle.collectGlobalRoots();
+    // TODO: Remove useless mm::GlobalRootSet abstraction.
+    for (auto value : mm::GlobalRootSet()) {
+        if (internal::collectRoot<Traits>(markQueue, value.object)) {
+            switch (value.source) {
+                case mm::GlobalRootSet::Source::kGlobal:
+                    handle.addGlobalRoot();
+                    break;
+                case mm::GlobalRootSet::Source::kStableRef:
+                    handle.addStableRoot();
+                    break;
+            }
         }
-        ++it;
     }
 }
 
-template <typename Traits>
-typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFactory& objectFactory) noexcept {
-    typename Traits::ObjectFactory::FinalizerQueue finalizerQueue;
+// TODO: This needs some tests now.
+template <typename Traits, typename F>
+void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& filter) noexcept {
+    Traits::clear(markQueue);
+    for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
+        if (!filter(thread))
+            continue;
+        thread.Publish();
+        collectRootSetForThread<Traits>(handle, markQueue, thread);
+    }
+    collectRootSetGlobals<Traits>(handle, markQueue);
+}
 
-    auto iter = objectFactory.LockForIter();
-    for (auto it = iter.begin(); it != iter.end();) {
-        if (Traits::TryResetMark(*it)) {
-            ++it;
+template <typename Traits>
+void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept {
+    auto handle = gcHandle.processWeaks();
+    for (auto object : registry.lockForIter()) { // FIXME rename
+        auto* obj = object.load(std::memory_order_relaxed);
+        if (!obj) {
+            // We already processed it at some point.
+            handle.addUndisposed();
             continue;
         }
-        auto* objHeader = it->IsArray() ? it->GetArrayHeader()->obj() : it->GetObjHeader();
-        if (HasFinalizers(objHeader)) {
-            iter.MoveAndAdvance(finalizerQueue, it);
-        } else {
-            iter.EraseAndAdvance(it);
+        if (obj->permanent() || Traits::IsMarked(obj)) {
+            // TODO: Let's not put permanent objects in here at all?
+            // Object is alive. Nothing to do.
+            handle.addAlive();
+            continue;
         }
+        // Object is not alive. Clear it out.
+        object.store(nullptr, std::memory_order_relaxed);
+        handle.addNulled();
     }
+}
 
-    return finalizerQueue;
+struct DefaultProcessWeaksTraits {
+    static bool IsMarked(ObjHeader* obj) noexcept { return gc::isMarked(obj); }
+};
+
+void stopTheWorld(GCHandle gcHandle, const char* reason) noexcept;
+void resumeTheWorld(GCHandle gcHandle) noexcept;
+
+[[nodiscard]] inline auto stopTheWorldInScope(GCHandle gcHandle) noexcept {
+    return ScopeGuard([=]() { stopTheWorld(gcHandle, "GC stop the world"); }, [=]() { resumeTheWorld(gcHandle); });
 }
 
 } // namespace gc

@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 
@@ -37,6 +39,8 @@ class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPa
 class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrElementTransformerVoidWithContext() {
     private val symbols = context.wasmSymbols
     private val builtIns = context.irBuiltIns
+    private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
+    private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -100,9 +104,6 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private val IrType.eraseToClassOrInterface: IrClass
         get() = this.erasedUpperBound ?: builtIns.anyClass.owner
-
-    private val IrType.eraseToClass: IrClass
-        get() = this.getRuntimeClass ?: builtIns.anyClass.owner
 
     private fun generateTypeCheck(
         valueProvider: () -> IrExpression,
@@ -177,6 +178,12 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
+        // A bit of a hack. Inliner tends to insert null casts from nothing to any. It's hard to express in wasm, so we simply replace
+        // them with single const null.
+        if (toType == builtIns.anyNType && fromType == builtIns.nothingNType && value is IrConst && value.kind == IrConstKind.Null) {
+            return builder.irNull(builtIns.nothingNType)
+        }
+
         // Handled by autoboxing transformer
         if (toType.isInlined() && !fromType.isInlined()) {
             return builder.irCall(
@@ -205,8 +212,16 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             return value
         }
 
+        if (value.isNullConst() && fromClass.isExternal != toClass.isExternal) {
+            value.type = toType
+            return value
+        }
+
         if (fromClass.isExternal && !toClass.isExternal) {
-            val narrowingToAny = builder.irCall(symbols.jsInteropAdapters.jsToKotlinAnyAdapter).also {
+            if (!context.isWasmJsTarget) {
+                TODO("Implement externalize adapter for wasi mode")
+            }
+            val narrowingToAny = builder.irCall(jsToKotlinAnyAdapter).also {
                 it.putValueArgument(0, value)
             }
             // Continue narrowing from Any to expected type
@@ -214,7 +229,10 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         if (toClass.isExternal && !fromClass.isExternal) {
-            return builder.irCall(symbols.jsInteropAdapters.kotlinToJsAnyAdapter).also {
+            if (!context.isWasmJsTarget) {
+                TODO("Implement internalize adapter for wasi mode")
+            }
+            return builder.irCall(kotlinToJsAnyAdapter).also {
                 it.putValueArgument(0, value)
             }
         }
@@ -222,6 +240,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         if (fromClass.isSubclassOf(toClass)) {
             return value
         }
+
         if (toType.isNothing()) {
             // Casting to nothing is unreachable...
             return builder.irComposite(resultType = context.irBuiltIns.nothingType) {
@@ -230,7 +249,13 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        return builder.irCall(symbols.wasmRefCast, type = toType).apply {
+        if (toType == symbols.voidType) {
+            return builder.irCall(symbols.findVoidConsumer(value.type)).apply {
+                putValueArgument(0, value)
+            }
+        }
+
+        return builder.irCall(symbols.refCastNull, type = toType).apply {
             putTypeArgument(0, toType)
             putValueArgument(0, value)
         }
@@ -257,7 +282,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             val argument = cacheValue(expression.argument)
             val narrowArg = narrowType(fromType, expression.type, argument())
             val check = generateTypeCheck(argument, toType)
-            if (check is IrConst<*>) {
+            if (check is IrConst) {
                 val value = check.value as Boolean
                 if (value) {
                     +narrowArg
@@ -296,19 +321,24 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun generateIsInterface(argument: IrExpression, toType: IrType): IrExpression {
-        val interfaceId = builder.irCall(symbols.wasmInterfaceId).apply {
-            putTypeArgument(0, toType)
-        }
-        return builder.irCall(symbols.isInterface).apply {
+        return builder.irCall(symbols.wasmIsInterface).apply {
             putValueArgument(0, argument)
-            putValueArgument(1, interfaceId)
+            putTypeArgument(0, toType)
         }
     }
 
     private fun generateIsSubClass(argument: IrExpression, toType: IrType): IrExpression {
+        if (toType.isAny()) {
+            return builder.irTrue()
+        }
+
         val fromType = argument.type
-        val fromTypeErased = fromType.eraseToClass
-        val toTypeErased = toType.eraseToClass
+        if (isExternalType(fromType) != isExternalType(toType)) {
+            return builder.irFalse()
+        }
+
+        val fromTypeErased = fromType.getRuntimeClass(context.irBuiltIns)
+        val toTypeErased = toType.getRuntimeClass(context.irBuiltIns)
         if (fromTypeErased.isSubclassOf(toTypeErased)) {
             return builder.irTrue()
         }
@@ -323,9 +353,14 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun generateIsExternalClass(argument: IrExpression, klass: IrClass): IrExpression {
-        val function = context.mapping.wasmJsInteropFunctionToWrapper[context.mapping.wasmExternalClassToInstanceCheck[klass]!!]!!
-        return builder.irCall(function).also {
-            it.putValueArgument(0, argument)
+        val instanceCheckFunction = context.mapping.wasmExternalClassToInstanceCheck[klass]!!
+        val wrappedInstanceCheckIfAny = context.mapping.wasmJsInteropFunctionToWrapper[instanceCheckFunction] ?: instanceCheckFunction
+
+        return builder.irCall(wrappedInstanceCheckIfAny).also {
+            it.putValueArgument(
+                index = 0,
+                valueArgument = narrowType(argument.type, context.irBuiltIns.anyType, argument) //TODO("Why we need it?)
+            )
         }
     }
 }

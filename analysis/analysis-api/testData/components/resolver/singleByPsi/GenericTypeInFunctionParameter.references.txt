@@ -1,0 +1,3 @@
+KtNameReferenceExpression(28,29): 'X'
+  KtSimpleNameReference:
+    (in <local>: A) X

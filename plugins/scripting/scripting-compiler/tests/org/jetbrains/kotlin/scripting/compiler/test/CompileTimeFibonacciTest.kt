@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -20,10 +22,10 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.RunAll
 import org.junit.Assert
 import java.io.File
 import java.nio.file.Files
-import kotlin.io.path.*
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -35,7 +37,14 @@ import kotlin.script.experimental.util.filterByAnnotationType
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci"
 
 class CompileTimeFibonacciTest : TestCase() {
-    private val testRootDisposable: Disposable = TestDisposable()
+    private val testRootDisposable: Disposable = TestDisposable("${CompileTimeFibonacciTest::class.simpleName}.testRootDisposable")
+
+    override fun tearDown() {
+        RunAll(
+            ThrowableRunnable { Disposer.dispose(testRootDisposable) },
+            ThrowableRunnable { super.tearDown() },
+        )
+    }
 
     fun testFibonacciWithSupportedNumbersImplementsTheCorrectConstants() {
         val outputLines = runScript("supported.fib.kts")

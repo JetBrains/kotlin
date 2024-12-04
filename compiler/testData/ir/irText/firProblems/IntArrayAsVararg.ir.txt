@@ -1,0 +1,17 @@
+FILE fqName:<root> fileName:/IntArrayAsVararg.kt
+  FUN name:consumeVarargs visibility:public modality:FINAL <> (arr:kotlin.IntArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:arr index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
+    BLOCK_BODY
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun consumeVarargs (vararg arr: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        arr: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+          CONST Int type=kotlin.Int value=1
+          CONST Int type=kotlin.Int value=2
+      CALL 'public final fun consumeVarargs (vararg arr: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        arr: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+          SPREAD_ELEMENT
+            CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+              elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                CONST Int type=kotlin.Int value=41
+                CONST Int type=kotlin.Int value=42

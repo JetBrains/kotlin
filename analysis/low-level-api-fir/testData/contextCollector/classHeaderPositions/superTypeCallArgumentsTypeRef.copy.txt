@@ -1,0 +1,44 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol primaryConstructorParameter: R|test/Base.Nested|
+
+FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsTypeRef.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] param: Nested): R|test/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|test/Base.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> materialize(): T { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] class Child : R|test/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] primaryConstructorParameter: R|test/Base.Nested|): R|test/Child| {
+            super<R|test/Base|>(R|test/materialize|<R|test/Base.Nested|>())
+        }
+
+    }

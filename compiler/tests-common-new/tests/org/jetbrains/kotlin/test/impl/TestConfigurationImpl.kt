@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
-import org.jetbrains.kotlin.test.model.ResultingArtifact
-import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.ModuleStructureExtractorImpl
 import org.jetbrains.kotlin.test.utils.TestDisposable
@@ -30,15 +27,15 @@ class TestConfigurationImpl(
 
     sourcePreprocessors: List<Constructor<SourceFilePreprocessor>>,
     additionalMetaInfoProcessors: List<Constructor<AdditionalMetaInfoProcessor>>,
-    environmentConfigurators: List<Constructor<EnvironmentConfigurator>>,
+    environmentConfigurators: List<Constructor<AbstractEnvironmentConfigurator>>,
 
     additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>,
     preAnalysisHandlers: List<Constructor<PreAnalysisHandler>>,
-    moduleStructureTransformers: List<ModuleStructureTransformer>,
+    moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>,
     metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
 
-    compilerConfigurationProvider: ((Disposable, List<EnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
+    compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
     runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>,
 
     override val metaInfoHandlerEnabled: Boolean,
@@ -50,7 +47,7 @@ class TestConfigurationImpl(
 
     val originalBuilder: TestConfigurationBuilder.ReadOnlyBuilder
 ) : TestConfiguration(), TestService {
-    override val rootDisposable: Disposable = TestDisposable()
+    override val rootDisposable: Disposable = TestDisposable("${TestConfigurationImpl::class.simpleName}.rootDisposable")
     override val testServices: TestServices = TestServices()
 
     init {
@@ -58,7 +55,9 @@ class TestConfigurationImpl(
         testServices.register(KotlinTestInfo::class, testInfo)
         val runtimeClassPathProviders = runtimeClasspathProviders.map { it.invoke(testServices) }
         testServices.register(RuntimeClasspathProvidersContainer::class, RuntimeClasspathProvidersContainer(runtimeClassPathProviders))
-        additionalServices.forEach { testServices.register(it) }
+        additionalServices.forEach {
+            testServices.register(it, skipAlreadyRegistered = false)
+        }
     }
 
     private val allDirectives = directives.toMutableSet()
@@ -70,7 +69,7 @@ class TestConfigurationImpl(
         }
     }
 
-    private val environmentConfigurators: List<EnvironmentConfigurator> =
+    private val environmentConfigurators: List<AbstractEnvironmentConfigurator> =
         environmentConfigurators
             .map { it.invoke(testServices) }
             .also { it.registerDirectivesAndServices() }
@@ -83,7 +82,7 @@ class TestConfigurationImpl(
         additionalSourceProviders
             .map { it.invoke(testServices) }
             .also { it.registerDirectivesAndServices() },
-        moduleStructureTransformers,
+        moduleStructureTransformers.map { it(testServices) },
         this.environmentConfigurators
     )
 
@@ -91,20 +90,19 @@ class TestConfigurationImpl(
         constructor.invoke(testServices).also { it.registerDirectivesAndServices() }
     }
 
-    override val afterAnalysisCheckers: List<AfterAnalysisChecker> = afterAnalysisCheckers.map { constructor ->
-        constructor.invoke(testServices).also { it.registerDirectivesAndServices() }
-    }
-
     init {
         testServices.apply {
-            @OptIn(ExperimentalStdlibApi::class)
+            register(
+                EnvironmentConfiguratorsProvider::class,
+                EnvironmentConfiguratorsProvider(this@TestConfigurationImpl.environmentConfigurators)
+            )
             val sourceFilePreprocessors = sourcePreprocessors.map { it.invoke(this@apply) }
             val sourceFileProvider = SourceFileProviderImpl(this, sourceFilePreprocessors)
             register(SourceFileProvider::class, sourceFileProvider)
 
             val environmentProvider =
-                compilerConfigurationProvider?.invoke(rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
-                    ?: CompilerConfigurationProviderImpl(rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
+                compilerConfigurationProvider?.invoke(this, rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
+                    ?: CompilerConfigurationProviderImpl(this, rootDisposable, this@TestConfigurationImpl.environmentConfigurators)
             register(CompilerConfigurationProvider::class, environmentProvider)
 
             register(AssertionsService::class, assertions)
@@ -117,20 +115,34 @@ class TestConfigurationImpl(
         }
     }
 
-    override val steps: List<TestStep<*, *>> = steps
-        .map { it.createTestStep(testServices) }
-        .onEach { step ->
-            when (step) {
-                is TestStep.FacadeStep<*, *> -> step.facade.registerDirectivesAndServices()
-                is TestStep.HandlersStep<*> -> step.handlers.registerDirectivesAndServices()
+    override val steps: List<TestStep<*, *>>
+    override val afterAnalysisCheckers: List<AfterAnalysisChecker>
+
+    init {
+        val afterAnalysisCheckerConstructors = mutableSetOf<Constructor<AfterAnalysisChecker>>()
+
+        this.steps = steps
+            .map { it.createTestStep(testServices) }
+            .onEach { step ->
+                when (step) {
+                    is TestStep.FacadeStep<*, *> -> step.facade.registerDirectivesAndServices()
+                    is TestStep.HandlersStep<*> -> {
+                        step.handlers.registerDirectivesAndServices()
+                        step.handlers.flatMapTo(afterAnalysisCheckerConstructors) { it.additionalAfterAnalysisCheckers }
+                    }
+                }
             }
+        afterAnalysisCheckerConstructors.addAll(afterAnalysisCheckers)
+        this.afterAnalysisCheckers = afterAnalysisCheckerConstructors.map { constructor ->
+            constructor.invoke(testServices).also { it.registerDirectivesAndServices() }
         }
+    }
 
     // ---------------------------------- utils ----------------------------------
 
     private fun ServicesAndDirectivesContainer.registerDirectivesAndServices() {
         allDirectives += directiveContainers
-        testServices.register(additionalServices)
+        testServices.register(additionalServices, skipAlreadyRegistered = true)
     }
 
     private fun List<ServicesAndDirectivesContainer>.registerDirectivesAndServices() {

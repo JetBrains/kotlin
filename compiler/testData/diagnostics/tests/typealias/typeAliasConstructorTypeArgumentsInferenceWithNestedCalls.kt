@@ -1,4 +1,5 @@
-// !LANGUAGE: -TypeEnhancementImprovementsInStrictMode
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -TypeEnhancementImprovementsInStrictMode
 // FULL_JDK
 
 // FILE: MapLike.java

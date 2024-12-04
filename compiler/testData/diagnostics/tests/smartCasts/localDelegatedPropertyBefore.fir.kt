@@ -1,8 +1,9 @@
-// !LANGUAGE: -ProhibitSmartcastsOnLocalDelegatedProperty
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitSmartcastsOnLocalDelegatedProperty
 
 class AlternatingDelegate {
     var counter: Int = 0
-    operator fun getValue(thisRef: Any?, property: <!UNRESOLVED_REFERENCE!>KProperty<*><!>): Any? =
+    operator fun getValue(thisRef: Any?, property: <!UNRESOLVED_REFERENCE!>KProperty<!><*>): Any? =
         if (counter++ % 2 == 0) 42 else ""
 }
 

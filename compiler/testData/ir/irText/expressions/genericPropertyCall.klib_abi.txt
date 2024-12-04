@@ -1,0 +1,10 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /id // /id|@0:0{0§<kotlin.Any?>}id[0]
+    final fun <#A1: kotlin/Any?> (#A1).<get-id>(): #A1 // /id.<get-id>|<get-id>@0:0(){0§<kotlin.Any?>}[0]
+final val /test // /test|{}test[0]
+    final fun <get-test>(): kotlin/String // /test.<get-test>|<get-test>(){}[0]

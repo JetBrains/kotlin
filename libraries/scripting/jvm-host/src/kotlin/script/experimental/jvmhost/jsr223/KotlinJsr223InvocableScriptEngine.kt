@@ -24,9 +24,6 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
 
     val baseClassLoader: ClassLoader
 
-    fun instancesForInvokeSearch(requestedReceiver: Any) =
-        sequenceOf(requestedReceiver) + backwardInstancesHistory.filterNot { it == requestedReceiver }
-
     override fun invokeFunction(name: String?, vararg args: Any?): Any? {
         if (name == null) throw AssertionError("function name cannot be null")
         return invokeImpl(backwardInstancesHistory, name, args)
@@ -35,7 +32,7 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
     override fun invokeMethod(thiz: Any?, name: String?, vararg args: Any?): Any? {
         if (name == null) throw java.lang.NullPointerException("method name cannot be null")
         if (thiz == null) throw IllegalArgumentException("cannot invoke method on the null object")
-        return invokeImpl(instancesForInvokeSearch(thiz), name, args)
+        return invokeImpl(sequenceOf(thiz), name, args)
     }
 
     private fun invokeImpl(possibleReceivers: Sequence<Any>, name: String, args: Array<out Any?>): Any? {
@@ -68,7 +65,7 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
 
     override fun <T : Any> getInterface(thiz: Any?, clasz: Class<T>?): T? {
         if (thiz == null) throw IllegalArgumentException("object cannot be null")
-        return proxyInterface(instancesForInvokeSearch(thiz), clasz)
+        return proxyInterface(sequenceOf(thiz), clasz)
     }
 
     private fun <T : Any> proxyInterface(possibleReceivers: Sequence<Any>, clasz: Class<T>?): T? {

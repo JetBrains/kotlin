@@ -6,12 +6,15 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
+#include "AllocatorTestSupport.hpp"
 #include "GC.hpp"
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
+#include "ObjectOps.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
+#include "ObjectTestSupport.hpp"
 
 using namespace kotlin;
 
@@ -44,16 +47,13 @@ auto collectPointers(T& iterable) {
 extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     // Validate that global registries are empty.
     auto globals = mm::GlobalsRegistry::Instance().LockForIter();
-    auto extraObjects = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
-    auto objects = mm::GlobalData::Instance().objectFactory().LockForIter();
-    auto stableRefs = mm::StableRefRegistry::Instance().LockForIter();
+    auto specialRefs = mm::SpecialRefRegistry::instance().lockForIter();
     auto threads = mm::ThreadRegistry::Instance().LockForIter();
 
     EXPECT_THAT(collectCopy(globals), testing::UnorderedElementsAre());
-    EXPECT_THAT(collectPointers(extraObjects), testing::UnorderedElementsAre());
-    EXPECT_THAT(collectCopy(objects), testing::UnorderedElementsAre());
-    EXPECT_THAT(collectCopy(stableRefs), testing::UnorderedElementsAre());
+    EXPECT_THAT(collectPointers(specialRefs), testing::UnorderedElementsAre());
     EXPECT_THAT(collectPointers(threads), testing::UnorderedElementsAre());
+    alloc::test_support::assertClear(mm::GlobalData::Instance().allocator());
 }
 
 void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {
@@ -63,4 +63,17 @@ void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {
 
 std::ostream& kotlin::operator<<(std::ostream& stream, ThreadState state) {
     return stream << ThreadStateName(state);
+}
+
+test_support::RegularWeakReferenceImpl& test_support::InstallWeakReference(
+        mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location)
+{
+    mm::AllocateObject(&threadData, theRegularWeakReferenceImplTypeInfo, location);
+    auto& weakReference = test_support::RegularWeakReferenceImpl::FromObjHeader(*location);
+    auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(objHeader);
+    weakReference->weakRef = static_cast<mm::RawSpecialRef*>(mm::WeakRef::create(objHeader));
+    weakReference->referred = objHeader;
+    auto* setWeakRef = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
+    EXPECT_EQ(setWeakRef, weakReference.header());
+    return weakReference;
 }

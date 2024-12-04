@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.inline.isInlineParameter
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,18 +26,32 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-val sharedVariablesPhase = makeIrFilePhase(
-    ::SharedVariablesLowering,
-    name = "SharedVariables",
-    description = "Transform shared variables"
-)
-
-class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
-
+/**
+ * Transforms declarations and usages of variables captured in lambdas ("shared variables") to `ObjectRef`/`IntRef`/...
+ *
+ * For example:
+ *
+ *     var x = "a"
+ *     run {
+ *         x = "b"
+ *         println(x)
+ *     }
+ *
+ * becomes
+ *
+ *     var x = ObjectRef<String>()
+ *     x.element = "a"
+ *     run {
+ *         x.element = "b"
+ *         println(x.element)
+ *     }
+ */
+open class SharedVariablesLowering(val sharedVariablesManager: SharedVariablesManager) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         SharedVariablesTransformer(irBody, container).lowerSharedVariables()
     }
@@ -72,7 +85,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
                     expression.dispatchReceiver?.accept(this, data)
                     expression.extensionReceiver?.accept(this, data)
                     for (param in callee.valueParameters) {
-                        val arg = expression.getValueArgument(param.index) ?: continue
+                        val arg = expression.getValueArgument(param.indexInOldValueParameters) ?: continue
                         if (param.isInlineParameter()
                             // This is somewhat conservative but simple.
                             // If a user put redundant <crossinline> modifier on a parameter,
@@ -139,11 +152,11 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
 
                     if (declaration !in sharedVariables) return declaration
 
-                    val newDeclaration = context.sharedVariablesManager.declareSharedVariable(declaration)
+                    val newDeclaration = sharedVariablesManager.declareSharedVariable(declaration)
                     newDeclaration.parent = declaration.parent
                     transformedSymbols[declaration.symbol] = newDeclaration.symbol
 
-                    return context.sharedVariablesManager.defineSharedValue(declaration, newDeclaration)
+                    return sharedVariablesManager.defineSharedValue(declaration, newDeclaration)
                 }
             })
 
@@ -153,7 +166,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
 
                     val newDeclaration = getTransformedSymbol(expression.symbol) ?: return expression
 
-                    return context.sharedVariablesManager.getSharedValue(newDeclaration, expression)
+                    return sharedVariablesManager.getSharedValue(newDeclaration, expression)
                 }
 
                 override fun visitSetValue(expression: IrSetValue): IrExpression {
@@ -161,7 +174,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
 
                     val newDeclaration = getTransformedSymbol(expression.symbol) ?: return expression
 
-                    return context.sharedVariablesManager.setSharedValue(newDeclaration, expression)
+                    return sharedVariablesManager.setSharedValue(newDeclaration, expression)
                 }
 
                 private fun getTransformedSymbol(oldSymbol: IrValueSymbol): IrVariableSymbol? =

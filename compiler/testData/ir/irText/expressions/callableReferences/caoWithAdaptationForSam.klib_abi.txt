@@ -1,0 +1,23 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /A // /A|null[0]
+final object /B // /B|null[0]
+abstract fun interface /IFoo { // /IFoo|null[0]
+    abstract fun foo(kotlin/Int) // /IFoo.foo|foo(kotlin.Int){}[0]
+}
+abstract fun interface /IFoo2 : /IFoo // /IFoo2|null[0]
+final fun (/A)./get(/IFoo): kotlin/Int // /get|get@A(IFoo){}[0]
+final fun (/B)./get(/IFoo): kotlin/Int // /get|get@B(IFoo){}[0]
+final fun (/A)./set(/IFoo, kotlin/Int) // /set|set@A(IFoo;kotlin.Int){}[0]
+final fun (/B)./set(/IFoo2, kotlin/Int) // /set|set@B(IFoo2;kotlin.Int){}[0]
+final fun /test1() // /test1|test1(){}[0]
+final fun /test2() // /test2|test2(){}[0]
+final fun /test3(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /test3|test3(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /test4(kotlin/Function1<kotlin/Int, kotlin/Unit>) // /test4|test4(kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
+final fun /test5(kotlin/Any) // /test5|test5(kotlin.Any){}[0]
+final fun /test6(kotlin/Any) // /test6|test6(kotlin.Any){}[0]
+final fun /withVararg(kotlin/IntArray...): kotlin/Int // /withVararg|withVararg(kotlin.IntArray...){}[0]

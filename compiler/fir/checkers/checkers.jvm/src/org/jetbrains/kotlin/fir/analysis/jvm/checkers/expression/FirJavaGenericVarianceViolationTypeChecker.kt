@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.argumentMapping
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.originalOrSelf
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -23,9 +24,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.math.min
 
 /**
  * Checks compatibility of variance of type argument for Java collections.
@@ -45,18 +45,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  * `UnsupportedOperationException`, which is expected and the price we pay in order to make immutable collection easier to use. This checker
  * doesn't do anything to prevent this from happening.
  */
-object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
-    private val javaOrigin = setOf(FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement)
+object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return
-        if (calleeFunction.originalOrSelf().origin !in javaOrigin) {
+        if (!calleeFunction.originalOrSelf().isJavaOrEnhancement) {
             return
         }
-        val argumentMapping = expression.argumentMapping ?: return
+        val argumentMapping = expression.resolvedArgumentMapping ?: return
         val typeArgumentMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-        for (i in 0 until expression.typeArguments.size) {
-            val type = expression.typeArguments[i].safeAs<FirTypeProjectionWithVariance>()?.typeRef?.coneTypeSafe<ConeKotlinType>()
+        for (i in 0 until min(expression.typeArguments.size, calleeFunction.typeParameterSymbols.size)) {
+            val type = (expression.typeArguments[i] as? FirTypeProjectionWithVariance)?.typeRef?.coneType
             if (type != null) {
                 typeArgumentMap[calleeFunction.typeParameterSymbols[i]] = type
             }
@@ -71,7 +70,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
             // Anything is acceptable for raw types
             if (expectedType is ConeRawType) continue
 
-            val argType = arg.typeRef.coneType
+            val argType = arg.resolvedType
 
             val lowerBound = expectedType.lowerBound
             val upperBound = expectedType.upperBound
@@ -109,21 +108,25 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
             // actually created because of type projection from `get`. Hence, to workaround this problem, we simply remove all the out
             // projection and type capturing and compare the types after such erasure. This way, we won't incorrectly reject any valid code
             // though we may accept some invalid code. But in presence of the unsound flexible types, we are allowing invalid code already.
-            val argTypeWithoutOutProjection = argType.removeOutProjection(isCovariant = true)
-            val lowerBoundWithoutCapturing = context.session.typeApproximator.approximateToSuperType(
-                lowerBound,
-                TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            ) ?: lowerBound
+            val argTypeWithoutOutProjection = argType.approximate(context).removeOutProjection(isCovariant = true)
+            val lowerBoundWithoutCapturing = lowerBound.approximate(context)
 
             if (!AbstractTypeChecker.isSubtypeOf(
                     typeContext,
                     argTypeWithoutOutProjection,
-                    lowerBoundWithoutCapturing.withNullability(ConeNullability.NULLABLE, typeContext)
+                    lowerBoundWithoutCapturing.withNullability(nullable = true, typeContext)
                 )
             ) {
                 reporter.reportOn(arg.source, FirJvmErrors.JAVA_TYPE_MISMATCH, expectedType, argType, context)
             }
         }
+    }
+
+    private fun ConeKotlinType.approximate(context: CheckerContext): ConeKotlinType {
+        return context.session.typeApproximator.approximateToSuperType(
+            this,
+            TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+        ) ?: this
     }
 
     private fun ConeKotlinType.removeOutProjection(isCovariant: Boolean): ConeKotlinType {
@@ -132,29 +135,34 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
                 lowerBound.removeOutProjection(isCovariant),
                 upperBound.removeOutProjection(isCovariant)
             )
-            is ConeCapturedType -> ConeCapturedType(
-                captureStatus,
-                lowerType?.removeOutProjection(isCovariant),
-                nullability,
-                constructor.apply {
+            is ConeRigidType -> removeOutProjection(isCovariant)
+        }
+    }
+
+    private fun ConeRigidType.removeOutProjection(isCovariant: Boolean): ConeRigidType {
+        return when (this) {
+            is ConeSimpleKotlinType -> removeOutProjection(isCovariant)
+            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
+        }
+    }
+
+    private fun ConeSimpleKotlinType.removeOutProjection(isCovariant: Boolean): ConeSimpleKotlinType {
+        return when (this) {
+            is ConeCapturedType -> copy(
+                lowerType = lowerType?.removeOutProjection(isCovariant),
+                constructor = constructor.apply {
                     ConeCapturedTypeConstructor(
                         projection.removeOutProjection(isCovariant),
                         supertypes?.map { it.removeOutProjection(isCovariant) },
                         typeParameterMarker
                     )
                 },
-                attributes,
-                isProjectionNotNull
             )
-            is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
-            is ConeIntersectionType -> ConeIntersectionType(
-                intersectedTypes.map { it.removeOutProjection(isCovariant) },
-                alternativeType?.removeOutProjection(isCovariant)
-            )
+            is ConeIntersectionType -> mapTypes { it.removeOutProjection(isCovariant) }
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                 lookupTag,
                 typeArguments.map { it.removeOutProjection(isCovariant) }.toTypedArray(),
-                isNullable,
+                isMarkedNullable,
                 attributes
             )
             else -> this
@@ -171,30 +179,18 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         return when (this) {
             is ConeKotlinTypeProjectionOut -> if (isCovariant) type else this
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(type.removeOutProjection(!isCovariant))
-            is ConeStarProjection -> if (isCovariant) StandardTypes.Any else this
+            is ConeStarProjection -> if (isCovariant) StandardTypes.NullableAny else this
             // Don't remove nested projections for types at invariant position.
             is ConeKotlinTypeConflictingProjection,
             is ConeKotlinType -> this
         }
     }
 
-    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(subType: ConeKotlinType, superType: ConeKotlinType): Boolean {
-        return isTypeConstructorEqualOrSubClassOf(subType.typeConstructor(), superType.typeConstructor())
+    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(
+        subType: ConeKotlinType,
+        superType: ConeRigidType,
+    ): Boolean {
+        return AbstractTypeChecker.isSubtypeOfClass(this, subType.typeConstructor(), superType.typeConstructor())
     }
 
-    private fun ConeInferenceContext.isTypeConstructorEqualOrSubClassOf(
-        subTypeConstructor: TypeConstructorMarker,
-        superTypeConstructor: TypeConstructorMarker
-    ): Boolean {
-        if (subTypeConstructor == superTypeConstructor) return true
-        for (immediateSuperType in subTypeConstructor.supertypes()) {
-            val immediateSuperTypeConstructor = immediateSuperType.typeConstructor()
-            if (superTypeConstructor == immediateSuperTypeConstructor) return true
-            if (this@isTypeConstructorEqualOrSubClassOf.isTypeConstructorEqualOrSubClassOf(
-                    immediateSuperTypeConstructor, superTypeConstructor
-                )
-            ) return true
-        }
-        return false
-    }
 }

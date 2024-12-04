@@ -1,0 +1,297 @@
+public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final Test createFromParcel(android.os.Parcel parcel) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, createByteArray, ()[B)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          ISTORE (2)
+          ILOAD (2)
+          NEWARRAY (9)
+          ASTORE (3)
+          ICONST_0
+          ISTORE (4)
+          ASTORE (5)
+        LABEL (L1)
+          ILOAD (4)
+          ILOAD (2)
+          IF_ICMPEQ (L2)
+          ALOAD (3)
+          ILOAD (4)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          I2S
+          SASTORE
+          ILOAD (4)
+          ICONST_1
+          IADD
+          ISTORE (4)
+          GOTO (L1)
+        LABEL (L2)
+          ALOAD (5)
+          ALOAD (3)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, createIntArray, ()[I)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, createLongArray, ()[J)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, createByteArray, ()[B)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          IFNE (L3)
+          ACONST_NULL
+          GOTO (L4)
+        LABEL (L3)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          ISTORE (2)
+          ILOAD (2)
+          NEWARRAY (9)
+          ASTORE (3)
+          ICONST_0
+          ISTORE (4)
+          ASTORE (9)
+          ASTORE (8)
+          ASTORE (7)
+          ASTORE (6)
+          ASTORE (5)
+        LABEL (L5)
+          ILOAD (4)
+          ILOAD (2)
+          IF_ICMPEQ (L6)
+          ALOAD (3)
+          ILOAD (4)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          I2S
+          SASTORE
+          ILOAD (4)
+          ICONST_1
+          IADD
+          ISTORE (4)
+          GOTO (L5)
+        LABEL (L6)
+          ALOAD (5)
+          ALOAD (6)
+          ALOAD (7)
+          ALOAD (8)
+          ALOAD (9)
+          ALOAD (3)
+        LABEL (L4)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, createIntArray, ()[I)
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, createLongArray, ()[J)
+          ACONST_NULL
+          ASTORE (10)
+          ASTORE (11)
+          ASTORE (12)
+          ASTORE (13)
+          ASTORE (14)
+          ASTORE (15)
+          ASTORE (16)
+          ASTORE (17)
+          ASTORE (18)
+          NEW (Test)
+          DUP
+          ALOAD (18)
+          ALOAD (17)
+          ALOAD (16)
+          ALOAD (15)
+          ALOAD (14)
+          ALOAD (13)
+          ALOAD (12)
+          ALOAD (11)
+          ALOAD (10)
+          INVOKESPECIAL (Test, <init>, ([B[S[I[J[B[S[I[JLkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          ARETURN
+        LABEL (L7)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (Test$Creator, createFromParcel, (Landroid/os/Parcel;)LTest;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final Test[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class Test : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final byte[] a
+
+    private final short[] b
+
+    private final int[] c
+
+    private final long[] d
+
+    private final byte[] e
+
+    private final short[] f
+
+    private final int[] g
+
+    private final long[] h
+
+    static void <clinit>()
+
+    private void <init>(byte[] a, short[] b, int[] c, long[] d, byte[] e, short[] f, int[] g, long[] h)
+
+    public void <init>(byte[] a, short[] b, int[] c, long[] d, byte[] e, short[] f, int[] g, long[] h, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public final byte[] component1-TcUX1vc()
+
+    public final short[] component2-amswpOA()
+
+    public final int[] component3--hP7Qyg()
+
+    public final long[] component4-Y2RjT0g()
+
+    public final byte[] component5--5HJl4c()
+
+    public final short[] component6-mR6EDK0()
+
+    public final int[] component7-9a2mAYU()
+
+    public final long[] component8-2g2roS4()
+
+    public final Test copy-gFjYMWk(byte[] a, short[] b, int[] c, long[] d, byte[] e, short[] f, int[] g, long[] h)
+
+    public static Test copy-gFjYMWk$default(Test p0, byte[] p1, short[] p2, int[] p3, long[] p4, byte[] p5, short[] p6, int[] p7, long[] p8, int p9, java.lang.Object p10)
+
+    public final int describeContents()
+
+    public boolean equals(java.lang.Object other)
+
+    public final byte[] getA-TcUX1vc()
+
+    public final short[] getB-amswpOA()
+
+    public final int[] getC--hP7Qyg()
+
+    public final long[] getD-Y2RjT0g()
+
+    public final byte[] getE--5HJl4c()
+
+    public final short[] getF-mR6EDK0()
+
+    public final int[] getG-9a2mAYU()
+
+    public final long[] getH-2g2roS4()
+
+    public int hashCode()
+
+    public java.lang.String toString()
+
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (dest)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (Test, a, [B)
+          INVOKEVIRTUAL (android/os/Parcel, writeByteArray, ([B)V)
+          ALOAD (0)
+          GETFIELD (Test, b, [S)
+          ASTORE (3)
+          ALOAD (3)
+          ARRAYLENGTH
+          ISTORE (4)
+          ALOAD (1)
+          ILOAD (4)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ICONST_0
+          ISTORE (5)
+        LABEL (L1)
+          ILOAD (5)
+          ILOAD (4)
+          IF_ICMPEQ (L2)
+          ALOAD (1)
+          ALOAD (3)
+          ILOAD (5)
+          SALOAD
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ILOAD (5)
+          ICONST_1
+          IADD
+          ISTORE (5)
+          GOTO (L1)
+        LABEL (L2)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (Test, c, [I)
+          INVOKEVIRTUAL (android/os/Parcel, writeIntArray, ([I)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (Test, d, [J)
+          INVOKEVIRTUAL (android/os/Parcel, writeLongArray, ([J)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (Test, e, [B)
+          INVOKEVIRTUAL (android/os/Parcel, writeByteArray, ([B)V)
+          ALOAD (0)
+          GETFIELD (Test, f, [S)
+          ASTORE (3)
+          ALOAD (3)
+          IFNONNULL (L3)
+          ALOAD (1)
+          ICONST_0
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          GOTO (L4)
+        LABEL (L3)
+          ALOAD (1)
+          ICONST_1
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ALOAD (3)
+          ASTORE (4)
+          ALOAD (4)
+          ARRAYLENGTH
+          ISTORE (5)
+          ALOAD (1)
+          ILOAD (5)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ICONST_0
+          ISTORE (6)
+        LABEL (L5)
+          ILOAD (6)
+          ILOAD (5)
+          IF_ICMPEQ (L4)
+          ALOAD (1)
+          ALOAD (4)
+          ILOAD (6)
+          SALOAD
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          ILOAD (6)
+          ICONST_1
+          IADD
+          ISTORE (6)
+          GOTO (L5)
+        LABEL (L4)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (Test, g, [I)
+          INVOKEVIRTUAL (android/os/Parcel, writeIntArray, ([I)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (Test, h, [J)
+          INVOKEVIRTUAL (android/os/Parcel, writeLongArray, ([J)V)
+        LABEL (L6)
+        LINENUMBER (18)
+          RETURN
+        LABEL (L7)
+    }
+}

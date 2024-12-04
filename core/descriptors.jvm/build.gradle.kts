@@ -3,7 +3,7 @@ plugins {
     id("jps-compatible")
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 dependencies {
     api(project(":kotlin-annotations-jvm"))
@@ -12,7 +12,7 @@ dependencies {
     api(project(":core:compiler.common.jvm"))
     api(project(":core:deserialization.common.jvm"))
     api(project(":core:util.runtime"))
-    api(commonDep("javax.inject"))
+    api(commonDependency("javax.inject"))
 }
 
 sourceSets {

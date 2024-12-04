@@ -1,4 +1,4 @@
 package
 
-public fun test(/*0*/ c: [ERROR : Continuation<Unit>]<kotlin.Unit>): kotlin.Unit
+public fun test(/*0*/ c: [Error type: Unresolved type for Continuation<Unit>]<kotlin.Unit>): kotlin.Unit
 public fun test2(/*0*/ c: kotlin.coroutines.Continuation<kotlin.Unit>): kotlin.Unit

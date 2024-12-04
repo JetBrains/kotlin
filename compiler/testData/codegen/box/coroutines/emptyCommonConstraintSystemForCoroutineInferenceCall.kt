@@ -61,10 +61,10 @@ suspend inline fun hang(onCancellation: () -> Unit) {}
 fun <T> Flow<T>.flatMap(mapper: suspend (T) -> Flow<T>): Flow<T> = TODO()
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> flow(@BuilderInference block: suspend FlowCollector<T>.() -> Unit): Flow<T> = TODO()
+fun <T> flow(block: suspend FlowCollector<T>.() -> Unit): Flow<T> = TODO()
 
 @OptIn(ExperimentalTypeInference::class)
-inline fun <T, R> Flow<T>.flatMapLatest(@BuilderInference crossinline transform: suspend (value: T) -> Flow<R>): Flow<R> = TODO()
+inline fun <T, R> Flow<T>.flatMapLatest(crossinline transform: suspend (value: T) -> Flow<R>): Flow<R> = TODO()
 
 interface Flow<out T>
 

@@ -17,7 +17,7 @@ object FirJvmVisibilityConverter : Fir2IrVisibilityConverter() {
             JavaVisibilities.PackageVisibility -> org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             JavaVisibilities.ProtectedStaticVisibility -> org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY
             JavaVisibilities.ProtectedAndPackage -> org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities.PROTECTED_AND_PACKAGE
-            else -> error("Unknown visibility: $this")
+            else -> error("Unknown visibility: $visibility")
         }
     }
 }

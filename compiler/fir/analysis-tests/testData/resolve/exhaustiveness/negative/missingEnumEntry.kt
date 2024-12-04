@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class SomeEnum {
     A, B
 }
@@ -27,7 +28,7 @@ fun test_2(enum: SomeEnum?) {
 }
 
 fun test_3(enum: SomeEnum) {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (enum) {
+    <!NO_ELSE_IN_WHEN!>when<!> (enum) {
         SomeEnum.A -> 1
     }
 }

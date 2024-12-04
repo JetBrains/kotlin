@@ -22,19 +22,21 @@ import org.jetbrains.typesBenchmarks.*
 import kotlinx.cli.*
 
 class CinteropLauncher : Launcher() {
-    override val benchmarks = BenchmarksCollection(
-            mutableMapOf(
-                    "macros" to BenchmarkEntry(::macrosBenchmark),
-                    "struct" to BenchmarkEntry(::structBenchmark),
-                    "union" to BenchmarkEntry(::unionBenchmark),
-                    "enum" to BenchmarkEntry(::enumBenchmark),
-                    "stringToC" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringToCBenchmark() }),
-                    "stringToKotlin" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringToKotlinBenchmark() }),
-                    "intMatrix" to BenchmarkEntryWithInit.create(::IntMatrixBenchmark, { intMatrixBenchmark() }),
-                    "int" to BenchmarkEntryWithInit.create(::IntBenchmark, { intBenchmark() }),
-                    "boxedInt" to BenchmarkEntryWithInit.create(::BoxedIntBenchmark, { boxedIntBenchmark() })
-            )
+    override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf(
+            "stringToC" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringToCBenchmark() }),
+            "stringToKotlin" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringToKotlinBenchmark() }),
+            "intMatrix" to BenchmarkEntryWithInit.create(::IntMatrixBenchmark, { intMatrixBenchmark() })
     )
+    override val extendedBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf(
+            "macros" to BenchmarkEntry(::macrosBenchmark),
+            "struct" to BenchmarkEntry(::structBenchmark),
+            "union" to BenchmarkEntry(::unionBenchmark),
+            "enum" to BenchmarkEntry(::enumBenchmark),
+            "int" to BenchmarkEntryWithInit.create(::IntBenchmark, { intBenchmark() }),
+            "boxedInt" to BenchmarkEntryWithInit.create(::BoxedIntBenchmark, { boxedIntBenchmark() }),
+            "pinnedArray" to BenchmarkEntryWithInit.create(::PinnedArrayBenchmark, { pinnedArrayBenchmark() }),
+    )
+
 }
 
 fun main(args: Array<String>) {

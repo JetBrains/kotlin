@@ -4,7 +4,7 @@
 @OptionalExpectation
 expect annotation class A()
 
-expect class C {
+class C {
     @A
-    fun f()
+    fun f() {}
 }

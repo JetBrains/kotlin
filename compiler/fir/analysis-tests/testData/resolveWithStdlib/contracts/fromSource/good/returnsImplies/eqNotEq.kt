@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
+@OptIn(ExperimentalContracts::class)
 fun checkNotNull(x: Any?): Boolean {
     contract {
         returns(true) implies (x != null)
@@ -8,6 +10,7 @@ fun checkNotNull(x: Any?): Boolean {
     return x != null
 }
 
+@OptIn(ExperimentalContracts::class)
 fun trickyRequireNotNull(x: Any?) {
     contract {
         returns() implies (!(x == null))

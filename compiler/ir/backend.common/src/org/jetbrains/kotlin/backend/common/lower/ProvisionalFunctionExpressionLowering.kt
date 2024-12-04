@@ -6,26 +6,28 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.util.remapTypes
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 class ProvisionalFunctionExpressionLoweringContext(
-    val outer: ProvisionalFunctionExpressionLoweringContext? = null,
     val startOffset: Int? = null,
-    val endOffset: Int? = null)
-class ProvisionalFunctionExpressionLowering :
-    IrElementTransformer<ProvisionalFunctionExpressionLoweringContext>,
+    val endOffset: Int? = null
+)
+
+/**
+ * Transforms [IrFunctionExpression] to a block with a local function and a reference to it.
+ */
+@PhaseDescription(name = "FunctionExpression")
+class ProvisionalFunctionExpressionLowering(@Suppress("UNUSED_PARAMETER", "unused") context: CommonBackendContext) :
+    IrTransformer<ProvisionalFunctionExpressionLoweringContext>(),
     BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -35,7 +37,6 @@ class ProvisionalFunctionExpressionLowering :
     override fun visitCall(expression: IrCall, data: ProvisionalFunctionExpressionLoweringContext) = super.visitCall(
         expression,
         ProvisionalFunctionExpressionLoweringContext(
-            data,
             expression.startOffset,
             expression.endOffset
         )
@@ -44,14 +45,18 @@ class ProvisionalFunctionExpressionLowering :
     override fun visitVariable(declaration: IrVariable, data: ProvisionalFunctionExpressionLoweringContext) = super.visitVariable(
         declaration,
         ProvisionalFunctionExpressionLoweringContext(
-            data,
             declaration.startOffset,
             declaration.endOffset
         )
     )
 
+    override fun visitContainerExpression(expression: IrContainerExpression, data: ProvisionalFunctionExpressionLoweringContext): IrExpression {
+        if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression, data)
+        return super.visitContainerExpression(expression, ProvisionalFunctionExpressionLoweringContext())
+    }
+
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: ProvisionalFunctionExpressionLoweringContext): IrElement {
-        expression.transformChildren(this, ProvisionalFunctionExpressionLoweringContext(data))
+        expression.transformChildren(this, ProvisionalFunctionExpressionLoweringContext())
 
         val startOffset = data.startOffset ?: expression.startOffset
         val endOffset = data.endOffset ?: expression.endOffset
@@ -67,10 +72,9 @@ class ProvisionalFunctionExpressionLowering :
                     startOffset, endOffset, type,
                     function.symbol,
                     typeArgumentsCount = 0,
-                    valueArgumentsCount = function.valueParameters.size,
                     reflectionTarget = null,
                     origin = origin
-                )
+                ).copyAttributes(expression)
             )
         )
     }

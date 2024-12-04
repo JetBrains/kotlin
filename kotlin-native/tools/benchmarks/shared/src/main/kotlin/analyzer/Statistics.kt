@@ -87,7 +87,7 @@ fun computeMeanVariance(samples: List<Double>): MeanVariance {
     }
 
     val mean = filteredSamples.sum() / filteredSamples.size
-    val variance = samples.indices.sumByDouble {
+    val variance = samples.indices.sumOf {
         (samples[it] - mean) * (samples[it] - mean)
     } / samples.size
     val confidenceInterval = sqrt(variance / samples.size) * zStar
@@ -143,5 +143,5 @@ fun collectMeanResults(benchmarks: Map<String, List<BenchmarkResult>>): Benchmar
 
 fun collectBenchmarksDurations(benchmarks: Map<String, List<BenchmarkResult>>): Map<String, Double> =
         benchmarks.map { (name, resultsSet) ->
-            name to resultsSet.sumByDouble { it.runtimeInUs }
+            name to resultsSet.sumOf { it.runtimeInUs }
         }.toMap()

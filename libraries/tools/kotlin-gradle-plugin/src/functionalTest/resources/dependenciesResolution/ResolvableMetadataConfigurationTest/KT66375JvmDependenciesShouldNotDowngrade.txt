@@ -1,0 +1,22 @@
+commonMain
+  test:foo:1.0
+commonTest
+  test:foo:1.0
+jvmMain
+  project :lib
+  test:foo:2.0
+jvmTest
+  project :lib
+  test:foo:2.0
+linuxMain
+  test:foo:1.0
+linuxTest
+  test:foo:1.0
+linuxX64Main
+  test:foo:1.0
+linuxX64Test
+  test:foo:1.0
+nativeMain
+  test:foo:1.0
+nativeTest
+  test:foo:1.0

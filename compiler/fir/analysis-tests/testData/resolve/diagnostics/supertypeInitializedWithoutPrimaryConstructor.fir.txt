@@ -36,6 +36,10 @@ FILE: supertypeInitializedWithoutPrimaryConstructor.kt
 
     }
     public final class G : R|C| {
+        public error_constructor(): R|G| {
+            super<R|C|>(Int(10))
+        }
+
         public constructor(): R|G| {
             super<R|C|>(Int(1))
         }

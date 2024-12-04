@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnota
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import java.lang.reflect.Array
 
@@ -66,7 +65,7 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
 
     override fun visitAnnotationDefault(): AnnotationVisitor =
         BinaryJavaAnnotationVisitor(context, signatureParser) {
-            member.safeAs<BinaryJavaMethod>()?.annotationParameterDefaultValue = it
+            (member as? BinaryJavaMethod)?.annotationParameterDefaultValue = it
         }
 
     override fun visitParameter(name: String?, access: Int) {
@@ -114,7 +113,7 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
             }
 
         val (annotationOwner, isFreshlySupportedAnnotation) = when (typeReference.sort) {
-            TypeReference.METHOD_RETURN -> getTargetType(member.safeAs<BinaryJavaMethod>()?.returnType ?: return null)
+            TypeReference.METHOD_RETURN -> getTargetType((member as? BinaryJavaMethod)?.returnType ?: return null)
             TypeReference.METHOD_TYPE_PARAMETER -> member.typeParameters[typeReference.typeParameterIndex] to true
             TypeReference.METHOD_FORMAL_PARAMETER -> getTargetType(member.valueParameters[typeReference.formalParameterIndex].type)
             TypeReference.METHOD_TYPE_PARAMETER_BOUND -> getTargetType(
@@ -161,7 +160,6 @@ class BinaryJavaAnnotation private constructor(
             return annotationVisitor
         }
 
-        @OptIn(ExperimentalStdlibApi::class)
         private fun translatePath(path: TypePath) = buildList {
             for (i in 0 until path.length) {
                 when (val step = path.getStep(i)) {
@@ -215,7 +213,7 @@ class BinaryJavaAnnotation private constructor(
     }
 
     override val classId: ClassId
-        get() = classifierResolutionResult.classifier.safeAs<JavaClass>()?.classId
+        get() = (classifierResolutionResult.classifier as? JavaClass)?.classId
             ?: ClassId.topLevel(FqName(classifierResolutionResult.qualifiedName))
 
     override fun resolve() = classifierResolutionResult.classifier as? JavaClass
@@ -247,7 +245,47 @@ class BinaryJavaAnnotationVisitor(
     }
 
     override fun visitEnum(name: String?, desc: String, value: String) {
-        val enumClassId = context.mapInternalNameToClassId(Type.getType(desc).internalName)
+        /**
+         * There are cases when enum is an inner class of some class which is not related to current loading Java class.
+         *   And in this cases `mapInternalNameToClassId` leaves `$` in name as is, which may lead to unresolved errors later
+         *   in compiler
+         *
+         *     @Api(status = Api.Status.Ok) // classId will be /Api$Status.Ok
+         *     public class NestedEnumInAnnotation {}
+         *
+         *     public @interface Api {
+         *         Status status();
+         *
+         *         enum Status {
+         *             Ok, Error;
+         *         }
+         *     }
+         *
+         * It's impossible to use `resolveByInternalName` (which always provides correct classId), because it may lead to
+         *   StackOverflowError for cases when enum and annotation are declared in same outer class, which will lead to
+         *   infinite loading of this class
+         *
+         *     public class NestedEnumArgument {
+         *         public enum E {
+         *             FIRST
+         *         }
+         *
+         *         public @interface Anno {
+         *             E value();
+         *         }
+         *
+         *         @Anno(E.FIRST)
+         *         void foo() {}
+         *     }
+         *
+         * So to avoid such recursion and in the same time fix original case we use simple heuristic about names with $
+         *   for enums in annotation arguments which contain `$` in internal name
+         */
+        val internalName = Type.getType(desc).internalName
+        var enumClassId = context.mapInternalNameToClassId(internalName)
+        if (enumClassId.asString().contains("$")) {
+            enumClassId = context.convertNestedClassInternalNameWithSimpleHeuristic(internalName) ?: enumClassId
+        }
         addArgument(PlainJavaEnumValueAnnotationArgument(name, enumClassId, value))
     }
 

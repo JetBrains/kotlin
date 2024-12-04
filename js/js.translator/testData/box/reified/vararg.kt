@@ -1,5 +1,4 @@
 // KJS_WITH_FULL_RUNTIME
-// EXPECTED_REACHABLE_NODES: 1682
 package foo
 
 // CHECK_NOT_CALLED_IN_SCOPE: function=test scope=box

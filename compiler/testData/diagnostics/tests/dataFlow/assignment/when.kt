@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test(a: Any?) {
     when (a) {
         is String -> {

@@ -1,33 +1,27 @@
 buildscript {
-    ext.realm_version = '1.1.1'
-
     repositories {
-        mavenLocal()
-        maven { url 'https://maven.google.com' }
+        google()
         mavenCentral()
-        maven { url = uri("https://jcenter.bintray.com/") }
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$android_tools_version"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath("io.realm:realm-gradle-plugin:$realm_version") {
-            exclude group: 'com.android.tools.build', module: 'gradle'
-        }
+        classpath "io.realm:realm-gradle-plugin:$realm_version"
     }
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
+}
+
 apply plugin: 'realm-android'
 
 android {
+    namespace "io.realm.examples.kotlin"
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId 'io.realm.examples.kotlin'
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -39,40 +33,13 @@ android {
         }
     }
 
-    dexOptions {
-        incremental false
-    }
-
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
-    }
-
-    packagingOptions {
-        // Workaround for org.jetbrains.kotlin.gradle.Kapt3Android33IT#testRealm
-        // Android Plugin 3.3.2 fails with:
-        // Execution failed for task ':transformResourcesWithMergeJavaResForDebug'.
-        // com.android.builder.merge.DuplicateRelativeFileException: (these appear one by one if you exclude single files)
-        // - More than one file was found with OS independent path 'kotlin/reflect/reflect.kotlin_builtins'
-        // - More than one file was found with OS independent path 'kotlin/coroutines/coroutines.kotlin_builtins'
-        // - More than one file was found with OS independent path 'kotlin/collections/collections.kotlin_builtins'
-        // - More than one file was found with OS independent path 'kotlin/internal/internal.kotlin_builtins'
-        // (maybe more)
-        exclude '**/*.kotlin_builtins'
+    kotlin {
+        jvmToolchain(8)
     }
 }
 
 repositories {
     mavenLocal()
-    maven { url 'https://maven.google.com' }
-    maven {
-        url 'https://oss.jfrog.org/artifactory/oss-snapshot-local'
-    }
+    google()
     mavenCentral()
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation 'org.jetbrains.anko:anko-common:0.9'
 }

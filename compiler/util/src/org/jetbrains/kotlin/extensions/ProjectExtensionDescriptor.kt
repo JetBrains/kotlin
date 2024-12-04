@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.extensions
 
-import com.intellij.openapi.extensions.ExtensionPoint
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 
@@ -13,10 +13,10 @@ open class ProjectExtensionDescriptor<T : Any>(name: String, private val extensi
     val extensionPointName: ExtensionPointName<T> = ExtensionPointName.create(name)
 
     fun registerExtensionPoint(project: Project) {
-        project.extensionArea.registerExtensionPoint(
+        CoreApplicationEnvironment.registerExtensionPoint(
+            project.extensionArea,
             extensionPointName.name,
-            extensionClass.name,
-            ExtensionPoint.Kind.INTERFACE
+            extensionClass
         )
     }
 

@@ -31,7 +31,7 @@ class Junk {
     private fun e(): Nothing = throw LowLevelException()
 }
 
-const val exceptionWithCause = Junk().a().<!WAS_NOT_EVALUATED: `
+const val exceptionWithCause = <!WAS_NOT_EVALUATED: `
 Exception HighLevelException: MidLevelException: LowLevelException
 	at ExceptionWithCauseKt.Junk.a(exceptionWithCause.kt:15)
 	at ExceptionWithCauseKt.<clinit>(exceptionWithCause.kt:34)
@@ -46,4 +46,4 @@ Caused by: LowLevelException
 	at ExceptionWithCauseKt.Junk.c(exceptionWithCause.kt:23)
 	at ExceptionWithCauseKt.Junk.b(exceptionWithCause.kt:19)
 	at ExceptionWithCauseKt.Junk.a(exceptionWithCause.kt:13)
-	at ExceptionWithCauseKt.<clinit>(exceptionWithCause.kt:34)`!>toString()<!>
+	at ExceptionWithCauseKt.<clinit>(exceptionWithCause.kt:34)`!>Junk().a().toString()<!>

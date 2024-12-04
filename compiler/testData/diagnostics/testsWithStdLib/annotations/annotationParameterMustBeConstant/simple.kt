@@ -1,9 +1,11 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class Ann(val i: Int)
 annotation class AnnIA(val ia: IntArray)
 annotation class AnnSA(val sa: Array<String>)
+
+var i = 1
 
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>MyClass().i<!>)
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i<!>)
@@ -15,7 +17,6 @@ class Test {
     @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i<!>) val i2 = 1
 }
 
-var i = 1
 val i2 = foo()
 
 fun foo(): Int = 1

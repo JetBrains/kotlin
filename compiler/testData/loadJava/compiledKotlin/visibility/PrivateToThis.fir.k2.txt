@@ -1,0 +1,20 @@
+public final class A<in I> : R|kotlin/Any| {
+    private final fun bas(): R|I|
+
+    private final val foo: R|I|
+        private get(): R|I|
+
+    private final var bar: R|I|
+        private get(): R|I|
+        private set(value: R|I|): R|kotlin/Unit|
+
+    private final val val_with_accessors: R|I|
+        private get(): R|I|
+
+    private final var var_with_accessors: R|I|
+        private get(): R|I|
+        private set(value: R|I|): R|kotlin/Unit|
+
+    public constructor<in I>(): R|test/A<I>|
+
+}

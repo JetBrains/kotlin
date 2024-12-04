@@ -1,0 +1,19 @@
+// SyntheticClassKt.class
+// ------------------------------------------
+package {
+
+  // signature: f(Lkotlin/annotation/AnnotationTarget;)Ljava/lang/String;
+  public final fun f(a: kotlin/annotation/AnnotationTarget): kotlin/String?
+
+  // module name: test-module
+}
+// SyntheticClassKt$WhenMappings.class
+// ------------------------------------------
+synthetic class
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    SyntheticClassKt
+  }
+}

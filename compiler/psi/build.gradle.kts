@@ -15,10 +15,11 @@ dependencies {
     api(project(":compiler:frontend.common"))
     api(project(":kotlin-script-runtime"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("guava", "trove4j", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(libs.guava)
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
-    jflexPath(commonDep("org.jetbrains.intellij.deps.jflex", "jflex"))
+    jflexPath(commonDependency("org.jetbrains.intellij.deps.jflex", "jflex"))
 }
 
 sourceSets {
@@ -30,7 +31,7 @@ sourceSets {
 
 ant.importBuild("buildLexer.xml")
 
-ant.properties["builddir"] = buildDir.absolutePath
+ant.properties["builddir"] = layout.buildDirectory.get().asFile.absolutePath
 
 tasks.findByName("lexer")!!.apply {
     doFirst {

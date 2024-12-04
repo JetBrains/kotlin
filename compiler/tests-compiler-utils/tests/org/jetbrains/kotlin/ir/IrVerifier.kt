@@ -10,13 +10,17 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.Assertions
 
-class IrVerifier(private val assertions: Assertions) : IrElementVisitorVoid {
+class IrVerifier(
+    private val assertions: Assertions,
+    private val isFir: Boolean,
+) : IrElementVisitorVoid {
     private val errors = ArrayList<String>()
 
     private val symbolForDeclaration = HashMap<IrElement, IrSymbol>()
@@ -95,6 +99,10 @@ class IrVerifier(private val assertions: Assertions) : IrElementVisitorVoid {
     override fun visitFunction(declaration: IrFunction) {
         visitDeclaration(declaration)
 
+        // For FIR, we don't use descriptors to build IR, but vice versa
+        // And at some points, like context descriptors, they might differ
+        if (isFir) return
+
         val functionDescriptor = declaration.descriptor
 
         checkTypeParameters(functionDescriptor, declaration, functionDescriptor.typeParameters)
@@ -108,14 +116,28 @@ class IrVerifier(private val assertions: Assertions) : IrElementVisitorVoid {
         }
 
         val expectedExtensionReceiver = functionDescriptor.extensionReceiverParameter
-        val actualExtensionReceiver = declaration.extensionReceiverParameter?.descriptor
+        val actualExtensionReceiver = declaration.parameters
+            .firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
+            ?.descriptor
         require(expectedExtensionReceiver == actualExtensionReceiver) {
             "$functionDescriptor: Extension receiver parameter mismatch: " +
                     "expected $expectedExtensionReceiver, actual $actualExtensionReceiver"
 
         }
 
-        val declaredValueParameters = declaration.valueParameters.map { it.descriptor }
+        val expectedContextReceivers = functionDescriptor.contextReceiverParameters
+        val actualContextReceivers = declaration.parameters.filter { it.kind == IrParameterKind.Context }.map { it.descriptor }
+        if (expectedContextReceivers.size != actualContextReceivers.size) {
+            error("$functionDescriptor: Context receivers mismatch: $expectedContextReceivers != $actualContextReceivers")
+        } else {
+            expectedContextReceivers.zip(actualContextReceivers).forEach { (expectedContextReceiver, actualContextReceiver) ->
+                require(expectedContextReceiver == actualContextReceiver) {
+                    "$functionDescriptor: Context receivers mismatch: $expectedContextReceiver != $actualContextReceiver"
+                }
+            }
+        }
+
+        val declaredValueParameters = declaration.parameters.filter { it.kind == IrParameterKind.Regular }.map { it.descriptor }
         val actualValueParameters = functionDescriptor.valueParameters
         if (declaredValueParameters.size != actualValueParameters.size) {
             error("$functionDescriptor: Value parameters mismatch: $declaredValueParameters != $actualValueParameters")
@@ -203,7 +225,6 @@ class IrVerifier(private val assertions: Assertions) : IrElementVisitorVoid {
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
-        expression.typeOperandClassifier.checkBinding("type operand", expression)
+        expression.typeOperand.classifierOrFail.checkBinding("type operand", expression)
     }
 }
-

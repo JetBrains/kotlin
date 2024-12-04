@@ -1,4 +1,6 @@
-// !LANGUAGE: +MultiPlatformProjects
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 

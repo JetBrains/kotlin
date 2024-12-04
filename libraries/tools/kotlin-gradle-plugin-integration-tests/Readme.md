@@ -10,25 +10,29 @@ To run all tests for all Gradle plugins use `check` task.
 More fine-grained test tasks exist covering different parts of Gradle plugins:
 - `kgpJvmTests` - runs all tests for Kotlin Gradle Plugin/Jvm platform (parallel execution)
 - `kgpJsTests` - runs all tests for Kotlin Gradle Plugin/Js platform (parallel execution)
+- `kgpAndroidTests` - runs all tests for Kotlin Gradle Plugin/Android platform (parallel execution)
+- `kgpMppTests` - run all tests for Kotlin Gradle Multiplatform plugin (parallel execution)
+- `kgpNativeTests` - run all tests for Kotlin Gradle Plugin with K/N (parallel execution)
 - `kgpDaemonTests` - runs all tests for Gradle and Kotlin daemons (sequential execution)
 - `kgpOtherTests` - run all tests for support Gradle plugins, such as kapt, allopen, etc (parallel execution)
 - `kgpAllParallelTests` - run all tests for all platforms except daemons tests (parallel execution)
 
-Also, few deprecated tasks still exist until all tests will be migrated to the new setup:
-- `kgpSimpleTests` - runs all migrated Kotlin Gradle Plugin tests (parallel execution)
-- `test` - runs all tests with the oldest supported Gradle version (sequential execution)
-- `testAdvancedGradleVersion` - runs all tests with the latest supported Gradle version (sequential execution)
-
-The old tests that use the Gradle plugins DSL ([`PluginsDslIT`](../kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt)) 
-also require the Gradle plugin marker artifacts to be installed:
-```shell
-./gradlew :kotlin-gradle-plugin:plugin-marker:install :kotlin-noarg:plugin-marker:install :kotlin-allopen:plugin-marker:install
-./gradlew :kotlin-gradle-plugin-integration-tests:test
-```
-
 If you want to run only one test class, you need to append `--tests` flag with value of test class, which you want to run
 ```shell
-./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllTests --tests <class-name-with-package>
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllParallelTests --tests <class-name-with-package>
+```
+
+#### How to Run Using Kotlin Native from Master
+
+Currently, Kotlin Native from master involves three configurations: `kgpMppTests`, `kgpNativeTests`, and `kgpOtherTests`. 
+Depending on your development environment, there are a few different ways you can run this.
+* **On Local Environment** In the case of Local Environment builds, you have two options, which you can add in your `local.properties` file:  
+  * `kotlin.native.enabled=true` - this property adds building Kotlin Native full bundle step before Integration Tests, then this bundle will be used in the Integration Tests.
+  * `kotlin.native.local.distribution.for.tests.enabled=false` - include this line if you need to disable running Integration Tests with Kotlin/Native from master, even when `kotlin.native.enabled` is set to true.
+* **On TeamCity** In the case of TeamCity builds, no extra setting is necessary. The mentioned configurations depend on the `full bundle`, which stores its artifacts in the `-DkonanDataDirForIntegrationTests` directory.
+Also, you can specify the konan directory for test by providing `-DkonanDataDirForIntegrationTests`, for example:
+```bash
+ ./gradlew :kotlin-gradle-plugin-integration-tests:kgpNativeTests -DkonanDataDirForIntegrationTests=/tmp/.konan
 ```
 
 #### How to work with the tests
@@ -45,12 +49,24 @@ compile tests and run them. This should reduce test execution time.
 a lot of output, that slows down test execution.
 - Add `@DisplayName(...)` with meaningful description both for test class and methods inside. This will allow developers easier 
 to understand what test is about.
+- Add to test related Kotlin tag. For example for Kotlin/Jvm tests - `@JvmGradlePluginTests`. Other available tags are located nearby 
+`@JvmGradlePluginTests` - check yourself what suites best for the test. You could add tag onto test suite once, but then all tests 
+in test suite should be for the related tag. Preferably add tag for each test.
 - Consider using [Gradle Plugin DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block) while adding new/modifying 
 existing test projects.
 
 Tests run using [Gradle TestKit](https://docs.gradle.org/current/userguide/test_kit.html) and may reuse already active Gradle TestKit daemon.
 Shared TestKit caches are located in [./.testKitDir](.testKitDir) directory. It is cleared on CI after test run is finished, but not locally.
 You could clean it locally by running `cleanTestKitCache` task.
+
+#### How to debug Kotlin daemon
+
+1. Create `Remote JVM debug` configuration in IDEA. 
+   1. Modify debug port to be `5005`. 
+   2. In `Debugger mode` floating menu select `Listen to remote JVM`. 
+   3. (Optional) You can check `Auto restart` to automatically restart configuration after each debug session.
+2. Specify correct debug port in `build` call arguments `kotlinDaemonDebugPort = 5005`.
+3. Run newly created configuration in `Debug` mode and after that run test in simple `Run` mode.
 
 ##### Adding new test suite
 
@@ -88,10 +104,10 @@ add a new assertion, add as a reviewer someone from Kotlin build tools team.
 
 ##### Additional test helpers
 
-Whenever you need to test combination of different JDKs and Gradle versions - you could use `@GradleWithJdkTest` instead of `@GradleTest`. 
+- Whenever you need to test combinations of different JDKs and Gradle versions - you could use `@GradleWithJdkTest` instead of `@GradleTest`. 
 Then test method will receive requires JDKs as a second parameter:
 ```kotlin
-@JdkVersions(version = [JavaVersion.VERSION_11, JavaVersion.VERSION_17])
+@JdkVersions(version = [JavaVersion.VERSION_11, JavaVersion.VERSION_21])
 @GradleWithJdkTest
 fun someTest(
     gradleVersion: GradleVersion, 
@@ -103,22 +119,85 @@ fun someTest(
 }
 ```
 
-##### Deprecated tests setup
+- Whenever Android Gradle plugin different versions should be checked in the tests - it is possible to use `@GradleAndroidTest` annotation 
+instead of `@GradleTest`. Test will receive additionally to Gradle version AGP version and required JDK version:
+```kotlin
+@AndroidTestVersions(additionalVersions = [TestVersions.AGP.AGP_42])
+@GradleAndroidTest
+fun someTest(
+    gradleVersion: GradleVersion,
+    agpVersion: String,
+    jdkVersion: JdkVersions.ProvidedJdk
+) {
+    project(
+        "simpleAndroid",
+        gradleVersion,
+        buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        buildJdk = jdkVersion.location
+    ) {
+        build("assembleDebug")
+    }
+}
+```
 
-When you create a new test, figure out which Gradle versions it is supposed to run on. Then, when you instantiate a test project, specify one of:
+- If you want to copy current state of the test project and play with it separately - you could use `makeSnapshotTo(destinationPath)` function.
 
-* `project("someProjectName", GradleVersionRequired.None)` or just `project("someProjectName")` – the test can run on the whole range of the supported Gradle versions;
-* `project("someProjectName", GradleVersionRequired.AtLeast("X.Y"))` – the test is supposed to run on Gradle version `X.Y` and newer (e.g. it tests integration with a Gradle feature that was released in version `X.Y`);
-* `project("someProjectName", GradleVersionRequired.Exact("X.Y"))` – the test is supposed to run only with Gradle version `X.Y` (e.g. it tests a workaround for that version or records some special behavior that is not reproducible with newer versions).
+##### Common test fixes
 
-:warning: When your tests target multiple Gradle versions, make sure they pass when run with both tasks `test` and `testAdvanceGradleVersion` (see above). In the IDE, you can modify a test run configuration to use a Gradle task other than `test`.
+Test infrastructure adds following common fixes to all test projects:
+- applies 'org.jetbrains.kotlin.test.fixes.android' [plugin](../gradle/android-test-fixes/Readme.md). If you are using custom `settings.gradle`
+or `settings.gradle.kts` content in the test project, you need to add this plugin into `pluginManagement`:
+<details open>
+<summary>Kotlin script</summary>
 
-You can check a Gradle version that the test runs with using [`Project.testGradleVersionAtLeast("X.Y")`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L454) and [`Project.testGradleVersionBelow("X.Y")`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L457).
+```kotlin
+pluginManagement {
+    repositories {
+        mavenLocal()
+    }
 
-Since Gradle output layouts differ from version to version, you can access classes and resources output directories using the functions that adapt to the Gradle version that is used for each test:
+    val test_fixes_version: String by settings
+    plugins {
+       id("org.jetbrains.kotlin.test.fixes.android") version test_fixes_version
+    }
+}
+```
+</details>
+<details>
+<summary>Groovy</summary>
 
-* [`CompiledProject.kotlinClassesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L459) with optional arguments for subproject and source set, and its Java counterpart [`CompiledProject.javaClassesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L462) (note that Gradle versions below 4.0 use the same directory for both)
+```groovy
+pluginManagement {
+    repositories {
+        mavenLocal()
+    }
+    
+    plugins {
+       id "org.jetbrains.kotlin.test.fixes.android" version $test_fixes_version
+    }
+}
+```
+</details>
 
-* [`Project.resourcesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L444) (with optional arguments for subproject and source set) for the resources directory;
+## build.gradle.kts injections from main test code
 
-* [`Project.classesDir()`](https://github.com/JetBrains/kotlin/blob/fe3ce1ec7cdd29a1839f3dd67e0a00023efa495d/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/BaseGradleIT.kt#L449), which is a general way to get the output directory for a specific subproject, source set, and language.
+It is possible to inject code from IT test directly into the build files of the test project.
+To do that use `buildScriptInjection` DSL function as follows:
+
+```kotlin
+nativeProject("native-fat-framework/smoke", gradleVersion) {
+    buildScriptInjection {
+        // This code will be executed inside build.gradle.kts during project evaluation
+        val macos = kotlinMultiplatform.macosX64()
+        macos.binaries.framework("DEBUG")
+        val fat = project.tasks.getByName("fat") as FatFrameworkTask
+        fat.from(macos.binaries.getFramework("DEBUG"))
+    }
+    buildAndFail("assemble") {}
+}
+```
+
+It is possible to inject the same code to both groovy and kts buildscript files. 
+
+Invocation of `buildGradleKtsInjection` adds  to the build script classpath classes from test. And injects in build script this line:
+`org.jetbrains.kotlin.gradle.testbase.invokeBuildScriptInjection(project, "<FQN to class produced from lambda>")`

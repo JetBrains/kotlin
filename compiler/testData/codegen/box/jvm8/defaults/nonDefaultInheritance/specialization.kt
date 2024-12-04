@@ -1,9 +1,10 @@
 // CHECK_BYTECODE_LISTING
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 // MODULE: lib
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // FILE: Foo.kt
 
 interface Foo<T> {
@@ -15,8 +16,7 @@ interface Foo2<T> {
 }
 
 // MODULE: main(lib)
-// !JVM_DEFAULT_MODE: disable
-// !JVM_DEFAULT_ALLOW_NON_DEFAULT_INHERITANCE
+// JVM_DEFAULT_MODE: disable
 // FILE: main.kt
 class DerivedClass : Foo<String>
 

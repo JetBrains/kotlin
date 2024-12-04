@@ -6,17 +6,24 @@
 package org.jetbrains.kotlin.test.frontend.classic
 
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
+import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
-import org.jetbrains.kotlin.ir.backend.js.generateIrForKlibSerialization
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.backend.js.KlibMetadataIncrementalSerializer
+import org.jetbrains.kotlin.ir.backend.js.getSerializedData
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.sortDependencies
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -27,6 +34,8 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 class ClassicFrontend2IrConverter(
     testServices: TestServices
@@ -36,12 +45,13 @@ class ClassicFrontend2IrConverter(
     BackendKinds.IrBackend
 ) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::JsLibraryProvider))
+        get() = listOf(service(::LibraryProvider))
 
     override fun transform(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
         return when (module.targetBackend) {
-            TargetBackend.JVM_IR -> transformToJvmIr(module, inputArtifact)
-            TargetBackend.JS_IR -> transformToJsIr(module, inputArtifact)
+            TargetBackend.JVM_IR, TargetBackend.JVM_IR_SERIALIZE -> transformToJvmIr(module, inputArtifact)
+            TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> transformToJsIr(module, inputArtifact)
+            TargetBackend.WASM -> transformToWasmIr(module, inputArtifact)
             else -> testServices.assertions.fail { "Target backend ${module.targetBackend} not supported for transformation into IR" }
         }
     }
@@ -51,21 +61,24 @@ class ClassicFrontend2IrConverter(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val files = psiFiles.values.toList()
-        val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
-        val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
+        val codegenFactory = JvmIrCodegenFactory(configuration, configuration.phaseConfig)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val state = GenerationState.Builder(
             project, ClassBuilderFactories.TEST, analysisResult.moduleDescriptor, analysisResult.bindingContext,
-            files, configuration
-        ).codegenFactory(codegenFactory)
-            .isIrBackend(true)
-            .ignoreErrors(CodegenTestDirectives.IGNORE_ERRORS in module.directives)
-            .diagnosticReporter(DiagnosticReporterFactory.createReporter())
+            configuration
+        ).ignoreErrors(CodegenTestDirectives.IGNORE_ERRORS in module.directives)
+            .diagnosticReporter(DiagnosticReporterFactory.createReporter(messageCollector))
             .build()
 
+        val conversionResult =
+            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values))
         return IrBackendInput.JvmIrBackendInput(
             state,
-            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationState(state))
+            codegenFactory,
+            conversionResult,
+            sourceFiles = emptyList(),
+            descriptorMangler = conversionResult.symbolTable.signaturer!!.mangler,
+            irMangler = JvmIrMangler,
         )
     }
 
@@ -75,28 +88,90 @@ class ClassicFrontend2IrConverter(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val verifySignatures = JsEnvironmentConfigurationDirectives.SKIP_MANGLE_VERIFICATION !in module.directives
 
-        val icData = mutableListOf<KotlinFileSerializedData>()
-        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-        val moduleFragment = generateIrForKlibSerialization(
+        val sourceFiles = psiFiles.values.toList()
+        val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
+
+        val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project,
-            psiFiles.values.toList(),
+            sourceFiles,
             configuration,
             analysisResult,
-            sortDependencies(JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices)),
+            sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
             icData,
-            expectDescriptorToSymbol,
             IrFactoryImpl,
             verifySignatures
         ) {
-            testServices.jsLibraryProvider.getDescriptorByCompiledLibrary(it)
+            testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
         }
 
-        return IrBackendInput.JsIrBackendInput(
+        val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(sourceFiles, analysisResult.bindingContext)
+        val metadataSerializer = KlibMetadataIncrementalSerializer(
+            sourceFiles,
+            configuration,
+            project,
+            analysisResult.bindingContext,
+            moduleFragment.descriptor,
+            hasErrors,
+        )
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        return IrBackendInput.JsIrAfterFrontendBackendInput(
             moduleFragment,
-            psiFiles.values.toList(),
-            bindingContext = analysisResult.bindingContext,
+            pluginContext,
             icData,
-            expectDescriptorToSymbol = expectDescriptorToSymbol,
+            diagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector),
+            hasErrors,
+            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
+            irMangler = JsManglerIr,
+            metadataSerializer = metadataSerializer,
+        )
+    }
+
+    private fun transformToWasmIr(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
+        val (psiFiles, analysisResult, project, _) = inputArtifact
+
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val verifySignatures = JsEnvironmentConfigurationDirectives.SKIP_MANGLE_VERIFICATION !in module.directives
+
+        val sourceFiles = psiFiles.values.toList()
+        val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
+
+        val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
+            project,
+            sourceFiles,
+            configuration,
+            analysisResult,
+            sortDependencies(WasmEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
+            icData,
+            IrFactoryImpl,
+            verifySignatures
+        ) {
+            testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
+        }
+
+        val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(configuration.get(WasmConfigurationKeys.WASM_TARGET))
+        val hasErrors = analyzerFacade.checkForErrors(sourceFiles, analysisResult.bindingContext)
+        val metadataSerializer = KlibMetadataIncrementalSerializer(
+            sourceFiles,
+            configuration,
+            project,
+            analysisResult.bindingContext,
+            moduleFragment.descriptor,
+            hasErrors,
+        )
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        return IrBackendInput.WasmAfterFrontendBackendInput(
+            moduleFragment,
+            pluginContext,
+            icData,
+            diagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector),
+            hasErrors,
+            descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer!!.mangler,
+            irMangler = JsManglerIr,
+            metadataSerializer = metadataSerializer,
         )
     }
 }

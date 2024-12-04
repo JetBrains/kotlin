@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.lexer.KtTokens;
 
-public class KtCallableReferenceExpression extends KtDoubleColonExpression {
+public class KtCallableReferenceExpression extends KtExpressionImpl implements KtDoubleColonExpression {
     public KtCallableReferenceExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -36,6 +38,12 @@ public class KtCallableReferenceExpression extends KtDoubleColonExpression {
         }
 
         throw new IllegalStateException("Callable reference simple name shouldn't be parsed to null");
+    }
+
+    @Nullable
+    @Override
+    public PsiElement findColonColon() {
+        return findChildByType(KtTokens.COLONCOLON);
     }
 
     @Override

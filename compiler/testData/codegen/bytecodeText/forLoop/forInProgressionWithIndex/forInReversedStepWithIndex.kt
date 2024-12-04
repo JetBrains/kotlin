@@ -21,12 +21,6 @@ fun box(): String {
 // The ICONST_0 is for initializing the index in the lowered for-loop.
 // 1 ICONST_0
 
-// JVM_TEMPLATES
-// 1 iterator
-// 1 hasNext
-// 1 next
-
-// JVM_IR_TEMPLATES
 // 0 iterator
 // 0 hasNext
 // 0 next
@@ -38,7 +32,6 @@ fun box(): String {
 // 0 reversed
 // 0 step
 
-// JVM_IR_TEMPLATES
 // 7 ILOAD
 // 6 ISTORE
 // 1 IADD

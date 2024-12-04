@@ -1,0 +1,15 @@
+MODULE main
+	CLASS ContextAndExtensionLambdaIndyKt.class
+		PACKAGE METADATA
+			FUNCTION accept(Lkotlin/jvm/functions/Function3;)I
+				Property: class.metadata.function.valueParameters
+					K1
+						(block: @kotlin/ExtensionFunctionType @kotlin/ContextFunctionTypeParams(count = 1) kotlin/Function3<Ctx, Scope, kotlin/Int, kotlin/String>)
+					K2
+						(block: @kotlin/ContextFunctionTypeParams(count = 1) @kotlin/ExtensionFunctionType kotlin/Function3<Ctx, Scope, kotlin/Int, kotlin/String>)
+			PROPERTY getFoo()Lkotlin/jvm/functions/Function3;
+				Property: class.metadata.property.returnType
+					K1
+						@kotlin/ExtensionFunctionType @kotlin/ContextFunctionTypeParams(count = 1) kotlin/Function3<Ctx, Scope, @kotlin/ParameterName(name = "fooParam") kotlin/Int, kotlin/String>
+					K2
+						@kotlin/ContextFunctionTypeParams(count = 1) @kotlin/ExtensionFunctionType kotlin/Function3<Ctx, Scope, @kotlin/ParameterName(name = "fooParam") kotlin/Int, kotlin/String>

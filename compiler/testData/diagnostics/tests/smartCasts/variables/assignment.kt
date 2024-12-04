@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo() {
     var v: Any = 42
     v.<!UNRESOLVED_REFERENCE!>length<!>()

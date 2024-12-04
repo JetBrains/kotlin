@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class SuperFoo {
     public fun bar(): String {
         if (this is Foo) {

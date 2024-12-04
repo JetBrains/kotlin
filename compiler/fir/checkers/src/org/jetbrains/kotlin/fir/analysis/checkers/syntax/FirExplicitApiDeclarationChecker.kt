@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -42,14 +43,27 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         ) {
             return
         }
-        val state = context.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
-        if (state == ExplicitApiMode.DISABLED) return
+
+        fun extractState(flag: AnalysisFlag<ExplicitApiMode>): ExplicitApiMode? {
+            return context.languageVersionSettings.getFlag(flag).takeUnless { it == ExplicitApiMode.DISABLED }
+        }
+
+        val explicitApiState = extractState(AnalysisFlags.explicitApiMode)
+        val explicitReturnTypesState = extractState(AnalysisFlags.explicitReturnTypes)
+        if (explicitApiState == null && explicitReturnTypesState == null) return
         // Enum entries do not have visibilities
         if (element is FirEnumEntry) return
         if (!element.effectiveVisibility.publicApi && element.publishedApiEffectiveVisibility == null) return
+        val lastContainingDeclaration = context.containingDeclarations.lastOrNull()
+        if ((lastContainingDeclaration as? FirMemberDeclaration)?.effectiveVisibility?.publicApi == false) {
+            return
+        }
 
-        checkVisibilityModifier(state, element, source, context, reporter)
-        checkExplicitReturnType(state, element, source, context, reporter)
+        if (explicitApiState != null) {
+            checkVisibilityModifier(explicitApiState, element, source, context, reporter)
+        }
+
+        checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, element, source, context, reporter)
     }
 
     private fun checkVisibilityModifier(
@@ -59,7 +73,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val visibilityModifier = source.getChild(KtNodeTypes.MODIFIER_LIST)?.getChild(KtTokens.VISIBILITY_MODIFIERS)
+        val visibilityModifier = source.getChild(KtNodeTypes.MODIFIER_LIST, depth = 1)?.getChild(KtTokens.VISIBILITY_MODIFIERS)
         if (visibilityModifier != null) return
 
         if (explicitVisibilityIsNotRequired(declaration, context)) return
@@ -80,27 +94,23 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
      * 6. Value parameter declaration
      * 7. An anonymous function
      * 8. A local named function
-     *
-     * TODO: Do we need something like @PublicApiFile to disable (or invert) this inspection per-file?
      */
     private fun explicitVisibilityIsNotRequired(declaration: FirMemberDeclaration, context: CheckerContext): Boolean {
         return when (declaration) {
-            // 1,
-            is FirPrimaryConstructor,
-            // 4
-            is FirPropertyAccessor,
-            // 6
-            is FirValueParameter,
-            // 7
-            is FirAnonymousFunction -> true
+            is FirPrimaryConstructor, // 1,
+            is FirPropertyAccessor, // 4
+            is FirValueParameter, // 6
+            is FirAnonymousFunction -> true // 7
             is FirCallableDeclaration -> {
                 val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClass
                 // 2, 5
-                if (declaration is FirProperty &&
-                    containingClass != null &&
-                    (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS)
-                ) {
-                    return true
+                if (declaration is FirProperty) {
+                    if (containingClass != null && (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
+                        return true
+                    }
+                    if (declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+                        return true
+                    }
                 }
 
                 // 3, 8

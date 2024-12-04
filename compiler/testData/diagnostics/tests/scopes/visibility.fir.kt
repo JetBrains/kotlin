@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 //FILE:a.kt
 package test_visibility
@@ -54,7 +55,7 @@ open class C : T {
 }
 
 fun test4(c: C) {
-    c.<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>i<!>++
+    c.<!INVISIBLE_REFERENCE!>i<!>++
 }
 
 class D : C() {

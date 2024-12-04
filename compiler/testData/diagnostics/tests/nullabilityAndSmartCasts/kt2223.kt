@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-2223 Comparing non-null value with null might produce helpful warning
 package kt2223

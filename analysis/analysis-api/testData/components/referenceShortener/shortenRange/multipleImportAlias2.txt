@@ -1,0 +1,19 @@
+Before shortening: when (a) {
+    1 -> bar1
+    2 -> com.dependency.bar
+    3 -> bar3
+    else -> com.dependency.bar
+}
+with default settings:
+[qualifier] com.dependency.bar -> bar1
+[qualifier] com.dependency.bar -> bar1
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] com.dependency.bar -> bar1
+[qualifier] com.dependency.bar -> bar1
+with SHORTEN_AND_IMPORT:
+[qualifier] com.dependency.bar -> bar1
+[qualifier] com.dependency.bar -> bar1
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] com.dependency.bar -> bar1
+[qualifier] com.dependency.bar -> bar1

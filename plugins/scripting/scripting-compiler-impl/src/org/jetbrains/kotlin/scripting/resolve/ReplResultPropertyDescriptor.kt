@@ -31,7 +31,7 @@ class ReplResultPropertyDescriptor(
     /* isDelegated = */ false
 ) {
     init {
-        setType(kotlinType, emptyList(), receiver, null)
+        setType(kotlinType, emptyList(), receiver, null, emptyList())
         initialize(
             null, null
         )

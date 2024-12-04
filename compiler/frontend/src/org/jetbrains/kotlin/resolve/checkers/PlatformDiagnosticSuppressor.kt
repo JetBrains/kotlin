@@ -21,23 +21,35 @@ import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
 import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.resolve.BindingContext
 
 @DefaultImplementation(PlatformDiagnosticSuppressor.Default::class)
 interface PlatformDiagnosticSuppressor : PlatformSpecificExtension<PlatformDiagnosticSuppressor>{
-    fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean
+    // Function without binding context is kept for binary compatibility
+    // Diagnostic should be suppressed if any of two overloads return false
+    @Deprecated("Use shouldReportUnusedParameter with bindingContext parameter")
+    fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean = true
+    fun shouldReportUnusedParameter(parameter: VariableDescriptor, bindingContext: BindingContext): Boolean = true
 
     fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean
 
     object Default : PlatformDiagnosticSuppressor {
-        override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean = true
+        override fun shouldReportUnusedParameter(parameter: VariableDescriptor, bindingContext: BindingContext): Boolean = true
 
         override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean = true
     }
 }
 
 class CompositePlatformDiagnosticSuppressor(private val suppressors: List<PlatformDiagnosticSuppressor>) : PlatformDiagnosticSuppressor {
+    override fun shouldReportUnusedParameter(parameter: VariableDescriptor, bindingContext: BindingContext): Boolean =
+        suppressors.all { it.shouldReportUnusedParameter(parameter, bindingContext) }
+
+    @Deprecated("Use shouldReportUnusedParameter with bindingContext parameter")
     override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean =
-        suppressors.all { it.shouldReportUnusedParameter(parameter) }
+        suppressors.all {
+            @Suppress("DEPRECATION")
+            it.shouldReportUnusedParameter(parameter)
+        }
 
     override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean =
         suppressors.all { it.shouldReportNoBody(descriptor) }

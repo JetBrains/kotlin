@@ -1,6 +1,3 @@
-fun String.extension() {
-}
-
 class C {
   constructor() /* primary */ {
     super/*Any*/()
@@ -13,6 +10,9 @@ class C {
 
 }
 
+fun String.extension() {
+}
+
 fun testExt() {
   s() /*!! String */.extension()
 }
@@ -20,3 +20,4 @@ fun testExt() {
 fun C.testMemberExt() {
   (<this>, s() /*!! String */).memberExtension()
 }
+

@@ -26,7 +26,6 @@ fun f(a: Long): Int {
 // 2 LCMP
 // 2 IF
 
-// JVM_IR_TEMPLATES
 // 1 ILOAD
 // 1 ISTORE
 // 0 IADD

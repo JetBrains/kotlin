@@ -16,7 +16,7 @@ public interface MemoizedFunctionToNotNull</*0*/ K, /*1*/ V> {
 
 public final class Refiner {
     public constructor Refiner()
-    public final val memoizedFunctionLambda: [ERROR : Type for createMemoizedFunction { it.foo() }]
+    public final val memoizedFunctionLambda: [Error type: Not found recorded type for createMemoizedFunction { it.foo() }]
     public final val memoizedFunctionReference: MemoizedFunctionToNotNull<TypeConstructor, kotlin.Boolean>
     public final val memoizedFunctionTypes: MemoizedFunctionToNotNull<TypeConstructor, kotlin.Boolean>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -1,26 +1,37 @@
-// IGNORE_BACKEND: JS
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 
 // MODULE: export_interface
 // FILE: lib.kt
 
+interface ParentI {
+   val str: String
+}
+
 @JsExport
-interface I {
+interface I : ParentI {
     val value: Int
     var variable: Int
     fun foo(): String
 }
 
-open class NotExportedClass(override var value: Int) : I {
+interface ExtendedI: I {
+    fun bar(): Int
+}
+
+open class NotExportedClass(override var value: Int) : ExtendedI {
     override var variable: Int = value
     override open fun foo(): String = "Not Exported"
+    override val str: String = "test 1"
+    override open fun bar(): Int = 42
 }
 
 @JsExport
-class ExportedClass(override val value: Int) : I {
+class ExportedClass(override val value: Int) : ExtendedI {
     override var variable: Int = value
     override fun foo(): String = "Exported"
+    override val str: String = "test 2"
+    override open fun bar(): Int = 43
 }
 
 @JsExport
@@ -74,6 +85,12 @@ function box() {
     if (consume(exported) !== "Value is 1, variable is 101 and result is 'Exported'") return "Fail: methods or fields of ExportedClass was mangled"
     if (consume(another) !== "Value is 42, variable is 102 and result is 'Another One Exported'") return "Fail: methods or fields of AnotherOne was mangled"
     if (consume(notExported) !== "Value is 3, variable is 103 and result is 'Not Exported'") return "Fail: methods or fields of NotExported was mangled"
+
+    if (notExported.str !== undefined) return "Fail: str should not exist inside NotExportedClass"
+    if (exported.str !== undefined) return "Fail: str should not exist inside ExportedClass"
+
+    if (notExported.bar !== undefined) return "Fail: bar should not exist inside NotExportedClass"
+    if (exported.bar !== undefined) return "Fail: bar should not exist inside ExportedClass"
 
     return "OK"
 }

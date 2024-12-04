@@ -1,0 +1,1 @@
+@MyAnno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any|

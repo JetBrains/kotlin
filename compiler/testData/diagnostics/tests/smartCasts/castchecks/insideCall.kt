@@ -1,4 +1,5 @@
-// !LANGUAGE: +SafeCastCheckBoundSmartCasts
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +SafeCastCheckBoundSmartCasts
 // See KT-19007
 
 // Stub

@@ -1,10 +1,4 @@
 class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val test_1: Int
     field = try { // BLOCK
       throw RuntimeException()
@@ -25,4 +19,11 @@ class A {
 
     get
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

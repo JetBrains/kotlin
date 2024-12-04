@@ -1,5 +1,18 @@
-import java.lang.System;
-
+/**
+ * public abstract class Cls : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: bar(I)Ljava/lang/String;
+ *   public final fun bar(bcd: kotlin/Int): kotlin/String
+ *
+ *   // signature: foo(Ljava/lang/String;)V
+ *   public abstract fun foo(abc: kotlin/String): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract class Cls {
 
@@ -19,8 +32,18 @@ public abstract class Cls {
 ////////////////////
 
 
-import java.lang.System;
-
+/**
+ * public abstract interface Intf : kotlin/Any {
+ *
+ *   // signature: bar(I)Ljava/lang/String;
+ *   public open fun bar(bcd: kotlin/Int): kotlin/String
+ *
+ *   // signature: foo(Ljava/lang/String;)V
+ *   public abstract fun foo(abc: kotlin/String): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Intf {
 
@@ -30,12 +53,11 @@ public abstract interface Intf {
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String bar(int bcd);
 
+    /**
+     * synthetic class
+     */
     @kotlin.Metadata()
     public static final class DefaultImpls {
-
-        public DefaultImpls() {
-            super();
-        }
 
         @org.jetbrains.annotations.NotNull()
         public static java.lang.String bar(@org.jetbrains.annotations.NotNull()

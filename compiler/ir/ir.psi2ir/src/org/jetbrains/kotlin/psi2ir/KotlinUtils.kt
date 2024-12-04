@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-fun KotlinType.containsNull() =
+internal fun KotlinType.containsNull(): Boolean =
     TypeUtils.isNullableType(this)
 
 fun KtElement.deparenthesize(): KtElement =
     if (this is KtExpression) KtPsiUtil.safeDeparenthesize(this) else this
 
-fun ResolvedCall<*>.isValueArgumentReorderingRequired(): Boolean {
+internal fun ResolvedCall<*>.isValueArgumentReorderingRequired(): Boolean {
     var lastValueParameterIndex = -1
     for (valueArgument in call.valueArguments) {
         val argumentMapping =
@@ -53,7 +53,7 @@ fun ResolvedCall<*>.isValueArgumentReorderingRequired(): Boolean {
     return false
 }
 
-fun KtSecondaryConstructor.isConstructorDelegatingToSuper(bindingContext: BindingContext): Boolean {
+internal fun KtSecondaryConstructor.isConstructorDelegatingToSuper(bindingContext: BindingContext): Boolean {
     val constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, this) ?: return false
     val delegatingResolvedCall = getDelegationCall().getResolvedCall(bindingContext)
     return if (delegatingResolvedCall != null) {
@@ -68,13 +68,13 @@ fun KtSecondaryConstructor.isConstructorDelegatingToSuper(bindingContext: Bindin
 fun MemberScope.findSingleFunction(name: Name): FunctionDescriptor =
     getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()
 
-val PsiElement?.startOffsetOrUndefined get() = this?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
-val PsiElement?.endOffsetOrUndefined get() = this?.endOffset ?: UNDEFINED_OFFSET
+internal val PsiElement?.startOffsetOrUndefined get() = this?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
+internal val PsiElement?.endOffsetOrUndefined get() = this?.endOffset ?: UNDEFINED_OFFSET
 
-val PropertyDescriptor.unwrappedGetMethod: FunctionDescriptor?
+internal val PropertyDescriptor.unwrappedGetMethod: FunctionDescriptor?
     get() = if (this is SyntheticPropertyDescriptor) this.getMethod else getter
 
-val PropertyDescriptor.unwrappedSetMethod: FunctionDescriptor?
+internal val PropertyDescriptor.unwrappedSetMethod: FunctionDescriptor?
     get() = if (this is SyntheticPropertyDescriptor) this.setMethod else setter
 
 // Only works for descriptors of Java fields.
@@ -90,7 +90,7 @@ internal fun PropertyDescriptor.resolveFakeOverride(): PropertyDescriptor {
     return current
 }
 
-val KtPureElement?.pureStartOffsetOrUndefined get() = this?.psiOrParent?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
-val KtPureElement?.pureEndOffsetOrUndefined get() = this?.psiOrParent?.endOffset ?: UNDEFINED_OFFSET
+internal val KtPureElement?.pureStartOffsetOrUndefined get() = this?.psiOrParent?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
+internal val KtPureElement?.pureEndOffsetOrUndefined get() = this?.psiOrParent?.endOffset ?: UNDEFINED_OFFSET
 
-fun KtElement.getChildTokenStartOffsetOrNull(tokenSet: TokenSet) = node.findChildByType(tokenSet)?.startOffset
+internal fun KtElement.getChildTokenStartOffsetOrNull(tokenSet: TokenSet) = node.findChildByType(tokenSet)?.startOffset

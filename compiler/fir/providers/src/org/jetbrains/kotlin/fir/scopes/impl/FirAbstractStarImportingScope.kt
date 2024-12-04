@@ -9,20 +9,29 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirAbstractStarImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    filter: FirImportingScopeFilter,
-    lookupInFir: Boolean
-) : FirAbstractImportingScope(session, scopeSession, filter, lookupInFir) {
+    lookupInFir: Boolean,
+    val excludedImportNames: Set<FqName>
+) : FirAbstractImportingScope(session, scopeSession, lookupInFir) {
 
     // TODO try to hide this
     abstract val starImports: List<FirResolvedImport>
+
+    override fun isExcluded(import: FirResolvedImport, name: Name): Boolean {
+        if (excludedImportNames.isNotEmpty()) {
+            return import.importedFqName!!.child(name) in excludedImportNames
+        }
+        return false
+    }
 
     private val absentClassifierNames = mutableSetOf<Name>()
 
@@ -30,17 +39,24 @@ abstract class FirAbstractStarImportingScope(
         if ((!name.isSpecial && name.identifier.isEmpty()) || starImports.isEmpty() || name in absentClassifierNames) {
             return
         }
-        val symbol = findSingleClassifierSymbolByName(name, starImports)
-        if (symbol != null) {
+        var foundAny = false
+        processClassifiersFromImportsByName(name, starImports) { symbol ->
+            foundAny = true
             processor(symbol, ConeSubstitutor.Empty)
-        } else {
+        }
+        if (!foundAny) {
             absentClassifierNames += name
         }
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) =
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         processFunctionsByName(name, starImports, processor)
+    }
 
-    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) =
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         processPropertiesByName(name, starImports, processor)
+    }
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirAbstractStarImportingScope
 }

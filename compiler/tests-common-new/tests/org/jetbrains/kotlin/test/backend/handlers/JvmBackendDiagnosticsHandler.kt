@@ -9,40 +9,41 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticReporter
 import org.jetbrains.kotlin.test.frontend.classic.handlers.withNewInferenceModeEnabled
-import org.jetbrains.kotlin.test.frontend.fir.handlers.toMetaInfos
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.dependencyProvider
-import org.jetbrains.kotlin.test.services.globalMetadataInfoHandler
+import org.jetbrains.kotlin.test.services.*
+import org.junit.jupiter.api.fail
 
 class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     private val reporter = ClassicDiagnosticReporter(testServices)
 
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::DiagnosticsService))
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        val testFileToKtFileMap = testServices.dependencyProvider.getArtifact(module, FrontendKinds.ClassicFrontend).ktFiles
-        val ktFileToTestFileMap = testFileToKtFileMap.entries.map { it.value to it.key }.toMap()
-        val generationState = info.classFileFactory.generationState
-        val diagnostics = generationState.collectedExtraJvmDiagnostics.all()
+        reportDiagnostics(module, info)
+        reportKtDiagnostics(module, info)
+    }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        checkFullDiagnosticRender()
+    }
+
+    private fun reportDiagnostics(module: TestModule, info: BinaryArtifacts.Jvm) {
+        val testFiles = module.files.associateBy { "/${it.name}" }
         val configuration = reporter.createConfiguration(module)
         val withNewInferenceModeEnabled = testServices.withNewInferenceModeEnabled()
+
+        val diagnostics = info.classFileFactory.generationState.collectedExtraJvmDiagnostics.all()
         for (diagnostic in diagnostics) {
-            val ktFile = diagnostic.psiFile as? KtFile ?: continue
-            val testFile = ktFileToTestFileMap[ktFile] ?: continue
+            val ktFile = diagnostic.psiFile as? KtFile ?: fail("PSI file is not a KtFile: ${diagnostic.psiFile}")
+            val testFile = testFiles[ktFile.virtualFilePath] ?: fail("Test file for KtFile not found: ${ktFile.virtualFilePath}")
             reporter.reportDiagnostic(diagnostic, module, testFile, configuration, withNewInferenceModeEnabled)
-        }
-        val ktDiagnosticReporter = generationState.diagnosticReporter as BaseDiagnosticsCollector
-        val globalMetadataInfoHandler = testServices.globalMetadataInfoHandler
-        for ((testFile, ktFile) in testFileToKtFileMap.entries) {
-            val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath[ktFile.virtualFilePath] ?: continue
-            ktDiagnostics.forEach {
-                val metaInfos =
-                    it.toMetaInfos(testFile, globalMetadataInfoHandler, false, false)
-                globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
-            }
         }
     }
 
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+    private fun reportKtDiagnostics(module: TestModule, info: BinaryArtifacts.Jvm) {
+        val ktDiagnosticReporter = info.classFileFactory.generationState.diagnosticReporter as BaseDiagnosticsCollector
+        reportKtDiagnostics(module, ktDiagnosticReporter)
+    }
 }

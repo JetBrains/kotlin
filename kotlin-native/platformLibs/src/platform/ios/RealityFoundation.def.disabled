@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.RealityFoundation
+
+modules = RealityFoundation
+compilerOpts = -framework RealityFoundation
+linkerOpts = -framework RealityFoundation
+# Swift-only module. Probably a part of RealityKit.

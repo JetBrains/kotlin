@@ -1,7 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -10,7 +10,7 @@ interface ProducerScope<E> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <E> produce(@BuilderInference block: ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
+fun <E> produce(block: ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
 
 fun <K> filter(e: K, predicate: (K) -> Boolean) =
     produce {

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.utils.keysToMap
 class LocalClassesNavigationInfo(
     val parentForClass: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
     private val parentClassForFunction: Map<FirCallableDeclaration, FirClassLikeDeclaration>,
-    val allMembers: List<FirDeclaration>
 ) {
     val designationMap: Map<FirCallableDeclaration, List<FirClassLikeDeclaration>> by lazy {
         parentClassForFunction.keys.keysToMap {
@@ -39,13 +38,12 @@ fun FirClassLikeDeclaration.collectLocalClassesNavigationInfo(): LocalClassesNav
     NavigationInfoVisitor().run {
         this@collectLocalClassesNavigationInfo.accept(this@run, null)
 
-        LocalClassesNavigationInfo(parentForClass, resultingMap, allMembers)
+        LocalClassesNavigationInfo(parentForClass, resultingMap)
     }
 
 private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
     val resultingMap: MutableMap<FirCallableDeclaration, FirClassLikeDeclaration> = mutableMapOf()
     val parentForClass: MutableMap<FirClassLikeDeclaration, FirClassLikeDeclaration?> = mutableMapOf()
-    val allMembers: MutableList<FirDeclaration> = mutableListOf()
     private val currentPath: MutableList<FirClassLikeDeclaration> = mutableListOf()
 
     override fun visitElement(element: FirElement, data: Any?) {}
@@ -56,6 +54,10 @@ private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?) {
         visitClass(anonymousObject, null)
+    }
+
+    override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
+        parentForClass[typeAlias] = currentPath.lastOrNull()
     }
 
     override fun visitClass(klass: FirClass, data: Any?) {
@@ -84,12 +86,7 @@ private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
     }
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: Any?) {
-        allMembers += callableDeclaration
         if (callableDeclaration.returnTypeRef !is FirImplicitTypeRef) return
         resultingMap[callableDeclaration] = currentPath.last()
-    }
-
-    override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Any?) {
-        allMembers += anonymousInitializer
     }
 }

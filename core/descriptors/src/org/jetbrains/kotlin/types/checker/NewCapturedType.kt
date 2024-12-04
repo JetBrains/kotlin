@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.types.checker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.FlexibleTypeBoundsChecker.areTypesMayBeLowerAn
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import org.jetbrains.kotlin.types.TypeRefinement
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -144,7 +145,7 @@ private fun captureFromArguments(type: UnwrappedType, status: CaptureStatus): Un
 }
 
 private fun UnwrappedType.replaceArguments(arguments: List<TypeProjection>) =
-    KotlinTypeFactory.simpleType(annotations, constructor, arguments, isMarkedNullable)
+    KotlinTypeFactory.simpleType(attributes, constructor, arguments, isMarkedNullable)
 
 private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<TypeProjection>? {
     if (type.arguments.size != type.constructor.parameters.size) return null
@@ -199,7 +200,7 @@ class NewCapturedType(
     val captureStatus: CaptureStatus,
     override val constructor: NewCapturedTypeConstructor,
     val lowerType: UnwrappedType?, // todo check lower type for nullable captured types
-    override val annotations: Annotations = Annotations.EMPTY,
+    override val attributes: TypeAttributes = TypeAttributes.Empty,
     override val isMarkedNullable: Boolean = false,
     val isProjectionNotNull: Boolean = false
 ) : SimpleType(), CapturedTypeMarker {
@@ -210,13 +211,13 @@ class NewCapturedType(
     override val arguments: List<TypeProjection> get() = listOf()
 
     override val memberScope: MemberScope // todo what about foo().bar() where foo() return captured type?
-        get() = ErrorUtils.createErrorScope("No member resolution should be done on captured type!", true)
+        get() = ErrorUtils.createErrorScope(ErrorScopeKind.CAPTURED_TYPE_SCOPE, throwExceptions = true)
 
-    override fun replaceAnnotations(newAnnotations: Annotations) =
-        NewCapturedType(captureStatus, constructor, lowerType, newAnnotations, isMarkedNullable)
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
+        NewCapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable, isProjectionNotNull)
 
     override fun makeNullableAsSpecified(newNullability: Boolean) =
-        NewCapturedType(captureStatus, constructor, lowerType, annotations, newNullability)
+        NewCapturedType(captureStatus, constructor, lowerType, attributes, newNullability)
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
@@ -224,7 +225,7 @@ class NewCapturedType(
             captureStatus,
             constructor.refine(kotlinTypeRefiner),
             lowerType?.let { kotlinTypeRefiner.refineType(it).unwrap() },
-            annotations,
+            attributes,
             isMarkedNullable
         )
 }

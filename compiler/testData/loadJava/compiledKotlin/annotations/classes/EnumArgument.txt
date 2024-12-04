@@ -3,7 +3,7 @@ package test
 public final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ t: java.lang.annotation.ElementType)
     public final val t: java.lang.annotation.ElementType
-        public final fun <get-t>(): java.lang.annotation.ElementType
+        public final fun `<get-t>`(): java.lang.annotation.ElementType
 }
 
 @test.Anno(t = ElementType.METHOD) public final class Class {

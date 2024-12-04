@@ -1,10 +1,12 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 class Pair<T1, T2>(val x1: T1, val x2: T2)
 
 class C<T> {
-    typealias P2 = Pair<T, T>
-    typealias PT2<T2> = Pair<T, T2>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias P2 = Pair<T, T>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias PT2<T2> = Pair<T, T2>
 
     fun first(p: P2) = p.x1
     fun second(p: P2) = p.x2

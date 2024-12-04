@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 interface NewTypeSubstitutor : TypeSubstitutorMarker {
@@ -116,7 +117,8 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
                             TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType),
                             typeParameter = typeConstructor.typeParameter
                         ).also { it.initializeSupertypes(substitutedSuperTypes) },
-                        lowerType = if (capturedType.lowerType != null) substitutedInnerType else null
+                        lowerType = if (capturedType.lowerType != null) substitutedInnerType else null,
+                        isMarkedNullable = type.isMarkedNullable
                     )
                 }
             }
@@ -148,7 +150,9 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
         // simple classifier type
         var replacement = substituteNotNullTypeWithConstructor(typeConstructor) ?: return null
         if (keepAnnotation) {
-            replacement = replacement.replaceAnnotations(CompositeAnnotations(replacement.annotations, type.annotations))
+            replacement = replacement.replaceAttributes(
+                replacement.attributes.add(type.attributes)
+            )
         }
         if (type.isMarkedNullable) {
             replacement = replacement.makeNullableAsSpecified(true)
@@ -184,7 +188,7 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
         val arguments = type.arguments
         if (parameters.size != arguments.size) {
             // todo error type or exception?
-            return ErrorUtils.createErrorType("Inconsistent type: $type (parameters.size = ${parameters.size}, arguments.size = ${arguments.size})")
+            return ErrorUtils.createErrorType(ErrorTypeKind.TYPE_WITH_MISMATCHED_TYPE_ARGUMENTS_AND_PARAMETERS, type.toString(), parameters.size.toString(), arguments.size.toString())
         }
         val newArguments = arrayOfNulls<TypeProjection?>(arguments.size)
 

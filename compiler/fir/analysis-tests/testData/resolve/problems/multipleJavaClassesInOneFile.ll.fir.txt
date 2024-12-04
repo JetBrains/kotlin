@@ -1,0 +1,7 @@
+FILE: main.kt
+    package foo
+
+    public final fun test(): R|kotlin/Unit| {
+        lval some: R|foo/Some| = R|foo/Some.Some|()
+        lval another: R|foo/Another| = R|foo/Another.Another|()
+    }

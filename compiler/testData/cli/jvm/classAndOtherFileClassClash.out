@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/classAndOtherFileClassClash1.kt:1:1: error: duplicate JVM class name 'test/Foo' generated from: Foo, Foo
 @file:JvmName("Foo")
-^
+^^^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/classAndOtherFileClassClash2.kt:3:1: error: duplicate JVM class name 'test/Foo' generated from: Foo, Foo
 class Foo
-^
+^^^^^^^^^
 COMPILATION_ERROR

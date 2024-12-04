@@ -1,0 +1,14 @@
+FILE: KotlinBase.kt
+    public open class KotlinBase : R|kotlin/Any| {
+        public constructor(): R|KotlinBase| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val abcd: R|kotlin/String| = String(abcd)
+            public get(): R|kotlin/String|
+
+    }
+FILE: test.kt
+    public final fun test(d: R|JavaDerived|): R|kotlin/Unit| {
+        R|<local>/d|.R|/JavaDerived.abcd|
+    }

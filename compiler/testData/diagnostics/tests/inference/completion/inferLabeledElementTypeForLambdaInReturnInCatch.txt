@@ -1,0 +1,5 @@
+package
+
+public fun test(/*0*/ b: kotlin.Boolean, /*1*/ f: () -> kotlin.String?): () -> kotlin.String
+public fun test2(/*0*/ b: kotlin.Boolean, /*1*/ f: () -> kotlin.String?): () -> kotlin.String
+

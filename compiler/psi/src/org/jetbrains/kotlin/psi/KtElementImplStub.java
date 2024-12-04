@@ -104,8 +104,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     @SuppressWarnings("deprecation")
     public PsiReference getReference() {
         PsiReference[] references = getReferences();
-        if (references.length == 1) return references[0];
-        else return null;
+        return (references.length > 0) ? references[0] : null;
     }
 
     @NotNull

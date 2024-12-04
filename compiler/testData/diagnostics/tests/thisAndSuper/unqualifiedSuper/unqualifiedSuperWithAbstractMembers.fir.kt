@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // fun foo:     abstract in A,      unresolved in I
 // fun bar:     implemented in A,   abstract in I
 // fun qux:     abstract in A,      abstract in I

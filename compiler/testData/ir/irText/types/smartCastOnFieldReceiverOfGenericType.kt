@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // FILE: smartCastOnFieldReceiverOfGenericType.kt
 fun testSetField(a: Any, b: Any) {

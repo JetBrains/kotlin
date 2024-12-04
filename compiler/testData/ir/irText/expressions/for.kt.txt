@@ -1,31 +1,10 @@
-fun testEmpty(ss: List<String>) {
-  { // BLOCK
-    val tmp0_iterator: Iterator<String> = ss.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val s: String = tmp0_iterator.next()
-    }
-  }
-}
-
-fun testIterable(ss: List<String>) {
-  { // BLOCK
-    val tmp0_iterator: Iterator<String> = ss.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val s: String = tmp0_iterator.next()
-      { // BLOCK
-        println(message = s)
-      }
-    }
-  }
-}
-
 fun testDestructuring(pp: List<Pair<Int, String>>) {
   { // BLOCK
-    val tmp0_iterator: Iterator<Pair<Int, String>> = pp.iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val tmp1_loop_parameter: Pair<Int, String> = tmp0_iterator.next()
-      val i: Int = tmp1_loop_parameter.component1()
-      val s: String = tmp1_loop_parameter.component2()
+    val tmp_0: Iterator<Pair<Int, String>> = pp.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val tmp_1: Pair<Int, String> = tmp_0.next()
+      val i: Int = tmp_1.component1()
+      val s: String = tmp_1.component2()
       { // BLOCK
         println(message = i)
         println(message = s)
@@ -34,11 +13,33 @@ fun testDestructuring(pp: List<Pair<Int, String>>) {
   }
 }
 
-fun testRange() {
+fun testEmpty(ss: List<String>) {
   { // BLOCK
-    val tmp0_iterator: IntIterator = 1.rangeTo(other = 10).iterator()
-    while (tmp0_iterator.hasNext()) { // BLOCK
-      val i: Int = tmp0_iterator.next()
+    val tmp_2: Iterator<String> = ss.iterator()
+    while (tmp_2.hasNext()) { // BLOCK
+      val s: String = tmp_2.next()
     }
   }
 }
+
+fun testIterable(ss: List<String>) {
+  { // BLOCK
+    val tmp_3: Iterator<String> = ss.iterator()
+    while (tmp_3.hasNext()) { // BLOCK
+      val s: String = tmp_3.next()
+      { // BLOCK
+        println(message = s)
+      }
+    }
+  }
+}
+
+fun testRange() {
+  { // BLOCK
+    val tmp_4: IntIterator = 1.rangeTo(other = 10).iterator()
+    while (tmp_4.hasNext()) { // BLOCK
+      val i: Int = tmp_4.next()
+    }
+  }
+}
+

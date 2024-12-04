@@ -1,0 +1,11 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /test1(kotlin/String?): kotlin/Int // /test1|test1(kotlin.String?){}[0]
+final fun <#A: kotlin/CharSequence?> /test2(#A): kotlin/Int // /test2|test2(0:0){0§<kotlin.CharSequence?>}[0]
+final inline fun <#A: reified kotlin/CharSequence?> /test3(kotlin/Any): kotlin/Int // /test3|test3(kotlin.Any){0§<kotlin.CharSequence?>}[0]
+final inline fun <#A: reified kotlin/CharSequence> /test4(kotlin/Any?): kotlin/Int // /test4|test4(kotlin.Any?){0§<kotlin.CharSequence>}[0]
+final fun <#A: #B?, #B: kotlin/Any?> /test5(#A, kotlin/Function1<#B, kotlin/Unit>) // /test5|test5(0:0;kotlin.Function1<0:1,kotlin.Unit>){0§<0:1?>;1§<kotlin.Any?>}[0]

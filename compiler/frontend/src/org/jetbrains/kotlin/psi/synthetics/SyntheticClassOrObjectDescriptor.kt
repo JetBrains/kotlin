@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
+import org.jetbrains.kotlin.mpp.K1SyntheticClassifierSymbolMarker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -50,7 +51,8 @@ class SyntheticClassOrObjectDescriptor(
         constructorVisibility: DescriptorVisibility,
         private val kind: ClassKind,
         private val isCompanionObject: Boolean
-) : ClassDescriptorBase(c.storageManager, containingDeclaration, name, source, false), ClassDescriptorWithResolutionScopes {
+) : ClassDescriptorBase(c.storageManager, containingDeclaration, name, source, false), ClassDescriptorWithResolutionScopes,
+    K1SyntheticClassifierSymbolMarker {
     val syntheticDeclaration: KtPureClassOrObject = SyntheticDeclaration(parentClassOrObject, name.asString())
 
     private val thisDescriptor: SyntheticClassOrObjectDescriptor get() = this // code readability
@@ -94,7 +96,7 @@ class SyntheticClassOrObjectDescriptor(
     override fun getStaticScope() = MemberScope.Empty
     override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner) = unsubstitutedMemberScope
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
-    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
+    override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = null
 
     init {
         assert(modality != Modality.SEALED) { "Implement getSealedSubclasses() for this class: ${this::class.java}" }
@@ -167,6 +169,7 @@ class SyntheticClassOrObjectDescriptor(
         override fun getPrimaryConstructorModifierList(): KtModifierList? = null
         override fun getPrimaryConstructorParameters(): List<KtParameter> = emptyList()
         override fun getSecondaryConstructors(): List<KtSecondaryConstructor> = emptyList()
+        override fun getContextReceivers(): List<KtContextReceiver> = emptyList()
 
         override fun getPsiOrParent() = _parent.psiOrParent
         override fun getParent() = _parent.psiOrParent

@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberDeclarationsToGenerate
-import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.kotlin.codegen.CodegenTestUtil
+import org.jetbrains.kotlin.codegen.GeneratedClassLoader
+import org.jetbrains.kotlin.codegen.extractUrls
+import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.clientserver.TestProxy
@@ -18,21 +18,20 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ATTACH_DEBUGGE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PREFER_IN_TEST_OVER_STDLIB
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.nameWithoutExtension
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator.Companion.TEST_CONFIGURATION_KIND_KEY
-import org.jetbrains.kotlin.test.services.dependencyProvider
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.jvmBoxMainClassProvider
-import org.jetbrains.kotlin.test.services.runtimeClasspathProviders
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.containsBoxMethod
+import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.fileContainsBoxMethod
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
@@ -44,6 +43,8 @@ import java.util.concurrent.TimeUnit
 open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
         private val BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port")
+        private const val DEFAULT_EXPECTED_RESULT = "OK"
+        private const val OUTPUT_EXTENSION = "box.txt"
     }
 
     private var boxMethodFound = false
@@ -55,15 +56,15 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        val ktFiles = info.classFileFactory.inputFiles.ifEmpty { return }
+        val fileInfos = info.fileInfos.ifEmpty { return }
         val reportProblems = !testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
         val classLoader = createAndVerifyClassLoader(module, info.classFileFactory, reportProblems)
         try {
-            for (ktFile in ktFiles) {
-                if (containsBoxMethod(ktFile.text)) {
+            for (fileInfo in fileInfos) {
+                if (fileContainsBoxMethod(fileInfo.sourceFile)) {
                     boxMethodFound = true
                     callBoxMethodAndCheckResultWithCleanup(
-                        ktFile,
+                        fileInfo.info,
                         module,
                         info.classFileFactory,
                         classLoader,
@@ -79,7 +80,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     private fun callBoxMethodAndCheckResultWithCleanup(
-        ktFile: KtFile,
+        fileInfo: JvmFileClassInfo,
         module: TestModule,
         classFileFactory: ClassFileFactory,
         classLoader: URLClassLoader,
@@ -87,7 +88,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         reportProblems: Boolean
     ) {
         try {
-            callBoxMethodAndCheckResult(ktFile, module, classFileFactory, classLoader, unexpectedBehaviour)
+            callBoxMethodAndCheckResult(fileInfo, module, classFileFactory, classLoader, unexpectedBehaviour)
         } catch (e: Throwable) {
             if (reportProblems) {
                 try {
@@ -100,17 +101,15 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
                 }
             }
             throw e
-        } finally {
-            clearReflectionCache(classLoader)
         }
     }
 
     private fun findClassAndMethodToExecute(
-        ktFile: KtFile,
+        fileInfo: JvmFileClassInfo,
         classLoader: URLClassLoader,
         classFileFactory: ClassFileFactory
     ): Pair<Class<*>, Method> {
-        val className = ktFile.getFacadeFqName() ?: error("Class<*> for ${ktFile.name} not found")
+        val className = fileInfo.facadeClassFqName.asString()
         val clazz = try {
             classLoader.getGeneratedClass(className)
         } catch (e: LinkageError) {
@@ -121,7 +120,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     private fun callBoxMethodAndCheckResult(
-        ktFile: KtFile,
+        fileInfo: JvmFileClassInfo,
         module: TestModule,
         classFileFactory: ClassFileFactory,
         classLoader: URLClassLoader,
@@ -132,7 +131,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
                 module,
                 classFileFactory,
                 classLoader,
-                findClassAndMethodToExecute(ktFile, classLoader, classFileFactory).first
+                findClassAndMethodToExecute(fileInfo, classLoader, classFileFactory).first
             )
         } else {
             val jdkKind = module.directives.singleOrZeroValue(JDK_KIND)
@@ -141,14 +140,20 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             } else {
                 runBoxInCurrentProcess(
                     classLoader,
-                    findClassAndMethodToExecute(ktFile, classLoader, classFileFactory).second
+                    findClassAndMethodToExecute(fileInfo, classLoader, classFileFactory).second
                 )
             }
         }
         if (unexpectedBehaviour) {
-            TestCase.assertNotSame("OK", result)
+            TestCase.assertNotSame(DEFAULT_EXPECTED_RESULT, result)
         } else {
-            assertions.assertEquals("OK", result)
+            val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
+            val outputFile = originalFile.withExtension(OUTPUT_EXTENSION)
+            if (outputFile.exists()) {
+                assertions.assertEqualsToFile(outputFile, result)
+            } else {
+                assertions.assertEquals(DEFAULT_EXPECTED_RESULT, result)
+            }
         }
     }
 
@@ -186,6 +191,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             TestJdkKind.FULL_JDK -> KtTestUtil.getJdk8Home()
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
+            TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
             else -> error("Unsupported JDK kind: $jdkKind")
         }
 
@@ -195,7 +201,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
 
         val classPath = extractClassPath(module, classLoader, classFileFactory)
 
-        val mainClassAndArguments = testServices.jvmBoxMainClassProvider?.getMainClassNameAndAdditionalArguments() ?: run {
+        val mainClassAndArguments = testServices.jvmBoxMainClassProvider?.getMainClassNameAndAdditionalArguments(module) ?: run {
             val mainFile = module.files.firstOrNull {
                 it.name == MainFunctionForBlackBoxTestsSourceProvider.BOX_MAIN_FILE_NAME && it.isAdditional
             } ?: error("No file with main function was generated. Please check TODO source provider")
@@ -257,21 +263,16 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         return proxy.runTest()
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun extractClassPath(
         module: TestModule,
         classLoader: URLClassLoader,
         classFileFactory: ClassFileFactory
     ): List<URL> {
         return buildList {
-            addAll(classLoader.extractUrls())
             if (classLoader is GeneratedClassLoader) {
-                val javaPath = testServices.compiledClassesManager.getCompiledJavaDirForModule(module)?.url
-                if (javaPath != null) {
-                    add(0, javaPath)
-                }
-                add(0, testServices.compiledClassesManager.getCompiledKotlinDirForModule(module, classFileFactory).url)
+                add(testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(module, classFileFactory).url)
             }
+            addAll(classLoader.extractUrls())
         }
     }
 
@@ -283,55 +284,14 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         classFileFactory: ClassFileFactory,
         reportProblems: Boolean
     ): GeneratedClassLoader {
-        val classLoader = createClassLoader(module, classFileFactory)
+        val classLoader = generatedTestClassLoader(testServices, module, classFileFactory)
         if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
-            val verificationSucceeded = CodegenTestUtil.verifyAllFilesWithAsm(classFileFactory, classLoader, reportProblems)
+            val verificationSucceeded = CodegenTestUtil.verifyAllFilesWithAsm(classFileFactory, reportProblems)
             if (!verificationSucceeded) {
                 assertions.fail { "Verification failed: see exceptions above" }
             }
         }
         return classLoader
-    }
-
-    private fun createClassLoader(module: TestModule, classFileFactory: ClassFileFactory): GeneratedClassLoader {
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val parentClassLoader = if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
-            ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
-        } else {
-            ForTestCompileRuntime.runtimeJarClassLoader()
-        }
-        val classpath = computeRuntimeClasspath(module)
-        return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())
-    }
-
-    private fun computeRuntimeClasspath(rootModule: TestModule): List<File> {
-        val visited = mutableSetOf<TestModule>()
-        val result = mutableListOf<File>()
-
-        fun computeClasspath(module: TestModule, isRoot: Boolean) {
-            if (!visited.add(module)) return
-
-            if (!isRoot) {
-                result.add(testServices.compiledClassesManager.getCompiledKotlinDirForModule(module))
-            }
-            result.addIfNotNull(testServices.compiledClassesManager.getCompiledJavaDirForModule(module))
-
-            for (dependency in module.allDependencies) {
-                if (dependency.kind == DependencyKind.Binary) {
-                    computeClasspath(testServices.dependencyProvider.getTestModule(dependency.moduleName), false)
-                }
-            }
-        }
-
-        computeClasspath(rootModule, true)
-        testServices.runtimeClasspathProviders.flatMapTo(result) { it.runtimeClassPaths(rootModule) }
-        return result
-    }
-
-    private fun KtFile.getFacadeFqName(): String? {
-        return runIf(getMemberDeclarationsToGenerate(this).isNotEmpty()) {
-            getFileClassInfoNoResolve(this).facadeClassFqName.asString()
-        }
     }
 
     private fun ClassLoader.getGeneratedClass(className: String): Class<*> {
@@ -349,4 +309,56 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             return null
         }
     }
+}
+
+internal fun generatedTestClassLoader(
+    testServices: TestServices,
+    module: TestModule,
+    classFileFactory: ClassFileFactory,
+): GeneratedClassLoader {
+    val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+    val classpath = computeTestRuntimeClasspath(testServices, module)
+    if (PREFER_IN_TEST_OVER_STDLIB in module.directives) {
+        val libPathProvider = testServices.standardLibrariesPathProvider
+        classpath += libPathProvider.runtimeJarForTests()
+        if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
+            classpath += libPathProvider.reflectJarForTests()
+        }
+        classpath += libPathProvider.scriptRuntimeJarForTests()
+        classpath += libPathProvider.kotlinTestJarForTests()
+        return GeneratedClassLoader(classFileFactory, null, *(classpath.map { it.toURI().toURL() }.toTypedArray()))
+    } else {
+        val parentClassLoader = if (configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true) {
+            testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader()
+        } else {
+            testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
+        }
+        return GeneratedClassLoader(classFileFactory, parentClassLoader, *classpath.map { it.toURI().toURL() }.toTypedArray())
+    }
+}
+
+private fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: TestModule): MutableList<File> {
+    val visited = mutableSetOf<TestModule>()
+    val result = mutableListOf<File>()
+
+    fun computeClasspath(module: TestModule, isRoot: Boolean) {
+        if (!visited.add(module)) return
+
+        if (isRoot) {
+            // Add output dir to the classpath in case there are Java compiled classes in the current module.
+            result.addIfNotNull(testServices.compiledClassesManager.getOutputDirForModule(module))
+        } else {
+            result.add(testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(module, classFileFactory = null))
+        }
+
+        for (dependency in module.allDependencies) {
+            if (dependency.kind == DependencyKind.Binary) {
+                computeClasspath(testServices.dependencyProvider.getTestModule(dependency.moduleName), false)
+            }
+        }
+    }
+
+    computeClasspath(rootModule, true)
+    testServices.runtimeClasspathProviders.flatMapTo(result) { it.runtimeClassPaths(rootModule) }
+    return result
 }

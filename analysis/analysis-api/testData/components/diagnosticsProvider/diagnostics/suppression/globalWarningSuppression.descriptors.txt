@@ -1,0 +1,10 @@
+Diagnostics from elements:
+  for PSI element of type KtTypeProjection at (7,19-26)
+    REDUNDANT_PROJECTION      text ranges: [(117,120)]
+      PSI: KtTypeProjection at (7,19-26)
+  for PSI element of type KtBinaryExpressionWithTypeRHS at (8,12-28)
+    UNCHECKED_CAST      text ranges: [(155,169)]
+      PSI: KtBinaryExpressionWithTypeRHS at (8,12-28)
+  for PSI element of type KtBinaryExpressionWithTypeRHS at (12,5-16)
+    USELESS_CAST      text ranges: [(203,212)]
+      PSI: KtBinaryExpressionWithTypeRHS at (12,5-16)

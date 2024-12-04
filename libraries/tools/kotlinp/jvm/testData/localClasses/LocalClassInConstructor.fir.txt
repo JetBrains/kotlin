@@ -1,0 +1,36 @@
+// A.class
+// ------------------------------------------
+public final class A : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// A$L.class
+// ------------------------------------------
+local final class .A$L<T#0 /* T */> : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // signature: x(LA$L;)V
+  public final fun x(l: .A$L<.A.L.I>): kotlin/Unit
+
+  // nested class: I
+
+  // module name: test-module
+}
+// A$L$I.class
+// ------------------------------------------
+local final inner class .A.L.I : kotlin/Any {
+
+  // signature: <init>(LA$L;)V
+  public constructor()
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

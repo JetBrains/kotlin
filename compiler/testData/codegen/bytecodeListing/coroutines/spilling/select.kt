@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM_IR
 
 import kotlin.coroutines.*
 import kotlin.experimental.*
@@ -8,7 +7,7 @@ interface CoroutineScope
 
 @OptIn(ExperimentalTypeInference::class)
 public fun <E> CoroutineScope.produce(
-    @BuilderInference block: suspend ProducerScope<E>.() -> Unit
+    block: suspend ProducerScope<E>.() -> Unit
 ): ReceiveChannel<E>  = TODO()
 
 interface ProducerScope<in E> : CoroutineScope, SendChannel<E> {

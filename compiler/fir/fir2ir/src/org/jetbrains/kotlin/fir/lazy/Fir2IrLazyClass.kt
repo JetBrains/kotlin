@@ -1,54 +1,66 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.generators.isFakeOverride
+import org.jetbrains.kotlin.fir.backend.toIrType
+import org.jetbrains.kotlin.fir.backend.utils.computeValueClassRepresentation
+import org.jetbrains.kotlin.fir.backend.utils.getIrSymbolsForSealedSubclasses
+import org.jetbrains.kotlin.fir.backend.utils.setThisReceiver
+import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.hasEnumEntries
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
-import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.originalOrSelf
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
+import org.jetbrains.kotlin.fir.scopes.staticScopeForBackend
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.isNullableAny
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.deserializedIr
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class Fir2IrLazyClass(
-    components: Fir2IrComponents,
+    private val c: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirRegularClass,
-    override val symbol: Fir2IrClassSymbol,
-) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass, IrClass>, IrMaybeDeserializedClass, Fir2IrComponents by components {
+    override val symbol: IrClassSymbol,
+    parent: IrDeclarationParent,
+) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass>, Fir2IrTypeParametersContainer,
+    IrMaybeDeserializedClass, Fir2IrComponents by c {
     init {
+        this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
+        this.deserializedIr = lazy {
+            assert(parent is IrPackageFragment)
+            extensions.deserializeToplevelClass(this, this)
+        }
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
     override lateinit var typeParameters: List<IrTypeParameter>
-    override lateinit var parent: IrDeclarationParent
 
     override val source: SourceElement
         get() = fir.sourceElement ?: SourceElement.NO_SOURCE
@@ -57,50 +69,62 @@ class Fir2IrLazyClass(
     override val descriptor: ClassDescriptor
         get() = symbol.descriptor
 
-    override val name: Name
+    override var name: Name
         get() = fir.name
+        set(_) = mutationNotSupported()
 
-    @Suppress("SetterBackingFieldAssignment")
-    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+    override var visibility: DescriptorVisibility = c.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
+        set(_) = mutationNotSupported()
 
     override var modality: Modality
-        get() = fir.modality!!
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        get() = if (fir.classKind.isAnnotationClass) Modality.OPEN else fir.symbol.resolvedStatus.modality
+        set(_) = mutationNotSupported()
 
     override var attributeOwnerId: IrAttributeContainer
         get() = this
+        set(_) = mutationNotSupported()
+
+    override var originalBeforeInline: IrAttributeContainer?
+        get() = null
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
 
-    override val kind: ClassKind
+    override var kind: ClassKind
         get() = fir.classKind
+        set(_) = mutationNotSupported()
 
-    override val isCompanion: Boolean
+    override var isCompanion: Boolean
         get() = fir.isCompanion
+        set(_) = mutationNotSupported()
 
-    override val isInner: Boolean
+    override var isInner: Boolean
         get() = fir.isInner
+        set(_) = mutationNotSupported()
 
-    override val isData: Boolean
+    override var isData: Boolean
         get() = fir.isData
+        set(_) = mutationNotSupported()
 
-    override val isExternal: Boolean
+    override var isExternal: Boolean
         get() = fir.isExternal
+        set(_) = mutationNotSupported()
 
-    override val isInline: Boolean
+    override var isValue: Boolean
         get() = fir.isInline
+        set(_) = mutationNotSupported()
 
-    override val isExpect: Boolean
+    override var isExpect: Boolean
         get() = fir.isExpect
+        set(_) = mutationNotSupported()
 
-    override val isFun: Boolean
+    override var isFun: Boolean
         get() = fir.isFun
+        set(_) = mutationNotSupported()
+
+    override var hasEnumEntries: Boolean
+        get() = fir.hasEnumEntries
+        set(_) = mutationNotSupported()
 
     override var superTypes: List<IrType> by lazyVar(lock) {
         fir.superTypeRefs.map { it.toIrType(typeConverter) }
@@ -108,97 +132,126 @@ class Fir2IrLazyClass(
 
     override var sealedSubclasses: List<IrClassSymbol> by lazyVar(lock) {
         if (fir.isSealed) {
-            fir.getIrSymbolsForSealedSubclasses(components)
+            fir.getIrSymbolsForSealedSubclasses(c)
         } else {
             emptyList()
         }
     }
 
     override var thisReceiver: IrValueParameter? by lazyVar(lock) {
-        symbolTable.enterScope(this)
-        val typeArguments = fir.typeParameters.map {
-            IrSimpleTypeImpl(
-                classifierStorage.getCachedIrTypeParameter(it.symbol.fir)!!.symbol,
-                hasQuestionMark = false, arguments = emptyList(), annotations = emptyList()
-            )
-        }
-        val receiver = declareThisReceiverParameter(
-            symbolTable,
-            thisType = IrSimpleTypeImpl(symbol, hasQuestionMark = false, arguments = typeArguments, annotations = emptyList()),
-            thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
-        )
-        symbolTable.leaveScope(this)
-        receiver
+        setThisReceiver(c, fir.typeParameters)
+        thisReceiver
     }
 
-    override var inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
-        get() = computeInlineClassRepresentation(fir)
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+    override var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
+        get() = computeValueClassRepresentation(fir)
+        set(_) = mutationNotSupported()
 
-    private val fakeOverridesByName = mutableMapOf<Name, Collection<IrDeclaration>>()
-
-    fun getFakeOverridesByName(name: Name): Collection<IrDeclaration> = fakeOverridesByName.getOrPut(name) {
-        fakeOverrideGenerator.generateFakeOverridesForName(this@Fir2IrLazyClass, name, fir)
-            .also(fakeOverrideGenerator::bindOverriddenSymbols)
-    }
-
+    @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
-        val scope = fir.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+        val scope = fir.unsubstitutedScope(c)
+        val lookupTag = fir.symbol.toLookupTag()
         scope.processDeclaredConstructors {
-            result += declarationStorage.getIrConstructorSymbol(it).owner
-        }
-
-        for (declaration in fir.declarations) {
-            if (declaration is FirRegularClass) {
-                val nestedSymbol = classifierStorage.getIrClassSymbol(declaration.symbol)
-                result += nestedSymbol.owner
+            val constructor = it.fir
+            if (shouldBuildStub(constructor)) {
+                // Lazy declarations are created together with their symbol, so it's safe to take the owner here
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                result += declarationStorage.getIrConstructorSymbol(constructor.symbol).owner
             }
         }
 
-        // Handle generated methods for enum classes (values(), valueOf(String)).
+        for (name in scope.getClassifierNames()) {
+            scope.processClassifiersByName(name) {
+                val declaration = it.fir as? FirRegularClass ?: return@processClassifiersByName
+                if (declaration.classId.outerClassId == fir.classId && shouldBuildStub(declaration)) {
+                    result += classifierStorage.getIrClassSymbol(declaration.symbol).owner
+                }
+            }
+        }
+
         if (fir.classKind == ClassKind.ENUM_CLASS) {
             for (declaration in fir.declarations) {
-                if (declaration !is FirSimpleFunction || !declaration.isStatic) continue
-                // TODO we also come here for all deserialized / enhanced static enum members (with declaration.source == null).
-                //  For such members we currently can't tell whether they are compiler-generated methods or not.
-                // Note: we must drop declarations from Java here to avoid FirJavaTypeRefs inside
-                if (declaration.source == null && declaration.origin != FirDeclarationOrigin.Java ||
-                    declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration
-                ) {
-                    result += declarationStorage.getIrFunctionSymbol(declaration.symbol).owner
+                if (declaration is FirEnumEntry && shouldBuildStub(declaration)) {
+                    result += classifierStorage.getIrEnumEntrySymbol(declaration).owner
                 }
             }
         }
 
-        val ownerLookupTag = fir.symbol.toLookupTag()
-        for (name in scope.getCallableNames()) {
-            scope.processFunctionsByName(name) {
-                if (it.isSubstitutionOrIntersectionOverride) return@processFunctionsByName
-                if (it.dispatchReceiverClassOrNull() == ownerLookupTag) {
-                    if (it.isAbstractMethodOfAny()) {
-                        return@processFunctionsByName
+        fun addDeclarationsFromScope(scope: FirContainingNamesAwareScope?) {
+            if (scope == null) return
+            for (name in scope.getCallableNames()) {
+                scope.processFunctionsByName(name) { symbol ->
+                    when {
+                        !shouldBuildStub(symbol.fir) -> {}
+                        else -> {
+                            // Lazy declarations are created together with their symbol, so it's safe to take the owner here
+                            @OptIn(UnsafeDuringIrConstructionAPI::class)
+                            result += declarationStorage.getIrFunctionSymbol(symbol, lookupTag).owner
+                        }
                     }
-                    result += declarationStorage.getIrFunctionSymbol(it).owner
                 }
-            }
-            scope.processPropertiesByName(name) {
-                if (it.isSubstitutionOrIntersectionOverride) return@processPropertiesByName
-                if (it is FirPropertySymbol && it.dispatchReceiverClassOrNull() == ownerLookupTag) {
-                    result.addIfNotNull(declarationStorage.getIrPropertySymbol(it).owner as? IrDeclaration)
+                scope.processPropertiesByName(name) { symbol ->
+                    when {
+                        !shouldBuildStub(symbol.fir) -> {}
+                        symbol is FirFieldSymbol -> {
+                            if (shouldBuildIrField(symbol)) {
+                                // Lazy declarations are created together with their symbol, so it's safe to take the owner here
+                                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                                result += declarationStorage.getIrSymbolForField(
+                                    symbol,
+                                    fakeOverrideOwnerLookupTag = lookupTag
+                                ).owner as IrProperty
+                            }
+                        }
+                        symbol is FirPropertySymbol -> {
+                            // Lazy declarations are created together with their symbol, so it's safe to take the owner here
+                            @OptIn(UnsafeDuringIrConstructionAPI::class)
+                            result += declarationStorage.getIrPropertySymbol(symbol, lookupTag).owner as IrProperty
+                        }
+                        else -> {}
+                    }
                 }
             }
         }
 
-        for (name in scope.getCallableNames()) {
-            result += getFakeOverridesByName(name)
+        addDeclarationsFromScope(scope)
+        addDeclarationsFromScope(fir.staticScopeForBackend(session, scopeSession))
+
+        with(classifierStorage) {
+            result.addAll(getFieldsWithContextReceiversForClass(this@Fir2IrLazyClass, fir))
         }
 
         result
+    }
+
+    private fun shouldBuildStub(fir: FirDeclaration): Boolean {
+        if (fir is FirCallableDeclaration) {
+            if (fir.originalOrSelf().origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) {
+                return false
+            }
+            if (fir.isHiddenToOvercomeSignatureClash == true && fir.isFinal) {
+                return false
+            }
+        }
+        if (fir !is FirMemberDeclaration) return true
+        return when {
+            fir is FirConstructor -> isObject || isEnumClass || !Visibilities.isPrivate(fir.visibility) // This special case seams to be not needed anymore - KT-65172
+            fir is FirCallableDeclaration && fir.isFakeOverride(this.fir) -> session.visibilityChecker.isVisibleForOverriding(
+                this.fir.moduleData,
+                this.fir.symbol,
+                fir
+            )
+            else -> !Visibilities.isPrivate(fir.visibility)
+        }
+    }
+
+    private fun shouldBuildIrField(fieldSymbol: FirFieldSymbol): Boolean {
+        if (!fieldSymbol.isStatic) return true
+        // we need to create IR for static fields only if they are not fake-overrides
+        return fir.isJava && !fieldSymbol.fir.isFakeOverride(fir)
     }
 
     override var metadata: MetadataSource?
@@ -210,14 +263,4 @@ class Fir2IrLazyClass(
 
     override val isNewPlaceForBodyGeneration: Boolean
         get() = fir.isNewPlaceForBodyGeneration == true
-
-    private fun FirNamedFunctionSymbol.isAbstractMethodOfAny(): Boolean {
-        val fir = fir
-        if (fir.modality != Modality.ABSTRACT) return false
-        return when (fir.name) {
-            OperatorNameConventions.EQUALS -> fir.valueParameters.singleOrNull()?.returnTypeRef?.isNullableAny == true
-            OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> fir.valueParameters.isEmpty()
-            else -> false
-        }
-    }
 }

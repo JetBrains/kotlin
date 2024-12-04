@@ -1,48 +1,26 @@
-class Outer {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  open inner class Inner {
-    constructor(x: Int) /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    val x: Int
-      field = x
-      get
-
-  }
-
-}
-
 class Host {
+  val y: Int
+    field = y
+    get
+
   constructor(y: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val y: Int
-    field = y
-    get
-
   fun Outer.test(): Inner {
     return { // BLOCK
       local class <no name provided> : Inner {
+        val xx: Int
+          field = <this>.<get-x>().plus(other = <this>.<get-y>())
+          get
+
         constructor() /* primary */ {
           <this>.super/*Inner*/(x = 42)
           /* <init>() */
 
         }
-
-        val xx: Int
-          field = <this>.<get-x>().plus(other = <this>.<get-y>())
-          get
 
       }
 
@@ -51,3 +29,26 @@ class Host {
   }
 
 }
+
+class Outer {
+  open inner class Inner {
+    val x: Int
+      field = x
+      get
+
+    constructor(x: Int) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+

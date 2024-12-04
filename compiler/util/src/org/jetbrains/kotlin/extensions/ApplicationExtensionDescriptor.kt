@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.extensions
 
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.ExtensionPointName
 
 open class ApplicationExtensionDescriptor<T : Any>(name: String, private val extensionClass: Class<T>) {
-    val extensionPointName: ExtensionPointName<T> = ExtensionPointName.create(name)
+    private val extensionPointName: ExtensionPointName<T> = ExtensionPointName.create(name)
 
     fun registerExtensionPoint() {
-        ApplicationManager.getApplication().extensionArea.registerExtensionPoint(
+        CoreApplicationEnvironment.registerExtensionPoint(
+            ApplicationManager.getApplication().extensionArea,
             extensionPointName.name,
-            extensionClass.name,
-            ExtensionPoint.Kind.INTERFACE
+            extensionClass
         )
     }
 

@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /foo(kotlin/Double): kotlin/Double // /foo|foo(kotlin.Double){}[0]
+final fun /testSimple(kotlin/Double): kotlin/Int // /testSimple|testSimple(kotlin.Double){}[0]
+final fun /testSmartCastInWhenCondition(kotlin/Double, kotlin/Any): kotlin/Int // /testSmartCastInWhenCondition|testSmartCastInWhenCondition(kotlin.Double;kotlin.Any){}[0]
+final fun /testSmartCastInWhenConditionInBranch(kotlin/Any): kotlin/Int // /testSmartCastInWhenConditionInBranch|testSmartCastInWhenConditionInBranch(kotlin.Any){}[0]
+final fun /testSmartCastInWhenSubject(kotlin/Any): kotlin/Int // /testSmartCastInWhenSubject|testSmartCastInWhenSubject(kotlin.Any){}[0]
+final fun /testSmartCastToDifferentTypes(kotlin/Any, kotlin/Any): kotlin/Int // /testSmartCastToDifferentTypes|testSmartCastToDifferentTypes(kotlin.Any;kotlin.Any){}[0]
+final fun /testWithPrematureExitInConditionSubexpression(kotlin/Any): kotlin/Int // /testWithPrematureExitInConditionSubexpression|testWithPrematureExitInConditionSubexpression(kotlin.Any){}[0]

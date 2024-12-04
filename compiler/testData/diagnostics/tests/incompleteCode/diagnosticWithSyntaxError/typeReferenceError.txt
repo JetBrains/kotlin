@@ -2,11 +2,11 @@ package
 
 package typeReferenceError {
 
-    public final class Pair : ([ERROR : No type element]) -> [ERROR : main] {
+    public final class Pair : ([Error type: No type specified for unknown element]) -> [Error type: Unresolved type for main] {
         public constructor Pair()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: [ERROR : No type element]): [ERROR : main]
+        public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: [Error type: No type specified for unknown element]): [Error type: Unresolved type for main]
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

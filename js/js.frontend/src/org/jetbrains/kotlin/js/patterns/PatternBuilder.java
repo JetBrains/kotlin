@@ -237,7 +237,7 @@ public final class PatternBuilder {
             if (actualReceiver != null) {
                 if (receiverFqName == null) return false;
 
-                String actualReceiverFqName = DescriptorUtilsKt.getJetTypeFqName(actualReceiver.getType(), false);
+                String actualReceiverFqName = DescriptorUtilsKt.getKotlinTypeFqName(actualReceiver.getType(), false);
 
                 if (!actualReceiverFqName.equals(receiverFqName)) return false;
             }

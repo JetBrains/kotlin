@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 fun box() : String {
     test {
         <!RETURN_NOT_ALLOWED!>return@box<!> "123"

@@ -1,7 +1,6 @@
 // EMIT_JVM_TYPE_ANNOTATIONS
 // RENDER_ANNOTATIONS
-// TARGET_BACKEND: JVM
-// JVM_TARGET: 1.8
+
 package foo
 
 @Target(AnnotationTarget.TYPE)
@@ -45,16 +44,8 @@ class Kotlin {
         return null
     }
 
-
-    fun <T> fooGenericIn(s: @Ann Bar<in @Ann2 T>) {
-    }
-
-    fun <T> fooGenericOut(s: @Ann Bar<out @Ann2 T>) {
-    }
-
     fun <T: Bar<Outer.Inner<@Ann Outer>>> innerClassInBound() {
     }
-
 }
 
 class WithBound<T: Bar<Outer.Inner<@Ann Outer>>>()

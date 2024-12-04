@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 fun String.foo(b: Boolean): String = ""
 
 fun String.let(block: () -> Unit) {}

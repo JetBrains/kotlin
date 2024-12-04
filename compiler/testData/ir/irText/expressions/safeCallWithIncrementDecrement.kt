@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: ANY
 package test
 
 class C

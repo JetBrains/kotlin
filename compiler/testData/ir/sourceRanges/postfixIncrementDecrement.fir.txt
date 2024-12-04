@@ -1,0 +1,23 @@
+@0:0..6:0 FILE fqName:<root> fileName:/postfixIncrementDecrement.kt
+  @0:0..5:1 FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    @0:11..5:1 BLOCK_BODY
+      @1:4..13 VAR name:x type:kotlin.Int [var]
+        @1:12..13 CONST Int type=kotlin.Int value=0
+      @2:4..13 VAR name:y type:kotlin.Int [var]
+        @2:12..13 CONST Int type=kotlin.Int value=0
+      @3:4..11 SET_VAR 'var y: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=EQ
+        @3:8..11 BLOCK type=kotlin.Int origin=POSTFIX_INCR
+          @3:8..11 VAR IR_TEMPORARY_VARIABLE name:<unary> type:kotlin.Int [val]
+            @3:8..9 GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=POSTFIX_INCR
+          @3:8..11 SET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=POSTFIX_INCR
+            @3:9..11 CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              @3:8..11 GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
+          @3:8..11 GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
+      @4:4..11 SET_VAR 'var y: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=EQ
+        @4:8..11 BLOCK type=kotlin.Int origin=POSTFIX_DECR
+          @4:8..11 VAR IR_TEMPORARY_VARIABLE name:<unary> type:kotlin.Int [val]
+            @4:8..9 GET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Int origin=POSTFIX_DECR
+          @4:8..11 SET_VAR 'var x: kotlin.Int [var] declared in <root>.test' type=kotlin.Unit origin=POSTFIX_DECR
+            @4:9..11 CALL 'public final fun dec (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              @4:8..11 GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
+          @4:8..11 GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null

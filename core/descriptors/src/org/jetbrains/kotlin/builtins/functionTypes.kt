@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_NAME
-import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.*
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 private fun KotlinType.isTypeOrSubtypeOf(predicate: (KotlinType) -> Boolean): Boolean =
         predicate(this) ||
@@ -58,17 +59,20 @@ val KotlinType.isBuiltinFunctionalTypeOrSubtype: Boolean
 fun KotlinType.isFunctionTypeOrSubtype(predicate: (KotlinType) -> Boolean): Boolean =
     isTypeOrSubtypeOf { it.isFunctionType && predicate(it) }
 
+val KotlinType.functionTypeKind: FunctionTypeKind?
+    get() = constructor.declarationDescriptor?.getFunctionTypeKind()
+
 val KotlinType.isFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.Function
+    get() = functionTypeKind == FunctionTypeKind.Function
 
 val KotlinType.isKFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.KFunction
+    get() = functionTypeKind == FunctionTypeKind.KFunction
 
 val KotlinType.isSuspendFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.SuspendFunction
+    get() = functionTypeKind == FunctionTypeKind.SuspendFunction
 
 val KotlinType.isKSuspendFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.KSuspendFunction
+    get() = functionTypeKind == FunctionTypeKind.KSuspendFunction
 
 val KotlinType.isFunctionOrSuspendFunctionType: Boolean
     get() = isFunctionType || isSuspendFunctionType
@@ -81,17 +85,17 @@ val KotlinType.isBuiltinFunctionalType: Boolean
 
 val DeclarationDescriptor.isBuiltinFunctionalClassDescriptor: Boolean
     get() {
-        val functionalClassKind = getFunctionalClassKind()
-        return functionalClassKind == FunctionClassKind.Function ||
-                functionalClassKind == FunctionClassKind.SuspendFunction
+        val functionalClassKind = getFunctionTypeKind()
+        return functionalClassKind == FunctionTypeKind.Function ||
+                functionalClassKind == FunctionTypeKind.SuspendFunction
     }
 
 fun isBuiltinFunctionClass(classId: ClassId): Boolean {
     if (!classId.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) return false
 
-    val kind = classId.asSingleFqName().toUnsafe().getFunctionalClassKind()
-    return kind == FunctionClassKind.Function ||
-           kind == FunctionClassKind.SuspendFunction
+    val kind = classId.asSingleFqName().toUnsafe().getFunctionTypeKind()
+    return kind == FunctionTypeKind.Function ||
+           kind == FunctionTypeKind.SuspendFunction
 }
 
 val KotlinType.isNonExtensionFunctionType: Boolean
@@ -99,6 +103,9 @@ val KotlinType.isNonExtensionFunctionType: Boolean
 
 val KotlinType.isExtensionFunctionType: Boolean
     get() = isFunctionType && isTypeAnnotatedWithExtensionFunctionType
+
+val KotlinType.isSuspendExtensionFunctionType: Boolean
+    get() = isSuspendFunctionType && isTypeAnnotatedWithExtensionFunctionType
 
 val KotlinType.isBuiltinExtensionFunctionalType: Boolean
     get() = isBuiltinFunctionalType && isTypeAnnotatedWithExtensionFunctionType
@@ -112,26 +119,46 @@ private val KotlinType.isTypeAnnotatedWithExtensionFunctionType: Boolean
  */
 fun isNumberedFunctionClassFqName(fqName: FqNameUnsafe): Boolean {
     return fqName.startsWith(BUILT_INS_PACKAGE_NAME) &&
-           fqName.getFunctionalClassKind() == FunctionClassKind.Function
+           fqName.getFunctionTypeKind() == FunctionTypeKind.Function
 }
 
-fun DeclarationDescriptor.getFunctionalClassKind(): FunctionClassKind? {
+fun DeclarationDescriptor.getFunctionTypeKind(): FunctionTypeKind? {
     if (this !is ClassDescriptor) return null
     if (!KotlinBuiltIns.isUnderKotlinPackage(this)) return null
 
-    return fqNameUnsafe.getFunctionalClassKind()
+    return fqNameUnsafe.getFunctionTypeKind()
 }
 
-private fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassKind? {
+@OptIn(AllowedToUsedOnlyInK1::class)
+private fun FqNameUnsafe.getFunctionTypeKind(): FunctionTypeKind? {
     if (!isSafe || isRoot) return null
 
-    return FunctionClassKind.getFunctionalClassKind(shortName().asString(), toSafe().parent())
+    return FunctionTypeKindExtractor.Default.getFunctionalClassKind(toSafe().parent(), shortName().asString())
 }
 
+fun KotlinType.contextFunctionTypeParamsCount(): Int {
+    val annotationDescriptor = annotations.findAnnotation(StandardNames.FqNames.contextFunctionTypeParams) ?: return 0
+    val constantValue = annotationDescriptor.allValueArguments.getValue(StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME)
+    return (constantValue as IntValue).value
+}
 
 fun KotlinType.getReceiverTypeFromFunctionType(): KotlinType? {
     assert(isBuiltinFunctionalType) { "Not a function type: $this" }
-    return if (isTypeAnnotatedWithExtensionFunctionType) arguments.first().type else null
+    if (!isTypeAnnotatedWithExtensionFunctionType) {
+        return null
+    }
+    val index = contextFunctionTypeParamsCount()
+    return arguments[index].type
+}
+
+fun KotlinType.getContextReceiverTypesFromFunctionType(): List<KotlinType> {
+    assert(isBuiltinFunctionalType) { "Not a function type: $this" }
+    val contextReceiversCount = contextFunctionTypeParamsCount()
+    return if (contextReceiversCount == 0) {
+        emptyList()
+    } else {
+        arguments.subList(0, contextReceiversCount).map { it.type }
+    }
 }
 
 fun KotlinType.getReturnTypeFromFunctionType(): KotlinType {
@@ -148,7 +175,7 @@ fun KotlinType.replaceReturnType(newReturnType: KotlinType): KotlinType {
 fun KotlinType.getValueParameterTypesFromFunctionType(): List<TypeProjection> {
     assert(isBuiltinFunctionalType) { "Not a function type: $this" }
     val arguments = arguments
-    val first = if (isBuiltinExtensionFunctionalType) 1 else 0
+    val first = contextFunctionTypeParamsCount() + if (isBuiltinExtensionFunctionalType) 1 else 0
     val last = arguments.size - 1
     assert(first <= last) { "Not an exact function type: $this" }
     return arguments.subList(first, last)
@@ -183,14 +210,16 @@ fun KotlinType.extractParameterNameFromFunctionTypeArgument(): Name? {
 }
 
 fun getFunctionTypeArgumentProjections(
-        receiverType: KotlinType?,
-        parameterTypes: List<KotlinType>,
-        parameterNames: List<Name>?,
-        returnType: KotlinType,
-        builtIns: KotlinBuiltIns
+    receiverType: KotlinType?,
+    contextReceiverTypes: List<KotlinType>,
+    parameterTypes: List<KotlinType>,
+    parameterNames: List<Name>?,
+    returnType: KotlinType,
+    builtIns: KotlinBuiltIns
 ): List<TypeProjection> {
-    val arguments = ArrayList<TypeProjection>(parameterTypes.size + (if (receiverType != null) 1 else 0) + 1)
+    val arguments = ArrayList<TypeProjection>(parameterTypes.size + contextReceiverTypes.size + (if (receiverType != null) 1 else 0) + 1)
 
+    arguments.addAll(contextReceiverTypes.map { it.asTypeProjection() })
     arguments.addIfNotNull(receiverType?.asTypeProjection())
 
     parameterTypes.mapIndexedTo(arguments) { index, type ->
@@ -199,7 +228,7 @@ fun getFunctionTypeArgumentProjections(
             val parameterNameAnnotation = BuiltInAnnotationDescriptor(
                 builtIns,
                 StandardNames.FqNames.parameterName,
-                mapOf(Name.identifier("name") to StringValue(name.asString()))
+                mapOf(StandardNames.NAME to StringValue(name.asString()))
             )
             type.replaceAnnotations(Annotations.create(type.annotations + parameterNameAnnotation))
         }
@@ -219,19 +248,24 @@ fun createFunctionType(
     builtIns: KotlinBuiltIns,
     annotations: Annotations,
     receiverType: KotlinType?,
+    contextReceiverTypes: List<KotlinType>,
     parameterTypes: List<KotlinType>,
     parameterNames: List<Name>?,
     returnType: KotlinType,
     suspendFunction: Boolean = false
 ): SimpleType {
-    val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, parameterNames, returnType, builtIns)
-    val parameterCount = if (receiverType == null) parameterTypes.size else parameterTypes.size + 1
+    val arguments =
+        getFunctionTypeArgumentProjections(receiverType, contextReceiverTypes, parameterTypes, parameterNames, returnType, builtIns)
+    val parameterCount = parameterTypes.size + contextReceiverTypes.size + if (receiverType == null) 0 else 1
     val classDescriptor = getFunctionDescriptor(builtIns, parameterCount, suspendFunction)
 
     // TODO: preserve laziness of given annotations
-    val typeAnnotations = if (receiverType != null) annotations.withExtensionFunctionAnnotation(builtIns) else annotations
+    var typeAnnotations = annotations
+    if (receiverType != null) typeAnnotations = typeAnnotations.withExtensionFunctionAnnotation(builtIns)
+    if (contextReceiverTypes.isNotEmpty()) typeAnnotations =
+        typeAnnotations.withContextReceiversFunctionAnnotation(builtIns, contextReceiverTypes.size)
 
-    return KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)
+    return KotlinTypeFactory.simpleNotNullType(typeAnnotations.toDefaultAttributes(), classDescriptor, arguments)
 }
 
 fun Annotations.hasExtensionFunctionAnnotation() = hasAnnotation(StandardNames.FqNames.extensionFunctionType)
@@ -244,6 +278,19 @@ fun Annotations.withExtensionFunctionAnnotation(builtIns: KotlinBuiltIns) =
         this
     } else {
         Annotations.create(this + BuiltInAnnotationDescriptor(builtIns, StandardNames.FqNames.extensionFunctionType, emptyMap()))
+    }
+
+fun Annotations.withContextReceiversFunctionAnnotation(builtIns: KotlinBuiltIns, contextReceiversCount: Int) =
+    if (hasAnnotation(StandardNames.FqNames.contextFunctionTypeParams)) {
+        this
+    } else {
+        Annotations.create(
+            this + BuiltInAnnotationDescriptor(
+                builtIns, StandardNames.FqNames.contextFunctionTypeParams, mapOf(
+                    StandardNames.CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME to IntValue(contextReceiversCount)
+                )
+            )
+        )
     }
 
 fun getFunctionDescriptor(builtIns: KotlinBuiltIns, parameterCount: Int, isSuspendFunction: Boolean) =

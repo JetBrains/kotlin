@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Test$Companion.class
+		CLASS METADATA
+			PROPERTY getProp2()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int

@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
-
 /*
  * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
@@ -15,29 +13,23 @@ repositories {
 }
 
 dependencies {
-    testApi(intellijCoreDep()) { includeJars("intellij-core")}
-    testApi(intellijDep()) {
-        includeJars("extensions", "idea_rt", "util", "asm-all", "jna", rootProject = rootProject)
-    }
+    testApi(intellijCore())
 
-    testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
+    testRuntimeOnly(libs.xerces)
+    testRuntimeOnly(commonDependency("commons-lang:commons-lang"))
 
-    testRuntimeOnly("xerces:xercesImpl:2.12.0")
-    testRuntimeOnly(intellijPluginDep("java"))
-
-    testApi(commonDep("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(libs.junit4)
+    testCompileOnly(kotlinTest("junit"))
     testApi(projectTests(":compiler:tests-common"))
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(project(":compiler:fir:resolve"))
     testApi(project(":compiler:fir:providers"))
     testApi(project(":compiler:fir:semantics"))
     testApi(project(":compiler:fir:dump"))
+
+    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
     val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
     if (asyncProfilerClasspath != null) {
@@ -50,13 +42,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
+    dependsOn(":dist")
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
-    jvmArgs!!.removeIf { it.contains("-Xmx") || it.contains("-Xms") || it.contains("ReservedCodeCacheSize") }
-    minHeapSize = "8g"
-    maxHeapSize = "8g"
-    dependsOn(":dist")
 
     run {
         val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
@@ -65,7 +54,6 @@ projectTest {
             jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
         }
     }
-    jvmArgs("-XX:ReservedCodeCacheSize=512m")
 }
 
 testsJar()

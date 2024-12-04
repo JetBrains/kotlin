@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
@@ -24,6 +25,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.LazyWrappedTypeComputationException
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
@@ -41,7 +46,7 @@ class CallableReferencesCandidateFactory(
         get() = receiver.receiverValue
 
     override fun createErrorCandidate(): CallableReferenceResolutionCandidate {
-        val errorScope = ErrorUtils.createErrorScope("Error resolution candidate for call $kotlinCall")
+        val errorScope = ErrorUtils.createErrorScope(ErrorScopeKind.SCOPE_FOR_ERROR_RESOLUTION_CANDIDATE, kotlinCall.toString())
         val errorDescriptor = errorScope.getContributedFunctions(kotlinCall.rhsName, scopeTower.location).first()
 
         val (reflectionCandidateType, callableReferenceAdaptation) = buildReflectionType(
@@ -50,7 +55,6 @@ class CallableReferencesCandidateFactory(
             extensionReceiver = null,
             expectedType,
             callComponents.builtIns,
-            buildTypeWithConversions = kotlinCall is CallableReferenceKotlinCallArgument
         )
 
         return CallableReferenceResolutionCandidate(
@@ -77,8 +81,6 @@ class CallableReferencesCandidateFactory(
             extensionCallableReceiver,
             expectedType,
             callComponents.builtIns,
-            // conversions aren't needed for top-level callable references
-            buildTypeWithConversions = kotlinCall is CallableReferenceKotlinCallArgument
         )
 
         fun createCallableReferenceCallCandidate(diagnostics: List<KotlinCallDiagnostic>) = CallableReferenceResolutionCandidate(
@@ -113,11 +115,26 @@ class CallableReferencesCandidateFactory(
             return createCallableReferenceCallCandidate(listOf(NotCallableMemberReference(kotlinCall, candidateDescriptor)))
         }
 
+        if (candidateDescriptor is PropertyDescriptor && candidateDescriptor.isSyntheticEnumEntries()) {
+            diagnostics.add(LowerPriorityToPreserveCompatibility(needToReportWarning = false).asDiagnostic())
+        }
+
         diagnostics.addAll(towerCandidate.diagnostics)
         // todo smartcast on receiver diagnostic and CheckInstantiationOfAbstractClass
 
         return createCallableReferenceCallCandidate(diagnostics)
     }
+
+    /**
+     * The function is called only inside [NoExplicitReceiverScopeTowerProcessor] with [TowerData.BothTowerLevelAndContextReceiversGroup].
+     * This case involves only [SimpleCandidateFactory].
+     */
+    override fun createCandidate(
+        towerCandidate: CandidateWithBoundDispatchReceiver,
+        explicitReceiverKind: ExplicitReceiverKind,
+        extensionReceiverCandidates: List<ReceiverValueWithSmartCastInfo>
+    ): CallableReferenceResolutionCandidate =
+        error("${this::class.simpleName} doesn't support candidates with multiple extension receiver candidates")
 
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
         createCallableReferenceProcessor(scopeTower, kotlinCall.rhsName, this, explicitReceiver)
@@ -159,6 +176,8 @@ class CallableReferencesCandidateFactory(
         val fakeArguments = createFakeArgumentsForReference(descriptor, expectedArgumentCount, inputOutputTypes, unboundReceiverCount)
         val argumentMapping =
             callComponents.argumentsToParametersMapper.mapArguments(fakeArguments, externalArgument = null, descriptor = descriptor)
+
+        @OptIn(ApplicabilityDetail::class)
         if (argumentMapping.diagnostics.any { !it.candidateApplicability.isSuccess }) return null
 
         /**
@@ -225,8 +244,15 @@ class CallableReferencesCandidateFactory(
         // lower(Unit!) = Unit
         val returnExpectedType = inputOutputTypes.outputType
 
+        fun isReturnTypeNonUnitSafe(): Boolean =
+            try {
+                descriptor.returnType?.isUnit() == false
+            } catch (e: LazyWrappedTypeComputationException) {
+                false
+            }
+
         val coercion =
-            if (returnExpectedType.isUnit() && descriptor.returnType?.isUnit() == false)
+            if (returnExpectedType.isUnit() && isReturnTypeNonUnitSafe())
                 CoercionStrategy.COERCION_TO_UNIT
             else
                 CoercionStrategy.NO_COERCION
@@ -320,9 +346,11 @@ class CallableReferencesCandidateFactory(
         extensionReceiver: CallableReceiver?,
         expectedType: UnwrappedType?,
         builtins: KotlinBuiltIns,
-        buildTypeWithConversions: Boolean = true
     ): Pair<UnwrappedType, CallableReferenceAdaptation?> {
-        val argumentsAndReceivers = ArrayList<KotlinType>(descriptor.valueParameters.size + 2)
+        val argumentsAndReceivers = ArrayList<KotlinType>(descriptor.valueParameters.size + 2 + descriptor.contextReceiverParameters.size)
+
+        val contextReceiversTypes = descriptor.contextReceiverParameters.map { it.type }
+        argumentsAndReceivers.addAll(contextReceiversTypes)
 
         if (dispatchReceiver is CallableReceiver.UnboundReference) {
             argumentsAndReceivers.add(dispatchReceiver.receiver.stableType)
@@ -332,7 +360,7 @@ class CallableReferencesCandidateFactory(
         }
 
         val descriptorReturnType = descriptor.returnType
-            ?: ErrorUtils.createErrorType("Error return type for descriptor: $descriptor")
+            ?: ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE, descriptor.toString())
 
         return when (descriptor) {
             is PropertyDescriptor -> {
@@ -358,6 +386,9 @@ class CallableReferencesCandidateFactory(
                     builtins = builtins
                 )
 
+                // conversions aren't needed for top-level callable references
+                val buildTypeWithConversions = kotlinCall is CallableReferenceKotlinCallArgument
+
                 val returnType = if (callableReferenceAdaptation == null || !buildTypeWithConversions) {
                     descriptor.valueParameters.mapTo(argumentsAndReceivers) { it.type }
                     descriptorReturnType
@@ -377,13 +408,13 @@ class CallableReferencesCandidateFactory(
                         (suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION && buildTypeWithConversions)
 
                 callComponents.reflectionTypes.getKFunctionType(
-                    Annotations.EMPTY, null, argumentsAndReceivers, null,
+                    Annotations.EMPTY, null, emptyList(), argumentsAndReceivers, null,
                     returnType, descriptor.builtIns, isSuspend
                 ) to callableReferenceAdaptation
             }
             else -> {
                 assert(!descriptor.isSupportedForCallableReference()) { "${descriptor::class} isn't supported to use in callable references actually, but it's listed in `isSupportedForCallableReference` method" }
-                ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to null
+                ErrorUtils.createErrorType(ErrorTypeKind.UNSUPPORTED_CALLABLE_REFERENCE_TYPE, descriptor.toString()) to null
             }
         }
     }

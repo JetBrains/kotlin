@@ -11,11 +11,10 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.fqName
 
 internal object IntrinsicEvaluator {
-    @OptIn(ExperimentalStdlibApi::class)
     private val fqNameToHandler: Map<String, IntrinsicBase> = buildMap {
         listOf(
             EmptyArray, ArrayOf, ArrayOfNulls, ArrayConstructor, EnumValues, EnumValueOf,
-            JsPrimitives, SourceLocation, AssertIntrinsic, DataClassArrayToString
+            JsPrimitives, SourceLocation, AssertIntrinsic, DataClassArrayToString, Indent
         ).forEach { intrinsic -> intrinsic.getListOfAcceptableFunctions().forEach { put(it, intrinsic) } }
     }
 

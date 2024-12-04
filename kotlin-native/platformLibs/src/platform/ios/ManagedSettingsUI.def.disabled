@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.ManagedSettingsUI
+
+modules = ManagedSettingsUI
+compilerOpts = -framework ManagedSettingsUI
+linkerOpts = -framework ManagedSettingsUI
+#Disabled: Not officially available for ios, Swift-only

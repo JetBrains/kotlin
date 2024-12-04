@@ -1,3 +1,3 @@
 package
 
-@[ERROR : foo] /* annotation class not found */ public fun bar(/*0*/ p: [ERROR : foo]): [ERROR : foo]
+@[Error type: Unresolved type for foo] /* annotation class not found */ public fun bar(/*0*/ p: [Error type: Unresolved type for foo]): [Error type: Unresolved type for foo]

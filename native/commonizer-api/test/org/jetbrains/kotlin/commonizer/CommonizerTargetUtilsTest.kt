@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.commonizer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class CommonizerTargetUtilsTest {
+public class CommonizerTargetUtilsTest {
 
     @Test
-    fun allLeaves() {
+    public fun allLeaves() {
         val target = parseCommonizerTarget("((a, b), (c, d), (e, (f, g)))")
         assertEquals(
             setOf(
@@ -34,12 +34,12 @@ class CommonizerTargetUtilsTest {
     }
 
     @Test
-    fun `withAllLeaves LeafCommonizerTarget`() {
+    public fun `withAllLeaves LeafCommonizerTarget`() {
         assertEquals(setOf(LeafCommonizerTarget("a")), LeafCommonizerTarget("a").withAllLeaves())
     }
 
     @Test
-    fun `withAllLeaves SharedCommonizerTarget`() {
+    public fun `withAllLeaves SharedCommonizerTarget`() {
         assertEquals(
             setOf(parseCommonizerTarget("(a, b)"), LeafCommonizerTarget("a"), LeafCommonizerTarget("b")),
             parseCommonizerTarget("(a, b)").withAllLeaves()

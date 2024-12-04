@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 typealias MyTypeAlias = (() -> String?)?
 fun foo(x: MyTypeAlias) {
 

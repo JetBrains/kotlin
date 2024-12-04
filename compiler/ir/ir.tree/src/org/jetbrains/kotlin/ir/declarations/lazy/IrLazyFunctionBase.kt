@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import kotlin.properties.ReadWriteProperty
+import org.jetbrains.kotlin.name.Name
 
 interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -20,26 +20,22 @@ interface IrLazyFunctionBase : IrLazyDeclarationBase, IrTypeParametersContainer 
 
     val initialSignatureFunction: IrFunction?
 
+    fun getTopLevelDeclaration(): IrDeclaration {
+        var current: IrDeclaration = this
+        while (current.parent !is IrPackageFragment) {
+            current = current.parent as IrDeclaration
+        }
+        return current
+    }
+
     fun createInitialSignatureFunction(): Lazy<IrFunction?> =
         // Need SYNCHRONIZED; otherwise two stubs generated in parallel may fight for the same symbol.
         lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            descriptor.initialSignatureDescriptor?.takeIf { it != descriptor }?.original?.let(stubGenerator::generateFunctionStub)
-        }
-
-    fun createValueParameters(): List<IrValueParameter> =
-        typeTranslator.buildWithScope(this) {
-            descriptor.valueParameters.mapTo(arrayListOf()) {
-                stubGenerator.generateValueParameterStub(it).apply { parent = this@IrLazyFunctionBase }
-            }
-        }
-
-    fun createReceiverParameter(
-        parameter: ReceiverParameterDescriptor?,
-        functionDispatchReceiver: Boolean = false,
-    ): IrValueParameter? =
-        if (functionDispatchReceiver && stubGenerator.extensions.isStaticFunction(descriptor)) null
-        else typeTranslator.buildWithScope(this) {
-            parameter?.generateReceiverParameterStub()?.also { it.parent = this@IrLazyFunctionBase }
+            val initialSignatureDescriptor = descriptor.initialSignatureDescriptor
+                ?: return@lazy null
+            if (initialSignatureDescriptor == descriptor)
+                return@lazy null
+            stubGenerator.generateFunctionStub(initialSignatureDescriptor.original)
         }
 
     fun createReturnType(): IrType =

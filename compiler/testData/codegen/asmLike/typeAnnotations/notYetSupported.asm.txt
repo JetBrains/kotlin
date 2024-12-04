@@ -49,16 +49,6 @@ public final class foo/Kotlin : java/lang/Object {
       @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
 
-    <T:Ljava/lang/Object;>(Lfoo/Bar<-TT;>;)V
-    public final void fooGenericIn(foo.Bar s)
-      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
-        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
-
-    <T:Ljava/lang/Object;>(Lfoo/Bar<+TT;>;)V
-    public final void fooGenericOut(foo.Bar s)
-      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
-        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
-
     <T:Lfoo/Bar<Lfoo/Outer$Inner<Lfoo/Outer;>;>;>()V
     public final void innerClassInBound()
 }

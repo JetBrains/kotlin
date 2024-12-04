@@ -1,11 +1,10 @@
-// !LANGUAGE: +RepeatableAnnotations
-// !OPT_IN: kotlin.ExperimentalStdlibApi
+// LANGUAGE: +RepeatableAnnotations
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // FULL_JDK
 // WITH_REFLECT
 
-// Android doesn't have @Repeatable.
+// Android doesn't have @Repeatable before API level 24.
 // IGNORE_BACKEND: ANDROID
 
 package test

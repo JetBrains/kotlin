@@ -31,7 +31,7 @@ package b {
 }
 
 package c {
-    public fun </*0*/ T> invBuilder(/*0*/ @kotlin.BuilderInference block: c.Inv<T>.() -> kotlin.Unit): kotlin.Unit
+    public fun </*0*/ T> invBuilder(/*0*/ block: c.Inv<T>.() -> kotlin.Unit): kotlin.Unit
     public fun test(): kotlin.Unit
 
     public interface Inv</*0*/ T> {

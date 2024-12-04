@@ -1,4 +1,5 @@
-// !LANGUAGE: +NewInference
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 
 fun main() {
     val list = listOf(A())
@@ -15,5 +16,5 @@ class A {
     }
 }
 
-@<!OPT_IN_IS_NOT_ENABLED!>RequiresOptIn<!>(level = <!OPT_IN_IS_NOT_ENABLED!>RequiresOptIn<!>.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class ExperimentalTime

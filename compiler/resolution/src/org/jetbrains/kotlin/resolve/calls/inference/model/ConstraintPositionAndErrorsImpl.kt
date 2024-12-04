@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -19,15 +18,18 @@ class InjectedAnotherStubTypeConstraintPositionImpl(builderInferenceLambdaOfInje
     InjectedAnotherStubTypeConstraintPosition<LambdaKotlinCallArgument>(builderInferenceLambdaOfInjectedStubType)
 
 class BuilderInferenceSubstitutionConstraintPositionImpl(
-    builderInferenceLambda: LambdaKotlinCallArgument, initialConstraint: InitialConstraint
-) : BuilderInferenceSubstitutionConstraintPosition<LambdaKotlinCallArgument, InitialConstraint>(
-    builderInferenceLambda, initialConstraint
+    builderInferenceLambda: LambdaKotlinCallArgument,
+    initialConstraint: InitialConstraint,
+    isFromNotSubstitutedDeclaredUpperBound: Boolean = false
+) : BuilderInferenceSubstitutionConstraintPosition<LambdaKotlinCallArgument>(
+    builderInferenceLambda, initialConstraint, isFromNotSubstitutedDeclaredUpperBound
 )
 
 class ExpectedTypeConstraintPositionImpl(topLevelCall: KotlinCall) : ExpectedTypeConstraintPosition<KotlinCall>(topLevelCall)
 
 class DeclaredUpperBoundConstraintPositionImpl(
-    typeParameter: TypeParameterDescriptor
+    typeParameter: TypeParameterDescriptor,
+    val kotlinCall: KotlinCall
 ) : DeclaredUpperBoundConstraintPosition<TypeParameterDescriptor>(typeParameter) {
     override fun toString() = "DeclaredUpperBound ${typeParameter.name} from ${typeParameter.containingDeclaration}"
 }
@@ -37,7 +39,10 @@ class ArgumentConstraintPositionImpl(argument: KotlinCallArgument) : ArgumentCon
 class CallableReferenceConstraintPositionImpl(val callableReferenceCall: CallableReferenceKotlinCall) :
     CallableReferenceConstraintPosition<CallableReferenceResolutionAtom>(callableReferenceCall)
 
-class ReceiverConstraintPositionImpl(argument: KotlinCallArgument) : ReceiverConstraintPosition<KotlinCallArgument>(argument)
+class ReceiverConstraintPositionImpl(
+    argument: KotlinCallArgument,
+    val selectorCall: KotlinCall?
+) : ReceiverConstraintPosition<KotlinCallArgument>(argument)
 
 class FixVariableConstraintPositionImpl(
     variable: TypeVariableMarker,

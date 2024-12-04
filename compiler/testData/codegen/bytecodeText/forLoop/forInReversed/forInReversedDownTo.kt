@@ -40,18 +40,11 @@ fun box(): String {
 // 0 getStep
 // 1 IFGT
 
-// JVM_TEMPLATES
-// 2 IF_ICMPGT
-// 3 IF
-// 1 LCMP
-
-// JVM_IR_TEMPLATES
 // 2 IF_ICMPLE
 // 1 IFLE
 // 4 IF
 // 2 LCMP
 
-// JVM_IR_TEMPLATES
 // 11 ILOAD
 // 9 ISTORE
 // 3 IADD

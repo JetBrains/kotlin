@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi;
@@ -347,9 +336,9 @@ public class KtPsiUtil {
     }
 
     @Nullable
-    public static KtClassOrObject getClassIfParameterIsProperty(@NotNull KtParameter jetParameter) {
-        if (jetParameter.hasValOrVar()) {
-            PsiElement grandParent = jetParameter.getParent().getParent();
+    public static KtClassOrObject getClassIfParameterIsProperty(@NotNull KtParameter ktParameter) {
+        if (ktParameter.hasValOrVar()) {
+            PsiElement grandParent = ktParameter.getParent().getParent();
             if (grandParent instanceof KtPrimaryConstructor) {
                 return ((KtPrimaryConstructor) grandParent).getContainingClassOrObject();
             }
@@ -407,14 +396,13 @@ public class KtPsiUtil {
         return maxPriority;
     }
 
+    @SuppressWarnings("unused") // used in intellij repo
     public static boolean areParenthesesUseless(@NotNull KtParenthesizedExpression expression) {
         KtExpression innerExpression = expression.getExpression();
         if (innerExpression == null) return true;
-
         PsiElement parent = expression.getParent();
-        if (!(parent instanceof KtExpression)) return true;
-
-        return !areParenthesesNecessary(innerExpression, expression, (KtExpression) parent);
+        if (!(parent instanceof KtElement)) return true;
+        return !areParenthesesNecessary(innerExpression, expression, (KtElement) parent);
     }
 
     public static boolean areParenthesesNecessary(
@@ -422,6 +410,8 @@ public class KtPsiUtil {
             @NotNull KtExpression currentInner,
             @NotNull KtElement parentElement
     ) {
+        if (parentElement instanceof KtDelegatedSuperTypeEntry) return true;
+
         if (parentElement instanceof KtParenthesizedExpression || innerExpression instanceof KtParenthesizedExpression) {
             return false;
         }
@@ -482,9 +472,31 @@ public class KtPsiUtil {
                 ((KtBinaryExpression) nextExpression).getOperationToken() == KtTokens.GT) return true;
         }
 
+        IElementType innerOperation = getOperation(innerExpression);
+
+        if (innerExpression instanceof KtBinaryExpression) {
+            // '(x operator return [...]) operator ...' case
+            if (parentElement instanceof KtBinaryExpression) {
+                KtBinaryExpression innerBinary = (KtBinaryExpression) innerExpression;
+                if (innerBinary.getRight() instanceof KtReturnExpression) {
+                    return true;
+                }
+            }
+            // '(x operator y)' case
+            if (innerOperation != KtTokens.ELVIS &&
+                !(parentElement instanceof KtValueArgument) &&
+                !(parentElement instanceof KtParameter) &&
+                !(parentElement instanceof KtBlockStringTemplateEntry) &&
+                !(parentElement instanceof KtContainerNode &&
+                  // for `if` branch, `else` branch, loops body and `when` entry parentheses are required
+                  !(parentElement instanceof KtContainerNodeForControlStructureBody)) &&
+                isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
+                return true;
+            }
+        }
+
         if (!(parentElement instanceof KtExpression)) return false;
 
-        IElementType innerOperation = getOperation(innerExpression);
         IElementType parentOperation = getOperation((KtExpression) parentElement);
 
         // 'return (@label{...})' case
@@ -512,21 +524,6 @@ public class KtPsiUtil {
             innerExpression instanceof KtNamedFunction &&
             currentInner == ((KtBinaryExpression) parentElement).getRight()) {
             return false;
-        }
-
-        if (innerExpression instanceof KtBinaryExpression) {
-            // '(x operator return [...]) operator ...' case
-            if (parentElement instanceof KtBinaryExpression) {
-                KtBinaryExpression innerBinary = (KtBinaryExpression) innerExpression;
-                if (innerBinary.getRight() instanceof KtReturnExpression) {
-                    return true;
-                }
-            }
-            // '(x operator y)' case
-            if (innerOperation != KtTokens.ELVIS &&
-                isKeepBinaryExpressionParenthesized((KtBinaryExpression) innerExpression)) {
-                return true;
-            }
         }
 
         int innerPriority = getPriority(innerExpression);
@@ -831,6 +828,11 @@ public class KtPsiUtil {
         PsiElement current = PsiTreeUtil.getStubOrPsiParent(declaration);
         boolean isNonLocalCallable = isNonLocalCallable(declaration);
         while (current != null) {
+            // No enclosing declaration found. There no sense to iterate through directories
+            if (current instanceof PsiFile) {
+                return null;
+            }
+
             PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
             if (parent instanceof KtScript) return null;
             if (current instanceof KtAnonymousInitializer) {
@@ -886,7 +888,7 @@ public class KtPsiUtil {
         KtSimpleNameExpression operationExpression = expression.getOperationReference();
         IElementType elementType = operationExpression.getReferencedNameElementType();
         assert elementType == null || elementType instanceof KtToken :
-                "JetOperationExpression should have operation token of type KtToken: " +
+                "KtOperationExpression should have operation token of type KtToken: " +
                 expression;
         return (KtToken) elementType;
     }

@@ -1,10 +1,10 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// LANGUAGE: +ValueClasses
 
 // FILE: a.kt
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+@JvmInline
 value class IC(val v: Int) {
     fun <T> getT(): T? = null
 }

@@ -1,4 +1,7 @@
-// !LANGUAGE: +MultiPlatformProjects, +InlineClasses, -JvmInlineValueClasses
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +InlineClasses
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
 // MODULE: m1-common
 // FILE: common.kt
 

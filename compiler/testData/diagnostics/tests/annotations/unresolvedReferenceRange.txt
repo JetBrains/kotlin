@@ -1,34 +1,34 @@
 package
 
-@[ERROR : Ann] /* annotation class not found */ public final class A {
+@[Error type: Unresolved type for Ann] /* annotation class not found */ public final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@[ERROR : Ann] /* annotation class not found */ public final class B {
+@[Error type: Unresolved type for Ann] /* annotation class not found */ public final class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@[ERROR : Ann] /* annotation class not found */ public final class C {
+@[Error type: Unresolved type for Ann] /* annotation class not found */ public final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@[ERROR : kotlin.Ann] /* annotation class not found */ public final class D {
+@[Error type: Unresolved type for kotlin.Ann] /* annotation class not found */ public final class D {
     public constructor D()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@[ERROR : kotlin.annotation.Ann] /* annotation class not found */ public final class E {
+@[Error type: Unresolved type for kotlin.annotation.Ann] /* annotation class not found */ public final class E {
     public constructor E()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

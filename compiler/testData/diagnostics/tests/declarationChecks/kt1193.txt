@@ -17,7 +17,7 @@ package kt1193 {
 
         private constructor MyEnum(/*0*/ i: kotlin.Int)
         public final val i: kotlin.Int
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt1193.MyEnum): kotlin.Int
@@ -28,6 +28,7 @@ package kt1193 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kt1193.MyEnum>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt1193.MyEnum
         public final /*synthesized*/ fun values(): kotlin.Array<kt1193.MyEnum>
     }

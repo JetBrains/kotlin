@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun f(x: Int = 0) {}
 
@@ -16,5 +18,5 @@ class A : (Int)->Unit {
     }
 
     val prop: (x: Int = <!UNSUPPORTED!>0<!>)->Unit
-        get(): (x: Int = <!UNSUPPORTED!>0<!>)->Unit = {}
+    get(): (x: Int = <!UNSUPPORTED!>0<!>)->Unit = {}
 }

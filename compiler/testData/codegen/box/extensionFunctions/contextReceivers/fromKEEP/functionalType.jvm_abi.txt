@@ -1,0 +1,9 @@
+MODULE main
+	CLASS FunctionalTypeKt.class
+		PACKAGE METADATA
+			FUNCTION f(LO;LK;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
+				Property: class.metadata.function.valueParameters
+					K1
+						(g: @kotlin/ExtensionFunctionType @kotlin/ContextFunctionTypeParams(count = 1) kotlin/Function3<O, K, Param, T#0>)
+					K2
+						(g: @kotlin/ContextFunctionTypeParams(count = 1) @kotlin/ExtensionFunctionType kotlin/Function3<O, K, Param, T#0>)

@@ -5,10 +5,12 @@ plugins {
 }
 
 dependencies {
-    api(kotlinStdlib())
+    implementation(kotlinStdlib("jdk8"))
     implementation(project(":compiler:tests-mutes"))
-    implementation("khttp:khttp:1.0.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.jackson)
+    implementation(libs.jackson.module.kotlin)
 }
 
 sourceSets {
@@ -19,6 +21,6 @@ sourceSets {
 val mutesPackageName = "org.jetbrains.kotlin.test.mutes"
 
 application {
-    mainClassName = "$mutesPackageName.MutedTestsSyncKt"
+    mainClass.set("$mutesPackageName.MutedTestsSyncKt")
     applicationDefaultJvmArgs = rootProject.properties.filterKeys { it.startsWith(mutesPackageName) }.map { (k, v) -> "-D$k=$v" }
 }

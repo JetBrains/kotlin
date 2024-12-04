@@ -1,13 +1,22 @@
+class FinalList : SomeList<String> {
+  constructor() /* primary */ {
+    super/*SomeList*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
 data class Some<T : Any?> {
+  val value: T
+    field = value
+    get
+
   constructor(value: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val value: T
-    field = value
-    get
 
   operator fun component1(): T {
     return <this>.#value
@@ -17,8 +26,18 @@ data class Some<T : Any?> {
     return Some<T>(value = value)
   }
 
-  override fun toString(): String {
-    return "Some(" + "value=" + <this>.#value + ")"
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Some<T> -> return false
+    }
+    val tmp_0: Some<T> = other as Some<T>
+    when {
+      EQEQ(arg0 = <this>.#value, arg1 = tmp_0.#value).not() -> return false
+    }
+    return true
   }
 
   override fun hashCode(): Int {
@@ -28,27 +47,13 @@ data class Some<T : Any?> {
     }
   }
 
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is Some<T> -> return false
-    }
-    val tmp0_other_with_cast: Some<T> = other as Some<T>
-    when {
-      EQEQ(arg0 = <this>.#value, arg1 = tmp0_other_with_cast.#value).not() -> return false
-    }
-    return true
+  override fun toString(): String {
+    return "Some(" + "value=" + <this>.#value + ")"
   }
 
 }
 
-interface MyList<T : Any?> : List<Some<T>> {
-
-}
-
-open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
+open class SomeList<T : Any?> : ArrayList<Some<T>>, MyList<T> {
   constructor() /* primary */ {
     super/*ArrayList*/<@FlexibleNullability Some<T>?>()
     /* <init>() */
@@ -57,11 +62,6 @@ open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
 
 }
 
-class FinalList : SomeList<String> {
-  constructor() /* primary */ {
-    super/*SomeList*/<String>()
-    /* <init>() */
-
-  }
-
+interface MyList<T : Any?> : List<Some<T>> {
 }
+

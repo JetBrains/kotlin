@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Visitor {
     fun visit()
 

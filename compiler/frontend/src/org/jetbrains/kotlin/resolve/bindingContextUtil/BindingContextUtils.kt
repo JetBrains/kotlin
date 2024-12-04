@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesizeOnce
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.types.KotlinType
@@ -56,12 +58,13 @@ fun KtReturnExpression.getTargetFunction(context: BindingContext): KtCallableDec
     return getTargetFunctionDescriptor(context)?.let { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtCallableDeclaration }
 }
 
-fun KtExpression.isUsedAsExpression(context: BindingContext): Boolean =
-    context[USED_AS_EXPRESSION, this]
-        ?: throw AssertionError(
-            "BindingContext returned null for Boolean slice: " +
-                    if (context == EMPTY) "BindingContext.EMPTY" else context.javaClass.toString()
-        )
+fun KtElement.isUsedAsExpression(context: BindingContext): Boolean =
+    context[USED_AS_EXPRESSION, this] ?: false
+
+fun KtElement.recordUsedAsExpression(trace: BindingTrace, value: Boolean) {
+    if (isUsedAsExpression(trace.bindingContext)) return
+    trace.record(USED_AS_EXPRESSION, this, value)
+}
 
 fun KtExpression.isUsedAsResultOfLambda(context: BindingContext): Boolean = context[USED_AS_RESULT_OF_LAMBDA, this]!!
 fun KtExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
@@ -143,22 +146,59 @@ fun getEnclosingDescriptor(context: BindingContext, element: KtElement): Declara
     val declaration =
         element.getParentOfTypeCodeFragmentAware(KtNamedDeclaration::class.java)
             ?: throw KotlinExceptionWithAttachments("No parent KtNamedDeclaration for of type ${element.javaClass}")
-                .withAttachment("element.kt", element.text)
+                .withPsiAttachment("element.kt", element)
     return if (declaration is KtFunctionLiteral) {
         getEnclosingDescriptor(context, declaration)
     } else {
         context.get(DECLARATION_TO_DESCRIPTOR, declaration)
             ?: throw KotlinExceptionWithAttachments("No descriptor for named declaration of type ${declaration.javaClass}")
-                .withAttachment("declaration.kt", declaration.text)
+                .withPsiAttachment("declaration.kt", declaration)
     }
 }
 
-fun getEnclosingFunctionDescriptor(context: BindingContext, element: KtElement): FunctionDescriptor? {
-    val functionOrClass = element.getParentOfTypeCodeFragmentAware(KtFunction::class.java, KtClassOrObject::class.java)
-    val descriptor = context.get(DECLARATION_TO_DESCRIPTOR, functionOrClass)
-    return if (functionOrClass is KtFunction) {
-        if (descriptor is FunctionDescriptor) descriptor else null
-    } else {
-        if (descriptor is ClassDescriptor) descriptor.unsubstitutedPrimaryConstructor else null
+fun getEnclosingFunctionDescriptor(context: BindingContext, element: KtElement, skipInlineFunctionLiterals: Boolean): FunctionDescriptor? {
+    var current = element
+    while (true) {
+        val functionOrClass = current.getParentOfTypeCodeFragmentAware(KtFunction::class.java, KtClassOrObject::class.java)
+        val descriptor = context.get(DECLARATION_TO_DESCRIPTOR, functionOrClass)
+        if (functionOrClass is KtFunction) {
+            if (descriptor is FunctionDescriptor) {
+                if (skipInlineFunctionLiterals && isInlineableFunctionLiteral(
+                        ((functionOrClass as? KtFunctionLiteral)?.parent as? KtExpression) ?: functionOrClass,
+                        context
+                    )) {
+                    current = functionOrClass
+                } else {
+                    return descriptor
+                }
+            } else {
+                return null
+            }
+        } else {
+            return if (descriptor is ClassDescriptor) descriptor.unsubstitutedPrimaryConstructor else null
+        }
     }
+}
+
+fun isInlineableFunctionLiteral(expression: KtExpression, context: BindingContext): Boolean {
+    if (expression !is KtLambdaExpression && !(expression is KtNamedFunction && expression.name == null)) {
+        return false
+    }
+    var wrapper: PsiElement = expression
+    while (deparenthesizeOnce(wrapper.parent as? KtExpression) == wrapper) {
+        wrapper = wrapper.parent
+    }
+
+    val argument = (wrapper.parent as? KtValueArgument) ?: return false
+    val call = (((argument.parent as? KtValueArgumentList) ?: argument).parent as? KtCallExpression) ?: return false
+    val resolvedCall = call.getResolvedCall(context) ?: return false
+    val descriptor = (resolvedCall.resultingDescriptor as? FunctionDescriptor) ?: return false
+    if (descriptor.isInline) {
+        val parameter = resolvedCall.valueArguments.entries.find { (_, valueArgument) ->
+            valueArgument.arguments.any { it.asElement() == argument }
+        }?.key ?: return false
+        return !parameter.isNoinline && !parameter.isCrossinline
+    }
+
+    return false
 }

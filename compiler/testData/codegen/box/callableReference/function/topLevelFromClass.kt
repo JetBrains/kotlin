@@ -5,7 +5,7 @@ fun <T> run(arg1: T, arg2: T, funRef:(T,T) -> T): T {
 fun foo(o: Int, k: Int) = o + k
 
 class A {
-    fun bar() = (::foo)(111, 222)
+    fun bar() = (::foo).let { it(111, 222) }
 }
 
 fun box(): String {

@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+sealed class /A : kotlin/CharSequence { // /A|null[0]
+    final class B : /A, kotlin/CharSequence { // /A.B|null[0]
+        final val c // /A.B.c|{}c[0]
+            final fun <get-c>(): kotlin/CharSequence // /A.B.c.<get-c>|<get-c>(){}[0]
+        final val length // /A.B.length|{}length[0]
+            final fun <get-length>(): kotlin/Int // /A.B.length.<get-length>|<get-length>(){}[0]
+        constructor <init>(kotlin/CharSequence) // /A.B.<init>|<init>(kotlin.CharSequence){}[0]
+        final fun component1(): kotlin/CharSequence // /A.B.component1|component1(){}[0]
+        final fun copy(kotlin/CharSequence = ...): /A.B // /A.B.copy|copy(kotlin.CharSequence){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // /A.B.equals|equals(kotlin.Any?){}[0]
+        final fun get(kotlin/Int): kotlin/Char // /A.B.get|get(kotlin.Int){}[0]
+        final fun hashCode(): kotlin/Int // /A.B.hashCode|hashCode(){}[0]
+        final fun subSequence(kotlin/Int, kotlin/Int): kotlin/CharSequence // /A.B.subSequence|subSequence(kotlin.Int;kotlin.Int){}[0]
+        final fun toString(): kotlin/String // /A.B.toString|toString(){}[0]
+    }
+}

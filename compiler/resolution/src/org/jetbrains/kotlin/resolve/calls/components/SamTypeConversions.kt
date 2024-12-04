@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.isFunctionOrKFunctionTypeWithAnySuspendability
+import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -41,15 +43,23 @@ object SamTypeConversions : ParameterTypeConversion {
         return false
     }
 
-    override fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean {
+    override fun conversionIsNeededBeforeSubtypingCheck(
+        argument: KotlinCallArgument,
+        areSuspendOnlySamConversionsSupported: Boolean
+    ): Boolean {
         return when (argument) {
             is SubKotlinCallArgument -> {
                 val stableType = argument.receiver.stableType
-                if (stableType.isFunctionType) return true
+                if (
+                    stableType.isFunctionType ||
+                    (areSuspendOnlySamConversionsSupported && stableType.isFunctionOrKFunctionTypeWithAnySuspendability)
+                ) return true
 
                 hasNonAnalyzedLambdaAsReturnType(argument.callResult.subResolvedAtoms, stableType)
             }
-            is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
+            is SimpleKotlinCallArgument -> argument.receiver.stableType.run {
+                isFunctionType || (areSuspendOnlySamConversionsSupported && isFunctionOrKFunctionTypeWithAnySuspendability)
+            }
             is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
             else -> false
         }

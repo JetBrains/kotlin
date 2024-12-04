@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 sealed class Operation(val left: Int, val right: Int) {
     abstract fun exec(): Int

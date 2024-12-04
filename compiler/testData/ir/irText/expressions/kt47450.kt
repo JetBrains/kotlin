@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// SKIP_KLIB_TEST
 // SKIP_KT_DUMP
 
 fun test(z: Int): String {

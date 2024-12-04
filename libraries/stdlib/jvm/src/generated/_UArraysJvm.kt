@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -283,6 +283,230 @@ public fun UShortArray.binarySearch(element: UShort, fromIndex: Int = 0, toIndex
             return mid // key found
     }
     return -(low + 1)  // key not found
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UIntArray.max(): UInt? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ULongArray.max(): ULong? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UByteArray.max(): UByte? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UShortArray.max(): UShort? {
+    return maxOrNull()
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UInt? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): ULong? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): UByte? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R): UShort? {
+    return maxByOrNull(selector)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UShortArray.maxWith(comparator: Comparator<in UShort>): UShort? {
+    return maxWithOrNull(comparator)
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UIntArray.min(): UInt? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ULongArray.min(): ULong? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UByteArray.min(): UByte? {
+    return minOrNull()
+}
+
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UShortArray.min(): UShort? {
+    return minOrNull()
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UInt? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): ULong? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): UByte? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R): UShort? {
+    return minByOrNull(selector)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte? {
+    return minWithOrNull(comparator)
+}
+
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UShortArray.minWith(comparator: Comparator<in UShort>): UShort? {
+    return minWithOrNull(comparator)
 }
 
 /**

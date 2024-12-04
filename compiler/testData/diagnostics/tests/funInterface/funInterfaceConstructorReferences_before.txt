@@ -1,0 +1,15 @@
+package
+
+public val w: kotlin.reflect.KFunction1<() -> kotlin.Unit, Foo>
+public val x: kotlin.reflect.KFunction1<() -> kotlin.Unit, Foo>
+public val y: Foo
+public val z: kotlin.reflect.KFunction1<() -> kotlin.Unit, java.lang.Runnable>
+public fun </*0*/ T> id(/*0*/ t: T): T
+
+public fun interface Foo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun run(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

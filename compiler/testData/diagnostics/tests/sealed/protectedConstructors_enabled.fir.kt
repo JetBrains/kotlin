@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
@@ -22,7 +23,7 @@ sealed class Case3 private constructor(val x: Int) {
     class Inheritor2 : Case3("Hello")
 }
 
-class Case3Inheritor3 : Case3(<!ARGUMENT_TYPE_MISMATCH!>20<!>) // should be an error in 1.8
+class Case3Inheritor3 : <!INVISIBLE_REFERENCE!>Case3<!>(20)
 
 sealed class Case4 {
     protected constructor(x: Int)

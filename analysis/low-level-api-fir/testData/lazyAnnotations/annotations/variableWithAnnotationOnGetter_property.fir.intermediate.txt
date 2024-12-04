@@ -1,0 +1,2 @@
+public? final? [ResolvedTo(RAW_FIR)] var variable: Int
+    @PROPERTY_GETTER:MyAnno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): Intpublic? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|

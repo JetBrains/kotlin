@@ -1,0 +1,10 @@
+Before shortening: kotlin.text.charset("")
+with default settings:
+[qualifier] kotlin.text.charset("")
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] kotlin.text.charset("")
+with SHORTEN_AND_IMPORT:
+[qualifier] kotlin.text.charset("")
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] kotlin.text.charset("")

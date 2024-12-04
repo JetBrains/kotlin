@@ -1,0 +1,10 @@
+enum class Style(value: kotlin.String) {
+  SHEET {
+    override val exitAnimation: kotlin.String
+      get()
+  };
+
+  abstract val exitAnimation: kotlin.String
+
+  val value: kotlin.String
+}

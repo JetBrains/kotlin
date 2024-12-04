@@ -1,0 +1,29 @@
+FILE: notInsideBranches.kt
+    public final enum class Some : R|kotlin/Enum<Some>| {
+        private constructor(): R|Some| {
+            super<R|kotlin/Enum<Some>|>()
+        }
+
+        public final static enum entry FIRST: R|Some|
+        public final static enum entry SECOND: R|Some|
+        public final static fun values(): R|kotlin/Array<Some>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Some| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Some>|
+            public get(): R|kotlin/enums/EnumEntries<Some>|
+
+    }
+    public final fun foo(s: R|Some|): <ERROR TYPE REF: Cannot infer argument for type parameter K> {
+        ^foo when (R|<local>/s|) {
+            ==($subj$, R|/Some.FIRST|) ->  {
+                <Unresolved name: SECOND>#
+            }
+            ==($subj$, R|/Some.SECOND|) ->  {
+                <Unresolved name: FIRST>#
+            }
+        }
+
+    }

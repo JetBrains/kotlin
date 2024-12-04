@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = <getter>(<dispatch receiver>: KtClass): KtSubClass
-substitutor = <empty substitutor>

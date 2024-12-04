@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = ERR<Too many arguments for public final fun /foo(): R|kotlin/Unit|, [/foo(): kotlin.Unit]>
-substitutor = <empty substitutor>

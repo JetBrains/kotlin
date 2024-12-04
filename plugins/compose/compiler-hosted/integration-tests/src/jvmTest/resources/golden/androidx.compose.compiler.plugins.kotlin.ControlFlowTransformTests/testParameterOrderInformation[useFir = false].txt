@@ -1,0 +1,999 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@Composable fun Test01(p0: Int, p1: Int, p2: Int, p3: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test02(p0: Int, p1: Int, p3: Int, p2: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test03(p0: Int, p2: Int, p1: Int, p3: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test04(p0: Int, p2: Int, p3: Int, p1: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test05(p0: Int, p3: Int, p1: Int, p2: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test06(p0: Int, p3: Int, p2: Int, p1: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test07(p1: Int, p0: Int, p2: Int, p3: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test08(p1: Int, p0: Int, p3: Int, p2: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test09(p1: Int, p2: Int, p0: Int, p3: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test00(p1: Int, p2: Int, p3: Int, p0: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test11(p1: Int, p3: Int, p0: Int, p2: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test12(p1: Int, p3: Int, p2: Int, p0: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test13(p2: Int, p0: Int, p1: Int, p3: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test14(p2: Int, p0: Int, p3: Int, p1: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test15(p2: Int, p1: Int, p0: Int, p3: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test16(p2: Int, p1: Int, p3: Int, p0: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test17(p2: Int, p3: Int, p0: Int, p1: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test18(p2: Int, p3: Int, p1: Int, p0: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test19(p3: Int, p0: Int, p1: Int, p2: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test20(p3: Int, p0: Int, p2: Int, p1: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test21(p3: Int, p1: Int, p0: Int, p2: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test22(p3: Int, p1: Int, p2: Int, p0: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test23(p3: Int, p2: Int, p0: Int, p1: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+@Composable fun Test24(p3: Int, p2: Int, p1: Int, p0: Int) {
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test01(p0: Int, p1: Int, p2: Int, p3: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test01):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test01(p0, p1, p2, p3, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test02(p0: Int, p1: Int, p3: Int, p2: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test02)P(!2,3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test02(p0, p1, p3, p2, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test03(p0: Int, p2: Int, p1: Int, p3: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test03)P(!1,2):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test03(p0, p2, p1, p3, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test04(p0: Int, p2: Int, p3: Int, p1: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test04)P(!1,2,3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test04(p0, p2, p3, p1, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test05(p0: Int, p3: Int, p1: Int, p2: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test05)P(!1,3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test05(p0, p3, p1, p2, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test06(p0: Int, p3: Int, p2: Int, p1: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test06)P(!1,3,2):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test06(p0, p3, p2, p1, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test07(p1: Int, p0: Int, p2: Int, p3: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test07)P(1):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test07(p1, p0, p2, p3, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test08(p1: Int, p0: Int, p3: Int, p2: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test08)P(1!1,3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test08(p1, p0, p3, p2, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test09(p1: Int, p2: Int, p0: Int, p3: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test09)P(1,2):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test09(p1, p2, p0, p3, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test00(p1: Int, p2: Int, p3: Int, p0: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test00)P(1,2,3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test00(p1, p2, p3, p0, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test11(p1: Int, p3: Int, p0: Int, p2: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test11)P(1,3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test11(p1, p3, p0, p2, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test12(p1: Int, p3: Int, p2: Int, p0: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test12)P(1,3,2):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test12(p1, p3, p2, p0, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test13(p2: Int, p0: Int, p1: Int, p3: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test13)P(2):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test13(p2, p0, p1, p3, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test14(p2: Int, p0: Int, p3: Int, p1: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test14)P(2!1,3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test14(p2, p0, p3, p1, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test15(p2: Int, p1: Int, p0: Int, p3: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test15)P(2,1):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test15(p2, p1, p0, p3, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test16(p2: Int, p1: Int, p3: Int, p0: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test16)P(2,1,3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test16(p2, p1, p3, p0, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test17(p2: Int, p3: Int, p0: Int, p1: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test17)P(2,3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test17(p2, p3, p0, p1, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test18(p2: Int, p3: Int, p1: Int, p0: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test18)P(2,3,1):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test18(p2, p3, p1, p0, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test19(p3: Int, p0: Int, p1: Int, p2: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test19)P(3):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test19(p3, p0, p1, p2, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test20(p3: Int, p0: Int, p2: Int, p1: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test20)P(3!1,2):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test20(p3, p0, p2, p1, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test21(p3: Int, p1: Int, p0: Int, p2: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test21)P(3,1):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test21(p3, p1, p0, p2, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test22(p3: Int, p1: Int, p2: Int, p0: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test22)P(3,1,2):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test22(p3, p1, p2, p0, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test23(p3: Int, p2: Int, p0: Int, p1: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test23)P(3,2):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test23(p3, p2, p0, p1, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test24(p3: Int, p2: Int, p1: Int, p0: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test24)P(3,2,1):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
+  }
+  if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
+  }
+  if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(p0)
+    used(p1)
+    used(p2)
+    used(p3)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test24(p3, p2, p1, p0, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

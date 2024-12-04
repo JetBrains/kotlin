@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 <!MUST_BE_INITIALIZED!>var x: Int<!>
 fun foo(f: Boolean) {

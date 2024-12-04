@@ -6,28 +6,38 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.config.LanguageVersion
 
-
-private val USE_BE_IR = System.getProperty("fir.bench.fe1.useIR", "false").toBooleanLenient()!!
+/**
+ * Language version to be used for K1 FP tests
+ */
+internal val LANGUAGE_VERSION_K1: String = System.getProperty("fir.bench.language.version.k1", "1.8")
 
 class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
-        args.useIR = USE_BE_IR
-        args.useOldBackend = !USE_BE_IR
-        args.useFir = false
-        args.jvmDefault = "compatibility"
-        args.apiVersion = "1.4"
-        args.optIn = arrayOf(
-            "kotlin.RequiresOptIn",
-            "kotlin.contracts.ExperimentalContracts",
-            "kotlin.io.path.ExperimentalPathApi",
-            "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
-        )
-        args.multiPlatform = true
+        args.languageVersion = LANGUAGE_VERSION_K1
+        // TODO: Remove when support for old modularized tests is removed
+        if (moduleData.arguments == null) {
+            args.jvmDefault = "compatibility"
+            args.apiVersion = API_VERSION
+            args.optIn = arrayOf(
+                "kotlin.RequiresOptIn",
+                "kotlin.contracts.ExperimentalContracts",
+                "kotlin.io.path.ExperimentalPathApi",
+                "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+            )
+            args.multiPlatform = true
+            args.noStdlib = true
+            args.noReflect = true
+        }
+
+        require(LanguageVersion.fromVersionString(args.languageVersion)!! < LanguageVersion.KOTLIN_2_0) {
+            "Language version misconfiguration for K1 FP: ${args.languageVersion} >= 2.0"
+        }
     }
 
     fun testTotalKotlin() {
+        pinCurrentThreadToIsolatedCpu()
         for (i in 0 until PASSES) {
             println("Pass $i")
             runTestOnce(i)

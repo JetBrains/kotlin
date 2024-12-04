@@ -11,8 +11,10 @@ package kotlin.time
 /**
  * Converts [java.time.Duration][java.time.Duration] value to [kotlin.time.Duration][Duration] value.
  *
- * Durations less than 104 days are converted exactly, and durations greater than that can lose some precision
- * due to rounding.
+ * Accuracy of conversion:
+ * - Durations in range of ±146 years are converted exactly.
+ * - Durations out of that range, but in range of ±146 million years can be rounded to millisecond precision.
+ * - Durations greater than that are converted to a positive or negative infinite Duration (see [Duration.INFINITE]).
  */
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalTime::class)
@@ -24,7 +26,7 @@ public inline fun java.time.Duration.toKotlinDuration(): Duration =
 /**
  * Converts [kotlin.time.Duration][Duration] value to [java.time.Duration][java.time.Duration] value.
  *
- * Durations greater than [Long.MAX_VALUE] seconds are cut to that value.
+ * An infinite duration is converted to either [Long.MAX_VALUE], or [Long.MIN_VALUE] seconds, depending on its sign.
  */
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalTime::class)

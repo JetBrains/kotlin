@@ -28,11 +28,16 @@ public class JvmClassName {
 
     @NotNull
     public static JvmClassName byClassId(@NotNull ClassId classId) {
+        return new JvmClassName(internalNameByClassId(classId));
+    }
+
+    @NotNull
+    public static String internalNameByClassId(@NotNull ClassId classId) {
         FqName packageFqName = classId.getPackageFqName();
         String relativeClassName = classId.getRelativeClassName().asString().replace('.', '$');
         return packageFqName.isRoot()
-               ? new JvmClassName(relativeClassName)
-               : new JvmClassName(packageFqName.asString().replace('.', '/') + "/" + relativeClassName);
+               ? relativeClassName
+               : packageFqName.asString().replace('.', '/') + "/" + relativeClassName;
     }
 
     /**

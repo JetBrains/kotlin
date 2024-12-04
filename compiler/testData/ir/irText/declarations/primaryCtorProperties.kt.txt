@@ -1,10 +1,4 @@
 class C {
-  constructor(test1: Int, test2: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val test1: Int
     field = test1
     get
@@ -14,4 +8,11 @@ class C {
     get
     set
 
+  constructor(test1: Int, test2: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

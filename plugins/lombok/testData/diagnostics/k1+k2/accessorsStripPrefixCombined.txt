@@ -1,0 +1,16 @@
+package
+
+public fun </*0*/ T> assertEquals(/*0*/ a: T, /*1*/ b: T): kotlin.Unit
+public fun test(): kotlin.Unit
+
+@lombok.Getter @lombok.Setter @lombok.experimental.Accessors(chain = false, fluent = true, prefix = {"pxo"}) public open class PrefixJava {
+    public constructor PrefixJava()
+    private final var pxaPropA: kotlin.String!
+    @lombok.experimental.Accessors private final var pxaPropD: kotlin.String!
+    @lombok.experimental.Accessors(chain = true) private final var pxoPropC: kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open /*synthesized*/ fun getPropD(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open /*synthesized*/ fun setPropD(/*0*/ pxaPropD: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

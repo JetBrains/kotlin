@@ -29,6 +29,9 @@ object ScriptingConfigurationKeys {
     val DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("Do not extract script definitions from the compilation classpath")
 
+    val DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("Do not automatically load compiler-supplied script definitions, like main-kts")
+
     val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION: CompilerConfigurationKey<MutableMap<String, Any?>> =
         CompilerConfigurationKey.create("Script resolver environment")
 }

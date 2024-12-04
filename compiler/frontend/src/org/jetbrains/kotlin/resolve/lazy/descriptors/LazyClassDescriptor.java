@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
+import com.google.common.collect.HashMultimap;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import kotlin.Pair;
 import kotlin.annotations.jvm.ReadOnly;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
@@ -46,17 +48,18 @@ import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static kotlin.collections.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.INNER_KEYWORD;
+import static org.jetbrains.kotlin.name.NameUtils.contextReceiverName;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
@@ -104,6 +107,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     private final NotNullLazyValue<Collection<ClassDescriptor>> sealedSubclasses;
 
+    private final NotNullLazyValue<List<ReceiverParameterDescriptor>> contextReceivers;
+
     public LazyClassDescriptor(
             @NotNull LazyClassContext c,
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -118,10 +123,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.c = c;
 
         classOrObject = classLikeInfo.getCorrespondingClassOrObject();
-        if (classOrObject != null) {
-            this.c.getTrace().record(BindingContext.CLASS, classOrObject, this);
-        }
-        this.c.getTrace().record(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(this), this);
 
         this.declarationProvider = c.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);
 
@@ -129,7 +130,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.scopesHolderForClass = createScopesHolderForClass(c, this.declarationProvider);
         this.kind = classLikeInfo.getClassKind();
-        this.staticScope = kind == ClassKind.ENUM_CLASS ? new StaticScopeForKotlinEnum(storageManager, this) : MemberScope.Empty.INSTANCE;
+        this.staticScope = kind == ClassKind.ENUM_CLASS ?
+                           new StaticScopeForKotlinEnum(
+                                   storageManager, this, /* enumEntriesCanBeUsed = */ true
+                           ) : MemberScope.Empty.INSTANCE;
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
@@ -189,8 +193,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             this.annotations = Annotations.Companion.getEMPTY();
         }
 
-        List<KtAnnotationEntry> jetDanglingAnnotations = classLikeInfo.getDanglingAnnotations();
-        if (jetDanglingAnnotations.isEmpty()) {
+        List<KtAnnotationEntry> ktDanglingAnnotations = classLikeInfo.getDanglingAnnotations();
+        if (ktDanglingAnnotations.isEmpty()) {
             this.danglingAnnotations = Annotations.Companion.getEMPTY();
         }
         else {
@@ -206,7 +210,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                             return getScopeForMemberDeclarationResolution();
                         }
                     },
-                    jetDanglingAnnotations
+                    ktDanglingAnnotations
             );
         }
 
@@ -294,10 +298,55 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             storageManager.createLazyValue(() -> {
                 if (getModality() == Modality.SEALED) {
                     return c.getSealedClassInheritorsProvider().computeSealedSubclasses(this, freedomForSealedInterfacesSupported);
-                } else {
+                }
+                else {
                     return Collections.emptyList();
                 }
+            });
+        this.contextReceivers = storageManager.createLazyValue(() -> {
+            if (classOrObject == null) {
+                return CollectionsKt.emptyList();
+            }
+            List<KtContextReceiver> contextReceivers = classOrObject.getContextReceivers();
+            List<ReceiverParameterDescriptor> contextReceiverDescriptors =
+                    IntStream.range(0, contextReceivers.size())
+                    .mapToObj(index -> {
+                        KtContextReceiver contextReceiver = contextReceivers.get(index);
+                        KtTypeReference typeReference = contextReceiver.typeReference();
+                        if (typeReference == null) return null;
+                        KotlinType kotlinType =
+                                c.getTypeResolver().resolveType(getScopeForClassHeaderResolution(), typeReference, c.getTrace(), true);
+                        Name label = contextReceiver.labelNameAsName() != null
+                                    ? contextReceiver.labelNameAsName()
+                                    : contextReceiverName(index);
+                        return DescriptorFactory.createContextReceiverParameterForClass(
+                                this,
+                                kotlinType,
+                                contextReceiver.labelNameAsName(),
+                                Annotations.Companion.getEMPTY(),
+                                index
+                        );
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            if (c.getLanguageVersionSettings().supportsFeature(LanguageFeature.ContextReceivers)) {
+                HashMultimap<String, ReceiverParameterDescriptor> labelNameToReceiverMap = HashMultimap.create();
+
+                for (int i = 0; i < contextReceivers.size(); i++) {
+                    labelNameToReceiverMap.put(contextReceivers.get(i).name(), contextReceiverDescriptors.get(i));
+                }
+
+                c.getTrace().record(BindingContext.DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, this, labelNameToReceiverMap);
+            }
+
+            return contextReceiverDescriptors;
         });
+
+        if (classOrObject != null) {
+            this.c.getTrace().record(BindingContext.CLASS, classOrObject, this);
+        }
+        this.c.getTrace().record(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(this), this);
     }
 
     private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {
@@ -319,7 +368,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE
         ) {
             {
-                initialize(null, null, Collections.emptyList(), Collections.emptyList(),
+                initialize(null, null, CollectionsKt.emptyList(), Collections.emptyList(), Collections.emptyList(),
                            null, Modality.FINAL, DescriptorVisibilities.PRIVATE);
             }
 
@@ -430,6 +479,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public Collection<ClassConstructorDescriptor> getConstructors() {
         return ((LazyClassMemberScope) getUnsubstitutedMemberScope()).getConstructors();
+    }
+
+    @NotNull
+    @Override
+    public List<ReceiverParameterDescriptor> getContextReceivers() {
+        return contextReceivers.invoke();
     }
 
     @Override
@@ -603,21 +658,56 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Nullable
     @Override
-    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
-        if (!InlineClassesUtilsKt.isInlineClass(this)) return null;
-
-        ClassConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
-        if (constructor != null) {
-            ValueParameterDescriptor parameter = firstOrNull(constructor.getValueParameters());
-            if (parameter != null) {
-                return new InlineClassRepresentation<>(parameter.getName(), (SimpleType) parameter.getType());
-            }
+    public ValueClassRepresentation<SimpleType> getValueClassRepresentation() {
+        if (!this.isValue && !this.isInline) {
+            return null;
         }
 
+        ClassConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
         // Don't crash on invalid code.
-        return new InlineClassRepresentation<>(
+        InlineClassRepresentation<SimpleType> invalidValueClassRepresentation = new InlineClassRepresentation<>(
                 SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME, c.getModuleDescriptor().getBuiltIns().getAnyType()
         );
+        if (constructor == null) {
+            return invalidValueClassRepresentation;
+        }
+        List<ValueParameterDescriptor> parameters = constructor.getValueParameters();
+        SimpleClassicTypeSystemContext context = SimpleClassicTypeSystemContext.INSTANCE;
+        if (isRecursiveInlineClass(constructor, new HashSet<>())) {
+            return new InlineClassRepresentation<>(parameters.get(0).getName(), (SimpleType) parameters.get(0).getType());
+        }
+        if (parameters.size() == 0) {
+            return invalidValueClassRepresentation;
+        }
+        List<Pair<Name, SimpleType>> fields = parameters.stream()
+                .map(parameter -> new Pair<>(parameter.getName(), (SimpleType) parameter.getType()))
+                .collect(Collectors.toList());
+        return ValueClassRepresentationKt.createValueClassRepresentation(context, fields);
+    }
+
+    private static boolean isRecursiveInlineClass(@Nullable ClassConstructorDescriptor constructor, @NotNull Set<ClassDescriptor> visited) {
+        if (constructor == null || constructor.getValueParameters().size() != 1 ||
+            !(constructor.getConstructedClass().isValue() || constructor.getConstructedClass().isInline())) {
+            return false;
+        }
+        if (!visited.add(constructor.getConstructedClass())) {
+            return true;
+        }
+        SimpleType type = (SimpleType) constructor.getValueParameters().get(0).getType();
+
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (descriptor instanceof ClassDescriptor) {
+            ClassConstructorDescriptor newConstructor = ((ClassDescriptor) descriptor).getUnsubstitutedPrimaryConstructor();
+            return isRecursiveInlineClass(newConstructor, visited);
+        }
+        return false;
+    }
+
+    @Override
+    public void validate() {
+        if (parameters == null) {
+            throw new IllegalStateException("parameters == null for " + this);
+        }
     }
 
     @Override
@@ -642,6 +732,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         ForceResolveUtil.forceResolveAllContents(getDescriptorsForExtraCompanionObjects());
         ForceResolveUtil.forceResolveAllContents(getUnsubstitutedMemberScope());
         ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
+        ForceResolveUtil.forceResolveAllContents(this.getContextReceivers());
     }
 
     // Note: headers of member classes' members are not resolved
@@ -671,6 +762,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         getUnsubstitutedPrimaryConstructor();
         getVisibility();
+        getContextReceivers();
     }
 
     @NotNull

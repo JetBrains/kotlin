@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
+// DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: Action.java
 public interface Action<T> {

@@ -1,9 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
-
 import java.util.*;
-
 
 public class A {
     void foo(List<Object> x) {}
@@ -12,10 +11,17 @@ public class A {
 
     List<? extends Number> bar() {}
     List<List<? extends Number>> bar2() {}
+    ListHolder<? extends Number> bar3() {}
+}
+
+// FILE: ListHolder.java
+import java.util.*;
+
+public interface ListHolder<T> {
+    List<T> get();
 }
 
 // FILE: B.java
-
 import java.util.*;
 
 public class B<T> {
@@ -23,6 +29,7 @@ public class B<T> {
 
     }
 }
+
 // FILE: main.kt
 
 fun main(a: A) {
@@ -30,8 +37,14 @@ fun main(a: A) {
     a.foo2(a.bar())
     a.foo3(a.bar())
     B(a.bar())
+
     a.foo(<!JAVA_TYPE_MISMATCH!>a.bar2()<!>)
     a.foo2(a.bar2())
     a.foo3(a.bar2())
     B(a.bar2())
+
+    a.foo(<!JAVA_TYPE_MISMATCH!>a.bar3().get()<!>)
+    a.foo2(a.bar3().get())
+    a.foo3(a.bar3().get())
+    B(a.bar3().get())
 }

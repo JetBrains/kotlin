@@ -66,7 +66,11 @@ class GlobalMetadataInfoHandler(
                     codeMetaInfos,
                     testServices.sourceFileProvider.getContentOfSourceFile(file)
                 )
-                builder.append(fileBuilder.stripAdditionalEmptyLines(file))
+                val reverseTransformers = testServices.sourceFileProvider.preprocessors.filterIsInstance<ReversibleSourceFilePreprocessor>()
+                val initialFileContent = fileBuilder.stripAdditionalEmptyLines(file).toString()
+                val actualFileContent =
+                    reverseTransformers.foldRight(initialFileContent) { transformer, source -> transformer.revert(file, source) }
+                builder.append(actualFileContent)
             }
         }
         val actualText = builder.toString()

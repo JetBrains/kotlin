@@ -1,0 +1,28 @@
+KaKotlinPropertySymbol:
+  callableId: test/MyInterface.withOwnGeneric_InterfaceWithValBase
+  name: withOwnGeneric_InterfaceWithValBase
+  origin: SOURCE
+
+KaKotlinPropertySymbol:
+  callableId: test/Inheritor.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
+  name: withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
+  origin: SUBSTITUTION_OVERRIDE
+
+KaNamedFunctionSymbol:
+  callableId: kotlin/Any.equals
+  name: equals
+  origin: LIBRARY
+
+KaNamedFunctionSymbol:
+  callableId: kotlin/Any.hashCode
+  name: hashCode
+  origin: LIBRARY
+
+KaNamedFunctionSymbol:
+  callableId: kotlin/Any.toString
+  name: toString
+  origin: LIBRARY
+
+KaConstructorSymbol:
+  callableId: null
+  origin: SOURCE_MEMBER_GENERATED

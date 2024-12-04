@@ -21,9 +21,7 @@ public class CompilationException extends KotlinExceptionWithAttachments {
               cause);
         this.element = element;
 
-        if (element != null) {
-            withAttachment("element.kt", element.getText());
-        }
+        withPsiAttachment("element.kt", element);
     }
 
     @Nullable

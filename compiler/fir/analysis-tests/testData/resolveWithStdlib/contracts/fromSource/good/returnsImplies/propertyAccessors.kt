@@ -1,20 +1,22 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
 interface A {
     fun foo()
 }
 
+@OptIn(ExperimentalContracts::class)
 var Any?.isNotNull: Boolean
     get() {
-        contract {
+        <!CONTRACT_NOT_ALLOWED!>contract<!> {
             returns(true) implies (this@isNotNull != null)
         }
         return this != null
     }
     set(value) {
-        contract {
-            returns() implies (this@isNotNull != null)
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>require(<!SENSELESS_COMPARISON!>this != null<!>)<!>
+        <!CONTRACT_NOT_ALLOWED!>contract<!> {
+            <!WRONG_IMPLIES_CONDITION!>returns() implies (this@isNotNull != null)<!>
+            require(<!SENSELESS_COMPARISON!>this != null<!>)
         }
     }
 

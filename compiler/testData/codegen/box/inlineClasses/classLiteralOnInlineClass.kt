@@ -1,22 +1,22 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
+// LANGUAGE: +ValueClasses
 
 package root
 
 import kotlin.reflect.KClass
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+@JvmInline
 value class IcInt(val x: Int)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+@JvmInline
 value class IcLong(val l: Long)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+@JvmInline
 value class IcAny(val a: Any?)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+@JvmInline
 value class IcOverIc(val o: IcLong)
 
 fun check(c: KClass<*>, s: String) {

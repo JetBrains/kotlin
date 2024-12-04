@@ -1,0 +1,23 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open enum class /A : kotlin/Enum</A> { // /A|null[0]
+    final val entries // /A.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries</A> // /A.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val prop1 // /A.prop1|{}prop1[0]
+        final fun <get-prop1>(): kotlin/String // /A.prop1.<get-prop1>|<get-prop1>(){}[0]
+    final val prop2 // /A.prop2|{}prop2[0]
+        final fun <get-prop2>(): kotlin/String // /A.prop2.<get-prop2>|<get-prop2>(){}[0]
+    final var prop3 // /A.prop3|{}prop3[0]
+        final fun <get-prop3>(): kotlin/String // /A.prop3.<get-prop3>|<get-prop3>(){}[0]
+        final fun <set-prop3>(kotlin/String) // /A.prop3.<set-prop3>|<set-prop3>(kotlin.String){}[0]
+    open fun f(): kotlin/String // /A.f|f(){}[0]
+    final fun valueOf(kotlin/String): /A // /A.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array</A> // /A.values|values#static(){}[0]
+    enum entry X // /A.X|null[0]
+    enum entry Y // /A.Y|null[0]
+    enum entry Z // /A.Z|null[0]
+}

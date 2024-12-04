@@ -1,0 +1,32 @@
+---
+assert("Hello, world!" !is String)
+                       |
+                       false
+---
+---
+assert(" !is " !is String)
+               |
+               false
+---
+---
+assert(
+    " !is "
+
+            !is
+            |
+            false
+
+            String
+)
+---
+---
+assert("Hello, world!"/*!is*/!is/*!is*/String)
+                             |
+                             false
+---
+---
+assert(("Hello, world!" !is String) !is Boolean)
+                        |           |
+                        |           false
+                        false
+---

@@ -6,14 +6,22 @@
 package org.jetbrains.kotlin.allopen.gradle.model.builder
 
 import org.jetbrains.kotlin.gradle.model.AllOpen
-import org.junit.Assert
-import org.junit.Test
+import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
+import org.jetbrains.kotlin.gradle.testbase.OtherGradlePluginTests
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-class AllOpenModelBuilderTest {
+@DisplayName("Allopen plugin model builder")
+@OtherGradlePluginTests
+class AllOpenModelBuilderTest : KGPBaseTest() {
+
+    @DisplayName("can build")
     @Test
     fun testCanBuild() {
         val modelBuilder = AllOpenModelBuilder()
-        Assert.assertTrue(modelBuilder.canBuild(AllOpen::class.java.name))
-        Assert.assertFalse(modelBuilder.canBuild("wrongModel"))
+        assertTrue(modelBuilder.canBuild(AllOpen::class.java.name))
+        assertFalse(modelBuilder.canBuild("wrongModel"))
     }
 }

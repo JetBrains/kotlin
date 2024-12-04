@@ -1,10 +1,11 @@
-fun <T : Any?> useTConstrained(xs: Array<T>, fn: Function0<T>): T {
-  return fn.invoke()
-}
-
 fun testWithNullCheck(xs: Array<String>) {
   useTConstrained<String>(xs = xs, fn = local fun <anonymous>(): String {
     return string() /*!! String */
   }
 ) /*~> Unit */
 }
+
+fun <T : Any?> useTConstrained(xs: Array<T>, fn: Function0<T>): T {
+  return fn.invoke()
+}
+

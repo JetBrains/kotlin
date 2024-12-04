@@ -1,0 +1,35 @@
+package
+
+public fun `should report error if type doesn't match`(): kotlin.Unit
+public fun `should report error if type doesn't match with apply`(): kotlin.Unit
+
+@ValueContainer public final data class StringProperty {
+    public constructor StringProperty(/*0*/ v: kotlin.String)
+    public final var v: kotlin.String
+    public final fun assign(/*0*/ v: StringProperty): kotlin.Unit
+    public final fun assign(/*0*/ v: kotlin.String): kotlin.Unit
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ v: kotlin.String = ...): StringProperty
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Task {
+    public constructor Task(/*0*/ input: StringProperty)
+    public final val input: StringProperty
+    public final operator /*synthesized*/ fun component1(): StringProperty
+    public final /*synthesized*/ fun copy(/*0*/ input: StringProperty = ...): Task
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final annotation class ValueContainer : kotlin.Annotation {
+    public constructor ValueContainer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

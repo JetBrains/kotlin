@@ -1,7 +1,3 @@
-interface SimpleTypeMarker {
-
-}
-
 class SimpleType : SimpleTypeMarker {
   constructor() /* primary */ {
     super/*Any*/()
@@ -11,14 +7,6 @@ class SimpleType : SimpleTypeMarker {
 
   fun foo(): String {
     return "OK"
-  }
-
-}
-
-interface User {
-  fun SimpleTypeMarker.bar(): String {
-    require(value = <this> is SimpleType)
-    return <this> /*as SimpleType */.foo()
   }
 
 }
@@ -36,3 +24,15 @@ class UserImpl {
   }
 
 }
+
+interface SimpleTypeMarker {
+}
+
+interface User {
+  fun SimpleTypeMarker.bar(): String {
+    require(value = <this> is SimpleType)
+    return <this> /*as SimpleType */.foo()
+  }
+
+}
+

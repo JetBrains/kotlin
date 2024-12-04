@@ -184,7 +184,7 @@ public final class WithNestedFun</*0*/ K> {
     public fun interface NestedFun {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public abstract fun inovke(/*0*/ element: [ERROR : K]): kotlin.Unit
+        public abstract fun inovke(/*0*/ element: [Error type: Unresolved type for K]): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 

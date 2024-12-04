@@ -1,0 +1,170 @@
+KtNameReferenceExpression(36,45): 'JavaClass'
+  KtSimpleNameReference:
+    (in ROOT) open class JavaClass
+
+KtNameReferenceExpression(61,70): 'JavaClass'
+  KtSimpleNameReference:
+    (in ROOT) open class JavaClass
+
+KtCallExpression(78,104): 'print(javaClass.something)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(78,83): 'print'
+  KtSimpleNameReference:
+    (in kotlin.io) inline fun print(message: kotlin.Int)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(84,93): 'javaClass'
+  KtSimpleNameReference:
+    javaClass: JavaClass
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(94,103): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun getSomething(): kotlin.Int
+
+KtNameReferenceExpression(109,118): 'javaClass'
+  KtSimpleNameReference:
+    javaClass: JavaClass
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(119,128): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+KtOperationReferenceExpression(129,130): '='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(137,146): 'javaClass'
+  KtSimpleNameReference:
+    javaClass: JavaClass
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(147,156): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun getSomething(): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+KtOperationReferenceExpression(157,159): '+='
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(166,175): 'javaClass'
+  KtSimpleNameReference:
+    javaClass: JavaClass
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(176,185): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun getSomething(): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+KtOperationReferenceExpression(185,187): '++'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int
+
+KtOperationReferenceExpression(192,194): '--'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun dec(): kotlin.Int
+
+KtNameReferenceExpression(194,203): 'javaClass'
+  KtSimpleNameReference:
+    javaClass: JavaClass
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(204,213): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun getSomething(): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+KtNameReferenceExpression(219,228): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun getSomething(): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+KtOperationReferenceExpression(228,230): '++'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int
+
+KtNameReferenceExpression(236,245): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun getSomething(): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+KtOperationReferenceExpression(246,248): '++'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun inc(): kotlin.Int
+
+KtNameReferenceExpression(254,263): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+KtOperationReferenceExpression(265,266): '='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(274,283): 'javaClass'
+  KtSimpleNameReference:
+    javaClass: JavaClass
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(284,293): 'something'
+  KtSimpleNameReference:
+    (in JavaClass) var JavaClass.something: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    (in JavaClass) open fun setSomething(value: kotlin.Int)
+
+KtOperationReferenceExpression(295,296): '='
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)

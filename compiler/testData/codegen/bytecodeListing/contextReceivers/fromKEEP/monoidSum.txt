@@ -1,0 +1,43 @@
+@kotlin.Metadata
+public final class IntMonoid {
+    // source: 'monoidSum.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: IntMonoid
+    private final static field unit: int
+    static method <clinit>(): void
+    private method <init>(): void
+    public @org.jetbrains.annotations.NotNull method combine(p0: int, p1: int): java.lang.Integer
+    public synthetic bridge method combine(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getUnit(): java.lang.Integer
+    public synthetic bridge method getUnit(): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface Monoid {
+    // source: 'monoidSum.kt'
+    public abstract method getUnit(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class MonoidSumKt {
+    // source: 'monoidSum.kt'
+    public final static method sum(@org.jetbrains.annotations.NotNull p0: Monoid, @org.jetbrains.annotations.NotNull p1: java.util.List): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface Semigroup {
+    // source: 'monoidSum.kt'
+    public abstract method combine(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class StringMonoid {
+    // source: 'monoidSum.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: StringMonoid
+    private final static @org.jetbrains.annotations.NotNull field unit: java.lang.String
+    static method <clinit>(): void
+    private method <init>(): void
+    public @org.jetbrains.annotations.NotNull method combine(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public synthetic bridge method combine(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method getUnit(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getUnit(): java.lang.String
+}

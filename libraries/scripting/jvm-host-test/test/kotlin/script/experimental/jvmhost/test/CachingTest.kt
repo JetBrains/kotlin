@@ -8,11 +8,16 @@ package kotlin.script.experimental.jvmhost.test
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
 import java.io.*
+import java.net.URLClassLoader
 import java.security.MessageDigest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
@@ -130,17 +135,7 @@ class CachingTest : TestCase() {
     fun ignoredTestLocalDependencyWithJarCacheInvalidation() {
         withTempDir("scriptingTestDepDir") { depDir ->
             val standardJars = KotlinJars.kotlinScriptStandardJars
-            val outJar = File(depDir, "dependency.jar")
-            val inKt = File(depDir, "Dependency.kt").apply { writeText("class Dependency(val v: Int)") }
-            val outStream = ByteArrayOutputStream()
-            val compileExitCode = K2JVMCompiler().exec(
-                PrintStream(outStream),
-                "-d", outJar.path, "-no-stdlib", "-cp", standardJars.joinToString(File.pathSeparator), inKt.path
-            )
-            assertTrue(
-                "Compilation Failed:\n$outStream",
-                outStream.size() == 0 && compileExitCode == ExitCode.OK && outJar.exists()
-            )
+            val outJar = makeDependenciesJar(depDir, standardJars)
 
             withTempDir("scriptingTestJarChacheWithDep") { cacheDir ->
                 val cache = TestCompiledScriptJarsCache(cacheDir)
@@ -186,6 +181,73 @@ class CachingTest : TestCase() {
                 assertEquals(0, cacheDir.listFiles().size)
             }
         }
+    }
+
+    @Test
+    fun testLocalDependencyWithExternalLoadAndCache() {
+        withTempDir("scriptingTestDepDir") { depDir ->
+            val standardJars = KotlinJars.kotlinScriptStandardJars
+            val outJar = makeDependenciesJar(depDir, standardJars)
+
+            withTempDir("scriptingTestJarChacheWithExtLoadedDep") { cacheDir ->
+                val cache = TestCompiledScriptJarsCache(cacheDir)
+                Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+
+                val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
+                    jvm {
+                        baseClassLoader(URLClassLoader((standardJars + outJar).map { it.toURI().toURL() }.toTypedArray(), null))
+                        compilationCache(cache)
+                    }
+                }
+                val host = BasicJvmScriptingHost(compiler = JvmScriptCompiler(hostConfiguration), evaluator = BasicJvmScriptEvaluator())
+
+                val scriptCompilationConfiguration = ScriptCompilationConfiguration {
+                    updateClasspath(standardJars + outJar)
+                    this.hostConfiguration.update { hostConfiguration }
+                }
+                val scriptEvaluationConfiguration = ScriptEvaluationConfiguration {
+                    jvm {
+                        loadDependencies(false)
+                    }
+                    this.hostConfiguration.update { hostConfiguration }
+                }
+
+                val script = "Dependency(42).v".toScriptSource()
+
+                // Without the patch that fixes loadDependencies usage in kotlin.script.experimental.jvmhost.KJvmCompiledScriptLazilyLoadedFromClasspath.getClass
+                // AND with hostConfiguration removed from scriptEvaluationConfiguration (essentially creating a misconfigured evaluator)
+                // the first evaluation fails because it cannot find the class for dependency, but the second mistakingly succeed, because dependency is taken from the cache
+                // (see #KT-50902 for details)
+                val res0 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
+                assertEquals(42, (res0 as? ResultValue.Value)?.value)
+
+                val res1 = host.eval(script, scriptCompilationConfiguration, scriptEvaluationConfiguration).valueOrThrow().returnValue
+                assertEquals(42, (res1 as? ResultValue.Value)?.value)
+            }
+        }
+    }
+
+    private fun makeDependenciesJar(depDir: File, standardJars: List<File>): File {
+        val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+        val outJar = File(depDir, "dependency.jar")
+        val inKt = File(depDir, "Dependency.kt").apply { writeText("class Dependency(val v: Int)") }
+        val outStream = ByteArrayOutputStream()
+        val compileExitCode = K2JVMCompiler().exec(
+            PrintStream(outStream),
+            K2JVMCompilerArguments::destination.cliArgument,
+            outJar.path,
+            K2JVMCompilerArguments::noStdlib.cliArgument,
+            K2JVMCompilerArguments::classpath.cliArgument,
+            standardJars.joinToString(File.pathSeparator),
+            CommonCompilerArguments::languageVersion.cliArgument,
+            if (isK2) "2.0" else "1.9",
+            inKt.path
+        )
+        assertTrue(
+            "Compilation Failed:\n$outStream",
+            outStream.size() == 0 && compileExitCode == ExitCode.OK && outJar.exists()
+        )
+        return outJar
     }
 
     private fun checkWithCache(

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -42,6 +45,17 @@ class KotlinCallResolver(
         }
 
         return kotlinCallCompleter.runCompletion(candidateFactory, candidates, expectedType, resolutionCallbacks)
+    }
+
+    fun resolveCall(
+        scopeTower: ImplicitScopeTower,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        kotlinCall: KotlinCall,
+        expectedType: UnwrappedType?,
+        collectAllCandidates: Boolean,
+    ): Collection<ResolutionCandidate> {
+        val candidateFactory = createFactory(scopeTower, kotlinCall, resolutionCallbacks, expectedType)
+        return resolveCall(scopeTower, resolutionCallbacks, kotlinCall, collectAllCandidates, candidateFactory)
     }
 
     fun resolveAndCompleteGivenCandidates(
@@ -207,31 +221,53 @@ class KotlinCallResolver(
             )
         }
 
-        if (
-            maximallySpecificCandidates.size > 1 &&
-            callComponents.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType) &&
-            candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) } &&
-            kotlinCall.callKind != KotlinCallKind.CALLABLE_REFERENCE
-        ) {
-            val candidatesWithAnnotation = candidates.filter {
-                it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME)
-            }.toSet()
-            val candidatesWithoutAnnotation = candidates - candidatesWithAnnotation
-            if (candidatesWithAnnotation.isNotEmpty()) {
-                @Suppress("UNCHECKED_CAST")
-                val newCandidates = kotlinCallCompleter.chooseCandidateRegardingOverloadResolutionByLambdaReturnType(
-                    maximallySpecificCandidates as Set<SimpleResolutionCandidate>,
-                    resolutionCallbacks
-                )
-                maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
-                    newCandidates,
-                    CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                    discriminateGenerics = true
-                )
+        if (maximallySpecificCandidates.size > 1) {
+            if (maximallySpecificCandidates.size == 2) {
+                val enumEntryCandidate = maximallySpecificCandidates.find {
+                    val descriptor = it.resolvedCall.candidateDescriptor
+                    descriptor is FakeCallableDescriptorForObject && descriptor.classDescriptor.kind == ClassKind.ENUM_ENTRY
+                }
+                if (enumEntryCandidate != null) {
+                    val otherCandidate = maximallySpecificCandidates.find {
+                        val candidateDescriptor = it.resolvedCall.candidateDescriptor
+                        candidateDescriptor !is FakeCallableDescriptorForObject
+                    }
+                    if (otherCandidate != null) {
+                        val propertyDescriptor = otherCandidate.resolvedCall.candidateDescriptor
+                        if (propertyDescriptor is PropertyDescriptor) {
+                            val enumEntryDescriptor =
+                                (enumEntryCandidate.resolvedCall.candidateDescriptor as FakeCallableDescriptorForObject).classDescriptor
+                            otherCandidate.addDiagnostic(EnumEntryAmbiguityWarning(propertyDescriptor, enumEntryDescriptor))
+                            return setOf(otherCandidate)
+                        }
+                    }
+                }
+            }
+            if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType) &&
+                kotlinCall.callKind != KotlinCallKind.CALLABLE_REFERENCE &&
+                candidates.all { it.isSuccessful } &&
+                candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
+            ) {
+                val candidatesWithAnnotation = candidates.filter {
+                    it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME)
+                }.toSet()
+                val candidatesWithoutAnnotation = candidates - candidatesWithAnnotation
+                if (candidatesWithAnnotation.isNotEmpty()) {
+                    @Suppress("UNCHECKED_CAST")
+                    val newCandidates = kotlinCallCompleter.chooseCandidateRegardingOverloadResolutionByLambdaReturnType(
+                        maximallySpecificCandidates as Set<SimpleResolutionCandidate>,
+                        resolutionCallbacks
+                    )
+                    maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
+                        newCandidates,
+                        CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                        discriminateGenerics = true
+                    )
 
-                if (maximallySpecificCandidates.size > 1 && candidatesWithoutAnnotation.any { it in maximallySpecificCandidates }) {
-                    maximallySpecificCandidates = maximallySpecificCandidates.toMutableSet().apply { removeAll(candidatesWithAnnotation) }
-                    maximallySpecificCandidates.singleOrNull()?.addDiagnostic(CandidateChosenUsingOverloadResolutionByLambdaAnnotation())
+                    if (maximallySpecificCandidates.size > 1 && candidatesWithoutAnnotation.any { it in maximallySpecificCandidates }) {
+                        maximallySpecificCandidates = maximallySpecificCandidates.toMutableSet().apply { removeAll(candidatesWithAnnotation) }
+                        maximallySpecificCandidates.singleOrNull()?.addDiagnostic(CandidateChosenUsingOverloadResolutionByLambdaAnnotation())
+                    }
                 }
             }
         }

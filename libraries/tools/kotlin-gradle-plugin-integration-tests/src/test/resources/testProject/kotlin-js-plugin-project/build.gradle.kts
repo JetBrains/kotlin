@@ -1,6 +1,5 @@
 plugins {
-    kotlin("js").version("<pluginMarkerVersion>")
-    id("kotlin-dce-js")
+    kotlin("js")
     `maven-publish`
 }
 
@@ -10,13 +9,13 @@ version = "1.0"
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url = uri("https://jcenter.bintray.com/") }
+    maven { setUrl("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") }
 }
 
 kotlin.sourceSets {
     getByName("main") {
         dependencies {
-            api("org.jetbrains.kotlinx:kotlinx-html-js:0.6.12")
+            api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.5")
             implementation(kotlin("stdlib-js"))
         }
     }
@@ -29,13 +28,22 @@ kotlin.sourceSets {
 
 kotlin.target {
     nodejs()
+    browser {
+        testTask {
+            useKarma {
+                useChromeHeadless()
+            }
+            enabled = false // Task is disabled because it requires browser to be installed. That may be a problem on CI.
+            // Disabled but configured task allows us to check at least a part of configuration cache correctness.
+        }
+    }
 }
 
 kotlin.target.compilations.create("benchmark") {
     defaultSourceSet.dependencies {
         val main by kotlin.target.compilations
         implementation(main.compileDependencyFiles + main.output.classesDirs)
-        runtimeOnly(main.runtimeDependencyFiles)
+        runtimeOnly(files(main.runtimeDependencyFiles))
     }
 }
 
@@ -43,7 +51,6 @@ publishing {
     publications {
         create("default", MavenPublication::class.java) {
             from(components.getByName("kotlin"))
-            artifact(tasks.getByName("kotlinSourcesJar"))
         }
     }
     repositories {

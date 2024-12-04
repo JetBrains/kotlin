@@ -1,0 +1,23 @@
+@kotlin.Metadata
+public final class CompareToKt {
+    // source: 'compareTo.kt'
+    public final static method compareTo(@org.jetbrains.annotations.NotNull p0: java.util.Comparator, p1: java.lang.Object, p2: java.lang.Object): int
+    public final static method getMin(@org.jetbrains.annotations.NotNull p0: java.util.Comparator, @org.jetbrains.annotations.NotNull p1: Pair): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Pair {
+    // source: 'compareTo.kt'
+    private final field first: java.lang.Object
+    private final field second: java.lang.Object
+    public method <init>(p0: java.lang.Object, p1: java.lang.Object): void
+    public final method component1(): java.lang.Object
+    public final method component2(): java.lang.Object
+    public synthetic static method copy$default(p0: Pair, p1: java.lang.Object, p2: java.lang.Object, p3: int, p4: java.lang.Object): Pair
+    public final @org.jetbrains.annotations.NotNull method copy(p0: java.lang.Object, p1: java.lang.Object): Pair
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getFirst(): java.lang.Object
+    public final method getSecond(): java.lang.Object
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}

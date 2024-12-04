@@ -1,5 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ReleaseCoroutines
 // SKIP_TXT
 
 suspend fun test() {

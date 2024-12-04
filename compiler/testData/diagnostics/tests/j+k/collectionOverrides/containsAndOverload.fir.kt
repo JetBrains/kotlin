@@ -1,4 +1,7 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// SCOPE_DUMP: KA:contains
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 // FILE: A.java
 abstract public class A implements java.util.Collection<String> {
@@ -8,14 +11,14 @@ abstract public class A implements java.util.Collection<String> {
 
 // FILE: main.kt
 abstract class KA : A() {
-    override fun contains(x: String) = false
+    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE!>contains<!>(x: String) = false
 }
 
 fun foo(a: A, ka: KA) {
-    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>contains<!>("")
-    a.<!NONE_APPLICABLE!>contains<!>(1)
-    "" <!OVERLOAD_RESOLUTION_AMBIGUITY!>in<!> a
-    1 <!NONE_APPLICABLE!>in<!> a
+    a.contains("")
+    a.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    "" in a
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in a
 
     ka.contains("")
     ka.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)

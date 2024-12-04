@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.resolve.calls.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateCollector
 import java.util.*
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
@@ -17,7 +17,7 @@ import kotlin.coroutines.resume
 
 class TowerResolveManager private constructor(private val shouldStopAtTheLevel: (TowerGroup) -> Boolean) {
 
-    constructor(collector: CandidateCollector) : this(collector::shouldStopAtTheLevel)
+    constructor(collector: CandidateCollector) : this(collector::shouldStopAtTheGroup)
 
     private val queue = PriorityQueue<SuspendedResolverTask>()
 

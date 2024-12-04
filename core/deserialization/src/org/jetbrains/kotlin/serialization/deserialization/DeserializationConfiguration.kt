@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+
 interface DeserializationConfiguration {
+
+    val metadataVersion: MetadataVersion
+        get() = MetadataVersion.INSTANCE
+
     val skipMetadataVersionCheck: Boolean
         get() = false
 

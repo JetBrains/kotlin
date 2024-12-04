@@ -1,0 +1,4 @@
+FILE: expressionsInQaSelectorsWithElvis.kt
+    public final fun test(a: R|(kotlin/Int.() -> kotlin/Int)?|, b: R|kotlin/Int.() -> kotlin/Int|): R|kotlin/Unit| {
+        R|<local>/a| ?: R|<local>/b|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(2))
+    }

@@ -1,0 +1,20 @@
+FILE: test.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Any|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Any| = R|<local>/x|
+            public get(): R|kotlin/Any|
+
+        public final fun <T> getFoo(): R|T| {
+            ^getFoo (this@R|/Base|.R|/Base.x| as R|T|)
+        }
+
+    }
+    public final fun bar(some: R|Some|): R|kotlin/Unit| {
+        lval foo: <ERROR TYPE REF: Unresolved name: foo> = R|<local>/some|.<Unresolved name: foo>#
+        lval baz: <ERROR TYPE REF: Unresolved name: foo> = R|<local>/some|.<Unresolved name: foo>#<R|kotlin/String|>
+        lval getFoo: <ERROR TYPE REF: Cannot infer argument for type parameter T> = R|<local>/some|.R|/Base.getFoo<CS errors: /Base.getFoo>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+        lval getBaz: R|kotlin/String| = R|<local>/some|.R|/Base.getFoo|<R|kotlin/String|>()
+    }

@@ -1,0 +1,28 @@
+FILE: AnnotatedBlock.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class Ann2 : R|kotlin/Annotation| {
+        public constructor(): R|Ann2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(x: R|kotlin/String?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/x|, Null(null)) -> @R|Ann|() @R|Ann2|()  {
+                Q|kotlin/Unit|
+            }
+        }
+
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                @R|Ann|() @R|Ann2|() Q|kotlin/Unit|
+            }
+        }
+
+        @R|Ann|() @R|Ann2|() R|<local>/x|
+    }

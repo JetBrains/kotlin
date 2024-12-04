@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.jvm.*
 
 external fun <<!REIFIED_TYPE_PARAMETER_NO_INLINE!>reified<!> T> foo()

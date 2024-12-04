@@ -1,0 +1,14 @@
+FILE: test.kt
+    public open class Value : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|Value| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final val generator: R|Generator| = R|/Generator.Generator|()
+        public get(): R|Generator|
+    public final val y: R|Value| = (R|/generator|.R|/Generator.createValue|<R|Value!|>(String(Omega)) as R|Value|)
+        public get(): R|Value|

@@ -1,0 +1,1 @@
+class String : java.io.Serializable, kotlin.Comparable<kotlin.String!>, kotlin.CharSequence

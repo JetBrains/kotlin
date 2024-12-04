@@ -1,0 +1,10 @@
+Before shortening: val prop: MyBaseClass.Nested = MyBaseClass.Nested()
+with default settings:
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[type] MyBaseClass.Nested
+[qualifier] MyBaseClass.Nested()
+with SHORTEN_AND_STAR_IMPORT:
+[type] MyBaseClass.Nested
+[qualifier] MyBaseClass.Nested()

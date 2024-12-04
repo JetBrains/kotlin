@@ -15,6 +15,8 @@ import java.nio.file.*
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.NoSuchFileException
 import java.nio.file.attribute.*
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.jvm.Throws
 
 /**
@@ -187,9 +189,9 @@ private object PathRelativizer {
  * Copies a file or directory located by this path to the given [target] path.
  *
  * Unlike `File.copyTo`, if some directories on the way to the [target] are missing, then they won't be created automatically.
- * You can use the following approach to ensure that required intermediate directories are created:
+ * You can use the [createParentDirectories] function to ensure that required intermediate directories are created:
  * ```
- * sourcePath.copyTo(destinationPath.apply { parent?.createDirectories() })
+ * sourcePath.copyTo(destinationPath.createParentDirectories())
  * ```
  *
  * If the [target] path already exists, this function will fail unless [overwrite] argument is set to `true`.
@@ -197,7 +199,7 @@ private object PathRelativizer {
  * When [overwrite] is `true` and [target] is a directory, it is replaced only if it is empty.
  *
  * If this path is a directory, it is copied without its content, i.e. an empty [target] directory is created.
- * If you want to copy directory including its contents, use [copyRecursively].
+ * If you want to copy directory including its contents, use [copyToRecursively].
  *
  * The operation doesn't preserve copied file attributes such as creation/modification date, permissions, etc.
  *
@@ -224,9 +226,9 @@ public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
  * Copies a file or directory located by this path to the given [target] path.
  *
  * Unlike `File.copyTo`, if some directories on the way to the [target] are missing, then they won't be created automatically.
- * You can use the following approach to ensure that required intermediate directories are created:
+ * You can use the [createParentDirectories] function to ensure that required intermediate directories are created:
  * ```
- * sourcePath.copyTo(destinationPath.apply { parent?.createDirectories() })
+ * sourcePath.copyTo(destinationPath.createParentDirectories())
  * ```
  *
  * If the [target] path already exists, this function will fail unless the
@@ -236,7 +238,7 @@ public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
  * it is replaced only if it is empty.
  *
  * If this path is a directory, it is copied *without* its content, i.e. an empty [target] directory is created.
- * If you want to copy a directory including its contents, use [copyRecursively].
+ * If you want to copy a directory including its contents, use [copyToRecursively].
  *
  * The operation doesn't preserve copied file attributes such as creation/modification date,
  * permissions, etc. unless [COPY_ATTRIBUTES][StandardCopyOption.COPY_ATTRIBUTES] is used.
@@ -480,7 +482,7 @@ public inline fun Path.deleteExisting() {
 @WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-public inline fun Path.deleteIfExists() =
+public inline fun Path.deleteIfExists(): Boolean =
     Files.deleteIfExists(this)
 
 /**
@@ -498,6 +500,8 @@ public inline fun Path.deleteIfExists() =
  *   when creating the directory.
  *
  * @see Files.createDirectory
+ * @see Path.createDirectories
+ * @see Path.createParentDirectories
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalPathApi::class)
@@ -511,15 +515,20 @@ public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Pat
  *
  * If the directory already exists, this function does not throw an exception, unlike [Path.createDirectory].
  *
+ * @return the path of this directory if it already exists or has been created successfully.
+ * The returned path can be converted [Path.toAbsolutePath][to absolute path] if it was relative.
+ *
  * @param attributes an optional list of file attributes to set atomically when creating the directory.
  *
- * @throws FileAlreadyExistsException if there is already a file located by this path
+ * @throws FileAlreadyExistsException if there is already a file located by this path or one of its parent paths
  * (optional specific exception, some implementations may throw more general [IOException]).
  * @throws IOException if an I/O error occurs.
- * @throws UnsupportedOperationException if the [attributes ]array contains an attribute that cannot be set atomically
+ * @throws UnsupportedOperationException if the [attributes] array contains an attribute that cannot be set atomically
  *   when creating the directory.
  *
  * @see Files.createDirectories
+ * @see Path.createDirectory
+ * @see Path.createParentDirectories
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalPathApi::class)
@@ -528,6 +537,41 @@ public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Pat
 public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): Path =
     Files.createDirectories(this, *attributes)
 
+/**
+ * Ensures that all parent directories of this path exist, creating them if required.
+ *
+ * If the parent directory already exists, this function does nothing.
+ *
+ * Note that the [parent][Path.getParent] directory is not always the directory that contains the entry specified by this path.
+ * For example, the parent of the path `x/y/.` is `x/y`, which is logically the same directory,
+ * and the parent of `x/y/..` (which means just `x/`) is also `x/y`.
+ * Use the function [Path.normalize] to eliminate redundant name elements from the path.
+ *
+ * @param attributes an optional list of file attributes to set atomically when creating the missing parent directories.
+ *
+ * @return this path unchanged if all parent directories already exist or have been created successfully.
+ *
+ * @throws FileAlreadyExistsException if there is already a file located by the [parent][Path.getParent] path or one of its parent paths
+ * (optional specific exception, some implementations may throw more general [IOException]).
+ * @throws IOException if an I/O error occurs.
+ * @throws UnsupportedOperationException if the [attributes] array contains an attribute that cannot be set atomically
+ *   when creating the directory.
+ *
+ * @see Path.getParent
+ * @see Path.createDirectories
+ */
+@SinceKotlin("1.9")
+@Throws(IOException::class)
+public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Path = also {
+    val parent = it.parent
+    if (parent != null && !parent.isDirectory()) {
+        try {
+            parent.createDirectories(*attributes)
+        } catch (e: FileAlreadyExistsException) {
+            if (!parent.isDirectory()) throw e
+        }
+    }
+}
 
 /**
  * Moves or renames the file located by this path to the [target] path.
@@ -996,3 +1040,213 @@ public inline fun Path(base: String, vararg subpaths: String): Path =
 @kotlin.internal.InlineOnly
 public inline fun URI.toPath(): Path =
     Paths.get(this)
+
+
+/**
+ * Returns a sequence of paths for visiting this directory and all its contents.
+ *
+ * By default, the returned sequence includes **only files** in the file tree, in **depth-first** order.
+ * Symbolic links are not followed; if encountered, they are included in the sequence as-is,
+ * and the contents of the directories they point to are not visited.
+ * The combination of [options] overrides this default behavior. See [PathWalkOption] for details.
+ *
+ * The order in which sibling entries are visited is unspecified.
+ *
+ * If, after calling this function, new entries get added or deleted from the file tree rooted at this directory,
+ * the changes may or may not be reflected in the returned sequence.
+ *
+ * If the entry located by this path does not exist, an empty sequence is returned.
+ * If the entry located by this path is not a directory, a sequence containing only this path is returned.
+ *
+ * Example:
+ * ```kotlin
+ * val startDirectory = createTempDirectory()
+ * run {
+ *     (startDirectory / "1" / "2" / "3" / "4").createDirectories()
+ *     (startDirectory / "1" / "2" / "3" / "a.txt").createFile()
+ *     (startDirectory / "1" / "2" / "b.txt").createFile()
+ *     (startDirectory / "c.txt").createFile()
+ * }
+ *
+ * // Default walk options. Prints:
+ * //    1/2/b.txt
+ * //    1/2/3/a.txt
+ * //    c.txt
+ * startDirectory.walk().forEach { path ->
+ *     println(path.relativeTo(startDirectory))
+ * }
+ *
+ * // Custom walk options. Prints:
+ * //    1
+ * //    c.txt
+ * //    1/2
+ * //    1/2/b.txt
+ * //    1/2/3
+ * //    1/2/3/a.txt
+ * //    1/2/3/4
+ * startDirectory.walk(PathWalkOption.INCLUDE_DIRECTORIES, PathWalkOption.BREADTH_FIRST).forEach { path ->
+ *     println(path.relativeTo(startDirectory))
+ * }
+ * ```
+ *
+ * When iterating the returned sequence, the following exceptions could be thrown:
+ *   * [FileSystemException] if the traversal reaches an entry with an illegal name such as "." or "..".
+ *   * [FileSystemLoopException] if the traversal reaches a cycle.
+ *   * [SecurityException] if a security manager is installed and it denies access to an entry reached during traversal.
+ *   * [IOException] if any errors arise while opening a directory.
+ */
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
+public fun Path.walk(vararg options: PathWalkOption): Sequence<Path> = PathTreeWalk(this, options)
+
+/**
+ * Visits this directory and all its contents with the specified [visitor].
+ *
+ * The traversal is in **depth-first** order and starts at this directory.
+ * The specified [visitor] is invoked on each entry encountered.
+ *
+ * Example:
+ *
+ * ```kotlin
+ * val cleanVisitor = fileVisitor {
+ *     onPreVisitDirectory { directory, _ ->
+ *         if (directory.name == "build") {
+ *             directory.deleteRecursively()
+ *             FileVisitResult.SKIP_SUBTREE
+ *         } else {
+ *             FileVisitResult.CONTINUE
+ *         }
+ *     }
+ *
+ *     onVisitFile { file, _ ->
+ *         if (file.extension == "class") {
+ *             file.deleteExisting()
+ *         }
+ *         FileVisitResult.CONTINUE
+ *     }
+ * }
+ *
+ * projectDirectory.visitFileTree(cleanVisitor)
+ * ```
+ *
+ * @param visitor the [FileVisitor] that receives callbacks.
+ * @param maxDepth the maximum depth to traverse. By default, there is no limit.
+ * @param followLinks specifies whether to follow symbolic links, `false` by default.
+ *   If `true`, the traversal follows symbolic links and visits the contents of the directories they point to.
+ *
+ * @throws IllegalArgumentException if [maxDepth] is negative.
+ * @throws SecurityException if a security manager is installed and it denies access to an entry reached during traversal.
+ * @throws IOException if a visitor function throws an I/O exception.
+ *
+ * @see Files.walkFileTree
+ */
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
+public fun Path.visitFileTree(visitor: FileVisitor<Path>, maxDepth: Int = Int.MAX_VALUE, followLinks: Boolean = false): Unit {
+    val options = if (followLinks) setOf(FileVisitOption.FOLLOW_LINKS) else setOf()
+    Files.walkFileTree(this, options, maxDepth, visitor)
+}
+
+/**
+ * Visits this directory and all its contents with the [FileVisitor] defined in [builderAction].
+ *
+ * This function works the same as [Path.visitFileTree]. It is introduced to streamline
+ * the cases when a [FileVisitor] is created only to be immediately used for a file tree traversal.
+ * The trailing lambda [builderAction] is passed to [fileVisitor] to get the file visitor.
+ *
+ * Example:
+ *
+ * ```kotlin
+ * projectDirectory.visitFileTree {
+ *     onPreVisitDirectory { directory, _ ->
+ *         if (directory.name == "build") {
+ *             directory.deleteRecursively()
+ *             FileVisitResult.SKIP_SUBTREE
+ *         } else {
+ *             FileVisitResult.CONTINUE
+ *         }
+ *     }
+ *
+ *     onVisitFile { file, _ ->
+ *         if (file.extension == "class") {
+ *             file.deleteExisting()
+ *         }
+ *         FileVisitResult.CONTINUE
+ *     }
+ * }
+ * ```
+ *
+ * @param maxDepth the maximum depth to traverse. By default, there is no limit.
+ * @param followLinks specifies whether to follow symbolic links, `false` by default.
+ *   If `true`, the traversal follows symbolic links and visits the contents of the directories they point to.
+ * @param builderAction the function that defines the callbacks for handling entry visit events.
+ *
+ * @throws IllegalArgumentException if [maxDepth] is negative.
+ * @throws SecurityException if a security manager is installed and it denies access to an entry reached during traversal.
+ * @throws IOException if a visitor function throws an I/O exception.
+ * @throws IllegalStateException if the provided [builderAction] defines a [FileVisitor] incorrectly.
+ *   See [fileVisitor] for details.
+ *
+ * @see Files.walkFileTree
+ * @see fileVisitor
+ */
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
+public fun Path.visitFileTree(
+    maxDepth: Int = Int.MAX_VALUE,
+    followLinks: Boolean = false,
+    builderAction: FileVisitorBuilder.() -> Unit
+): Unit {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    visitFileTree(fileVisitor(builderAction), maxDepth, followLinks)
+}
+
+/**
+ * Builds a [FileVisitor] whose implementation is defined in [builderAction].
+ *
+ * By default, the returned file visitor visits all files and re-throws I/O errors, that is:
+ *   * [FileVisitor.preVisitDirectory] returns [FileVisitResult.CONTINUE].
+ *   * [FileVisitor.visitFile] returns [FileVisitResult.CONTINUE].
+ *   * [FileVisitor.visitFileFailed] re-throws the I/O exception that prevented the file from being visited.
+ *   * [FileVisitor.postVisitDirectory] returns [FileVisitResult.CONTINUE] if the directory iteration completes without an I/O exception;
+ *     otherwise, it re-throws the I/O exception that caused the iteration to complete prematurely.
+ *
+ * To override a function provide its implementation to the corresponding
+ * function of the [FileVisitorBuilder] that was passed as a receiver to [builderAction].
+ * Note that each function can be overridden only once.
+ * Repeated override of a function throws [IllegalStateException].
+ *
+ * The builder is valid only inside [builderAction] function.
+ * Using it outside the function throws [IllegalStateException].
+ *
+ * Example:
+ *
+ * ```kotlin
+ * val cleanVisitor = fileVisitor {
+ *     onPreVisitDirectory { directory, _ ->
+ *         if (directory.name == "build") {
+ *             directory.deleteRecursively()
+ *             FileVisitResult.SKIP_SUBTREE
+ *         } else {
+ *             FileVisitResult.CONTINUE
+ *         }
+ *     }
+ *
+ *     onVisitFile { file, _ ->
+ *         if (file.extension == "class") {
+ *             file.deleteExisting()
+ *         }
+ *         FileVisitResult.CONTINUE
+ *     }
+ * }
+ * ```
+ *
+ * @see FileVisitor
+ * @see FileVisitorBuilder
+ */
+@WasExperimental(ExperimentalPathApi::class)
+@SinceKotlin("2.1")
+public fun fileVisitor(builderAction: FileVisitorBuilder.() -> Unit): FileVisitor<Path> {
+    contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
+    return FileVisitorBuilderImpl().apply(builderAction).build()
+}

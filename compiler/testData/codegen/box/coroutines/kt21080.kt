@@ -1,8 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: VARIABLE_EXPECTED at b?.a += ... Not sure FIR supports this (contact Dmitry Novozhilov)
 
 import kotlin.coroutines.*
 import helpers.*

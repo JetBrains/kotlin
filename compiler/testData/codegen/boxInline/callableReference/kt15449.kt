@@ -24,7 +24,7 @@ class A  {
                 apply2 {
                     this@linearLayout2::calc
                 }()
-            }()
+            }.let { it() }
         }
     }
 

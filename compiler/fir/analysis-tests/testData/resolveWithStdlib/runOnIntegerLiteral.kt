@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class TestInitValInLambdaCalledOnce {
     val x: Int
     init {

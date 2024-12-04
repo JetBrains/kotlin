@@ -1,0 +1,59 @@
+[CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+----
+[CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonTest can't declare dependsOn on other source sets
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'myCustomCommonMain' is included in compilations of Kotlin Targets: 'jvm', 'linuxX64'
+but it doesn't depend on 'commonMain'
+
+Please remove 'myCustomCommonMain' and include its sources to one of the default source set: https://kotl.in/hierarchy-template
+For example:
+
+    kotlin.sourceSets.commonMain.kotlin.srcDir() // <-- pass here sources directory
+
+Or add explicit dependency if the solution above is not applicable:
+
+    kotlin.sourceSets["myCustomCommonMain"].dependsOn(commonMain)
+
+See https://kotl.in/connecting-source-sets for more details.
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'myCustomCommonMain2' is included in compilations of Kotlin Targets: 'jvm', 'linuxX64'
+but it doesn't depend on 'commonMain'
+
+Please remove 'myCustomCommonMain2' and include its sources to one of the default source set: https://kotl.in/hierarchy-template
+For example:
+
+    kotlin.sourceSets.commonMain.kotlin.srcDir() // <-- pass here sources directory
+
+Or add explicit dependency if the solution above is not applicable:
+
+    kotlin.sourceSets["myCustomCommonMain2"].dependsOn(commonMain)
+
+See https://kotl.in/connecting-source-sets for more details.
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'myCustomCommonTest' is included in compilations of Kotlin Targets: 'jvm', 'linuxX64'
+but it doesn't depend on 'commonTest'
+
+Please remove 'myCustomCommonTest' and include its sources to one of the default source set: https://kotl.in/hierarchy-template
+For example:
+
+    kotlin.sourceSets.commonMain.kotlin.srcDir() // <-- pass here sources directory
+
+Or add explicit dependency if the solution above is not applicable:
+
+    kotlin.sourceSets["myCustomCommonTest"].dependsOn(commonTest)
+
+See https://kotl.in/connecting-source-sets for more details.
+----
+[MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Set 'myCustomCommonTest2' is included in compilations of Kotlin Targets: 'jvm', 'linuxX64'
+but it doesn't depend on 'commonTest'
+
+Please remove 'myCustomCommonTest2' and include its sources to one of the default source set: https://kotl.in/hierarchy-template
+For example:
+
+    kotlin.sourceSets.commonMain.kotlin.srcDir() // <-- pass here sources directory
+
+Or add explicit dependency if the solution above is not applicable:
+
+    kotlin.sourceSets["myCustomCommonTest2"].dependsOn(commonTest)
+
+See https://kotl.in/connecting-source-sets for more details.

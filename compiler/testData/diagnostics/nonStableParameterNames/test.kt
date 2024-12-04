@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference
 // MODULE: m1-common
 // FILE: test.kt
 

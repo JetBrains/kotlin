@@ -1,0 +1,32 @@
+STEP 0:
+    modifications:
+        U : JsModuleA.0.kt -> JsModuleA.kt
+        U : JsModuleB.0.kt -> JsModuleB.kt
+        U : demo.0.kt -> demo.kt
+    added file: JsModuleA.kt, JsModuleB.kt, demo.kt
+STEP 1:
+    modifications:
+        U : JsModuleA.1.kt -> JsModuleA.kt
+        U : JsModuleB.1.kt -> JsModuleB.kt
+    modified ir: JsModuleA.kt, JsModuleB.kt
+    updated imports: demo.kt
+STEP 2:
+    modifications:
+        U : JsModuleB.2.kt -> JsModuleB.kt
+    modified ir: JsModuleB.kt
+    updated imports: demo.kt
+STEP 3:
+    modifications:
+        U : demo.3.kt -> demo.kt
+    modified ir: demo.kt
+STEP 4:
+    modifications:
+        U : JsModuleA.4.kt -> JsModuleA.kt
+        U : JsModuleB.0.kt -> JsModuleB.kt
+    modified ir: JsModuleA.kt, JsModuleB.kt
+STEP 5:
+    modifications:
+        U : JsModuleA.1.kt -> JsModuleA.kt
+    modified ir: JsModuleA.kt
+    updated exports: JsModuleA.kt
+STEP 6:

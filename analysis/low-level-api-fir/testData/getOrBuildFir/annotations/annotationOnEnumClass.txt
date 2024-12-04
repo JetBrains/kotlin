@@ -1,0 +1,32 @@
+KT element: KtAnnotationEntry
+FIR element: FirAnnotationCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@<ERROR TYPE REF: Symbol not found for Anno>[Types]()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] annotationOnEnumClass.kt
+    @<ERROR TYPE REF: Symbol not found for Anno>[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class MyClass : R|kotlin/Enum<MyClass>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.i] i: Int = LAZY_EXPRESSION): R|MyClass| {
+            LAZY_super<R|kotlin/Enum<MyClass>|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Int
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] enum entry ENTRY1: R|MyClass| = LAZY_EXPRESSION
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] enum entry ENTRY2: R|MyClass| = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] a: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] fun values(): R|kotlin/Array<MyClass>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|MyClass| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<MyClass>|
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }

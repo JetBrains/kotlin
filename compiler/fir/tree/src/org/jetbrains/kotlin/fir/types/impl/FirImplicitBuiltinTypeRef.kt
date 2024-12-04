@@ -5,16 +5,10 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
@@ -29,7 +23,7 @@ sealed class FirImplicitBuiltinTypeRef(
     override val annotations: List<FirAnnotation>
         get() = emptyList()
 
-    override val type: ConeClassLikeType = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(id), typeArguments, isNullable)
+    override val coneType: ConeClassLikeType = ConeClassLikeTypeImpl(id.toLookupTag(), typeArguments, isNullable)
 
     override val delegatedTypeRef: FirTypeRef?
         get() = null
@@ -38,6 +32,10 @@ sealed class FirImplicitBuiltinTypeRef(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Replacing annotations in FirImplicitBuiltinTypeRef is not supported")
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef {
@@ -69,6 +67,10 @@ class FirImplicitBooleanTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Boolean)
 
+class FirImplicitNumberTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Number)
+
 class FirImplicitByteTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Byte)
@@ -93,6 +95,22 @@ class FirImplicitFloatTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Float)
 
+class FirImplicitUIntTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UInt)
+
+class FirImplicitULongTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.ULong)
+
+class FirImplicitUShortTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UShort)
+
+class FirImplicitUByteTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UByte)
+
 class FirImplicitNothingTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Nothing)
@@ -112,6 +130,14 @@ class FirImplicitStringTypeRef(
 class FirImplicitThrowableTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Throwable)
+
+class FirImplicitCharSequenceTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.CharSequence)
+
+class FirImplicitCharIteratorTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.CharIterator)
 
 class FirImplicitKPropertyTypeRef(
     source: KtSourceElement?,
@@ -160,10 +186,9 @@ class FirImplicitKMutableProperty2TypeRef(
     arrayOf(dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument)
 )
 
-fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): FirImplicitBuiltinTypeRef {
+fun FirImplicitBuiltinTypeRef.withNewSource(newSource: KtSourceElement?): FirImplicitBuiltinTypeRef {
     val source = source ?: return this
-    if (source.kind == kind) return this
-    val newSource = source.fakeElement(kind)
+    if (source.kind == newSource?.kind) return this
     return when (this) {
         is FirImplicitUnitTypeRef -> FirImplicitUnitTypeRef(newSource)
         is FirImplicitAnyTypeRef -> FirImplicitAnyTypeRef(newSource)
@@ -172,49 +197,56 @@ fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): Fir
         is FirImplicitAnnotationTypeRef -> FirImplicitAnnotationTypeRef(newSource)
         is FirImplicitBooleanTypeRef -> FirImplicitBooleanTypeRef(newSource)
         is FirImplicitByteTypeRef -> FirImplicitByteTypeRef(newSource)
+        is FirImplicitNumberTypeRef -> FirImplicitNumberTypeRef(newSource)
         is FirImplicitShortTypeRef -> FirImplicitShortTypeRef(newSource)
         is FirImplicitIntTypeRef -> FirImplicitIntTypeRef(newSource)
         is FirImplicitLongTypeRef -> FirImplicitLongTypeRef(newSource)
         is FirImplicitDoubleTypeRef -> FirImplicitDoubleTypeRef(newSource)
         is FirImplicitFloatTypeRef -> FirImplicitFloatTypeRef(newSource)
+        is FirImplicitUIntTypeRef -> FirImplicitUIntTypeRef(newSource)
+        is FirImplicitULongTypeRef -> FirImplicitULongTypeRef(newSource)
         is FirImplicitNothingTypeRef -> FirImplicitNothingTypeRef(newSource)
         is FirImplicitNullableNothingTypeRef -> FirImplicitNullableNothingTypeRef(newSource)
         is FirImplicitCharTypeRef -> FirImplicitCharTypeRef(newSource)
         is FirImplicitStringTypeRef -> FirImplicitStringTypeRef(newSource)
         is FirImplicitThrowableTypeRef -> FirImplicitThrowableTypeRef(newSource)
+        is FirImplicitCharSequenceTypeRef -> FirImplicitCharSequenceTypeRef(newSource)
+        is FirImplicitCharIteratorTypeRef -> FirImplicitCharIteratorTypeRef(newSource)
         is FirImplicitKPropertyTypeRef -> FirImplicitKPropertyTypeRef(
             newSource,
-            typeArgument = type.typeArguments[0]
+            typeArgument = coneType.typeArguments[0]
         )
         is FirImplicitKProperty0TypeRef -> FirImplicitKProperty0TypeRef(
             newSource,
-            propertyTypeArgument = type.typeArguments[0]
+            propertyTypeArgument = coneType.typeArguments[0]
         )
         is FirImplicitKMutableProperty0TypeRef -> FirImplicitKMutableProperty0TypeRef(
             newSource,
-            propertyTypeArgument = type.typeArguments[0]
+            propertyTypeArgument = coneType.typeArguments[0]
         )
         is FirImplicitKProperty1TypeRef -> FirImplicitKProperty1TypeRef(
             newSource,
-            receiverTypeArgument = type.typeArguments[0],
-            propertyTypeArgument = type.typeArguments[1]
+            receiverTypeArgument = coneType.typeArguments[0],
+            propertyTypeArgument = coneType.typeArguments[1]
         )
         is FirImplicitKMutableProperty1TypeRef -> FirImplicitKMutableProperty1TypeRef(
             newSource,
-            receiverTypeArgument = type.typeArguments[0],
-            propertyTypeArgument = type.typeArguments[1]
+            receiverTypeArgument = coneType.typeArguments[0],
+            propertyTypeArgument = coneType.typeArguments[1]
         )
         is FirImplicitKProperty2TypeRef -> FirImplicitKProperty2TypeRef(
             newSource,
-            dispatchReceiverTypeArgument = type.typeArguments[0],
-            extensionReceiverTypeArgument = type.typeArguments[1],
-            propertyTypeArgument = type.typeArguments[2]
+            dispatchReceiverTypeArgument = coneType.typeArguments[0],
+            extensionReceiverTypeArgument = coneType.typeArguments[1],
+            propertyTypeArgument = coneType.typeArguments[2]
         )
         is FirImplicitKMutableProperty2TypeRef -> FirImplicitKMutableProperty2TypeRef(
             newSource,
-            dispatchReceiverTypeArgument = type.typeArguments[0],
-            extensionReceiverTypeArgument = type.typeArguments[1],
-            propertyTypeArgument = type.typeArguments[2]
+            dispatchReceiverTypeArgument = coneType.typeArguments[0],
+            extensionReceiverTypeArgument = coneType.typeArguments[1],
+            propertyTypeArgument = coneType.typeArguments[2]
         )
+        is FirImplicitUByteTypeRef -> FirImplicitUByteTypeRef(newSource)
+        is FirImplicitUShortTypeRef -> FirImplicitUShortTypeRef(newSource)
     }
 }

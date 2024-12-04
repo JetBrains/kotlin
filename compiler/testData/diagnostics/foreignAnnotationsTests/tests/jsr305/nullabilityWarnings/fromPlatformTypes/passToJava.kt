@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// WITH_STDLIB
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: J.java
@@ -37,18 +39,39 @@ fun test(n: J?, nn: J) {
     J.staticNN = nn
     J.staticNN = platformNN
     J.staticNN = platformJ
+    J.staticNN = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    J.staticNN = requireNotNull(J.staticNN)
+    J.staticNN = requireNotNull(J.staticN)
+    J.staticNN = requireNotNull(J.staticJ)
+    J.staticNN = J.staticNN as J
+    J.staticNN = J.staticN as J
+    J.staticNN = J.staticJ as J
 
     J.staticN = n
     J.staticN = platformN
     J.staticN = nn
     J.staticN = platformNN
     J.staticN = platformJ
+    J.staticN = null
+    J.staticN = requireNotNull(J.staticNN)
+    J.staticN = requireNotNull(J.staticN)
+    J.staticN = requireNotNull(J.staticJ)
+    J.staticN = J.staticNN as J
+    J.staticN = J.staticN as J
+    J.staticN = J.staticJ as J
 
     J.staticJ = n
     J.staticJ = platformN
     J.staticJ = nn
     J.staticJ = platformNN
     J.staticJ = platformJ
+    J.staticJ = null
+    J.staticJ = requireNotNull(J.staticNN)
+    J.staticJ = requireNotNull(J.staticN)
+    J.staticJ = requireNotNull(J.staticJ)
+    J.staticJ = J.staticNN as J
+    J.staticJ = J.staticN as J
+    J.staticJ = J.staticJ as J
 
     J.staticSet(nn, nn, nn)
     J.staticSet(platformNN, platformNN, platformNN)

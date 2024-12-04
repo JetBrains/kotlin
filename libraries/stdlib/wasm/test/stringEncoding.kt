@@ -5,7 +5,6 @@
 
 package test.text
 
-// TODO: Fix this once we implement kotlin.text
-internal actual val surrogateCodePointDecoding: String = "�"
+internal actual val surrogateCodePointDecoding: String = "���"
 
-internal actual val surrogateCharEncoding: ByteArray = byteArrayOf(0x3F)
+internal actual val surrogateCharEncoding: ByteArray = byteArrayOf(0xEF.toByte(), 0xBF.toByte(), 0xBD.toByte())

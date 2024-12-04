@@ -1,2 +1,5 @@
 expression: a
-expected type: kotlin/Int
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: kotlin/Int

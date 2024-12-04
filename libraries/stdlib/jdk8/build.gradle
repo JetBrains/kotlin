@@ -1,32 +1,25 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 description = 'Kotlin Standard Library JDK 8 extension'
 
 apply plugin: 'kotlin'
 
-configurePublishing(project)
-configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.publish(project)
+RepoArtifacts.sourcesJar(project)
+RepoArtifacts.javadocJar(project)
 
 dependencies {
     api project(':kotlin-stdlib')
     api project(':kotlin-stdlib-jdk7')
-    testApi project(':kotlin-test:kotlin-test-junit')
 }
 
 sourceSets {
     main {
         kotlin {
-            srcDir 'src'
         }
     }
     test {
         kotlin {
-            srcDir 'test'
-            if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
-                srcDir '../jvm/test'
-                srcDir '../common/test'
-                srcDir '../test'
-                srcDir '../jdk7/test'
-            }
         }
     }
     java9 {
@@ -34,71 +27,62 @@ sourceSets {
             srcDir 'java9'
         }
     }
+    moduleTest {
+        java {
+            srcDir 'moduleTest'
+        }
+    }
+}
+
+dependencies {
+    moduleTestApi project(':kotlin-stdlib')
+    moduleTestApi project(':kotlin-stdlib-jdk7')
+    moduleTestCompileOnly project
+    moduleTestApi RepoDependencies.kotlinTest(project, "junit")
+    moduleTestApi "org.ow2.asm:asm:9.0"
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main', true)
+    LibrariesCommon.manifestAttributes(project, manifest, 'Main', true)
     from sourceSets.java9.output
 }
 
-configureModularJar {
-    dependsOn(jar)
-    manifestAttributes(manifest, project, 'Main', true)
-
-    from zipTree(jar.outputs.files.singleFile)
+sourcesJar {
+    from sourceSets.java9.allSource
 }
 
 artifacts {
     archives sourcesJar
     sources sourcesJar
-
-    archives modularJar
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = [
-            "-Xallow-kotlin-package",
-            "-Xmultifile-parts-inherit",
-    ]
     kotlinOptions.moduleName = project.name
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = [
-            "-Xallow-kotlin-package",
-            "-Xmulti-platform",
-            "-opt-in=kotlin.RequiresOptIn",
-            "-opt-in=kotlin.ExperimentalUnsignedTypes",
-            "-opt-in=kotlin.ExperimentalStdlibApi",
-            "-opt-in=kotlin.io.path.ExperimentalPathApi",
-            "-Xcommon-sources=${fileTree('../test').join(',')}",
-    ]
 }
-
-configureFrontendIr(project)
 
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk8')
 
-task testJdk6Tests(type: Test) { thisTask ->
-    dependsOn(':kotlin-stdlib:testClasses')
-    check.dependsOn(thisTask)
-    group = "verification"
+tasks.named("compileModuleTestJava", JavaCompile) {
+    sourceCompatibility = JavaVersion.VERSION_1_9
+    targetCompatibility = JavaVersion.VERSION_1_9
+}
 
+compileModuleTestKotlin {
+    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_11_0))
+    compilerOptions.jvmTarget = JvmTarget.JVM_9
+    compilerOptions.freeCompilerArgs = [ "-Xjdk-release=9" ]
+}
+
+check.dependsOn(tasks.register("moduleInfoTest", Test) {test ->
+    test.dependsOn(moduleTestClasses)
+    test.group = "verification"
+    test.testClassesDirs = sourceSets.moduleTest.output.classesDirs
+    test.classpath = files(sourceSets.moduleTest.runtimeClasspath, tasks.jar)
+    test.javaLauncher.set(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_9_0))
     doFirst {
-        testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
-        classpath = files(
-                testClassesDirs,
-                sourceSets.test.compileClasspath
-        )
+        test.systemProperty("stdlibJars", test.classpath.filter { it.name.contains('kotlin-stdlib') }.join(File.pathSeparator))
     }
-}
-
-[JdkMajorVersion.JDK_9, JdkMajorVersion.JDK_10, JdkMajorVersion.JDK_11].forEach { jvmVersion ->
-    tasks.register("jdk${jvmVersion.majorVersion}Test", Test) { thisTask ->
-        check.dependsOn(thisTask)
-        group = "verification"
-        thisTask.javaLauncher.set(
-                JvmToolchain.getToolchainLauncherFor(project, jvmVersion)
-        )
-    }
-}
+})

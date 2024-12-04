@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63984
+
 // FILE: accessorForProtectedPropertyWithPrivateSetter.kt
 import a.A
 

@@ -7,7 +7,7 @@ public val a4: kotlin.reflect.KClass<A<out kotlin.String?>>
 public val b1: kotlin.reflect.KClass<kotlin.Int>
 public val b2: kotlin.reflect.KClass<kotlin.Nothing>
 public val i1: kotlin.reflect.KClass<A<*>.Inner<*>>
-public val i2: [ERROR : Unresolved class]
+public val i2: [Error type: Unresolved class A<*>.Inner<*>::class]
 public val i3: kotlin.reflect.KClass<A<kotlin.Int>.Inner<kotlin.CharSequence>>
 public val m1: kotlin.reflect.KClass<kotlin.collections.Map<*, *>>
 public val m2: kotlin.reflect.KClass<kotlin.collections.Map<kotlin.Int, *>>

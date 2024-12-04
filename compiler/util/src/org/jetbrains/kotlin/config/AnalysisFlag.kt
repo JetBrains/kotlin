@@ -25,8 +25,10 @@ class AnalysisFlag<out T> internal constructor(
     }
 
     object Delegates {
-        object Boolean {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, false)
+        open class Boolean(val defaultValue: kotlin.Boolean) {
+            companion object : Boolean(defaultValue = false)
+
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, defaultValue)
         }
 
         object ApiModeDisabledByDefault {
@@ -35,11 +37,6 @@ class AnalysisFlag<out T> internal constructor(
 
         object ListOfStrings {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, emptyList<String>())
-        }
-
-        object ConstraintSystemForOverloadResolution {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) =
-                Delegate(property.name, ConstraintSystemForOverloadResolutionMode.CONSTRAINT_SYSTEM_FOR_NEW_INFERENCE)
         }
     }
 }

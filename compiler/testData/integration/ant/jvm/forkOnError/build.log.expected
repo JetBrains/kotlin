@@ -9,10 +9,19 @@ build:
   [kotlinc] Compiling [[TestData]] => [[Temp]/fork.jar]
   [kotlinc] -Xms64m
   [kotlinc] -Xmx128m
+  [kotlinc] warning: ATTENTION!
+  [kotlinc] This build uses unsafe internal compiler arguments:
+  [kotlinc] 
+  [kotlinc] -XXLanguage:+EnableDfaWarningsInK2
+  [kotlinc] 
+  [kotlinc] This mode is not recommended for production use,
+  [kotlinc] as no stability/compatibility guarantees are given on
+  [kotlinc] compiler or generated code. Use it at your own risk!
+  [kotlinc] 
   [kotlinc] error: warnings found and -Werror specified
-  [kotlinc] [TestData]/test.kt:4:15: warning: this cast can never succeed
+  [kotlinc] [TestData]/test.kt:4:15: warning: this cast can never succeed.
   [kotlinc]     println(0 as String)
-  [kotlinc]               ^
+  [kotlinc]               ^^
 
 ERR:
 

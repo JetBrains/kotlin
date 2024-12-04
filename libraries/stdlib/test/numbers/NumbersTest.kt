@@ -49,7 +49,7 @@ class NumbersTest {
         expect(Int.MIN_VALUE) { Int.MAX_VALUE + one }
         expect(Int.MAX_VALUE) { Int.MIN_VALUE - one }
         expect(Int.MIN_VALUE) { Int.MIN_VALUE / -one }
-        expect(0) { (Int.MIN_VALUE % -1) + 0 } // +0 is a workaround for KT-45620
+        expect(0) { Int.MIN_VALUE % -1 }
     }
 
     @Test fun longMinMaxValues() {
@@ -77,7 +77,7 @@ class NumbersTest {
         expect(Short.MIN_VALUE) { (Short.MAX_VALUE + oneS).toShort() }
         expect(Short.MAX_VALUE) { (Short.MIN_VALUE - oneS).toShort() }
         expect(Short.MAX_VALUE + oneS) { Short.MIN_VALUE / (-1).toShort() }
-        expect(0) { (Short.MIN_VALUE % (-1).toShort()) + 0 } // +0 is a workaround for KT-45620
+        expect(0) { Short.MIN_VALUE % (-1).toShort() }
     }
 
     @Test fun byteMinMaxValues() {
@@ -91,7 +91,7 @@ class NumbersTest {
         expect(Byte.MIN_VALUE) { (Byte.MAX_VALUE + oneB).toByte() }
         expect(Byte.MAX_VALUE) { (Byte.MIN_VALUE - oneB).toByte() }
         expect(Byte.MAX_VALUE + oneB) { Byte.MIN_VALUE / (-1).toByte() }
-        expect(0) { (Byte.MIN_VALUE % (-1).toByte()) + 0 } // +0 is a workaround for KT-45620
+        expect(0) { Byte.MIN_VALUE % (-1).toByte() }
     }
 
     @Test fun doubleMinMaxValues() {

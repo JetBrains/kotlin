@@ -1,0 +1,6 @@
+KtNameReferenceExpression(16,19): 'bar'
+  KtSimpleNameReference:
+    (in ROOT) fun bar(a: kotlin.Int, b: (kotlin.Int) -> kotlin.Int)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

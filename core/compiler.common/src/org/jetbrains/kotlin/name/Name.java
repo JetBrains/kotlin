@@ -74,6 +74,11 @@ public final class Name implements Comparable<Name> {
         return true;
     }
 
+    public static @Nullable Name identifierIfValid(@NotNull String name) {
+        if (!isValidIdentifier(name)) return null;
+        return identifier(name);
+    }
+
     @NotNull
     public static Name special(@NotNull String name) {
         if (!name.startsWith("<")) {

@@ -21,13 +21,13 @@ public val test7: [ERROR : Type for generate {
     genericExtension<Int>()
 }]
 public val test8: kotlin.String
-public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend Controller<S>.() -> kotlin.Unit): S
+public fun </*0*/ S> generate(/*0*/ g: suspend Controller<S>.() -> kotlin.Unit): S
 public fun Base.baseExtension(): kotlin.Unit
 public fun </*0*/ S> Controller<S>.genericExtension(): kotlin.Unit
 public fun Controller<kotlin.Any?>.invNullableAnyExtension(): kotlin.Unit
 public fun Controller<out kotlin.Any>.outAnyExtension(): kotlin.Unit
 public fun Controller<out kotlin.Any?>.outNullableAnyExtension(): kotlin.Unit
-@kotlin.BuilderInference public fun Controller<kotlin.String>.safeExtension(): kotlin.Unit
+public fun Controller<kotlin.String>.safeExtension(): kotlin.Unit
 
 public interface Base {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

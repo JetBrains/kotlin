@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractClassDescriptor extends ModuleAwareClassDescriptor {
@@ -112,6 +113,12 @@ public abstract class AbstractClassDescriptor extends ModuleAwareClassDescriptor
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         return thisAsReceiverParameter.invoke();
+    }
+
+    @NotNull
+    @Override
+    public List<ReceiverParameterDescriptor> getContextReceivers() {
+        return Collections.emptyList();
     }
 
     @NotNull

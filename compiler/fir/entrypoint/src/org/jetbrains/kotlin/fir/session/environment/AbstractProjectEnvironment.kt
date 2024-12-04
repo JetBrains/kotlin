@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.session.environment
 
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
@@ -48,6 +50,10 @@ interface AbstractProjectEnvironment {
     fun registerAsJavaElementFinder(firSession: FirSession)
 
     fun getSearchScopeByIoFiles(files: Iterable<File>, allowOutOfProjectRoots: Boolean = false): AbstractProjectFileSearchScope
+
+    fun getSearchScopeBySourceFiles(files: Iterable<KtSourceFile>, allowOutOfProjectRoots: Boolean = false): AbstractProjectFileSearchScope
+
+    fun getSearchScopeByDirectories(directories: Iterable<File>): AbstractProjectFileSearchScope
 
     fun getSearchScopeForProjectLibraries(): AbstractProjectFileSearchScope
 

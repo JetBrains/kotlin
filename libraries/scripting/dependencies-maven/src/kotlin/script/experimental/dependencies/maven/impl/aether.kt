@@ -5,12 +5,8 @@
 
 package kotlin.script.experimental.dependencies.maven.impl
 
-import org.apache.commons.io.filefilter.NameFileFilter
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils
 import org.apache.maven.settings.Settings
-import org.apache.maven.settings.SettingsUtils
-import org.apache.maven.settings.TrackableBase
-import org.apache.maven.settings.building.*
 import org.apache.maven.wagon.Wagon
 import org.codehaus.plexus.DefaultContainerConfiguration
 import org.codehaus.plexus.DefaultPlexusContainer
@@ -19,6 +15,8 @@ import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.artifact.Artifact
 import org.eclipse.aether.collection.CollectRequest
+import org.eclipse.aether.collection.CollectResult
+import org.eclipse.aether.collection.DependencyCollectionException
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
 import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.graph.DependencyFilter
@@ -27,7 +25,9 @@ import org.eclipse.aether.internal.transport.wagon.PlexusWagonProvider
 import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.repository.Proxy
 import org.eclipse.aether.repository.RemoteRepository
-import org.eclipse.aether.resolution.*
+import org.eclipse.aether.resolution.ArtifactRequest
+import org.eclipse.aether.resolution.ArtifactResolutionException
+import org.eclipse.aether.resolution.ArtifactResult
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
 import org.eclipse.aether.transport.file.FileTransporterFactory
@@ -35,19 +35,41 @@ import org.eclipse.aether.transport.wagon.WagonConfigurator
 import org.eclipse.aether.transport.wagon.WagonProvider
 import org.eclipse.aether.transport.wagon.WagonTransporterFactory
 import org.eclipse.aether.util.filter.DependencyFilterUtils
+import org.eclipse.aether.util.graph.visitor.FilteringDependencyVisitor
+import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor
 import org.eclipse.aether.util.repository.AuthenticationBuilder
+import org.eclipse.aether.util.repository.DefaultAuthenticationSelector
 import org.eclipse.aether.util.repository.DefaultMirrorSelector
 import org.eclipse.aether.util.repository.DefaultProxySelector
 import java.io.File
-import java.io.FileFilter
-import java.util.*
+import kotlin.script.experimental.api.IterableResultsCollector
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.ScriptDiagnostic
+import kotlin.script.experimental.api.asSuccess
+import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 
 val mavenCentral: RemoteRepository = RemoteRepository.Builder("maven central", "default", "https://repo.maven.apache.org/maven2/").build()
 
+internal enum class ResolutionKind {
+    NON_TRANSITIVE,
+    TRANSITIVE,
+
+    // Partial resolution is successful in case if dependency tree was built,
+    // but may return non-complete list of dependencies - i.e. while requesting sources, some libraries may lack sources artifacts.
+    // Resolution errors will be attached as reports.
+    // Also, might be slightly slower than usual transitive resolution.
+    TRANSITIVE_PARTIAL
+}
+
 internal class AetherResolveSession(
-    private val localRepo: File = File(File(System.getProperty("user.home")!!, ".m2"), "repository"),
-    remoteRepos: List<RemoteRepository> = listOf(mavenCentral)
+    localRepoDirectory: File? = null,
+    remoteRepos: List<RemoteRepository> = listOf(mavenCentral),
+    settingsFactory: () -> Settings = ::createMavenSettings,
 ) {
+
+    private val localRepoPath by lazy {
+        localRepoDirectory?.absolutePath ?: settings.localRepository
+    }
 
     private val remotes by lazy {
         val proxySelector = settings.activeProxy?.let { proxy ->
@@ -67,9 +89,9 @@ internal class AetherResolveSession(
             )
             selector
         }
-        val mirrorSelector = getMirrorSelector()
-        remoteRepos.mapNotNull {
-            val builder = RemoteRepository.Builder(it)
+
+        remoteRepos.mapNotNull { originalRepo ->
+            val builder = RemoteRepository.Builder(originalRepo)
             if (proxySelector != null) {
                 builder.setProxy(proxySelector.getProxy(builder.build()))
             }
@@ -82,12 +104,13 @@ internal class AetherResolveSession(
                 //);
                 null
             } else {
-                mirrorSelector.getMirror(built) ?: built
+                resolveRemote(built)
             }
         }
     }
 
     private val repositorySystem: RepositorySystem by lazy {
+        @Suppress("DEPRECATION")
         val locator = MavenRepositorySystemUtils.newServiceLocator()
         locator.addService(
             RepositoryConnectorFactory::class.java,
@@ -121,84 +144,130 @@ internal class AetherResolveSession(
     }
 
     private val repositorySystemSession: RepositorySystemSession by lazy {
-        val localRepo = LocalRepository(localRepo.absolutePath)
+        val localRepo = LocalRepository(localRepoPath)
         MavenRepositorySystemUtils.newSession().also {
             it.localRepositoryManager = repositorySystem.newLocalRepositoryManager(it, localRepo)
         }
     }
 
-    fun resolve(root: Artifact, scope: String, transitive: Boolean, filter: DependencyFilter?): List<Artifact> {
-        return if (transitive) resolveDependencies(root, scope, filter)
-        else resolveArtifact(root)
+    fun resolve(
+        roots: List<Artifact>,
+        scope: String,
+        kind: ResolutionKind,
+        filter: DependencyFilter?,
+        classifier: String? = null,
+        extension: String? = null,
+    ): ResultWithDiagnostics<List<File>> {
+        if (kind == ResolutionKind.NON_TRANSITIVE) return resolveArtifacts(roots).asSuccess()
+
+        val isOptional = kind == ResolutionKind.TRANSITIVE_PARTIAL
+        val requests = resolveTree(roots, scope, isOptional, filter, classifier, extension)
+
+        val artifactResults = try {
+            synchronized(this) {
+                repositorySystem.resolveArtifacts(
+                    repositorySystemSession,
+                    requests
+                )
+            }
+        } catch (resolutionException: ArtifactResolutionException) {
+            if (isOptional) {
+                resolutionException.results
+            } else {
+                return makeResolveFailureResult(listOf(resolutionException.message.orEmpty()), null, resolutionException)
+            }
+        }
+
+        return IterableResultsCollector<File>().run {
+            for (artifactResult in artifactResults) {
+                if (artifactResult.isResolved) {
+                    addValue(artifactResult.artifact.file)
+                } else {
+                    for (exception in artifactResult.exceptions) {
+                        addDiagnostic(
+                            ScriptDiagnostic(
+                                ScriptDiagnostic.unspecifiedError,
+                                "Unable to resolve artifact ${artifactResult.request.artifact}",
+                                exception = exception
+                            )
+                        )
+                    }
+                }
+            }
+            getResult()
+        }
     }
 
-    private fun resolveDependencies(root: Artifact, scope: String, filter: DependencyFilter? = null): List<Artifact> {
+    private fun resolveTree(
+        roots: List<Artifact>,
+        scope: String,
+        isOptional: Boolean,
+        filter: DependencyFilter?,
+        classifier: String?,
+        extension: String?,
+    ): Collection<ArtifactRequest> {
         return fetch(
-            DependencyRequest(
-                request(Dependency(root, scope)),
-                filter ?: DependencyFilterUtils.classpathFilter(scope)
-            ),
-            { req -> repositorySystem.resolveDependencies(repositorySystemSession, req).artifactResults },
-            { req, ex ->
-                DependencyResolutionException(
-                    DependencyResult(req),
-                    IllegalArgumentException( //Logger.format(
-                        //        "failed to load '%s' from %[list]s into %s",
-                        //        req.getCollectRequest().getRoot(),
-                        //        Aether.reps(req.getCollectRequest().getRepositories()),
-                        //        session.getLocalRepositoryManager()
-                        //                .getRepository()
-                        //                .getBasedir()
-                        //),
-                        ex
+            request(roots.map { root -> Dependency(root, scope, isOptional) }),
+            { req ->
+                val requestsBuilder = ArtifactRequestBuilder(classifier, extension)
+                val collectionResult = repositorySystem.collectDependencies(repositorySystemSession, req)
+                collectionResult.root.accept(
+                    TreeDependencyVisitor(
+                        FilteringDependencyVisitor(
+                            requestsBuilder,
+                            filter ?: DependencyFilterUtils.classpathFilter(scope)
+                        )
                     )
+                )
+
+                requestsBuilder.requests
+            },
+            { req, ex ->
+                DependencyCollectionException(
+                    CollectResult(req),
+                    ex.message,
+                    ex
                 )
             }
         )
     }
 
-    private fun resolveArtifact(artifact: Artifact): List<Artifact> {
-        val request = ArtifactRequest()
-        request.artifact = artifact
-        for (repo in remotes) {
-            request.addRepository(repo)
+    private fun Collection<ArtifactResult>.toFiles() = map { it.artifact.file }
+
+    private fun resolveArtifacts(artifacts: List<Artifact>): List<File> {
+        val requests = artifacts.map { artifact ->
+            ArtifactRequest(artifact, remotes, "")
         }
 
         return fetch(
-            request,
-            { req -> listOf(repositorySystem.resolveArtifact(repositorySystemSession, req)) },
-            { req, ex -> ArtifactResolutionException(listOf(ArtifactResult(req)), ex.message, IllegalArgumentException(ex)) }
-        )
+            requests,
+            { reqs -> listOf(repositorySystem.resolveArtifacts(repositorySystemSession, reqs)) },
+            { reqs, ex -> ArtifactResolutionException(reqs.map { req -> ArtifactResult(req) }, ex.message, IllegalArgumentException(ex)) }
+        ).flatMap { it.toFiles() }
     }
 
-    private fun request(root: Dependency): CollectRequest {
+    private fun request(roots: List<Dependency>): CollectRequest {
         val request = CollectRequest()
-        request.root = root
+        request.dependencies = roots
         for (repo in remotes) {
             request.addRepository(repo)
         }
         return request
     }
 
-    private fun <RequestT> fetch(
+    private fun <RequestT, ResultT> fetch(
         request: RequestT,
-        fetchBody: (RequestT) -> Collection<ArtifactResult>,
-        wrapException: (RequestT, Exception) -> Exception
-    ): List<Artifact> {
-        val deps: MutableList<Artifact> = LinkedList()
-        try {
-            var results: Collection<ArtifactResult>
+        fetchBody: (RequestT) -> ResultT,
+        wrapException: (RequestT, Exception) -> Exception,
+    ): ResultT {
+        return try {
             synchronized(this) {
-                results = fetchBody(request)
-            }
-            for (res in results) {
-                deps.add(res.artifact)
+                fetchBody(request)
             }
             // @checkstyle IllegalCatch (1 line)
         } catch (ex: Exception) {
             throw wrapException(request, ex)
         }
-        return deps
     }
 
     private fun getMirrorSelector(): DefaultMirrorSelector {
@@ -215,53 +284,41 @@ internal class AetherResolveSession(
         return selector
     }
 
-    private val settings: Settings by lazy {
-        val builder: SettingsBuilder = DefaultSettingsBuilderFactory().newInstance()
-        val request: SettingsBuildingRequest = DefaultSettingsBuildingRequest()
-        val user = System.getProperty("org.apache.maven.user-settings")
-        if (user == null) {
-            request.userSettingsFile = File(
-                File(System.getProperty("user.home")).absoluteFile,
-                "/.m2/settings.xml"
-            )
-        } else {
-            request.userSettingsFile = File(user)
-        }
-        val global = System.getProperty("org.apache.maven.global-settings")
-        if (global != null) {
-            request.globalSettingsFile = File(global)
-        }
-        val result: SettingsBuildingResult = try {
-            builder.build(request)
-        } catch (ex: SettingsBuildingException) {
-            throw IllegalStateException(ex)
-        }
-        this.invokers(builder, result)
-    }
-
-    private fun invokers(
-        builder: SettingsBuilder,
-        result: SettingsBuildingResult
-    ): Settings {
-        var main = result.effectiveSettings
-        val files = File(System.getProperty("user.dir"))
-            .parentFile?.listFiles(
-                NameFileFilter("interpolated-settings.xml") as FileFilter
-            )
-        val settingsFile = files?.singleOrNull()
-        if (settingsFile != null) {
-            val irequest =
-                DefaultSettingsBuildingRequest()
-            irequest.userSettingsFile = settingsFile
-            main = try {
-                val isettings = builder.build(irequest)
-                    .effectiveSettings
-                SettingsUtils.merge(isettings, main, TrackableBase.USER_LEVEL)
-                isettings
-            } catch (ex: SettingsBuildingException) {
-                throw java.lang.IllegalStateException(ex)
+    private fun getAuthenticationSelector(): DefaultAuthenticationSelector {
+        val selector = DefaultAuthenticationSelector()
+        val servers = settings.servers
+        if (servers != null) {
+            val validServers = servers.filter { it.id != null }
+            for (server in validServers) {
+                selector.add(
+                    server.id, AuthenticationBuilder()
+                        .addUsername(server.username)
+                        .addPassword(server.password)
+                        .addPrivateKey(server.privateKey, server.passphrase)
+                        .build()
+                )
             }
         }
-        return main
+        return selector
+    }
+
+    internal fun resolveRemote(
+        remote: RemoteRepository,
+    ): RemoteRepository {
+        val mirrorSelector = getMirrorSelector()
+        val authenticationSelector = getAuthenticationSelector()
+
+        val finalServer = mirrorSelector.getMirror(remote) ?: remote
+        return if (finalServer.authentication == null) {
+            RemoteRepository.Builder(finalServer)
+                .setAuthentication(authenticationSelector.getAuthentication(finalServer))
+                .build()
+        } else {
+            finalServer
+        }
+    }
+
+    private val settings: Settings by lazy {
+        settingsFactory()
     }
 }

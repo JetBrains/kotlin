@@ -1,132 +1,63 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.Assert
-import org.junit.Test
-import java.io.File
-import javax.xml.parsers.DocumentBuilderFactory
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.junit.jupiter.api.DisplayName
 
-class PluginsDslIT : BaseGradleIT() {
+@DisplayName("Plugins DSL is working correctly")
+@OtherGradlePluginTests
+class PluginsDslIT : KGPBaseTest() {
 
-    @Test
-    fun testAllopenWithPluginsDsl() {
-        val project = projectWithMavenLocalPlugins("allopenPluginsDsl")
-        project.build("build") {
-            assertSuccessful()
-            assertTasksExecuted(":compileKotlin")
-        }
-    }
-
-    @Test
-    fun testApplyToSubprojects() {
-        val project = projectWithMavenLocalPlugins("applyToSubprojects")
-        project.build("build") {
-            assertSuccessful()
-            assertTasksExecuted(":subproject:compileKotlin")
-        }
-    }
-
-    @Test
-    fun testApplyAllPlugins() {
-        val project = projectWithMavenLocalPlugins("applyAllPlugins")
-
-        val kotlinPluginClasses = setOf(
-            "org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper",
-            "org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin",
-            "org.jetbrains.kotlin.allopen.gradle.AllOpenGradleSubplugin",
-            "org.jetbrains.kotlin.allopen.gradle.SpringGradleSubplugin",
-            "org.jetbrains.kotlin.noarg.gradle.NoArgGradleSubplugin",
-            "org.jetbrains.kotlin.noarg.gradle.KotlinJpaSubplugin"
-        )
-
-        project.build("build") {
-            assertSuccessful()
-            val appliedPlugins = "applied plugin class\\:(.*)".toRegex().findAll(output).map { it.groupValues[1] }.toSet()
-            kotlinPluginClasses.forEach {
-                Assert.assertTrue("Plugin class $it should be in applied plugins", it in appliedPlugins)
+    @DisplayName("Allopen plugin")
+    @GradleTest
+    fun testAllopenWithPluginsDsl(gradleVersion: GradleVersion) {
+        project("allopenPluginsDsl".withPrefix, gradleVersion) {
+            build("build") {
+                assertTasksExecuted(":compileKotlin")
             }
         }
     }
 
-    companion object {
-        private const val DIRECTORY_PREFIX = "pluginsDsl"
-
-        private fun BaseGradleIT.projectWithMavenLocalPlugins(
-            projectName: String,
-            wrapperVersion: GradleVersionRequired = GradleVersionRequired.None,
-            directoryPrefix: String? = DIRECTORY_PREFIX,
-            minLogLevel: LogLevel = LogLevel.DEBUG
-        ): Project = transformProjectWithPluginsDsl(projectName, wrapperVersion, directoryPrefix, minLogLevel)
-    }
-}
-
-private const val MAVEN_LOCAL_URL_PLACEHOLDER = "<mavenLocalUrl>"
-internal const val PLUGIN_MARKER_VERSION_PLACEHOLDER = "<pluginMarkerVersion>"
-
-internal fun BaseGradleIT.transformProjectWithPluginsDsl(
-    projectName: String,
-    wrapperVersion: GradleVersionRequired = defaultGradleVersion,
-    directoryPrefix: String? = null,
-    minLogLevel: LogLevel = LogLevel.DEBUG
-): BaseGradleIT.Project {
-
-    val result = Project(projectName, wrapperVersion, directoryPrefix, minLogLevel)
-    result.setupWorkingDir()
-
-    val settingsGradle = File(result.projectDir, "settings.gradle").takeIf(File::exists)
-    settingsGradle?.modify {
-        it.replace(MAVEN_LOCAL_URL_PLACEHOLDER, MavenLocalUrlProvider.mavenLocalUrl)
-    }
-
-    result.projectDir.walkTopDown()
-        .filter {
-            it.isFile && (it.name == "build.gradle" || it.name == "build.gradle.kts" ||
-                    it.name == "settings.gradle" || it.name == "settings.gradle.kts")
+    @DisplayName("Apply plugin to subproject from root project")
+    @GradleTest
+    fun testApplyToSubprojects(gradleVersion: GradleVersion) {
+        project("applyToSubprojects".withPrefix, gradleVersion) {
+            build("build") {
+                assertTasksExecuted(":subproject:compileKotlin")
+            }
         }
-        .forEach { buildGradle ->
-            buildGradle.modify(::transformBuildScriptWithPluginsDsl)
+    }
+
+    @DisplayName("All Kotlin plugins are applied to project")
+    @GradleTest
+    fun testApplyAllPlugins(gradleVersion: GradleVersion) {
+        project("applyAllPlugins".withPrefix, gradleVersion) {
+
+            val kotlinPluginClasses = setOf(
+                "org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper",
+                "org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin",
+                "org.jetbrains.kotlin.allopen.gradle.AllOpenGradleSubplugin",
+                "org.jetbrains.kotlin.allopen.gradle.SpringGradleSubplugin",
+                "org.jetbrains.kotlin.noarg.gradle.NoArgGradleSubplugin",
+                "org.jetbrains.kotlin.noarg.gradle.KotlinJpaSubplugin",
+                "org.jetbrains.kotlinx.atomicfu.gradle.AtomicfuKotlinGradleSubplugin",
+                "org.jetbrains.kotlin.lombok.gradle.LombokSubplugin",
+                "org.jetbrains.kotlin.powerassert.gradle.PowerAssertGradlePlugin",
+                "org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverGradleSubplugin",
+                "org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin"
+            )
+
+            build("build") {
+                val appliedPlugins = "applied plugin class:(.*)".toRegex().findAll(output).map { it.groupValues[1] }.toSet()
+                kotlinPluginClasses.forEach {
+                    assertTrue(it in appliedPlugins) {
+                        "Plugin class $it should be in applied plugins"
+                    }
+                }
+            }
         }
-
-    return result
-}
-
-internal fun transformBuildScriptWithPluginsDsl(buildScriptContent: String): String =
-    buildScriptContent.replace(PLUGIN_MARKER_VERSION_PLACEHOLDER, KOTLIN_VERSION)
-
-/** Copies the logic of Gradle [`mavenLocal()`](https://docs.gradle.org/3.4.1/dsl/org.gradle.api.artifacts.dsl.RepositoryHandler.html#org.gradle.api.artifacts.dsl.RepositoryHandler:mavenLocal())
- */
-private object MavenLocalUrlProvider {
-    /** The URL that points to the Gradle's mavenLocal() repository. */
-    val mavenLocalUrl by lazy {
-        val path = propertyMavenLocalRepoPath ?: homeSettingsLocalRepoPath ?: m2HomeSettingsLocalRepoPath ?: defaultM2RepoPath
-        File(path).toURI().toString()
     }
 
-    private val homeDir get() = File(System.getProperty("user.home"))
-
-    private fun getLocalRepositoryFromXml(file: File): String? {
-        if (!file.isFile)
-            return null
-
-        val xml = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file)
-        val localRepoNodes = xml.getElementsByTagName("localRepository")
-
-        if (localRepoNodes.length == 0)
-            return null
-
-        val content = localRepoNodes.item(0).textContent
-
-        return content.replace("\\$\\{(.*?)\\}".toRegex()) { System.getProperty(it.groupValues[1]) ?: it.value }
-    }
-
-    private val propertyMavenLocalRepoPath get() = System.getProperty("maven.repo.local")
-
-    private val homeSettingsLocalRepoPath
-        get() = getLocalRepositoryFromXml(File(homeDir, ".m2/settings.xml"))
-
-    private val m2HomeSettingsLocalRepoPath
-        get() = System.getProperty("M2_HOME")?.let { getLocalRepositoryFromXml(File(it, "conf/settings.xml")) }
-
-    private val defaultM2RepoPath get() = File(homeDir, ".m2/repository").absolutePath
+    private val String.withPrefix get() = "pluginsDsl/$this"
 }

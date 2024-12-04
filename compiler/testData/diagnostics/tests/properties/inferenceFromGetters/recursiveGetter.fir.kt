@@ -1,16 +1,17 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 // NI_EXPECTED_FILE
 
-val x get() = x
+val x get() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x<!>
 
 class A {
-    val y get() = y
+    val y get() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>y<!>
 
-    val a get() = b
-    val b get() = a
+    val a get() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>b<!>
+    val b get() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>a<!>
 
-    val z1 get() = id(<!ARGUMENT_TYPE_MISMATCH!>z1<!>)
-    val z2 get() = l(<!ARGUMENT_TYPE_MISMATCH!>z2<!>)
+    val z1 get() = <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>z1<!>)
+    val z2 get() = <!CANNOT_INFER_PARAMETER_TYPE!>l<!>(<!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>z2<!>)
 
     val u get() = <!UNRESOLVED_REFERENCE!>field<!>
 }

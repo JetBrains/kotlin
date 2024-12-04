@@ -1,14 +1,19 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.integration
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.CLITool
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -58,47 +63,57 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
     private val outklib: String
         get() = tmpdir.resolve("out.klib").absolutePath
 
-    private fun runTest(compiler: CLITool<*>, src: TestKtFile, libs: String, outFile: String, extras: List<String> = emptyList()) {
+    private fun runTest(
+        compiler: CLICompiler<*>, src: TestKtFile, libs: String, outFile: String, extras: List<String> = emptyList(),
+        messageRenderer: MessageRenderer? = null,
+    ) {
         val mainKt = tmpdir.resolve(src.name).apply {
             writeText(src.content)
         }
         val plugin = writePlugin()
+        val outputFile = File(outFile)
         val args = listOf(
-            "-Xplugin=$plugin",
-            "-libraries", libs,
-            "-output", outFile,
-            mainKt.absolutePath)
-        CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras)
+            K2JSCompilerArguments::pluginClasspaths.cliArgument(plugin),
+            K2JSCompilerArguments::libraries.cliArgument, libs,
+            K2JSCompilerArguments::outputDir.cliArgument, outputFile.parentFile.path,
+            K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
+            K2JSCompilerArguments::languageVersion.cliArgument, "1.9",
+            mainKt.absolutePath
+        )
+        CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras, messageRenderer)
     }
 
     fun testShouldNotGenerateCodeJs() {
         if (jsirStdlib != null)
-            runTest(K2JSCompiler(), classNotFound, jsirStdlib!!, outjs, listOf("-Xir-produce-js"))
+            runTest(K2JSCompiler(), classNotFound, jsirStdlib!!, outjs, listOf(K2JSCompilerArguments::irProduceJs.cliArgument))
     }
 
     fun testShouldNotGenerateCodeKlib() {
         if (jsirStdlib != null)
-            runTest(K2JSCompiler(), classNotFound, jsirStdlib!!, outklib, listOf("-Xir-produce-klib-file"))
+            runTest(K2JSCompiler(), classNotFound, jsirStdlib!!, outklib, listOf(K2JSCompilerArguments::irProduceKlibFile.cliArgument))
     }
 
     fun testShouldNotGenerateCodeWasm() {
         if (jsirStdlib != null && wasmStdlib != null)
-            runTest(K2JSCompiler(), classNotFound, "$jsirStdlib,$wasmStdlib", outjs, listOf("-Xir-produce-js", "-Xwasm"))
+            runTest(K2JSCompiler(), classNotFound, "$jsirStdlib,$wasmStdlib", outjs, listOf(K2JSCompilerArguments::irProduceJs.cliArgument, K2JSCompilerArguments::wasm.cliArgument))
     }
 
     fun testRepeatedAnalysisJs() {
         if (jsirStdlib != null)
-            runTest(K2JSCompiler(), repeatedAnalysis, jsirStdlib!!, outjs, listOf("-Xir-produce-js"))
+            runTest(K2JSCompiler(), repeatedAnalysis, jsirStdlib!!, outjs, listOf(K2JSCompilerArguments::irProduceJs.cliArgument))
     }
 
     fun testRepeatedAnalysisKlib() {
         if (jsirStdlib != null)
-            runTest(K2JSCompiler(), repeatedAnalysis, jsirStdlib!!, outklib, listOf("-Xir-produce-klib-file"))
+            runTest(K2JSCompiler(), repeatedAnalysis, jsirStdlib!!, outklib, listOf(K2JSCompilerArguments::irProduceKlibFile.cliArgument))
     }
 
     fun testRepeatedAnalysisWasm() {
         if (jsirStdlib != null && wasmStdlib != null)
-            runTest(K2JSCompiler(), repeatedAnalysis, "$jsirStdlib,$wasmStdlib", outjs, listOf("-Xir-produce-js", "-Xwasm"))
+            runTest(
+                K2JSCompiler(), repeatedAnalysis, "$jsirStdlib,$wasmStdlib", outjs,
+                listOf(K2JSCompilerArguments::irProduceJs.cliArgument, K2JSCompilerArguments::wasm.cliArgument)
+            )
     }
 }
 

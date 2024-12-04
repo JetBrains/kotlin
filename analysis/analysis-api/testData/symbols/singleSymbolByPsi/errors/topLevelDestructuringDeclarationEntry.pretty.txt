@@ -1,0 +1,1 @@
+val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)

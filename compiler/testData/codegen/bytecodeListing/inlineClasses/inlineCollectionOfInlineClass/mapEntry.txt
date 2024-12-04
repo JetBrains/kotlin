@@ -49,9 +49,10 @@ public final class InlineMapEntry {
     public static method getValue-zSeR6Gk(p0: java.util.Map$Entry): double
     public method hashCode(): int
     public static method hashCode-impl(p0: java.util.Map$Entry): int
-    public synthetic method setValue(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method setValue(p0: java.lang.Object): java.lang.Object
     public method setValue-cYiyq8k(p0: double): double
     public method toString(): java.lang.String
     public static method toString-impl(p0: java.util.Map$Entry): java.lang.String
     public synthetic final method unbox-impl(): java.util.Map$Entry
+    public inner class java/util/Map$Entry
 }

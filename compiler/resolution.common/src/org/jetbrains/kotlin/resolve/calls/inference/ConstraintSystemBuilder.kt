@@ -9,7 +9,13 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 interface ConstraintSystemOperation {
     val hasContradiction: Boolean
@@ -18,6 +24,7 @@ interface ConstraintSystemOperation {
     fun markCouldBeResolvedWithUnrestrictedBuilderInference()
     fun unmarkPostponedVariable(variable: TypeVariableMarker)
     fun removePostponedVariables()
+    fun substituteFixedVariables(substitutor: TypeSubstitutorMarker)
 
     fun getBuiltFunctionalExpectedTypeForPostponedArgument(
         topLevelVariable: TypeConstructorMarker,
@@ -51,13 +58,36 @@ interface ConstraintSystemOperation {
     val errors: List<ConstraintSystemError>
 }
 
+abstract class ConstraintSystemTransaction {
+    abstract fun closeTransaction()
+
+    abstract fun rollbackTransaction()
+}
+
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
-    // if runOperations return true, then this operation will be applied, and function return true
-    fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
+    fun prepareTransaction(): ConstraintSystemTransaction
 
     fun buildCurrentSubstitutor(): TypeSubstitutorMarker
 
     fun currentStorage(): ConstraintStorage
+}
+
+// if runOperations return true, then this operation will be applied, and function return true
+@OptIn(ExperimentalContracts::class)
+inline fun ConstraintSystemBuilder.runTransaction(crossinline runOperations: ConstraintSystemOperation.() -> Boolean): Boolean {
+    contract {
+        callsInPlace(runOperations, InvocationKind.EXACTLY_ONCE)
+    }
+    val transactionState = prepareTransaction()
+
+    // typeVariablesTransaction is clear
+    if (runOperations()) {
+        transactionState.closeTransaction()
+        return true
+    }
+
+    transactionState.rollbackTransaction()
+    return false
 }
 
 fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(
@@ -86,4 +116,31 @@ private fun ConstraintSystemBuilder.addConstraintIfCompatible(
         }
     }
     !hasContradiction
+}
+
+fun ConstraintSystemBuilder.isSubtypeConstraintCompatible(
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
+    position: ConstraintPosition
+): Boolean = isConstraintCompatible(lowerType, upperType, position, ConstraintKind.LOWER)
+
+private fun ConstraintSystemBuilder.isConstraintCompatible(
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
+    position: ConstraintPosition,
+    kind: ConstraintKind
+): Boolean {
+    var isCompatible = false
+    runTransaction {
+        if (!hasContradiction) {
+            when (kind) {
+                ConstraintKind.LOWER -> addSubtypeConstraint(lowerType, upperType, position)
+                ConstraintKind.UPPER -> addSubtypeConstraint(upperType, lowerType, position)
+                ConstraintKind.EQUALITY -> addEqualityConstraint(lowerType, upperType, position)
+            }
+        }
+        isCompatible = !hasContradiction
+        false
+    }
+    return isCompatible
 }

@@ -62,7 +62,7 @@ class DeserializationFailureTest {
             buildSystemVersion = "",
             buildPlugin = "",
             buildPluginVersion = "",
-            projectSettings = KotlinToolingMetadata.ProjectSettings(false, false),
+            projectSettings = KotlinToolingMetadata.ProjectSettings(false, false, false),
             projectTargets = emptyList()
         ).toJsonString()
 

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +LateinitTopLevelProperties
+// LANGUAGE: +LateinitTopLevelProperties
 
 object Delegate {
     operator fun getValue(instance: Any?, property: Any) : String = ""

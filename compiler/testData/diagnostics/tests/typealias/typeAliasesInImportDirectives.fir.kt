@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 // FILE: foo.kt
 
@@ -28,20 +29,20 @@ import test.ClassAlias
 import test.ClassAlias.Nested1
 
 import test.ClassSample.Nested1.*
-import test.ClassAlias.Nested1.*
+import test.ClassAlias.<!UNRESOLVED_IMPORT!>Nested1<!>.*
 
 import test.ObjectAlias
 import test.ObjectAlias.Nested2
 
 import test.ObjectSample.Nested2.*
-import test.ObjectAlias.Nested2.*
+import test.ObjectAlias.<!UNRESOLVED_IMPORT!>Nested2<!>.*
 
 import test.EnumAlias
 import test.EnumAlias.Nested3
 
 import test.EnumSample.Nested3.*
-import test.EnumAlias.Nested3.*
+import test.EnumAlias.<!UNRESOLVED_IMPORT!>Nested3<!>.*
 
-import test.EnumAlias.Entry
+import test.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR!>EnumAlias<!>.Entry
 
 fun f() {}

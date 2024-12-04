@@ -1,0 +1,48 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform'
+}
+
+kotlin {
+    linuxX64()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+}
+
+kotlinArtifacts {
+    it.native.Library("groolib") {
+        modes(DEBUG)
+        target = iosX64
+        it.static = false
+        linkerOptions = ["a", "b"]
+        kotlinOptions {
+            verbose = true
+            freeCompilerArgs = ["foo"]
+        }
+        binaryOption("name", "value")
+        setModules(
+            project(":shared"),
+            project(":lib")
+        )
+    }
+    it.native.Framework("grooframe") {
+        modes(DEBUG, RELEASE)
+        target = iosArm64
+        it.static = false
+        embedBitcode = EmbedBitcodeMode.MARKER
+        kotlinOptions {
+            verbose = true
+        }
+        addModule(project(":shared"))
+    }
+    it.native.FatFramework("groofatframe") {
+        targets(iosX64, iosSimulatorArm64)
+        embedBitcode = EmbedBitcodeMode.DISABLE
+        kotlinOptions {
+            suppressWarnings = true
+        }
+    }
+    it.native.XCFramework {
+        targets(iosX64, iosArm64, iosSimulatorArm64)
+    }
+}

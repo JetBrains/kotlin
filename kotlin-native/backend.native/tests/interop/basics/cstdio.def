@@ -1,8 +1,0 @@
-headers = stdio.h
-compilerOpts.osx = -D_ANSI_SOURCE
-
----
-
-static inline FILE* getStdout() {
-    return stdout;
-}

@@ -1,5 +1,0 @@
-KT element: KtTypeReference
-FIR element: FirErrorTypeRefImpl
-
-FIR element rendered:
-<ERROR TYPE REF: Wrong number of type arguments>

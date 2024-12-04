@@ -1,4 +1,6 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// CHECK_TYPE
 val x get(): String = foo()
 val y get(): List<Int> = bar()
 val z get(): List<Int> {

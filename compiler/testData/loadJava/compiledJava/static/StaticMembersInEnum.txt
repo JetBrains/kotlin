@@ -4,7 +4,7 @@ public final enum class StaticMembersInEnum : kotlin.Enum<test.StaticMembersInEn
     enum entry ENTRY
 
     private constructor StaticMembersInEnum()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.StaticMembersInEnum!): kotlin.Int
@@ -14,6 +14,7 @@ public final enum class StaticMembersInEnum : kotlin.Enum<test.StaticMembersInEn
     // Static members
     public final val CONSTANT: test.StaticMembersInEnum!
     public final var STATIC_FIELD: kotlin.Int
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.StaticMembersInEnum>
     public open fun foo(): kotlin.Unit
     public open fun valueOf(/*0*/ p0: kotlin.Int): kotlin.Unit
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.StaticMembersInEnum

@@ -1,5 +1,4 @@
-//!LANGUAGE: +DefinitelyNonNullableTypes
-// IGNORE_BACKEND_FIR: ANY
+// LANGUAGE: +DefinitelyNonNullableTypes
 
 interface I<T> {
     fun input(t: T)
@@ -17,5 +16,4 @@ class C<TT>(val t: TT): I<TT & Any> {
     override fun output(): TT & Any = t!!
 }
 
-// TODO: FE gets crashed on that method, KT-49419
-//fun <T1 , T2 : I<T1 & Any>> foo2(p1: T, p2: T2) { p2.input(p1!!) }
+fun <T1 , T2 : I<T1 & Any>> foo2(p1: T1, p2: T2) { p2.input(p1!!) }

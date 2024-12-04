@@ -4,11 +4,11 @@ FILE: test.kt
             super<R|A|>()
         }
 
-        public final override fun foo(): R|B| {
+        public open override fun foo(): R|B| {
             ^foo this@R|/B|
         }
 
-        public final fun bar(): R|B| {
+        public final override fun bar(): R|B| {
             ^bar this@R|/B|
         }
 

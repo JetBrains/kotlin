@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-class IrSyntheticDeclarationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
+internal class IrSyntheticDeclarationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
     fun generateSyntheticDeclarations(file: IrFile) {
         try {
             file.acceptChildrenVoid(this)

@@ -114,9 +114,9 @@ private fun ReceiverParameterDescriptor.substituteTopLevelType(newType: KotlinTy
 private fun TypeApproximator.approximate(type: UnwrappedType, toSuper: Boolean): KotlinType? {
     if (type.arguments.isEmpty() && type.constructor.isDenotable) return null
     return if (toSuper)
-        approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration)
+        approximateToSuperType(type, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
     else
-        approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration)
+        approximateToSubType(type, TypeApproximatorConfiguration.PublicDeclaration.SaveAnonymousTypes)
 }
 
 /**
@@ -132,7 +132,7 @@ fun createFreeFakeLocalPropertyDescriptor(descriptor: LocalVariableDescriptor, t
     )
     property.setType(
         descriptor.type, descriptor.typeParameters,
-        descriptor.dispatchReceiverParameter, descriptor.extensionReceiverParameter
+        descriptor.dispatchReceiverParameter, descriptor.extensionReceiverParameter, descriptor.contextReceiverParameters
     )
 
     property.initialize(

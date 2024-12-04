@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun x(p: String): Boolean { return p == "abc" }
 
 public fun foo(p: String?, r: String?, q: String?): Int {

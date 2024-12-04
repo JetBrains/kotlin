@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.model.AnalysisHandler
+import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -30,8 +31,8 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         } finally {
             try {
                 testConfiguration.testServices.temporaryDirectoryManager.cleanupTemporaryDirectories()
-            } catch (_: IOException) {
-                // ignored
+            } catch (e: IOException) {
+                println("Failed to clean temporary directories: ${e.message}\n${e.stackTrace}")
             }
             beforeDispose(testConfiguration)
             Disposer.dispose(testConfiguration.rootDisposable)
@@ -69,10 +70,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         runTestPipeline(moduleStructure, services)
     }
 
-    fun runTestPipeline(
-        moduleStructure: TestModuleStructure,
-        services: TestServices
-    ) {
+    fun runTestPipeline(moduleStructure: TestModuleStructure, services: TestServices) {
         val globalMetadataInfoHandler = testConfiguration.testServices.globalMetadataInfoHandler
         globalMetadataInfoHandler.parseExistingMetadataInfosFromAllSources()
 
@@ -82,6 +80,12 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
 
         testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
             preprocessor.preprocessModuleStructure(moduleStructure)
+        }
+
+        testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
+            withAssertionCatching(WrappedException::FromPreAnalysisHandler) {
+                preprocessor.prepareSealedClassInheritors(moduleStructure)
+            }
         }
 
         for (module in modules) {
@@ -118,7 +122,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         filteredFailedAssertions.firstIsInstanceOrNull<WrappedException.FromFacade>()?.let {
             throw it
         }
-        services.assertions.assertAll(filteredFailedAssertions)
+        services.assertions.failAll(filteredFailedAssertions)
     }
 
     /*
@@ -133,12 +137,11 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         for (step in testConfiguration.steps) {
             if (!step.shouldProcessModule(module, inputArtifact)) continue
 
-            when (val result = step.hackyProcessModule(module, inputArtifact, allFailedExceptions.isNotEmpty())) {
+            val thereWereCriticalExceptionsOnPreviousSteps = allFailedExceptions.any { it.failureDisablesNextSteps }
+            when (val result = step.hackyProcessModule(module, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)) {
                 is TestStep.StepResult.Artifact<*> -> {
                     require(step is TestStep.FacadeStep<*, *>)
-                    if (step.inputArtifactKind != step.outputArtifactKind) {
-                        dependencyProvider.registerArtifact(module, result.outputArtifact)
-                    }
+                    dependencyProvider.registerArtifact(module, result.outputArtifact)
                     inputArtifact = result.outputArtifact
                 }
                 is TestStep.StepResult.ErrorFromFacade -> {

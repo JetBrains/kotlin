@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import java.io.InputStream
+import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 
 class MetadataPackageFragmentProvider(
     storageManager: StorageManager,
@@ -45,7 +44,8 @@ class MetadataPackageFragmentProvider(
     private val metadataPartProvider: MetadataPartProvider,
     contractDeserializer: ContractDeserializer,
     kotlinTypeChecker: NewKotlinTypeChecker,
-    samConversionResolver: SamConversionResolver
+    samConversionResolver: SamConversionResolver,
+    typeAttributeTranslators: TypeAttributeTranslators
 ) : AbstractDeserializedPackageFragmentProvider(storageManager, finder, moduleDescriptor) {
     init {
         components = DeserializationComponents(
@@ -65,7 +65,8 @@ class MetadataPackageFragmentProvider(
             AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
             BuiltInSerializerProtocol.extensionRegistry,
             kotlinTypeChecker,
-            samConversionResolver
+            samConversionResolver,
+            typeAttributeTranslators = typeAttributeTranslators.translators
         )
     }
 
@@ -82,16 +83,7 @@ class MetadataPackageFragment(
     private val metadataPartProvider: MetadataPartProvider,
     private val finder: KotlinMetadataFinder
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
-    override val classDataFinder = ClassDataFinder { classId ->
-        val topLevelClassId = generateSequence(classId, ClassId::getOuterClassId).last()
-        val stream = finder.findMetadata(topLevelClassId) ?: return@ClassDataFinder null
-        val (message, nameResolver, version) = readProto(stream)
-        message.class_List.firstOrNull { classProto ->
-            nameResolver.getClassId(classProto.fqName) == classId
-        }?.let { classProto ->
-            ClassData(nameResolver, classProto, version, SourceElement.NO_SOURCE)
-        }
-    }
+    override val classDataFinder = MetadataClassDataFinder(finder)
 
     private lateinit var components: DeserializationComponents
 
@@ -149,25 +141,17 @@ class MetadataPackageFragment(
         return true
     }
 
-    private fun readProto(stream: InputStream): Triple<ProtoBuf.PackageFragment, NameResolverImpl, BuiltInsBinaryVersion> {
-        val version = BuiltInsBinaryVersion.readFrom(stream)
-
-        if (!version.isCompatible()) {
-            // TODO: report a proper diagnostic
-            throw UnsupportedOperationException(
-                "Kotlin metadata definition format version is not supported: " +
-                        "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                        "Please update Kotlin"
-            )
-        }
-
-        val message = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
-        val nameResolver = NameResolverImpl(message.strings, message.qualifiedNames)
-        return Triple(message, nameResolver, version)
-    }
-
     companion object {
-        const val METADATA_FILE_EXTENSION = "kotlin_metadata"
-        const val DOT_METADATA_FILE_EXTENSION = ".$METADATA_FILE_EXTENSION"
+        @Deprecated(
+            "The constant has been moved",
+            ReplaceWith("METADATA_FILE_EXTENSION", "org.jetbrains.kotlin.serialization.deserialization"),
+        )
+        const val METADATA_FILE_EXTENSION = org.jetbrains.kotlin.serialization.deserialization.METADATA_FILE_EXTENSION
+
+        @Deprecated(
+            "The constant has been moved",
+            ReplaceWith("DOT_METADATA_FILE_EXTENSION", "org.jetbrains.kotlin.serialization.deserialization")
+        )
+        const val DOT_METADATA_FILE_EXTENSION = org.jetbrains.kotlin.serialization.deserialization.DOT_METADATA_FILE_EXTENSION
     }
 }

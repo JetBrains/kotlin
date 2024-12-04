@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_SORT
 // WITH_STDLIB
 
 fun box(): String {

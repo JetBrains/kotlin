@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -14,10 +17,15 @@ import org.jetbrains.kotlin.resolve.UpperBoundChecker
 import org.jetbrains.kotlin.resolve.UpperBoundViolatedReporter
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.getEnhancementDeeply
 
 // TODO: remove this checker after removing support LV < 1.6
-class WarningAwareUpperBoundChecker : UpperBoundChecker() {
+class WarningAwareUpperBoundChecker(
+    typeChecker: KotlinTypeChecker,
+) : UpperBoundChecker(typeChecker) {
     override fun checkBoundsOfExpandedTypeAlias(type: KotlinType, expression: KtExpression, trace: BindingTrace) {
         val typeParameters = type.constructor.parameters
 
@@ -35,11 +43,13 @@ class WarningAwareUpperBoundChecker : UpperBoundChecker() {
         typeParameterDescriptor: TypeParameterDescriptor,
         substitutor: TypeSubstitutor,
         trace: BindingTrace,
-        typeAliasUsageElement: KtElement?
+        typeAliasUsageElement: KtElement?,
+        diagnosticForTypeAliases: DiagnosticFactory3<KtElement, KotlinType, KotlinType, ClassifierDescriptor>,
     ) {
         checkBounds(
             argumentReference, argumentType, typeParameterDescriptor, substitutor, trace, typeAliasUsageElement,
-            withOnlyCheckForWarning = false
+            withOnlyCheckForWarning = false,
+            diagnosticForTypeAliases = diagnosticForTypeAliases,
         )
     }
 
@@ -50,11 +60,14 @@ class WarningAwareUpperBoundChecker : UpperBoundChecker() {
         substitutor: TypeSubstitutor,
         trace: BindingTrace,
         typeAliasUsageElement: KtElement? = null,
-        withOnlyCheckForWarning: Boolean = false
+        withOnlyCheckForWarning: Boolean = false,
+        diagnosticForTypeAliases: DiagnosticFactory3<KtElement, KotlinType, KotlinType, ClassifierDescriptor> =
+            Errors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
     ) {
         if (typeParameterDescriptor.upperBounds.isEmpty()) return
 
-        val diagnosticsReporter = UpperBoundViolatedReporter(trace, argumentType, typeParameterDescriptor)
+        val diagnosticsReporter =
+            UpperBoundViolatedReporter(trace, argumentType, typeParameterDescriptor, diagnosticForTypeAliases = diagnosticForTypeAliases)
         val diagnosticsReporterForWarnings = UpperBoundViolatedReporter(
             trace, argumentType, typeParameterDescriptor,
             baseDiagnostic = UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS,

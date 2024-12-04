@@ -44,9 +44,11 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.needsMfvcFlattening
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedArrayValue
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.lang.reflect.Type
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
@@ -97,9 +99,20 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
         }
     }
 
-    var fqName = "$packageName.${className.replace('.', '$')}"
-    if (arrayDimensions > 0) {
-        fqName = "[".repeat(arrayDimensions) + "L$fqName;"
+    val fqName = buildString {
+        if (arrayDimensions > 0) {
+            repeat(arrayDimensions) {
+                append("[")
+            }
+            append("L")
+        }
+        if (packageName.isNotEmpty()) {
+            append("$packageName.")
+        }
+        append(className.replace('.', '$'))
+        if (arrayDimensions > 0) {
+            append(";")
+        }
     }
 
     return classLoader.tryLoadClass(fqName)
@@ -177,7 +190,7 @@ private fun ConstantValue<*>.toRuntimeValue(classLoader: ClassLoader): Any? = wh
 }
 
 private fun ArrayValue.arrayToRuntimeValue(classLoader: ClassLoader): Any? {
-    val type = (this as? DeserializedArrayValue)?.type ?: return null
+    val type = (this as? TypedArrayValue)?.type ?: return null
     val values = value.map { it.toRuntimeValue(classLoader) }
 
     return when (KotlinBuiltIns.getPrimitiveArrayElementType(type)) {
@@ -256,6 +269,8 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
 
 internal val KType.isInlineClassType: Boolean
     get() = (this as? KTypeImpl)?.type?.isInlineClassType() == true
+internal val KType.needsMultiFieldValueClassFlattening: Boolean
+    get() = (this as? KTypeImpl)?.type?.needsMfvcFlattening() == true
 
 internal fun defaultPrimitiveValue(type: Type): Any? =
     if (type is Class<*> && type.isPrimitive) {
@@ -298,3 +313,17 @@ internal open class CreateKCallableVisitor(private val container: KDeclarationCo
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*> =
         KFunctionImpl(container, descriptor)
 }
+
+internal fun Class<*>.getDeclaredMethodOrNull(name: String, vararg parameterTypes: Class<*>): Method? =
+    try {
+        getDeclaredMethod(name, *parameterTypes)
+    } catch (e: NoSuchMethodException) {
+        null
+    }
+
+internal fun Class<*>.getDeclaredFieldOrNull(name: String): Field? =
+    try {
+        getDeclaredField(name)
+    } catch (e: NoSuchFieldException) {
+        null
+    }

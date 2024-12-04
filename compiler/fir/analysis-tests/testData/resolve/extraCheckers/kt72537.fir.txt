@@ -1,0 +1,8 @@
+FILE: kt72537.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval x: <ERROR TYPE REF: Inc/dec without operand> =  {
+            ERROR_EXPR(Inc/dec without operand) = ERROR_EXPR(Inc/dec without operand).<Unresolved name: inc (++)>#()
+            ERROR_EXPR(Inc/dec without operand)
+        }
+
+    }

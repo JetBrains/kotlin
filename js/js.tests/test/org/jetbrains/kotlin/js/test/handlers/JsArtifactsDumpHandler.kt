@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
-import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
-class JsArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {}
+/**
+ * Copy JS artifacts from the temporary directory to the `js/js.tests/build/out` directory.
+ */
+class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
 
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+    override fun check(failedAssertions: List<WrappedException>) {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val allDirectives = testServices.moduleStructure.allDirectives
 
@@ -28,13 +29,25 @@ class JsArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHandl
 
         val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
         val testGroupOutputDirForMinification = File(pathToRootOutputDir + "out-min/" + testGroupOutputDirPrefix)
+        val testGroupOutputDirForPerModuleCompilation = File(pathToRootOutputDir + "out-per-module/" + testGroupOutputDirPrefix)
+        val testGroupOutputDirForPerModuleMinification = File(pathToRootOutputDir + "out-per-module-min/" + testGroupOutputDirPrefix)
+        val testGroupOutputDirForPerFileCompilation = File(pathToRootOutputDir + "out-per-file/" + testGroupOutputDirPrefix)
+        val testGroupOutputDirForPerFileMinification = File(pathToRootOutputDir + "out-per-file-min/" + testGroupOutputDirPrefix)
 
         val outputDir = getOutputDir(originalFile, testGroupOutputDirForCompilation, stopFile)
         val dceOutputDir = getOutputDir(originalFile, testGroupOutputDirForMinification, stopFile)
+        val perModuleOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerModuleCompilation, stopFile)
+        val perModuleDceOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerModuleMinification, stopFile)
+        val perFileOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerFileCompilation, stopFile)
+        val perFileDceOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerFileMinification, stopFile)
         val minOutputDir = File(dceOutputDir, originalFile.nameWithoutExtension)
 
         copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices), outputDir)
-        copy(JsEnvironmentConfigurator.getDceJsArtifactsOutputDir(testServices), dceOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_PROD_MINIMIZED_NAMES), dceOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_DEV), perModuleOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES), perModuleDceOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_FILE_DEV), perFileOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES), perFileDceOutputDir)
         copy(JsEnvironmentConfigurator.getMinificationJsArtifactsOutputDir(testServices), minOutputDir)
     }
 

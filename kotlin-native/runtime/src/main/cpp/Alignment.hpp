@@ -11,9 +11,11 @@
 
 namespace kotlin {
 
+// Must match objectAlignment in Runtime.kt
 constexpr size_t kObjectAlignment = 8;
 
-constexpr inline size_t AlignUp(size_t size, size_t alignment) {
+template <typename T>
+constexpr T AlignUp(T size, T alignment) {
     return (size + alignment - 1) & ~(alignment - 1);
 }
 
@@ -26,7 +28,7 @@ constexpr inline bool IsValidAlignment(size_t alignment) {
     return alignment != 0 && (alignment & (alignment - 1)) == 0;
 }
 
-constexpr inline bool IsAligned(size_t size, size_t alignment) {
+constexpr inline bool IsAligned(uint64_t size, size_t alignment) {
     return size % alignment == 0;
 }
 

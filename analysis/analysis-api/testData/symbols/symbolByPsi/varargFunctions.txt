@@ -1,20 +1,13 @@
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  hasDefaultValue: false
-  isExtension: false
-  isVararg: true
-  name: a
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Int
-  symbolKind: LOCAL
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /primitive
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /primitive
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -23,36 +16,65 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: primitive
   origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Unit
-  symbolKind: TOP_LEVEL
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(a)
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: a
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
+      getContainingJvmClassName: VarargFunctionsKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
+  getContainingJvmClassName: VarargFunctionsKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  hasDefaultValue: false
-  isExtension: false
-  isVararg: true
-  name: b
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Float?
-  symbolKind: LOCAL
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /nullablePrimitive
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /nullablePrimitive
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -61,36 +83,65 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: nullablePrimitive
   origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Unit
-  symbolKind: TOP_LEVEL
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(b)
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: b
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Float?
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
+      getContainingJvmClassName: VarargFunctionsKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
+  getContainingJvmClassName: VarargFunctionsKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  hasDefaultValue: false
-  isExtension: false
-  isVararg: true
-  name: c
-  origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Any
-  symbolKind: LOCAL
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /nonPrimitive
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /nonPrimitive
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -99,36 +150,65 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: nonPrimitive
   origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Unit
-  symbolKind: TOP_LEVEL
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(c)
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: c
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
+      getContainingJvmClassName: VarargFunctionsKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
+  getContainingJvmClassName: VarargFunctionsKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KtValueParameterSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  hasDefaultValue: false
-  isExtension: false
-  isVararg: true
-  name: d
-  origin: SOURCE
-  receiverType: null
-  returnType: ERROR_TYPE
-  symbolKind: LOCAL
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /error
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /error
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -137,15 +217,50 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: error
   origin: SOURCE
-  receiverType: null
-  returnType: kotlin/Unit
-  symbolKind: TOP_LEVEL
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
   typeParameters: []
   valueParameters: [
-    KtValueParameterSymbol(d)
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: d
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaClassErrorType:
+        annotations: []
+        type: ERROR_TYPE
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
+      getContainingJvmClassName: VarargFunctionsKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
   ]
-  visibility: Public
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(varargFunctions.kt)
+  getContainingJvmClassName: VarargFunctionsKt
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

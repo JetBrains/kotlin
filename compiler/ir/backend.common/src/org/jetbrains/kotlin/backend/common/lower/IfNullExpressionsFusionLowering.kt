@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -17,19 +16,15 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isTrivial
 import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-val ifNullExpressionsFusionPhase =
-    makeIrFilePhase(
-        ::IfNullExpressionsFusionLowering,
-        name = "IfNullExpressionsFusionLowering",
-        description = "Simplify '?.' and '?:' operator chains"
-    )
-
+/**
+ * Simplifies `?.` and `?:` operator chains.
+ */
 class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(Transformer())
@@ -130,7 +125,7 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
 
         private fun IrExpression.isNull(knownVariableSymbol: IrVariableSymbol, knownVariableIsNull: Boolean): Boolean? =
             when (this) {
-                is IrConst<*> ->
+                is IrConst ->
                     value == null
                 is IrGetValue ->
                     when {
@@ -183,7 +178,7 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
         if (condition0.symbol != context.irBuiltIns.eqeqSymbol) return null
         val arg0 = condition0.getValueArgument(0) as? IrGetValue ?: return null
         if (arg0.symbol != subjectVar.symbol) return null
-        val arg1 = condition0.getValueArgument(1) as? IrConst<*> ?: return null
+        val arg1 = condition0.getValueArgument(1) as? IrConst ?: return null
         if (arg1.value != null) return null
 
         val elseResult = whenExpr.branches[1].getElseBranchResultOrNull() ?: return null
@@ -193,7 +188,7 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
 
     private fun IrBranch.getElseBranchResultOrNull(): IrExpression? {
         val branchCondition = condition
-        return if (branchCondition is IrConst<*> && branchCondition.value == true)
+        return if (branchCondition is IrConst && branchCondition.value == true)
             result
         else
             null

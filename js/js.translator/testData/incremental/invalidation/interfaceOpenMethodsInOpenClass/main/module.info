@@ -1,0 +1,16 @@
+STEP 0:
+    dependencies: lib1, lib2
+    modifications:
+        U : test.0.kt -> test.kt
+    added file: m.kt, test.kt
+STEP 1..3:
+    dependencies: lib1, lib2
+    updated imports: test.kt
+STEP 4:
+    dependencies: lib1, lib2
+    modifications:
+        U : test.4.kt -> test.kt
+    modified ir: test.kt
+STEP 5..7:
+    dependencies: lib1, lib2
+    updated imports: test.kt

@@ -5,18 +5,19 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.FirSession
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 sealed class FirMetadataSource : MetadataSource {
     abstract val fir: FirDeclaration
-
-    val declarationSiteSession: FirSession
-        get() = fir.moduleData.session
+    override val source: KtSourceElement?
+        get() = fir.source
 
     override val name: Name?
         get() = when (val fir = fir) {
@@ -39,5 +40,18 @@ sealed class FirMetadataSource : MetadataSource {
 
     class Property(override val fir: FirProperty) : FirMetadataSource(), MetadataSource.Property {
         override val isConst: Boolean get() = fir.isConst
+        override val psi: PsiElement? get() = fir.psi
     }
+
+    class Field(override val fir: FirField) : FirMetadataSource(), MetadataSource.Property {
+        override val isConst: Boolean
+            get() = fir.isConst
+        override val psi: PsiElement? get() = fir.psi
+    }
+
+    class Script(override val fir: FirScript) : FirMetadataSource(), MetadataSource.Script
+
+    class CodeFragment(override val fir: FirCodeFragment) : FirMetadataSource(), MetadataSource.CodeFragment
+
+    class TypeAlias(override val fir: FirTypeAlias) : FirMetadataSource()
 }

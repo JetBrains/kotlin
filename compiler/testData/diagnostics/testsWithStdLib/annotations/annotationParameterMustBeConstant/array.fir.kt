@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class Ann(val i: IntArray)

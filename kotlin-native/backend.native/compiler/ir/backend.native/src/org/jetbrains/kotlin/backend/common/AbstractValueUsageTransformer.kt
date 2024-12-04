@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isBoxedArray
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isBoxedArray
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import java.lang.IllegalStateException
-
 
 /**
  * Transforms expressions depending on the context they are used in.
@@ -77,7 +75,6 @@ internal abstract class AbstractValueUsageTransformer(
                 is IrSimpleFunctionSymbol -> this.useAs(returnTarget.owner.returnType)
                 is IrConstructorSymbol -> this.useAs(irBuiltIns.unitType)
                 is IrReturnableBlockSymbol -> this.useAs(returnTarget.owner.type)
-                else -> error(returnTarget)
             }
 
     protected open fun IrExpression.useAsResult(enclosing: IrExpression): IrExpression =
@@ -281,7 +278,7 @@ internal abstract class AbstractValueUsageTransformer(
                     ?: throw IllegalStateException("Unexpected array type ${expression.type.render()}")
 
         expression.elements.forEachIndexed { index, it ->
-            expression.putElement(index, it.useAs(elementType) as IrConstantValue)
+            expression.elements[index] = it.useAs(elementType) as IrConstantValue
         }
         return expression
     }
@@ -290,7 +287,7 @@ internal abstract class AbstractValueUsageTransformer(
         expression.transformChildrenVoid(this)
 
         expression.valueArguments.forEachIndexed { index, arg ->
-            expression.putArgument(index, arg.useAsArgument(expression.constructor.owner.valueParameters[index]) as IrConstantValue)
+            expression.valueArguments[index] = arg.useAsArgument(expression.constructor.owner.valueParameters[index]) as IrConstantValue
         }
         return expression
     }
@@ -298,4 +295,3 @@ internal abstract class AbstractValueUsageTransformer(
     // TODO: IrStringConcatenation, IrEnumEntry?
 
 }
-

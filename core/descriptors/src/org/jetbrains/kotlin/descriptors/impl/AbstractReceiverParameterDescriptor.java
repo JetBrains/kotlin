@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -34,6 +35,10 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
 
     public AbstractReceiverParameterDescriptor(@NotNull Annotations annotations) {
         super(annotations, SpecialNames.THIS);
+    }
+
+    public AbstractReceiverParameterDescriptor(@NotNull Annotations annotations, @NotNull Name name) {
+        super(annotations, name);
     }
 
     @Nullable
@@ -63,6 +68,12 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitReceiverParameterDescriptor(this, data);
+    }
+
+    @NotNull
+    @Override
+    public List<ReceiverParameterDescriptor> getContextReceiverParameters() {
+        return Collections.emptyList();
     }
 
     @Nullable

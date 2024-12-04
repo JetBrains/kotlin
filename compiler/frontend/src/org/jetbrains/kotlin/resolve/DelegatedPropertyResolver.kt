@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.createFakeExpressionOfType
@@ -368,7 +370,7 @@ class DelegatedPropertyResolver(
         val hasThis = propertyDescriptor.extensionReceiverParameter != null || propertyDescriptor.dispatchReceiverParameter != null
 
         val arguments = Lists.newArrayList<KtExpression>()
-        val psiFactory = KtPsiFactory(delegateExpression, markGenerated = false)
+        val psiFactory = KtPsiFactory(delegateExpression.project, markGenerated = false)
         arguments.add(psiFactory.createExpression(if (hasThis) "this" else "null"))
         arguments.add(psiFactory.createExpressionForProperty())
 
@@ -456,7 +458,7 @@ class DelegatedPropertyResolver(
         context: ExpressionTypingContext
     ): OverloadResolutionResults<FunctionDescriptor> {
         val propertyHasReceiver = propertyDescriptor.dispatchReceiverParameter != null
-        val arguments = KtPsiFactory(delegateExpression, markGenerated = false).run {
+        val arguments = KtPsiFactory(delegateExpression.project, markGenerated = false).run {
             listOf(
                 createExpression(if (propertyHasReceiver) "this" else "null"),
                 createExpressionForProperty()
@@ -541,6 +543,21 @@ class DelegatedPropertyResolver(
         return delegateType
     }
 
+    private fun completeNotComputedDelegateType(trace: BindingTrace, traceToResolveDelegatedProperty: TemporaryBindingTrace) {
+        val ranIntoRecursionDiagnostic = traceToResolveDelegatedProperty.bindingContext.diagnostics.find {
+            it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.errorFactory
+                    || it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.warningFactory
+        }
+        if (ranIntoRecursionDiagnostic != null) {
+            trace.report(
+                TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(
+                    languageVersionSettings,
+                    ranIntoRecursionDiagnostic.psiElement as KtExpression
+                )
+            )
+        }
+    }
+
     private fun resolveWithNewInference(
         delegateExpression: KtExpression,
         variableDescriptor: VariableDescriptorWithAccessors,
@@ -561,7 +578,7 @@ class DelegatedPropertyResolver(
         )
 
         var delegateType = delegateTypeInfo.type ?: run {
-            traceToResolveDelegatedProperty.commit()
+            completeNotComputedDelegateType(trace, traceToResolveDelegatedProperty)
             return null
         }
 
@@ -656,7 +673,7 @@ class DelegatedPropertyResolver(
         inferenceSession: InferenceSession
     ): UnwrappedType {
         val expectedType = if (variableDescriptor.type !is DeferredType) variableDescriptor.type.unwrap() else null
-        val newInferenceSession = DelegatedPropertyInferenceSession(
+        val newInferenceSession = DelegateInferenceSession(
             variableDescriptor, expectedType, psiCallResolver,
             postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
             callComponents, builtIns, inferenceSession
@@ -722,7 +739,7 @@ class DelegatedPropertyResolver(
         val pretendReturnType = call.getResolvedCall(trace.bindingContext)?.resultingDescriptor?.returnType
         return pretendReturnType?.takeIf { it.isProperType() }
             ?: delegateType.takeIf { it.isProperType() }
-            ?: ErrorUtils.createErrorType("Type for ${delegateExpression.text}")
+            ?: ErrorUtils.createErrorType(ErrorTypeKind.TYPE_FOR_DELEGATION, delegateExpression.text)
     }
 
     private fun KotlinType.isProperType(): Boolean {

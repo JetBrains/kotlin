@@ -29,9 +29,10 @@ abstract class SimpleDirectivesContainer : DirectivesContainer() {
 
     protected fun stringDirective(
         description: String,
-        applicability: DirectiveApplicability = DirectiveApplicability.Global
+        applicability: DirectiveApplicability = DirectiveApplicability.Global,
+        multiLine: Boolean = false
     ): DirectiveDelegateProvider<StringDirective> {
-        return DirectiveDelegateProvider { StringDirective(it, description, applicability) }
+        return DirectiveDelegateProvider { StringDirective(it, description, applicability, multiLine) }
     }
 
     protected inline fun <reified T : Enum<T>> enumDirective(

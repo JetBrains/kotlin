@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-235 Illegal assignment return type
 
 package kt235
@@ -5,7 +6,7 @@ package kt235
 fun main() {
     val array = MyArray()
     val f: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
-        <!TYPE_MISMATCH!>array[2] = 23<!> //error: Type mismatch: inferred type is Int (!!!) but String was expected
+        array[2] = 23 //error: Type mismatch: inferred type is Int (!!!) but String was expected
     }<!>
     val g: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
         var x = 1
@@ -17,11 +18,11 @@ fun main() {
     }<!>
     val array1 = MyArray1()
     val i: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
-        <!TYPE_MISMATCH!>array1[2] = 23<!>
+        array1[2] = 23
     }<!>
 
     val fi: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
-        <!TYPE_MISMATCH!>array[2] = 23<!>
+        array[2] = 23
     }<!>
     val gi: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
         var x = 1

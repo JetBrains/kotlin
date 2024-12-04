@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -8,7 +9,7 @@ class Buildee<T>
 class Builder<T>
 
 @OptIn(ExperimentalTypeInference::class)
-inline fun <T> builder(@BuilderInference block: Builder<T>.() -> Unit): Buildee<T> = TODO()
+inline fun <T> builder(block: Builder<T>.() -> Unit): Buildee<T> = TODO()
 
 private fun <T> Builder<T>.consumer(builder: Builder<T>): Unit = TODO()
 

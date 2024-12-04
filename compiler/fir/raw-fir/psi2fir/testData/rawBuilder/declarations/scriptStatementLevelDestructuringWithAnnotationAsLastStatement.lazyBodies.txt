@@ -1,0 +1,18 @@
+FILE: scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts
+    SCRIPT: <script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts>
+
+        init {
+            when () {
+                Boolean(true) ->  {
+                    @DestrAnno(LAZY_EXPRESSION) lval <destruct>: <implicit> = IntegerLiteral(0).to#(IntegerLiteral(1))
+                    @LeftAnno(LAZY_EXPRESSION) lval a: <implicit> = LAZY_EXPRESSION
+                    @RightAnno(LAZY_EXPRESSION) lval b: <implicit> = LAZY_EXPRESSION
+                    run#(LAZY_EXPRESSION)
+                    @Destr2Anno(LAZY_EXPRESSION) lval <destruct>: <implicit> = IntegerLiteral(2).to#(IntegerLiteral(3))
+                    @SecondLeftAnno(LAZY_EXPRESSION) lval c: <implicit> = LAZY_EXPRESSION
+                    @SecondRightAnno(LAZY_EXPRESSION) lval d: <implicit> = LAZY_EXPRESSION
+                }
+            }
+
+        }
+

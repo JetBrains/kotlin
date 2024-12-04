@@ -2,7 +2,15 @@ fun test1(a: Int, b: Int): Int {
   return a.plus(other = b)
 }
 
+fun test1x(a: Int, b: Int): Int {
+  return a.plus(other = b)
+}
+
 fun test2(a: Int, b: Int): Int {
+  return a.minus(other = b)
+}
+
+fun test2x(a: Int, b: Int): Int {
   return a.minus(other = b)
 }
 
@@ -10,7 +18,15 @@ fun test3(a: Int, b: Int): Int {
   return a.times(other = b)
 }
 
+fun test3x(a: Int, b: Int): Int {
+  return a.times(other = b)
+}
+
 fun test4(a: Int, b: Int): Int {
+  return a.div(other = b)
+}
+
+fun test4x(a: Int, b: Int): Int {
   return a.div(other = b)
 }
 
@@ -18,26 +34,11 @@ fun test5(a: Int, b: Int): Int {
   return a.rem(other = b)
 }
 
+fun test5x(a: Int, b: Int): Int {
+  return a.rem(other = b)
+}
+
 fun test6(a: Int, b: Int): IntRange {
   return a.rangeTo(other = b)
 }
 
-fun test1x(a: Int, b: Int): Int {
-  return a.plus(other = b)
-}
-
-fun test2x(a: Int, b: Int): Int {
-  return a.minus(other = b)
-}
-
-fun test3x(a: Int, b: Int): Int {
-  return a.times(other = b)
-}
-
-fun test4x(a: Int, b: Int): Int {
-  return a.div(other = b)
-}
-
-fun test5x(a: Int, b: Int): Int {
-  return a.rem(other = b)
-}

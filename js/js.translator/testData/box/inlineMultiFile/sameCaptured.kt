@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1289
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/lambdaTransformation/sameCaptured.1.kt

@@ -3,15 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
+package org.jetbrains.kotlin.kapt3.base.incremental
 
-import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
-import org.jetbrains.kotlin.kapt3.base.incremental.MentionedTypesTaskListener
-import org.junit.Assert.assertEquals
-import org.junit.BeforeClass
-import org.junit.ClassRule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.jetbrains.kotlin.kapt3.base.newCacheFolder
+import org.jetbrains.kotlin.kapt3.base.newGeneratedSourcesFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 private val MY_TEST_DIR = File("plugins/kapt3/kapt3-base/testData/runner/incremental/complex")
@@ -19,18 +18,14 @@ private val MY_TEST_DIR = File("plugins/kapt3/kapt3-base/testData/runner/increme
 class TestComplexIncrementalAptCache {
 
     companion object {
-        @ClassRule
-        @JvmField
-        var tmp = TemporaryFolder()
-
         private lateinit var cache: JavaClassCacheManager
         private lateinit var generatedSources: File
 
         @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            cache = JavaClassCacheManager(tmp.newFolder())
-            generatedSources = tmp.newFolder()
+        @BeforeAll
+        fun setUp(@TempDir tmp: File) {
+            cache = JavaClassCacheManager(tmp.newCacheFolder())
+            generatedSources = tmp.newGeneratedSourcesFolder()
             cache.close()
             val processor = SimpleProcessor().toAggregating()
             val srcFiles = listOf(
@@ -53,9 +48,9 @@ class TestComplexIncrementalAptCache {
 
     @Test
     fun testEnum() {
-        val myEnum = cache.javaCache.getStructure(MY_TEST_DIR.resolve("MyEnum.java"))!!
+        val myEnum = cache.javaCache.getStructure(MY_TEST_DIR.resolve("MyEnum.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.MyEnum"), myEnum.getDeclaredTypes())
+        assertEquals(setOf("test.MyEnum"), myEnum.declaredTypes)
         assertEquals(emptySet<String>(), myEnum.getMentionedAnnotations())
         assertEquals(emptySet<String>(), myEnum.getPrivateTypes())
         assertEquals(setOf("test.MyEnum", "test.TypeGeneratedByApt"), myEnum.getMentionedTypes())
@@ -63,7 +58,7 @@ class TestComplexIncrementalAptCache {
 
     @Test
     fun testMyNumber() {
-        val myNumber = cache.javaCache.getStructure(MY_TEST_DIR.resolve("MyNumber.java"))!!
+        val myNumber = cache.javaCache.getStructure(MY_TEST_DIR.resolve("MyNumber.java"))!! as SourceFileStructure
 
         assertEquals(
             setOf(
@@ -74,7 +69,7 @@ class TestComplexIncrementalAptCache {
                 "test.TypeUseAnnotation",
                 "test.AnotherTypeUseAnnotation",
                 "test.ThrowTypeUseAnnotation"
-            ), myNumber.getDeclaredTypes()
+            ), myNumber.declaredTypes
         )
         assertEquals(
             setOf(
@@ -116,9 +111,9 @@ class TestComplexIncrementalAptCache {
 
     @Test
     fun testAnnotation() {
-        val numberAnnotation = cache.javaCache.getStructure(MY_TEST_DIR.resolve("NumberAnnotation.java"))!!
+        val numberAnnotation = cache.javaCache.getStructure(MY_TEST_DIR.resolve("NumberAnnotation.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.NumberAnnotation", "test.BaseAnnotation"), numberAnnotation.getDeclaredTypes())
+        assertEquals(setOf("test.NumberAnnotation", "test.BaseAnnotation"), numberAnnotation.declaredTypes)
         assertEquals(setOf("test.BaseAnnotation"), numberAnnotation.getMentionedAnnotations())
         assertEquals(emptySet<String>(), numberAnnotation.getPrivateTypes())
         assertEquals(
@@ -134,9 +129,9 @@ class TestComplexIncrementalAptCache {
 
     @Test
     fun testNumberException() {
-        val numberException = cache.javaCache.getStructure(MY_TEST_DIR.resolve("NumberException.java"))!!
+        val numberException = cache.javaCache.getStructure(MY_TEST_DIR.resolve("NumberException.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.NumberException"), numberException.getDeclaredTypes())
+        assertEquals(setOf("test.NumberException"), numberException.declaredTypes)
         assertEquals(emptySet<String>(), numberException.getMentionedAnnotations())
         assertEquals(emptySet<String>(), numberException.getPrivateTypes())
         assertEquals(setOf("test.NumberException", "java.lang.RuntimeException"), numberException.getMentionedTypes())
@@ -144,9 +139,9 @@ class TestComplexIncrementalAptCache {
 
     @Test
     fun testNumberHolder() {
-        val numberHolder = cache.javaCache.getStructure(MY_TEST_DIR.resolve("NumberHolder.java"))!!
+        val numberHolder = cache.javaCache.getStructure(MY_TEST_DIR.resolve("NumberHolder.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.NumberHolder", "test.NumberHolder.MyInnerClass"), numberHolder.getDeclaredTypes())
+        assertEquals(setOf("test.NumberHolder", "test.NumberHolder.MyInnerClass"), numberHolder.declaredTypes)
         assertEquals(setOf("test.NumberAnnotation"), numberHolder.getMentionedAnnotations())
         assertEquals(setOf("test.NumberManager"), numberHolder.getPrivateTypes())
         assertEquals(
@@ -166,9 +161,9 @@ class TestComplexIncrementalAptCache {
 
     @Test
     fun testNumberManager() {
-        val numberManager = cache.javaCache.getStructure(MY_TEST_DIR.resolve("NumberManager.java"))!!
+        val numberManager = cache.javaCache.getStructure(MY_TEST_DIR.resolve("NumberManager.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.NumberManager"), numberManager.getDeclaredTypes())
+        assertEquals(setOf("test.NumberManager"), numberManager.declaredTypes)
         assertEquals(emptySet<String>(), numberManager.getMentionedAnnotations())
         assertEquals(setOf("test.MyEnum"), numberManager.getPrivateTypes())
         assertEquals(
@@ -182,9 +177,9 @@ class TestComplexIncrementalAptCache {
 
     @Test
     fun testGenericNumber() {
-        val genericNumber = cache.javaCache.getStructure(MY_TEST_DIR.resolve("GenericNumber.java"))!!
+        val genericNumber = cache.javaCache.getStructure(MY_TEST_DIR.resolve("GenericNumber.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.GenericNumber"), genericNumber.getDeclaredTypes())
+        assertEquals(setOf("test.GenericNumber"), genericNumber.declaredTypes)
         assertEquals(emptySet<String>(), genericNumber.getMentionedAnnotations())
         assertEquals(emptySet<String>(), genericNumber.getPrivateTypes())
         assertEquals(

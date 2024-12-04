@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 typealias Test1 = suspend (Int) -> Unit
 typealias Test2 = suspend Int.(Int) -> Unit

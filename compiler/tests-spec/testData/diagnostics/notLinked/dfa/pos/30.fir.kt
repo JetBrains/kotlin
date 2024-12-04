@@ -1,6 +1,14 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 30
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, properties, objects, typealiases, enumClasses, interfaces, sealedClasses
+ */
 
 /*
  * TESTCASE NUMBER: 1
@@ -9,11 +17,11 @@
  */
 fun case_1(x: Class?) {
     if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8.prop_8
     }
 }
 
@@ -24,11 +32,11 @@ fun case_1(x: Class?) {
  */
 fun case_2(x: Class?) {
     if (x?.prop_8!!.prop_8?.prop_8?.prop_8 !== null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8.prop_8
     }
 }
 
@@ -39,11 +47,11 @@ fun case_2(x: Class?) {
  */
 fun case_3(x: Class?) {
     if (x?.prop_8?.prop_8?.prop_8!!.prop_8 == null) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8.prop_8.prop_8
     }
 }
 
@@ -53,12 +61,12 @@ fun case_3(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_4(x: Class?) {
-    if (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8<!>?.prop_8?.prop_8?.prop_8 == null == true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+    if (x!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8?.prop_8?.prop_8?.prop_8 == null == true) else {
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8.prop_8
     }
 }
 
@@ -68,12 +76,12 @@ fun case_4(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_5(x: Class?) {
-    if (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8<!>?.prop_8?.prop_8 == null == true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+    if (x?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8?.prop_8?.prop_8 == null == true) else {
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8.prop_8
     }
 }
 
@@ -83,12 +91,12 @@ fun case_5(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_6(x: Class?) {
-    if (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x?.prop_8?.prop_8?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8<!> == null == true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
+    if (x?.prop_8?.prop_8?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8 == null == true) else {
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8.prop_8.prop_8
     }
 }
 
@@ -101,9 +109,9 @@ fun case_7(x: Class) {
     if (x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.prop_8?.prop_8?.prop_8?.prop_8 != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8.prop_8
     }
 }
 
@@ -116,15 +124,15 @@ fun case_8(x: Class) {
     if (x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.prop_8?.prop_8?.prop_8?.prop_8 != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8.prop_8.prop_8
     }
 }
 // TESTCASE NUMBER: 9
 fun <T> case_9(x: T) {
     if (x!!.propNullableT != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>
         x.propNullableT
     }
 }
@@ -136,8 +144,8 @@ fun <T> case_9(x: T) {
  */
 fun <T>case_10(x: Inv<T>?) {
     if (x!!.prop_1?.prop_1?.prop_1?.prop_2 != null) {
-        x.prop_1<!UNSAFE_CALL!>.<!>prop_1<!UNSAFE_CALL!>.<!>prop_1<!UNSAFE_CALL!>.<!>prop_2
-        x.prop_1<!UNSAFE_CALL!>.<!>prop_1<!UNSAFE_CALL!>.<!>prop_1<!UNSAFE_CALL!>.<!>prop_2<!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>.equals(10)
     }
 }
 
@@ -148,8 +156,8 @@ fun <T>case_10(x: Inv<T>?) {
  */
 inline fun <reified T>case_11(x: Inv<T>?) {
     if (x?.prop_1!!.prop_1?.prop_1?.prop_2 == null) else {
-        x.prop_1.prop_1<!UNSAFE_CALL!>.<!>prop_1<!UNSAFE_CALL!>.<!>prop_2
-        x.prop_1.prop_1<!UNSAFE_CALL!>.<!>prop_1<!UNSAFE_CALL!>.<!>prop_2<!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & Any")!>x.prop_1.prop_1.prop_1.prop_2<!>.equals(10)
     }
 }
 
@@ -160,8 +168,8 @@ inline fun <reified T>case_11(x: Inv<T>?) {
  */
 fun <T>case_12(x: Inv<T>?) {
     if (x?.prop_1?.prop_1?.prop_1!!.prop_1 == null) else {
-        x.prop_1.prop_1.prop_1.prop_1
-        x.prop_1.prop_1.prop_1.prop_1<!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<T>")!>x.prop_1.prop_1.prop_1.prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<T>")!>x.prop_1.prop_1.prop_1.prop_1<!>.equals(10)
     }
 }
 
@@ -172,7 +180,7 @@ fun <T>case_12(x: Inv<T>?) {
  */
 inline fun <reified T>case_13(x: Out<T>?) {
     if (x?.prop_1?.prop_1!!.prop_1?.prop_1 != null) {
-        x.prop_1.prop_1.prop_1<!UNSAFE_CALL!>.<!>prop_1
-        x.prop_1.prop_1.prop_1<!UNSAFE_CALL!>.<!>prop_1<!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<CapturedType(out T)>")!>x.prop_1.prop_1.prop_1.prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<CapturedType(out T)>")!>x.prop_1.prop_1.prop_1.prop_1<!>.equals(10)
     }
 }

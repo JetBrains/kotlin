@@ -575,6 +575,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 typealias Proxy = Short
                 @UnsafeNumber(["c: kotlin.Int", "d: kotlin.Short"])
                 typealias X = Proxy
+                @UnsafeNumber(["c: kotlin.Int", "d: kotlin.Short"])
                 expect val x: X
             """.trimIndent()
         )
@@ -585,6 +586,7 @@ class HierarchicalClassAndTypeAliasCommonizationTest : AbstractInlineSourcesComm
                 typealias Proxy = Short
                 @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Long", "c: kotlin.Int", "d: kotlin.Short"])
                 typealias X = Proxy
+                @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Long", "c: kotlin.Int", "d: kotlin.Short"])
                 expect val x: X
             """.trimIndent()
         )

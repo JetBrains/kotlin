@@ -1,4 +1,5 @@
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+// RUN_PIPELINE_TILL: FRONTEND
+@file:Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 package test
 
 import kotlin.internal.RequireKotlin

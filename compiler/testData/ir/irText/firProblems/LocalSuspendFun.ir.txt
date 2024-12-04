@@ -1,0 +1,20 @@
+FILE fqName:<root> fileName:/LocalSuspendFun.kt
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:addNewStatusAction type:kotlin.coroutines.SuspendFunction0<kotlin.Unit> [val]
+        CALL 'public final fun useMemo <T> (callback: kotlin.Function0<T of <root>.useMemo>): T of <root>.useMemo declared in <root>' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=null
+          <T>: kotlin.coroutines.SuspendFunction0<kotlin.Unit>
+          callback: FUN_EXPR type=kotlin.Function0<kotlin.coroutines.SuspendFunction0<kotlin.Unit>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.coroutines.SuspendFunction0<kotlin.Unit>
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.coroutines.SuspendFunction0<kotlin.Unit> declared in <root>.foo'
+                  FUN_EXPR type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
+                    FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit [suspend]
+                      BLOCK_BODY
+  FUN name:useMemo visibility:public modality:FINAL <T> (callback:kotlin.Function0<T of <root>.useMemo>) returnType:T of <root>.useMemo
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER name:callback index:0 type:kotlin.Function0<T of <root>.useMemo>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun useMemo <T> (callback: kotlin.Function0<T of <root>.useMemo>): T of <root>.useMemo declared in <root>'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=T of <root>.useMemo origin=INVOKE
+          $this: GET_VAR 'callback: kotlin.Function0<T of <root>.useMemo> declared in <root>.useMemo' type=kotlin.Function0<T of <root>.useMemo> origin=VARIABLE_AS_FUNCTION

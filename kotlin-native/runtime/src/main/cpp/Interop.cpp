@@ -19,33 +19,34 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "Alloc.h"
 #include "KString.h"
 #include "Memory.h"
 #include "MemorySharedRefs.hpp"
 #include "Types.h"
 
+using namespace kotlin;
+
 extern "C" {
 
 KNativePtr Kotlin_Interop_createStablePointer(KRef any) {
-  KRefSharedHolder* holder = konanConstructInstance<KRefSharedHolder>();
-  holder->init(any);
-  return holder;
+    KRefSharedHolder* holder = new KRefSharedHolder();
+    holder->init(any);
+    return holder;
 }
 
 void Kotlin_Interop_disposeStablePointer(KNativePtr pointer) {
   KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
   holder->dispose();
-  konanDestructInstance(holder);
+  delete holder;
 }
 
 OBJ_GETTER(Kotlin_Interop_derefStablePointer, KNativePtr pointer) {
   KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
-  RETURN_OBJ(holder->ref<ErrorPolicy::kThrow>());
+  RETURN_OBJ(holder->ref());
 }
 
 OBJ_GETTER(Kotlin_CString_toKStringFromUtf8Impl, const char* cstring) {
-  RETURN_RESULT_OF(StringFromUtf8Buffer, cstring, strlen(cstring));
+  RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
 }

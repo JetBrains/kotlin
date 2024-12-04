@@ -17,33 +17,38 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-object LateinitIntrinsicApplicabilityChecker : CallChecker {
-    private val ACCESSIBLE_LATEINIT_PROPERTY_LITERAL = FqName("kotlin.internal.AccessibleLateinitPropertyLiteral")
-
+class LateinitIntrinsicApplicabilityChecker(val isWarningInPre19: Boolean) : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.resultingDescriptor
 
         // An optimization
         if (descriptor.name.asString() != "isInitialized") return
 
-        if (descriptor.extensionReceiverParameter?.annotations?.hasAnnotation(ACCESSIBLE_LATEINIT_PROPERTY_LITERAL) != true) return
+        if (descriptor.extensionReceiverParameter?.annotations?.hasAnnotation(FqNames.accessibleLateinitPropertyLiteral) != true) return
 
         val expression = (resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression?.let(KtPsiUtil::safeDeparenthesize)
+        fun <T> chooseDiagnostic(ifWarning: T, ifError: T) =
+            if (isWarningInPre19 && !context.languageVersionSettings.supportsFeature(LanguageFeature.NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess))
+                ifWarning
+            else
+                ifError
         if (expression !is KtCallableReferenceExpression) {
-            context.trace.report(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL.on(reportOn))
+            val diagnostic = chooseDiagnostic(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL_WARNING, LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL)
+            context.trace.report(diagnostic.on(reportOn))
         } else {
             val propertyReferenceResolvedCall = expression.callableReference.getResolvedCall(context.trace.bindingContext) ?: return
             val referencedProperty = propertyReferenceResolvedCall.resultingDescriptor
@@ -52,11 +57,20 @@ object LateinitIntrinsicApplicabilityChecker : CallChecker {
             }
 
             if (!referencedProperty.isLateInit) {
-                context.trace.report(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT.on(reportOn))
+                val diagnostic = chooseDiagnostic(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT_WARNING, LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT)
+                context.trace.report(diagnostic.on(reportOn))
             } else if (!isBackingFieldAccessible(referencedProperty, context)) {
-                context.trace.report(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY.on(reportOn, referencedProperty))
+                val diagnostic = chooseDiagnostic(
+                    LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING,
+                    LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY
+                )
+                context.trace.report(diagnostic.on(reportOn, referencedProperty))
             } else if ((context.scope.ownerDescriptor as? FunctionDescriptor)?.isInline == true) {
-                context.trace.report(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION.on(reportOn))
+                val diagnostic = chooseDiagnostic(
+                    LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION_WARNING,
+                    LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION
+                )
+                context.trace.report(diagnostic.on(reportOn))
             }
         }
     }

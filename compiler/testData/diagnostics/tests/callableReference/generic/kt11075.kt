@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 // KT-11075 NONE_APPLICABLE reported for callable reference to an overloaded generic function with expected type provided
 
 object TestCallableReferences {

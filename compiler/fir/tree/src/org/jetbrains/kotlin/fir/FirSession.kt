@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
-import org.jetbrains.kotlin.fir.utils.NullableArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.TypeRegistry
+import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
+import org.jetbrains.kotlin.util.ArrayMapAccessor
+import org.jetbrains.kotlin.util.ComponentArrayOwner
+import org.jetbrains.kotlin.util.NullableArrayMapAccessor
+import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.reflect.KClass
 
 interface FirSessionComponent
@@ -18,9 +19,13 @@ abstract class FirSession @PrivateSessionConstructor constructor(
     val sessionProvider: FirSessionProvider?,
     val kind: Kind
 ) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
-    companion object : TypeRegistry<FirSessionComponent, FirSessionComponent>() {
+    companion object : ConeTypeRegistry<FirSessionComponent, FirSessionComponent>() {
         inline fun <reified T : FirSessionComponent> sessionComponentAccessor(): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
             return generateAccessor(T::class)
+        }
+
+        inline fun <reified T : FirSessionComponent> sessionComponentAccessor(id: String): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
+            return generateAccessor(id)
         }
 
         inline fun <reified T : FirSessionComponent> nullableSessionComponentAccessor(): NullableArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
@@ -35,6 +40,11 @@ abstract class FirSession @PrivateSessionConstructor constructor(
     @SessionConfiguration
     fun register(tClass: KClass<out FirSessionComponent>, value: FirSessionComponent) {
         registerComponent(tClass, value)
+    }
+
+    @SessionConfiguration
+    fun register(keyQualifiedName: String, value: FirSessionComponent) {
+        registerComponent(keyQualifiedName, value)
     }
 
     override fun toString(): String {
@@ -58,15 +68,25 @@ class BuiltinTypes {
     val enumType: FirImplicitBuiltinTypeRef = FirImplicitEnumTypeRef(null)
     val annotationType: FirImplicitBuiltinTypeRef = FirImplicitAnnotationTypeRef(null)
     val booleanType: FirImplicitBuiltinTypeRef = FirImplicitBooleanTypeRef(null)
+    val numberType: FirImplicitBuiltinTypeRef = FirImplicitNumberTypeRef(null)
     val byteType: FirImplicitBuiltinTypeRef = FirImplicitByteTypeRef(null)
     val shortType: FirImplicitBuiltinTypeRef = FirImplicitShortTypeRef(null)
     val intType: FirImplicitBuiltinTypeRef = FirImplicitIntTypeRef(null)
     val longType: FirImplicitBuiltinTypeRef = FirImplicitLongTypeRef(null)
     val doubleType: FirImplicitBuiltinTypeRef = FirImplicitDoubleTypeRef(null)
     val floatType: FirImplicitBuiltinTypeRef = FirImplicitFloatTypeRef(null)
+
+    val uByteType: FirImplicitUByteTypeRef = FirImplicitUByteTypeRef(null)
+    val uShortType: FirImplicitUShortTypeRef = FirImplicitUShortTypeRef(null)
+    val uIntType: FirImplicitUIntTypeRef = FirImplicitUIntTypeRef(null)
+    val uLongType: FirImplicitULongTypeRef = FirImplicitULongTypeRef(null)
+
     val nothingType: FirImplicitBuiltinTypeRef = FirImplicitNothingTypeRef(null)
     val nullableNothingType: FirImplicitBuiltinTypeRef = FirImplicitNullableNothingTypeRef(null)
     val charType: FirImplicitBuiltinTypeRef = FirImplicitCharTypeRef(null)
     val stringType: FirImplicitBuiltinTypeRef = FirImplicitStringTypeRef(null)
     val throwableType: FirImplicitThrowableTypeRef = FirImplicitThrowableTypeRef(null)
+
+    val charSequenceType: FirImplicitCharSequenceTypeRef = FirImplicitCharSequenceTypeRef(null)
+    val charIteratorType: FirImplicitCharIteratorTypeRef = FirImplicitCharIteratorTypeRef(null)
 }

@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib())
-    testImplementation(commonDep("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(kotlin("test"))
 }
 
@@ -14,15 +14,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            languageVersion = "1.4"
-            apiVersion = "1.4"
-            freeCompilerArgs += "-Xsuppress-version-warnings"
-        }
-    }
-}
+configureKotlinCompileTasksGradleCompatibility()
 
 publish()
 

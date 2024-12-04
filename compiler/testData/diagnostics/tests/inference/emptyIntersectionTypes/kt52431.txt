@@ -1,0 +1,24 @@
+package
+
+public fun main(/*0*/ x: Column<kotlin.Long?>, /*1*/ y: kotlin.Double): kotlin.Unit
+public infix fun </*0*/ T : kotlin.Comparable<T>, /*1*/ S : T?> Expression<in S>.less(/*0*/ other: Expression<in S>): kotlin.Unit
+public infix fun </*0*/ T : kotlin.Comparable<T>, /*1*/ S : T?> ExpressionWithColumnType<in S>.less(/*0*/ t: T): kotlin.Unit
+
+public final class Column</*0*/ T> : ExpressionWithColumnType<T> {
+    public constructor Column</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Expression</*0*/ K> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ExpressionWithColumnType</*0*/ K> : Expression<K> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

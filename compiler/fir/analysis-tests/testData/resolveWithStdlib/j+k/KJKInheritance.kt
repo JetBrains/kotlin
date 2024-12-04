@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: K1.kt
 open class KFirst() {
     fun foo() {

@@ -53,6 +53,7 @@ fun getChartData(labels: List<String>, valuesList: Collection<List<*>>,
 fun getChartOptions(samples: Array<String>, yTitle: String, classNames: Array<String>? = null): dynamic {
     val chartOptions: dynamic = object {}
     chartOptions["fullWidth"] = true
+    chartOptions["low"] = 0
     val paddingObject: dynamic = object {}
     paddingObject["right"] = 40
     chartOptions["chartPadding"] = paddingObject
@@ -103,8 +104,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
         var element = data.element
         if (data.type == "point") {
             val pointSize = 12
-            val currentBuild = builds.get(data.index)
-            currentBuild?.let { currentBuild ->
+            builds.get(data.index)?.let { currentBuild ->
                 // Higlight builds with failures.
                 if (currentBuild.failuresNumber > 0) {
                     val svgParameters: dynamic = object {}
@@ -132,7 +132,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
                     previousBuild = builds.get(data.index - shift)
                     shift++
                 }
-                val linkToDetailedInfo = "https://kotlin-native-performance.labs.jb.gg/?report=" +
+                val linkToDetailedInfo = "${window.location.origin}/compare?report=" +
                         "${currentBuild.buildNumber}:${parameters["target"]}" +
                         "${previousBuild?.let {
                             "&compareTo=${previousBuild.buildNumber}:${parameters["target"]}"
@@ -148,9 +148,10 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
                     append("time: ${currentBuild.formattedStartTime}-${currentBuild.formattedFinishTime}<br>")
                     append("Commits:<br>")
                     val commitsList = (JsonTreeParser.parse("{${currentBuild.commits}}") as JsonObject).getArray("commits").map {
+                        it as JsonObject
                         Commit(
-                                (it as JsonObject).getPrimitive("revision").content,
-                                (it as JsonObject).getPrimitive("developer").content
+                                it.getPrimitive("revision").content,
+                                it.getPrimitive("developer").content
                         )
                     }
                     val commits = if (commitsList.size > 3) commitsList.slice(0..2) else commitsList
@@ -171,11 +172,11 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
     })
     chart.on("created", {
         val currentChart = jquerySelector
-        val parameters: dynamic = object {}
-        parameters["selector"] = "[data-chart-tooltip=\"$chartContainer\"]"
-        parameters["container"] = "#$chartContainer"
-        parameters["html"] = true
-        currentChart.tooltip(parameters)
+        val chartParameters: dynamic = object {}
+        chartParameters["selector"] = "[data-chart-tooltip=\"$chartContainer\"]"
+        chartParameters["container"] = "#$chartContainer"
+        chartParameters["html"] = true
+        currentChart.tooltip(chartParameters)
     })
 }
 
@@ -189,8 +190,8 @@ external fun encodeURIComponent(url: String): String
 fun getDatesComponents() = "${beforeDate?.let {"&before=${encodeURIComponent(it)}"} ?: ""}" +
         "${afterDate?.let {"&after=${encodeURIComponent(it)}"} ?: ""}"
 
-fun main(args: Array<String>) {
-    val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg"
+fun main() {
+    val serverUrl = window.location.origin // use "http://localhost:3000" for local debug.
     val zoomRatio = 2
 
     // Get parameters from request.
@@ -215,7 +216,8 @@ fun main(args: Array<String>) {
         val branches: Array<String> = JSON.parse(response)
         // Add release branches to selector.
         branches.filter { it != "master" }.forEach {
-            if ("v(\\d|\\.)+(-M\\d)?-fixes".toRegex().matches(it)) {
+            if ("^v?(\\d|\\.)+(-M\\d)?(-fixes)?$".toRegex().matches(it)) {
+                @Suppress("UNUSED_VARIABLE") // it's used within js block
                 val option = Option(it, it)
                 js("$('#inputGroupBranch')").append(js("$(option)"))
             }
@@ -282,10 +284,15 @@ fun main(args: Array<String>) {
         }
     })
 
-    val platformSpecificBenchs = if (parameters["target"] == "Mac_OS_X") ",FrameworkBenchmarksAnalyzer,SpaceFramework_iosX64" else
-        if (parameters["target"] == "Linux") ",kotlinx.coroutines" else ""
+    val platformSpecificBenchs = when (parameters["target"]) {
+        "Mac_OS_X" -> ",FrameworkBenchmarksAnalyzer,SpaceFramework_iosX64"
+        "Mac_OS_X_Arm64" -> ",FrameworkBenchmarksAnalyzer"
+        "Linux" -> ",kotlinx.coroutines"
+        else -> ""
+    }
 
     var execData = listOf<String>() to listOf<List<Double?>>()
+    var execDebugData = listOf<String>() to listOf<List<Double?>>()
     var compileData = listOf<String>() to listOf<List<Double?>>()
     var codeSizeData = listOf<String>() to listOf<List<Double?>>()
     var bundleSizeData = listOf<String>() to listOf<List<Int?>>()
@@ -294,6 +301,7 @@ fun main(args: Array<String>) {
 
     // Draw charts.
     var execChart: dynamic = null
+    var execChartDebug: dynamic = null
     var compileChart: dynamic = null
     var codeSizeChart: dynamic = null
     var bundleSizeChart: dynamic = null
@@ -304,8 +312,7 @@ fun main(args: Array<String>) {
 
     val metricUrl = "$serverUrl/metricValue/${parameters["target"]}/"
 
-    val unstableBenchmarksPromise = sendGetRequest("$serverUrl/unstable").then { response ->
-        val unstableList = response as String
+    val unstableBenchmarksPromise = sendGetRequest("$serverUrl/unstable").then { unstableList ->
         val data = JsonTreeParser.parse(unstableList)
         if (data !is JsonArray) {
             error("Response is expected to be an array.")
@@ -316,50 +323,65 @@ fun main(args: Array<String>) {
     }
 
     // Get builds description.
-    val buildsInfoPromise = sendGetRequest(descriptionUrl).then { response ->
-        val buildsInfo = response as String
+    val buildsInfoPromise = sendGetRequest(descriptionUrl).then { buildsInfo ->
         val data = JsonTreeParser.parse(buildsInfo)
         if (data !is JsonArray) {
             error("Response is expected to be an array.")
         }
         data.jsonArray.map {
-            val element = it as JsonElement
-            if (element.isNull) null else Build.create(element as JsonObject)
+            if (it.isNull) null else Build.create(it as JsonObject)
         }
     }
 
     unstableBenchmarksPromise.then { unstableBenchmarks ->
         // Collect information for charts library.
-        val valuesToShow = mapOf("EXECUTION_TIME" to listOf(mapOf(
-                        "normalize" to "true"
+        val valuesToShow = mapOf(
+            "EXECUTION_TIME" to listOf(
+                mapOf(
+                    "normalize" to "true"
                 ),
                 mapOf(
-                        "normalize" to "true",
-                        "exclude" to unstableBenchmarks.joinToString(",")
+                    "normalize" to "true",
+                    "exclude" to unstableBenchmarks.joinToString(",")
                 ),
                 mapOf(
-                        "normalize" to "true",
-                        "buildSuffix" to "(NewMM)"
+                    "normalize" to "true",
+                    "buildSuffix" to "(NewMM)"
                 )
+            ),
+            "COMPILE_TIME" to listOf(
+                mapOf(
+                    "samples" to "HelloWorld,Videoplayer$platformSpecificBenchs",
+                    "agr" to "samples"
+                )
+            ),
+            "CODE_SIZE" to listOfNotNull(
+                mapOf(
+                    "normalize" to "true",
+                    "exclude" to when (parameters["target"]) {
+                        "Linux" -> "kotlinx.coroutines"
+                        "Mac_OS_X" -> "SpaceFramework_iosX64"
+                        else -> ""
+                    }
                 ),
-                "COMPILE_TIME" to listOf(mapOf(
-                        "samples" to "HelloWorld,Videoplayer$platformSpecificBenchs",
-                        "agr" to "samples"
-                )),
-                "CODE_SIZE" to listOf(mapOf(
-                        "normalize" to "true",
-                        "exclude" to if (parameters["target"] == "Linux")
-                            "kotlinx.coroutines"
-                        else if (parameters["target"] == "Mac_OS_X")
-                            "SpaceFramework_iosX64"
-                        else ""
-                ), if (platformSpecificBenchs.isNotEmpty()) mapOf(
-                        "normalize" to "true",
-                        "agr" to "samples",
-                        "samples" to platformSpecificBenchs.removePrefix(",")
-                ) else null).filterNotNull(),
-                "BUNDLE_SIZE" to listOf(mapOf("samples" to "KotlinNative",
-                        "agr" to "samples"))
+                mapOf(
+                    "normalize" to "true",
+                    "agr" to "samples",
+                    "samples" to platformSpecificBenchs.removePrefix(",")
+                ).takeIf { platformSpecificBenchs.isNotEmpty() }
+            ),
+            "EXECUTION_TIME_DEBUG" to listOf(
+                mapOf(
+                    "normalize" to "true",
+                    "buildSuffix" to "(DebugNewMM)"
+                )
+            ),
+            "BUNDLE_SIZE" to listOf(
+                mapOf(
+                    "samples" to "KotlinNative",
+                    "agr" to "samples"
+                )
+            )
         )
         // Send requests to get all needed metric values.
         valuesToShow.map { (metric, listOfSettings) ->
@@ -381,12 +403,13 @@ fun main(args: Array<String>) {
                     (if (getParameters.isEmpty()) "?" else "&") + "branch=${parameters["branch"]}"
                 else ""
 
-                val url = "$metricUrl$metric$getParameters$branchParameter${
+                val requestedMetric = if (metric.startsWith("EXECUTION_TIME")) "EXECUTION_TIME" else metric
+                val queryUrl = "$metricUrl$requestedMetric$getParameters$branchParameter${
                     if (parameters["type"] != "all")
                         (if (getParameters.isEmpty() && branchParameter.isEmpty()) "?" else "&") + "type=${parameters["type"]}"
                     else ""
                 }&count=$buildsNumberToShow${getDatesComponents()}"
-                sendGetRequest(url)
+                sendGetRequest(queryUrl)
             }.toTypedArray()
 
             // Get metrics values for charts.
@@ -398,8 +421,7 @@ fun main(args: Array<String>) {
                     }
 
                     val labels = results.map { it.first }
-                    val values = results[0]?.second?.size?.let { (0..it - 1).map { i -> results.map { it.second[i] } } }
-                            ?: emptyList()
+                    val values = results[0].second.size.let { (0..it - 1).map { i -> results.map { it.second[i] } } }
                     labels to values
                 }
                 val labels = valuesList[0].first
@@ -412,7 +434,7 @@ fun main(args: Array<String>) {
                         compileData = labels to values.map { it.map { it?.let { it / 1000 } } }
                         compileChart = Chartist.Line("#compile_chart",
                                 getChartData(labels, compileData.second),
-                                getChartOptions(valuesToShow["COMPILE_TIME"]!![0]!!["samples"]!!.split(',').toTypedArray(),
+                                getChartOptions(valuesToShow["COMPILE_TIME"]!![0]["samples"]!!.split(',').toTypedArray(),
                                         "Time, milliseconds"))
                         buildsInfoPromise.then { builds ->
                             customizeChart(compileChart, "compile_chart", js("$(\"#compile_chart\")"), builds, parameters)
@@ -428,6 +450,16 @@ fun main(args: Array<String>) {
                         buildsInfoPromise.then { builds ->
                             customizeChart(execChart, "exec_chart", js("$(\"#exec_chart\")"), builds, parameters)
                             execChart.update(getChartData(execData.first, execData.second))
+                        }
+                    }
+                    "EXECUTION_TIME_DEBUG" -> {
+                        execDebugData = labels to values
+                        execChartDebug = Chartist.Line("#exec_debug_chart",
+                                getChartData(labels, execDebugData.second),
+                                getChartOptions(arrayOf("Geometric Mean (All)"), "Normalized time"))
+                        buildsInfoPromise.then { builds ->
+                            customizeChart(execChartDebug, "exec_debug_chart", js("$(\"#exec_debug_chart\")"), builds, parameters)
+                            execChartDebug.update(getChartData(execDebugData.first, execDebugData.second))
                         }
                     }
                     "CODE_SIZE" -> {
@@ -464,6 +496,7 @@ fun main(args: Array<String>) {
     // Update all charts with using same data.
     val updateAllCharts: () -> Unit = {
         execChart.update(getChartData(execData.first, execData.second))
+        execChartDebug.update(getChartData(execDebugData.first, execDebugData.second))
         compileChart.update(getChartData(compileData.first, compileData.second))
         codeSizeChart.update(getChartData(codeSizeData.first, codeSizeData.second, sizeClassNames))
         bundleSizeChart.update(getChartData(bundleSizeData.first, bundleSizeData.second, sizeClassNames))

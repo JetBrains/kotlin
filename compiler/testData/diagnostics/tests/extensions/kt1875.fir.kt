@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1875 Safe call should be binded with receiver or this object (but not with both by default)
 
 package kt1875

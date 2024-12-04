@@ -5,12 +5,10 @@ package test
 inline fun String.inlineFun(crossinline lambda: () -> String, crossinline dlambda: () -> String = { this }): String {
     return {
         "${this} ${lambda()} ${dlambda()}"
-    }()
+    }.let { it() }
 }
 
 // FILE: 2.kt
-// CHECK_CALLED_IN_SCOPE: function=inlineFun$lambda_0 scope=test TARGET_BACKENDS=JS
-// CHECK_CALLED_IN_SCOPE: function=inlineFun$lambda scope=test TARGET_BACKENDS=JS
 import test.*
 
 fun String.test(): String = "INLINE".inlineFun({ this })

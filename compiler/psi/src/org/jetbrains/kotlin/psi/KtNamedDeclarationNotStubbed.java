@@ -24,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
-import static org.jetbrains.kotlin.psi.KtPsiFactoryKt.KtPsiFactory;
-
 // TODO: Remove when all named declarations get stubs
 @Deprecated
 abstract class KtNamedDeclarationNotStubbed extends KtDeclarationImpl implements KtNamedDeclaration {
@@ -67,7 +65,7 @@ abstract class KtNamedDeclarationNotStubbed extends KtDeclarationImpl implements
         PsiElement identifier = getNameIdentifier();
         if (identifier == null) throw new IncorrectOperationException();
 
-        return identifier.replace(KtPsiFactory(this).createNameIdentifier(name));
+        return identifier.replace(new KtPsiFactory(getProject()).createNameIdentifier(name));
     }
 
     @Override

@@ -1,0 +1,55 @@
+KtNameReferenceExpression(8,11): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(12,15): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(24,27): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(28,31): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(32,45): 'TopLevelClass'
+  KtSimpleNameReference:
+    (in one.two) class TopLevelClass
+
+KtNameReferenceExpression(46,56): 'InnerClass'
+  KtSimpleNameReference:
+    (in one.two.TopLevelClass) inner class InnerClass
+
+KtNameReferenceExpression(150,153): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(154,157): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(158,171): 'TopLevelClass'
+  KtSimpleNameReference:
+    (in one.two) class TopLevelClass
+
+KtNameReferenceExpression(189,202): 'TopLevelClass'
+  KtSimpleNameReference:
+    (in one.two) class TopLevelClass
+
+KtNameReferenceExpression(203,214): 'NestedClass'
+  KtSimpleNameReference:
+    (in one.two.TopLevelClass) class NestedClass
+
+KtNameReferenceExpression(238,248): 'InnerAlias'
+  KtSimpleNameReference:
+    (in one.two.TopLevelClass) inner class InnerClass
+
+KtCallExpression(251,263): 'InnerClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(251,261): 'InnerClass'
+  KtSimpleNameReference:
+    (in one.two.TopLevelClass.InnerClass) constructor()

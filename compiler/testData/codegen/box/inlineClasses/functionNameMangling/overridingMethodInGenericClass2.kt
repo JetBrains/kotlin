@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 abstract class GenericBase<T> {
     abstract fun foo(x: T): T
@@ -8,8 +10,7 @@ interface IFoo {
     fun foo(x: String): String
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Str(val str: String)
 
 class Derived : GenericBase<Str>(), IFoo {

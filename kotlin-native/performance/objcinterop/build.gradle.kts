@@ -29,7 +29,8 @@ native.apply {
         create("classes") {
             headers("$projectDir/src/nativeInterop/cinterop/complexNumbers.h")
             extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/complexNumbers.m")
-            extraOpts("-Xsource-compiler-option", "-lobjc", "-Xsource-compiler-option", "-fobjc-arc")
+            extraOpts("-Xsource-compiler-option", "-lobjc", "-Xsource-compiler-option", "-fobjc-arc",
+                    "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)=")
         }
     }
 }

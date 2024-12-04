@@ -1,4 +1,5 @@
-// !WTIH_NEW_INFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_NEW_INFERENCE
 // SKIP_TXT
 
 class MyException : Exception() {

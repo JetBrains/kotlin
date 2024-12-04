@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface P<U, Y>
 
 class A<T> {

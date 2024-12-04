@@ -27,7 +27,6 @@ fun f(a: Long): Int {
 // 1 IFGE
 // 1 IF
 
-// JVM_IR_TEMPLATES
 // 1 ILOAD
 // 1 ISTORE
 // 0 IADD

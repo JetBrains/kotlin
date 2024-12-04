@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
 
 // WITH_STDLIB
 
@@ -11,7 +10,7 @@ fun fn1(x: Any) {}
 inline fun safeAsReturnsNull(operation: String, cast: () -> Any?) {
     try {
         val x = cast()
-        assert(x == null) { "$operation: should return null, got $x" }
+        require(x == null) { "$operation: should return null, got $x" }
     }
     catch (e: Throwable) {
         throw AssertionError("$operation: should not throw exceptions, got $e")
@@ -21,7 +20,7 @@ inline fun safeAsReturnsNull(operation: String, cast: () -> Any?) {
 inline fun safeAsReturnsNonNull(operation: String, cast: () -> Any?) {
     try {
         val x = cast()
-        assert(x != null) { "$operation: should return non-null" }
+        require(x != null) { "$operation: should return non-null" }
     }
     catch (e: Throwable) {
         throw AssertionError("$operation: should not throw exceptions, got $e")

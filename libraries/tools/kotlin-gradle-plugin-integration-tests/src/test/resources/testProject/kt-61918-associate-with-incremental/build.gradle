@@ -1,0 +1,23 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+kotlin.target.compilations {
+    create("integrationTest") {
+        defaultSourceSet {
+            dependencies {
+                implementation(getByName("main").compileDependencyFiles + getByName("main").output.classesDirs)
+            }
+        }
+    }
+
+    //force task instantiation:
+    tasks.getByName("compileIntegrationTestKotlin")
+
+    named("integrationTest").configure { associateWith(getByName("main")) }
+}

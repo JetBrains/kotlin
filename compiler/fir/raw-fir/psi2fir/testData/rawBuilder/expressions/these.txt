@@ -1,5 +1,5 @@
 FILE: these.kt
-    public? final? class Some : R|kotlin/Any| {
+    public final? class Some : R|kotlin/Any| {
         public? [ContainingClassKey=Some] constructor(): R|Some| {
             super<R|kotlin/Any|>()
         }
@@ -13,7 +13,7 @@ FILE: these.kt
         }
 
         public? final? val instance: Some
-            [ContainingClassKey=Some] public? get(): Some {
+            public? [ContainingClassKey=Some] get(): Some {
                 ^ this@Some#
             }
 

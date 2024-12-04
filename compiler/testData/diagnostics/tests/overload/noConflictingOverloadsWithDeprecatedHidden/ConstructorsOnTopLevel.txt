@@ -1,0 +1,464 @@
+package
+
+public val defaultArgument: UserKlass
+public val defaultArgumentA: UserKlass
+public val defaultArgumentB: UserKlass
+public val sameDefaultArgument: UserKlass
+
+public open class Invariant</*0*/ T> {
+    public constructor Invariant</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class SuperConstructorSource {
+    public constructor SuperConstructorSource(/*0*/ placeholder: UserKlass)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestBasic {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestBasic()
+    public constructor TestBasic()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDifferencesInInternalAndPublicVisibilities {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") internal constructor TestDifferencesInInternalAndPublicVisibilities()
+    public constructor TestDifferencesInInternalAndPublicVisibilities()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDifferencesInInternalAndPublicVisibilitiesReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestDifferencesInInternalAndPublicVisibilitiesReverse()
+    internal constructor TestDifferencesInInternalAndPublicVisibilitiesReverse()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDifferencesInPrivateAndInternalVisibilities {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") private constructor TestDifferencesInPrivateAndInternalVisibilities()
+    internal constructor TestDifferencesInPrivateAndInternalVisibilities()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDifferencesInPrivateAndInternalVisibilitiesReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") internal constructor TestDifferencesInPrivateAndInternalVisibilitiesReverse()
+    private constructor TestDifferencesInPrivateAndInternalVisibilitiesReverse()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDifferencesInPrivateAndPublicVisibilities {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") private constructor TestDifferencesInPrivateAndPublicVisibilities()
+    public constructor TestDifferencesInPrivateAndPublicVisibilities()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDifferencesInPrivateAndPublicVisibilitiesReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestDifferencesInPrivateAndPublicVisibilitiesReverse()
+    private constructor TestDifferencesInPrivateAndPublicVisibilitiesReverse()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TestDifferencesInProtectedAndInternalVisibilities {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") protected constructor TestDifferencesInProtectedAndInternalVisibilities()
+    internal constructor TestDifferencesInProtectedAndInternalVisibilities()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TestDifferencesInProtectedAndInternalVisibilitiesReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") internal constructor TestDifferencesInProtectedAndInternalVisibilitiesReverse()
+    protected constructor TestDifferencesInProtectedAndInternalVisibilitiesReverse()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TestDifferencesInProtectedAndPrivateVisibilities {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") protected constructor TestDifferencesInProtectedAndPrivateVisibilities()
+    private constructor TestDifferencesInProtectedAndPrivateVisibilities()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TestDifferencesInProtectedAndPrivateVisibilitiesReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") private constructor TestDifferencesInProtectedAndPrivateVisibilitiesReverse()
+    protected constructor TestDifferencesInProtectedAndPrivateVisibilitiesReverse()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TestDifferencesInProtectedAndPublicVisibilities {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") protected constructor TestDifferencesInProtectedAndPublicVisibilities()
+    public constructor TestDifferencesInProtectedAndPublicVisibilities()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TestDifferencesInProtectedAndPublicVisibilitiesReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestDifferencesInProtectedAndPublicVisibilitiesReverse()
+    protected constructor TestDifferencesInProtectedAndPublicVisibilitiesReverse()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDifferencesInValueParameterDefaultArgumentsPresence {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestDifferencesInValueParameterDefaultArgumentsPresence(/*0*/ arg: UserKlass = ...)
+    public constructor TestDifferencesInValueParameterDefaultArgumentsPresence(/*0*/ arg: UserKlass)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDifferencesInValueParameterDefaultArgumentsPresenceReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestDifferencesInValueParameterDefaultArgumentsPresenceReverse(/*0*/ arg: UserKlass)
+    public constructor TestDifferencesInValueParameterDefaultArgumentsPresenceReverse(/*0*/ arg: UserKlass = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestDifferentlyNamedValueParameters {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestDifferentlyNamedValueParameters(/*0*/ argA: UserKlass)
+    public constructor TestDifferentlyNamedValueParameters(/*0*/ argB: UserKlass)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalDelegatedPrimaryConstructorCalls {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestIdenticalDelegatedPrimaryConstructorCalls()
+    public constructor TestIdenticalDelegatedPrimaryConstructorCalls()
+    public constructor TestIdenticalDelegatedPrimaryConstructorCalls(/*0*/ placeholder: UserKlass)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalDelegatedSuperConstructorCalls : SuperConstructorSource {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestIdenticalDelegatedSuperConstructorCalls()
+    public constructor TestIdenticalDelegatedSuperConstructorCalls()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalInternalVisibility {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") internal constructor TestIdenticalInternalVisibility()
+    internal constructor TestIdenticalInternalVisibility()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalPrimaryAndSecondaryConstructorsA {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestIdenticalPrimaryAndSecondaryConstructorsA()
+    public constructor TestIdenticalPrimaryAndSecondaryConstructorsA()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalPrimaryAndSecondaryConstructorsB {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestIdenticalPrimaryAndSecondaryConstructorsB()
+    public constructor TestIdenticalPrimaryAndSecondaryConstructorsB()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalPrivateVisibility {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") private constructor TestIdenticalPrivateVisibility()
+    private constructor TestIdenticalPrivateVisibility()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TestIdenticalProtectedVisibility {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") protected constructor TestIdenticalProtectedVisibility()
+    protected constructor TestIdenticalProtectedVisibility()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalTypeParametersA</*0*/ T> {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestIdenticalTypeParametersA</*0*/ T>()
+    public constructor TestIdenticalTypeParametersA</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalTypeParametersB</*0*/ T> {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestIdenticalTypeParametersB</*0*/ T>(/*0*/ arg: T)
+    public constructor TestIdenticalTypeParametersB</*0*/ T>(/*0*/ arg: T)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalTypeParametersC</*0*/ T> {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestIdenticalTypeParametersC</*0*/ T>(/*0*/ arg: Invariant<T>)
+    public constructor TestIdenticalTypeParametersC</*0*/ T>(/*0*/ arg: Invariant<T>)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestIdenticalValueParameters {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestIdenticalValueParameters(/*0*/ arg: UserKlass)
+    public constructor TestIdenticalValueParameters(/*0*/ arg: UserKlass)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestMultipleDifferentlyNamedValueParametersA {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestMultipleDifferentlyNamedValueParametersA(/*0*/ arg1: UserKlassA, /*1*/ arg2A: UserKlassB)
+    public constructor TestMultipleDifferentlyNamedValueParametersA(/*0*/ arg1: UserKlassA, /*1*/ arg2B: UserKlassB)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestMultipleDifferentlyNamedValueParametersB {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestMultipleDifferentlyNamedValueParametersB(/*0*/ arg1A: UserKlassA, /*1*/ arg2A: UserKlassB)
+    public constructor TestMultipleDifferentlyNamedValueParametersB(/*0*/ arg1B: UserKlassA, /*1*/ arg2B: UserKlassB)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestMultipleIdenticalTypeParameters</*0*/ T1, /*1*/ T2> {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestMultipleIdenticalTypeParameters</*0*/ T1, /*1*/ T2>()
+    public constructor TestMultipleIdenticalTypeParameters</*0*/ T1, /*1*/ T2>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestMultipleIdenticalValueParameters {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestMultipleIdenticalValueParameters(/*0*/ arg1: UserKlassA, /*1*/ arg2: UserKlassB)
+    public constructor TestMultipleIdenticalValueParameters(/*0*/ arg1: UserKlassA, /*1*/ arg2: UserKlassB)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestMultipleTypeAliasedValueParameterTypesA {
+    public constructor TestMultipleTypeAliasedValueParameterTypesA(/*0*/ arg1: UserKlassA, /*1*/ arg2: SameUserKlassB /* = UserKlassB */)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestMultipleTypeAliasedValueParameterTypesA(/*0*/ arg1: UserKlassA, /*1*/ arg2: UserKlassB)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestMultipleTypeAliasedValueParameterTypesAReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestMultipleTypeAliasedValueParameterTypesAReverse(/*0*/ arg1: UserKlassA, /*1*/ arg2: SameUserKlassB /* = UserKlassB */)
+    public constructor TestMultipleTypeAliasedValueParameterTypesAReverse(/*0*/ arg1: UserKlassA, /*1*/ arg2: UserKlassB)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestMultipleTypeAliasedValueParameterTypesB {
+    public constructor TestMultipleTypeAliasedValueParameterTypesB(/*0*/ arg1: SameUserKlassA /* = UserKlassA */, /*1*/ arg2: SameUserKlassB /* = UserKlassB */)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestMultipleTypeAliasedValueParameterTypesB(/*0*/ arg1: UserKlassA, /*1*/ arg2: UserKlassB)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestMultipleTypeAliasedValueParameterTypesBReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestMultipleTypeAliasedValueParameterTypesBReverse(/*0*/ arg1: SameUserKlassA /* = UserKlassA */, /*1*/ arg2: SameUserKlassB /* = UserKlassB */)
+    public constructor TestMultipleTypeAliasedValueParameterTypesBReverse(/*0*/ arg1: UserKlassA, /*1*/ arg2: UserKlassB)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeAliasedValueParameterTypes {
+    public constructor TestTypeAliasedValueParameterTypes(/*0*/ arg: SameUserKlass /* = UserKlass */)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeAliasedValueParameterTypes(/*0*/ arg: UserKlass)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeAliasedValueParameterTypesReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeAliasedValueParameterTypesReverse(/*0*/ arg: SameUserKlass /* = UserKlass */)
+    public constructor TestTypeAliasedValueParameterTypesReverse(/*0*/ arg: UserKlass)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeParameterWithIdenticalUpperBoundsA</*0*/ T : UserInterface> {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeParameterWithIdenticalUpperBoundsA</*0*/ T : UserInterface>()
+    public constructor TestTypeParameterWithIdenticalUpperBoundsA</*0*/ T : UserInterface>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeParameterWithIdenticalUpperBoundsB</*0*/ T : UserInterface> {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeParameterWithIdenticalUpperBoundsB</*0*/ T : UserInterface>(/*0*/ arg: T)
+    public constructor TestTypeParameterWithIdenticalUpperBoundsB</*0*/ T : UserInterface>(/*0*/ arg: T)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeParameterWithIdenticalUpperBoundsC</*0*/ T : UserInterface> {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeParameterWithIdenticalUpperBoundsC</*0*/ T : UserInterface>(/*0*/ arg: Invariant<T>)
+    public constructor TestTypeParameterWithIdenticalUpperBoundsC</*0*/ T : UserInterface>(/*0*/ arg: Invariant<T>)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeParameterWithMultipleIdenticalUpperBoundsAA</*0*/ T : UserInterfaceA> where T : UserInterfaceB {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsAA</*0*/ T : UserInterfaceA>() where T : UserInterfaceB
+    public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsAA</*0*/ T : UserInterfaceA>() where T : UserInterfaceB
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeParameterWithMultipleIdenticalUpperBoundsAB</*0*/ T : UserInterfaceA> where T : UserInterfaceB {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsAB</*0*/ T : UserInterfaceA>(/*0*/ arg: T) where T : UserInterfaceB
+    public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsAB</*0*/ T : UserInterfaceA>(/*0*/ arg: T) where T : UserInterfaceB
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeParameterWithMultipleIdenticalUpperBoundsAC</*0*/ T : UserInterfaceA> where T : UserInterfaceB {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsAC</*0*/ T : UserInterfaceA>(/*0*/ arg: Invariant<T>) where T : UserInterfaceB
+    public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsAC</*0*/ T : UserInterfaceA>(/*0*/ arg: Invariant<T>) where T : UserInterfaceB
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeParameterWithMultipleIdenticalUpperBoundsBA</*0*/ T : UserInterfaceA> where T : UserInterfaceB {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsBA</*0*/ T : UserInterfaceA>() where T : UserInterfaceB
+    public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsBA</*0*/ T : UserInterfaceA>() where T : UserInterfaceB
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeParameterWithMultipleIdenticalUpperBoundsBB</*0*/ T : UserInterfaceA> where T : UserInterfaceB {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsBB</*0*/ T : UserInterfaceA>(/*0*/ arg: T) where T : UserInterfaceB
+    public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsBB</*0*/ T : UserInterfaceA>(/*0*/ arg: T) where T : UserInterfaceB
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestTypeParameterWithMultipleIdenticalUpperBoundsBC</*0*/ T : UserInterfaceA> where T : UserInterfaceB {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsBC</*0*/ T : UserInterfaceA>(/*0*/ arg: Invariant<T>) where T : UserInterfaceB
+    public constructor TestTypeParameterWithMultipleIdenticalUpperBoundsBC</*0*/ T : UserInterfaceA>(/*0*/ arg: Invariant<T>) where T : UserInterfaceB
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestValueParameterWithAliasedDefaultArguments {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestValueParameterWithAliasedDefaultArguments(/*0*/ arg: UserKlass = ...)
+    public constructor TestValueParameterWithAliasedDefaultArguments(/*0*/ arg: UserKlass = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestValueParameterWithAliasedDefaultArgumentsReverse {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestValueParameterWithAliasedDefaultArgumentsReverse(/*0*/ arg: UserKlass = ...)
+    public constructor TestValueParameterWithAliasedDefaultArgumentsReverse(/*0*/ arg: UserKlass = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestValueParameterWithDifferentDefaultArguments {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestValueParameterWithDifferentDefaultArguments(/*0*/ arg: UserKlass = ...)
+    public constructor TestValueParameterWithDifferentDefaultArguments(/*0*/ arg: UserKlass = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestValueParameterWithIdenticalDefaultArguments {
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public constructor TestValueParameterWithIdenticalDefaultArguments(/*0*/ arg: UserKlass = ...)
+    public constructor TestValueParameterWithIdenticalDefaultArguments(/*0*/ arg: UserKlass = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface UserInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface UserInterfaceA {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface UserInterfaceB {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class UserKlass {
+    public constructor UserKlass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class UserKlassA {
+    public constructor UserKlassA()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class UserKlassB {
+    public constructor UserKlassB()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias SameUserKlass = UserKlass
+public typealias SameUserKlassA = UserKlassA
+public typealias SameUserKlassB = UserKlassB
+

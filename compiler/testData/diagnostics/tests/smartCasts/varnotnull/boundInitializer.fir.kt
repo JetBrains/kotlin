@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(arg: Int?) {
     val x = arg
     if (x != null) {
@@ -15,6 +16,6 @@ fun foo(arg: Int?) {
     var z = arg
     z = z?.let { 42 }
     if (z != null) {
-        arg.hashCode()
+        arg<!UNSAFE_CALL!>.<!>hashCode()
     }
 }

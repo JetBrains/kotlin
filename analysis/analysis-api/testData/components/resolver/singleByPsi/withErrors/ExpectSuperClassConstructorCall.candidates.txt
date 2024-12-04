@@ -1,0 +1,2 @@
+KtNameReferenceExpression(149,152): 'Foo'
+  NO_CANDIDATES

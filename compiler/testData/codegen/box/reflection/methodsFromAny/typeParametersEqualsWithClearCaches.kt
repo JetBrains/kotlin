@@ -11,7 +11,9 @@ inline fun check(message: String, generate: () -> Any?) {
         x1 = generate()
 
         // Force clear the internal maps, as if the weak values in them are garbage-collected.
-        kotlin.reflect.jvm.internal.ReflectionFactoryImpl.clearCaches()
+        synchronized(kotlin.reflect.jvm.internal.ReflectionFactoryImpl::class.java) {
+            kotlin.reflect.jvm.internal.ReflectionFactoryImpl.clearCaches()
+        }
 
         x2 = generate()
     } catch (e: Throwable) {

@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /C : /I<#A!!> { // /C|null[0]
+    final val t // /C.t|{}t[0]
+        final fun <get-t>(): #A // /C.t.<get-t>|<get-t>(){}[0]
+    constructor <init>(#A) // /C.<init>|<init>(1:0){}[0]
+    final fun input(#A!!) // /C.input|input(1:0){}[0]
+    final fun output(): #A!! // /C.output|output(){}[0]
+}
+abstract interface <#A: kotlin/Any?> /I { // /I|null[0]
+    abstract fun input(#A) // /I.input|input(1:0){}[0]
+    abstract fun output(): #A // /I.output|output(){}[0]
+}
+final fun <#A: kotlin/Any?> /bar(/I<out #A!!>): #A!! // /bar|bar(I<out|0:0>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /foo(/I<#A!!>) // /foo|foo(I<0:0>){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: /I<#A!!>> /foo2(#A, #B) // /foo2|foo2(0:0;0:1){0§<kotlin.Any?>;1§<I<0:0>>}[0]
+final fun <#A: kotlin/Any?> /qux(#A, /I<in #A!!>) // /qux|qux(0:0;I<in|0:0>){0§<kotlin.Any?>}[0]

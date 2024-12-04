@@ -86,8 +86,7 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
 
         super.configureSpecificCompilerArguments(arguments, sourceRoots);
 
-        arguments.setOutputFile(outputFile);
-        arguments.setMetaInfo(metaInfo);
+        arguments.setOutputDir(new File(outputFile).getParent());
     }
 
     @Override

@@ -8,7 +8,7 @@ public final enum class DOMElementTestClasses : kotlin.Enum<DOMElementTestClasse
     enum entry cls2
 
     private constructor DOMElementTestClasses()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: DOMElementTestClasses): kotlin.Int
@@ -20,6 +20,7 @@ public final enum class DOMElementTestClasses : kotlin.Enum<DOMElementTestClasse
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<DOMElementTestClasses>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): DOMElementTestClasses
     public final /*synthesized*/ fun values(): kotlin.Array<DOMElementTestClasses>
 }
@@ -35,7 +36,7 @@ public final enum class TestClasses : kotlin.Enum<TestClasses>, EnumStyleClass {
     enum entry cls
 
     private constructor TestClasses()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: TestClasses): kotlin.Int
@@ -47,6 +48,7 @@ public final enum class TestClasses : kotlin.Enum<TestClasses>, EnumStyleClass {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<TestClasses>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestClasses
     public final /*synthesized*/ fun values(): kotlin.Array<TestClasses>
 }

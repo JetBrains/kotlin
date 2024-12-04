@@ -3,12 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.konan
+package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.isInterop
 
 sealed class KlibModuleOrigin {
 
@@ -17,21 +16,20 @@ sealed class KlibModuleOrigin {
     }
 }
 
-sealed class CompiledKlibModuleOrigin: KlibModuleOrigin()
+sealed class CompiledKlibModuleOrigin : KlibModuleOrigin()
 
 class DeserializedKlibModuleOrigin(val library: KotlinLibrary) : CompiledKlibModuleOrigin()
 
-object CurrentKlibModuleOrigin: CompiledKlibModuleOrigin()
+object CurrentKlibModuleOrigin : CompiledKlibModuleOrigin()
 
 object SyntheticModulesOrigin : KlibModuleOrigin()
 
-internal fun KlibModuleOrigin.isInteropLibrary(): Boolean = when (this) {
-    is DeserializedKlibModuleOrigin -> this.library.isInterop
+internal fun KlibModuleOrigin.isCInteropLibrary(): Boolean = when (this) {
+    is DeserializedKlibModuleOrigin -> this.library.isCInteropLibrary()
     CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
 }
 
 val ModuleDescriptor.klibModuleOrigin get() = this.getCapability(KlibModuleOrigin.CAPABILITY)!!
 
-val ModuleDescriptor.kotlinLibrary get() =
-    (this.klibModuleOrigin as DeserializedKlibModuleOrigin)
-        .library
+val ModuleDescriptor.kotlinLibrary
+    get() = (this.klibModuleOrigin as DeserializedKlibModuleOrigin).library

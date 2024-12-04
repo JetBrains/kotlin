@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: AImpl.kt
 
 public abstract class AImpl {
@@ -102,5 +103,5 @@ fun main() {
     <!OPERATOR_MODIFIER_REQUIRED!>x[0]<!>
     x.size
     x.remove("")
-    x.remove(1)
+    x.remove(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }

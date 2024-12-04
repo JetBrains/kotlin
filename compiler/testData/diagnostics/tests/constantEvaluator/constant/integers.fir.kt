@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 package test
 
@@ -11,4 +12,4 @@ val prop2: Long = 0x7777777777
 val prop3 = 0x7777777777
 
 // val prop4: 10
-const val prop4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>'\n'.code<!>
+const val prop4 = '\n'.code

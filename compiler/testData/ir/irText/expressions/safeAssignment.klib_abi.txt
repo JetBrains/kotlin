@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    final var x // /C.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /C.x.<get-x>|<get-x>(){}[0]
+        final fun <set-x>(kotlin/Int) // /C.x.<set-x>|<set-x>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int) // /C.<init>|<init>(kotlin.Int){}[0]
+}
+final fun /test(/C?) // /test|test(C?){}[0]

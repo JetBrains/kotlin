@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package kt786
 
 //KT-786 Exception on incomplete code with 'when'

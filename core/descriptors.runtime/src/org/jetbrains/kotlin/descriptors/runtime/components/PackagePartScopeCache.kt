@@ -25,7 +25,7 @@ class PackagePartScopeCache(private val resolver: DeserializedDescriptorResolver
             if (fileClass.classHeader.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS)
                 fileClass.classHeader.multifilePartNames.mapNotNull { partName ->
                     val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
-                    kotlinClassFinder.findKotlinClass(classId)
+                    kotlinClassFinder.findKotlinClass(classId, resolver.components.configuration.metadataVersion)
                 }
             else listOf(fileClass)
 

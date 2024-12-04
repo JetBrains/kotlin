@@ -8,22 +8,21 @@ package org.jetbrains.kotlin.scripting.ide_services
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.scripting.ide_services.test_util.*
 import java.io.File
-import kotlin.io.path.*
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.reflect.full.isSubclassOf
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.isError
 import kotlin.script.experimental.jvm.util.isIncomplete
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
-import kotlin.script.experimental.util.LinkedSnippet
-import kotlin.script.experimental.util.get
 
 // Adapted form GenericReplTest
 
@@ -284,6 +283,7 @@ class JvmIdeServicesTest : TestCase() {
             jvm {
                 updateClasspath(scriptCompilationClasspathFromContext("test", classLoader = DependsOn::class.java.classLoader))
             }
+            compilerOptions("-Xallow-unstable-dependencies")
             defaultImports(DependsOn::class)
             refineConfiguration {
                 onAnnotations(DependsOn::class, handler = { configureMavenDepsOnAnnotations(it, resolver) })
@@ -325,6 +325,20 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    fun testAnonymousObjectReflection() {
+        JvmTestRepl()
+            .use { repl ->
+                assertEvalResult(repl, "42", 42)
+                assertEvalUnit(repl, "val sim = object : ArrayList<String>() {}")
+
+                val compiledSnippet = checkCompile(repl, "sim")
+                val evalResult = repl.eval(compiledSnippet!!)
+
+                val a = (evalResult.valueOrThrow().get().result as ResultValue.Value).value!!
+                assertTrue(a::class.isSubclassOf(List::class))
+            }
+    }
+
     @OptIn(ExperimentalPathApi::class)
     companion object {
         private const val MODULE_PATH = "plugins/scripting/scripting-ide-services-test"
@@ -354,7 +368,7 @@ class JvmIdeServicesTest : TestCase() {
     }
 }
 
-class LegacyReplTestLong : TestCase() {
+class LegacyReplTestLong1 : TestCase() {
     fun test256Evals() {
         JvmTestRepl()
             .use { repl ->
@@ -384,7 +398,9 @@ class LegacyReplTestLong : TestCase() {
                 assertEquals(evaluated.toString(), evals, (evaluated?.result as ResultValue.Value?)?.value)
             }
     }
+}
 
+class LegacyReplTestLong2 : TestCase() {
     fun testReplSlowdownKt22740() {
         JvmTestRepl()
             .use { repl ->
@@ -407,109 +423,3 @@ class LegacyReplTestLong : TestCase() {
             }
     }
 }
-
-private fun JvmTestRepl.compileAndEval(codeLine: SourceCode): Pair<ResultWithDiagnostics<LinkedSnippet<out CompiledSnippet>>, EvaluatedSnippet?> {
-
-    val compRes = compile(codeLine)
-
-    val evalRes = compRes.valueOrNull()?.let {
-        eval(it)
-    }
-    return compRes to evalRes?.valueOrNull().get()
-}
-
-private fun assertCompileFails(
-    repl: JvmTestRepl,
-    @Suppress("SameParameterValue")
-    line: String
-) {
-    val compiledSnippet =
-        checkCompile(repl, line)
-
-    TestCase.assertNull(compiledSnippet)
-}
-
-private fun assertEvalUnit(
-    repl: JvmTestRepl,
-    @Suppress("SameParameterValue")
-    line: String
-) {
-    val compiledSnippet =
-        checkCompile(repl, line)
-
-    val evalResult = repl.eval(compiledSnippet!!)
-    val valueResult = evalResult.valueOrNull().get()
-
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.result is ResultValue.Unit)
-}
-
-private fun <R> assertEvalResult(repl: JvmTestRepl, line: String, expectedResult: R) {
-    val compiledSnippet =
-        checkCompile(repl, line)
-
-    val evalResult = repl.eval(compiledSnippet!!)
-    val valueResult = evalResult.valueOrNull().get()
-
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.result is ResultValue.Value)
-    TestCase.assertEquals(expectedResult, (valueResult.result as ResultValue.Value).value)
-}
-
-private inline fun <reified R> assertEvalResultIs(repl: JvmTestRepl, line: String) {
-    val compiledSnippet =
-        checkCompile(repl, line)
-
-    val evalResult = repl.eval(compiledSnippet!!)
-    val valueResult = evalResult.valueOrNull().get()
-
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.result is ResultValue.Value)
-    TestCase.assertTrue((valueResult.result as ResultValue.Value).value is R)
-}
-
-private fun checkCompile(repl: JvmTestRepl, line: String): LinkedSnippet<KJvmCompiledScript>? {
-    val codeLine = repl.nextCodeLine(line)
-    val compileResult = repl.compile(codeLine)
-    return compileResult.valueOrNull()
-}
-
-private data class CompilationErrors(
-    val message: String,
-    val location: CompilerMessageLocationWithRange?
-)
-
-private fun <T> ResultWithDiagnostics<T>.getErrors(): CompilationErrors =
-    CompilationErrors(
-        reports.joinToString("\n") { report ->
-            report.location?.let { loc ->
-                CompilerMessageLocationWithRange.create(
-                    report.sourcePath,
-                    loc.start.line,
-                    loc.start.col,
-                    loc.end?.line,
-                    loc.end?.col,
-                    null
-                )?.toString()?.let {
-                    "$it "
-                }
-            }.orEmpty() + report.message
-        },
-        reports.firstOrNull {
-            when (it.severity) {
-                ScriptDiagnostic.Severity.ERROR -> true
-                ScriptDiagnostic.Severity.FATAL -> true
-                else -> false
-            }
-        }?.let {
-            val loc = it.location ?: return@let null
-            CompilerMessageLocationWithRange.create(
-                it.sourcePath,
-                loc.start.line,
-                loc.start.col,
-                loc.end?.line,
-                loc.end?.col,
-                null
-            )
-        }
-    )

@@ -5,8 +5,6 @@
 
 package org.jetbrains.analyzer
 
-import org.w3c.xhr.*
-import kotlinx.browser.*
 import kotlin.js.*
 
 actual fun readFile(fileName: String): String {
@@ -27,3 +25,5 @@ actual fun assert(value: Boolean, lazyMessage: () -> Any) {
 actual fun sendGetRequest(url: String, user: String?, password: String?, followLocation: Boolean) : String {
     error("Unsupported")
 }
+
+actual fun getDefaultPerformanceServerUrl() : String? = null

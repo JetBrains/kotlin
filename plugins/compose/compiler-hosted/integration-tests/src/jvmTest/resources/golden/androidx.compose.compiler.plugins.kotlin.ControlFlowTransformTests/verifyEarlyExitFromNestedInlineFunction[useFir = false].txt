@@ -1,0 +1,57 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+@NonRestartableComposable
+fun Test(condition: Boolean) {
+    Text("Before outer")
+    InlineLinearA {
+        Text("Before inner")
+        InlineLinearB inner@{
+            Text("Before return")
+            if (condition) return@inner
+            Text("After return")
+        }
+        Text("After inner")
+    }
+    Text("Before outer")
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@NonRestartableComposable
+fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<Text("...>,<Inline...>,<Text("...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  Text("Before outer", %composer, 0b0110)
+  InlineLinearA({ %composer: Composer?, %changed: Int ->
+    sourceInformationMarkerStart(%composer, <>, "C<Text("...>,<Inline...>,<Text("...>:Test.kt")
+    Text("Before inner", %composer, 0b0110)
+    InlineLinearB({ %composer: Composer?, %changed: Int ->
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C<Text("...>,<Text("...>:Test.kt")
+      Text("Before return", %composer, 0b0110)
+      if (condition) {
+        %composer.endReplaceGroup()
+        return@InlineLinearB
+      }
+      Text("After return", %composer, 0b0110)
+      %composer.endReplaceGroup()
+    }, %composer, 0)
+    Text("After inner", %composer, 0b0110)
+    sourceInformationMarkerEnd(%composer)
+  }, %composer, 0)
+  Text("Before outer", %composer, 0b0110)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

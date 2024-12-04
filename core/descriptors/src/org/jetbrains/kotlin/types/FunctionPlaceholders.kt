@@ -20,15 +20,18 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 class FunctionPlaceholders(private val builtIns: KotlinBuiltIns) {
     fun createFunctionPlaceholderType(
             argumentTypes: List<KotlinType>,
             hasDeclaredArguments: Boolean
     ): KotlinType {
-        return ErrorUtils.createErrorTypeWithCustomConstructor(
-                "function placeholder type",
-                FunctionPlaceholderTypeConstructor(argumentTypes, hasDeclaredArguments, builtIns)
+        return ErrorUtils.createErrorType(
+            ErrorTypeKind.FUNCTION_PLACEHOLDER_TYPE,
+            FunctionPlaceholderTypeConstructor(argumentTypes, hasDeclaredArguments, builtIns),
+            argumentTypes.toString()
         )
     }
 }
@@ -43,7 +46,8 @@ class FunctionPlaceholderTypeConstructor(
         val hasDeclaredArguments: Boolean,
         private val kotlinBuiltIns: KotlinBuiltIns
 ) : TypeConstructor {
-    private val errorTypeConstructor: TypeConstructor = ErrorUtils.createErrorTypeConstructorWithCustomDebugName("PLACEHOLDER_FUNCTION_TYPE" + argumentTypes)
+    private val errorTypeConstructor: TypeConstructor =
+        ErrorUtils.createErrorTypeConstructor(ErrorTypeKind.FUNCTION_PLACEHOLDER_TYPE, argumentTypes.toString())
 
     override fun getParameters(): List<TypeParameterDescriptor> {
         return errorTypeConstructor.parameters

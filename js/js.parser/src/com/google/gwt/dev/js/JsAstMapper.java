@@ -17,6 +17,7 @@ package com.google.gwt.dev.js;
 
 import com.google.gwt.dev.js.parserExceptions.JsParserException;
 import com.google.gwt.dev.js.rhino.CodePosition;
+import com.google.gwt.dev.js.rhino.Comment;
 import com.google.gwt.dev.js.rhino.Node;
 import com.google.gwt.dev.js.rhino.TokenStream;
 import com.intellij.util.SmartList;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class JsAstMapper {
@@ -44,7 +46,18 @@ public class JsAstMapper {
     }
 
     private JsNode map(Node node) throws JsParserException {
-        return withLocation(mapWithoutLocation(node), node);
+        return withLocation(mapWithComments(node), node);
+    }
+
+    private JsNode mapWithComments(Node node) throws JsParserException {
+        JsNode jsNode = mapWithoutLocation(node);
+
+        if (jsNode != null) {
+            jsNode.setCommentsBeforeNode(mapComments(node.getCommentsBeforeNode()));
+            jsNode.setCommentsAfterNode(mapComments(node.getCommentsAfterNode()));
+        }
+
+        return jsNode;
     }
 
     private JsNode mapWithoutLocation(Node node) throws JsParserException {
@@ -165,6 +178,7 @@ public class JsAstMapper {
                 return mapSetElem(node);
 
             case TokenStream.FUNCTION:
+            case TokenStream.GENERATOR:
                 return mapFunction(node);
 
             case TokenStream.BLOCK:
@@ -185,6 +199,9 @@ public class JsAstMapper {
 
             case TokenStream.CONTINUE:
                 return mapContinue(node);
+
+            case TokenStream.YIELD:
+                return mapYield(node);
 
             case TokenStream.OBJLIT:
                 return mapObjectLit(node);
@@ -374,6 +391,10 @@ public class JsAstMapper {
         return new JsContinue(getTargetLabel(contNode));
     }
 
+    private JsYield mapYield(Node yieldNode) {
+        return new JsYield(mapExpression(yieldNode.getFirstChild()));
+    }
+
     private JsStatement mapDebuggerStatement(Node node) {
         // Calls an optional method to invoke the debugger.
         //
@@ -557,7 +578,7 @@ public class JsAstMapper {
 
     public JsFunction mapFunction(Node fnNode) throws JsParserException {
         int nodeType = fnNode.getType();
-        assert nodeType == TokenStream.FUNCTION: "Expected function node, got: " + TokenStream.tokenToName(nodeType);
+        assert nodeType == TokenStream.FUNCTION || nodeType == TokenStream.GENERATOR: "Expected function node, got: " + TokenStream.tokenToName(nodeType);
         Node fromFnNameNode = fnNode.getFirstChild();
         Node fromParamNode = fnNode.getFirstChild().getNext().getFirstChild();
         Node fromBodyNode = fnNode.getFirstChild().getNext().getNext();
@@ -573,10 +594,14 @@ public class JsAstMapper {
         JsFunction toFn = scopeContext.enterFunction();
         toFn.setName(functionName);
 
+        if (nodeType == TokenStream.GENERATOR) {
+            toFn.getModifiers().add(JsFunction.Modifier.GENERATOR);
+        }
+
         while (fromParamNode != null) {
             String fromParamName = fromParamNode.getString();
             JsName name = scopeContext.localNameFor(fromParamName);
-            toFn.getParameters().add(new JsParameter(name));
+            toFn.getParameters().add(withLocation(new JsParameter(name), fromParamNode));
             fromParamNode = fromParamNode.getNext();
         }
 
@@ -1111,8 +1136,28 @@ public class JsAstMapper {
         if (astNode == null) return null;
 
         CodePosition location = node.getPosition();
+        switch (node.getType()) {
+            case TokenStream.FUNCTION:
+                // For functions, consider their location to be at the opening parenthesis.
+                Node c = node.getFirstChild();
+                while (c != null && c.getType() != TokenStream.LP)
+                    c = c.getNext();
+                if (c != null && c.getPosition() != null)
+                    location = c.getPosition();
+                break;
+            case TokenStream.GETPROP:
+                // For dot-qualified references, consider their position to be at the rightmost name reference.
+                location = node.getLastChild().getPosition();
+                break;
+        }
+
         if (location != null) {
-            JsLocation jsLocation = new JsLocation(fileName, location.getLine(), location.getOffset());
+            String originalName = null;
+            if (astNode instanceof JsFunction || astNode instanceof JsVars.JsVar || astNode instanceof JsParameter) {
+                JsName name = ((HasName) astNode).getName();
+                originalName = name != null ? name.toString() : null;
+            }
+            JsLocation jsLocation = new JsLocation(fileName, location.getLine(), location.getOffset(), originalName);
             if (astNode instanceof SourceInfoAwareJsNode) {
                 astNode.setSource(jsLocation);
             }
@@ -1124,5 +1169,20 @@ public class JsAstMapper {
             }
         }
         return astNode;
+    }
+
+    private List<JsComment> mapComments(Comment comment) {
+        if (comment == null) return null;
+
+        List<JsComment> comments = new LinkedList<>();
+
+        while (comment != null) {
+            String text = comment.getText();
+            JsComment jsComment = comment.isMultiLine() ? new JsMultiLineComment(text) : new JsSingleLineComment(text);
+            comments.add(jsComment);
+            comment = comment.getNext();
+        }
+
+        return comments;
     }
 }

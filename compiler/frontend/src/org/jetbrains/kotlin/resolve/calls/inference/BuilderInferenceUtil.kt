@@ -54,7 +54,7 @@ class TypeTemplate(
     typeVariable.originalTypeParameter.builtIns.nothingType,
     typeVariable.originalTypeParameter.builtIns.anyType.makeNullableAsSpecified(nullable)
 ) {
-    override fun replaceAnnotations(newAnnotations: Annotations) = this
+    override fun replaceAttributes(newAttributes: TypeAttributes) = this
 
     override fun makeNullableAsSpecified(newNullability: Boolean) = TypeTemplate(typeVariable, builderInferenceData, newNullability)
 
@@ -177,7 +177,7 @@ class BuilderInferenceSupport(
             approximationSubstitutor.buildSubstitutor().substitute(lambdaExpectedType, Variance.IN_VARIANCE) ?: return
 
         val newExpectedType = createFunctionType(
-            newReceiverType.builtIns, approximatedLambdaType.annotations, newReceiverType,
+            newReceiverType.builtIns, approximatedLambdaType.annotations, newReceiverType, emptyList(), // TODO: Context receivers?
             approximatedLambdaType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType),
             parameterNames = null, // TODO: parameterNames
             returnType = approximatedLambdaType.getReturnTypeFromFunctionType(),

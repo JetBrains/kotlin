@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -194,12 +195,11 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         typeSubstitutor: IrTypeSubstitutor
     ): List<IrValueParameter> {
         val lambdaParameters = ArrayList<IrValueParameter>()
-        var index = 0
         superMethod.extensionReceiverParameter?.let { superExtensionReceiver ->
-            lambdaParameters.add(superExtensionReceiver.copySubstituted(lambda, typeSubstitutor, index++, Name.identifier("\$receiver")))
+            lambdaParameters.add(superExtensionReceiver.copySubstituted(lambda, typeSubstitutor, Name.identifier("\$receiver")))
         }
         superMethod.valueParameters.mapTo(lambdaParameters) { superValueParameter ->
-            superValueParameter.copySubstituted(lambda, typeSubstitutor, index++)
+            superValueParameter.copySubstituted(lambda, typeSubstitutor)
         }
         return lambdaParameters
     }
@@ -207,12 +207,10 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
     private fun IrValueParameter.copySubstituted(
         function: IrSimpleFunction,
         substitutor: IrTypeSubstitutor,
-        newIndex: Int,
         newName: Name = name
     ) =
         buildValueParameter(function) {
             name = newName
-            index = newIndex
             type = substitutor.substitute(this@copySubstituted.type)
         }
 
@@ -222,7 +220,6 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
             expression.type,
             lambda.symbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = lambda.valueParameters.size,
             reflectionTarget = null,
             origin = IrStatementOrigin.LAMBDA
         )
@@ -233,10 +230,6 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
             throw AssertionError("Simple type expected: ${irType.render()}")
         val irClassSymbol = irType.classOrNull
             ?: throw AssertionError("Class type expected: ${irType.render()}")
-        return IrTypeSubstitutor(
-            irClassSymbol.owner.typeParameters.map { it.symbol },
-            irType.arguments,
-            jvmContext.irBuiltIns
-        )
+        return IrTypeSubstitutor(irClassSymbol.owner.typeParameters.map { it.symbol }, irType.arguments)
     }
 }

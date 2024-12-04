@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
@@ -49,7 +50,6 @@ import org.jetbrains.kotlin.types.expressions.FakeCallKind;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.psi.KtPsiFactoryKt.KtPsiFactory;
 import static org.junit.Assert.assertNotNull;
 
 public class ExpectedResolveDataUtil {
@@ -148,15 +148,15 @@ public class ExpectedResolveDataUtil {
         emptyModule.initialize(PackageFragmentProvider.Empty.INSTANCE);
 
         LexicalScopeImpl lexicalScope = new LexicalScopeImpl(ImportingScope.Empty.INSTANCE, classDescriptor, false,
-                                                             classDescriptor.getThisAsReceiverParameter(),
+                                                             classDescriptor.getThisAsReceiverParameter(), Collections.emptyList(),
                                                              LexicalScopeKind.SYNTHETIC);
 
         LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(environment.getConfiguration());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                new BindingTraceContext(), lexicalScope,
+                new BindingTraceContext(project), lexicalScope,
                 DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, container.getDataFlowValueFactory());
 
-        KtExpression callElement = KtPsiFactory(project).createExpression(name);
+        KtExpression callElement = new KtPsiFactory(project).createExpression(name);
 
         TemporaryBindingTrace traceWithFakeArgumentInfo =
                 TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name);

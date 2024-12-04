@@ -8,42 +8,79 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
+import kotlin.io.path.exists
 
 @DisplayName("Tasks configuration avoidance")
-@SimpleGradlePluginTests
 class ConfigurationAvoidanceIT : KGPBaseTest() {
 
-    @DisplayName("Unrelated tasks are not configured")
+    @JvmGradlePluginTests
+    @DisplayName("JVM unrelated tasks are not configured")
     @GradleTest
     fun testUnrelatedTaskNotConfigured(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
-
-            val expensivelyConfiguredTaskName = "expensivelyConfiguredTask"
-
-            @Suppress("GroovyAssignabilityCheck")
-            buildGradle.append(
-                //language=Groovy
-                """
-                    
-                tasks.register("$expensivelyConfiguredTaskName") {
-                    throw new GradleException("Should not configure expensive task!")
-                }
-                """.trimIndent()
-            )
+            createTaskWithExpensiveConfiguration()
 
             build("compileKotlin")
         }
     }
 
-    @DisplayName("Android tasks are not configured")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
+    @JvmGradlePluginTests
+    @DisplayName("KGP/Jvm does not eagerly configure any tasks")
     @GradleTest
-    fun testAndroidUnrelatedTaskNotConfigured(gradleVersion: GradleVersion) {
+    fun testJvmConfigurationAvoidance(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.configureEach {
+                |    if (name != "help" && name != "clean") {
+                |        throw new GradleException("Configuration avoidance failure for ${'$'}name!")
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build("--dry-run")
+        }
+    }
+
+    @OtherGradlePluginTests
+    @DisplayName("KGP/Kapt does not eagerly configure any tasks")
+    @GradleTest
+    fun testKaptConfigurationAvoidance(gradleVersion: GradleVersion) {
+        project("kapt2/simple", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.configureEach {
+                |    if (name != "help" && name != "clean") {
+                |        throw new GradleException("Configuration avoidance failure for ${'$'}name!")
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build("--dry-run")
+        }
+    }
+
+    @AndroidGradlePluginTests
+    @DisplayName("Android unrelated tasks are not configured")
+    @GradleAndroidTest
+    fun testAndroidUnrelatedTaskNotConfigured(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
         project(
             "AndroidProject",
-            gradleVersion
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = providedJdk.location
         ) {
 
+            gradleProperties.appendText("android.defaults.buildfeatures.aidl=true")
             listOf("Android", "Test").forEach { subproject ->
                 subProject(subproject)
                     .buildGradle
@@ -78,12 +115,108 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
                     """.trimIndent()
                 )
 
-            build(
-                "help",
-                buildOptions = defaultBuildOptions.copy(
-                    androidVersion = TestVersions.AGP.AGP_42
-                )
+            build("help")
+        }
+    }
+
+    @JsGradlePluginTests
+    @DisplayName("JS unrelated tasks are not configured")
+    @GradleTest
+    fun jsNoTasksConfigured(gradleVersion: GradleVersion) {
+        project("kotlin-js-plugin-project", gradleVersion) {
+            createTaskWithExpensiveConfiguration()
+
+            build("help")
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("MPP unrelated tasks are not configured")
+    @GradleTest
+    fun mppNoTasksConfigured(gradleVersion: GradleVersion) {
+        project("new-mpp-lib-and-app/sample-app", gradleVersion) {
+            createTaskWithExpensiveConfiguration()
+
+            build("help")
+        }
+    }
+
+    private fun TestProject.createTaskWithExpensiveConfiguration(
+        expensivelyConfiguredTaskName: String = "expensivelyConfiguredTask"
+    ): String {
+        @Suppress("GroovyAssignabilityCheck")
+        if (buildGradle.exists()) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                    
+                tasks.register("$expensivelyConfiguredTaskName") {
+                    throw new GradleException("Should not configure expensive task!")
+                }
+                """.trimIndent()
+            )
+        } else {
+            buildGradleKts.appendText(
+                //language=kotlin
+                """
+                |
+                |tasks.register("$expensivelyConfiguredTaskName") {
+                |   throw GradleException("Should not configure expensive task!")
+                |}
+                """.trimMargin()
             )
         }
+
+        return expensivelyConfiguredTaskName
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("JVM early configuration resolution")
+    @GradleTest
+    fun testEarlyConfigurationsResolutionKotlin(gradleVersion: GradleVersion) {
+        testEarlyConfigurationsResolution("kotlinProject", gradleVersion, kts = false)
+    }
+
+    @JsGradlePluginTests
+    @DisplayName("JS early configuration resolution")
+    @GradleTest
+    fun testEarlyConfigurationsResolutionKotlinJs(gradleVersion: GradleVersion) {
+        testEarlyConfigurationsResolution("kotlin-js-browser-project", gradleVersion, kts = true)
+    }
+
+    private fun testEarlyConfigurationsResolution(
+        projectName: String,
+        gradleVersion: GradleVersion,
+        kts: Boolean,
+        buildOptions: BuildOptions = defaultBuildOptions
+    ) = project(projectName, gradleVersion, buildOptions = buildOptions) {
+        (if (kts) buildGradleKts else buildGradle).appendText(
+            //language=Gradle
+            """${'\n'}
+            // KT-45834 start
+            ${if (kts) "var" else "def"} ready = false
+            gradle.taskGraph.whenReady {
+                println("Task Graph Ready")
+                ready = true
+            }
+
+            allprojects {
+                configurations.forEach { configuration ->
+                    configuration.incoming.beforeResolve {
+                        println("Resolving ${'$'}configuration")
+                        if (!ready) {
+                            throw ${if (kts) "" else "new"} GradleException("${'$'}configuration is being resolved at configuration time")
+                        }
+                    }
+                }
+            }
+            // KT-45834 end
+            """.trimIndent()
+        )
+
+        build(
+            "assemble",
+            "-m"
+        )
     }
 }

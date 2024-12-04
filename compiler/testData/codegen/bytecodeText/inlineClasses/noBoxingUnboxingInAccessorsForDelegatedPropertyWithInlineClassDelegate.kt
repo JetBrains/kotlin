@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // FILE: Foo.kt
 class Foo {
     var a: Int = 42

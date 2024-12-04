@@ -23,9 +23,9 @@ fun test2() {
 
   <set-x>(value = 0)
   { // BLOCK
-    val tmp0: Int = <get-x>()
-    <set-x>(value = tmp0.inc())
-    tmp0
+    val tmp_0: Int = <get-x>()
+    <set-x>(value = tmp_0.inc())
+    tmp_0
   } /*~> Unit */
   <set-x>(value = <get-x>().plus(other = 1))
 }

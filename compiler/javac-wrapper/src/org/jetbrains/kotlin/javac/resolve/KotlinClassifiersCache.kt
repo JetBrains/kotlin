@@ -125,6 +125,9 @@ class MockKotlinClassifier(override val classId: ClassId,
                             cache.createMockKotlinClassifier(nestedClassOrObject, ktFile, classId.createNestedClassId(nestedClassOrObject.nameAsSafeName))
                         } ?: emptyList()
 
+    override val isFromSource: Boolean
+        get() = true
+
     override val lightClassOriginKind
         get() = LightClassOriginKind.SOURCE
 
@@ -159,7 +162,7 @@ class MockKotlinClassifier(override val classId: ClassId,
     override val isEnum get() = shouldNotBeCalled()
     override val isRecord get() = shouldNotBeCalled()
     override val isSealed: Boolean get() = shouldNotBeCalled()
-    override val permittedTypes: Collection<JavaClassifierType> get() = shouldNotBeCalled()
+    override val permittedTypes: Sequence<JavaClassifierType> get() = shouldNotBeCalled()
     override val methods get() = shouldNotBeCalled()
     override val fields get() = shouldNotBeCalled()
     override val constructors get() = shouldNotBeCalled()
@@ -198,6 +201,7 @@ class MockKotlinField(private val psiField: PsiField) : JavaField {
     override val type get() = shouldNotBeCalled()
     override val hasConstantNotNullInitializer get() = shouldNotBeCalled()
     override fun findAnnotation(fqName: FqName) = shouldNotBeCalled()
+    override val isFromSource: Boolean get() = shouldNotBeCalled()
 }
 
 private fun KtClassOrObject.computeClassId(): ClassId? =

@@ -32,6 +32,7 @@ public abstract class CharBuffer implements CharSequence {
 
 // MODULE: main(lib)
 // FILE: 1.kt
+abstract class KCB : CharBuffer()
 
 fun box(): String {
     val cb: CharBuffer = CharBuffer.impl()

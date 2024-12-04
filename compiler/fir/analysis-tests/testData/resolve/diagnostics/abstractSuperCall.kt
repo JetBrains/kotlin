@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class C {
     open val x: Int = 10
     fun h() {}

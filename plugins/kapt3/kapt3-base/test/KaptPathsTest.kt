@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.kapt.base.test
 
-import junit.framework.TestCase
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.base.kapt3.collectJavaSourceFiles
-import org.junit.Test
+import org.jetbrains.kotlin.kapt3.base.KaptOptions
+import org.jetbrains.kotlin.kapt3.base.collectJavaSourceFiles
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
 
-class KaptPathsTest : TestCase() {
+class KaptPathsTest {
     @Test
     fun testSymbolicLinks() {
         if (System.getProperty("os.name").lowercase().contains("win")) return
@@ -34,9 +35,8 @@ class KaptPathsTest : TestCase() {
 
             val symlinkToOtherJava = Files.createSymbolicLink(File(tempDir, "Other.java").toPath(), otherJava.toPath()).toFile()
             val symlinkToNotJava = Files.createSymbolicLink(File(tempDir, "NotJava.java").toPath(), notJava.toPath()).toFile()
-            val symlinkToJavaRootDir = Files.createSymbolicLink(File(tempDir, "java2").toPath(), javaRootDir.toPath()).toFile()
 
-            val javaRoots = listOf(simpleJava, symlinkToOtherJava, symlinkToNotJava, symlinkToJavaRootDir, javaRootDir)
+            val javaRoots = listOf(simpleJava, symlinkToOtherJava, symlinkToNotJava, javaRootDir)
 
             val paths = KaptOptions.Builder().apply {
                 javaSourceRoots.addAll(javaRoots)
@@ -49,11 +49,10 @@ class KaptPathsTest : TestCase() {
 
             fun assertContains(path: String) {
                 val available by lazy { javaSourceFiles.joinToString { it.toRelativeString(tempDir) } }
-                assertTrue("Can't find path $path\nAvailable: $available",
-                           javaSourceFiles.any { it.toRelativeString(tempDir) == path })
+                assertTrue(javaSourceFiles.any { it.toRelativeString(tempDir) == path }) { "Can't find path $path\nAvailable: $available" }
             }
 
-            assertEquals(4, javaSourceFiles.size)
+            assertEquals(4, javaSourceFiles.size, "Actual content: ${javaSourceFiles}")
             assertContains("Simple.java")
             assertContains("Other.java")
             assertContains("NotJava.java")

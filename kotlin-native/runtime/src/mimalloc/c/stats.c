@@ -410,6 +410,19 @@ mi_msecs_t _mi_clock_now(void) {
   QueryPerformanceCounter(&t);
   return mi_to_msecs(t);
 }
+#elif defined(KONAN_MI_MALLOC) && (defined(KONAN_MACOSX) || defined(KONAN_OSX) || defined(KONAN_IOS) || defined(KONAN_TVOS) || defined(KONAN_WATCHOS))
+/**
+ * clock_gettime man said, that CLOCK_REALTIME returns the same value as gettimeofday, but has better precision
+ * Unfortunately, this function is available only from Mac OSX 10.12, and relevant ios versions.
+ * So building against newer sdk, while running on old one can lead to runtime crash as in https://youtrack.jetbrains.com/issue/KT-52430
+ * To avoid this we use gettimeofday function, which gives enough precision while existing since 4.2BSD, which seems to be a reasonably long time ago
+ **/
+#include <sys/time.h>
+mi_msecs_t _mi_clock_now(void) {
+  struct timeval t;
+  gettimeofday(&t, NULL);
+  return ((mi_msecs_t)t.tv_sec * 1000) + ((mi_msecs_t)t.tv_usec / 1000);
+}
 #else
 #include <time.h>
 #ifdef CLOCK_REALTIME

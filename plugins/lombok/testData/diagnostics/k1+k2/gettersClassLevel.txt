@@ -1,0 +1,37 @@
+package
+
+public fun </*0*/ T> assertEquals(/*0*/ a: T, /*1*/ b: T): kotlin.Unit
+public fun test(): kotlin.Unit
+
+@lombok.Getter public open class ClassLevelGetterTest {
+    public constructor ClassLevelGetterTest()
+    private final var age: kotlin.Int
+    private final var boxedBoolean: kotlin.Boolean!
+    @lombok.Getter(value = AccessLevel.PROTECTED) private final var name: kotlin.String!
+    private final var primitiveBoolean: kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open /*synthesized*/ fun getAge(): kotlin.Int
+    public open /*synthesized*/ fun getBoxedBoolean(): kotlin.Boolean!
+    protected open /*synthesized*/ fun getName(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open /*synthesized*/ fun isPrimitiveBoolean(): kotlin.Boolean
+    public/*package*/ open fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OverridenGetterTest : ClassLevelGetterTest {
+    public constructor OverridenGetterTest()
+    invisible_fake final override /*1*/ /*fake_override*/ var age: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var boxedBoolean: kotlin.Boolean!
+    @lombok.Getter(value = AccessLevel.PROTECTED) invisible_fake final override /*1*/ /*fake_override*/ var name: kotlin.String!
+    invisible_fake final override /*1*/ /*fake_override*/ var primitiveBoolean: kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun getAge(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun getBoxedBoolean(): kotlin.Boolean!
+    protected open override /*1*/ /*fake_override*/ fun getName(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isPrimitiveBoolean(): kotlin.Boolean
+    public/*package*/ open override /*1*/ /*fake_override*/ fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun usage(): kotlin.Unit
+}

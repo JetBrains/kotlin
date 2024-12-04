@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = { 1 -> (r: kotlin.Int) }
-targetFunction = /A.foo(<dispatch receiver>: A<kotlin.String>, r: kotlin.Int): kotlin.Unit
-substitutor = <map substitutor: {R = kotlin/Int}>

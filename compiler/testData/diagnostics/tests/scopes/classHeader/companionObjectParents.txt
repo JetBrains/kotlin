@@ -8,7 +8,7 @@ public interface A {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public companion object Companion : I<[ERROR : Nested], [ERROR : Interface]> {
+    public companion object Companion : I<[Error type: Unresolved type for Nested], [Error type: Unresolved type for Interface]> {
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -35,7 +35,7 @@ public final class B {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public companion object Companion : I<[ERROR : Nested], [ERROR : Interface]> {
+    public companion object Companion : I<[Error type: Unresolved type for Nested], [Error type: Unresolved type for Interface]> {
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

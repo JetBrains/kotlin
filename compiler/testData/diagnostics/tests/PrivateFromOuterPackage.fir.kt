@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package outer
 
@@ -7,7 +8,7 @@ private class B
 // FILE: b.kt
 package outer.p1
 
-import outer.a
+import outer.<!INVISIBLE_REFERENCE!>a<!>
 
 fun use() {
     <!INVISIBLE_REFERENCE!>a<!>()
@@ -17,7 +18,7 @@ fun use() {
 // FILE: c.kt
 package outer.p1.p2
 
-import outer.a
+import outer.<!INVISIBLE_REFERENCE!>a<!>
 
 fun use() {
     <!INVISIBLE_REFERENCE!>a<!>()

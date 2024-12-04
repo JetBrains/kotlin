@@ -1,10 +1,10 @@
 package
 
-public val invalid1: My<invalid1.<anonymous>.Local>
-public val invalid2: My<invalid2.<no name provided>>
-public val invalid3: My<invalid3.<no name provided>>
-public val invalid4: My<My<invalid4.<anonymous>.Local>>
-public val invalid5: My<invalid5.<anonymous>.invalid5a.<anonymous>.Local>
+public val invalid1: My<invalid1.`<anonymous>`.Local>
+public val invalid2: My<invalid2.`<no name provided>`>
+public val invalid3: My<invalid3.`<no name provided>`>
+public val invalid4: My<My<invalid4.`<anonymous>`.Local>>
+public val invalid5: My<invalid5.`<anonymous>`.invalid5a.`<anonymous>`.Local>
 public val valid1: kotlin.Any
 public val valid2: Base
 public val valid3: My<Base>

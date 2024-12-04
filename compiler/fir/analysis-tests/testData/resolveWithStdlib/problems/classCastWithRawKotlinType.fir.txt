@@ -1,0 +1,18 @@
+FILE: test.kt
+    public abstract interface Inter : R|kotlin/Any| {
+    }
+    public open class Apple<T : R|Inter|> : R|Inter| {
+        public constructor<T : R|Inter|>(): R|Apple<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class XXX : R|Usage| {
+        public constructor(): R|XXX| {
+            super<R|Usage|>()
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|kotlin/io/println|(R|/XXX.XXX|())
+    }

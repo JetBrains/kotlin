@@ -1,0 +1,1 @@
+public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) p1: String = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(RAW_FIR)] p2: Int = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|

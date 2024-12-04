@@ -1,0 +1,384 @@
+/**
+ * public final object ConstReferences : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // field: booleanFalse:Z
+ *   // getter: getBooleanFalse()Z
+ *   public final val booleanFalse: kotlin/Boolean
+ *     public final get
+ *
+ *   // field: booleanTrue:Z
+ *   // getter: getBooleanTrue()Z
+ *   public final val booleanTrue: kotlin/Boolean
+ *     public final get
+ *
+ *   // field: byte12:B
+ *   // getter: getByte12()B
+ *   public final val byte12: kotlin/Byte
+ *     public final get
+ *
+ *   // field: charC:C
+ *   // getter: getCharC()C
+ *   public final val charC: kotlin/Char
+ *     public final get
+ *
+ *   // field: double16:D
+ *   // getter: getDouble16()D
+ *   public final val double16: kotlin/Double
+ *     public final get
+ *
+ *   // field: float15:F
+ *   // getter: getFloat15()F
+ *   public final val float15: kotlin/Float
+ *     public final get
+ *
+ *   // field: int11:I
+ *   // getter: getInt11()I
+ *   public final val int11: kotlin/Int
+ *     public final get
+ *
+ *   // field: long14:J
+ *   // getter: getLong14()J
+ *   public final val long14: kotlin/Long
+ *     public final get
+ *
+ *   // field: short13:S
+ *   // getter: getShort13()S
+ *   public final val short13: kotlin/Short
+ *     public final get
+ *
+ *   // field: string:Ljava/lang/String;
+ *   // getter: getString()Ljava/lang/String;
+ *   public final val string: kotlin/String
+ *     public final get
+ *
+ *   // field: ubyte22:B
+ *   // getter: getUbyte22-w2LRezQ()B
+ *   public final val ubyte22: kotlin/UByte
+ *     public final get
+ *
+ *   // field: uint21:I
+ *   // getter: getUint21-pVg5ArA()I
+ *   public final val uint21: kotlin/UInt
+ *     public final get
+ *
+ *   // field: ulong24:J
+ *   // getter: getUlong24-s-VKNKU()J
+ *   public final val ulong24: kotlin/ULong
+ *     public final get
+ *
+ *   // field: ushort23:S
+ *   // getter: getUshort23-Mh2AYeg()S
+ *   public final val ushort23: kotlin/UShort
+ *     public final get
+ *
+ *   // nested class: Consts
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ConstReferences {
+    private static final boolean booleanFalse = false;
+    private static final boolean booleanTrue = true;
+    private static final int int11 = 11;
+    private static final byte byte12 = (byte)12;
+    private static final short short13 = (short)13;
+    private static final char charC = 'C';
+    private static final long long14 = 14L;
+    private static final float float15 = 1.5F;
+    private static final double double16 = 1.6;
+    private static final int uint21 = 21;
+    private static final byte ubyte22 = (byte)22;
+    private static final short ushort23 = (short)23;
+    private static final long ulong24 = 24L;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String string = "Hello, world!";
+    @org.jetbrains.annotations.NotNull()
+    public static final ConstReferences INSTANCE = null;
+
+    private ConstReferences() {
+        super();
+    }
+
+    public final boolean getBooleanFalse() {
+        return false;
+    }
+
+    public final boolean getBooleanTrue() {
+        return false;
+    }
+
+    public final int getInt11() {
+        return 0;
+    }
+
+    public final byte getByte12() {
+        return 0;
+    }
+
+    public final short getShort13() {
+        return 0;
+    }
+
+    public final char getCharC() {
+        return '\u0000';
+    }
+
+    public final long getLong14() {
+        return 0L;
+    }
+
+    public final float getFloat15() {
+        return 0.0F;
+    }
+
+    public final double getDouble16() {
+        return 0.0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getString() {
+        return null;
+    }
+
+    /**
+     * public final object ConstReferences.Consts : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: booleanFalse:Z
+     *   public final const val booleanFalse: kotlin/Boolean (* = ... *)
+     *     public final get
+     *
+     *   // field: booleanTrue:Z
+     *   public final const val booleanTrue: kotlin/Boolean (* = ... *)
+     *     public final get
+     *
+     *   // field: byte12:B
+     *   public final const val byte12: kotlin/Byte (* = ... *)
+     *     public final get
+     *
+     *   // field: charC:C
+     *   public final const val charC: kotlin/Char (* = ... *)
+     *     public final get
+     *
+     *   // field: double16:D
+     *   public final const val double16: kotlin/Double (* = ... *)
+     *     public final get
+     *
+     *   // field: float15:F
+     *   public final const val float15: kotlin/Float (* = ... *)
+     *     public final get
+     *
+     *   // field: int11:I
+     *   public final const val int11: kotlin/Int (* = ... *)
+     *     public final get
+     *
+     *   // field: long14:J
+     *   public final const val long14: kotlin/Long (* = ... *)
+     *     public final get
+     *
+     *   // field: short13:S
+     *   public final const val short13: kotlin/Short (* = ... *)
+     *     public final get
+     *
+     *   // field: string:Ljava/lang/String;
+     *   public final const val string: kotlin/String (* = ... *)
+     *     public final get
+     *
+     *   // field: ubyte22:B
+     *   public final const val ubyte22: kotlin/UByte (* = ... *)
+     *     public final get
+     *
+     *   // field: uint21:I
+     *   public final const val uint21: kotlin/UInt (* = ... *)
+     *     public final get
+     *
+     *   // field: ulong24:J
+     *   public final const val ulong24: kotlin/ULong (* = ... *)
+     *     public final get
+     *
+     *   // field: ushort23:S
+     *   public final const val ushort23: kotlin/UShort (* = ... *)
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Consts {
+        public static final boolean booleanFalse = false;
+        public static final boolean booleanTrue = true;
+        public static final int int11 = 11;
+        public static final byte byte12 = (byte)12;
+        public static final short short13 = (short)13;
+        public static final char charC = 'C';
+        public static final long long14 = 14L;
+        public static final float float15 = 1.5F;
+        public static final double double16 = 1.6;
+        public static final int uint21 = 21;
+        public static final byte ubyte22 = (byte)22;
+        public static final short ushort23 = (short)23;
+        public static final long ulong24 = 24L;
+        @org.jetbrains.annotations.NotNull()
+        public static final java.lang.String string = "Hello, world!";
+        @org.jetbrains.annotations.NotNull()
+        public static final ConstReferences.Consts INSTANCE = null;
+
+        private Consts() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+/**
+ * public final object Literals : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // field: booleanFalse:Z
+ *   // getter: getBooleanFalse()Z
+ *   public final val booleanFalse: kotlin/Boolean
+ *     public final get
+ *
+ *   // field: booleanTrue:Z
+ *   // getter: getBooleanTrue()Z
+ *   public final val booleanTrue: kotlin/Boolean
+ *     public final get
+ *
+ *   // field: byte12:B
+ *   // getter: getByte12()B
+ *   public final val byte12: kotlin/Byte
+ *     public final get
+ *
+ *   // field: charC:C
+ *   // getter: getCharC()C
+ *   public final val charC: kotlin/Char
+ *     public final get
+ *
+ *   // field: double16:D
+ *   // getter: getDouble16()D
+ *   public final val double16: kotlin/Double
+ *     public final get
+ *
+ *   // field: float15:F
+ *   // getter: getFloat15()F
+ *   public final val float15: kotlin/Float
+ *     public final get
+ *
+ *   // field: int11:I
+ *   // getter: getInt11()I
+ *   public final val int11: kotlin/Int
+ *     public final get
+ *
+ *   // field: long14:J
+ *   // getter: getLong14()J
+ *   public final val long14: kotlin/Long
+ *     public final get
+ *
+ *   // field: short13:S
+ *   // getter: getShort13()S
+ *   public final val short13: kotlin/Short
+ *     public final get
+ *
+ *   // field: string:Ljava/lang/String;
+ *   // getter: getString()Ljava/lang/String;
+ *   public final val string: kotlin/String
+ *     public final get
+ *
+ *   // field: ubyte22:B
+ *   // getter: getUbyte22-w2LRezQ()B
+ *   public final val ubyte22: kotlin/UByte
+ *     public final get
+ *
+ *   // field: uint21:I
+ *   // getter: getUint21-pVg5ArA()I
+ *   public final val uint21: kotlin/UInt
+ *     public final get
+ *
+ *   // field: ulong24:J
+ *   // getter: getUlong24-s-VKNKU()J
+ *   public final val ulong24: kotlin/ULong
+ *     public final get
+ *
+ *   // field: ushort23:S
+ *   // getter: getUshort23-Mh2AYeg()S
+ *   public final val ushort23: kotlin/UShort
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Literals {
+    private static final boolean booleanFalse = false;
+    private static final boolean booleanTrue = true;
+    private static final int int11 = 11;
+    private static final byte byte12 = (byte)12;
+    private static final short short13 = (short)13;
+    private static final char charC = 'C';
+    private static final long long14 = 14L;
+    private static final float float15 = 1.5F;
+    private static final double double16 = 1.6;
+    private static final int uint21 = 21;
+    private static final byte ubyte22 = 0;
+    private static final short ushort23 = 0;
+    private static final long ulong24 = 24L;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String string = "Hello, world!";
+    @org.jetbrains.annotations.NotNull()
+    public static final Literals INSTANCE = null;
+
+    private Literals() {
+        super();
+    }
+
+    public final boolean getBooleanFalse() {
+        return false;
+    }
+
+    public final boolean getBooleanTrue() {
+        return false;
+    }
+
+    public final int getInt11() {
+        return 0;
+    }
+
+    public final byte getByte12() {
+        return 0;
+    }
+
+    public final short getShort13() {
+        return 0;
+    }
+
+    public final char getCharC() {
+        return '\u0000';
+    }
+
+    public final long getLong14() {
+        return 0L;
+    }
+
+    public final float getFloat15() {
+        return 0.0F;
+    }
+
+    public final double getDouble16() {
+        return 0.0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getString() {
+        return null;
+    }
+}

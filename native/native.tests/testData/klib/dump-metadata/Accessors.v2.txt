@@ -1,0 +1,75 @@
+library {
+  // module name: <Accessors.kt>
+
+  library fragment {
+    // package name: custom.pkg
+
+    // class name: custom/pkg/A
+    // class name: custom/pkg/Foo
+
+    // signature: custom.pkg/A|null[0]
+    public final annotation class custom/pkg/A : kotlin/Annotation {
+
+      // signature: custom.pkg/A.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: custom.pkg/Foo|null[0]
+    public final class custom/pkg/Foo : kotlin/Any {
+
+      // signature: custom.pkg/Foo.<init>|<init>(){}[0]
+      public constructor()
+
+      // signature: custom.pkg/Foo.annotated|{}annotated[0]
+      @custom/pkg/A
+      public final val annotated: kotlin/Int /* = 0 */
+        // signature: custom.pkg/Foo.annotated.<get-annotated>|<get-annotated>(){}[0]
+        public final get
+
+      // signature: custom.pkg/Foo.annotatedAccessors|{}annotatedAccessors[0]
+      public final var annotatedAccessors: kotlin/Int
+        // signature: custom.pkg/Foo.annotatedAccessors.<get-annotatedAccessors>|<get-annotatedAccessors>(){}[0]
+        @custom/pkg/A
+        public final /* non-default */ get
+        // signature: custom.pkg/Foo.annotatedAccessors.<set-annotatedAccessors>|<set-annotatedAccessors>(kotlin.Int){}[0]
+        @custom/pkg/A
+        public final /* non-default */ set(<set-?>: kotlin/Int)
+
+      // signature: custom.pkg/Foo.annotatedGetter|{}annotatedGetter[0]
+      public final val annotatedGetter: kotlin/Int /* = 0 */
+        // signature: custom.pkg/Foo.annotatedGetter.<get-annotatedGetter>|<get-annotatedGetter>(){}[0]
+        @custom/pkg/A
+        public final /* non-default */ get
+
+      // signature: custom.pkg/Foo.annotatedSetter|{}annotatedSetter[0]
+      public final var annotatedSetter: kotlin/Int
+        // signature: custom.pkg/Foo.annotatedSetter.<get-annotatedSetter>|<get-annotatedSetter>(){}[0]
+        public final get
+        // signature: custom.pkg/Foo.annotatedSetter.<set-annotatedSetter>|<set-annotatedSetter>(kotlin.Int){}[0]
+        @custom/pkg/A
+        public final /* non-default */ set(<set-?>: kotlin/Int)
+
+      // signature: custom.pkg/Foo.privateSetter|{}privateSetter[0]
+      public final var privateSetter: kotlin/Int
+        // signature: custom.pkg/Foo.privateSetter.<get-privateSetter>|<get-privateSetter>(){}[0]
+        public final get
+        // signature: custom.pkg/Foo.privateSetter.<set-privateSetter>|<set-privateSetter>(kotlin.Int){}[0]
+        private final /* non-default */ set(<set-?>: kotlin/Int)
+
+      // signature: custom.pkg/Foo.privateSimple|{}privateSimple[0]
+      private final val privateSimple: kotlin/Int /* = 0 */
+        // signature: custom.pkg/Foo.privateSimple.<get-privateSimple>|<get-privateSimple>(){}[0]
+        private final get
+
+      // signature: custom.pkg/Foo.protectedSimple|{}protectedSimple[0]
+      protected final val protectedSimple: kotlin/Int /* = 0 */
+        // signature: custom.pkg/Foo.protectedSimple.<get-protectedSimple>|<get-protectedSimple>(){}[0]
+        protected final get
+
+      // signature: custom.pkg/Foo.simple|{}simple[0]
+      public final val simple: kotlin/Int /* = 0 */
+        // signature: custom.pkg/Foo.simple.<get-simple>|<get-simple>(){}[0]
+        public final get
+    }
+  }
+}

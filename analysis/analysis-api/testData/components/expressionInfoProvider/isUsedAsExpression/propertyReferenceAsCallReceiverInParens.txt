@@ -1,0 +1,3 @@
+expression: PARENTHESIZED
+text: (b::hashCode)
+isUsedAsExpression: true

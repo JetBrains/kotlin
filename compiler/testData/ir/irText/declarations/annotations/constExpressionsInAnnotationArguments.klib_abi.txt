@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open annotation class /A : kotlin/Annotation { // /A|null[0]
+    final val x // /A.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /A.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/Int) // /A.<init>|<init>(kotlin.Int){}[0]
+}
+final const val /ONE // /ONE|{}ONE[0]
+    final fun <get-ONE>(): kotlin/Int // /ONE.<get-ONE>|<get-ONE>(){}[0]
+final fun /test1() // /test1|test1(){}[0]
+final fun /test2() // /test2|test2(){}[0]

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_TEXT
 // WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
@@ -33,7 +31,7 @@ fun builder(c: suspend () -> Unit) {
 fun box(): String {
     var res = ""
     builder {
-        val iter = CompilerKillingIterator("ok".asIterable().iterator()) { ("" + it.toUpperCase()).asIterable().iterator() }
+        val iter = CompilerKillingIterator("ok".asIterable().iterator()) { ("" + it.uppercaseChar()).asIterable().iterator() }
         while (iter.hasNext()) {
             res += iter.next()
         }

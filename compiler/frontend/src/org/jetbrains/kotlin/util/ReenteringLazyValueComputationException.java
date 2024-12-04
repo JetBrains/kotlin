@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.util;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.types.error.LazyWrappedTypeComputationException;
 
-public class ReenteringLazyValueComputationException extends RuntimeException {
+public class ReenteringLazyValueComputationException extends LazyWrappedTypeComputationException {
     public ReenteringLazyValueComputationException() {
     }
 

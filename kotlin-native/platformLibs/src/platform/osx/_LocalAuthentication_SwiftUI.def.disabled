@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._LocalAuthentication_SwiftUI
+
+modules = _LocalAuthentication_SwiftUI
+compilerOpts = -framework _LocalAuthentication_SwiftUI
+linkerOpts = -framework _LocalAuthentication_SwiftUI
+#Disabled: Unavailable

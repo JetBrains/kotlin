@@ -17,13 +17,24 @@
 package org.jetbrains.kotlin.compiler.plugin
 
 import com.intellij.mock.MockProject
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
+@Deprecated(
+    message = "ComponentRegistrar is deprecated. Please use CompilerPluginRegistrar instead. Check https://youtrack.jetbrains.com/issue/KT-52665 for more details",
+    replaceWith = ReplaceWith("CompilerPluginRegistrar", "org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"),
+    level = DeprecationLevel.WARNING
+)
+@ExperimentalCompilerApi
 interface ComponentRegistrar {
     companion object {
-        val PLUGIN_COMPONENT_REGISTRARS: CompilerConfigurationKey<MutableList<ComponentRegistrar>> = CompilerConfigurationKey.create("plugin component registrars")
+        @Suppress("DEPRECATION")
+        val PLUGIN_COMPONENT_REGISTRARS: CompilerConfigurationKey<MutableList<ComponentRegistrar>> =
+            CompilerConfigurationKey.create("plugin component registrars")
     }
 
     fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration)
+
+    val supportsK2: Boolean
+        get() = false
 }

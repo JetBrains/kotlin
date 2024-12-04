@@ -1,0 +1,18 @@
+PROTO DIFFERENCE in test/ClassWithChangedVisiblityForFun1: FUNCTION_LIST
+CHANGES in test/ClassWithChangedVisiblityForFun1: MEMBERS
+    [foo]
+PROTO DIFFERENCE in test/ClassWithChangedVisiblityForFun2: FUNCTION_LIST
+CHANGES in test/ClassWithChangedVisiblityForFun2: MEMBERS
+    [foo]
+PROTO DIFFERENCE in test/ClassWithFunAdded: FUNCTION_LIST
+CHANGES in test/ClassWithFunAdded: MEMBERS
+    [added]
+PROTO DIFFERENCE in test/ClassWithFunRemoved: FUNCTION_LIST
+CHANGES in test/ClassWithFunRemoved: MEMBERS
+    [removed]
+PROTO DIFFERENCE in test/ClassWithValAndFunAddedAndRemoved: FUNCTION_LIST, PROPERTY_LIST
+CHANGES in test/ClassWithValAndFunAddedAndRemoved: MEMBERS
+    [funAdded, funRemoved, valAdded, valRemoved]
+PROTO DIFFERENCE in test/ClassWithValConvertedToVar: PROPERTY_LIST
+CHANGES in test/ClassWithValConvertedToVar: MEMBERS
+    [value]

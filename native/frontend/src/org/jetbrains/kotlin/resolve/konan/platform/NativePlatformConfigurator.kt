@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.konan.platform
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
@@ -13,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
-import org.jetbrains.kotlin.resolve.calls.checkers.TypeOfChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.LateinitIntrinsicApplicabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.ReasonableInlineRule
 import org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsChecker
@@ -22,15 +21,24 @@ import org.jetbrains.kotlin.resolve.konan.diagnostics.*
 object NativePlatformConfigurator : PlatformConfiguratorBase(
     additionalCallCheckers = listOf(
         SuperCallWithDefaultArgumentsChecker(),
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true),
+        NativeReifiedForwardDeclarationChecker(),
     ),
     additionalDeclarationCheckers = listOf(
         NativeThrowsChecker, NativeSharedImmutableChecker,
-        NativeTopLevelSingletonChecker, NativeThreadLocalChecker
-    )
+        NativeThreadLocalChecker,
+        NativeObjCNameChecker, NativeObjCNameOverridesChecker,
+        NativeObjCRefinementChecker, NativeObjCRefinementAnnotationChecker,
+        NativeObjCRefinementOverridesChecker, NativeHiddenFromObjCInheritanceChecker,
+        NativeObjcOverrideApplicabilityChecker,
+    ),
+    platformSpecificCastChecker = NativePlatformSpecificCastChecker
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NativeInliningRule)
         container.useImpl<NativeIdentifierChecker>()
+        container.useImpl<NativeForwardDeclarationRttiChecker>()
+        container.useInstance(NativeConflictingOverloadsDispatcher)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

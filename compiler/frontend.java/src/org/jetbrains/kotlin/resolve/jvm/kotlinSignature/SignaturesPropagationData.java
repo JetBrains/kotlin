@@ -88,8 +88,7 @@ public class SignaturesPropagationData {
                 false
         );
         autoMethodDescriptor.initialize(
-                null,
-                containingClass.getThisAsReceiverParameter(),
+                null, containingClass.getThisAsReceiverParameter(), CollectionsKt.emptyList(),
                 autoTypeParameters,
                 autoValueParameters,
                 autoReturnType,

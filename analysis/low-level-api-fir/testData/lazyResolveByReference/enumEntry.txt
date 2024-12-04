@@ -1,0 +1,7 @@
+BODY_RESOLVE:
+TARGET: public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelEnum] enum entry ENTRY1: R|library/TopLevelEnum|
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|library/TopLevelEnum| = Q|library/TopLevelEnum|.R|library/TopLevelEnum.ENTRY1|
+    }

@@ -1,14 +1,3 @@
-interface I<G : Any?> {
-  fun <T : Any?> T.fromInterface(): T {
-    return <this>
-  }
-
-  fun genericFromSuper(g: G): G {
-    return g
-  }
-
-}
-
 open class BaseClass {
   constructor() /* primary */ {
     super/*Any*/()
@@ -23,11 +12,31 @@ open class BaseClass {
 
 }
 
+interface I<G : Any?> {
+  fun <T : Any?> T.fromInterface(): T {
+    return <this>
+  }
+
+  fun genericFromSuper(g: G): G {
+    return g
+  }
+
+}
+
 object C : BaseClass, I<String> {
+  var p: Int
+    field = 4
+    get
+    set
+
   private constructor() /* primary */ {
     super/*BaseClass*/()
     /* <init>() */
 
+  }
+
+  fun Boolean.f(): Int {
+    return 3
   }
 
   fun f(s: Int): Int {
@@ -38,23 +47,14 @@ object C : BaseClass, I<String> {
     return 2
   }
 
-  fun Boolean.f(): Int {
-    return 3
+  fun <T : Any?> g1(t: T): T {
+    return t
   }
-
-  var p: Int
-    field = 4
-    get
-    set
 
   val Int.ext: Int
     get(): Int {
       return 6
     }
-
-  fun <T : Any?> g1(t: T): T {
-    return t
-  }
 
   val <T : Any?> T.g2: T
     get(): T {
@@ -100,3 +100,4 @@ fun box(): String {
   }
   return "OK"
 }
+

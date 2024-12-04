@@ -102,6 +102,6 @@ private fun TypeConstructor.debugInfo() = buildString {
     }
 }
 
-interface NewTypeVariableConstructor {
+interface NewTypeVariableConstructor : TypeConstructor {
     val originalTypeParameter: TypeParameterDescriptor?
 }

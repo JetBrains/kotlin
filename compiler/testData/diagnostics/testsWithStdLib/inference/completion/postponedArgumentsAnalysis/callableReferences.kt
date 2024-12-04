@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 
 import kotlin.reflect.*
 
@@ -53,5 +54,5 @@ fun main() {
 
     select(id(::foo5), id { x: A -> }, id { x: B -> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> })
 
-    val x2: (Int) -> Unit = selectNumber(id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Number, kotlin.Unit>")!>::foo6<!>), id { x -> <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>x<!> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>it<!> })
+    val x2: (Int) -> Unit = selectNumber(id(::foo6), id { x -> <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>x<!> }, id { <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>it<!> })
 }

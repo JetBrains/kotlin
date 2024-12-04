@@ -3,6 +3,7 @@ package
 public fun test1(/*0*/ f: Function1Impl): kotlin.Unit
 public fun test2(/*0*/ f: (kotlin.String) -> kotlin.Unit): kotlin.Unit
 public fun test3(/*0*/ f: kotlin.String.(kotlin.String) -> kotlin.Unit): kotlin.Unit
+public fun test4(/*0*/ f: (myParamName: kotlin.String) -> kotlin.Unit): kotlin.Unit
 
 public final class Function1Impl : (kotlin.String) -> kotlin.Unit {
     public constructor Function1Impl()

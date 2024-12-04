@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 internal abstract class Test</*0*/ in I> {
     private/*private to this*/ final fun foo(): I {

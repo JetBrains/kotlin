@@ -1,0 +1,11 @@
+@kotlin.Metadata
+public final class DelegateToConstPropertyKt {
+    // source: 'delegateToConstProperty.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    public final static @org.jetbrains.annotations.NotNull field a: java.lang.String
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private static method getS$delegate(): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.String
+}

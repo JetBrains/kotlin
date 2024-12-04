@@ -1,4 +1,6 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// FIR_IDENTICAL
+// LANGUAGE: -BreakContinueInInlineLambdas
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
 /*
@@ -14,14 +16,14 @@
 fun case_1(value_1: Boolean) {
     while (value_1) {
         funWithExactlyOnceCallsInPlace {
-            <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
+            <!UNSUPPORTED_FEATURE!>break<!>
         }
         println("1")
     }
 
     loop@ for (i in 0..10) {
         funWithExactlyOnceCallsInPlace {
-            <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break@loop<!>
+            <!UNSUPPORTED_FEATURE!>break@loop<!>
         }
         println("1")
     }
@@ -31,14 +33,14 @@ fun case_1(value_1: Boolean) {
 fun case_2(value_1: Boolean) {
     for (i in 0..10) {
         funWithExactlyOnceCallsInPlace {
-            <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
+            <!UNSUPPORTED_FEATURE!>continue<!>
         }
         println("1")
     }
 
     loop@ while (value_1) {
         funWithExactlyOnceCallsInPlace {
-            <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue@loop<!>
+            <!UNSUPPORTED_FEATURE!>continue@loop<!>
         }
         println("1")
     }

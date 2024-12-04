@@ -1,61 +1,61 @@
 package
 
-internal val packageInternal2Property: packageInternal2Property.<no name provided>
-public val packageInternalProperty: packageInternalProperty.<no name provided>
-private val packagePrivateProperty: packagePrivateProperty.<no name provided>
-protected val packageProtectedProperty: packageProtectedProperty.<no name provided>
-public val packagePublicProperty: packagePublicProperty.<no name provided>
+internal val packageInternal2Property: packageInternal2Property.`<no name provided>`
+public val packageInternalProperty: packageInternalProperty.`<no name provided>`
+private val packagePrivateProperty: packagePrivateProperty.`<no name provided>`
+protected val packageProtectedProperty: packageProtectedProperty.`<no name provided>`
+public val packagePublicProperty: packagePublicProperty.`<no name provided>`
 public fun fooPackage(): kotlin.Unit
 public fun </*0*/ T> lazy(/*0*/ f: () -> T): Lazy<T>
-internal fun packageInternal2Function(): packageInternal2Function.<no name provided>
-public fun packageInternalFunction(): packageInternalFunction.<no name provided>
-protected fun packageProtectedFunction(): packageProtectedFunction.<no name provided>
-public fun packagePublicFunction(): packagePublicFunction.<no name provided>
+internal fun packageInternal2Function(): packageInternal2Function.`<no name provided>`
+public fun packageInternalFunction(): packageInternalFunction.`<no name provided>`
+protected fun packageProtectedFunction(): packageProtectedFunction.`<no name provided>`
+public fun packagePublicFunction(): packagePublicFunction.`<no name provided>`
 
 public final class Foo {
     public constructor Foo(/*0*/ myTrait: MyTrait)
     public final val delegate: MyTrait
-    internal final val internal2DelegateProperty: Foo.internal2DelegateProperty.<anonymous>.<no name provided>
-    internal final val internal2Property: Foo.internal2Property.<no name provided>
-    public final val internalDelegateProperty: Foo.internalDelegateProperty.<anonymous>.<no name provided>
-    public final val internalProperty: Foo.internalProperty.<no name provided>
+    internal final val internal2DelegateProperty: Foo.internal2DelegateProperty.`<anonymous>`.`<no name provided>`
+    internal final val internal2Property: Foo.internal2Property.`<no name provided>`
+    public final val internalDelegateProperty: Foo.internalDelegateProperty.`<anonymous>`.`<no name provided>`
+    public final val internalProperty: Foo.internalProperty.`<no name provided>`
     public final val myTrait: MyTrait
-    private final val privateDelegate: Foo.privateDelegate.<no name provided>
-    private final val privateDelegateProperty: Foo.privateDelegateProperty.<anonymous>.<no name provided>
-    private final val privateDelegatePropertyWithSingleSuperType: Foo.privateDelegatePropertyWithSingleSuperType.<anonymous>.<no name provided>
-    private final val privateProperty: Foo.privateProperty.<no name provided>
-    private final val privatePropertyWithSingleSuperType: Foo.privatePropertyWithSingleSuperType.<no name provided>
-    public final val propertyWithGetter: Foo.<get-propertyWithGetter>.<no name provided>
-    protected final val protectedDelegateProperty: Foo.protectedDelegateProperty.<anonymous>.<no name provided>
-    protected final val protectedProperty: Foo.protectedProperty.<no name provided>
-    public final val publicDelegateProperty: Foo.publicDelegateProperty.<anonymous>.<no name provided>
+    private final val privateDelegate: Foo.privateDelegate.`<no name provided>`
+    private final val privateDelegateProperty: Foo.privateDelegateProperty.`<anonymous>`.`<no name provided>`
+    private final val privateDelegatePropertyWithSingleSuperType: Foo.privateDelegatePropertyWithSingleSuperType.`<anonymous>`.`<no name provided>`
+    private final val privateProperty: Foo.privateProperty.`<no name provided>`
+    private final val privatePropertyWithSingleSuperType: Foo.privatePropertyWithSingleSuperType.`<no name provided>`
+    public final val propertyWithGetter: Foo.`<get-propertyWithGetter>`.`<no name provided>`
+    protected final val protectedDelegateProperty: Foo.protectedDelegateProperty.`<anonymous>`.`<no name provided>`
+    protected final val protectedProperty: Foo.protectedProperty.`<no name provided>`
+    public final val publicDelegateProperty: Foo.publicDelegateProperty.`<anonymous>`.`<no name provided>`
     public final val publicDelegatePropertyWithSingleSuperType: MyClass
-    public final val publicProperty: Foo.publicProperty.<no name provided>
+    public final val publicProperty: Foo.publicProperty.`<no name provided>`
     public final val publicPropertyWithSingleSuperType: MyClass
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    internal final fun internal2Function(): Foo.internal2Function.<no name provided>
-    public final fun internalFunction(): Foo.internalFunction.<no name provided>
-    private final fun privateFunction(): Foo.privateFunction.<no name provided>
-    protected final fun protectedFunction(): Foo.protectedFunction.<no name provided>
-    public final fun publicFunction(): Foo.publicFunction.<no name provided>
+    internal final fun internal2Function(): Foo.internal2Function.`<no name provided>`
+    public final fun internalFunction(): Foo.internalFunction.`<no name provided>`
+    private final fun privateFunction(): Foo.privateFunction.`<no name provided>`
+    protected final fun protectedFunction(): Foo.protectedFunction.`<no name provided>`
+    public final fun publicFunction(): Foo.publicFunction.`<no name provided>`
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public final class FooInner {
         public constructor FooInner()
-        internal final val internal2Property: Foo.FooInner.internal2Property.<no name provided>
-        public final val internalProperty: Foo.FooInner.internalProperty.<no name provided>
-        private final val privatePropertyInner: Foo.FooInner.privatePropertyInner.<no name provided>
-        protected final val protectedProperty: Foo.FooInner.protectedProperty.<no name provided>
-        public final val publicProperty: Foo.FooInner.publicProperty.<no name provided>
+        internal final val internal2Property: Foo.FooInner.internal2Property.`<no name provided>`
+        public final val internalProperty: Foo.FooInner.internalProperty.`<no name provided>`
+        private final val privatePropertyInner: Foo.FooInner.privatePropertyInner.`<no name provided>`
+        protected final val protectedProperty: Foo.FooInner.protectedProperty.`<no name provided>`
+        public final val publicProperty: Foo.FooInner.publicProperty.`<no name provided>`
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        internal final fun internal2Function(): Foo.FooInner.internal2Function.<no name provided>
-        public final fun internalFunction(): Foo.FooInner.internalFunction.<no name provided>
-        private final fun privateFunctionInner(): Foo.FooInner.privateFunctionInner.<no name provided>
-        protected final fun protectedFunction(): Foo.FooInner.protectedFunction.<no name provided>
-        public final fun publicFunction(): Foo.FooInner.publicFunction.<no name provided>
+        internal final fun internal2Function(): Foo.FooInner.internal2Function.`<no name provided>`
+        public final fun internalFunction(): Foo.FooInner.internalFunction.`<no name provided>`
+        private final fun privateFunctionInner(): Foo.FooInner.privateFunctionInner.`<no name provided>`
+        protected final fun protectedFunction(): Foo.FooInner.protectedFunction.`<no name provided>`
+        public final fun publicFunction(): Foo.FooInner.publicFunction.`<no name provided>`
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

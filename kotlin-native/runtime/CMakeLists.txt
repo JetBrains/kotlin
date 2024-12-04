@@ -38,6 +38,7 @@ add_executable(runtime
 	src/main/cpp/Porting.cpp
 	src/main/cpp/Regex.cpp
 	src/main/cpp/ReturnSlot.cpp
+	src/main/cpp/Random.cpp
 	src/main/cpp/Runtime.cpp
 	src/main/cpp/StdCppStubs.cpp
 	src/main/cpp/Time.cpp

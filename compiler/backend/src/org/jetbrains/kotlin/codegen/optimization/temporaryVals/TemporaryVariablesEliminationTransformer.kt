@@ -5,22 +5,26 @@
 
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.InsnSequence
+import org.jetbrains.kotlin.codegen.inline.isSuspendInlineMarker
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
+import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckExpressionValueIsNotNull
+import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckNotNullWithMessage
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.math.max
 
-class TemporaryVariablesEliminationTransformer(private val state: GenerationState) : MethodTransformer() {
+class TemporaryVariablesEliminationTransformer : MethodTransformer() {
     private val temporaryValsAnalyzer = TemporaryValsAnalyzer()
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        if (!state.isIrBackend) return
+        // If there are any suspend inline markers, don't touch anything now.
+        if (methodNode.instructions.any { isSuspendInlineMarker(it) }) return
 
         simplifyTrivialInstructions(methodNode)
 
@@ -162,7 +166,7 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
         }
 
         for (insn in insnList) {
-            when (insn.type) {
+            when (insn.nodeType) {
                 AbstractInsnNode.LINE -> {
                     usedLabels.add((insn as LineNumberNode).start)
                 }
@@ -205,6 +209,8 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
 
     private fun optimizeTemporaryVals(cfg: ControlFlowGraph, temporaryVals: List<TemporaryVal>) {
         val insnList = cfg.methodNode.instructions
+
+        var maxStackIncrement = 0
 
         for (tmp in temporaryVals) {
             if (tmp.loadInsns.isEmpty()) {
@@ -270,8 +276,42 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
                         continue
                     }
                 }
+            } else if (tmp.loadInsns.size == 2) {
+                val storeInsn = tmp.storeInsn
+
+                if (storeInsn.matchOpcodes(Opcodes.ASTORE, Opcodes.ALOAD, Opcodes.LDC, Opcodes.INVOKESTATIC, Opcodes.ALOAD)) {
+                    val aLoad1Insn = storeInsn.next
+                    val ldcInsn = aLoad1Insn.next
+                    val invokeStaticInsn = ldcInsn.next
+                    val aLoad2Insn = invokeStaticInsn.next
+
+                    if ((aLoad1Insn as VarInsnNode).`var` == tmp.index &&
+                        (ldcInsn as LdcInsnNode).cst is String &&
+                        (invokeStaticInsn.isCheckExpressionValueIsNotNull() || invokeStaticInsn.isCheckNotNullWithMessage()) &&
+                        (aLoad2Insn as VarInsnNode).`var` == tmp.index
+                    ) {
+                        // Replace instruction sequence:
+                        //      ASTORE tmp
+                        //      ALOAD tmp
+                        //      LDC "expression"
+                        //      INVOKESTATIC <check-not-null-expression> (Ljava/lang/Object;Ljava/lang/String;)V
+                        //      ALOAD tmp
+                        // with
+                        //      DUP
+                        //      LDC "expression
+                        //      INVOKESTATIC <check-not-null-expression> (Ljava/lang/Object;Ljava/lang/String;)V
+                        insnList.remove(storeInsn)
+                        insnList.remove(aLoad1Insn)
+                        insnList.insertBefore(ldcInsn, InsnNode(Opcodes.DUP))
+                        insnList.remove(aLoad2Insn)
+                        maxStackIncrement = max(maxStackIncrement, 1)
+                        continue
+                    }
+                }
             }
         }
+
+        cfg.methodNode.maxStack += maxStackIncrement
     }
 
     @Suppress("DuplicatedCode")
@@ -528,7 +568,7 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
     }
 
     private fun AbstractInsnNode.isIntervening(context: ControlFlowGraph): Boolean =
-        when (this.type) {
+        when (this.nodeType) {
             AbstractInsnNode.LINE, AbstractInsnNode.FRAME ->
                 false
             AbstractInsnNode.LABEL ->

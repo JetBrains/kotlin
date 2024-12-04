@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicMemberExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDynamicOperatorExpressionImpl
-import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.Name
 
 
@@ -30,7 +30,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
     }
 
     init {
-        nameToTransformer = mutableMapOf()
+        nameToTransformer = hashMapOf()
         nameToTransformer.run {
             addWithPredicate(
                 Name.special(Namer.KCALLABLE_GET_NAME),

@@ -150,7 +150,7 @@ class JavaTypeEnhancement(private val javaResolverSettings: JavaResolverSettings
         ).compositeAnnotationsOrSingle()
 
         val enhancedType = KotlinTypeFactory.simpleType(
-            newAnnotations,
+            newAnnotations.toDefaultAttributes(),
             typeConstructor,
             enhancedArguments.zip(arguments) { enhanced, original -> enhanced ?: original },
             enhancedNullability ?: isMarkedNullable
@@ -199,7 +199,7 @@ private fun getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: Typ
     }
 }
 
-private val ENHANCED_NULLABILITY_ANNOTATIONS = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
+val ENHANCED_NULLABILITY_ANNOTATIONS: Annotations = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
 private val ENHANCED_MUTABILITY_ANNOTATIONS = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_MUTABILITY_ANNOTATION)
 
 private class EnhancedTypeAnnotations(private val fqNameToMatch: FqName) : Annotations {
@@ -238,7 +238,6 @@ internal class NotNullTypeParameterImpl(override val delegate: SimpleType) : Not
                 unwrappedType.lowerBound.prepareReplacement(),
                 unwrappedType.upperBound.prepareReplacement()
             ).wrapEnhancement(unwrappedType.getEnhancement())
-            else -> error("Incorrect type: $unwrappedType")
         }
     }
 
@@ -252,7 +251,7 @@ internal class NotNullTypeParameterImpl(override val delegate: SimpleType) : Not
         return NotNullTypeParameterImpl(result)
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations) = NotNullTypeParameterImpl(delegate.replaceAnnotations(newAnnotations))
+    override fun replaceAttributes(newAttributes: TypeAttributes) = NotNullTypeParameterImpl(delegate.replaceAttributes(newAttributes))
     override fun makeNullableAsSpecified(newNullability: Boolean) =
         if (newNullability) delegate.makeNullableAsSpecified(true) else this
 

@@ -4,13 +4,14 @@
  */
 package kotlin.native
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.TypedIntrinsic
-import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
  * Operating system family.
  */
+@ExperimentalNativeApi
 public enum class OsFamily {
     UNKNOWN,
     MACOSX,
@@ -26,7 +27,8 @@ public enum class OsFamily {
 /**
  * Central Processor Unit architecture.
  */
-public enum class CpuArchitecture(val bitness: Int) {
+@ExperimentalNativeApi
+public enum class CpuArchitecture(public val bitness: Int) {
     UNKNOWN(-1),
     ARM32(32),
     ARM64(64),
@@ -41,6 +43,8 @@ public enum class CpuArchitecture(val bitness: Int) {
  * Memory model.
  */
 // NOTE: Must match `MemoryModel` in `Memory.h`
+@ExperimentalNativeApi
+@Deprecated("The only possible value returned in runtime is MemoryModel.EXPERIMENTAL now. The usages of this enum can be safely removed.")
 public enum class MemoryModel {
     STRICT,
     RELAXED,
@@ -50,6 +54,7 @@ public enum class MemoryModel {
 /**
  * Object describing the current platform program executes upon.
  */
+@ExperimentalNativeApi
 public object Platform {
     /**
      * Check if current architecture allows unaligned access to wider than byte locations.
@@ -70,22 +75,39 @@ public object Platform {
         get() = OsFamily.values()[Platform_getOsFamily()]
 
     /**
-     * Architechture of the CPU program executes upon.
+     * Architecture of the CPU program executes upon.
      */
     public val cpuArchitecture: CpuArchitecture
         get() = CpuArchitecture.values()[Platform_getCpuArchitecture()]
 
     /**
-     * Memory model binary was compiled with.
+     * Memory model binary was compiled with. Always [MemoryModel.EXPERIMENTAL].
      */
+    @Deprecated("This propery always returns MemoryModel.EXPERIMENTAL, its usages can be safely removed.", ReplaceWith("MemoryModel.EXPERIMENTAL"))
+    @Suppress("DEPRECATION")
     public val memoryModel: MemoryModel
-        get() = MemoryModel.values()[Platform_getMemoryModel()]
+        get() = MemoryModel.EXPERIMENTAL
 
     /**
      * If binary was compiled in debug mode.
      */
     public val isDebugBinary: Boolean
         get() = Platform_isDebugBinary()
+
+    /**
+     * If freezing is enabled. Always [false]
+     */
+    @Deprecated("Support for the legacy memory manager has been completely removed. Consequently, this property is always `false`.", ReplaceWith("false"))
+    @DeprecatedSinceKotlin(errorSince = "2.1")
+    public val isFreezingEnabled: Boolean
+        get() = false
+
+    /**
+     * Representation of the name used to invoke the program executable.
+     * [null] if the Kotlin code was compiled to a native library and the executable is not a Kotlin program.
+     */
+    public val programName: String?
+        get() = Platform_getProgramName()
 
     /**
      * If the memory leak checker is activated, by default `true` in debug mode, `false` in release.
@@ -102,6 +124,28 @@ public object Platform {
     public var isCleanersLeakCheckerActive: Boolean
         get() = Platform_getCleanersLeakChecker()
         set(value) = Platform_setCleanersLeakChecker(value)
+
+    /**
+     * The number of logical processors available.
+     *
+     * Can be not equal to the number of processors in the system if some restrictions on processor usage were successfully detected.
+     * Some kinds of processor usage restrictions are not detected, for now, e.g., CPU quotas in containers.
+     *
+     * The value is computed on each usage. It can change if some OS scheduler API restricts the process during runtime.
+     * Also, value can differ on different threads if some thread-specific scheduler API was used.
+     *
+     * If one considers the value to be inaccurate and wants another one to be used, it can be overridden by
+     * `KOTLIN_NATIVE_AVAILABLE_PROCESSORS` environment variable. When the variable is set and contains a value that is not
+     * positive [Int], [IllegalStateException] will be thrown.
+     */
+    public fun getAvailableProcessors() : Int {
+        val fromEnv = Platform_getAvailableProcessorsEnv()
+        if (fromEnv == null) {
+            return Platform_getAvailableProcessors()
+        }
+        return fromEnv.toIntOrNull()?.takeIf { it > 0 } ?:
+            throw IllegalStateException("Available processors has incorrect environment override: $fromEnv")
+    }
 }
 
 @GCUnsafeCall("Konan_Platform_canAccessUnaligned")
@@ -116,11 +160,12 @@ private external fun Platform_getOsFamily(): Int
 @GCUnsafeCall("Konan_Platform_getCpuArchitecture")
 private external fun Platform_getCpuArchitecture(): Int
 
-@GCUnsafeCall("Konan_Platform_getMemoryModel")
-private external fun Platform_getMemoryModel(): Int
-
 @GCUnsafeCall("Konan_Platform_isDebugBinary")
 private external fun Platform_isDebugBinary(): Boolean
+
+@GCUnsafeCall("Konan_Platform_getProgramName")
+@Escapes.Nothing
+private external fun Platform_getProgramName(): String?
 
 @GCUnsafeCall("Konan_Platform_getMemoryLeakChecker")
 private external fun Platform_getMemoryLeakChecker(): Boolean
@@ -134,6 +179,13 @@ private external fun Platform_getCleanersLeakChecker(): Boolean
 @GCUnsafeCall("Konan_Platform_setCleanersLeakChecker")
 private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit
 
-@TypedIntrinsic(IntrinsicType.IS_EXPERIMENTAL_MM)
+@GCUnsafeCall("Konan_Platform_getAvailableProcessorsEnv")
+@Escapes.Nothing
+private external fun Platform_getAvailableProcessorsEnv(): String?
+
+@GCUnsafeCall("Konan_Platform_getAvailableProcessors")
+private external fun Platform_getAvailableProcessors(): Int
+
 @ExperimentalStdlibApi
-external fun isExperimentalMM(): Boolean
+@Deprecated("This property always returns true, its usages can be safely removed.", ReplaceWith("true"))
+public fun isExperimentalMM(): Boolean = true

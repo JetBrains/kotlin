@@ -1,5 +1,6 @@
-// !LANGUAGE: +SamConversionPerArgument +NewInference +ProhibitVarargAsArrayAfterSamArgument
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +SamConversionPerArgument +ProhibitVarargAsArrayAfterSamArgument
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.java
 

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform._MusicKit_SwiftUI
+
+modules = _MusicKit_SwiftUI
+compilerOpts = -framework _MusicKit_SwiftUI
+linkerOpts = -framework _MusicKit_SwiftUI
+#Disabled: Unavailable

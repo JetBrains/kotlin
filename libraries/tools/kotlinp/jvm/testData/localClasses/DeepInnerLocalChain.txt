@@ -1,0 +1,82 @@
+// DeepInnerLocalChainKt.class
+// ------------------------------------------
+package {
+
+  // signature: test()V
+  public final fun test(): kotlin/Unit
+
+  // module name: test-module
+}
+// DeepInnerLocalChainKt$test$Local.class
+// ------------------------------------------
+local final class .DeepInnerLocalChainKt$test$Local : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // nested class: Inner
+
+  // module name: test-module
+}
+// DeepInnerLocalChainKt$test$Local$Inner.class
+// ------------------------------------------
+local final inner class .DeepInnerLocalChainKt$test$Local.Inner : kotlin/Any {
+
+  // signature: <init>(LDeepInnerLocalChainKt$test$Local;)V
+  public constructor()
+
+  // field: prop:LDeepInnerLocalChainKt$test$Local$Inner$prop$1;
+  // getter: getProp()LDeepInnerLocalChainKt$test$Local$Inner$prop$1;
+  public final val prop: .DeepInnerLocalChainKt$test$Local$Inner$prop$1
+    public final get
+
+  // module name: test-module
+}
+// DeepInnerLocalChainKt$test$Local$Inner$prop$1.class
+// ------------------------------------------
+local final class .DeepInnerLocalChainKt$test$Local$Inner$prop$1 : kotlin/Any {
+
+  // signature: foo()V
+  public final fun foo(): kotlin/Unit
+
+  // module name: test-module
+}
+// DeepInnerLocalChainKt$test$Local$Inner$prop$1$foo$bar$DeepLocal.class
+// ------------------------------------------
+local final class .DeepInnerLocalChainKt$test$Local$Inner$prop$1$foo$bar$DeepLocal : kotlin/Any {
+
+  // signature: <init>(LDeepInnerLocalChainKt$test$Local;)V
+  public constructor()
+
+  // nested class: Deepest
+
+  // module name: test-module
+}
+// DeepInnerLocalChainKt$test$Local$Inner$prop$1$foo$bar$DeepLocal$Deepest.class
+// ------------------------------------------
+local final inner class .DeepInnerLocalChainKt$test$Local$Inner$prop$1$foo$bar$DeepLocal.Deepest : kotlin/Any {
+
+  // signature: <init>(LDeepInnerLocalChainKt$test$Local$Inner$prop$1$foo$bar$DeepLocal;)V
+  public constructor()
+
+  // signature: deep()LDeepInnerLocalChainKt$test$Local$Inner$prop$1$foo$bar$DeepLocal;
+  public final fun deep(): .DeepInnerLocalChainKt$test$Local$Inner$prop$1$foo$bar$DeepLocal
+
+  // signature: deepest()LDeepInnerLocalChainKt$test$Local$Inner$prop$1$foo$bar$DeepLocal$Deepest;
+  public final fun deepest(): .DeepInnerLocalChainKt$test$Local$Inner$prop$1$foo$bar$DeepLocal.Deepest?
+
+  // signature: inner()LDeepInnerLocalChainKt$test$Local$Inner;
+  public final fun inner(): .DeepInnerLocalChainKt$test$Local.Inner
+
+  // signature: local()LDeepInnerLocalChainKt$test$Local;
+  public final fun local(): .DeepInnerLocalChainKt$test$Local
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    DeepInnerLocalChainKt
+  }
+}

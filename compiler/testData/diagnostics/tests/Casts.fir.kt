@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun test() : Unit {
   var x : Int? = 0
@@ -10,8 +11,8 @@ fun test() : Unit {
   checkSubtype<Int>(y <!USELESS_CAST!>as Int<!>)
   checkSubtype<Int?>(x as Int?)
   checkSubtype<Int?>(y as Int?)
-  checkSubtype<Int?>(x as? Int)
-  checkSubtype<Int?>(y as? Int)
+  checkSubtype<Int?>(x <!USELESS_CAST!>as? Int<!>)
+  checkSubtype<Int?>(y <!USELESS_CAST!>as? Int<!>)
   checkSubtype<Int?>(x as? Int?)
   checkSubtype<Int?>(y as? Int?)
 

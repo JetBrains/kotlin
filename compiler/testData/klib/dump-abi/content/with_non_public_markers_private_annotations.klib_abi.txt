@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <with_non_public_markers_library>
+open annotation class /PublicAnnotation : kotlin/Annotation { // /PublicAnnotation|null[0]
+    constructor <init>() // /PublicAnnotation.<init>|<init>(){}[0]
+}
+final object /PublicContainer { // /PublicContainer|null[0]
+    open annotation class PublicAnnotation : kotlin/Annotation { // /PublicContainer.PublicAnnotation|null[0]
+        constructor <init>() // /PublicContainer.PublicAnnotation.<init>|<init>(){}[0]
+    }
+}
+final fun /nonMarked() // /nonMarked|nonMarked(){}[0]

@@ -175,6 +175,97 @@ class Arrays {
 
             assertPrints(matrix.contentDeepToString(), "[[3, 7, 9], [0, 1, 0], [2, 4, 8]]")
         }
+
+        @Sample
+        fun arrayContentEquals() {
+            val array = arrayOf("apples", "oranges", "lime")
+
+            // the same size and equal elements
+            assertPrints(array.contentEquals(arrayOf("apples", "oranges", "lime")), "true")
+
+            // different size
+            assertPrints(array.contentEquals(arrayOf("apples", "oranges")), "false")
+
+            // the elements at index 1 are not equal
+            assertPrints(array.contentEquals(arrayOf("apples", "lime", "oranges")), "false")
+        }
+
+        @Sample
+        fun charArrayContentEquals() {
+            val array = charArrayOf('a', 'b', 'c')
+
+            // the same size and equal elements
+            assertPrints(array.contentEquals(charArrayOf('a', 'b', 'c')), "true")
+
+            // different size
+            assertPrints(array.contentEquals(charArrayOf('a', 'b')), "false")
+
+            // the elements at index 1 are not equal
+            assertPrints(array.contentEquals(charArrayOf('a', 'c', 'b')), "false")
+        }
+
+        @Sample
+        fun booleanArrayContentEquals() {
+            val array = booleanArrayOf(true, false, true)
+
+            // the same size and equal elements
+            assertPrints(array.contentEquals(booleanArrayOf(true, false, true)), "true")
+
+            // different size
+            assertPrints(array.contentEquals(booleanArrayOf(true, false)), "false")
+
+            // the elements at index 1 are not equal
+            assertPrints(array.contentEquals(booleanArrayOf(true, true, false)), "false")
+        }
+
+        @Sample
+        fun intArrayContentEquals() {
+            val array = intArrayOf(1, 2, 3)
+
+            // the same size and equal elements
+            assertPrints(array.contentEquals(intArrayOf(1, 2, 3)), "true")
+
+            // different size
+            assertPrints(array.contentEquals(intArrayOf(1, 2)), "false")
+
+            // the elements at index 1 are not equal
+            assertPrints(array.contentEquals(intArrayOf(1, 3, 2)), "false")
+        }
+
+        @Sample
+        fun doubleArrayContentEquals() {
+            val array = doubleArrayOf(1.0, Double.NaN, 0.0)
+
+            // the same size and equal elements, NaN is equal to NaN
+            assertPrints(array.contentEquals(doubleArrayOf(1.0, Double.NaN, 0.0)), "true")
+
+            // different size
+            assertPrints(array.contentEquals(doubleArrayOf(1.0, Double.NaN)), "false")
+
+            // the elements at index 2 are not equal, 0.0 is not equal to -0.0
+            assertPrints(array.contentEquals(doubleArrayOf(1.0, Double.NaN, -0.0)), "false")
+
+            // the elements at index 1 are not equal
+            assertPrints(array.contentEquals(doubleArrayOf(1.0, 0.0, Double.NaN)), "false")
+        }
+
+        @Sample
+        fun contentDeepEquals() {
+            val identityMatrix = arrayOf(
+                intArrayOf(1, 0),
+                intArrayOf(0, 1)
+            )
+            val reflectionMatrix = arrayOf(
+                intArrayOf(1, 0),
+                intArrayOf(0, -1)
+            )
+
+            // the elements at index [1][1] are not equal
+            assertPrints(identityMatrix.contentDeepEquals(reflectionMatrix), "false")
+
+            reflectionMatrix[1][1] = 1
+            assertPrints(identityMatrix.contentDeepEquals(reflectionMatrix), "true")
+        }
     }
 
     class CopyOfOperations {

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.buildStatement
 import org.jetbrains.kotlin.ir.builders.irIfThenMaybeElse
-import org.jetbrains.kotlin.ir.builders.primitiveOp1
 import org.jetbrains.kotlin.ir.builders.whenComma
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -32,9 +31,10 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.psi2ir.intermediate.loadAt
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.utils.SmartList
 
-class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+internal class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
     fun generateIfExpression(expression: KtIfExpression): IrExpression {
         var ktLastIf: KtIfExpression = expression
@@ -111,18 +111,21 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                 break
             }
 
-            var irBranchCondition: IrExpression? = null
-            for (ktCondition in ktEntry.conditions) {
-                val irCondition =
-                    if (irSubject != null)
-                        generateWhenConditionWithSubject(ktCondition, irSubject, expression.subjectExpression)
-                    else
-                        generateWhenConditionNoSubject(ktCondition)
-                irBranchCondition = irBranchCondition?.let { context.whenComma(it, irCondition) } ?: irCondition
-            }
+            // chunk conditions to avoid stackoverflow later when IrWhen is visited
+            for (ktConditions in ktEntry.conditions.toList().chunked(64)) {
+                var irBranchCondition: IrExpression? = null
+                for (ktCondition in ktConditions) {
+                    val irCondition =
+                        if (irSubject != null)
+                            generateWhenConditionWithSubject(ktCondition, irSubject, expression.subjectExpression)
+                        else
+                            generateWhenConditionNoSubject(ktCondition)
+                    irBranchCondition = irBranchCondition?.let { context.whenComma(it, irCondition) } ?: irCondition
+                }
 
-            val irBranchResult = ktEntry.expression!!.genExpr()
-            irWhen.branches.add(IrBranchImpl(irBranchCondition!!, irBranchResult))
+                val irBranchResult = ktEntry.expression!!.genExpr()
+                irWhen.branches.add(IrBranchImpl(irBranchCondition!!, irBranchResult))
+            }
         }
         if (!hasExplicitElseBranch) {
             addElseBranchForExhaustiveWhenIfNeeded(irWhen, expression)
@@ -142,7 +145,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     }
 
     private fun addElseBranchForExhaustiveWhenIfNeeded(irWhen: IrWhen, whenExpression: KtWhenExpression) {
-        val isUsedAsExpression = true == get(BindingContext.USED_AS_EXPRESSION, whenExpression)
+        val isUsedAsExpression = whenExpression.isUsedAsExpression(context.bindingContext)
         val isImplicitElseRequired =
             if (isUsedAsExpression)
                 true == get(BindingContext.EXHAUSTIVE_WHEN, whenExpression)
@@ -218,13 +221,20 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             irSubject.loadAt(startOffset, startOffset)
         )
         return if (ktCondition.isNegated)
-            primitiveOp1(
-                ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
-                context.irBuiltIns.booleanNotSymbol,
-                context.irBuiltIns.booleanType,
-                IrStatementOrigin.EXCL,
-                irInstanceOf
-            )
+            IrCallImplWithShape(
+                startOffset = ktCondition.startOffsetSkippingComments,
+                endOffset = ktCondition.endOffset,
+                symbol = context.irBuiltIns.booleanNotSymbol,
+                type = context.irBuiltIns.booleanType,
+                origin = IrStatementOrigin.EXCL,
+                typeArgumentsCount = 0,
+                valueArgumentsCount = 0,
+                contextParameterCount = 0,
+                hasDispatchReceiver = true,
+                hasExtensionReceiver = false,
+            ).apply {
+                dispatchReceiver = irInstanceOf
+            }
         else
             irInstanceOf
     }
@@ -242,13 +252,20 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             IrStatementOrigin.IN ->
                 irInCall
             IrStatementOrigin.NOT_IN ->
-                primitiveOp1(
-                    startOffset, endOffset,
-                    context.irBuiltIns.booleanNotSymbol,
-                    context.irBuiltIns.booleanType,
-                    IrStatementOrigin.EXCL,
-                    irInCall
-                )
+                IrCallImplWithShape(
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    symbol = context.irBuiltIns.booleanNotSymbol,
+                    type = context.irBuiltIns.booleanType,
+                    origin = IrStatementOrigin.EXCL,
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = 0,
+                    contextParameterCount = 0,
+                    hasDispatchReceiver = true,
+                    hasExtensionReceiver = false,
+                ).apply {
+                    dispatchReceiver = irInCall
+                }
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")
         }
     }

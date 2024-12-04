@@ -1,0 +1,9 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] memberTypeAlias.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] typealias X = R|kotlin/Int|
+
+    }

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 open class Ref<T>(var x: T)
 
 typealias R<T> = Ref<T>

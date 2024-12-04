@@ -1,18 +1,7 @@
 class C {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val test1: Int
     field = 0
     get
-
-  val test2: Int
-    get(): Int {
-      return 0
-    }
 
   var test3: Int
     field = 0
@@ -53,4 +42,16 @@ class C {
       return <this>.#test8$delegate.setValue<Int>(thisRef = <this>, property = C::test8, value = <set-?>)
     }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val test2: Int
+    get(): Int {
+      return 0
+    }
+
 }
+

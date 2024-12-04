@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface FirDeclaration
 
 interface FirSymbolOwner<E : FirSymbolOwner<E>> {

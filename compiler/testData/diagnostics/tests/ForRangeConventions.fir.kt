@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 import java.util.*;
 
@@ -82,9 +83,9 @@ fun test(notRange1: NotRange1, notRange2: NotRange2, notRange3: NotRange3, notRa
   for (i in <!HAS_NEXT_MISSING, NEXT_MISSING!>notRange2<!>);
   for (i in <!NEXT_MISSING!>notRange3<!>);
   for (i in <!HAS_NEXT_MISSING!>notRange4<!>);
-  <!CONDITION_TYPE_MISMATCH!>for (i in notRange5)<!>;
+  for (i in <!CONDITION_TYPE_MISMATCH!>notRange5<!>);
   for (i in notRange6);
-  <!CONDITION_TYPE_MISMATCH!>for (i in notRange7)<!>;
+  for (i in <!CONDITION_TYPE_MISMATCH!>notRange7<!>);
   for (i in <!HAS_NEXT_MISSING!>notRange8<!>);
   for (i in range0);
   for (i in range1);

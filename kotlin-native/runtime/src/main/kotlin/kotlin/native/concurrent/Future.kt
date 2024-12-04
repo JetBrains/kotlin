@@ -1,16 +1,15 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
 package kotlin.native.concurrent
 
-import kotlin.native.internal.Frozen
-
 /**
  * State of the future object.
  */
-enum class FutureState(val value: Int) {
+@ObsoleteWorkersApi
+public enum class FutureState(public val value: Int) {
     INVALID(0),
     /** Future is scheduled for execution. */
     SCHEDULED(1),
@@ -26,7 +25,8 @@ enum class FutureState(val value: Int) {
  * Class representing abstract computation, whose result may become available in the future.
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-public value class Future<T> @PublishedApi internal constructor(val id: Int) {
+@ObsoleteWorkersApi
+public value class Future<T> @PublishedApi internal constructor(public val id: Int) {
     /**
      * Blocks execution until the future is ready.
      *
@@ -70,6 +70,7 @@ public value class Future<T> @PublishedApi internal constructor(val id: Int) {
 
 
 @Deprecated("Use 'waitForMultipleFutures' top-level function instead", ReplaceWith("waitForMultipleFutures(this, millis)"), DeprecationLevel.ERROR)
+@ObsoleteWorkersApi
 public fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Future<T>> = waitForMultipleFutures(this, millis)
 
 
@@ -79,6 +80,7 @@ public fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Fu
  *
  * @param timeoutMillis the amount of time in milliseconds to wait for the computed future
  */
+@ObsoleteWorkersApi
 public fun <T> waitForMultipleFutures(futures: Collection<Future<T>>, timeoutMillis: Int): Set<Future<T>> {
     val result = mutableSetOf<Future<T>>()
 

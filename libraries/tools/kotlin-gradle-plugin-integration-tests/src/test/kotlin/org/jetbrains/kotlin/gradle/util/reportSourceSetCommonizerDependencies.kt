@@ -5,52 +5,56 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.gradle.testkit.runner.BuildResult
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.annotations.RegExp
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
-import org.jetbrains.kotlin.commonizer.util.transitiveClosure
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.BaseGradleIT.CompiledProject
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
+import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.commonizerTarget
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.tooling.core.linearClosure
 import java.io.File
+import java.nio.file.Path
 import javax.annotation.RegEx
+import kotlin.io.path.appendText
 import kotlin.test.fail
 
 data class SourceSetCommonizerDependency(
     val sourceSetName: String,
     val target: CommonizerTarget,
-    val file: File
+    val file: File,
 )
 
 data class SourceSetCommonizerDependencies(
     val sourceSetName: String,
-    val dependencies: Set<SourceSetCommonizerDependency>
+    val dependencies: Set<SourceSetCommonizerDependency>,
 ) {
 
-    fun withoutNativeDistributionDependencies(): SourceSetCommonizerDependencies {
+    fun withoutNativeDistributionDependencies(konanDataDirProperty: Path): SourceSetCommonizerDependencies {
         return SourceSetCommonizerDependencies(
             sourceSetName,
-            dependencies.filter { dependency -> !dependency.isFromNativeDistribution() }.toSet()
+            dependencies.filter { dependency -> !dependency.isFromNativeDistribution(konanDataDirProperty) }.toSet()
         )
     }
 
-    fun onlyNativeDistributionDependencies(): SourceSetCommonizerDependencies {
+    fun onlyNativeDistributionDependencies(konanDataDirProperty: Path): SourceSetCommonizerDependencies {
         return SourceSetCommonizerDependencies(
             sourceSetName,
-            dependencies.filter { dependency -> dependency.isFromNativeDistribution() }.toSet()
+            dependencies.filter { dependency -> dependency.isFromNativeDistribution(konanDataDirProperty) }.toSet()
         )
     }
 
-    private fun SourceSetCommonizerDependency.isFromNativeDistribution(): Boolean {
-        val konanDataDir = System.getenv("KONAN_DATA_DIR")?.let(::File)
+    private fun SourceSetCommonizerDependency.isFromNativeDistribution(konanDataDirProperty: Path?): Boolean {
+        val konanDataDir = konanDataDirProperty?.toRealPath()?.toFile() ?: System.getenv("KONAN_DATA_DIR")?.let(::File)
         if (konanDataDir != null) {
             return file.startsWith(konanDataDir)
         }
-        return file.allParents.any { parentFile -> parentFile.name == ".konan" }
+        return file.parentsClosure.any { parentFile -> parentFile.name == ".konan" }
     }
 
     fun assertTargetOnAllDependencies(target: CommonizerTarget) = apply {
@@ -77,10 +81,6 @@ data class SourceSetCommonizerDependencies(
         assertDependencyFilesMatches(fileMatchers.filterNotNull().map(::Regex).toSet())
     }
 
-    fun assertDependencyFilesMatches(vararg fileMatchers: Regex?) = apply {
-        assertDependencyFilesMatches(fileMatchers.filterNotNull().toSet())
-    }
-
     fun assertDependencyFilesMatches(fileMatchers: Set<Regex>) = apply {
         val unmatchedDependencies = dependencies.filter { dependency ->
             fileMatchers.none { matcher -> dependency.file.absolutePath.matches(matcher) }
@@ -92,12 +92,20 @@ data class SourceSetCommonizerDependencies(
 
         if (unmatchedDependencies.isNotEmpty() || unmatchedMatchers.isNotEmpty()) {
             fail(buildString {
+                fun appendLineIndented(value: Any?) = appendLine(value.toString().prependIndent("    "))
+
                 appendLine("$sourceSetName: Set of commonizer dependencies does not match given 'fileMatchers'")
                 if (unmatchedDependencies.isNotEmpty()) {
-                    appendLine("Unmatched dependencies: $unmatchedDependencies")
+                    appendLine("Unmatched dependencies:")
+                    unmatchedDependencies.forEach { dependency ->
+                        appendLineIndented(dependency)
+                    }
                 }
                 if (unmatchedMatchers.isNotEmpty()) {
-                    appendLine("Unmatched fileMatchers: $unmatchedMatchers")
+                    appendLine("Unmatched fileMatchers:")
+                    unmatchedMatchers.forEach { matcher ->
+                        appendLineIndented(matcher)
+                    }
                 }
             })
         }
@@ -108,21 +116,15 @@ fun interface WithSourceSetCommonizerDependencies {
     fun getCommonizerDependencies(sourceSetName: String): SourceSetCommonizerDependencies
 }
 
-fun BaseGradleIT.reportSourceSetCommonizerDependencies(
-    project: BaseGradleIT.Project,
+fun TestProject.reportSourceSetCommonizerDependencies(
     subproject: String? = null,
-    options: BaseGradleIT.BuildOptions = defaultBuildOptions(),
-    test: WithSourceSetCommonizerDependencies.(compiledProject: CompiledProject) -> Unit
-) = with(project) {
-
-    if (!projectDir.exists()) {
-        setupWorkingDir()
-    }
-
-    gradleBuildScript(subproject).apply {
-        appendText("\n\n")
-        appendText(taskSourceCode)
-        appendText("\n\n")
+    options: BuildOptions = this.buildOptions,
+    test: WithSourceSetCommonizerDependencies.(compiledProject: BuildResult) -> Unit,
+) {
+    if (subproject != null) {
+        subProject(subproject).buildGradleKts.appendText(taskSourceCode)
+    } else {
+        buildGradleKts.appendText(taskSourceCode)
     }
 
     val taskName = buildString {
@@ -130,8 +132,7 @@ fun BaseGradleIT.reportSourceSetCommonizerDependencies(
         append(":reportCommonizerSourceSetDependencies")
     }
 
-    build(taskName, options = options) {
-        assertSuccessful()
+    build(taskName, buildOptions = options) {
 
         val dependencyReports = output.lineSequence().filter { line -> line.contains("SourceSetCommonizerDependencyReport") }.toList()
 
@@ -165,25 +166,42 @@ private fun inferCommonizerTargetOrNull(libraryFile: File): CommonizerTarget? = 
     strategy = ToolingSingleFileKlibResolveStrategy
 ).commonizerTarget?.let(::parseCommonizerTarget)
 
-private val File.allParents: Set<File> get() = transitiveClosure(this) { listOfNotNull(parentFile) }
+private val File.parentsClosure: Set<File> get() = this.linearClosure { it.parentFile }
 
 private const val dollar = "\$"
 
 private val taskSourceCode = """
-tasks.register("reportCommonizerSourceSetDependencies") {
-    kotlin.sourceSets.withType(org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet::class).all {
-        inputs.files(configurations.getByName(intransitiveMetadataConfigurationName))
-    }
 
-    doLast {
-        kotlin.sourceSets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet>().forEach { sourceSet ->
-            val configuration = configurations.getByName(sourceSet.intransitiveMetadataConfigurationName)
-            val dependencies = configuration.files
+abstract class ReportCommonizerSourceSetDependencies : DefaultTask() {
+    class SourceSetIntransitiveDependencies(
+        @get:Input
+        val sourceSetName: String,
 
-            logger.quiet(
-                "SourceSetCommonizerDependencyReport[$dollar{sourceSet.name}]$dollar{dependencies.joinToString("|#+#|")}"
-            )
+        @get:InputFiles
+        val dependencies: FileCollection
+    )
+
+    @get:Nested
+    abstract val sourceSetIntransitiveDependencies: ListProperty<SourceSetIntransitiveDependencies>
+
+    @TaskAction
+    fun action() {
+        sourceSetIntransitiveDependencies.get().forEach {
+            println("SourceSetCommonizerDependencyReport[${'$'}{it.sourceSetName}]${'$'}{it.dependencies.joinToString("|#+#|")}")
         }
     }
 }
+
+tasks.register<ReportCommonizerSourceSetDependencies>("reportCommonizerSourceSetDependencies") {
+    sourceSetIntransitiveDependencies.set(kotlin.sourceSets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet>().map { sourceSet ->
+        val configuration = configurations.getByName(sourceSet.intransitiveMetadataConfigurationName)
+
+        ReportCommonizerSourceSetDependencies.SourceSetIntransitiveDependencies(
+            sourceSet.name,
+            configuration.incoming.artifacts.artifactFiles
+        )
+    })
+}
+
+
 """.trimIndent()

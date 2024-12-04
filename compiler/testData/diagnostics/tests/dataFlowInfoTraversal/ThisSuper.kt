@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class Base {
     fun bar(x: Int): Int = x + 1
 }

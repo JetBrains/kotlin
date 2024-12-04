@@ -1,5 +1,6 @@
-// !LANGUAGE: -JvmStaticInInterface
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -JvmStaticInInterface
+// DIAGNOSTICS: -UNUSED_VARIABLE
 open class B {
     public open val base1 : Int = 1
     public open val base2 : Int = 1

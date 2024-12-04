@@ -1,0 +1,40 @@
+FILE: companionVsStaticScope.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object Bar : R|kotlin/Any| {
+            private constructor(): R|Foo.Bar| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open override fun toString(): R|kotlin/String| {
+                ^toString String(object Bar)
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Foo.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val Bar: R|kotlin/Int| = Int(10)
+                public get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final fun <T> take(it: R|T|): R|T| {
+        ^take R|<local>/it|
+    }
+    public final val x: R|Foo.Bar| = Q|Foo.Bar|
+        public get(): R|Foo.Bar|
+    public final val y: R|Foo.Bar| = R|/take|<R|Foo.Bar|>(Q|Foo.Bar|)
+        public get(): R|Foo.Bar|
+    public final val z: R|Foo.Bar| = Q|Foo.Bar|.R|kotlin/let|<R|Foo.Bar|, R|Foo.Bar|>(<L> = let@fun <anonymous>(it: R|Foo.Bar|): R|Foo.Bar| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^ R|<local>/it|
+    }
+    )
+        public get(): R|Foo.Bar|

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -10,19 +11,19 @@
  */
 
 fun test1(): Int {
-    val x: String = if (true) {
-        when {
-            true -> Any()
+    val x: String = <!INITIALIZER_TYPE_MISMATCH!>if (true) {
+        <!TYPE_MISMATCH, TYPE_MISMATCH!>when {
+            true -> <!TYPE_MISMATCH!>Any()<!>
             else -> null
-        }
-    } else ""
+        }<!>
+    } else ""<!>
     return x.hashCode()
 }
 
 fun test2(): Int {
-    val x: String = when {
-                        true -> Any()
+    val x: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>when {
+                        true -> <!TYPE_MISMATCH!>Any()<!>
                         else -> null
-                    } ?: return 0
+                    } ?: return 0<!>
     return x.hashCode()
 }

@@ -6,18 +6,20 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -30,6 +32,7 @@ import kotlin.system.measureNanoTime
 
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
+@ObsoleteTestInfrastructure
 class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 
     fun testTotalKotlinWithExpressionTrees() {
@@ -65,44 +68,46 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 time += measureNanoTime {
                     firFile = ktFile.toFirFile()
                 }
-                totalLength += StringBuilder().also { FirRenderer(it).visitFile(firFile) }.length
+                totalLength += FirRenderer().renderElementAsString(firFile).length
                 counter++
-                firFile.accept(object : FirVisitorVoid() {
-                    override fun visitElement(element: FirElement) {
-                        element.acceptChildren(this)
+                firFile.accept(object : FirVisitor<Unit, FirElement>() {
+                    override fun visitElement(element: FirElement, data: FirElement) {
+                        element.acceptChildren(this, element)
                     }
 
-                    override fun visitErrorExpression(errorExpression: FirErrorExpression) {
+                    override fun visitErrorExpression(errorExpression: FirErrorExpression, data: FirElement) {
                         errorExpressions++
                         println(errorExpression.render())
                         errorExpression.psi?.let { println(it) }
                     }
 
-                    override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
-                        val calleeReference = qualifiedAccess.calleeReference
-                        if (calleeReference is FirErrorNamedReference) {
+                    override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: FirElement) {
+                        val calleeReference = qualifiedAccessExpression.calleeReference
+                        if (calleeReference.isError()) {
                             errorReferences++
-                            println(calleeReference.diagnostic.reason)
+                            println((calleeReference as FirDiagnosticHolder).diagnostic.reason)
                         } else {
                             normalReferences++
                         }
-                        visitStatement(qualifiedAccess)
+                        visitStatement(qualifiedAccessExpression, data)
                     }
 
-                    override fun visitExpression(expression: FirExpression) {
+                    override fun visitExpression(expression: FirExpression, data: FirElement) {
                         when (expression) {
                             is FirExpressionStub -> {
-                                expressionStubs++
-                                println(expression.psi?.text)
+                                if (data !is FirProperty || data.isCatchParameter != true) {
+                                    expressionStubs++
+                                    println(expression.psi?.text)
+                                }
                             }
                             else -> normalExpressions++
                         }
-                        expression.acceptChildren(this)
+                        expression.acceptChildren(this, expression)
                     }
 
-                    override fun visitStatement(statement: FirStatement) {
+                    override fun visitStatement(statement: FirStatement, data: FirElement) {
                         normalStatements++
-                        statement.acceptChildren(this)
+                        statement.acceptChildren(this, statement)
                     }
 
 //                    override fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration) {
@@ -111,11 +116,11 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
 //                        errorDeclaration.psi?.let { println(it) }
 //                    }
 
-                    override fun visitDeclaration(declaration: FirDeclaration) {
+                    override fun visitDeclaration(declaration: FirDeclaration, data: FirElement) {
                         normalDeclarations++
-                        declaration.acceptChildren(this)
+                        declaration.acceptChildren(this, declaration)
                     }
-                })
+                }, firFile)
                 ktFile.accept(object : KtTreeVisitor<Nothing?>() {
                     override fun visitReferenceExpression(expression: KtReferenceExpression, data: Nothing?): Void? {
                         ktReferences++
@@ -247,6 +252,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         return it is KtPackageDirective || it is KtImportList || it is KtClassBody ||
                 it is KtModifierList ||
                 it is KtUserType || it is KtNullableType || it is KtFunctionType || it is KtFunctionTypeReceiver ||
+                it is KtIntersectionType || it is KtDynamicType ||
                 it is KtQualifiedExpression ||
                 it is KtPropertyDelegate ||
                 it is KtConstructorCalleeExpression && (it.parent is KtAnnotationEntry || it.parent is KtSuperTypeCallEntry) ||
@@ -263,9 +269,9 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it is KtLabeledExpression ||
                 it is KtAnnotatedExpression ||
                 it is KtWhenConditionWithExpression ||
+                it is KtWhenEntryGuard ||
                 it is KtFinallySection ||
                 it is KtObjectLiteralExpression ||// TODO: KT-24089 (support of dynamic)
-                it is KtDynamicType ||
                 // NB: KtAnnotation is processed via its KtAnnotationEntries
                 it is KtFileAnnotationList || it is KtAnnotationUseSiteTarget || it is KtAnnotation ||
                 it is KtInitializerList || it is KtEnumEntrySuperclassReferenceExpression ||
@@ -283,6 +289,10 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                 it.getStrictParentOfType<KtImportDirective>() != null ||
                 (it is KtPropertyAccessor && !it.hasBody()) ||
                 it is KtDestructuringDeclarationEntry && it.text == "_" ||
+                it is KtConstructorDelegationCall && it.text == "" ||
+                it is KtIfExpression && it.parent is KtContainerNodeForControlStructureBody && it.parent.parent is KtIfExpression ||
+                it is KtContextReceiverList ||
+                it is KtContextReceiver && it.parent is KtContextReceiverList && it.parent?.parent is KtFunctionType ||
                 it is KtConstantExpression && it.parent.let { parent ->
             parent is KtPrefixExpression && (parent.operationToken == KtTokens.MINUS || parent.operationToken == KtTokens.PLUS)
         }

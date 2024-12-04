@@ -1,0 +1,24 @@
+package
+
+public fun test(/*0*/ x: C<kotlin.Long?>): kotlin.Unit
+public fun </*0*/ T : kotlin.Comparable<T>, /*1*/ S : T?> A<in S>.foo(/*0*/ other: A<in S>): kotlin.Unit
+public fun </*0*/ T : kotlin.Comparable<T>, /*1*/ S : T?> B<in S>.foo(/*0*/ t: T): kotlin.Unit
+
+public interface A</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B</*0*/ T> : A<T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface C</*0*/ T> : B<T>, kotlin.Comparable<C<*>> {
+    public abstract override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: C<*>): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

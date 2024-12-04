@@ -1,7 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -14,7 +14,7 @@ class CoroutineScope
 class ReceiveChannel<E>
 
 @OptIn(ExperimentalTypeInference::class)
-public fun <E> produce(@BuilderInference block: suspend ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
+public fun <E> produce(block: suspend ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
 
 fun test(ls: List<Int>) =
     produce<Int> {

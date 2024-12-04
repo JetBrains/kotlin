@@ -1,5 +1,0 @@
-// EXISTS: m1/m1.meta.js
-// ABSENT: m1/m1.js
-// EXISTS: m1/m1/m1/m1.kjsm
-
-// EXISTS: m2/m2.js

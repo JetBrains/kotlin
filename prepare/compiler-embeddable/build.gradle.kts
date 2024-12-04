@@ -1,8 +1,4 @@
-import java.util.stream.Collectors
-import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
-import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
-import shadow.org.apache.tools.zip.ZipEntry
-import shadow.org.apache.tools.zip.ZipOutputStream
+import org.gradle.kotlin.dsl.support.serviceOf
 
 description = "Kotlin Compiler (embeddable)"
 
@@ -23,14 +19,12 @@ val testCompilerClasspath by configurations.creating {
 dependencies {
     runtimeOnly(kotlinStdlib())
     runtimeOnly(project(":kotlin-script-runtime"))
-    runtimeOnly(project(":kotlin-reflect"))
+    runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     runtimeOnly(project(":kotlin-daemon-embeddable"))
-    runtimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
-    Platform[203].orHigher {
-        runtimeOnly(commonDep("net.java.dev.jna", "jna"))
-    }
-    testApi(commonDep("junit:junit"))
-    testApi(project(":kotlin-test:kotlin-test-junit"))
+    runtimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
+    runtimeOnly(libs.kotlinx.coroutines.core) { isTransitive = false }
+    testImplementation(libs.junit4)
+    testApi(kotlinTest("junit"))
     testCompilationClasspath(kotlinStdlib())
 }
 
@@ -38,8 +32,6 @@ sourceSets {
     "main" {}
     "test" { projectDefault() }
 }
-
-publish()
 
 // dummy is used for rewriting dependencies to the shaded packages in the embeddable compiler
 compilerDummyJar(compilerDummyForDependenciesRewriting("compilerDummy") {
@@ -53,8 +45,23 @@ val runtimeJar = runtimeJar(embeddableCompiler()) {
     mergeServiceFiles()
 }
 
-sourcesJar()
-javadocJar()
+val sourcesJar = sourcesJar {
+    val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("sourcesJar")
+    dependsOn(compilerTask)
+    val archiveOperations = serviceOf<ArchiveOperations>()
+    from(compilerTask.map { it.archiveFile }.map { archiveOperations.zipTree(it) })
+}
+
+val javadocJar = javadocJar {
+    val compilerTask = project(":kotlin-compiler").tasks.named<Jar>("javadocJar")
+    dependsOn(compilerTask)
+    val archiveOperations = serviceOf<ArchiveOperations>()
+    from(compilerTask.map { it.archiveFile }.map { archiveOperations.zipTree(it) })
+}
+
+publish {
+    setArtifacts(listOf(runtimeJar, sourcesJar, javadocJar))
+}
 
 projectTest {
     dependsOn(runtimeJar)
@@ -66,5 +73,4 @@ projectTest {
         systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
     }
 }
-
 

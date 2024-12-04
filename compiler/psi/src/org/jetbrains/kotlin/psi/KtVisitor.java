@@ -74,6 +74,16 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return null;
     }
 
+    /**
+     * Required for {@link KtCommonFile} implementation.
+     * It is not expected to be used, because {@link KtCommonFile} should not be used directly.
+     */
+    @SuppressWarnings("deprecation")
+    public final R visitKtCommonFile(@NotNull KtCommonFile file) {
+        visitFile(file);
+        return null;
+    }
+
     public R visitScript(@NotNull KtScript script, D data) {
         return visitDeclaration(script, data);
     }
@@ -156,6 +166,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
 
     public R visitSuperTypeEntry(@NotNull KtSuperTypeEntry specifier, D data) {
         return visitSuperTypeListEntry(specifier, data);
+    }
+
+    public R visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList, D data) {
+        return visitKtElement(contextReceiverList, data);
     }
 
     public R visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call, D data) {
@@ -414,8 +428,8 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitKtElement(typeProjection, data);
     }
 
-    public R visitWhenEntry(@NotNull KtWhenEntry jetWhenEntry, D data) {
-        return visitKtElement(jetWhenEntry, data);
+    public R visitWhenEntry(@NotNull KtWhenEntry ktWhenEntry, D data) {
+        return visitKtElement(ktWhenEntry, data);
     }
 
     public R visitIsExpression(@NotNull KtIsExpression expression, D data) {

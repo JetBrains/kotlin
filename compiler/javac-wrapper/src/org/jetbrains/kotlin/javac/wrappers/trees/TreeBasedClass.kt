@@ -40,6 +40,9 @@ class TreeBasedClass(
         override val outerClass: JavaClass?
 ) : TreeBasedElement<JCTree.JCClassDecl>(tree, compilationUnit, javac), JavaClassWithClassId {
 
+    override val isFromSource: Boolean
+        get() = true
+
     override val name: Name
         get() = Name.identifier(tree.simpleName.toString())
 
@@ -122,8 +125,8 @@ class TreeBasedClass(
     override val isSealed: Boolean
         get() = false
 
-    override val permittedTypes: Collection<JavaClassifierType>
-        get() = emptyList()
+    override val permittedTypes: Sequence<JavaClassifierType>
+        get() = emptySequence()
 
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null

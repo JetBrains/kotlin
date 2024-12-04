@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -15,87 +15,88 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames
 import org.jetbrains.kotlin.resolve.UseSiteTargetsList
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
-fun FirRegularClass.getRetention(): AnnotationRetention {
-    return getRetentionAnnotation()?.getRetention() ?: AnnotationRetention.RUNTIME
-}
-
-fun FirAnnotation.getRetention(): AnnotationRetention {
-    val retentionArgument = findArgumentByName(ParameterNames.retentionValue) as? FirQualifiedAccessExpression
-        ?: return AnnotationRetention.RUNTIME
-    val retentionName = (retentionArgument.calleeReference as? FirResolvedNamedReference)?.name?.asString()
-        ?: return AnnotationRetention.RUNTIME
-    return AnnotationRetention.values().firstOrNull { it.name == retentionName } ?: AnnotationRetention.RUNTIME
-}
-
 private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
+private val defaultAnnotationTargetsWithExpression = KotlinTarget.DEFAULT_TARGET_SET + KotlinTarget.EXPRESSION
 
 fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
-    if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.values().toSet()
+    if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.ALL_TARGET_SET
     val annotationClassSymbol = (this.annotationTypeRef.coneType as? ConeClassLikeType)
         ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session) ?: return defaultAnnotationTargets
-    annotationClassSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
-    return annotationClassSymbol.getAllowedAnnotationTargets()
+    annotationClassSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+    return annotationClassSymbol.getAllowedAnnotationTargets(session)
 }
 
 internal fun FirAnnotation.getAnnotationClassForOptInMarker(session: FirSession): FirRegularClassSymbol? {
-    val lookupTag = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return null
-    val annotationClassSymbol = lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: return null
-    if (annotationClassSymbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID) == null) {
+    val lookupTag = annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return null
+    val annotationClassSymbol = lookupTag.toRegularClassSymbol(session) ?: return null
+    if (annotationClassSymbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) {
         return null
     }
     return annotationClassSymbol
 }
 
-fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
-    return symbol.getAllowedAnnotationTargets()
+fun FirRegularClass.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
+    return symbol.getAllowedAnnotationTargets(session)
 }
 
-fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
-    val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
-    val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unfoldArrayOrVararg().orEmpty()
+fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
+    lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
+    // In KT-67014, we decided to allow EXPRESSION targets for Java annotations
+    val targetAnnotation = getTargetAnnotation(session)
+        ?: return if (isJavaOrEnhancement) defaultAnnotationTargetsWithExpression else defaultAnnotationTargets
+    val arguments =
+        targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unwrapAndFlattenArgument(flattenArrays = true).orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
-        val targetExpression = argument as? FirQualifiedAccessExpression
-        val targetName = (targetExpression?.calleeReference as? FirResolvedNamedReference)?.name?.asString() ?: return@mapNotNullTo null
-        KotlinTarget.values().firstOrNull { target -> target.name == targetName }
+        val targetName = argument.extractEnumValueArgumentInfo()?.enumEntryName?.asString() ?: return@mapNotNullTo null
+        KotlinTarget.entries.firstOrNull { target -> target.name == targetName }
+    }.let {
+        // In KT-67014, we decided to allow EXPRESSION targets for Java annotations
+        if (isJavaOrEnhancement) it + KotlinTarget.EXPRESSION else it
     }
 }
 
-fun FirDeclaration.getRetentionAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Retention)
+fun FirDeclaration.getTargetAnnotation(session: FirSession): FirAnnotation? {
+    return getAnnotationByClassId(StandardClassIds.Annotations.Target, session)
 }
 
-fun FirDeclaration.getTargetAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Target)
+fun FirClassLikeSymbol<*>.getTargetAnnotation(session: FirSession): FirAnnotation? {
+    return getAnnotationByClassId(StandardClassIds.Annotations.Target, session)
 }
 
-fun FirClassLikeSymbol<*>.getTargetAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Target)
+fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegularClassSymbol> {
+    return unwrapAndFlattenArgument(flattenArrays = true).mapNotNull {
+        it.extractClassFromArgument(session)
+    }
 }
 
-fun FirExpression.extractClassesFromArgument(): List<FirRegularClassSymbol> {
-    return unfoldArrayOrVararg().mapNotNull {
-        if (it !is FirGetClassCall) return@mapNotNull null
-        val qualifier = it.argument as? FirResolvedQualifier ?: return@mapNotNull null
-        qualifier.symbol as? FirRegularClassSymbol
+fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClassSymbol? {
+    if (this !is FirGetClassCall) return null
+    return when (val argument = argument) {
+        is FirResolvedQualifier ->
+            argument.symbol?.fullyExpandedClass(session)
+        is FirClassReferenceExpression -> {
+            val classTypeRef = argument.classTypeRef
+            val coneType = classTypeRef.coneType.unwrapToSimpleTypeUsingLowerBound()
+            coneType.fullyExpandedType(session).toRegularClassSymbol(session)
+        }
+        else -> null
     }
 }
 
@@ -105,35 +106,21 @@ fun checkRepeatedAnnotation(
     annotation: FirAnnotation,
     context: CheckerContext,
     reporter: DiagnosticReporter,
+    annotationSource: KtSourceElement?,
 ) {
     val duplicated = useSiteTarget in existingTargetsForAnnotation
             || existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }
     if (duplicated && !annotation.isRepeatable(context.session)) {
-        reporter.reportOn(annotation.source, FirErrors.REPEATED_ANNOTATION, context)
+        reporter.reportOn(annotationSource, FirErrors.REPEATED_ANNOTATION, context)
     }
 }
 
 fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
-    val annotationClassId = this.toAnnotationClassId() ?: return false
+    val annotationClassId = this.toAnnotationClassId(session) ?: return false
     if (annotationClassId.isLocal) return false
     val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: return false
 
-    return annotationClass.containsRepeatableAnnotation(session)
-}
-
-fun FirClassLikeSymbol<*>.containsRepeatableAnnotation(session: FirSession): Boolean {
-    if (getAnnotationByClassId(StandardClassIds.Annotations.Repeatable) != null) return true
-    if (getAnnotationByClassId(StandardClassIds.Annotations.Java.Repeatable) != null ||
-        getAnnotationByClassId(StandardClassIds.Annotations.JvmRepeatable) != null
-    ) {
-        return session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) ||
-                getAnnotationRetention() == AnnotationRetention.SOURCE && origin == FirDeclarationOrigin.Java
-    }
-    return false
-}
-
-fun FirClassLikeSymbol<*>.getAnnotationRetention(): AnnotationRetention {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Retention)?.getRetention() ?: AnnotationRetention.RUNTIME
+    return session.annotationPlatformSupport.symbolContainsRepeatableAnnotation(annotationClass, session)
 }
 
 fun FirAnnotationContainer.getDefaultUseSiteTarget(
@@ -162,19 +149,13 @@ fun FirAnnotationContainer.getImplicitUseSiteTargetList(context: CheckerContext)
     }
 }
 
-private fun FirExpression.unfoldArrayOrVararg(): List<FirExpression> {
-    return when (this) {
-        is FirVarargArgumentsExpression -> arguments
-        is FirArrayOfCall -> arguments
-        else -> return emptyList()
-    }
-}
-
 fun checkRepeatedAnnotation(
     annotationContainer: FirAnnotationContainer?,
     annotations: List<FirAnnotation>,
     context: CheckerContext,
-    reporter: DiagnosticReporter
+    reporter: DiagnosticReporter,
+    annotationSources: Map<FirAnnotation, KtSourceElement?>,
+    defaultSource: KtSourceElement?,
 ) {
     if (annotations.size <= 1) return
 
@@ -182,12 +163,11 @@ fun checkRepeatedAnnotation(
 
     for (annotation in annotations) {
         val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation, context)
-        val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
+        val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType(context.session)
+        val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
 
-        withSuppressedDiagnostics(annotation, context) {
-            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter)
-        }
-
+        val source = annotationSources[annotation] ?: defaultSource
+        checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter, source)
         existingTargetsForAnnotation.add(useSiteTarget)
     }
 }

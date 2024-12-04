@@ -1,6 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: +NewInference
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 interface OutBase<out E>
 interface OutDerived<out F> : OutBase<F>

@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
+// CHECK_TYPE
 import java.util.ArrayList
 
 class ListOfLists<T>(public val x : ArrayList<ArrayList<T>>)

@@ -1,0 +1,29 @@
+FILE: annotatedBranch.kt
+    public final enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
+        private constructor(): R|SomeEnum| {
+            super<R|kotlin/Enum<SomeEnum>|>()
+        }
+
+        public final static enum entry A: R|SomeEnum|
+        public final static enum entry B: R|SomeEnum|
+        public final static fun values(): R|kotlin/Array<SomeEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+
+    }
+    public final fun test(x: R|SomeEnum|): R|kotlin/Unit| {
+        when (R|<local>/x|) {
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, @R|kotlin/Suppress|(names = vararg(String(deprecation))) Q|SomeEnum|.R|/SomeEnum.B|) ->  {
+                Int(2)
+            }
+        }
+        .R|kotlin/Int.inc|()
+    }

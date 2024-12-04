@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.math
@@ -384,6 +384,23 @@ public actual fun max(a: Double, b: Double): Double = when {
     else -> if (a > b) a else b
 }
 
+
+/**
+ * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
+ * that is, the cube root of a negative value is the negative of the cube root
+ * of that value's magnitude. Special cases:
+ *
+ * Special cases:
+ *   - If the argument is `NaN`, then the result is `NaN`.
+ *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
+ *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ */
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
+@GCUnsafeCall("Kotlin_math_cbrt")
+public external actual fun cbrt(x: Double): Double
+
+
 // extensions
 
 /**
@@ -416,8 +433,8 @@ public actual fun Double.pow(n: Int): Double = pow(n.toDouble())
  * `q = round(this / other)`.
  *
  * Special cases:
- *    - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
- *    - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
+ *   - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
+ *   - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
  *
  * @see round
  */
@@ -799,7 +816,7 @@ external public actual fun ln(x: Float): Float
 /**
  * Computes the common logarithm (base 10) of the value [x].
  *
- * @see [ln] actual function for special cases.
+ * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_log10f")
@@ -808,14 +825,14 @@ external public actual fun log10(x: Float): Float
 /**
  * Computes the binary logarithm (base 2) of the value [x].
  *
- * @see [ln] actual function for special cases.
+ * @see [ln] function for special cases.
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_log2f")
 external public actual fun log2(x: Float): Float
 
 /**
- * Computes `ln(a + 1)`.
+ * Computes `ln(x + 1)`.
  *
  * This function can be implemented to produce more precise result for [x] near zero.
  *
@@ -934,6 +951,23 @@ public actual fun max(a: Float, b: Float): Float = when {
     else -> if (a > b) a else b
 }
 
+
+/**
+ * Returns the cube root of [x]. For any `x`, `cbrt(-x) == -cbrt(x)`;
+ * that is, the cube root of a negative value is the negative of the cube root
+ * of that value's magnitude. Special cases:
+ *
+ * Special cases:
+ *   - If the argument is `NaN`, then the result is `NaN`.
+ *   - If the argument is infinite, then the result is an infinity with the same sign as the argument.
+ *   - If the argument is zero, then the result is a zero with the same sign as the argument.
+ */
+@SinceKotlin("1.8")
+@WasExperimental(ExperimentalStdlibApi::class)
+@GCUnsafeCall("Kotlin_math_cbrtf")
+public external actual fun cbrt(x: Float): Float
+
+
 // extensions
 
 /**
@@ -966,8 +1000,8 @@ public actual fun Float.pow(n: Int): Float = pow(n.toFloat())
  * `q = round(this / other)`.
  *
  * Special cases:
- *    - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
- *    - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
+ *   - `x.IEEErem(y)` is `NaN`, when `x` is `NaN` or `y` is `NaN` or `x` is `+Inf|-Inf` or `y` is zero.
+ *   - `x.IEEErem(y) == x` when `x` is finite and `y` is infinite.
  *
  * @see round
  */
@@ -981,7 +1015,7 @@ external public fun Float.IEEErem(divisor: Float): Float
  * Special cases:
  *   - `NaN.absoluteValue` is `NaN`
  *
- * @see abs actual function
+ * @see abs function
  */
 @SinceKotlin("1.2")
 public actual val Float.absoluteValue: Float
@@ -1014,6 +1048,16 @@ external public actual fun Float.withSign(sign: Float): Float
 @SinceKotlin("1.2")
 public actual fun Float.withSign(sign: Int): Float = withSign(sign.toFloat())
 
+/**
+ * Returns the ulp of this value.
+ *
+ * An ulp is a positive distance between this value and the next nearest [Float] value larger in magnitude.
+ *
+ * Special Cases:
+ *   - `NaN.ulp` is `NaN`
+ *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
+ *   - `0.0.ulp` is `Float.MIN_VALUE`
+ */
 @SinceKotlin("1.2")
 public val Float.ulp: Float
     get() = when {
@@ -1141,6 +1185,7 @@ public actual val Int.absoluteValue: Int
  */
 @SinceKotlin("1.2")
 public actual val Int.sign: Int
+    // implementation note: use a naive implementation here as LLVM is capable of optimizing it later.
     get() = when {
         this < 0 -> -1
         this > 0 -> 1
@@ -1178,7 +1223,7 @@ public actual fun max(a: Long, b: Long): Long = if (a > b) a else b
  * Special cases:
  *   - `Long.MIN_VALUE.absoluteValue` is `Long.MIN_VALUE` due to an overflow
  *
- * @see abs actual function
+ * @see abs function
  */
 @SinceKotlin("1.2")
 public actual val Long.absoluteValue: Long
@@ -1192,6 +1237,7 @@ public actual val Long.absoluteValue: Long
  */
 @SinceKotlin("1.2")
 public actual val Long.sign: Int
+    // implementation note: use a naive implementation here as LLVM is capable of optimizing it later.
     get() = when {
         this < 0 -> -1
         this > 0 -> 1

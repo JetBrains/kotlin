@@ -7,17 +7,30 @@ package org.jetbrains.kotlin.commonizer.konan
 
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
+import org.jetbrains.kotlin.commonizer.konan.DefaultModulesProvider.DuplicateLibraryHandler
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
-import java.io.File
+import org.jetbrains.kotlin.util.Logger
 
-internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : ModulesProvider {
+internal class DefaultModulesProvider private constructor(
+    libraries: Collection<NativeLibrary>,
+    duplicateLibraryHandler: DuplicateLibraryHandler
+) : ModulesProvider {
+
     internal class NativeModuleInfo(
         name: String,
-        originalLocation: File,
         val dependencies: Set<String>,
         cInteropAttributes: ModulesProvider.CInteropModuleAttributes?
-    ) : ModuleInfo(name, originalLocation, cInteropAttributes)
+    ) : ModuleInfo(name, cInteropAttributes)
+
+    private fun interface DuplicateLibraryHandler {
+        fun onDuplicateLibrary(name: String)
+
+        companion object {
+            val error = DuplicateLibraryHandler { name -> error("Duplicated libraries: $name") }
+            fun warning(logger: Logger) = DuplicateLibraryHandler { name -> logger.warning("Duplicated libraries: $name") }
+        }
+    }
 
     private val libraryMap: Map<String, NativeLibrary>
     private val moduleInfoMap: Map<String, NativeModuleInfo>
@@ -30,16 +43,15 @@ internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : Mo
             val manifestData = library.manifestData
 
             val name = manifestData.uniqueName
-            val location = File(library.library.libraryFile.path)
             val dependencies = manifestData.dependencies.toSet()
 
-            val cInteropAttributes = if (manifestData.isInterop) {
+            val cInteropAttributes = if (manifestData.isCInterop) {
                 val packageFqName = manifestData.packageFqName ?: error("Main package FQ name not specified for module $name")
                 ModulesProvider.CInteropModuleAttributes(packageFqName, manifestData.exportForwardDeclarations)
             } else null
 
-            libraryMap.put(name, library)?.let { error("Duplicated libraries: $name") }
-            moduleInfoMap[name] = NativeModuleInfo(name, location, dependencies, cInteropAttributes)
+            libraryMap.put(name, library)?.let { duplicateLibraryHandler.onDuplicateLibrary(name) }
+            moduleInfoMap[name] = NativeModuleInfo(name, dependencies, cInteropAttributes)
         }
 
         this.libraryMap = libraryMap
@@ -67,9 +79,9 @@ internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : Mo
 
     companion object {
         fun create(librariesToCommonize: NativeLibrariesToCommonize): ModulesProvider =
-            DefaultModulesProvider(librariesToCommonize.libraries)
+            DefaultModulesProvider(librariesToCommonize.libraries, DuplicateLibraryHandler.error)
 
-        fun create(libraries: Iterable<NativeLibrary>): ModulesProvider =
-            DefaultModulesProvider(libraries.toList())
+        fun forDependencies(libraries: Iterable<NativeLibrary>, logger: Logger): ModulesProvider =
+            DefaultModulesProvider(libraries.toList(), DuplicateLibraryHandler.warning(logger))
     }
 }

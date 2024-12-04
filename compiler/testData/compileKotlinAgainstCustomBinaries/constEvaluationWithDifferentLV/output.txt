@@ -1,0 +1,4 @@
+info: produce executable: $TMP_DIR$/usage.js
+info: cache directory: null
+info: executable production duration: [time]
+OK

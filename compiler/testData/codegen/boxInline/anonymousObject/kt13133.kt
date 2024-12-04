@@ -1,15 +1,18 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+// IGNORE_INLINER_K2: IR
 // FILE: 1.kt
 
 package test
 
 inline fun inf(crossinline cif: Any.() -> String): () -> String {
-    return {
+    // Approximate the types manually to avoid running into KT-30696
+    val factory: () -> () -> String = {
         object : () -> String {
             override fun invoke() = cif()
         }
-    }()
+    }
+    return factory()
 }
 // FILE: 2.kt
 

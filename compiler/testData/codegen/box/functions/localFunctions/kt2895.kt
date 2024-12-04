@@ -3,7 +3,7 @@ fun outer() {
         if (i > 0){
             {
                 it: Int -> inner(0) // <- invocation of literal itself is generated instead
-            }.invoke(1)
+            }.let { it.invoke(1) }
         }
     }
     inner(1)

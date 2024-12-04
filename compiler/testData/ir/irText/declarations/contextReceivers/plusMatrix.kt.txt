@@ -1,0 +1,23 @@
+class Matrix {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface NumberOperations {
+  abstract fun Number.plus(other: Number): Number
+
+}
+
+fun Matrix.plus($context_receiver_0: NumberOperations, other: Matrix): Matrix {
+  return TODO()
+}
+
+fun NumberOperations.plusMatrix(m1: Matrix, m2: Matrix) {
+  m1.plus($context_receiver_0 = <this>, other = m2) /*~> Unit */
+  m2.plus($context_receiver_0 = <this>, other = m1) /*~> Unit */
+}
+

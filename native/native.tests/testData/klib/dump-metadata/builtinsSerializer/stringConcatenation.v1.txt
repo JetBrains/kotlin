@@ -1,0 +1,35 @@
+library {
+  // module name: <stringConcatenation.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Foo
+    // class name: Obj
+
+    // signature: /Foo|null[0]
+    @kotlin/Deprecated(message = "O/{id}")
+    public final class Foo : kotlin/Any {
+
+      // signature: /Foo.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: /Obj|null[0]
+    public final object Obj : kotlin/Any {
+
+      // signature: /Obj.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: /Obj.O|-6675131087042329948[0]
+      public final const val O: kotlin/String /* = "O" */
+        // signature: /Obj.O.<get-O>|3449384386782486809[0]
+        public final get
+
+      // signature: /Obj.concat|4194001668264387881[0]
+      public final val concat: kotlin/String /* = "OK" */
+        // signature: /Obj.concat.<get-concat>|7226754227535139280[0]
+        public final get
+    }
+  }
+}

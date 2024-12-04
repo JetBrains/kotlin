@@ -37,11 +37,11 @@ public interface ScriptDescriptor extends ClassDescriptor {
     @Nullable
     PropertyDescriptor getResultValue();
 
-    @NotNull
-    List<ValueParameterDescriptor> getExplicitConstructorParameters();
+    @Nullable
+    ValueParameterDescriptor getEarlierScriptsConstructorParameter();
 
     @NotNull
-    List<ValueParameterDescriptor> getImplicitReceiversParameters();
+    List<ValueParameterDescriptor> getExplicitConstructorParameters();
 
     @NotNull
     List<ValueParameterDescriptor> getScriptProvidedPropertiesParameters();

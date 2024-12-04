@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface I1
 interface I2
 interface I3

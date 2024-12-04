@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}
+final fun (/A)./get(kotlin/Int, kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): kotlin/Int // /get|get@A(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+final fun (/A)./set(kotlin/Int, kotlin/Int = ..., kotlin/Int) // /set|set@A(kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+final fun /testCompoundAssignment(/A) // /testCompoundAssignment|testCompoundAssignment(A){}[0]
+final fun /testPostfixIncrement(/A): kotlin/Int // /testPostfixIncrement|testPostfixIncrement(A){}[0]
+final fun /testSimpleAssignment(/A) // /testSimpleAssignment|testSimpleAssignment(A){}[0]

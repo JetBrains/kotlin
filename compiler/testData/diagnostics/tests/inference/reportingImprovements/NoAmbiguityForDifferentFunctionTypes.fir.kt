@@ -1,4 +1,4 @@
-
+// RUN_PIPELINE_TILL: FRONTEND
 package a
 
 interface Closeable {}
@@ -9,8 +9,8 @@ fun <T: Closeable, R> T.foo(block: (T)-> R) = block
 fun <T: Closeable, R> T.foo(block: (T, T)-> R) = block
 
 fun main() {
-    C().foo { // no ambiguity here
+    C().<!CANNOT_INFER_PARAMETER_TYPE!>foo<!> { // no ambiguity here
         www ->
-        <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>xs<!>
+        <!UNRESOLVED_REFERENCE!>xs<!>
     }
 }

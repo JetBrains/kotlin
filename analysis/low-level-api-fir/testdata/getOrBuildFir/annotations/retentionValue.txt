@@ -1,5 +1,0 @@
-KT element: KtNameReferenceExpression
-FIR element: FirResolvedNamedReferenceImpl
-
-FIR element rendered:
-R|kotlin/annotation/AnnotationRetention.SOURCE|

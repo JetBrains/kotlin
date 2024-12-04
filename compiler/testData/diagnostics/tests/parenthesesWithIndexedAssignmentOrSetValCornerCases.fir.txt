@@ -1,0 +1,140 @@
+FILE: parenthesesWithIndexedAssignmentOrSetValCornerCases.fir.kt
+    public final object Plus : R|kotlin/Any| {
+        private constructor(): R|Plus| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun plus(number: R|kotlin/Int|): R|Plus| {
+            ^plus this@R|/Plus|.R|kotlin/also|<R|Plus|>(<L> = also@fun <anonymous>(it: R|Plus|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                R|kotlin/io/println|(String(p -> plus))
+            }
+            )
+        }
+
+    }
+    public final object PlusAssign : R|kotlin/Any| {
+        private constructor(): R|PlusAssign| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun plusAssign(number: R|kotlin/Int|): R|kotlin/Unit| {
+            R|kotlin/io/println|(String(pa -> plusAssign))
+        }
+
+    }
+    public final object PlusAndPlusAssign : R|kotlin/Any| {
+        private constructor(): R|PlusAndPlusAssign| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun plus(number: R|kotlin/Int|): R|PlusAndPlusAssign| {
+            ^plus this@R|/PlusAndPlusAssign|.R|kotlin/also|<R|PlusAndPlusAssign|>(<L> = also@fun <anonymous>(it: R|PlusAndPlusAssign|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                R|kotlin/io/println|(String(ppa -> plus))
+            }
+            )
+        }
+
+        public final operator fun plusAssign(number: R|kotlin/Int|): R|kotlin/Unit| {
+            R|kotlin/io/println|(String(ppa -> plusAssign))
+        }
+
+    }
+    public final object B : R|kotlin/Any| {
+        private constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p: R|kotlin/Array<Plus>| = R|kotlin/arrayOf|<R|Plus|>(vararg(Q|Plus|))
+            public get(): R|kotlin/Array<Plus>|
+
+        public final val pa: R|kotlin/Array<PlusAssign>| = R|kotlin/arrayOf|<R|PlusAssign|>(vararg(Q|PlusAssign|))
+            public get(): R|kotlin/Array<PlusAssign>|
+
+        public final val ppa: R|kotlin/Array<PlusAndPlusAssign>| = R|kotlin/arrayOf|<R|PlusAndPlusAssign|>(vararg(Q|PlusAndPlusAssign|))
+            public get(): R|kotlin/Array<PlusAndPlusAssign>|
+
+    }
+    public final fun ban(b: R|B?|): R|kotlin/Unit| {
+        R|<local>/b|?.{  {
+            lval <array>: R|kotlin/Array<Plus>| = $subj$.R|/B.p|
+            lval <index_0>: R|kotlin/Int| = Int(0)
+            R|<local>/<array>|.R|SubstitutionOverride<kotlin/Array.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride<kotlin/Array.get: R|Plus|>|(R|<local>/<index_0>|).R|/Plus.plus|(Int(10)))
+        }
+         }
+        Unit
+        R|<local>/b|?.{ $subj$.R|/B.p|.R|SubstitutionOverride<kotlin/Array.get: R|Plus|>|(Int(0)) }.<Ambiguity: plusAssign, [/plusAssign, /plusAssign]>#(Int(10))
+        Unit
+        R|<local>/b|?.{ $subj$.R|/B.pa|.R|SubstitutionOverride<kotlin/Array.get: R|PlusAssign|>|(Int(0)).R|/PlusAssign.plusAssign|(Int(10)) }
+        Unit
+        R|<local>/b|?.{ $subj$.R|/B.pa|.R|SubstitutionOverride<kotlin/Array.get: R|PlusAssign|>|(Int(0)) }.R|/PlusAssign.plusAssign<Inapplicable(UNSAFE_CALL): /PlusAssign.plusAssign>#|(Int(10))
+        Unit
+        R|<local>/b|?.{ $subj$.R|/B.ppa|.R|SubstitutionOverride<kotlin/Array.get: R|PlusAndPlusAssign|>|(Int(0)).<Operator overload ambiguity. Compatible candidates: [/PlusAndPlusAssign.plusAssign, kotlin/Array.set]>#(Int(10)) }
+        Unit
+        R|<local>/b|?.{ $subj$.R|/B.ppa|.R|SubstitutionOverride<kotlin/Array.get: R|PlusAndPlusAssign|>|(Int(0)) }.R|/PlusAndPlusAssign.plusAssign<Inapplicable(UNSAFE_CALL): /PlusAndPlusAssign.plusAssign>#|(Int(10))
+        Unit
+    }
+    public final object PlusExt : R|kotlin/Any| {
+        private constructor(): R|PlusExt| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final operator fun R|PlusExt?|.plus(number: R|kotlin/Int|): R|PlusExt?| {
+        ^plus this@R|/plus|.R|kotlin/also|<R|PlusExt?|>(<L> = also@fun <anonymous>(it: R|PlusExt?|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|kotlin/io/println|(String(p-ext -> plus))
+        }
+        )
+    }
+    public final object PlusAssignExt : R|kotlin/Any| {
+        private constructor(): R|PlusAssignExt| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final operator fun R|PlusAssignExt?|.plusAssign(number: R|kotlin/Int|): R|kotlin/Unit| {
+        R|kotlin/io/println|(String(pa-ext -> plusAssign))
+    }
+    public final object PlusAndPlusAssignExt : R|kotlin/Any| {
+        private constructor(): R|PlusAndPlusAssignExt| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final operator fun R|PlusAndPlusAssignExt?|.plus(number: R|kotlin/Int|): R|PlusAndPlusAssignExt?| {
+        ^plus this@R|/plus|.R|kotlin/also|<R|PlusAndPlusAssignExt?|>(<L> = also@fun <anonymous>(it: R|PlusAndPlusAssignExt?|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|kotlin/io/println|(String(ppa-ext -> plus))
+        }
+        )
+    }
+    public final operator fun R|PlusAndPlusAssignExt?|.plusAssign(number: R|kotlin/Int|): R|kotlin/Unit| {
+        R|kotlin/io/println|(String(ppa-ext -> plusAssign))
+    }
+    public final object C : R|kotlin/Any| {
+        private constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p: R|kotlin/Array<PlusExt>| = R|kotlin/arrayOf|<R|PlusExt|>(vararg(Q|PlusExt|))
+            public get(): R|kotlin/Array<PlusExt>|
+
+        public final val pa: R|kotlin/Array<PlusAssignExt>| = R|kotlin/arrayOf|<R|PlusAssignExt|>(vararg(Q|PlusAssignExt|))
+            public get(): R|kotlin/Array<PlusAssignExt>|
+
+        public final val ppa: R|kotlin/Array<PlusAndPlusAssignExt>| = R|kotlin/arrayOf|<R|PlusAndPlusAssignExt|>(vararg(Q|PlusAndPlusAssignExt|))
+            public get(): R|kotlin/Array<PlusAndPlusAssignExt>|
+
+    }
+    public final fun bad(c: R|C?|): R|kotlin/Unit| {
+        R|<local>/c|?.{ $subj$.R|/C.p|.R|SubstitutionOverride<kotlin/Array.get: R|PlusExt|>|(Int(0)).<Unresolved name: +=>#(Int(10)) }
+        Unit
+        R|<local>/c|?.{ $subj$.R|/C.p|.R|SubstitutionOverride<kotlin/Array.get: R|PlusExt|>|(Int(0)) }.<Ambiguity: plusAssign, [/plusAssign, /plusAssign]>#(Int(10))
+        Unit
+        R|<local>/c|?.{ $subj$.R|/C.pa|.R|SubstitutionOverride<kotlin/Array.get: R|PlusAssignExt|>|(Int(0)).R|/plusAssign|(Int(10)) }
+        Unit
+        R|<local>/c|?.{ $subj$.R|/C.pa|.R|SubstitutionOverride<kotlin/Array.get: R|PlusAssignExt|>|(Int(0)) }.R|/plusAssign|(Int(10))
+        Unit
+        R|<local>/c|?.{ $subj$.R|/C.ppa|.R|SubstitutionOverride<kotlin/Array.get: R|PlusAndPlusAssignExt|>|(Int(0)).R|/plusAssign|(Int(10)) }
+        Unit
+        R|<local>/c|?.{ $subj$.R|/C.ppa|.R|SubstitutionOverride<kotlin/Array.get: R|PlusAndPlusAssignExt|>|(Int(0)) }.R|/plusAssign|(Int(10))
+        Unit
+    }

@@ -1,0 +1,14 @@
+test1@(1,1) : kotlin.Unit
+  i@(2,5) : kotlin.Int
+  foo@(3,5) : kotlin.String
+  f1@(4,5) : () -> kotlin.Unit
+  f2@(5,5) : kotlin.String.(kotlin.Int) -> kotlin.String
+    KtParameter@(5,21) : kotlin.Int
+test2@(8,1) : kotlin.Unit
+  t1@(8,15) : T
+  t2@(9,5) : T
+  foo@(10,5) : T
+  f@(11,5) : () -> T
+test3@(14,1) : kotlin.Unit
+  i@(15,5) : kotlin.Int
+    j@(16,9) : kotlin.Int

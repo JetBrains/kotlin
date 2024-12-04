@@ -12,9 +12,12 @@ FILE: missingEnumEntry.kt
         public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+
     }
     public final fun test_1(enum: R|SomeEnum|): R|kotlin/Unit| {
-        lval x: R|kotlin/Unit| = when (R|<local>/enum|) {
+        lval x: R|kotlin/Int| = when (R|<local>/enum|) {
             ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
                 Int(1)
             }
@@ -31,7 +34,7 @@ FILE: missingEnumEntry.kt
 
     }
     public final fun test_2(enum: R|SomeEnum?|): R|kotlin/Unit| {
-        lval x: R|kotlin/Unit| = when (R|<local>/enum|) {
+        lval x: R|kotlin/Int| = when (R|<local>/enum|) {
             ==($subj$, Q|SomeEnum|.R|/SomeEnum.A|) ->  {
                 Int(1)
             }

@@ -15,7 +15,7 @@ FILE: nonConstValInAnnotationArgument.kt
         public set(value: R|kotlin/Int|): R|kotlin/Unit|
     public final const val cnst: R|kotlin/Int| = Int(2)
         public get(): R|kotlin/Int|
-    @R|Ann|(a = <implicitArrayOf>(R|/foo|, R|/foo|.R|kotlin/String.plus|(R|/cnst|.R|kotlin/Any.toString|()))) public final fun test(): R|kotlin/Unit| {
+    @R|Ann|(a = <implicitArrayOf>(R|/foo|, R|/foo|.R|kotlin/String.plus|(R|/cnst|.R|kotlin/Int.toString|()))) public final fun test(): R|kotlin/Unit| {
     }
     public final const val A: R|kotlin/String| = String(foo)
         public get(): R|kotlin/String|

@@ -6,7 +6,7 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
-#import <Foundation/NSObject.h>
+#import <Foundation/Foundation.h>
 #import "Memory.h"
 #import "MemorySharedRefs.hpp"
 #import "ObjCExportPrivate.h"
@@ -17,7 +17,7 @@
 @interface KotlinObjectHolder : NSObject
 -(id)initWithRef:(KRef)ref;
 -(KRef)ref;
-@end;
+@end
 
 @implementation KotlinObjectHolder {
   KRefSharedHolder refHolder;
@@ -31,15 +31,15 @@
 }
 
 -(KRef)ref {
-  return refHolder.ref<ErrorPolicy::kTerminate>();
+  return refHolder.ref();
 }
 
 -(void)dealloc {
-  refHolder.disposeFromNative();
+  refHolder.dispose();
   [super dealloc];
 }
 
-@end;
+@end
 
 static id Kotlin_Interop_createKotlinObjectHolder(KRef any) {
   if (any == nullptr) {
@@ -59,7 +59,7 @@ static KRef Kotlin_Interop_unwrapKotlinObjectHolder(id holder) {
 
 // Used as an associated object for ObjCWeakReferenceImpl.
 @interface KotlinObjCWeakReference : NSObject
-@end;
+@end
 
 // libobjc:
 extern "C" {
@@ -74,14 +74,12 @@ void objc_release(id obj);
 }
 
 // Called when removing Kotlin object.
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+-(void)releaseAsAssociatedObject {
   objc_destroyWeak(&referred);
   objc_release(self);
 }
 
-@end;
+@end
 
 extern "C" OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj);
 

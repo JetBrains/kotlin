@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test(a: Any?) {
     if (a != null) {
         <!DEBUG_INFO_SMARTCAST!>a<!>.foo(11)

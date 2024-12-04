@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-5182 Data flow info is lost for 'when' branches
 
 open class A

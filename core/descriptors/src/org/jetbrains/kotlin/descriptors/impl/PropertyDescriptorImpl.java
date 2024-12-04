@@ -22,7 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitContextReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.utils.SmartSet;
 
@@ -47,6 +49,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private final boolean isExternal;
     private final boolean isDelegated;
 
+    private List<ReceiverParameterDescriptor> contextReceiverParameters = Collections.emptyList();
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private ReceiverParameterDescriptor extensionReceiverParameter;
     private List<TypeParameterDescriptor> typeParameters;
@@ -117,11 +120,23 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         return setter != null ? setter.getValueParameters().get(0).getType() : null;
     }
 
+    @kotlin.Deprecated(message = "This method is left for binary compatibility with android.nav.safearg plugin. Used in SafeArgSyntheticDescriptorGenerator.kt")
     public void setType(
             @NotNull KotlinType outType,
             @ReadOnly @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @Nullable ReceiverParameterDescriptor extensionReceiverParameter
+    ) {
+        setType(outType, typeParameters, dispatchReceiverParameter, extensionReceiverParameter,
+                Collections.<ReceiverParameterDescriptor>emptyList());
+    }
+
+    public void setType(
+            @NotNull KotlinType outType,
+            @ReadOnly @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
+            @Nullable ReceiverParameterDescriptor extensionReceiverParameter,
+            @NotNull List<ReceiverParameterDescriptor> contextReceiverParameters
     ) {
         setOutType(outType);
 
@@ -129,6 +144,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
         this.extensionReceiverParameter = extensionReceiverParameter;
         this.dispatchReceiverParameter = dispatchReceiverParameter;
+        this.contextReceiverParameters = contextReceiverParameters;
     }
 
     public void initialize(
@@ -164,9 +180,20 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         List<TypeParameterDescriptor> parameters = typeParameters;
         // Diagnostics for EA-212070
         if (parameters == null) {
-            throw new IllegalStateException("typeParameters == null for " + this.toString());
+            throw new IllegalStateException("typeParameters == null for " + this);
         }
         return parameters;
+    }
+
+    @Override
+    public void validate() {
+        getTypeParameters();
+    }
+
+    @Override
+    @NotNull
+    public List<ReceiverParameterDescriptor> getContextReceiverParameters() {
+        return contextReceiverParameters;
     }
 
     @Override
@@ -427,19 +454,22 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
         ReceiverParameterDescriptor substitutedExtensionReceiver;
         if (extensionReceiverParameter != null) {
-            KotlinType substitutedReceiverType = substitutor.substitute(extensionReceiverParameter.getType(), Variance.IN_VARIANCE);
-            if (substitutedReceiverType == null) return null;
-            substitutedExtensionReceiver = new ReceiverParameterDescriptorImpl(
-                    substitutedDescriptor,
-                    new ExtensionReceiver(substitutedDescriptor, substitutedReceiverType, extensionReceiverParameter.getValue()),
-                    extensionReceiverParameter.getAnnotations()
-            );
-        }
-        else {
+            substitutedExtensionReceiver = substituteParameterDescriptor(substitutor, substitutedDescriptor, extensionReceiverParameter);
+        } else {
             substitutedExtensionReceiver = null;
         }
 
-        substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedDispatchReceiver, substitutedExtensionReceiver);
+        List<ReceiverParameterDescriptor> substitutedContextReceivers = new ArrayList<ReceiverParameterDescriptor>();
+        for (ReceiverParameterDescriptor contextReceiverParameter: contextReceiverParameters) {
+            ReceiverParameterDescriptor substitutedContextReceiver = substituteContextParameterDescriptor(substitutor, substitutedDescriptor,
+                                                                                                      contextReceiverParameter);
+            if (substitutedContextReceiver != null) {
+                substitutedContextReceivers.add(substitutedContextReceiver);
+            }
+        }
+
+        substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedDispatchReceiver, substitutedExtensionReceiver,
+                                      substitutedContextReceivers);
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
                 substitutedDescriptor, getter.getAnnotations(), copyConfiguration.modality, normalizeVisibility(getter.getVisibility(), copyConfiguration.kind),
@@ -500,8 +530,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             substitutedDescriptor.setOverriddenDescriptors(overridden);
         }
 
-        if (isConst() && compileTimeInitializer != null) {
-            substitutedDescriptor.setCompileTimeInitializer(compileTimeInitializer);
+        if (isConst() && compileTimeInitializerFactory != null) {
+            substitutedDescriptor.setCompileTimeInitializer(compileTimeInitializer, compileTimeInitializerFactory);
         }
 
         return substitutedDescriptor;
@@ -512,6 +542,37 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             return DescriptorVisibilities.INVISIBLE_FAKE;
         }
         return prev;
+    }
+
+    private static ReceiverParameterDescriptor substituteParameterDescriptor(
+            TypeSubstitutor substitutor,
+            PropertyDescriptor substitutedPropertyDescriptor,
+            ReceiverParameterDescriptor receiverParameterDescriptor
+    ) {
+        KotlinType substitutedType = substitutor.substitute(receiverParameterDescriptor.getType(), Variance.IN_VARIANCE);
+        if (substitutedType == null) return null;
+        return new ReceiverParameterDescriptorImpl(
+                substitutedPropertyDescriptor,
+                new ExtensionReceiver(substitutedPropertyDescriptor, substitutedType, receiverParameterDescriptor.getValue()),
+                receiverParameterDescriptor.getAnnotations()
+        );
+    }
+
+    private static ReceiverParameterDescriptor substituteContextParameterDescriptor(
+            TypeSubstitutor substitutor,
+            PropertyDescriptor substitutedPropertyDescriptor,
+            ReceiverParameterDescriptor receiverParameterDescriptor
+    ) {
+        KotlinType substitutedType = substitutor.substitute(receiverParameterDescriptor.getType(), Variance.IN_VARIANCE);
+        if (substitutedType == null) return null;
+        return new ReceiverParameterDescriptorImpl(
+                substitutedPropertyDescriptor,
+                new ContextReceiver(substitutedPropertyDescriptor,
+                                    substitutedType,
+                                    ((ImplicitContextReceiver) receiverParameterDescriptor.getValue()).getCustomLabelName(),
+                                    receiverParameterDescriptor.getValue()),
+                receiverParameterDescriptor.getAnnotations()
+        );
     }
 
     private static FunctionDescriptor getSubstitutedInitialSignatureDescriptor(

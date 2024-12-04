@@ -9,7 +9,12 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
 
 interface SpecificityComparisonCallbacks {
-    fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
+    fun isNonSubtypeEquallyOrMoreSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
+}
+
+object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
+    override fun isNonSubtypeEquallyOrMoreSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean =
+        false
 }
 
 class TypeWithConversion(val resultType: KotlinTypeMarker?, val originalTypeIfWasConverted: KotlinTypeMarker? = null)
@@ -18,11 +23,13 @@ class FlatSignature<out T> constructor(
     val origin: T,
     val typeParameters: Collection<TypeParameterMarker>,
     val hasExtensionReceiver: Boolean,
+    val contextReceiverCount: Int,
     val hasVarargs: Boolean,
     val numDefaults: Int,
     val isExpect: Boolean,
     val isSyntheticMember: Boolean,
     val valueParameterTypes: List<TypeWithConversion?>,
+    val hasContext: Boolean = contextReceiverCount > 0
 ) {
     val isGeneric = typeParameters.isNotEmpty()
 
@@ -31,12 +38,13 @@ class FlatSignature<out T> constructor(
         typeParameters: Collection<TypeParameterMarker>,
         valueParameterTypes: List<KotlinTypeMarker?>,
         hasExtensionReceiver: Boolean,
+        contextReceiverCount: Int,
         hasVarargs: Boolean,
         numDefaults: Int,
         isExpect: Boolean,
         isSyntheticMember: Boolean,
     ) : this(
-        origin, typeParameters, hasExtensionReceiver, hasVarargs, numDefaults, isExpect,
+        origin, typeParameters, hasExtensionReceiver, contextReceiverCount, hasVarargs, numDefaults, isExpect,
         isSyntheticMember, valueParameterTypes.map(::TypeWithConversion)
     )
 
@@ -55,7 +63,7 @@ interface SimpleConstraintSystem {
     val context: TypeSystemInferenceExtensionContext
 }
 
-private fun <T> SimpleConstraintSystem.isValueParameterTypeNotLessSpecific(
+private fun <T> SimpleConstraintSystem.isValueParameterTypeEquallyOrMoreSpecific(
     specific: FlatSignature<T>,
     general: FlatSignature<T>,
     callbacks: SpecificityComparisonCallbacks,
@@ -64,10 +72,21 @@ private fun <T> SimpleConstraintSystem.isValueParameterTypeNotLessSpecific(
 ): Boolean {
     val typeParameters = general.typeParameters
     val typeSubstitutor = registerTypeVariables(typeParameters)
-    val valueParameterTypes = specific.valueParameterTypes.map(typeKindSelector).zip(general.valueParameterTypes.map(typeKindSelector))
 
-    for ((specificType, generalType) in valueParameterTypes) {
-        if (specificType == null || generalType == null) continue
+    val specificContextReceiverCount = specific.contextReceiverCount
+    val generalContextReceiverCount = general.contextReceiverCount
+
+    var specificValueParameterTypes = specific.valueParameterTypes
+    var generalValueParameterTypes = general.valueParameterTypes
+
+    if (specificContextReceiverCount != generalContextReceiverCount) {
+        specificValueParameterTypes = specificValueParameterTypes.drop(specificContextReceiverCount)
+        generalValueParameterTypes = generalValueParameterTypes.drop(generalContextReceiverCount)
+    }
+
+    for (index in specificValueParameterTypes.indices) {
+        val specificType = typeKindSelector(specificValueParameterTypes[index]) ?: continue
+        val generalType = typeKindSelector(generalValueParameterTypes[index]) ?: continue
 
         if (specificityComparator.isDefinitelyLessSpecific(specificType, generalType)) {
             return false
@@ -75,7 +94,7 @@ private fun <T> SimpleConstraintSystem.isValueParameterTypeNotLessSpecific(
 
         if (typeParameters.isEmpty() || !generalType.dependsOnTypeParameters(context, typeParameters)) {
             if (!AbstractTypeChecker.isSubtypeOf(context, specificType, generalType)) {
-                if (!callbacks.isNonSubtypeNotLessSpecific(specificType, generalType)) {
+                if (!callbacks.isNonSubtypeEquallyOrMoreSpecific(specificType, generalType)) {
                     return false
                 }
             }
@@ -98,7 +117,7 @@ private fun <T> SimpleConstraintSystem.isValueParameterTypeNotLessSpecific(
     return true
 }
 
-fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
+fun <T> SimpleConstraintSystem.isSignatureEquallyOrMoreSpecific(
     specific: FlatSignature<T>,
     general: FlatSignature<T>,
     callbacks: SpecificityComparisonCallbacks,
@@ -106,13 +125,15 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
     useOriginalSamTypes: Boolean = false
 ): Boolean {
     if (specific.hasExtensionReceiver != general.hasExtensionReceiver) return false
-    if (specific.valueParameterTypes.size != general.valueParameterTypes.size) return false
+    if (specific.contextReceiverCount > general.contextReceiverCount) return false
+    if (specific.valueParameterTypes.size - specific.contextReceiverCount != general.valueParameterTypes.size - general.contextReceiverCount)
+        return false
 
-    if (!isValueParameterTypeNotLessSpecific(specific, general, callbacks, specificityComparator) { it?.resultType }) {
+    if (!isValueParameterTypeEquallyOrMoreSpecific(specific, general, callbacks, specificityComparator) { it?.resultType }) {
         return false
     }
 
-    if (useOriginalSamTypes && !isValueParameterTypeNotLessSpecific(
+    if (useOriginalSamTypes && !isValueParameterTypeEquallyOrMoreSpecific(
             specific, general, callbacks, specificityComparator
         ) { it?.originalTypeIfWasConverted }
     ) {
@@ -121,4 +142,3 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
 
     return !hasContradiction()
 }
-

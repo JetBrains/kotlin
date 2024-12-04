@@ -1,19 +1,18 @@
 package com.example
 
 interface Aa {
-
 }
 
 interface Ab<T : Ab<T>> : Aa {
-
 }
 
 interface Ba {
-
 }
 
 interface Bb<T : Bb<T>> : Ab<T>, Ba {
+}
 
+interface C : Ca, Cb {
 }
 
 interface Ca {
@@ -28,6 +27,3 @@ interface Cb {
 
 }
 
-interface C : Cb, Ca {
-
-}

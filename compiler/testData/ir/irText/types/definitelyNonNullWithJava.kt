@@ -1,6 +1,6 @@
-//!LANGUAGE: +DefinitelyNonNullableTypes
+// FIR_IDENTICAL
+// LANGUAGE: +DefinitelyNonNullableTypes
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: ANY
 
 // FILE: A.java
 import org.jetbrains.annotations.*;

@@ -27,18 +27,31 @@ fun getMergedScriptText(script: SourceCode, configuration: ScriptCompilationConf
             val curPos = if (prevFragment == null) 0 else prevFragment.range.end.absolutePos!!
             if (prevFragment != null && prevFragment.range.end.absolutePos!! > fragmentStartPos) throw RuntimeException("Unsorted or overlapping fragments: previous: $prevFragment, current: $fragment")
             if (curPos < fragmentStartPos) {
-                sb.append(
-                    originalScriptText.subSequence(
-                        curPos,
-                        fragmentStartPos
-                    ).map { if (it == '\r' || it == '\n') it else ' ' }) // preserving lines layout
+                originalScriptText
+                    .cleanContentPreservingLinesLayout(curPos, fragmentStartPos)
+                    .forEach(sb::append)
             }
             sb.append(originalScriptText.subSequence(fragmentStartPos, fragmentEndPos))
             prevFragment = fragment
         }
+        val positionOfLastAppended = prevFragment?.range?.end?.absolutePos
+        if (positionOfLastAppended != null && positionOfLastAppended < originalScriptText.length) {
+            originalScriptText
+                .cleanContentPreservingLinesLayout(positionOfLastAppended)
+                .forEach(sb::append)
+        }
         sb.toString()
     }
 }
+
+/**
+ * Replaces every character with ' ' except end of line
+ */
+private fun String.cleanContentPreservingLinesLayout(
+    start: Int = 0,
+    end: Int = this.length
+) = subSequence(start, end)
+    .map { if (it == '\r' || it == '\n') it else ' ' }
 
 abstract class FileBasedScriptSource() : ExternalSourceCode {
     abstract val file: File
@@ -49,7 +62,7 @@ abstract class FileBasedScriptSource() : ExternalSourceCode {
  */
 open class FileScriptSource(override val file: File, private val preloadedText: String? = null) : FileBasedScriptSource(), Serializable {
     override val externalLocation: URL get() = file.toURI().toURL()
-    override val text: String by lazy { preloadedText ?: file.readText() }
+    override val text: String by lazy { preloadedText ?: file.readTextSkipUtf8Bom() }
     override val name: String? get() = file.name
     override val locationId: String? get() = file.path
 
@@ -68,7 +81,7 @@ open class FileScriptSource(override val file: File, private val preloadedText: 
  * The implementation of the SourceCode for a script location pointed by the URL
  */
 open class UrlScriptSource(override val externalLocation: URL) : ExternalSourceCode, Serializable {
-    override val text: String by lazy { externalLocation.readText() }
+    override val text: String by lazy { externalLocation.readTextSkipUtf8Bom() }
     override val name: String? get() = externalLocation.file
     override val locationId: String? get() = externalLocation.toString()
 
@@ -95,7 +108,7 @@ open class StringScriptSource(val source: String, override val name: String? = n
 
     override val text: String get() = source
 
-    override val locationId: String? = null
+    override val locationId: String? get() = name
 
     override fun equals(other: Any?): Boolean =
         this === other || (other as? StringScriptSource)?.let { text == it.text && name == it.name && locationId == it.locationId } == true
@@ -120,3 +133,10 @@ private val ExternalSourceCode.textSafe: String?
         } catch (e: Throwable) {
             null
         }
+
+private const val UTF8_BOM = 0xfeff.toChar().toString()
+
+private fun File.readTextSkipUtf8Bom(): String = readText().removePrefix(UTF8_BOM)
+
+private fun URL.readTextSkipUtf8Bom(): String = readText().removePrefix(UTF8_BOM)
+

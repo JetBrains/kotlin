@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.sure
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -83,6 +85,28 @@ fun DeclarationDescriptor.containingPackage(): FqName? {
         if (container == null || container is PackageFragmentDescriptor) break
         container = container.containingDeclaration
     }
-    require(container is PackageFragmentDescriptor?)
     return container?.fqName
+}
+
+object DeserializedDeclarationsFromSupertypeConflictDataKey : CallableDescriptor.UserDataKey<CallableMemberDescriptor>
+
+fun FunctionDescriptor.isTypedEqualsInValueClass(): Boolean {
+    val valueClassStarProjection =
+        (containingDeclaration as? ClassDescriptor)?.takeIf { it.isValueClass() }?.defaultType?.replaceArgumentsWithStarProjections()
+            ?: return false
+    val returnType = returnType ?: return false
+    return name == OperatorNameConventions.EQUALS
+            && (returnType.isBoolean() || returnType.isNothing())
+            && valueParameters.size == 1 && valueParameters[0].type.replaceArgumentsWithStarProjections() == valueClassStarProjection
+            && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
+}
+
+
+fun FunctionDescriptor.overridesEqualsFromAny(): Boolean = name == OperatorNameConventions.EQUALS
+        && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
+        && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
+
+tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
+    return if (this is PackageFragmentDescriptor) this
+    else this.containingDeclaration!!.findPackage()
 }

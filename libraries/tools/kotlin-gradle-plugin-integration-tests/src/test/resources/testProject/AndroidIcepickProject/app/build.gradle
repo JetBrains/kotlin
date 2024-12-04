@@ -13,8 +13,9 @@ dependencies {
 }
 
 android {
+    namespace "com.github.frankiesardo.icepick"
+
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.example.icepick.kotlin"
@@ -24,17 +25,14 @@ android {
         versionName "1.0"
     }
 
+    kotlin {
+        jvmToolchain(8)
+    }
+
     lintOptions {
         abortOnError false
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-}
-
-repositories {
-    mavenLocal()
-    maven { url 'https://maven.google.com' }
-    mavenCentral()
-    maven { url "https://clojars.org/repo/" }
 }

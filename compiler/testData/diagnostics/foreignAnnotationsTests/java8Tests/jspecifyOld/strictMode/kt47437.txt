@@ -1,0 +1,14 @@
+package
+
+public fun test(): Foo<kotlin.String>
+
+@org.jspecify.nullness.NullMarked public open class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ open fun </*0*/ T : (kotlin.Comparable<(raw) kotlin.Any?>..kotlin.Comparable<kotlin.Nothing>?)> create(): Foo<T>
+}
+

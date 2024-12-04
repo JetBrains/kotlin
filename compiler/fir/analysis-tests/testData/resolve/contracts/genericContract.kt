@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ContractSyntaxV2
 // WITH_STDLIB
 
 import kotlin.contracts.*

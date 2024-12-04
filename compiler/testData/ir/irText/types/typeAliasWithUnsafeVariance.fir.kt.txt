@@ -1,33 +1,32 @@
-typealias Action<RenderingT : Any?> = Function1<RenderingT, Unit>
 data class Tag<out RenderingT : Any?> {
+  val action: Function1<RenderingT, Unit>
+    field = action
+    get
+
   constructor(action: Function1<RenderingT, Unit>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val action: Function1<RenderingT, Unit>
-    field = action
-    get
-
   operator fun component1(): Function1<RenderingT, Unit> {
     return <this>.#action
   }
 
   fun copy(action: Function1<RenderingT, Unit> = <this>.#action): Tag<RenderingT> {
-    return Tag<Any>(action = action)
+    return Tag<RenderingT>(action = action)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
     when {
       other !is Tag<RenderingT> -> return false
     }
-    val tmp0_other_with_cast: Tag<RenderingT> = other as Tag<RenderingT>
+    val tmp_0: Tag<RenderingT> = other as Tag<RenderingT>
     when {
-      EQEQ(arg0 = <this>.#action, arg1 = tmp0_other_with_cast.#action).not() -> return false
+      EQEQ(arg0 = <this>.#action, arg1 = tmp_0.#action).not() -> return false
     }
     return true
   }
@@ -42,10 +41,12 @@ data class Tag<out RenderingT : Any?> {
 
 }
 
-fun getTag(): Tag<*> {
-  return throw Exception()
-}
-
 fun doAction() {
   getTag().<get-action>() /*~> Unit */
 }
+
+fun getTag(): Tag<*> {
+  throw Exception()
+}
+
+typealias Action<RenderingT : Any?> = Function1<RenderingT, Unit>

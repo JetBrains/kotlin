@@ -1,9 +1,9 @@
 package
 
-public final class A : ([ERROR : No type element]) -> [ERROR : No type element] {
+public final class A : ([Error type: No type specified for unknown element]) -> [Error type: No type specified for unknown element] {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: [ERROR : No type element]): [ERROR : No type element]
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: [Error type: No type specified for unknown element]): [Error type: No type specified for unknown element]
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

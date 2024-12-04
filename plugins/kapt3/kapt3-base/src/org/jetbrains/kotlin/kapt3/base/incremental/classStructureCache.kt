@@ -18,7 +18,7 @@ import java.net.URI
  * exists i.e we know all referenced types. For .class files we only know which type is defined in the .class file.
  */
 class JavaClassCache() : Serializable {
-    private var sourceCache = mutableMapOf<URI, SourceFileStructure>()
+    private var sourceCache = mutableMapOf<URI, JavaFileStructure>()
 
     /** Map from types to files they are mentioned in. */
     @Transient
@@ -27,7 +27,7 @@ class JavaClassCache() : Serializable {
     @Transient
     private var nonTransitiveCache = mutableMapOf<String, MutableSet<URI>>()
 
-    fun addSourceStructure(sourceStructure: SourceFileStructure) {
+    fun addSourceStructure(sourceStructure: JavaFileStructure) {
         sourceCache[sourceStructure.sourceFile] = sourceStructure
     }
 
@@ -35,7 +35,7 @@ class JavaClassCache() : Serializable {
     fun getTypesForFiles(files: Collection<File>): Set<String> {
         val typesFromFiles = HashSet<String>(files.size)
         for (file in files) {
-            sourceCache[file.toURI()]?.getDeclaredTypes()?.let {
+            sourceCache[file.toURI()]?.declaredTypes?.let {
                 typesFromFiles.addAll(it)
             }
         }
@@ -44,10 +44,11 @@ class JavaClassCache() : Serializable {
 
     private fun readObject(input: ObjectInputStream) {
         @Suppress("UNCHECKED_CAST")
-        sourceCache = input.readObject() as MutableMap<URI, SourceFileStructure>
+        sourceCache = input.readObject() as MutableMap<URI, JavaFileStructure>
 
         dependencyCache = HashMap(sourceCache.size * 4)
         for (sourceInfo in sourceCache.values) {
+            if (sourceInfo !is SourceFileStructure) continue
             for (mentionedType in sourceInfo.getMentionedTypes()) {
                 val dependants = dependencyCache[mentionedType] ?: mutableSetOf()
                 dependants.add(sourceInfo.sourceFile)
@@ -62,6 +63,7 @@ class JavaClassCache() : Serializable {
         }
         nonTransitiveCache = HashMap(sourceCache.size * 2)
         for (sourceInfo in sourceCache.values) {
+            if (sourceInfo !is SourceFileStructure) continue
             for (privateType in sourceInfo.getPrivateTypes()) {
                 val dependants = nonTransitiveCache[privateType] ?: mutableSetOf()
                 dependants.add(sourceInfo.sourceFile)
@@ -104,12 +106,12 @@ class JavaClassCache() : Serializable {
         fun findImpactedTypes(changedType: String, transitiveDeps: MutableSet<String>, nonTransitiveDeps: MutableSet<String>) {
             dependencyCache[changedType]?.let { impactedSources ->
                 impactedSources.forEach {
-                    transitiveDeps.addAll(sourceCache.getValue(it).getDeclaredTypes())
+                    transitiveDeps.addAll(sourceCache.getValue(it).declaredTypes)
                 }
             }
             nonTransitiveCache[changedType]?.let { impactedSources ->
                 impactedSources.forEach {
-                    nonTransitiveDeps.addAll(sourceCache.getValue(it).getDeclaredTypes())
+                    nonTransitiveDeps.addAll(sourceCache.getValue(it).declaredTypes)
                 }
             }
         }
@@ -139,7 +141,7 @@ class JavaClassCache() : Serializable {
 
     fun getSourceForType(type: String): File {
         sourceCache.forEach { (fileUri, typeInfo) ->
-            if (type in typeInfo.getDeclaredTypes()) {
+            if (type in typeInfo.declaredTypes) {
                 return File(fileUri)
             }
         }
@@ -149,23 +151,47 @@ class JavaClassCache() : Serializable {
     fun invalidateDataForTypes(impactedTypes: MutableSet<String>) {
         val allSources = mutableSetOf<URI>()
         sourceCache.forEach { (fileUri, typeInfo) ->
-            if (typeInfo.getDeclaredTypes().any { it in impactedTypes }) {
+            if (typeInfo.declaredTypes.any { it in impactedTypes }) {
                 allSources.add(fileUri)
             }
         }
 
         allSources.forEach { sourceCache.remove(it) }
     }
+
+    /** Returns total number of declared types in .java source files that were processed. */
+    fun getSourceFileDefinedTypesCount(): Int {
+        return sourceCache.values.sumOf {
+            val structure = it as? SourceFileStructure ?: return@sumOf 0
+            if (structure.declaredTypes.size == 1 && structure.declaredTypes.single() == "error.NonExistentClass") {
+                // never report package for error.NonExistentClass, as it is never compiled by javac/kotlinc
+                return@sumOf 0
+            }
+            return@sumOf structure.declaredTypes.size
+        }
+    }
 }
 
 
 private val IGNORE_TYPES = { name: String -> name == "java.lang.Object" }
 
-class SourceFileStructure(
+interface JavaFileStructure {
     val sourceFile: URI
-) : Serializable {
+    val declaredTypes: Set<String>
+}
 
-    private val declaredTypes: MutableSet<String> = mutableSetOf()
+class ClassFileStructure(
+    override val sourceFile: URI,
+    declaredType: String
+) : JavaFileStructure, Serializable {
+    override val declaredTypes: Set<String> = setOf(declaredType)
+}
+
+class SourceFileStructure(
+    override val sourceFile: URI
+) : JavaFileStructure, Serializable {
+
+    private val _declaredTypes: MutableSet<String> = mutableSetOf()
 
     private val mentionedTypes: MutableSet<String> = mutableSetOf()
     private val privateTypes: MutableSet<String> = mutableSetOf()
@@ -173,14 +199,14 @@ class SourceFileStructure(
     private val mentionedAnnotations: MutableSet<String> = mutableSetOf()
     private val mentionedConstants: MutableMap<String, MutableSet<String>> = mutableMapOf()
 
-    fun getDeclaredTypes(): Set<String> = declaredTypes
+    override val declaredTypes: Set<String> = _declaredTypes
     fun getMentionedTypes(): Set<String> = mentionedTypes
     fun getPrivateTypes(): Set<String> = privateTypes
     fun getMentionedAnnotations(): Set<String> = mentionedAnnotations
     fun getMentionedConstants(): Map<String, Set<String>> = mentionedConstants
 
     fun addDeclaredType(declaredType: String) {
-        declaredTypes.add(declaredType)
+        _declaredTypes.add(declaredType)
     }
 
     fun addMentionedType(mentionedType: String) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Foo {
     operator fun plus(other: Foo): Foo = this
 }

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 class A {
     companion object {
@@ -17,12 +18,12 @@ class B {
     }
 }
 
-fun B.foo(): Double = 0.0
+fun B.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(): Double = 0.0
 
 fun call(a: Any) {}
 
 fun testA(a: A) {
-    call(A::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
+    call(A::foo)
     call(A.Companion::foo)
 }
 

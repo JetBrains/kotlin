@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -13,6 +13,7 @@
 #import "Types.h"
 #import "Memory.h"
 
+extern "C" id MissingInitImp(id self, SEL _cmd);
 extern "C" id (*Kotlin_Interop_createKotlinObjectHolder_ptr)(KRef any);
 extern "C" KRef (*Kotlin_Interop_unwrapKotlinObjectHolder_ptr)(id holder);
 extern "C" OBJ_GETTER((*Konan_ObjCInterop_getWeakReference_ptr), KRef ref);

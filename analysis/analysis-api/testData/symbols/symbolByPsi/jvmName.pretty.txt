@@ -1,0 +1,13 @@
+class Foo {
+  var i: kotlin.Int
+    @kotlin.jvm.JvmName(name = "getMyI")
+    get()
+    @kotlin.jvm.JvmName(name = "setMyI")
+    set(value: kotlin.Int)
+
+  var j: kotlin.Int
+    @kotlin.jvm.JvmName(name = "getMyJ")
+    get()
+    @kotlin.jvm.JvmName(name = "setMyJ")
+    set(value: kotlin.Int)
+}

@@ -1,0 +1,37 @@
+val equals: KFunction2<Z, Any?, Boolean>
+  field = Z::equals
+  get
+
+@JvmInline
+value class Z {
+  val s: String
+    field = s
+    get
+
+  constructor(s: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is Z -> return false
+    }
+    val tmp_0: Z = other as Z
+    when {
+      EQEQ(arg0 = <this>.#s, arg1 = tmp_0.#s).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#s.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Z(" + "s=" + <this>.#s + ")"
+  }
+
+}
+

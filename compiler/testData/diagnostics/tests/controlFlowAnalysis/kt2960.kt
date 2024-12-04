@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2960 Perform control flow checks for package property initializers
 
 package b

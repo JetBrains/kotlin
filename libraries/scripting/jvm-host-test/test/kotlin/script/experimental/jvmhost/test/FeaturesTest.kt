@@ -8,7 +8,7 @@ package kotlin.script.experimental.jvmhost.test
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.compileJavaFiles
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
@@ -22,11 +22,10 @@ class FeaturesTest : TestCase() {
             runBlocking {
                 val srcDir = File(TEST_DATA_DIR, "samWithReceiver")
                 val destDir = File(tempDir, "dest").also { it.mkdir() }
-                val javaRes = KotlinTestUtils.compileJavaFiles(
+                compileJavaFiles(
                     srcDir.listFiles { file: File -> file.extension == "java" }!!.toMutableList(),
                     mutableListOf("-d", destDir.absolutePath)
-                )
-                assertTrue(javaRes)
+                ).assertSuccessful()
 
                 val baseConfig = ScriptCompilationConfiguration {
                     fileExtension("samwr.kts")
@@ -37,8 +36,8 @@ class FeaturesTest : TestCase() {
                     when (res) {
                         is ResultWithDiagnostics.Success -> fail("Expecting \"Unresolved reference\" error, got successful compilation")
                         is ResultWithDiagnostics.Failure ->
-                            if (res.reports.none { it.message.contains("Unresolved reference") }) {
-                                fail("Expecting \"Unresolved reference\" error, got:\n  ${res.reports.joinToString("\n  ")}")
+                            if (res.reports.none { it.message.contains("Unresolved reference") || it.message.contains("'this' is not defined in this context") }) {
+                                fail("Expecting \"Unresolved reference\" or \"'this' is not defined in this context\" error, got:\n  ${res.reports.joinToString("\n  ")}")
                             }
                     }
                 }

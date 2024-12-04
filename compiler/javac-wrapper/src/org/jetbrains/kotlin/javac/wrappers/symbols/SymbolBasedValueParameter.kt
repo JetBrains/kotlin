@@ -43,6 +43,9 @@ class SymbolBasedValueParameter(
     override val name: Name
         get() = Name.identifier(elementName)
 
+    override val isFromSource: Boolean
+        get() = true
+
     override val type: JavaType
         get() = SymbolBasedType.create(element.asType(), javac)
 

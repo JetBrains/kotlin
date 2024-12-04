@@ -1,6 +1,0 @@
-/indirectInlineCycle_ir.kt:8:24: error: the 'inlineFun2' invocation is a part of inline cycle
-        fun method() { inlineFun2(p) }
-                       ^
-/indirectInlineCycle_ir.kt:13:5: error: the 'inlineFun1' invocation is a part of inline cycle
-    inlineFun1(p)
-    ^

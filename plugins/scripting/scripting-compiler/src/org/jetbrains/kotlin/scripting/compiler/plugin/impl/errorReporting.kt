@@ -11,13 +11,19 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.scripting.definitions.MessageReporter
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.jvm.javaField
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asErrorDiagnostics
+import kotlin.script.experimental.jvm.util.toSourceCodePosition
 
 class ScriptDiagnosticsMessageCollector(private val parentMessageCollector: MessageCollector?) : MessageCollector {
 
@@ -127,9 +133,6 @@ internal fun reportArgumentsNotAllowed(
         messageCollector,
         reportingState,
         K2JVMCompilerArguments::useJavac,
-        K2JVMCompilerArguments::useIR,
-        K2JVMCompilerArguments::useOldBackend,
-        K2JVMCompilerArguments::useFir
     )
 
 internal fun reportArgumentsIgnoredGenerally(
@@ -155,7 +158,6 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::disableStandardScript,
         K2JVMCompilerArguments::defaultScriptExtension,
         K2JVMCompilerArguments::disableDefaultScriptingPlugin,
-        K2JVMCompilerArguments::pluginClasspaths,
         K2JVMCompilerArguments::useJavac,
         K2JVMCompilerArguments::compileJava,
         K2JVMCompilerArguments::reportPerf,
@@ -176,7 +178,10 @@ internal fun reportArgumentsIgnoredFromRefinement(
         K2JVMCompilerArguments::javaModulePath,
         K2JVMCompilerArguments::classpath,
         K2JVMCompilerArguments::noStdlib,
-        K2JVMCompilerArguments::noReflect
+        K2JVMCompilerArguments::noReflect,
+        K2JVMCompilerArguments::pluginClasspaths,
+        K2JVMCompilerArguments::pluginOptions,
+        K2JVMCompilerArguments::pluginConfigurations,
     )
 
 
@@ -188,7 +193,7 @@ private fun reportInvalidArguments(
 ): Boolean {
     val invalidArgKeys = toIgnore.mapNotNull { argProperty ->
         if (argProperty.get(arguments) != argProperty.get(reportingState.currentArguments)) {
-            argProperty.annotations.firstIsInstanceOrNull<Argument>()?.value
+            argProperty.javaField?.getAnnotation(Argument::class.java)?.value
                 ?: throw IllegalStateException("unknown compiler argument property: $argProperty: no Argument annotation found")
         } else null
     }
@@ -205,3 +210,37 @@ val MessageCollector.reporter: MessageReporter
         this.report(severity.toCompilerMessageSeverity(), message)
     }
 
+fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
+    val (diagnosticCode, scriptSeverity) = when (severity) {
+        Severity.INFO -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.INFO
+        Severity.ERROR -> ScriptDiagnostic.unspecifiedError to ScriptDiagnostic.Severity.ERROR
+        Severity.WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
+    }
+
+    val renderer = RootDiagnosticRendererFactory(this)
+
+    val location = if (textRanges.isEmpty()) {
+        null
+    } else {
+        val firstRange = textRanges.first()
+        val lastRange = textRanges.last()
+        SourceCode.LocationWithId(
+            element.psi?.containingFile?.virtualFile?.path.orEmpty(),
+            SourceCode.Location(
+                firstRange.startOffset.toSourceCodePosition(sourceCode),
+                lastRange.endOffset.toSourceCodePosition(sourceCode)
+            )
+        )
+    }
+
+    return ScriptDiagnostic(
+        diagnosticCode,
+        renderer.render(this),
+        scriptSeverity,
+        location
+    )
+}
+
+fun BaseDiagnosticsCollector.scriptDiagnostics(sourceCode: SourceCode) = diagnostics.map {
+    it.asScriptDiagnostic(sourceCode)
+}

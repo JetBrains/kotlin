@@ -1,115 +1,73 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveTestCase.Directives.LAZY_MODE
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
-import org.jetbrains.kotlin.test.services.TestModuleStructure
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.NO_RUNTIME
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 
-/**
- * Test that we do not resolve declarations we do not need & do not build bodies for them
- */
-@Execution(ExecutionMode.SAME_THREAD)
-abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingleFileTest() {
-
-    private fun FirFile.findResolveMe(): FirDeclaration {
-        val visitor = object : FirVisitorVoid() {
-            var result: FirDeclaration? = null
-            override fun visitElement(element: FirElement) {
-                if (result != null) return
-                val declaration = element.realPsi as? KtDeclaration
-                if (element is FirDeclaration && declaration != null && declaration.name == "resolveMe") {
-                    result = element
-                    return
-                }
-                element.acceptChildren(this)
-            }
-
-        }
-        accept(visitor)
-        return visitor.result ?: error("declaration with name `resolveMe` was not found")
+abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
+    override fun checkSession(firSession: LLFirResolveSession) {
+        require(firSession.isSourceSession)
     }
 
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val rendererOption = FirRenderer.RenderMode.WithDeclarationAttributes.copy(renderDeclarationResolvePhase = true)
-        val resultBuilder = StringBuilder()
-        resolveWithClearCaches(ktFile) { firModuleResolveState ->
-            check(firModuleResolveState is FirModuleResolveStateImpl)
-            val declarationToResolve = firModuleResolveState
-                .getOrBuildFirFile(ktFile)
-                .findResolveMe()
-            for (currentPhase in FirResolvePhase.values()) {
-                if (currentPhase.pluginPhase || currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
-                declarationToResolve.withFirDeclaration(firModuleResolveState, currentPhase) {
-                    val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
-                    resultBuilder.append("\n${currentPhase.name}:\n")
-                    resultBuilder.append(firFile.render(rendererOption))
-                }
-            }
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        doLazyResolveTest(mainFile, testServices, outputRenderingMode = OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES) { firResolveSession ->
+            findFirDeclarationToResolve(mainFile, testServices, firResolveSession)
         }
-
-        for (resolveType in ResolveType.values()) {
-            resolveWithClearCaches(ktFile) { firModuleResolveState ->
-                check(firModuleResolveState is FirModuleResolveStateImpl)
-                val declarationToResolve = firModuleResolveState
-                    .getOrBuildFirFile(ktFile)
-                    .findResolveMe()
-
-                when (resolveType) {
-                    ResolveType.CallableReturnType,
-                    ResolveType.CallableBodyResolve,
-                    ResolveType.CallableContracts -> if (declarationToResolve !is FirCallableDeclaration) return@resolveWithClearCaches
-                    ResolveType.ClassSuperTypes -> if (declarationToResolve !is FirClassLikeDeclaration) return@resolveWithClearCaches
-                    else -> {
-                    }
-                }
-
-                declarationToResolve.withFirDeclaration(resolveType, firModuleResolveState) {
-                    val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
-                    resultBuilder.append("\n${resolveType.name}:\n")
-                    resultBuilder.append(firFile.render(rendererOption))
-                }
-            }
-        }
-
-        resolveWithClearCaches(ktFile) { firModuleResolveState ->
-            check(firModuleResolveState is FirModuleResolveStateImpl)
-            val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
-            firFile.withFirDeclaration(firModuleResolveState, FirResolvePhase.BODY_RESOLVE) {
-                resultBuilder.append("\nFILE RAW TO BODY:\n")
-                resultBuilder.append(firFile.render(rendererOption))
-            }
-        }
-
-        testServices.assertions.assertEqualsToTestDataFileSibling(resultBuilder.toString())
     }
-
-    override val enableTestInDependedMode: Boolean = false
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
-            defaultDirectives {
-                +ConfigurationDirectives.WITH_STDLIB
+            forTestsNotMatching("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/*") {
+                defaultDirectives {
+                    +WITH_STDLIB
+                }
+            }
+
+            forTestsMatching("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/*") {
+                defaultDirectives {
+                    +NO_RUNTIME
+                }
+            }
+
+            forTestsMatching("analysis/low-level-api-fir/testData/lazyResolve/withCallableMembers/*") {
+                defaultDirectives {
+                    LAZY_MODE.with(LazyResolveMode.WithCallableMembers)
+                }
             }
         }
     }
+}
+
+abstract class AbstractFirSourceLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractFirOutOfContentRootLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
+    override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractFirScriptLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractFirCustomScriptDefinitionLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirCustomScriptDefinitionTestConfigurator(
+        analyseInDependentSession = false,
+    )
 }

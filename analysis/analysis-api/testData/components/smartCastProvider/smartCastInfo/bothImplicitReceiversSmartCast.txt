@@ -1,0 +1,7 @@
+expression: foo
+isStable: null
+smartCastType: null
+receiver: DISPATCH
+    smartCastType: Foo
+receiver: EXTENSION
+    smartCastType: Bar

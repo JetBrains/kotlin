@@ -1,0 +1,99 @@
+public final class Data$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
+    public final static Data$$serializer INSTANCE
+
+    private final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
+
+    static void <clinit>()
+
+    private void <init>()
+
+    public final kotlinx.serialization.KSerializer[] childSerializers()
+
+    public final Data deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Data value)
+
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
+
+    public kotlinx.serialization.KSerializer[] typeParametersSerializers()
+}
+
+public final class Data$Companion : java/lang/Object {
+    private void <init>()
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public final kotlinx.serialization.KSerializer generatedSerializer$main() {
+        LABEL (L0)
+        LINENUMBER (28)
+          GETSTATIC (Data$$serializer, INSTANCE, LData$$serializer;)
+          CHECKCAST (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.KSerializer serializer() {
+        LABEL (L0)
+        LINENUMBER (28)
+          GETSTATIC (DataSerializer, INSTANCE, LDataSerializer;)
+          CHECKCAST (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+public final class Data : java/lang/Object {
+    public final static Data$Companion Companion
+
+    private final int i
+
+    static void <clinit>()
+
+    public void <init>(int i)
+
+    public void <init>(int seen0, int i, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
+
+    public final int component1()
+
+    public final Data copy(int i)
+
+    public static Data copy$default(Data p0, int p1, int p2, java.lang.Object p3)
+
+    public boolean equals(java.lang.Object other)
+
+    public final int getI()
+
+    public int hashCode()
+
+    public java.lang.String toString()
+
+    public final static void write$Self$main(Data self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc)
+}
+
+public final class DataSerializer : java/lang/Object, kotlinx/serialization/KSerializer {
+    public final static DataSerializer INSTANCE
+
+    private final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
+
+    static void <clinit>()
+
+    private void <init>()
+
+    public Data deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, Data value)
+
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
+}
+
+public abstract interface kotlinx/serialization/KeepGeneratedSerializer : java/lang/Object, java/lang/annotation/Annotation {
+
+}

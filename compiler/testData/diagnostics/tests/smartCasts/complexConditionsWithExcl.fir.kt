@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: String?, y: String?, z: String?) {
     if ((x!!.hashCode() == 0 || y!!.hashCode() == 1) && z!!.hashCode() == 2) {
         x.length

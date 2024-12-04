@@ -1,0 +1,6 @@
+KtNameReferenceExpression(128,136): 'function'
+  KtSimpleNameReference:
+    (in ROOT) fun <T1, O1> function(a: O1, b: (kotlin.Int) -> kotlin.Boolean, c: T1)
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

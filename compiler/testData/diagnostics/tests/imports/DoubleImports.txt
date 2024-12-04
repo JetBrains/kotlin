@@ -1,0 +1,37 @@
+package
+
+public fun test(): kotlin.Unit
+public fun useAnotherClass(): explicit.AnotherClass
+public fun useNested(): star.SomeClass.Nested
+public fun useSomeClass(): star.SomeClass
+
+package explicit {
+    public val gau: kotlin.Int = 2
+    public fun baz(): kotlin.Unit
+
+    public final class AnotherClass {
+        public constructor AnotherClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package star {
+    public val bar: kotlin.Int = 1
+    public fun foo(): kotlin.Unit
+
+    public final class SomeClass {
+        public constructor SomeClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class Nested {
+            public constructor Nested()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

@@ -14,7 +14,7 @@ fun box(): String {
     val klass = Base::class
     if (!klass.isSealed) return "Error: Base is not sealed"
     if (klass.isAbstract) return "Error: Base is abstract"
-    return klass.sealedSubclasses
+    return klass.sealedSubclasses.asReversed()
         .joinToString("") { it.simpleName ?: "_No name provided_" }
         .takeIf { it.isNotBlank() }
         ?: "_No sealed subclasses found_"

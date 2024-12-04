@@ -39,6 +39,7 @@ suspend fun incrementJ() {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     builder {
         crossinlineMe({ StateMachineChecker.suspendHere() }) { incrementJ() }
     }

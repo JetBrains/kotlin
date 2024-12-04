@@ -1,36 +1,32 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
  */
 
-#include "Alloc.h"
-#include "Atomic.h"
+#include "std_support/Atomic.hpp"
 #include "Cleaner.h"
 #include "CompilerConstants.hpp"
 #include "Exceptions.h"
 #include "KAssert.h"
 #include "Memory.h"
+#include "Logging.hpp"
 #include "ObjCExportInit.h"
 #include "Porting.h"
 #include "Runtime.h"
+#include "RuntimePrivate.hpp"
 #include "Worker.h"
+#include "KString.h"
+#include <atomic>
+#include <cstdint>
+#include <cstdlib>
+#include <thread>
 
-typedef void (*Initializer)(int initialize, MemoryState* memory);
-struct InitNode {
-  Initializer init;
-  InitNode* next;
-};
+using namespace kotlin;
+
+using kotlin::internal::FILE_NOT_INITIALIZED;
+using kotlin::internal::FILE_BEING_INITIALIZED;
+using kotlin::internal::FILE_INITIALIZED;
+using kotlin::internal::FILE_FAILED_TO_INITIALIZE;
 
 namespace {
 
@@ -73,11 +69,11 @@ constexpr RuntimeState* kInvalidRuntime = nullptr;
 
 THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = kInvalidRuntime;
 
-inline bool isValidRuntime() {
+PERFORMANCE_INLINE inline bool isValidRuntime() {
   return ::runtimeState != kInvalidRuntime;
 }
 
-volatile int aliveRuntimesCount = 0;
+std::atomic<int> aliveRuntimesCount = 0;
 
 enum GlobalRuntimeStatus {
     kGlobalRuntimeUninitialized = 0,
@@ -85,65 +81,41 @@ enum GlobalRuntimeStatus {
     kGlobalRuntimeShutdown,
 };
 
-volatile GlobalRuntimeStatus globalRuntimeStatus = kGlobalRuntimeUninitialized;
+std::atomic<GlobalRuntimeStatus> globalRuntimeStatus = kGlobalRuntimeUninitialized;
 
-RuntimeState* initRuntime() {
+void Kotlin_deinitRuntimeCallback(void* argument);
+
+NO_INLINE RuntimeState* initRuntime() {
   SetKonanTerminateHandler();
-  RuntimeState* result = konanConstructInstance<RuntimeState>();
+  initObjectPool();
+  RuntimeState* result = new RuntimeState();
   if (!result) return kInvalidRuntime;
   RuntimeCheck(!isValidRuntime(), "No active runtimes allowed");
   ::runtimeState = result;
 
-  bool firstRuntime = false;
-  // We set this guard in the `switch` below, after memory initialization.
-  kotlin::ThreadStateGuard stateGuard;
-  switch (kotlin::compiler::destroyRuntimeMode()) {
-      case kotlin::compiler::DestroyRuntimeMode::kLegacy:
-          compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
-          result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
-          // Switch thread state because worker and globals inits require the runnable state.
-          // This call may block if GC requested suspending threads.
-          stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-          result->worker = WorkerInit(result->memoryState);
-          firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
-          if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
-              konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
-              konan::abort();
-          }
-          break;
-      case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
-          // First update `aliveRuntimesCount` and then update `globalRuntimeStatus`, for synchronization with
-          // runtime shutdown, which does it the other way around.
-          atomicAdd(&aliveRuntimesCount, 1);
-          auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
-          if (Kotlin_forceCheckedShutdown()) {
-              RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
-          }
-          firstRuntime = lastStatus == kGlobalRuntimeUninitialized;
-          if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
-              konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
-              konan::abort();
-          }
-          result->memoryState = InitMemory(firstRuntime);
-          // Switch thread state because worker and globals inits require the runnable state.
-          // This call may block if GC requested suspending threads.
-          stateGuard = kotlin::ThreadStateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-          result->worker = WorkerInit(result->memoryState);
-  }
+  // First update `aliveRuntimesCount` and then update `globalRuntimeStatus`, for synchronization with
+  // runtime shutdown, which does it the other way around.
+  ++aliveRuntimesCount;
+
+  bool firstRuntime = initializeGlobalRuntimeIfNeeded();
+  result->memoryState = InitMemory();
+  // Switch thread state because worker and globals inits require the runnable state.
+  // This call may block if GC requested suspending threads.
+  ThreadStateGuard stateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
+  result->worker = WorkerInit(result->memoryState);
 
   InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);
   CommitTLSStorage(result->memoryState);
   // Keep global variables in state as well.
   if (firstRuntime) {
-    konan::consoleInit();
-#if KONAN_OBJC_INTEROP
-    Kotlin_ObjCExport_initialize();
-#endif
     InitOrDeinitGlobalVariables(INIT_GLOBALS, result->memoryState);
   }
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->memoryState);
   RuntimeAssert(result->status == RuntimeStatus::kUninitialized, "Runtime must still be in the uninitialized state");
   result->status = RuntimeStatus::kRunning;
+
+  // Register runtime deinit function at thread cleanup.
+  konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
 
   return result;
 }
@@ -155,29 +127,19 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   // This may be called after TLS is zeroed out, so ::runtimeState and ::memoryState in Memory cannot be trusted.
   // TODO: This may in fact reallocate TLS without guarantees that it'll be deallocated again.
   ::runtimeState = state;
-  RestoreMemory(state->memoryState);
-  bool lastRuntime = atomicAdd(&aliveRuntimesCount, -1) == 0;
-  switch (kotlin::compiler::destroyRuntimeMode()) {
-    case kotlin::compiler::DestroyRuntimeMode::kLegacy:
-      destroyRuntime = lastRuntime;
-      break;
-    case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
-      // Nothing to do.
-      break;
-  }
+  --aliveRuntimesCount;
   ClearTLS(state->memoryState);
   if (destroyRuntime)
     InitOrDeinitGlobalVariables(DEINIT_GLOBALS, state->memoryState);
 
-  // Worker deinit must be performed in the runnable state because
-  // Worker's destructor unregisters stable refs.
+  // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
+  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
+
   auto workerId = GetWorkerId(state->worker);
   WorkerDeinit(state->worker);
 
-  // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
-  kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
   DeinitMemory(state->memoryState, destroyRuntime);
-  konanDestructInstance(state);
+  delete state;
   WorkerDestroyThreadDataIfNeeded(workerId);
   ::runtimeState = kInvalidRuntime;
 }
@@ -191,9 +153,28 @@ void Kotlin_deinitRuntimeCallback(void* argument) {
 
 }  // namespace
 
+bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
+    auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
+    if (Kotlin_forceCheckedShutdown()) {
+        RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
+    }
+    if (lastStatus != kGlobalRuntimeUninitialized)
+        return false;
+
+    konan::consoleInit();
+    logging::OnRuntimeInit();
+    initGlobalMemory();
+#if KONAN_OBJC_INTEROP
+    Kotlin_ObjCExport_initialize();
+#endif
+    return true;
+}
+
+const char* kotlin::programName = nullptr;
+
 extern "C" {
 
-void AppendToInitializersTail(InitNode *next) {
+RUNTIME_NOTHROW void AppendToInitializersTail(InitNode *next) {
   // TODO: use RuntimeState.
   if (initHeadNode == nullptr) {
     initHeadNode = next;
@@ -203,15 +184,13 @@ void AppendToInitializersTail(InitNode *next) {
   initTailNode = next;
 }
 
-RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
+PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
   if (!isValidRuntime()) {
     initRuntime();
-    // Register runtime deinit function at thread cleanup.
-    konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
   }
 }
 
-void Kotlin_deinitRuntimeIfNeeded() {
+void deinitRuntimeIfNeeded() {
   if (isValidRuntime()) {
     deinitRuntime(::runtimeState, false);
   }
@@ -222,20 +201,19 @@ void Kotlin_shutdownRuntime() {
     auto* runtime = ::runtimeState;
     RuntimeAssert(runtime != kInvalidRuntime, "Current thread must have Kotlin runtime initialized on it");
 
-    bool needsFullShutdown = false;
-    switch (kotlin::compiler::destroyRuntimeMode()) {
-        case kotlin::compiler::DestroyRuntimeMode::kLegacy:
-            needsFullShutdown = true;
-            break;
-        case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
-            needsFullShutdown = Kotlin_forceCheckedShutdown() || Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled();
-            break;
-    }
+    bool needsFullShutdown = Kotlin_forceCheckedShutdown() || Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled();
     if (!needsFullShutdown) {
-        auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
+        auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
         RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
+        // The main thread is not doing anything Kotlin anymore, but will stick around to cleanup C++ globals and the like.
+        // Mark the thread native, and don't make the GC thread wait on it.
+        kotlin::SwitchThreadState(runtime->memoryState, kotlin::ThreadState::kNative);
         return;
     }
+
+    // If we're going to need finalizers for the full shutdown, we need to start the thread before
+    // new runtimes are disallowed.
+    kotlin::StartFinalizerThreadIfNeeded();
 
     if (Kotlin_cleanersLeakCheckerEnabled()) {
         // Make sure to collect any lingering cleaners.
@@ -246,28 +224,31 @@ void Kotlin_shutdownRuntime() {
     ShutdownCleaners(Kotlin_cleanersLeakCheckerEnabled());
 
     // Cleaners are now done, disallow new runtimes.
-    auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
+    auto lastStatus = std_support::atomic_compare_swap_strong(globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
     RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
 
     bool canDestroyRuntime = true;
 
-    // TODO: When legacy mode is gone, this `if` will become unnecessary.
-    if (Kotlin_forceCheckedShutdown() || Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled()) {
-        // First make sure workers are gone.
-        WaitNativeWorkersTermination();
+    // First make sure workers are gone.
+    WaitNativeWorkersTermination();
 
-        // Now check for existence of any other runtimes.
-        auto otherRuntimesCount = atomicGet(&aliveRuntimesCount) - 1;
-        RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
-        if (Kotlin_forceCheckedShutdown()) {
-            if (otherRuntimesCount > 0) {
-                konan::consoleErrorf("Cannot run checkers when there are %d alive runtimes at the shutdown", otherRuntimesCount);
-                konan::abort();
-            }
-        } else {
-            // Cannot destroy runtime globally if there're some other threads with Kotlin runtime on them.
-            canDestroyRuntime = otherRuntimesCount == 0;
+    // Allow the current runtime.
+    int knownRuntimes = 1;
+    if (kotlin::FinalizersThreadIsRunning()) {
+        ++knownRuntimes;
+    }
+
+    // Now check for existence of any other runtimes.
+    auto otherRuntimesCount = aliveRuntimesCount.load() - knownRuntimes;
+    RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
+    if (Kotlin_forceCheckedShutdown()) {
+        if (otherRuntimesCount > 0) {
+            konan::consoleErrorf("Cannot run checkers when there are %d alive runtimes at the shutdown", otherRuntimesCount);
+            std::abort();
         }
+    } else {
+        // Cannot destroy runtime globally if there're some other threads with Kotlin runtime on them.
+        canDestroyRuntime = otherRuntimesCount == 0;
     }
 
     deinitRuntime(runtime, canDestroyRuntime);
@@ -300,8 +281,6 @@ KInt Konan_Platform_getOsFamily() {
   return 4;
 #elif KONAN_ANDROID
   return 5;
-#elif KONAN_WASM
-  return 6;
 #elif KONAN_TVOS
   return 7;
 #elif KONAN_WATCHOS
@@ -321,24 +300,23 @@ KInt Konan_Platform_getCpuArchitecture() {
   return 3;
 #elif KONAN_X64
   return 4;
-#elif KONAN_MIPS32
-  return 5;
-#elif KONAN_MIPSEL32
-  return 6;
-#elif KONAN_WASM
-  return 7;
 #else
 #warning "Unknown CPU"
   return 0;
 #endif
 }
 
-KInt Konan_Platform_getMemoryModel() {
-    return static_cast<KInt>(CurrentMemoryModel);
-}
-
 KBoolean Konan_Platform_isDebugBinary() {
   return kotlin::compiler::shouldContainDebugInfo();
+}
+
+OBJ_GETTER0(Konan_Platform_getProgramName) {
+    if (kotlin::programName == nullptr) {
+        // null in case Platform.getProgramName is called from within a library and the main function of the binary is not built with Kotlin
+        RETURN_OBJ(nullptr)
+    } else {
+        RETURN_RESULT_OF(CreateStringFromCString, kotlin::programName)
+    }
 }
 
 bool Kotlin_memoryLeakCheckerEnabled() {
@@ -348,6 +326,31 @@ bool Kotlin_memoryLeakCheckerEnabled() {
 KBoolean Konan_Platform_getMemoryLeakChecker() {
   return g_checkLeaks;
 }
+
+KInt Konan_Platform_getAvailableProcessors() {
+    auto res = std::thread::hardware_concurrency();
+    // C++ standard says that if this function can return 0 if value is not "well defined or not computable"
+    // In current libstdc++ implementation, seems it can happen only on unsupported targets.
+    // We consider such systems as single-threaded
+    if (res == 0) {
+        res = 1;
+    }
+    // Probably it can't happen, but let's not allow overflows
+    if (res > std::numeric_limits<int>::max()) {
+        res = std::numeric_limits<int>::max();
+    }
+    return static_cast<KInt>(res);
+}
+
+OBJ_GETTER0(Konan_Platform_getAvailableProcessorsEnv) {
+    char* env = getenv("KOTLIN_NATIVE_AVAILABLE_PROCESSORS");
+    if (env == nullptr) {
+        RETURN_OBJ(nullptr)
+    }
+    RETURN_RESULT_OF(CreateStringFromCString, env)
+}
+
+
 
 void Konan_Platform_setMemoryLeakChecker(KBoolean value) {
   g_checkLeaks = value;
@@ -374,13 +377,6 @@ KBoolean Kotlin_Debugging_getForceCheckedShutdown() {
 }
 
 void Kotlin_Debugging_setForceCheckedShutdown(KBoolean value) {
-    switch (kotlin::compiler::destroyRuntimeMode()) {
-        case kotlin::compiler::DestroyRuntimeMode::kLegacy:
-            // Only applicable to ON_SHUTDOWN modes.
-            return;
-        case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
-            break;
-    }
     g_forceCheckedShutdown = value;
 }
 
@@ -400,73 +396,60 @@ RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isLocal(KRef obj) {
     return obj->local();
 }
 
-RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeededFromKotlin() {
-    switch (CurrentMemoryModel) {
-        case MemoryModel::kExperimental:
-            return;
-        case MemoryModel::kStrict:
-        case MemoryModel::kRelaxed:
-            Kotlin_initRuntimeIfNeeded();
+static void CallInitGlobalAwaitInitialized(uintptr_t* state) {
+    uintptr_t localState;
+    // Switch to the native state to avoid dead-locks.
+    {
+        kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+        do {
+            localState = std_support::atomic_ref{*state}.load(std::memory_order_acquire);
+        } while (localState != FILE_INITIALIZED && localState != FILE_FAILED_TO_INITIALIZE);
     }
+    if (localState == FILE_FAILED_TO_INITIALIZE) ThrowFileFailedToInitializeException(nullptr);
 }
 
-static constexpr int FILE_NOT_INITIALIZED = 0;
-static constexpr int FILE_BEING_INITIALIZED = 1;
-static constexpr int FILE_INITIALIZED = 2;
-static constexpr int FILE_FAILED_TO_INITIALIZE = 3;
-
-void CallInitGlobalPossiblyLock(int volatile* state, void (*init)()) {
-    int localState = *state;
+NO_INLINE void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)()) {
+    uintptr_t localState = std_support::atomic_ref{*state}.load(std::memory_order_acquire);
     if (localState == FILE_INITIALIZED) return;
     if (localState == FILE_FAILED_TO_INITIALIZE)
-        ThrowFileFailedToInitializeException();
-    int threadId = konan::currentThreadId();
+        ThrowFileFailedToInitializeException(nullptr);
+    uintptr_t threadId = konan::currentThreadId();
     if ((localState & 3) == FILE_BEING_INITIALIZED) {
         if ((localState & ~3) != (threadId << 2)) {
-            do {
-                localState = *state;
-                if (localState == FILE_FAILED_TO_INITIALIZE)
-                    ThrowFileFailedToInitializeException();
-            } while (localState != FILE_INITIALIZED);
+            CallInitGlobalAwaitInitialized(state);
         }
         return;
     }
-    if (compareAndSwap(state, FILE_NOT_INITIALIZED, FILE_BEING_INITIALIZED | (threadId << 2)) == FILE_NOT_INITIALIZED) {
+    if (std_support::atomic_compare_swap_strong(std_support::atomic_ref{*state}, FILE_NOT_INITIALIZED, FILE_BEING_INITIALIZED | (threadId << 2)) == FILE_NOT_INITIALIZED) {
         // actual initialization
-#if KONAN_NO_EXCEPTIONS
-        init();
-#else
         try {
+            CurrentFrameGuard guard;
             init();
-        } catch (...) {
-            *state = FILE_FAILED_TO_INITIALIZE;
-            throw;
+        } catch (ExceptionObjHolder& e) {
+            ObjHolder holder;
+            auto *exception = Kotlin_getExceptionObject(&e, holder.slot());
+            std_support::atomic_ref{*state}.store(FILE_FAILED_TO_INITIALIZE, std::memory_order_release);
+            ThrowFileFailedToInitializeException(exception);
         }
-#endif
-        *state = FILE_INITIALIZED;
+        std_support::atomic_ref{*state}.store(FILE_INITIALIZED, std::memory_order_release);
     } else {
-        do {
-            localState = *state;
-            if (localState == FILE_FAILED_TO_INITIALIZE)
-                ThrowFileFailedToInitializeException();
-        } while (localState != FILE_INITIALIZED);
+        CallInitGlobalAwaitInitialized(state);
     }
 }
 
-void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init)()) {
+void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)()) {
     if (*localState == FILE_FAILED_TO_INITIALIZE || (globalState != nullptr && *globalState == FILE_FAILED_TO_INITIALIZE))
-        ThrowFileFailedToInitializeException();
+        ThrowFileFailedToInitializeException(nullptr);
     *localState = FILE_INITIALIZED;
-#if KONAN_NO_EXCEPTIONS
-    init();
-#else
     try {
+        CurrentFrameGuard guard;
         init();
-    } catch(...) {
+    } catch(ExceptionObjHolder& e) {
+        ObjHolder holder;
+        auto *exception = Kotlin_getExceptionObject(&e, holder.slot());
         *localState = FILE_FAILED_TO_INITIALIZE;
-        throw;
+        ThrowFileFailedToInitializeException(exception);
     }
-#endif
 }
 
 }  // extern "C"

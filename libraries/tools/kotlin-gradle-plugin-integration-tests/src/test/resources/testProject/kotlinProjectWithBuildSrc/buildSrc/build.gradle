@@ -1,9 +1,11 @@
+plugins {
+    id 'java'
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
 }
-
-apply plugin: 'java'
 
 dependencies {
     runtimeOnly "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"

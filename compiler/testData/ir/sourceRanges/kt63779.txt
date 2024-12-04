@@ -1,0 +1,19 @@
+@0:0..8:0 FILE fqName:<root> fileName:/kt63779.kt
+  @2:0..7:1 FUN name:topLevelMethod visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Int) returnType:kotlin.Unit
+    @2:19..25 VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    @2:27..33 VALUE_PARAMETER name:y index:1 type:kotlin.Int
+    @2:35..7:1 BLOCK_BODY
+      @3:4..6:5 WHEN type=kotlin.Unit origin=IF
+        @3:7..4:5 BRANCH
+          @3:7..12 CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
+            @3:7..8 GET_VAR 'x: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+            @3:11..12 GET_VAR 'y: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+          @3:14..4:5 BLOCK type=kotlin.Unit origin=null
+        @4:14..5:5 BRANCH
+          @4:14..19 CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
+            @4:14..15 GET_VAR 'x: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+            @4:18..19 GET_VAR 'y: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+          @4:21..5:5 BLOCK type=kotlin.Unit origin=null
+        @5:11..6:5 BRANCH
+          @5:11..6:5 CONST Boolean type=kotlin.Boolean value=true
+          @5:11..6:5 BLOCK type=kotlin.Unit origin=null

@@ -1,4 +1,0 @@
-package
-
-public fun box(): kotlin.String
-public fun withoutAnnotation(/*0*/ x: kotlin.Int): kotlin.Int

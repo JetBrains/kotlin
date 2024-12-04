@@ -1,5 +1,18 @@
-import java.lang.System;
-
+/**
+ * public abstract class Base : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: doJob(Ljava/lang/String;I)V
+ *   protected abstract fun doJob(job: kotlin/String, delay: kotlin/Int): kotlin/Unit
+ *
+ *   // signature: doJobGeneric(Ljava/lang/CharSequence;I)V
+ *   protected abstract fun <T#0 (* T *) : kotlin/CharSequence> doJobGeneric(job: T#0, delay: kotlin/Int): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract class Base {
 
@@ -17,8 +30,21 @@ public abstract class Base {
 ////////////////////
 
 
-import java.lang.System;
-
+/**
+ * public final class Impl : Base {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: doJob(Ljava/lang/String;I)V
+ *   protected open fun doJob(job: kotlin/String, delay: kotlin/Int): kotlin/Unit
+ *
+ *   // signature: doJobGeneric(Ljava/lang/CharSequence;I)V
+ *   protected open fun <T#0 (* T *) : kotlin/CharSequence> doJobGeneric(job: T#0, delay: kotlin/Int): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Impl extends Base {
 

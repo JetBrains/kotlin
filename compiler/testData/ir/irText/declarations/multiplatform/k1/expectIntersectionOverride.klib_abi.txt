@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C : /I1, /I2 { // /C|null[0]
+    final val p // /C.p|{}p[0]
+        final fun <get-p>(): kotlin/Int // /C.p.<get-p>|<get-p>(){}[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+    final fun f(): kotlin/String // /C.f|f(){}[0]
+}
+abstract interface /I1 { // /I1|null[0]
+    abstract val p // /I1.p|{}p[0]
+        abstract fun <get-p>(): kotlin/Int // /I1.p.<get-p>|<get-p>(){}[0]
+    abstract fun f(): kotlin/String // /I1.f|f(){}[0]
+}
+abstract interface /I2 { // /I2|null[0]
+    abstract val p // /I2.p|{}p[0]
+        abstract fun <get-p>(): kotlin/Int // /I2.p.<get-p>|<get-p>(){}[0]
+    abstract fun f(): kotlin/String // /I2.f|f(){}[0]
+}

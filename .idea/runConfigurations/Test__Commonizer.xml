@@ -4,7 +4,7 @@
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="--tests &quot;org.jetbrains.kotlin.gradle.CommonizerHierarchicalIT&quot; --tests &quot;org.jetbrains.kotlin.gradle.CommonizerIT&quot; --tests &quot;org.jetbrains.kotlin.commonizer.**&quot; --tests &quot;org.jetbrains.kotlin.gradle.native.CocoaPodsIT.testCinteropCommonization*&quot;" />
+      <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
         <list />
       </option>
@@ -13,6 +13,14 @@
           <option value=":native:kotlin-klib-commonizer-api:test" />
           <option value=":native:kotlin-klib-commonizer:test" />
           <option value=":kotlin-gradle-plugin-integration-tests:test" />
+          <option value="--tests" />
+          <option value="&quot;org.jetbrains.kotlin.gradle.CommonizerHierarchicalIT&quot;" />
+          <option value="--tests" />
+          <option value="&quot;org.jetbrains.kotlin.gradle.CommonizerIT&quot;" />
+          <option value="--tests" />
+          <option value="&quot;org.jetbrains.kotlin.commonizer.**&quot;" />
+          <option value="--tests" />
+          <option value="&quot;org.jetbrains.kotlin.gradle.native.CocoaPodsIT.testCinteropCommonization*&quot;" />
         </list>
       </option>
       <option name="vmOptions" value="" />
@@ -20,6 +28,7 @@
     <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>true</RunAsTest>
     <method v="2" />
   </configuration>
 </component>

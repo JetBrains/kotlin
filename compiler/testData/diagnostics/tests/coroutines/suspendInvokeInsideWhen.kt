@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST
 
 internal class Demo() {
     suspend operator fun <T> invoke(name: String, block: suspend () -> T): T {

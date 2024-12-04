@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /My { // /My|null[0]
+    constructor <init>() // /My.<init>|<init>(){}[0]
+}
+open annotation class /SomeAnn : kotlin/Annotation { // /SomeAnn|null[0]
+    constructor <init>() // /SomeAnn.<init>|<init>(){}[0]
+}

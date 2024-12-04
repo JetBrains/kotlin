@@ -37,22 +37,4 @@ public interface IrTypeParameterOrBuilder extends
    * <code>repeated int32 super_type = 3 [packed = true];</code>
    */
   int getSuperType(int index);
-
-  /**
-   * <code>optional int32 index = 104;</code>
-   */
-  boolean hasIndex();
-  /**
-   * <code>optional int32 index = 104;</code>
-   */
-  int getIndex();
-
-  /**
-   * <code>optional bool isGlobal = 105;</code>
-   */
-  boolean hasIsGlobal();
-  /**
-   * <code>optional bool isGlobal = 105;</code>
-   */
-  boolean getIsGlobal();
 }

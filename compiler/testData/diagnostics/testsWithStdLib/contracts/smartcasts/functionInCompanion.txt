@@ -1,0 +1,31 @@
+package
+
+public fun usage(): kotlin.Unit
+
+public object Bar {
+    private constructor Bar()
+    @kotlin.OptIn(markerClass = {kotlin.contracts.ExperimentalContracts::class}) public final fun checkSomethingObject(/*0*/ condition: kotlin.Boolean, /*1*/ message: kotlin.String): kotlin.Unit
+        Returns(WILDCARD) -> condition
+
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        @kotlin.OptIn(markerClass = {kotlin.contracts.ExperimentalContracts::class}) public final fun checkSomethingCompanion(/*0*/ condition: kotlin.Boolean, /*1*/ message: kotlin.String): kotlin.Unit
+            Returns(WILDCARD) -> condition
+
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

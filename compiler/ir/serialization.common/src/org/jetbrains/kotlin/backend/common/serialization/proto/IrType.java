@@ -54,13 +54,13 @@ public final class IrType extends
             break;
           }
           case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.Builder subBuilder = null;
             if (kindCase_ == 1) {
-              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_).toBuilder();
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_).toBuilder();
             }
-            kind_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.PARSER, extensionRegistry);
+            kind_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.PARSER, extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_);
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_);
               kind_ = subBuilder.buildPartial();
             }
             kindCase_ = 1;
@@ -105,6 +105,19 @@ public final class IrType extends
             kindCase_ = 4;
             break;
           }
+          case 42: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.Builder subBuilder = null;
+            if (kindCase_ == 5) {
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_).toBuilder();
+            }
+            kind_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_);
+              kind_ = subBuilder.buildPartial();
+            }
+            kindCase_ = 5;
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -143,10 +156,11 @@ public final class IrType extends
   private java.lang.Object kind_;
   public enum KindCase
       implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
-    SIMPLE(1),
+    LEGACYSIMPLE(1),
     DYNAMIC(2),
     ERROR(3),
     DNN(4),
+    SIMPLE(5),
     KIND_NOT_SET(0);
     private int value = 0;
     private KindCase(int value) {
@@ -154,10 +168,11 @@ public final class IrType extends
     }
     public static KindCase valueOf(int value) {
       switch (value) {
-        case 1: return SIMPLE;
+        case 1: return LEGACYSIMPLE;
         case 2: return DYNAMIC;
         case 3: return ERROR;
         case 4: return DNN;
+        case 5: return SIMPLE;
         case 0: return KIND_NOT_SET;
         default: throw new java.lang.IllegalArgumentException(
           "Value is undefined for this oneof enum.");
@@ -174,21 +189,21 @@ public final class IrType extends
         kindCase_);
   }
 
-  public static final int SIMPLE_FIELD_NUMBER = 1;
+  public static final int LEGACYSIMPLE_FIELD_NUMBER = 1;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
    */
-  public boolean hasSimple() {
+  public boolean hasLegacySimple() {
     return kindCase_ == 1;
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getSimple() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy getLegacySimple() {
     if (kindCase_ == 1) {
-       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_;
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_;
     }
-    return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance();
   }
 
   public static final int DYNAMIC_FIELD_NUMBER = 2;
@@ -242,6 +257,23 @@ public final class IrType extends
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance();
   }
 
+  public static final int SIMPLE_FIELD_NUMBER = 5;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+   */
+  public boolean hasSimple() {
+    return kindCase_ == 5;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getSimple() {
+    if (kindCase_ == 5) {
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_;
+    }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+  }
+
   private void initFields() {
   }
   private byte memoizedIsInitialized = -1;
@@ -250,8 +282,8 @@ public final class IrType extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (hasSimple()) {
-      if (!getSimple().isInitialized()) {
+    if (hasLegacySimple()) {
+      if (!getLegacySimple().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -268,6 +300,12 @@ public final class IrType extends
         return false;
       }
     }
+    if (hasSimple()) {
+      if (!getSimple().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -276,7 +314,7 @@ public final class IrType extends
                       throws java.io.IOException {
     getSerializedSize();
     if (kindCase_ == 1) {
-      output.writeMessage(1, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_);
+      output.writeMessage(1, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_);
     }
     if (kindCase_ == 2) {
       output.writeMessage(2, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_);
@@ -286,6 +324,9 @@ public final class IrType extends
     }
     if (kindCase_ == 4) {
       output.writeMessage(4, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_);
+    }
+    if (kindCase_ == 5) {
+      output.writeMessage(5, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -298,7 +339,7 @@ public final class IrType extends
     size = 0;
     if (kindCase_ == 1) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_);
+        .computeMessageSize(1, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_);
     }
     if (kindCase_ == 2) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -311,6 +352,10 @@ public final class IrType extends
     if (kindCase_ == 4) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(4, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_);
+    }
+    if (kindCase_ == 5) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(5, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -443,6 +488,9 @@ public final class IrType extends
       if (kindCase_ == 4) {
         result.kind_ = kind_;
       }
+      if (kindCase_ == 5) {
+        result.kind_ = kind_;
+      }
       result.bitField0_ = to_bitField0_;
       result.kindCase_ = kindCase_;
       return result;
@@ -451,8 +499,8 @@ public final class IrType extends
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrType other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrType.getDefaultInstance()) return this;
       switch (other.getKindCase()) {
-        case SIMPLE: {
-          mergeSimple(other.getSimple());
+        case LEGACYSIMPLE: {
+          mergeLegacySimple(other.getLegacySimple());
           break;
         }
         case DYNAMIC: {
@@ -467,6 +515,10 @@ public final class IrType extends
           mergeDnn(other.getDnn());
           break;
         }
+        case SIMPLE: {
+          mergeSimple(other.getSimple());
+          break;
+        }
         case KIND_NOT_SET: {
           break;
         }
@@ -477,8 +529,8 @@ public final class IrType extends
     }
 
     public final boolean isInitialized() {
-      if (hasSimple()) {
-        if (!getSimple().isInitialized()) {
+      if (hasLegacySimple()) {
+        if (!getLegacySimple().isInitialized()) {
           
           return false;
         }
@@ -491,6 +543,12 @@ public final class IrType extends
       }
       if (hasError()) {
         if (!getError().isInitialized()) {
+          
+          return false;
+        }
+      }
+      if (hasSimple()) {
+        if (!getSimple().isInitialized()) {
           
           return false;
         }
@@ -532,24 +590,24 @@ public final class IrType extends
     private int bitField0_;
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
      */
-    public boolean hasSimple() {
+    public boolean hasLegacySimple() {
       return kindCase_ == 1;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getSimple() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy getLegacySimple() {
       if (kindCase_ == 1) {
-        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_;
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_;
       }
-      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
      */
-    public Builder setSimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType value) {
+    public Builder setLegacySimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -559,22 +617,22 @@ public final class IrType extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
      */
-    public Builder setSimple(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.Builder builderForValue) {
+    public Builder setLegacySimple(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.Builder builderForValue) {
       kind_ = builderForValue.build();
 
       kindCase_ = 1;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
      */
-    public Builder mergeSimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType value) {
+    public Builder mergeLegacySimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy value) {
       if (kindCase_ == 1 &&
-          kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance()) {
-        kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_)
+          kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance()) {
+        kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_)
             .mergeFrom(value).buildPartial();
       } else {
         kind_ = value;
@@ -584,9 +642,9 @@ public final class IrType extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 1;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
      */
-    public Builder clearSimple() {
+    public Builder clearLegacySimple() {
       if (kindCase_ == 1) {
         kindCase_ = 0;
         kind_ = null;
@@ -780,6 +838,70 @@ public final class IrType extends
      */
     public Builder clearDnn() {
       if (kindCase_ == 4) {
+        kindCase_ = 0;
+        kind_ = null;
+        
+      }
+      return this;
+    }
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     */
+    public boolean hasSimple() {
+      return kindCase_ == 5;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getSimple() {
+      if (kindCase_ == 5) {
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     */
+    public Builder setSimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      kind_ = value;
+
+      kindCase_ = 5;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     */
+    public Builder setSimple(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.Builder builderForValue) {
+      kind_ = builderForValue.build();
+
+      kindCase_ = 5;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     */
+    public Builder mergeSimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType value) {
+      if (kindCase_ == 5 &&
+          kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance()) {
+        kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_)
+            .mergeFrom(value).buildPartial();
+      } else {
+        kind_ = value;
+      }
+
+      kindCase_ = 5;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     */
+    public Builder clearSimple() {
+      if (kindCase_ == 5) {
         kindCase_ = 0;
         kind_ = null;
         

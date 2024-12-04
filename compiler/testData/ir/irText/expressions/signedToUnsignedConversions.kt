@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_STDLIB
+// LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 
 // FILE: signedToUnsignedConversions_annotation.kt
 

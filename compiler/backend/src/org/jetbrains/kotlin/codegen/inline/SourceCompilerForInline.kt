@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -22,12 +21,13 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.io.File
 
 class InlineCallSiteInfo(
     val ownerClassName: String,
     val method: Method,
     val inlineScopeVisibility: DescriptorVisibility?,
-    val file: PsiFile?,
+    val file: File?,
     val lineNumber: Int
 ) {
     val isInlineOrInsideInline: Boolean
@@ -85,7 +85,8 @@ fun loadCompiledInlineFunction(
     asmMethod: Method,
     isSuspend: Boolean,
     isMangled: Boolean,
-    state: GenerationState
+    isInternalToBeMatchedIgnoringSuffix: Boolean,
+    state: GenerationState,
 ): SMAPAndMethodNode {
     val containerType = AsmUtil.asmTypeByClassId(containerId)
     val resultInCache = state.inlineCache.methodNodeById.getOrPut(MethodId(containerType.descriptor, asmMethod)) {
@@ -93,7 +94,7 @@ fun loadCompiledInlineFunction(
             findVirtualFile(state, containerId)?.contentsToByteArray()
                 ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
         }
-        getMethodNode(containerType, bytes, asmMethod, isSuspend, isMangled)
+        getMethodNode(containerType, bytes, asmMethod, isSuspend, isMangled, isInternalToBeMatchedIgnoringSuffix)
     }
     return SMAPAndMethodNode(cloneMethodNode(resultInCache.node), resultInCache.classSMAP)
 }
@@ -103,7 +104,8 @@ private fun getMethodNode(
     bytes: ByteArray,
     method: Method,
     isSuspend: Boolean,
-    isMangled: Boolean
+    isMangled: Boolean,
+    isInternalToBeMatchedIgnoringSuffix: Boolean,
 ): SMAPAndMethodNode {
     getMethodNode(owner, bytes, method, isSuspend)?.let { return it }
     if (isMangled) {
@@ -115,7 +117,20 @@ private fun getMethodNode(
         }
         getMethodNode(owner, bytes, Method("$nameWithoutManglingSuffix-impl", method.descriptor), isSuspend)?.let { return it }
     }
+    // Hack to match internal function ignoring mangling suffix
+    if (isInternalToBeMatchedIgnoringSuffix) {
+        val nameWithoutModuleSuffix = removeModuleSuffixOrNull(method.name)
+        if (nameWithoutModuleSuffix != null) {
+            val methodToFind = Method(nameWithoutModuleSuffix, method.descriptor)
+            getMethodNode(bytes, owner) { methodToFind == Method(removeModuleSuffixOrNull(it.name), it.descriptor) }?.let { return it }
+        }
+    }
     throw IllegalStateException("couldn't find inline method $owner.$method")
+}
+
+private fun removeModuleSuffixOrNull(name: String): String? {
+    val indexOfDollar = name.indexOf('$')
+    return if (indexOfDollar >= 0) name.substring(0, indexOfDollar + 1) else null
 }
 
 // If an `inline suspend fun` has a state machine, it should have a `$$forInline` version without one.

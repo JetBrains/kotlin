@@ -1,9 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
 interface A
 
 fun A.foo() {}
 
+@OptIn(ExperimentalContracts::class)
 fun Any?.myRequireNotNull() {
     contract {
         returns() implies (this@myRequireNotNull != null)

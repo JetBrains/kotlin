@@ -10,34 +10,39 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 
-object FirThrowableSubclassChecker : FirClassChecker() {
+object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.hasThrowableSupertype(context))
             return
 
         if (declaration.typeParameters.isNotEmpty()) {
-            reporter.reportOn(declaration.typeParameters.firstOrNull()?.source, FirErrors.GENERIC_THROWABLE_SUBCLASS, context)
-
-            val source = when {
-                (declaration as? FirRegularClass)?.let { it.isInner || it.isLocal } == true -> declaration.source
-                declaration is FirAnonymousObject -> (declaration.declarations.firstOrNull())?.source
-                else -> null
+            declaration.typeParameters.firstOrNull()?.source?.let {
+                reporter.reportOn(it, FirErrors.GENERIC_THROWABLE_SUBCLASS, context)
             }
-            reporter.reportOn(source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS, context)
+
+            val shouldReport = when (declaration) {
+                is FirRegularClass -> declaration.isInner || declaration.isLocal
+                is FirAnonymousObject -> true
+            }
+
+            if (shouldReport) {
+                reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS, context)
+            }
         } else if (declaration.hasGenericOuterDeclaration(context)) {
             reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS, context)
         }
     }
 
     private fun FirClass.hasThrowableSupertype(context: CheckerContext) =
-        superConeTypes.any { it !is ConeClassErrorType && it.isSubtypeOfThrowable(context.session) }
+        superConeTypes.any { it !is ConeErrorType && it.isSubtypeOfThrowable(context.session) }
 
     private fun FirClass.hasGenericOuterDeclaration(context: CheckerContext): Boolean {
         if (!classId.isLocal) return false

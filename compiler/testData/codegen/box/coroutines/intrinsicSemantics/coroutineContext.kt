@@ -19,16 +19,12 @@ suspend fun multipleArgs(a: Any, b: Any, c: Any) =
 fun builder(c: suspend () -> String): String {
     var fromSuspension: String? = null
 
-    val continuation = object : ContinuationAdapter<String>() {
+    val continuation = object : Continuation<String> {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 
-        override fun resumeWithException(exception: Throwable) {
-            fromSuspension = "Exception: ${exception}"
-        }
-
-        override fun resume(value: String) {
-            fromSuspension = value
+        override fun resumeWith(value: Result<String>) {
+            fromSuspension = try { value.getOrThrow() } catch (exception: Throwable) { "Exception: ${exception}" }
         }
     }
 
@@ -54,6 +50,17 @@ fun box(): String {
     }
     if (res != "OK") {
         return "fail 3 $res"
+    }
+    res = builder(::suspendHere)
+    if (res != "OK") {
+        return "fail 4 $res"
+    }
+    res = builder {
+        suspend {}()
+        suspendHere()
+    }
+    if (res != "OK") {
+        return "fail 5 $res"
     }
 
     return "OK"

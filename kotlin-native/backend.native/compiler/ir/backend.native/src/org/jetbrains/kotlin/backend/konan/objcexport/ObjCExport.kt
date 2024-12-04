@@ -1,32 +1,26 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.BUNDLE_ID
-import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.getExportedDependencies
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.SourceFile
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.createTempFile
-import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.isSubpackageOf
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 internal class ObjCExportedInterface(
         val generatedClasses: Set<ClassDescriptor>,
@@ -37,302 +31,215 @@ internal class ObjCExportedInterface(
         val mapper: ObjCExportMapper
 )
 
-internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
-    private val target get() = context.config.target
-    private val topLevelNamePrefix get() = context.objCExportTopLevelNamePrefix
+internal fun produceObjCExportInterface(
+        context: PhaseContext,
+        moduleDescriptor: ModuleDescriptor,
+        frontendServices: FrontendServices,
+): ObjCExportedInterface {
+    val config = context.config
+    require(config.target.family.isAppleFamily)
+    require(config.produce == CompilerOutputKind.FRAMEWORK)
 
-    private val exportedInterface = produceInterface()
-    private val codeSpec = exportedInterface?.createCodeSpec(symbolTable)
+    val topLevelNamePrefix = context.objCExportTopLevelNamePrefix
 
-    private fun produceInterface(): ObjCExportedInterface? {
-        if (!target.family.isAppleFamily) return null
+    // TODO: emit RTTI to the same modules as classes belong to.
+    //   Not possible yet, since ObjCExport translates the entire "world" API at once
+    //   and can't do this per-module, e.g. due to global name conflict resolution.
 
-        if (!context.config.produce.isFinalBinary) return null
+    val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
+    val entryPoints = config.objcEntryPoints
+    val mapper = ObjCExportMapper(
+            frontendServices.deprecationResolver,
+            unitSuspendFunctionExport = unitSuspendFunctionExport,
+            entryPoints = entryPoints)
+    val moduleDescriptors = listOf(moduleDescriptor) + moduleDescriptor.getExportedDependencies(config)
+    val objcGenerics = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+    val disableSwiftMemberNameMangling = config.configuration.getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
+    val ignoreInterfaceMethodCollisions = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
+    val reportNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportReportNameCollisions)
+    val errorOnNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportErrorOnNameCollisions)
 
-        // TODO: emit RTTI to the same modules as classes belong to.
-        //   Not possible yet, since ObjCExport translates the entire "world" API at once
-        //   and can't do this per-module, e.g. due to global name conflict resolution.
+    val problemCollector = ObjCExportCompilerProblemCollector(context)
 
-        val produceFramework = context.config.produce == CompilerOutputKind.FRAMEWORK
+    val namer = ObjCExportNamerImpl(
+            moduleDescriptors.toSet(),
+            moduleDescriptor.builtIns,
+            mapper,
+            problemCollector,
+            topLevelNamePrefix,
+            local = false,
+            objcGenerics = objcGenerics,
+            disableSwiftMemberNameMangling = disableSwiftMemberNameMangling,
+            ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
+            nameCollisionMode = when {
+                errorOnNameCollisions -> ObjCExportNameCollisionMode.ERROR
+                reportNameCollisions -> ObjCExportNameCollisionMode.WARNING
+                else -> ObjCExportNameCollisionMode.NONE
+            }
+    )
+    val shouldExportKDoc = context.shouldExportKDoc()
+    val additionalImports = context.config.configuration.getNotNull(KonanConfigKeys.FRAMEWORK_IMPORT_HEADERS)
+    val headerGenerator = ObjCExportHeaderGenerator.createInstance(
+            moduleDescriptors, mapper, namer, problemCollector, objcGenerics, shouldExportKDoc = shouldExportKDoc,
+            additionalImports = additionalImports)
+    headerGenerator.translateModule()
+    return headerGenerator.buildInterface()
+}
 
-        return if (produceFramework) {
-            val unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport
-            val mapper = ObjCExportMapper(context.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
-            val moduleDescriptors = listOf(context.moduleDescriptor) + context.getExportedDependencies()
-            val objcGenerics = context.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
-            val namer = ObjCExportNamerImpl(
-                    moduleDescriptors.toSet(),
-                    context.moduleDescriptor.builtIns,
-                    mapper,
-                    topLevelNamePrefix,
-                    local = false,
-                    objcGenerics = objcGenerics
-            )
-            val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
-            headerGenerator.translateModule()
-            headerGenerator.buildInterface()
-        } else {
-            null
-        }
+private class ObjCExportCompilerProblemCollector(val context: PhaseContext) : ObjCExportProblemCollector {
+    private val DeclarationDescriptor.psiLocation
+        get() = (this@psiLocation as? DeclarationDescriptorWithSource)?.source?.getPsi()?.let { MessageUtil.psiElementToMessageLocation(it) }
+
+    override fun reportWarning(text: String) {
+        context.reportCompilationWarning(text)
     }
+
+    override fun reportWarning(declaration: DeclarationDescriptor, text: String) {
+        val location = declaration.psiLocation ?: return reportWarning(
+                "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
+        )
+
+        context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
+    }
+
+    override fun reportError(text: String) {
+        context.messageCollector.report(CompilerMessageSeverity.ERROR, text, null)
+    }
+
+    override fun reportError(declaration: DeclarationDescriptor, text: String) {
+        val location = declaration.psiLocation ?: return reportError(
+                "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
+        )
+
+        context.messageCollector.report(CompilerMessageSeverity.ERROR, text, location)
+    }
+
+    override fun reportException(throwable: Throwable) {
+        throw throwable
+    }
+}
+
+/**
+ * Populate framework directory with headers, module and info.plist.
+ */
+internal fun createObjCFramework(
+    config: KonanConfig,
+    moduleDescriptor: ModuleDescriptor,
+    exportedInterface: ObjCExportedInterface,
+    frameworkDirectory: File
+) {
+    val frameworkName = frameworkDirectory.name.removeSuffix(CompilerOutputKind.FRAMEWORK.suffix())
+    val frameworkBuilder = FrameworkBuilder(
+        config,
+        infoPListBuilder = InfoPListBuilder(config),
+        moduleMapBuilder = ModuleMapBuilder(),
+        objCHeaderWriter = ObjCHeaderWriter(),
+        mainPackageGuesser = MainPackageGuesser(),
+    )
+    frameworkBuilder.build(
+            moduleDescriptor,
+            frameworkDirectory,
+            frameworkName,
+            exportedInterface.headerLines,
+            moduleDependencies = setOf("Foundation")
+    )
+}
+
+internal fun createTestBundle(
+        config: KonanConfig,
+        moduleDescriptor: ModuleDescriptor,
+        bundleDirectory: File
+) {
+    val name = bundleDirectory.name.removeSuffix(CompilerOutputKind.TEST_BUNDLE.suffix())
+    BundleBuilder(
+            config = config,
+            infoPListBuilder = InfoPListBuilder(config, BundleType.XCTEST),
+            mainPackageGuesser = MainPackageGuesser()
+    ).build(moduleDescriptor, bundleDirectory, name)
+}
+
+// TODO: No need for such class in dynamic driver.
+internal class ObjCExport(
+    private val generationState: NativeGenerationState,
+    private val moduleDescriptor: ModuleDescriptor,
+    private val exportedInterface: ObjCExportedInterface?,
+    private val codeSpec: ObjCExportCodeSpec?
+) {
+    private val config = generationState.config
+    private val target get() = config.target
+    private val topLevelNamePrefix get() = generationState.objCExportTopLevelNamePrefix
 
     lateinit var namer: ObjCExportNamer
 
     internal fun generate(codegen: CodeGenerator) {
         if (!target.family.isAppleFamily) return
 
-        if (context.producedLlvmModuleContainsStdlib) {
+        if (generationState.shouldDefineFunctionClasses) {
             ObjCExportBlockCodeGenerator(codegen).generate()
         }
 
-        if (!context.config.produce.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
+        if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
-        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = context.config.unitSuspendFunctionObjCExport)
+        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
-                setOf(codegen.context.moduleDescriptor),
-                context.moduleDescriptor.builtIns,
+                setOf(moduleDescriptor),
+                moduleDescriptor.builtIns,
                 mapper,
+                ObjCExportProblemCollector.SILENT,
                 topLevelNamePrefix,
                 local = false
         )
 
         val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
 
-        if (exportedInterface != null) {
-            produceFrameworkSpecific(exportedInterface.headerLines)
-
-            exportedInterface.generateWorkaroundForSwiftSR10177()
-        }
+        exportedInterface?.generateWorkaroundForSwiftSR10177(generationState)
 
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
     }
+}
 
-    private fun produceFrameworkSpecific(headerLines: List<String>) {
-        val framework = File(context.config.outputFile)
-        val frameworkContents = when(target.family) {
-            Family.IOS,
-            Family.WATCHOS,
-            Family.TVOS -> framework
-            Family.OSX -> framework.child("Versions/A")
-            else -> error(target)
-        }
+// See https://bugs.swift.org/browse/SR-10177
+private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationState: NativeGenerationState) {
+    // Code for all protocols from the header should get into the binary.
+    // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
+    // so the easiest way to achieve this (quickly) is to compile a stub by clang.
 
-        val headers = frameworkContents.child("Headers")
-
-        val frameworkName = framework.name.removeSuffix(".framework")
-        val headerName = frameworkName + ".h"
-        val header = headers.child(headerName)
-        headers.mkdirs()
-        header.writeLines(headerLines)
-
-        val modules = frameworkContents.child("Modules")
-        modules.mkdirs()
-
-        val moduleMap = """
-            |framework module $frameworkName {
-            |    umbrella header "$headerName"
-            |
-            |    export *
-            |    module * { export * }
-            |}
-        """.trimMargin()
-
-        modules.child("module.modulemap").writeBytes(moduleMap.toByteArray())
-
-        emitInfoPlist(frameworkContents, frameworkName)
-        if (target.family == Family.OSX) {
-            framework.child("Versions/Current").createAsSymlink("A")
-            for (child in listOf(frameworkName, "Headers", "Modules", "Resources")) {
-                framework.child(child).createAsSymlink("Versions/Current/$child")
-            }
-        }
-    }
-
-    private fun emitInfoPlist(frameworkContents: File, name: String) {
-        val properties = context.config.platform.configurables as AppleConfigurables
-
-        val directory = when (target.family) {
-            Family.IOS,
-            Family.WATCHOS,
-            Family.TVOS -> frameworkContents
-            Family.OSX -> frameworkContents.child("Resources").also { it.mkdirs() }
-            else -> error(target)
-        }
-
-        val file = directory.child("Info.plist")
-        val bundleId = guessBundleID(name)
-        val platform = properties.platformName()
-        val minimumOsVersion = properties.osVersionMin
-
-        val contents = StringBuilder()
-        contents.append("""
-            <?xml version="1.0" encoding="UTF-8"?>
-            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-            <plist version="1.0">
-            <dict>
-                <key>CFBundleExecutable</key>
-                <string>$name</string>
-                <key>CFBundleIdentifier</key>
-                <string>$bundleId</string>
-                <key>CFBundleInfoDictionaryVersion</key>
-                <string>6.0</string>
-                <key>CFBundleName</key>
-                <string>$name</string>
-                <key>CFBundlePackageType</key>
-                <string>FMWK</string>
-                <key>CFBundleShortVersionString</key>
-                <string>1.0</string>
-                <key>CFBundleSupportedPlatforms</key>
-                <array>
-                    <string>$platform</string>
-                </array>
-                <key>CFBundleVersion</key>
-                <string>1</string>
-
-        """.trimIndent())
-
-        fun addUiDeviceFamilies(vararg values: Int) {
-            val xmlValues = values.joinToString(separator = "\n") {
-                "        <integer>$it</integer>"
-            }
-            contents.append("""
-                |    <key>MinimumOSVersion</key>
-                |    <string>$minimumOsVersion</string>
-                |    <key>UIDeviceFamily</key>
-                |    <array>
-                |$xmlValues       
-                |    </array>
-
-                """.trimMargin())
-        }
-
-        // UIDeviceFamily mapping:
-        // 1 - iPhone
-        // 2 - iPad
-        // 3 - AppleTV
-        // 4 - Apple Watch
-        when (target.family) {
-            Family.IOS -> addUiDeviceFamilies(1, 2)
-            Family.TVOS -> addUiDeviceFamilies(3)
-            Family.WATCHOS -> addUiDeviceFamilies(4)
-            else -> {}
-        }
-
-        if (target == KonanTarget.IOS_ARM64) {
-            contents.append("""
-                |    <key>UIRequiredDeviceCapabilities</key>
-                |    <array>
-                |        <string>arm64</string>
-                |    </array>
-
-                """.trimMargin()
-            )
-        }
-
-        if (target == KonanTarget.IOS_ARM32) {
-            contents.append("""
-                |    <key>UIRequiredDeviceCapabilities</key>
-                |    <array>
-                |        <string>armv7</string>
-                |    </array>
-
-                """.trimMargin()
-            )
-        }
-
-        contents.append("""
-            </dict>
-            </plist>
-        """.trimIndent())
-
-        // TODO: Xcode also add some number of DT* keys.
-
-        file.writeBytes(contents.toString().toByteArray())
-    }
-
-    // See https://bugs.swift.org/browse/SR-10177
-    private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177() {
-        // Code for all protocols from the header should get into the binary.
-        // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
-        // so the easiest way to achieve this (quickly) is to compile a stub by clang.
-
-        val protocolsStub = listOf(
-                "__attribute__((used)) static void __workaroundSwiftSR10177() {",
-                buildString {
-                    append("    ")
-                    generatedClasses.forEach {
-                        if (it.isInterface) {
-                            val protocolName = namer.getClassOrProtocolName(it).objCName
-                            append("@protocol($protocolName); ")
-                        }
+    val protocolsStub = listOf(
+            "__attribute__((used)) static void __workaroundSwiftSR10177() {",
+            buildString {
+                append("    ")
+                generatedClasses.forEach {
+                    if (it.isInterface) {
+                        val protocolName = namer.getClassOrProtocolName(it).objCName
+                        append("@protocol($protocolName); ")
                     }
-                },
-                "}"
-        )
+                }
+            },
+            "}"
+    )
 
-        val source = createTempFile("protocols", ".m").deleteOnExit()
-        source.writeLines(headerLines + protocolsStub)
+    val source = createTempFile("protocols", ".m").deleteOnExit()
+    source.writeLines(headerLines + protocolsStub)
 
-        val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
+    val bitcode = createTempFile("protocols", ".bc").deleteOnExit()
 
-        val clangCommand = context.config.clang.clangC(
-                source.absolutePath,
-                "-O2",
-                "-emit-llvm",
-                "-c", "-o", bitcode.absolutePath
-        )
+    val clangCommand = generationState.config.clang.clangC(
+            source.absolutePath,
+            "-O2",
+            "-emit-llvm",
+            "-c", "-o", bitcode.absolutePath
+    )
 
-        val result = Command(clangCommand).getResult(withErrors = true)
+    val result = Command(clangCommand).getResult(withErrors = true)
 
-        if (result.exitCode == 0) {
-            context.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
-        } else {
-            // Note: ignoring compile errors intentionally.
-            // In this case resulting framework will likely be unusable due to compile errors when importing it.
-        }
-    }
-
-    private fun guessMainPackage(modules: List<ModuleDescriptor>): FqName? {
-        if (modules.isEmpty()) {
-            return null
-        }
-
-        val allPackages = modules.flatMap {
-            it.getPackageFragments() // Includes also all parent packages, e.g. the root one.
-        }
-
-        val nonEmptyPackages = allPackages
-            .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
-            .map { it.fqName }.distinct()
-
-        return allPackages.map { it.fqName }.distinct()
-            .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
-            // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
-            .maxByOrNull { it.asString().length }
-    }
-
-    private fun guessBundleID(bundleName: String): String {
-        val configuration = context.configuration
-        configuration[BUNDLE_ID]?.let {
-            return it
-        }
-
-        // Consider exported libraries only if we cannot infer the package from sources or included libs.
-        val mainPackage = guessMainPackage(context.getIncludedLibraryDescriptors() + context.moduleDescriptor)
-                ?: guessMainPackage(context.getExportedDependencies())
-                ?: FqName.ROOT
-
-        val bundleID = mainPackage.child(Name.identifier(bundleName)).asString()
-
-        if (mainPackage.isRoot) {
-            configuration.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "Cannot infer a bundle ID from packages of source files and exported dependencies, " +
-                            "use the bundle name instead: $bundleName. " +
-                            "Please specify the bundle ID explicitly using the -Xbundle-id compiler flag."
-            )
-        }
-        return bundleID
+    if (result.exitCode == 0) {
+        generationState.llvm.additionalProducedBitcodeFiles += bitcode.absolutePath
+    } else {
+        // Note: ignoring compile errors intentionally.
+        // In this case resulting framework will likely be unusable due to compile errors when importing it.
     }
 }
+
+internal val PhaseContext.objCExportTopLevelNamePrefix: String
+    get() = abbreviate(config.fullExportedNamePrefix)

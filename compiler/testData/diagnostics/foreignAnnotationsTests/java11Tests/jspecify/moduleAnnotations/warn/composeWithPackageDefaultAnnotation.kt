@@ -1,8 +1,9 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: warn
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: sandbox/module-info.java
-import org.jspecify.nullness.NullMarked;
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 module sandbox {
@@ -14,7 +15,7 @@ module sandbox {
 @NullMarked
 package test;
 
-import org.jspecify.nullness.NullMarked;
+import org.jspecify.annotations.NullMarked;
 
 // FILE: sandbox/test/Test.java
 package test;

@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 interface Bound
 class Cls : Bound
@@ -57,7 +57,7 @@ fun test7(cls: Cls) {
 }
 
 fun test8(cls: Cls) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(
+    id(
         wrapIn(cls)
     )
 }

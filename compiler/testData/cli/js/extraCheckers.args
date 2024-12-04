@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/extraCheckers.kt
+-Wextra
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

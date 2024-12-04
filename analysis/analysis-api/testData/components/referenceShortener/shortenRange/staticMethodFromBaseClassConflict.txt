@@ -1,0 +1,13 @@
+Before shortening: fun usage() {
+        Middle.test()
+        Base.test()
+    }
+with default settings:
+[qualifier] Middle.test()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] Middle.test()
+with SHORTEN_AND_IMPORT:
+[qualifier] Middle.test()
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] Middle.test()

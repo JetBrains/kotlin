@@ -27,6 +27,16 @@ expect fun function5(): Planet
 expect fun function6(): Planet
 expect fun function7(): C
 
+// Optimistic Number Commonization: KT-48455, KT-48568
+@kotlinx.cinterop.UnsafeNumber(["js: kotlin.Int", "jvm: kotlin.Long"])
+expect val propertyWithMismatchedType1: Int
+@kotlinx.cinterop.UnsafeNumber(["js: kotlin.Int", "jvm: kotlin.Short"])
+expect val propertyWithMismatchedType2: Short
+@kotlinx.cinterop.UnsafeNumber(["js: kotlin.Int", "jvm: kotlin.Long"])
+expect fun functionWithMismatchedType1(): Int
+@kotlinx.cinterop.UnsafeNumber(["js: kotlin.Int", "jvm: kotlin.Short"])
+expect fun functionWithMismatchedType2(): Short
+
 expect class Box<T>(value: T) {
     val value: T
 }

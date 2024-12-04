@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // bug: type of the expression in return statement is Char
 fun illegalReturnIf(): Char {
-    return if (1 < 2) 'a' else { 1 }
+    return <!RETURN_TYPE_MISMATCH!>if (1 < 2) 'a' else { 1 }<!>
 }
 
 fun foo(): String {
@@ -12,7 +13,7 @@ fun ok(): Int {
 }
 
 fun okOneLineFunction(): Int = 10 + 1
-fun errorOneLineFunction(): String = <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>10 + 1<!>
+fun errorOneLineFunction(): String = <!RETURN_TYPE_MISMATCH!>10 + 1<!>
 
 class A {
     fun bar() {}
@@ -37,7 +38,7 @@ fun errorWithLambda(): String {
         return@foo
     } foo {
         bar()
-        return@foo 10
+        return@foo <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>10<!>
     }
 
     return ""

@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -17,12 +14,13 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LambdaArgumentConstraintPositionImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.StubTypeForBuilderInference
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class PostponedArgumentsAnalyzer(
     private val callableReferenceArgumentResolver: CallableReferenceArgumentResolver,
@@ -94,9 +92,13 @@ class PostponedArgumentsAnalyzer(
 
         val expectedParameters = lambda.expectedType.valueParameters()
         val expectedReceiver = lambda.expectedType.receiver()
+        val expectedContextReceivers = lambda.expectedType.contextReceivers()
 
         val receiver = lambda.receiver?.let {
             expectedOrActualType(expectedReceiver ?: expectedParameters?.getOrNull(0), lambda.receiver)
+        }
+        val contextReceivers = lambda.contextReceivers.mapIndexedNotNull { i, contextReceiver ->
+            expectedOrActualType(expectedContextReceivers?.getOrNull(i), contextReceiver)
         }
 
         val expectedParametersToMatchAgainst = when {
@@ -127,14 +129,16 @@ class PostponedArgumentsAnalyzer(
             else FilteredAnnotations(annotations, true) { it != StandardNames.FqNames.extensionFunctionType }
         }
 
+        @Suppress("UNCHECKED_CAST")
         val returnArgumentsAnalysisResult = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
             lambda.atom,
             lambda.isSuspend,
             receiver,
+            contextReceivers,
             parameters,
             expectedTypeForReturnArguments,
             convertedAnnotations ?: Annotations.EMPTY,
-            substitutorAndStubsForLambdaAnalysis.stubsForPostponedVariables.cast(),
+            substitutorAndStubsForLambdaAnalysis.stubsForPostponedVariables as Map<NewTypeVariable, StubTypeForBuilderInference>,
         )
         applyResultsOfAnalyzedLambdaToCandidateSystem(c, lambda, returnArgumentsAnalysisResult, completionMode, diagnosticHolder, substitute)
         return returnArgumentsAnalysisResult
@@ -189,11 +193,11 @@ class PostponedArgumentsAnalyzer(
                 || languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
 
         if (inferenceSession != null && shouldUseBuilderInference) {
-            val storageSnapshot = c.getBuilder().currentStorage()
+            val constraintSystemBuilder = c.getBuilder()
 
             val postponedVariables = inferenceSession.inferPostponedVariables(
                 lambda,
-                storageSnapshot,
+                constraintSystemBuilder,
                 completionMode,
                 diagnosticHolder
             )
@@ -202,8 +206,16 @@ class PostponedArgumentsAnalyzer(
                 return
             }
 
+            // WARN: Following type constraint system unification algorithm is incorrect,
+            // as in fact direction of constraint should depend on projection direction
+            // To perform constraint unification properly, original constraints should be
+            // unified instead of simple result type based constraint
+            // Other possible solution is to add equality constraint, but it will be too strict
+            // and will limit usability
+            // Nevertheless, proper design should be done before fixing this
+            // Causes KT-53740
             for ((constructor, resultType) in postponedVariables) {
-                val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue
+                val variableWithConstraints = constraintSystemBuilder.currentStorage().notFixedTypeVariables[constructor] ?: continue
                 val variable = variableWithConstraints.typeVariable
 
                 c.getBuilder().unmarkPostponedVariable(variable)
@@ -218,6 +230,10 @@ class PostponedArgumentsAnalyzer(
 
     private fun UnwrappedType?.receiver(): UnwrappedType? {
         return forFunctionalType { getReceiverTypeFromFunctionType()?.unwrap() }
+    }
+
+    private fun UnwrappedType?.contextReceivers(): List<UnwrappedType>? {
+        return forFunctionalType { getContextReceiverTypesFromFunctionType().map { it.unwrap() } }
     }
 
     private fun UnwrappedType?.valueParameters(): List<UnwrappedType>? {

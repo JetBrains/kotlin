@@ -119,7 +119,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     @NotNull
     @Override
     public FunctionDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        throw new UnsupportedOperationException(); // TODO
+        return this; // no substitution since we work with originals of accessors in the backend anyway
     }
 
     @NotNull
@@ -164,6 +164,12 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     @NotNull
     public PropertyDescriptor getCorrespondingProperty() {
         return correspondingProperty;
+    }
+
+    @NotNull
+    @Override
+    public List<ReceiverParameterDescriptor> getContextReceiverParameters() {
+        return getCorrespondingProperty().getContextReceiverParameters();
     }
 
     @Nullable

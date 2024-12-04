@@ -1,8 +1,0 @@
-KT element: KtNamedFunction
-FIR element: FirSimpleFunctionImpl
-
-FIR element rendered:
-public final fun x(): R|kotlin/Unit| {
-    local final fun y(): R|kotlin/String|
-
-}

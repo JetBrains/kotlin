@@ -1,12 +1,14 @@
-open class A {
+abstract class A {
     val x: Int
 
-    open val y: Int
+    abstract val y: Int
 
     init {
         x = 23
-        y = 42
     }
+
 }
 
-// LINES: 1 2 4 7 7 8 8 4 4 4
+class B(override val y: Int): A()
+
+// LINES(JS_IR): 1 1 7 7 2 2 2 12 12 12 12 12 12 12 12

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class A {
     open var value: Int = 4
         protected set

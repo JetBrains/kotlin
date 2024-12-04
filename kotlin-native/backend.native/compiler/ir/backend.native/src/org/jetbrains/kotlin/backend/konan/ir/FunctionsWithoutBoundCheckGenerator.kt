@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
-import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.computeBinaryType
+import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.addMember
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -28,22 +29,22 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
     private val symbols = context.ir.symbols
 
     private fun generateFunction(baseFunction: IrSimpleFunction, delegatingToFunction: IrSimpleFunction?, functionName: Name) =
-            context.irFactory.createFunction(
-                    baseFunction.startOffset, baseFunction.endOffset,
-                    IrDeclarationOrigin.GENERATED_SETTER_GETTER,
-                    IrSimpleFunctionSymbolImpl(),
-                    functionName,
-                    DescriptorVisibilities.PUBLIC,
-                    Modality.FINAL,
-                    baseFunction.returnType,
+            context.irFactory.createSimpleFunction(
+                    startOffset = baseFunction.startOffset,
+                    endOffset = baseFunction.endOffset,
+                    origin = IrDeclarationOrigin.GENERATED_SETTER_GETTER,
+                    name = functionName,
+                    visibility = DescriptorVisibilities.PUBLIC,
                     isInline = false,
-                    isExternal = true,
+                    isExpect = false,
+                    returnType = baseFunction.returnType,
+                    modality = Modality.FINAL,
+                    symbol = IrSimpleFunctionSymbolImpl(),
                     isTailrec = false,
                     isSuspend = false,
-                    isExpect = false,
-                    isFakeOverride = false,
                     isOperator = false,
-                    isInfix = false
+                    isInfix = false,
+                    isExternal = true,
             ).also { function ->
                 function.parent = baseFunction.parent
                 function.createDispatchReceiverParameter()
@@ -64,7 +65,7 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
     fun generate() {
         symbols.arrays.forEach { classSymbol ->
             val underlyingClass = (classSymbol.defaultType.computeBinaryType() as BinaryType.Reference)
-                    .types.single().takeIf { classSymbol.owner.isInline }
+                    .types.single().takeIf { classSymbol.owner.isSingleFieldValueClass }
             val setFunction = classSymbol.owner.functions.single { it.name == OperatorNameConventions.SET }
             val setDelegatingToFunction = underlyingClass?.functions?.single { it.name == OperatorNameConventions.SET }
             classSymbol.owner.addMember(generateFunction(setFunction, setDelegatingToFunction, KonanNameConventions.setWithoutBoundCheck))

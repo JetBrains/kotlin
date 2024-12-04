@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js").version("<pluginMarkerVersion>")
+    kotlin("js")
 }
 
 group = "com.example"
@@ -11,7 +11,7 @@ repositories {
 }
 
 kotlin {
-    js(IR) {
+    js {
         nodejs {
         }
     }

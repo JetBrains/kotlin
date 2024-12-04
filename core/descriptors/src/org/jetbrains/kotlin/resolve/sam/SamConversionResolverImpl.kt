@@ -76,6 +76,7 @@ fun getFunctionTypeForAbstractMethod(
     val parameterTypes = ArrayList<KotlinType>(valueParameters.size)
     val parameterNames = ArrayList<Name>(valueParameters.size)
 
+    val contextReceiversTypes = function.contextReceiverParameters.map { it.type }
     var startIndex = 0
     var receiverType: KotlinType? = null
     val extensionReceiver = function.extensionReceiverParameter
@@ -93,7 +94,7 @@ fun getFunctionTypeForAbstractMethod(
     }
 
     return createFunctionType(
-        function.builtIns, EMPTY, receiverType, parameterTypes,
+        function.builtIns, EMPTY, receiverType, contextReceiversTypes, parameterTypes,
         parameterNames, returnType, function.isSuspend
     )
 }

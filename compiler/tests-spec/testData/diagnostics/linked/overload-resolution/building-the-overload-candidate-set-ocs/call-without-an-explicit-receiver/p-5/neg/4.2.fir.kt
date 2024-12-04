@@ -1,7 +1,15 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-464
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, call-without-an-explicit-receiver -> paragraph 5 -> sentence 4
+ * PRIMARY LINKS: overload-resolution, building-the-overload-candidate-set-ocs, call-without-an-explicit-receiver -> paragraph 5 -> sentence 6
+ * NUMBER: 2
+ * DESCRIPTION: Top-level non-extension functions named f: callables implicitly imported into the current file;
+ */
 
 
 // FILE: TestCase1.kt
@@ -17,7 +25,7 @@ class B : I
 
 fun case1(){
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!OPERATOR_MODIFIER_REQUIRED!>A<!>()<!>
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!OPERATOR_MODIFIER_REQUIRED!>A<!>()<!>
+    <!DEBUG_INFO_CALL("fqName: lib.case1.A.invoke; typeCall: function")!><!OPERATOR_MODIFIER_REQUIRED!>A<!>()<!>
 }
 
 // FILE: Lib.kt

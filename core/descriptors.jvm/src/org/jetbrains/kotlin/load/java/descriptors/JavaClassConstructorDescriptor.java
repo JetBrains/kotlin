@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.descriptors;
 
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -132,8 +133,7 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
                 );
         // We do not use doSubstitute here as in JavaMethodDescriptor.enhance because type parameters of constructor belongs to class
         enhanced.initialize(
-                enhancedReceiver,
-                getDispatchReceiverParameter(),
+                enhancedReceiver, getDispatchReceiverParameter(), CollectionsKt.<ReceiverParameterDescriptor>emptyList(),
                 getTypeParameters(),
                 UtilKt.copyValueParameters(enhancedValueParameterTypes, getValueParameters(), enhanced),
                 enhancedReturnType,

@@ -1,0 +1,73 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+inline fun Wrapper(content: @Composable () -> Unit) = content()
+
+@Composable
+fun Test(condition: Boolean) {
+    A()
+    Wrapper {
+        A()
+        if (!condition) return
+        A()
+    }
+    A()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Wrapper)<conten...>:Test.kt")
+  content(%composer, 0b1110 and %changed)
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<A()>,<Wrappe...>,<A()>:Test.kt")
+  val tmp0_marker = %composer.currentMarker
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    A(%composer, 0)
+    Wrapper({ %composer: Composer?, %changed: Int ->
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C<A()>,<A()>:Test.kt")
+      A(%composer, 0)
+      if (!condition) {
+        %composer.endToMarker(tmp0_marker)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        %composer@Test.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+          Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
+        }
+        return
+      }
+      A(%composer, 0)
+      %composer.endReplaceGroup()
+    }, %composer, 0)
+    A(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

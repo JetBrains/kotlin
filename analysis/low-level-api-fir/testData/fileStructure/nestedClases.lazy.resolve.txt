@@ -1,0 +1,28 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] nestedClases.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.B| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] object C : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.C| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class D : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.C.D| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }

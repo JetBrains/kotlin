@@ -24,9 +24,10 @@ KtFile: IncompleteAccessor1.kt
         PsiWhiteSpace(' ')
         PROPERTY_ACCESSOR
           PsiElement(get)('get')
-          PsiElement(LPAR)('(')
-          PsiErrorElement:Expecting ')'
-            <empty list>
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiErrorElement:Expecting ')'
+              <empty list>
           PsiErrorElement:Expecting function body
             <empty list>
       PsiWhiteSpace('\n')

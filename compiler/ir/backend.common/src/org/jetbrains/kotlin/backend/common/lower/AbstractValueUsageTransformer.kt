@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.ir.util.innerInlinedBlockOrThis
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -33,7 +34,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * TODO: consider making this visitor non-recursive to make it more general.
  */
 abstract class AbstractValueUsageTransformer(
-    protected val irBuiltIns: IrBuiltIns
+    protected val irBuiltIns: IrBuiltIns,
+    private val replaceTypesInsideInlinedFunctionBlock: Boolean = false
 ) : IrElementTransformerVoid() {
 
     protected open fun IrExpression.useAs(type: IrType): IrExpression = this
@@ -71,13 +73,12 @@ abstract class AbstractValueUsageTransformer(
             is IrSimpleFunctionSymbol -> this.useAs(returnTarget.owner.returnType)
             is IrConstructorSymbol -> this.useAs(irBuiltIns.unitType)
             is IrReturnableBlockSymbol -> this.useAs(returnTarget.owner.type)
-            else -> error(returnTarget)
         }
 
     protected open fun IrExpression.useAsResult(enclosing: IrExpression): IrExpression =
         this.useAs(enclosing.type)
 
-    protected open fun IrExpression.useAsVarargElement(expression: IrVararg): IrExpression = this
+    protected open fun useAsVarargElement(element: IrExpression, expression: IrVararg): IrExpression = element
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
         TODO()
@@ -119,6 +120,14 @@ abstract class AbstractValueUsageTransformer(
         return body
     }
 
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+        if (!replaceTypesInsideInlinedFunctionBlock) {
+            inlinedBlock.transformChildrenVoid(this)
+            return inlinedBlock
+        }
+        return super.visitInlinedFunctionBlock(inlinedBlock)
+    }
+
     override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
@@ -126,14 +135,14 @@ abstract class AbstractValueUsageTransformer(
             return expression
         }
 
-        val lastIndex = expression.statements.lastIndex
-        expression.statements.forEachIndexed { i, irStatement ->
+        val container = expression.innerInlinedBlockOrThis
+        val lastIndex = container.statements.lastIndex
+        container.statements.forEachIndexed { i, irStatement ->
             if (irStatement is IrExpression) {
-                expression.statements[i] =
-                        if (i == lastIndex)
-                            irStatement.useAsResult(expression)
-                        else
-                            irStatement.useAsStatement()
+                container.statements[i] = when (i) {
+                    lastIndex -> irStatement.useAsResult(expression)
+                    else -> irStatement.useAsStatement()
+                }
             }
         }
 
@@ -233,7 +242,7 @@ abstract class AbstractValueUsageTransformer(
                 is IrSpreadElement ->
                     element.expression = element.expression.useAs(expression.type)
                 is IrExpression -> {
-                    expression.putElement(i, element.useAsVarargElement(expression))
+                    expression.putElement(i, useAsVarargElement(element, expression))
                 }
             }
         }

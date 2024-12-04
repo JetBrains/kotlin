@@ -1,29 +1,31 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 class Outer<TO> {
-    typealias LTO = List<TO>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTO = List<TO>
 
     class Nested<TN> {
-        typealias LTO = List<<!UNRESOLVED_REFERENCE!>TO<!>>
-        typealias LTN = List<TN>
+        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTO = List<<!UNRESOLVED_REFERENCE!>TO<!>>
+        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTN = List<TN>
 
         inner class Inner<TI> {
-            typealias LTO = List<<!UNRESOLVED_REFERENCE!>TO<!>>
-            typealias LTN = List<TN>
-            typealias LTI = List<TI>
+            <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTO = List<<!UNRESOLVED_REFERENCE!>TO<!>>
+            <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTN = List<TN>
+            <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTI = List<TI>
         }
     }
 }
 
 fun <TF> foo() {
     class Local<TL> {
-        typealias LTF = List<TF>
-        typealias LTL = List<TL>
+        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTF = List<TF>
+        <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTL = List<TL>
     }
 
     fun <TLF> localfun() =
             object {
-                typealias LTF = List<TF>
-                typealias LTLF = List<TLF>
+                <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTF = List<TF>
+                <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTLF = List<TLF>
             }
 }

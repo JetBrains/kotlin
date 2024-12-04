@@ -1,0 +1,38 @@
+library {
+  // module name: <varargs.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/My
+    // class name: test/ann
+    // class name: test/annotated
+
+    public final enum class test/My : kotlin/Enum<test/My> {
+
+      private constructor()
+
+      ALPHA,
+
+      BETA,
+
+      OMEGA,
+
+      // has Enum.entries
+    }
+
+    public final annotation class test/ann : kotlin/Annotation {
+
+      public constructor(vararg m: test/My /* kotlin/Array<out test/My> */)
+
+      public final val m: kotlin/Array<out test/My>
+        public final get
+    }
+
+    @test/ann(m = [test/My.ALPHA, test/My.BETA])
+    public final annotation class test/annotated : kotlin/Annotation {
+
+      public constructor()
+    }
+  }
+}

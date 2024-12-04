@@ -12,8 +12,9 @@ repositories {
     }
 }
 
+kotlin.jvmToolchain(8)
+
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.intellij.deps:asm-all:9.0"

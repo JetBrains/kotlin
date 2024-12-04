@@ -49,9 +49,9 @@ abstract class ClassNameCollectionClassBuilderFactory(
             super.defineClass(origin, version, access, name, signature, superName, interfaces)
         }
 
-        override fun done() {
+        override fun done(generateSmapCopyToAnnotation: Boolean) {
             handleClashingNames(classInternalName, classCreatedFor)
-            super.done()
+            super.done(generateSmapCopyToAnnotation)
         }
     }
 }

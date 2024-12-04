@@ -17,13 +17,10 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.openapi.project.Project
-import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -53,12 +50,14 @@ interface CodegenFactory {
         val bindingContext: BindingContext,
         val languageVersionSettings: LanguageVersionSettings,
         val ignoreErrors: Boolean,
+        val skipBodies: Boolean,
     ) {
         companion object {
-            fun fromGenerationState(state: GenerationState): IrConversionInput =
+            fun fromGenerationStateAndFiles(state: GenerationState, files: Collection<KtFile>): IrConversionInput =
                 with(state) {
                     IrConversionInput(
-                        project, files, configuration, module, originalFrontendBindingContext, languageVersionSettings, ignoreErrors
+                        project, files, configuration, module, originalFrontendBindingContext, languageVersionSettings, ignoreErrors,
+                        skipBodies = !state.classBuilderMode.generateBodies
                     )
                 }
         }
@@ -78,65 +77,5 @@ interface CodegenFactory {
                 ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             }
         }
-    }
-}
-
-object DefaultCodegenFactory : CodegenFactory {
-    private object DummyOldBackendInput : CodegenFactory.BackendInput
-
-    private class DummyOldCodegenInput(override val state: GenerationState) : CodegenFactory.CodegenInput
-
-    override fun convertToIr(input: CodegenFactory.IrConversionInput): CodegenFactory.BackendInput = DummyOldBackendInput
-
-    override fun getModuleChunkBackendInput(
-        wholeBackendInput: CodegenFactory.BackendInput,
-        sourceFiles: Collection<KtFile>,
-    ): CodegenFactory.BackendInput = DummyOldBackendInput
-
-    override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
-        val filesInPackages = MultiMap<FqName, KtFile>()
-        val filesInMultifileClasses = MultiMap<FqName, KtFile>()
-
-        for (file in state.files) {
-            val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
-
-            if (fileClassInfo.withJvmMultifileClass) {
-                filesInMultifileClasses.putValue(fileClassInfo.facadeClassFqName, file)
-            } else {
-                filesInPackages.putValue(file.packageFqName, file)
-            }
-        }
-
-        val obsoleteMultifileClasses = HashSet(state.obsoleteMultifileClasses)
-        for (multifileClassFqName in filesInMultifileClasses.keySet() + obsoleteMultifileClasses) {
-            CodegenFactory.doCheckCancelled(state)
-            generateMultifileClass(state, multifileClassFqName, filesInMultifileClasses.get(multifileClassFqName))
-        }
-
-        val packagesWithObsoleteParts = HashSet(state.packagesWithObsoleteParts)
-        for (packageFqName in packagesWithObsoleteParts + filesInPackages.keySet()) {
-            CodegenFactory.doCheckCancelled(state)
-            generatePackage(state, packageFqName, filesInPackages.get(packageFqName))
-        }
-
-        return DummyOldCodegenInput(state)
-    }
-
-    override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
-        // Do nothing
-    }
-
-    private fun generateMultifileClass(state: GenerationState, multifileClassFqName: FqName, files: Collection<KtFile>) {
-        state.factory.forMultifileClass(multifileClassFqName, files).generate()
-    }
-
-    fun generatePackage(
-        state: GenerationState,
-        packageFqName: FqName,
-        ktFiles: Collection<KtFile>
-    ) {
-        // We do not really generate package class, but use old package fqName to identify package in module-info.
-        //FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
-        state.factory.forPackage(packageFqName, ktFiles).generate()
     }
 }

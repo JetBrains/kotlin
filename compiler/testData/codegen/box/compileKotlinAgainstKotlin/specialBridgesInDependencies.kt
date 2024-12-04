@@ -1,3 +1,5 @@
+// NATIVE error: this type is final, so it cannot be inherited from
+// DONT_TARGET_EXACT_BACKEND: NATIVE
 // WITH_STDLIB
 // MODULE: lib
 // FILE: A.kt

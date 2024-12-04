@@ -1,6 +1,6 @@
-// !OPT_IN: kotlin.js.ExperimentalJsExport
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !RENDER_DIAGNOSTICS_MESSAGES
+// OPT_IN: kotlin.js.ExperimentalJsExport
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// RENDER_DIAGNOSTICS_MESSAGES
 
 package foo
 
@@ -23,7 +23,7 @@ var x2: C<!>
 
 @JsExport
 class A(
-    <!NON_EXPORTABLE_TYPE("property; C"), NON_EXPORTABLE_TYPE("parameter; C")!>val x: C<!>,
+    <!NON_EXPORTABLE_TYPE("parameter; C")!>val x: C<!>,
     <!NON_EXPORTABLE_TYPE("parameter; C")!>y: C<!>
 ) {
     <!NON_EXPORTABLE_TYPE("return; C")!>fun foo(<!NON_EXPORTABLE_TYPE("parameter; C")!>x: C<!>)<!> = x
@@ -53,4 +53,28 @@ fun foo5(<!NON_EXPORTABLE_TYPE("parameter; (Unit) -> Unit")!>x: (Unit) -> Unit<!
 
 @JsExport
 fun foo6(x: (A) -> A) {
+}
+
+@JsExport
+fun foo7(x: List<Int>) {
+}
+
+@JsExport
+fun foo8(x: MutableList<Int>) {
+}
+
+@JsExport
+fun foo9(x: Set<Int>) {
+}
+
+@JsExport
+fun foo10(x: MutableSet<Int>) {
+}
+
+@JsExport
+fun foo11(x: Map<String, Int>) {
+}
+
+@JsExport
+fun foo12(x: MutableMap<String, Int>) {
 }

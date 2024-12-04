@@ -1,0 +1,24 @@
+@kotlin.Metadata
+public final class ArrayKt {
+    // source: 'array.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class ICIntArray {
+    // source: 'array.kt'
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.Integer[]
+    private synthetic method <init>(p0: java.lang.Integer[]): void
+    public synthetic final static method box-impl(p0: java.lang.Integer[]): ICIntArray
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Integer[]): java.lang.Integer[]
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Integer[], p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Integer[], p1: java.lang.Integer[]): boolean
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.Integer[]
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Integer[]): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.Integer[]): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.Integer[]
+}

@@ -1,0 +1,3 @@
+expression: +1
+constant: 1
+constantValueKind: IntValue

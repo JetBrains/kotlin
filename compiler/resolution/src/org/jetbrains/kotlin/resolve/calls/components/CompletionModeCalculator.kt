@@ -136,16 +136,14 @@ class CompletionModeCalculator {
             fixationDirectionsCollector: MutableSet<FixationDirectionForVariable>
         ) {
             val typeArgumentsCount = type.argumentsCount()
-            if (typeArgumentsCount > 0) {
+            val typeConstructor = type.typeConstructor()
+            if (typeArgumentsCount > 0 && typeArgumentsCount == typeConstructor.parametersCount()) {
                 for (position in 0 until typeArgumentsCount) {
                     val argument = type.getArgument(position)
-                    val parameter = type.typeConstructor().getParameter(position)
-
-                    if (argument.isStarProjection())
-                        continue
+                    val parameter = typeConstructor.getParameter(position)
 
                     collectRequiredDirectionsForVariables(
-                        argument.getType(),
+                        argument.getType() ?: continue,
                         compositeVariance(outerVariance, argument, parameter),
                         fixationDirectionsCollector
                     )

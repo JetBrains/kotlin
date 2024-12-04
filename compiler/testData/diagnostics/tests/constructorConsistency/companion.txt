@@ -12,7 +12,7 @@ public final class My {
     public companion object Companion {
         private constructor Companion()
         public final val u: kotlin.String
-        public final val y: [ERROR : Type for foo()]
+        public final val y: [Error type: Not found recorded type for foo()]
         public final val z: kotlin.String?
         public final fun bar(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

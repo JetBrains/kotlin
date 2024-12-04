@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1286
 package foo
 
 fun test(action: ()->Unit): String = js("""

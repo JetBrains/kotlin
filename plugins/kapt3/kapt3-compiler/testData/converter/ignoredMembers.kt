@@ -1,3 +1,5 @@
+// STRIP_METADATA
+// TODO: Re-enable metadata generation
 import kotlinx.kapt.*
 
 class Test {

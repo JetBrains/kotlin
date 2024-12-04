@@ -58,6 +58,7 @@ class JavaTypeEnhancementStateParser(
 
         return JavaTypeEnhancementState(jsr305Settings) {
             when {
+                it.isSubpackageOf(JSPECIFY_OLD_ANNOTATIONS_PACKAGE) -> jspecifyReportLevel
                 it.isSubpackageOf(JSPECIFY_ANNOTATIONS_PACKAGE) -> jspecifyReportLevel
                 it.isSubpackageOf(CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE) -> compatqualCheckerFrameworkAnnotationsReportLevel
                 else -> getReportLevelForAnnotation(it, nullabilityAnnotationReportLevels, kotlinVersion)
@@ -108,7 +109,7 @@ class JavaTypeEnhancementStateParser(
         if (reportLevel == null) {
             collector.report(
                 CompilerMessageSeverity.ERROR,
-                "Unrecognized -Xjspecify-annotations option: $jspecifyState. Possible values are 'disable'/'warn'/'strict'"
+                "Unrecognized -Xjspecify-annotations option: $jspecifyState. Possible values are 'ignore'/'warn'/'strict'"
             )
             return getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE, nullabilityAnnotationReportLevels, kotlinVersion)
         }
@@ -202,7 +203,7 @@ class JavaTypeEnhancementStateParser(
     }
 
     companion object {
-        private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, KotlinVersion.CURRENT)
+        private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, KotlinVersion(1, 7, 20))
         private const val NULLABILITY_ANNOTATIONS_COMPILER_OPTION = "-Xnullability-annotations"
 
         fun parsePlainNullabilityAnnotationReportLevels(nullabilityAnnotations: String): Pair<FqName, ReportLevel> =

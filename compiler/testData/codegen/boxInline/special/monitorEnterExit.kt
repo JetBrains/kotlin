@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 // FILE: mySynchronized.kt
 
 import kotlin.jvm.internal.unsafe.*

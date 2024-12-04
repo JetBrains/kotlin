@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -REDUNDANT_PROJECTION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -REDUNDANT_PROJECTION
 
 class In<in T>() {
     fun f(t : T) {}
@@ -7,5 +8,5 @@ class In<in T>() {
 
 fun test1(x: In<String>): Unit = x.f("1")
 fun test2(x: In<in String>): Unit = x.f("1")
-fun test3(x: In<<!CONFLICTING_PROJECTION!>out<!> String>): Unit = x.<!NONE_APPLICABLE!>f<!>("1")
-fun test4(x: In<*>): Unit = x.<!NONE_APPLICABLE!>f<!>("1")
+fun test3(x: In<<!CONFLICTING_PROJECTION!>out<!> String>): Unit = x.f(<!TYPE_MISMATCH!>"1"<!>)
+fun test4(x: In<*>): Unit = x.f(<!TYPE_MISMATCH!>"1"<!>)

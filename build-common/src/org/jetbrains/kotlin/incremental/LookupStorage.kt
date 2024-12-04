@@ -32,19 +32,22 @@ import java.util.*
 
 open class LookupStorage(
     targetDataDir: File,
-    pathConverter: FileToPathConverter
+    private val icContext: IncrementalCompilationContext,
 ) : BasicMapsOwner(targetDataDir) {
     val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
 
     companion object {
-        private val DELETED_TO_SIZE_TRESHOLD = 0.5
-        private val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
+        private const val DELETED_TO_SIZE_THRESHOLD = 0.5
+        private const val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
     }
 
+    private val trackChanges
+        get() = icContext.trackChangesInLookupCache
+
     private val countersFile = "counters".storageFile
-    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, pathConverter))
-    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, pathConverter))
-    val lookupMap = registerMap(LookupMap("lookups".storageFile))
+    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, icContext))
+    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, icContext))
+    private val lookupMap = TrackedLookupMap(registerMap(LookupMap("lookups".storageFile, icContext)), trackChanges)
 
     @Volatile
     private var size: Int = 0
@@ -54,8 +57,10 @@ open class LookupStorage(
         try {
             if (countersFile.exists()) {
                 val lines = countersFile.readLines()
-                size = lines.firstOrNull()?.toIntOrNull() ?: throw IOException("$countersFile exists, but it is empty. " +
-                                                                                       "Counters file is corrupted")
+                size = lines.firstOrNull()?.toIntOrNull() ?: throw IOException(
+                    "$countersFile exists, but it is empty. " +
+                            "Counters file is corrupted"
+                )
                 oldSize = size
             }
         } catch (e: IOException) {
@@ -64,6 +69,24 @@ open class LookupStorage(
             throw IOException("Could not read $countersFile", e)
         }
     }
+
+    /** Set of [LookupSymbol]s that have been added after the initialization of this [LookupStorage] instance. */
+    val addedLookupSymbols: Set<LookupSymbolKey>
+        get() = run {
+            check(trackChanges) { "trackChanges is not enabled" }
+            lookupMap.addedKeys!!
+        }
+
+    /** Set of [LookupSymbol]s that have been removed after the initialization of this [LookupStorage] instance. */
+    val removedLookupSymbols: Set<LookupSymbolKey>
+        get() = run {
+            check(trackChanges) { "trackChanges is not enabled" }
+            lookupMap.removedKeys!!
+        }
+
+    /** Returns all [LookupSymbol]s in this storage. Note that this call takes a bit of time to run. */
+    val lookupSymbols: Collection<LookupSymbolKey>
+        get() = lookupMap.keys
 
     @Synchronized
     fun get(lookupSymbol: LookupSymbol): Collection<String> {
@@ -82,7 +105,7 @@ open class LookupStorage(
 
         }
 
-        if (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && filtered.size.toDouble() / fileIds.size.toDouble() < DELETED_TO_SIZE_TRESHOLD) {
+        if (size > MINIMUM_GARBAGE_COLLECTIBLE_SIZE && filtered.size.toDouble() / fileIds.size.toDouble() < DELETED_TO_SIZE_THRESHOLD) {
             lookupMap[key] = filtered
         }
 
@@ -112,31 +135,24 @@ open class LookupStorage(
     }
 
     @Synchronized
-    override fun clean() {
-        if (countersFile.exists()) {
-            countersFile.delete()
-        }
+    override fun deleteStorageFiles() {
+        icContext.transaction.deleteFile(countersFile.toPath())
 
         size = 0
 
-        super.clean()
+        super.deleteStorageFiles()
     }
 
     @Synchronized
-    override fun flush(memoryCachesOnly: Boolean) {
+    override fun close() {
         try {
             if (size != oldSize) {
                 if (size > 0) {
-                    if (!countersFile.exists()) {
-                        countersFile.parentFile.mkdirs()
-                        countersFile.createNewFile()
-                    }
-
-                    countersFile.writeText("$size\n0")
+                    icContext.transaction.writeText(countersFile.toPath(), "$size\n0")
                 }
             }
         } finally {
-            super.flush(memoryCachesOnly)
+            super.close()
         }
     }
 
@@ -155,10 +171,10 @@ open class LookupStorage(
             lookupMap[hash] = lookupMap[hash]!!.filter { it in idToFile }.toSet()
         }
 
-        val oldFileToId = fileToId.toMap()
+        val oldFileToId = fileToId.keys.associateWith { fileToId[it]!! }
         val oldIdToNewId = HashMap<Int, Int>(oldFileToId.size)
-        idToFile.clean()
-        fileToId.clean()
+        idToFile.clear()
+        fileToId.clear()
         size = 0
 
         for ((file, oldId) in oldFileToId.entries.sortedBy { it.key.path }) {
@@ -181,12 +197,12 @@ open class LookupStorage(
     @TestOnly
     fun forceGC() {
         removeGarbageForTests()
-        flush(false)
+        flush()
     }
 
     @TestOnly
     fun dump(lookupSymbols: Set<LookupSymbol>): String {
-        flush(false)
+        flush()
 
         val sb = StringBuilder()
         val p = Printer(sb)
@@ -255,6 +271,15 @@ class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
             delegate.record(prevFilePath, position, prevScopeFqName, scopeKind, prevName)
         }
     }
+
+    override fun clear() {
+        lookups.clear()
+        prevFilePath = ""
+        prevPosition = null
+        prevScopeFqName = ""
+        prevScopeKind = null
+        prevName = ""
+    }
 }
 
 data class LookupSymbol(val name: String, val scope: String) : Comparable<LookupSymbol> {
@@ -263,5 +288,55 @@ data class LookupSymbol(val name: String, val scope: String) : Comparable<Lookup
         if (scopeCompare != 0) return scopeCompare
 
         return name.compareTo(other.name)
+    }
+}
+
+/**
+ * Wrapper of a [LookupMap] which tracks changes to the map after the initialization of this [TrackedLookupMap] instance (unless
+ * [trackChanges] is set to `false`).
+ */
+private class TrackedLookupMap(private val lookupMap: LookupMap, private val trackChanges: Boolean) {
+
+    // Note that there may be multiple operations on the same key, and the following sets contain the *aggregated* differences with the
+    // original set of keys in the map. For example, if a key is added then removed, or vice versa, it will not be present in either set.
+    val addedKeys = if (trackChanges) mutableSetOf<LookupSymbolKey>() else null
+    val removedKeys = if (trackChanges) mutableSetOf<LookupSymbolKey>() else null
+
+    val keys: Set<LookupSymbolKey>
+        get() = lookupMap.keys
+
+    operator fun get(key: LookupSymbolKey): Set<Int>? = lookupMap[key]
+
+    operator fun set(key: LookupSymbolKey, fileIds: Set<Int>) {
+        recordSet(key)
+        lookupMap[key] = fileIds
+    }
+
+    fun append(key: LookupSymbolKey, fileIds: Set<Int>) {
+        recordSet(key)
+        lookupMap.append(key, fileIds)
+    }
+
+    fun remove(key: LookupSymbolKey) {
+        recordRemove(key)
+        lookupMap.remove(key)
+    }
+
+    private fun recordSet(key: LookupSymbolKey) {
+        if (!trackChanges) return
+        when (key) {
+            in lookupMap -> Unit
+            in removedKeys!! -> removedKeys.remove(key)
+            else -> addedKeys!!.add(key)
+        }
+    }
+
+    private fun recordRemove(key: LookupSymbolKey) {
+        if (!trackChanges) return
+        when (key) {
+            !in lookupMap -> Unit
+            in addedKeys!! -> addedKeys.remove(key)
+            else -> removedKeys!!.add(key)
+        }
     }
 }

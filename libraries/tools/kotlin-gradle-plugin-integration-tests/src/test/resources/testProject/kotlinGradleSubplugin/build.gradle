@@ -1,22 +1,9 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-subplugin-example:$kotlin_version"
-    }
+plugins {
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.gradle-subplugin-example")
 }
-
-apply plugin: "kotlin"
-apply plugin: "kotlin-example-subplugin"
 
 repositories {
     mavenLocal()
     mavenCentral()
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

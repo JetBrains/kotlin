@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 open class Outer {
     private class PrivateNested
     private inner class PrivateInner

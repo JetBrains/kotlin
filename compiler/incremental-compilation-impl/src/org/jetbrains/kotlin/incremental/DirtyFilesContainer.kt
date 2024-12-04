@@ -12,12 +12,14 @@ import java.io.File
 class DirtyFilesContainer(
     private val caches: IncrementalCachesManager<*>,
     private val reporter: ICReporter,
-    private val sourceFilesExtensions: List<String>
+    private val sourceFilesExtensions: Set<String>
 ) {
     private val myDirtyFiles = HashSet<File>()
 
-    fun toMutableList(): MutableList<File> =
-        ArrayList(myDirtyFiles)
+    fun isEmpty() = myDirtyFiles.isEmpty()
+
+    fun toMutableLinkedSet(): LinkedHashSet<File> =
+        LinkedHashSet(myDirtyFiles)
 
     fun add(files: Iterable<File>, reason: String?) {
         val existingKotlinFiles = files.filter { it.isKotlinFile(sourceFilesExtensions) }

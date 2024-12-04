@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun bar(): Boolean { return true }
 
 fun gav(arg: Any, z: String): String { return if (arg is String) arg else z }

@@ -12,7 +12,7 @@ import java.io.File
  */
 open class CopySamples : Copy() {
     @InputDirectory
-    var samplesDir: File = project.file("samples")
+    var samplesDir: File = project.file("backend.native/tests/samples")
 
     private fun configureReplacements() {
         from(samplesDir) {
@@ -60,6 +60,5 @@ open class CopySamples : Copy() {
     private val replacements = listOf(
         "https://plugins.gradle.org/m2" to "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2",
         "mavenCentral()" to "maven { setUrl(\"https://cache-redirector.jetbrains.com/maven-central\") }",
-        "jcenter()" to "maven { setUrl(\"https://cache-redirector.jetbrains.com/jcenter\") }"
     )
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 //KT-571 Type inference failed
 fun <T, R> let(t : T, body : (T) -> R) = body(t)

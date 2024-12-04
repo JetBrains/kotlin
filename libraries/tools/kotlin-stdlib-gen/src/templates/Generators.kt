@@ -367,13 +367,6 @@ object Generators : TemplateGroupBase() {
         }
     }
 
-    private fun elementsConversionClause(elements: Family) =
-            """
-            Before Kotlin 1.6, the [elements] ${elements.doc.collection} may have been converted to a [HashSet] to speed up the operation, thus the elements were required to have
-            a correct and stable implementation of `hashCode()` that didn't change between successive invocations. 
-            On JVM, you can enable this behavior back with the system property `kotlin.collections.convert_arg_to_set_in_removeAll` set to `true`.
-            """
-
     val f_minus_iterable = fn("minus(elements: Iterable<T>)") {
         include(Iterables, Sets, Sequences)
     } builder {
@@ -384,7 +377,7 @@ object Generators : TemplateGroupBase() {
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
             """
-            val other = elements.convertToSetForSetOperationWith(this)
+            val other = elements.convertToListIfNotCollection()
             if (other.isEmpty())
                 return this.toList()
 
@@ -402,7 +395,7 @@ object Generators : TemplateGroupBase() {
             }
             body {
                 """
-                val other = elements.convertToSetForSetOperationWith(this)
+                val other = elements.convertToListIfNotCollection()
                 if (other.isEmpty())
                     return this.toSet()
                 if (other is Set)
@@ -429,7 +422,7 @@ object Generators : TemplateGroupBase() {
                 """
                 return object: Sequence<T> {
                     override fun iterator(): Iterator<T> {
-                        val other = elements.convertToSetForSetOperation()
+                        val other = elements.convertToListIfNotCollection()
                         if (other.isEmpty())
                             return this@minus.iterator()
                         else
@@ -439,9 +432,6 @@ object Generators : TemplateGroupBase() {
                 """
             }
 
-        }
-        doc {
-            doc + elementsConversionClause(Iterables)
         }
     }
 
@@ -456,8 +446,7 @@ object Generators : TemplateGroupBase() {
         body {
             """
             if (elements.isEmpty()) return this.toList()
-            val other = elements.convertToSetForSetOperation()
-            return this.filterNot { it in other }
+            return this.filterNot { it in elements }
             """
         }
         specialFor(Sets) {
@@ -492,15 +481,11 @@ object Generators : TemplateGroupBase() {
                 if (elements.isEmpty()) return this
                 return object: Sequence<T> {
                     override fun iterator(): Iterator<T> {
-                        val other = elements.convertToSetForSetOperation()
-                        return this@minus.filterNot { it in other }.iterator()
+                        return this@minus.filterNot { it in elements }.iterator()
                     }
                 }
                 """
             }
-        }
-        doc {
-            doc + elementsConversionClause(ArraysOfObjects)
         }
     }
 
@@ -514,7 +499,7 @@ object Generators : TemplateGroupBase() {
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
             """
-            val other = elements.convertToSetForSetOperation()
+            val other = elements.toList()
             if (other.isEmpty())
                 return this.toList()
 
@@ -553,7 +538,7 @@ object Generators : TemplateGroupBase() {
                 """
                 return object: Sequence<T> {
                     override fun iterator(): Iterator<T> {
-                        val other = elements.convertToSetForSetOperation()
+                        val other = elements.toList()
                         if (other.isEmpty())
                             return this@minus.iterator()
                         else
@@ -562,9 +547,6 @@ object Generators : TemplateGroupBase() {
                 }
                 """
             }
-        }
-        doc {
-            doc + elementsConversionClause(Sequences)
         }
     }
 
@@ -576,7 +558,7 @@ object Generators : TemplateGroupBase() {
 
         doc {
             """
-            Splits the original ${f.collection} into pair of lists,
+            Splits the original ${f.collection} into a pair of lists,
             where *first* list contains elements for which [predicate] yielded `true`,
             while *second* list contains elements for which [predicate] yielded `false`.
             """
@@ -607,7 +589,7 @@ object Generators : TemplateGroupBase() {
         specialFor(CharSequences, Strings) {
             doc {
                 """
-                Splits the original ${f.collection} into pair of ${f.collection}s,
+                Splits the original ${f.collection} into a pair of ${f.collection}s,
                 where *first* ${f.collection} contains characters for which [predicate] yielded `true`,
                 while *second* ${f.collection} contains characters for which [predicate] yielded `false`.
                 """

@@ -10,15 +10,13 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.allJavaFiles
 import org.junit.jupiter.api.DisplayName
 import java.io.File
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
 @DisplayName("Tests that the outputs of a build are deterministic")
-@SimpleGradlePluginTests
-@OptIn(ExperimentalPathApi::class)
 class DeterministicBuildIT : KGPBaseTest() {
 
+    @OtherGradlePluginTests
     @DisplayName("Kapt generate stubs task - KT-40882")
     @GradleTest
     fun testKaptGenerateStubsTask(gradleVersion: GradleVersion) {

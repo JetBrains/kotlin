@@ -1,0 +1,25 @@
+> Configure project :
+
+> Configure project :brokenProjectA
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+#diagnostic-end
+
+
+> Configure project :brokenProjectB
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+#diagnostic-end
+
+
+> Configure project :healthyProject
+
+> Task :brokenProjectA:checkKotlinGradlePluginConfigurationErrors FAILED
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+#diagnostic-end
+
+
+> Task :brokenProjectB:checkKotlinGradlePluginConfigurationErrors FAILED
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+#diagnostic-end
+
+
+> Task :healthyProject:checkKotlinGradlePluginConfigurationErrors SKIPPED

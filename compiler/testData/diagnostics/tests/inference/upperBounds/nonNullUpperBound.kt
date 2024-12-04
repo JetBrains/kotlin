@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun <R : Any> unescape(value: Any): R? = throw Exception("$value")
 

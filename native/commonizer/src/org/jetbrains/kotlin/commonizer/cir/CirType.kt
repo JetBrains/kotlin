@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
-import kotlinx.metadata.KmType
+import kotlin.metadata.KmType
 import org.jetbrains.kotlin.commonizer.utils.Interner
 import org.jetbrains.kotlin.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.commonizer.utils.hashCode
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 /**
  * The hierarchy of [CirType]:
@@ -87,6 +88,9 @@ sealed class CirClassOrTypeAliasType : CirSimpleType(), AnyClassOrTypeAliasType 
 
 abstract class CirClassType : CirClassOrTypeAliasType() {
     abstract val outerType: CirClassType?
+    abstract val attachments: List<CirTypeAttachment>
+
+    inline fun <reified T : CirTypeAttachment> getAttachment(): T? = attachments.firstIsInstanceOrNull()
 
     override fun appendDescriptionTo(builder: StringBuilder, shortNameOnly: Boolean) {
         val outerType = outerType
@@ -107,13 +111,15 @@ abstract class CirClassType : CirClassOrTypeAliasType() {
             classId: CirEntityId,
             outerType: CirClassType?,
             arguments: List<CirTypeProjection>,
-            isMarkedNullable: Boolean
+            isMarkedNullable: Boolean,
+            attachments: List<CirTypeAttachment> = emptyList()
         ): CirClassType = interner.intern(
             CirClassTypeInternedImpl(
                 classifierId = classId,
                 outerType = outerType,
                 arguments = arguments,
-                isMarkedNullable = isMarkedNullable
+                isMarkedNullable = isMarkedNullable,
+                attachments = attachments,
             )
         )
 
@@ -121,13 +127,15 @@ abstract class CirClassType : CirClassOrTypeAliasType() {
             classifierId: CirEntityId = this.classifierId,
             outerType: CirClassType? = this.outerType,
             arguments: List<CirTypeProjection> = this.arguments,
-            isMarkedNullable: Boolean = this.isMarkedNullable
+            isMarkedNullable: Boolean = this.isMarkedNullable,
+            attachments: List<CirTypeAttachment> = this.attachments,
         ): CirClassType {
             return createInterned(
                 classId = classifierId,
                 outerType = outerType,
                 arguments = arguments,
-                isMarkedNullable = isMarkedNullable
+                isMarkedNullable = isMarkedNullable,
+                attachments = attachments,
             )
         }
 
@@ -217,12 +225,14 @@ private class CirClassTypeInternedImpl(
     override val outerType: CirClassType?,
     override val arguments: List<CirTypeProjection>,
     override val isMarkedNullable: Boolean,
+    override val attachments: List<CirTypeAttachment> = emptyList(),
 ) : CirClassType() {
 
     private val hashCode = hashCode(classifierId)
         .appendHashCode(outerType)
         .appendHashCode(arguments)
         .appendHashCode(isMarkedNullable)
+        .appendHashCode(attachments.toTypedArray())
 
     override fun hashCode(): Int = hashCode
 
@@ -232,6 +242,7 @@ private class CirClassTypeInternedImpl(
                 && isMarkedNullable == other.isMarkedNullable
                 && arguments == other.arguments
                 && outerType == other.outerType
+                && attachments == other.attachments
         else -> false
     }
 }
@@ -262,3 +273,8 @@ private class CirTypeAliasTypeInternedImpl(
         else -> false
     }
 }
+
+/**
+ * Marker interface for arbitrary metadata that can be attached to a type during commonization
+ */
+interface CirTypeAttachment

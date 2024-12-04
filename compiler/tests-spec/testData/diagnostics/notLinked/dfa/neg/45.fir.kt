@@ -1,6 +1,14 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
+// DIAGNOSTICS: -UNUSED_EXPRESSION -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 45
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
 
 /*
  * TESTCASE NUMBER: 1
@@ -8,8 +16,8 @@
  */
 fun case_1(x: Number?): Long? {
     if (x is Long?) return x
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!>
-    return <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x<!><!UNSAFE_CALL!>.<!>toLong()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>
+    return <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>.toLong()
 }
 
 /*

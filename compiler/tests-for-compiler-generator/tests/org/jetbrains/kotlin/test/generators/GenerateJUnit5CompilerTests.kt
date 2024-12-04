@@ -5,128 +5,147 @@
 
 package org.jetbrains.kotlin.test.generators
 
+import org.jetbrains.kotlin.generators.TestGroup.TestClass
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
-import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
-import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
-import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterFir2IrTest
-import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractIrInterpreterAfterPsi2IrTest
-import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizerTest
-import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizerTest
+import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
+import org.jetbrains.kotlin.test.runners.ir.*
+import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFirPsi2IrTest
+import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterPsi2IrTest
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
-fun generateJUnit5CompilerTests(args: Array<String>) {
-    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
+    val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
+    val k1BoxTestDir = listOf("multiplatform/k1")
+    val k2BoxTestDir = listOf("multiplatform/k2")
+    val excludedScriptDirs = listOf("script")
+    // We exclude the 'inlineScopes' directory from the IR inliner tests. The reason is that
+    // the IR inliner produces slightly different bytecode than the bytecode inliner (see KT-65477).
+    val inlineScopesTestDir = listOf("inlineScopes")
+    // We exclude the 'inlineScopes/newFormatToOld' directory from tests that have inline scopes enabled
+    // by default, since we only want to test the scenario where code with inline scopes is inlined by the
+    // old inliner with $iv suffixes.
+    val inlineScopesNewFormatToOld = listOf("inlineScopes/newFormatToOld")
 
-    generateTestGroupSuiteWithJUnit5(args) {
+    generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testsRoot = "compiler/tests-common-new/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractDiagnosticTest> {
-                model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractDiagnosticUsingJavacTest> {
-                model("diagnostics/tests/javac", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
-            }
-
-            testClass<AbstractDiagnosticsTestWithJsStdLib> {
-                model("diagnostics/testsWithJsStdLib")
-            }
-
-            testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
-                model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_OLD)
+                model("diagnostics/tests/javac", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractDiagnosticsTestWithJvmIrBackend> {
-                model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_IR)
+                model(
+                    "diagnostics/testsWithJvmBackend",
+                    pattern = "^(.+)\\.kts?$",
+                    targetBackend = TargetBackend.JVM_IR,
+                    excludedPattern = excludedCustomTestdataPattern
+                )
             }
 
-            testClass<AbstractDiagnosticsNativeTest> {
-                model("diagnostics/nativeTests")
+            testClass<AbstractDiagnosticsWithMultiplatformCompositeAnalysisTest> {
+                model(
+                    "diagnostics/testsWithMultiplatformCompositeAnalysis",
+                    pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern
+                )
             }
 
             testClass<AbstractForeignAnnotationsSourceJavaTest> {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractForeignAnnotationsCompiledJavaTest> {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedFirTestdataPattern)
+                model(
+                    "diagnostics/foreignAnnotationsTests/tests",
+                    excludedPattern = excludedCustomTestdataPattern,
+                    excludeDirs = listOf("externalAnnotations"),
+                )
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractForeignAnnotationsCompiledJavaWithPsiClassReadingTest> {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedFirTestdataPattern)
-            }
-
-            testClass<AbstractBlackBoxCodegenTest> {
-                model("codegen/box")
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractIrBlackBoxCodegenTest> {
-                model("codegen/box")
+                model("codegen/box", excludeDirs = k2BoxTestDir)
             }
 
-            testClass<AbstractSteppingTest> {
-                model("debug/stepping")
+
+            // We split JVM ABI tests into two parts, to avoid creation of a huge file, unable to analyze by IntelliJ with default settings
+            testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestBoxGenerated") {
+                model("codegen/box", excludeDirs = listOf("multiplatform"))
             }
 
-            testClass<AbstractIrSteppingTest> {
-                model("debug/stepping")
-            }
-
-            testClass<AbstractLocalVariableTest> {
-                model("debug/localVariables")
-            }
-
-            testClass<AbstractIrLocalVariableTest> {
-                model("debug/localVariables")
-            }
-
-            testClass<AbstractBlackBoxCodegenTest>("BlackBoxModernJdkCodegenTestGenerated") {
+            testClass<AbstractJvmAbiConsistencyTest>("JvmAbiConsistencyTestRestGenerated") {
+                model("codegen/boxInline")
                 model("codegen/boxModernJdk")
+                model("codegen/bytecodeText")
+                model("codegen/bytecodeListing")
+                model("codegen/composeLike")
+                model("codegen/composeLikeBytecodeText")
+                model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractIrBlackBoxCodegenWithIrInlinerTest> {
+                model("codegen/box", excludeDirs = k2BoxTestDir)
+            }
+
+            testClass<AbstractIrSteppingWithBytecodeInlinerTest> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractIrSteppingWithIrInlinerTest> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractIrLocalVariableBytecodeInlinerTest> {
+                model("debug/localVariables")
+            }
+
+            testClass<AbstractIrLocalVariableIrInlinerTest> {
+                model("debug/localVariables", excludeDirs = inlineScopesTestDir)
             }
 
             testClass<AbstractIrBlackBoxCodegenTest>("IrBlackBoxModernJdkCodegenTestGenerated") {
                 model("codegen/boxModernJdk")
             }
 
-            testClass<AbstractJvmIrAgainstOldBoxTest> {
-                model("codegen/box/compileKotlinAgainstKotlin")
+            testClass<AbstractClassicJvmIrTextTest> {
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k2")
+                )
             }
 
-            testClass<AbstractJvmOldAgainstIrBoxTest> {
-                model("codegen/box/compileKotlinAgainstKotlin")
-            }
-
-            testClass<AbstractIrTextTest> {
-                model("ir/irText")
-            }
-
-            testClass<AbstractBytecodeTextTest> {
-                model("codegen/bytecodeText")
+            testClass<AbstractClassicJvmIrSourceRangesTest> {
+                model("ir/sourceRanges")
             }
 
             testClass<AbstractIrBytecodeTextTest> {
                 model("codegen/bytecodeText")
             }
 
-            testClass<AbstractBlackBoxInlineCodegenTest> {
+            testClass<AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest> {
                 model("codegen/boxInline")
+                model("klib/syntheticAccessors")
             }
 
-            testClass<AbstractIrBlackBoxInlineCodegenTest> {
+            testClass<AbstractIrBlackBoxInlineCodegenWithIrInlinerTest> {
                 model("codegen/boxInline")
-            }
-
-            testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/boxInline")
+                model("klib/syntheticAccessors")
             }
 
             testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
@@ -137,162 +156,360 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractJvmIrAgainstOldBoxInlineTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractJvmOldAgainstIrBoxInlineTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractBytecodeListingTest> {
-                model("codegen/bytecodeListing")
-            }
-
             testClass<AbstractIrBytecodeListingTest> {
                 model("codegen/bytecodeListing")
             }
 
-            testClass<AbstractAsmLikeInstructionListingTest> {
+            testClass<AbstractIrAsmLikeInstructionListingTest> {
                 model("codegen/asmLike")
             }
 
-            testClass<AbstractIrAsmLikeInstructionListingTest> {
-                model("codegen/asmLike")
+            testClass<AbstractJvmIrInterpreterAfterFirPsi2IrTest> {
+                model("ir/interpreter", excludeDirs = listOf("helpers"))
+            }
+
+            testClass<AbstractJvmIrInterpreterAfterPsi2IrTest> {
+                model("ir/interpreter", excludeDirs = listOf("helpers"))
+            }
+
+            testClass<AbstractClassicJvmIntegrationDiagnosticTest> {
+                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            }
+
+            // ------------- Inline scopes tests duplication -------------
+
+            testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes> {
+                model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
+            }
+
+            testClass<AbstractFirBytecodeTextTestWithInlineScopes> {
+                model("codegen/bytecodeText")
+            }
+
+            testClass<AbstractFirSteppingWithBytecodeInlinerTestWithInlineScopes> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractFirSteppingWithIrInlinerTestWithInlineScopes> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractFirLocalVariableBytecodeInlinerTestWithInlineScopes> {
+                model("debug/localVariables", excludeDirs = inlineScopesNewFormatToOld)
+            }
+
+            testClass<AbstractFirLocalVariableIrInlinerTestWithInlineScopes> {
+                model("debug/localVariables", excludeDirs = inlineScopesTestDir)
+            }
+
+            testClass<AbstractFirBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopes> {
+                model("codegen/boxInline", excludeDirs = k2BoxTestDir)
+            }
+
+            testClass<AbstractFirBlackBoxInlineCodegenWithIrInlinerTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes>("FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes") {
+                model("codegen/boxModernJdk")
             }
         }
 
         // ---------------------------------------------- FIR tests ----------------------------------------------
 
         testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/testData") {
-            testClass<AbstractFirDiagnosticTest>(suiteTestClassName = "FirOldFrontendDiagnosticsTestGenerated") {
-                model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
+            testClass<AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersionTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionTestGenerated") {
+                model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractFirDiagnosticsWithLightTreeTest>(
-                suiteTestClassName = "FirOldFrontendDiagnosticsWithLightTreeTestGenerated"
-            ) {
-                model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
+            fun model(allowKts: Boolean, onlyTypealiases: Boolean = false): TestClass.() -> Unit = {
+                val pattern = when (allowKts) {
+                    true -> TestGeneratorUtil.KT_OR_KTS
+                    false -> TestGeneratorUtil.KT
+                }
+                model(
+                    "diagnostics/tests", pattern = pattern,
+                    excludeDirsRecursively = listOf("multiplatform"),
+                    excludedPattern = excludedCustomTestdataPattern,
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
+                )
+                model(
+                    "diagnostics/testsWithStdLib",
+                    excludedPattern = excludedCustomTestdataPattern,
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
+                )
             }
 
-            testClass<AbstractFirForeignAnnotationsSourceJavaTest>(
-                suiteTestClassName = "FirOldFrontendForeignAnnotationsSourceJavaTestGenerated"
+            testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(
+                suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGenerated",
+                init = model(allowKts = false)
+            )
+
+            testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(
+                suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerated",
+                init = model(allowKts = false, onlyTypealiases = true)
+            )
+
+            testClass<AbstractFirPsiForeignAnnotationsSourceJavaTest>(
+                suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated"
             ) {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractFirForeignAnnotationsCompiledJavaTest>(
-                suiteTestClassName = "FirOldFrontendForeignAnnotationsCompiledJavaTestGenerated"
+            testClass<AbstractFirPsiForeignAnnotationsCompiledJavaTest>(
+                suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated"
             ) {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedFirTestdataPattern)
+                model(
+                    "diagnostics/foreignAnnotationsTests/tests",
+                    excludedPattern = excludedCustomTestdataPattern,
+                    excludeDirs = listOf("externalAnnotations"),
+                )
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractFirForeignAnnotationsCompiledJavaWithPsiClassReadingTest>(
-                suiteTestClassName = "FirOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated"
+            testClass<AbstractFirPsiForeignAnnotationsCompiledJavaWithPsiClassReadingTest>(
+                suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated"
             ) {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)
-                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
+            }
+        }
+
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
+            testClass<AbstractFirLoadK1CompiledJvmKotlinTest> {
+                model("loadJava/compiledKotlin", extension = "kt")
+                model("loadJava/compiledKotlinWithStdlib", extension = "kt")
+            }
+
+            testClass<AbstractFirLoadK2CompiledJvmKotlinTest> {
+                model("loadJava/compiledKotlin", extension = "kt")
+                model("loadJava/compiledKotlinWithStdlib", extension = "kt")
             }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
-            testClass<AbstractFirBlackBoxCodegenTest> {
-                model("codegen/box")
+            testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
+                model("codegen/box", excludeDirs = k1BoxTestDir + excludedScriptDirs)
             }
 
-            testClass<AbstractFirBlackBoxCodegenTest>("FirBlackBoxModernJdkCodegenTestGenerated") {
+            testClass<AbstractFirPsiBlackBoxCodegenTest> {
+                model("codegen/box", excludeDirs = k1BoxTestDir)
+            }
+
+            testClass<AbstractFirLightTreeBlackBoxCodegenTest>("FirLightTreeBlackBoxModernJdkCodegenTestGenerated") {
                 model("codegen/boxModernJdk")
             }
 
-            testClass<AbstractFirBlackBoxInlineCodegenTest> {
+            testClass<AbstractFirPsiBlackBoxCodegenTest>("FirPsiBlackBoxModernJdkCodegenTestGenerated") {
+                model("codegen/boxModernJdk")
+            }
+
+            testClass<AbstractFirPsiBlackBoxInlineCodegenWithBytecodeInlinerTest> {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractIrInterpreterAfterFir2IrTest> {
-                model("ir/interpreter", excludeDirs = listOf("helpers"))
+            testClass<AbstractFirPsiBlackBoxInlineCodegenWithIrInlinerTest> {
+                model("codegen/boxInline")
             }
 
-            testClass<AbstractIrInterpreterAfterPsi2IrTest> {
-                model("ir/interpreter", excludeDirs = listOf("helpers"))
+            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest> {
+                model("codegen/boxInline")
+                model("klib/syntheticAccessors")
             }
 
-            testClass<AbstractFirSteppingTest> {
+            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest> {
+                model("codegen/boxInline")
+                model("klib/syntheticAccessors")
+            }
+
+            testClass<AbstractComposeLikeIrBlackBoxCodegenTest> {
+                model("codegen/composeLike")
+            }
+
+            testClass<AbstractComposeLikeFirLightTreeBlackBoxCodegenTest> {
+                model("codegen/composeLike")
+            }
+
+            testClass<AbstractComposeLikeIrBytecodeTextTest> {
+                model("codegen/composeLikeBytecodeText")
+            }
+
+            testClass<AbstractComposeLikeFirLightTreeBytecodeTextTest> {
+                model("codegen/composeLikeBytecodeText")
+            }
+
+            testClass<AbstractFirLightTreeSteppingTest> {
                 model("debug/stepping")
             }
 
-            testClass<AbstractFirLocalVariableTest> {
+            testClass<AbstractFirPsiSteppingTest> {
+                model("debug/stepping")
+            }
+
+            testClass<AbstractFirLightTreeLocalVariableTest> {
                 model("debug/localVariables")
             }
-        }
 
-        testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/fir/fir2ir/testData") {
-            testClass<AbstractFirBlackBoxCodegenTest>(
-                suiteTestClassName = "FirSpecificBlackBoxCodegenTestGenerated"
-            ) {
-                model("codegen/box")
-                model("codegen/boxWithStdLib")
+            testClass<AbstractFirPsiLocalVariableTest> {
+                model("debug/localVariables")
             }
 
-            testClass<AbstractFir2IrTextTest>(
-                suiteTestClassName = "Fir2IrSpecificTextTestGenerated"
-            ) {
-                model("ir/irText")
+            testClass<AbstractFirPsiWithInterpreterDiagnosticsTest> {
+                model("diagnostics/irInterpreter")
             }
 
-            testClass<AbstractFirBytecodeListingTest>(
-                suiteTestClassName = "Fir2IrSpecificBytecodeListingTestGenerated"
-            ) {
+            testClass<AbstractFirLightTreeWithInterpreterDiagnosticsTest> {
+                model("diagnostics/irInterpreter")
+            }
+
+            testClass<AbstractFirPsiDiagnosticsTestWithJvmIrBackend> {
+                model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend> {
+                model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirPsiBytecodeListingTest> {
                 model("codegen/bytecodeListing")
+            }
+
+            testClass<AbstractFirLightTreeBytecodeListingTest> {
+                model("codegen/bytecodeListing")
+            }
+
+            testClass<AbstractFirPsiAsmLikeInstructionListingTest> {
+                model("codegen/asmLike")
+            }
+
+            testClass<AbstractFirLightTreeAsmLikeInstructionListingTest> {
+                model("codegen/asmLike")
+            }
+
+            testClass<AbstractFirScriptCodegenTest> {
+                model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractFirPsiJvmIntegrationDiagnosticTest> {
+                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            }
+
+            testClass<AbstractFirLightTreeJvmIntegrationDiagnosticTest> {
+                model("diagnostics/jvmIntegration", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractFirDiagnosticTest> {
-                model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-                model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            fun model(allowKts: Boolean, onlyTypealiases: Boolean = false): TestClass.() -> Unit = {
+                val pattern = when (allowKts) {
+                    true -> TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
+                    false -> TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
+                }
+                model(
+                    "resolve",
+                    pattern = pattern,
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
+                )
+                model(
+                    "resolveWithStdlib",
+                    pattern = pattern,
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
+                )
+
+                // Those files might contain code which when being analyzed in the IDE might accidentally freeze it, thus we use a fake
+                // file extension for it.
+                model(
+                    "resolveFreezesIDE",
+                    pattern = """^(.+)\.(nkt)$""",
+                    skipSpecificFile = skipSpecificFileForFirDiagnosticTest(onlyTypealiases),
+                    skipTestAllFilesCheck = onlyTypealiases
+                )
             }
 
-            testClass<AbstractFirDiagnosticsWithLightTreeTest> {
-                model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-                model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-            }
+            testClass<AbstractFirLightTreeDiagnosticsWithLatestLanguageVersionTest>(init = model(allowKts = false))
+            testClass<AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest>(init = model(allowKts = false, onlyTypealiases = true))
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
-            testClass<AbstractFir2IrTextTest> {
-                model("ir/irText")
+            testClass<AbstractFirLightTreeJvmIrTextTest> {
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
             }
 
-            testClass<AbstractFirBytecodeTextTest> {
+            testClass<AbstractFirPsiJvmIrTextTest> {
+                model(
+                    "ir/irText",
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
+            }
+
+            testClass<AbstractFirLightTreeJvmIrSourceRangesTest> {
+                model("ir/sourceRanges")
+            }
+
+            testClass<AbstractFirPsiJvmIrSourceRangesTest> {
+                model("ir/sourceRanges")
+            }
+
+            testClass<AbstractFirLightTreeBytecodeTextTest> {
+                model("codegen/bytecodeText")
+            }
+
+            testClass<AbstractFirPsiBytecodeTextTest> {
                 model("codegen/bytecodeText")
             }
         }
 
-        testGroup("compiler/visualizer/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
-            testClass<AbstractPsiVisualizerTest>("PsiVisualizerForRawFirDataGenerated") {
-                model("rawBuilder")
-            }
+        // ---------------------------------------------- Tiered tests ----------------------------------------------
 
-            testClass<AbstractFirVisualizerTest>("FirVisualizerForRawFirDataGenerated") {
-                model("rawBuilder")
-            }
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/") {
+            testClass<AbstractTieredFrontendJvmLightTreeTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND, allowKts = false),
+            )
+
+            testClass<AbstractTieredFrontendJvmPsiTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FRONTEND, allowKts = true),
+            )
         }
 
-        testGroup("compiler/visualizer/tests-gen", "compiler/visualizer/testData") {
-            testClass<AbstractPsiVisualizerTest>("PsiVisualizerForUncommonCasesGenerated") {
-                model("uncommonCases/testFiles")
-            }
+        testGroup("compiler/fir/fir2ir/tests-gen", "compiler/") {
+            testClass<AbstractTieredFir2IrJvmLightTreeTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR, allowKts = false),
+            )
 
-            testClass<AbstractFirVisualizerTest>("FirVisualizerForUncommonCasesGenerated") {
-                model("uncommonCases/testFiles")
-            }
+            testClass<AbstractTieredFir2IrJvmPsiTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.FIR2IR, allowKts = true),
+            )
+
+            testClass<AbstractTieredBackendJvmLightTreeTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND, allowKts = false),
+            )
+
+            testClass<AbstractTieredBackendJvmPsiTest>(
+                init = configureTierModelsForK1AlongsideDiagnosticTestsStating(TestTierLabel.BACKEND, allowKts = true),
+            )
         }
     }
 }

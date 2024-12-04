@@ -1,11 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: uint.kt
-
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 package kotlin
 
-inline class UInt(val value: Int)
+inline class UInt @kotlin.internal.IntrinsicConstEvaluation constructor(val value: Int)
 
 // FILE: test.kt
 

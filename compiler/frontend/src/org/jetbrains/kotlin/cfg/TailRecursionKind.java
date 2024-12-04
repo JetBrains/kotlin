@@ -17,17 +17,7 @@
 package org.jetbrains.kotlin.cfg;
 
 public enum TailRecursionKind {
-    TAIL_CALL(true),
-    IN_TRY(false),
-    NON_TAIL(false);
-
-    private final boolean doGenerateTailRecursion;
-
-    TailRecursionKind(boolean doGenerateTailRecursion) {
-        this.doGenerateTailRecursion = doGenerateTailRecursion;
-    }
-
-    public boolean isDoGenerateTailRecursion() {
-        return doGenerateTailRecursion;
-    }
+    TAIL_CALL,
+    IN_TRY,
+    NON_TAIL;
 }

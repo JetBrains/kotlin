@@ -1,0 +1,26 @@
+FILE: annotationOnSuperType.kt
+    @Target(LAZY_EXPRESSION) public final? annotation class Anno : R|kotlin/Annotation| {
+        public? constructor(position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? val position: String = R|<local>/position|
+            public? get(): String
+
+    }
+    public? final? const val prop: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public final? interface I : R|kotlin/Any| {
+    }
+    public final? class MyClassWithoutConstructor : @Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) I>> {
+        public? constructor(): R|util/MyClassWithoutConstructor| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+    public final? class MyClassWithConstructor : @Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) I>> {
+        public? constructor(): R|util/MyClassWithConstructor| {
+            LAZY_super<<implicit>>
+        }
+
+    }

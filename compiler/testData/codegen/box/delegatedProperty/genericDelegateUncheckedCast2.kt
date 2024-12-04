@@ -1,10 +1,12 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: not supported in JVM
+// See the end of KT-8135 description: The same problem appears when using delegating properties with unchecked casts inside
+// Test fail reason: ClassCastException is not thrown when using delegating properties with unchecked casts inside
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
+// FIR status: not supported in JVM
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JVM, JS
+// IGNORE_BACKEND: JVM
 
 import kotlin.reflect.KProperty
 
@@ -38,7 +40,7 @@ fun box(): String {
     val c = A().B()
 
     (del as Delegate<String?>).inner = null
-    asFailsWithCCE { c.prop }  // does not fail in JVM, JS due KT-8135.
+    asFailsWithCCE { c.prop }  // throws AssertionError due to KT-8135.
 
     return "OK"
 }

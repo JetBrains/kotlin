@@ -1,5 +1,0 @@
-KT element: KtParameter
-FIR element: FirPropertyImpl
-
-FIR element rendered:
-lval x: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: jvm/Diagnostic.java
 
 package jvm;

@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A { // /A|null[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+    final fun close() // /A.close|close(){}[0]
+    final fun (kotlin/String).invoke() // /A.invoke|invoke@kotlin.String(){}[0]
+    final object Companion // /A.Companion|null[0]
+}

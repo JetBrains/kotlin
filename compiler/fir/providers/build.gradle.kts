@@ -10,11 +10,16 @@ dependencies {
     api(project(":compiler:fir:tree"))
     implementation(project(":core:util.runtime"))
 
-    compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("guava", rootProject = rootProject) }
+    compileOnly(libs.guava)
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
+    }
 }

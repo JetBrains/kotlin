@@ -6,20 +6,24 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
 object BuiltinSpecialProperties {
     val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP: Map<FqName, Name> = mapOf(
-        StandardNames.FqNames._enum.childSafe("name") to Name.identifier("name"),
+        StandardNames.FqNames._enum.childSafe("name") to StandardNames.NAME,
         StandardNames.FqNames._enum.childSafe("ordinal") to Name.identifier("ordinal"),
         StandardNames.FqNames.collection.child("size") to Name.identifier("size"),
         StandardNames.FqNames.map.child("size") to Name.identifier("size"),
         StandardNames.FqNames.charSequence.childSafe("length") to Name.identifier("length"),
         StandardNames.FqNames.map.child("keys") to Name.identifier("keySet"),
         StandardNames.FqNames.map.child("values") to Name.identifier("values"),
-        StandardNames.FqNames.map.child("entries") to Name.identifier("entrySet")
+        StandardNames.FqNames.map.child("entries") to Name.identifier("entrySet"),
+        StandardNames.FqNames.atomicIntArray.child("size") to Name.identifier("length"),
+        StandardNames.FqNames.atomicLongArray.child("size") to Name.identifier("length"),
+        StandardNames.FqNames.atomicArray.child("size") to Name.identifier("length"),
     )
 
     private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =
@@ -29,6 +33,10 @@ object BuiltinSpecialProperties {
             .mapValues {
                 it.value.distinct()
             }
+
+    val GETTER_FQ_NAMES: Set<FqName> = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.mapTo(mutableSetOf()) {
+        JavaToKotlinClassMap.mapKotlinToJava(it.key.parent().toUnsafe())!!.asSingleFqName().child(it.value)
+    }
 
     val SPECIAL_FQ_NAMES: Set<FqName> = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
     val SPECIAL_SHORT_NAMES: Set<Name> = SPECIAL_FQ_NAMES.map(FqName::shortName).toSet()

@@ -6,21 +6,24 @@
 #include "MultiSourceQueue.hpp"
 
 #include <atomic>
-#include <thread>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "StdAllocatorTestSupport.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
-#include "Types.h"
 
 using namespace kotlin;
+
+using ::testing::_;
 
 namespace {
 
 template <typename T, typename Mutex>
-KStdVector<T> Collect(MultiSourceQueue<T, Mutex>& queue) {
-    KStdVector<T> result;
+std::vector<T> Collect(MultiSourceQueue<T, Mutex>& queue) {
+    std::vector<T> result;
     for (const auto& element : queue.LockForIter()) {
         result.push_back(element);
     }
@@ -29,7 +32,7 @@ KStdVector<T> Collect(MultiSourceQueue<T, Mutex>& queue) {
 
 } // namespace
 
-using IntQueue = MultiSourceQueue<int, SpinLock<MutexThreadStateHandling::kIgnore>>;
+using IntQueue = MultiSourceQueue<int, SpinLock>;
 
 TEST(MultiSourceQueueTest, Insert) {
     IntQueue queue;
@@ -193,8 +196,8 @@ TEST(MultiSourceQueueTest, ConcurrentPublish) {
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    KStdVector<std::thread> threads;
-    KStdVector<int> expected;
+    std::vector<ScopedThread> threads;
+    std::vector<int> expected;
 
     for (int i = 0; i < kThreadCount; ++i) {
         expected.push_back(i);
@@ -211,9 +214,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublish) {
     while (readyCount < kThreadCount) {
     }
     canStart = true;
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::UnorderedElementsAreArray(expected));
@@ -224,8 +225,8 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
     constexpr int kStartCount = 50;
     constexpr int kThreadCount = kDefaultThreadCount;
 
-    KStdVector<int> expectedBefore;
-    KStdVector<int> expectedAfter;
+    std::vector<int> expectedBefore;
+    std::vector<int> expectedAfter;
     IntQueue::Producer producer(queue);
     for (int i = 0; i < kStartCount; ++i) {
         expectedBefore.push_back(i);
@@ -237,7 +238,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    KStdVector<std::thread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         int j = i + kStartCount;
         expectedAfter.push_back(j);
@@ -252,7 +253,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
         });
     }
 
-    KStdVector<int> actualBefore;
+    std::vector<int> actualBefore;
     {
         auto iter = queue.LockForIter();
         while (readyCount < kThreadCount) {
@@ -266,9 +267,7 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
         }
     }
 
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     EXPECT_THAT(actualBefore, testing::ElementsAreArray(expectedBefore));
 
@@ -283,7 +282,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublishAndApplyDeletions) {
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
     std::atomic<int> startedCount(0);
-    KStdVector<std::thread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kThreadCount; ++i) {
         threads.emplace_back([&queue, i, &canStart, &readyCount, &startedCount]() {
             IntQueue::Producer producer(queue);
@@ -306,9 +305,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublishAndApplyDeletions) {
 
     queue.ApplyDeletions();
 
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     // We do not know which elements were deleted at this point. Expecting not to crash by this point.
 
@@ -317,4 +314,43 @@ TEST(MultiSourceQueueTest, ConcurrentPublishAndApplyDeletions) {
 
     auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::IsEmpty());
+}
+
+TEST(MultiSourceQueueTest, CustomAllocator) {
+    testing::StrictMock<test_support::SpyAllocatorCore> allocatorCore;
+    auto allocator = test_support::MakeAllocator<int>(allocatorCore);
+
+    using Queue = MultiSourceQueue<int, SpinLock, decltype(allocator)>;
+    Queue queue(allocator);
+    Queue::Producer producer1(queue);
+    Queue::Producer producer2(queue);
+
+    EXPECT_CALL(allocatorCore, allocate(_)).Times(5);
+    auto* node11 = producer1.Insert(1);
+    auto* node12 = producer1.Insert(2);
+    auto* node21 = producer2.Insert(10);
+    auto* node22 = producer2.Insert(20);
+    auto* node23 = producer2.Insert(30);
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
+
+    EXPECT_CALL(allocatorCore, deallocate(_, _));
+    producer2.Erase(node22);
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
+
+    producer1.Publish();
+    producer2.Publish();
+
+    EXPECT_CALL(allocatorCore, allocate(_)).Times(4);
+    producer1.Erase(node11);
+    producer1.Erase(node23);
+    producer2.Erase(node12);
+    producer2.Erase(node21);
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
+
+    producer1.Publish();
+    producer2.Publish();
+
+    EXPECT_CALL(allocatorCore, deallocate(_, _)).Times(8);
+    queue.ApplyDeletions();
+    testing::Mock::VerifyAndClearExpectations(&allocatorCore);
 }

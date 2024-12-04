@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompil
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
 import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.io.Serializable
 import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
@@ -37,7 +36,7 @@ internal fun makeCompiledModule(generationState: GenerationState) =
 inline fun <T> withMessageCollectorAndDisposable(
     script: SourceCode? = null,
     parentMessageCollector: MessageCollector? = null,
-    disposable: Disposable = Disposer.newDisposable(),
+    disposable: Disposable = Disposer.newDisposable("Default disposable for scripting compiler"),
     disposeOnSuccess: Boolean = true,
     body: (ScriptDiagnosticsMessageCollector, Disposable) -> ResultWithDiagnostics<T>
 ): ResultWithDiagnostics<T> {
@@ -100,16 +99,6 @@ internal fun getScriptKtFile(
     }
 }
 
-class SourceCodeImpl(file: KtFile) : SourceCode, Serializable {
-    override val text: String = file.text
-    override val name: String? = file.name
-    override val locationId: String? = file.virtualFilePath
-
-    companion object {
-        private const val serialVersionUID = 1L
-    }
-}
-
 internal fun makeCompiledScript(
     generationState: GenerationState,
     script: SourceCode,
@@ -160,7 +149,7 @@ internal fun makeCompiledScript(
 
     val resultField = with(generationState.scriptSpecific) {
         if (resultFieldName == null) null
-        else resultFieldName!! to KotlinType(resultTypeString ?: DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(resultType!!))
+        else resultFieldName!! to KotlinType(DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(resultType!!))
     }
 
     return makeOtherScripts(ktScript).onSuccess { otherScripts ->

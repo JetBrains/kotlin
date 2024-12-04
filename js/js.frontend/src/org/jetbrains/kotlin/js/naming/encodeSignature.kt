@@ -37,6 +37,14 @@ fun encodeSignature(descriptor: CallableDescriptor): String {
             ?: error("${typeParameter.original} is not found when encode the signature of $descriptor.")
     }
 
+    val contextReceiverParameters = descriptor.contextReceiverParameters
+    if (contextReceiverParameters.isNotEmpty()) {
+        for (contextReceiverParameter in contextReceiverParameters) {
+            sig.encodeForSignature(contextReceiverParameter.type, typeParameterNamer).append(',')
+        }
+        sig.append('\\')
+    }
+
     val receiverParameter = descriptor.extensionReceiverParameter
     if (receiverParameter != null) {
         sig.encodeForSignature(receiverParameter.type, typeParameterNamer).append('/')

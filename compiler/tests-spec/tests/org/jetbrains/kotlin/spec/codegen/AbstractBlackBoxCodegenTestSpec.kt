@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestExceptionsComparator
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
 import org.jetbrains.kotlin.spec.utils.models.AbstractSpecTest
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
@@ -23,7 +24,7 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
     companion object {
         private const val CODEGEN_BOX_TESTDATA_PATH = "$SPEC_TESTDATA_PATH/codegen/box"
         private const val HELPERS_PATH = "$CODEGEN_BOX_TESTDATA_PATH/helpers"
-        private const val HELPERS_PACKAGE_VARIABLE = "<!PACKAGE!>"
+        private const val HELPERS_PACKAGE_VARIABLE = "<?PACKAGE?>"
     }
 
     private fun addPackageDirectiveToHelperFile(helperContent: String, packageName: String?) =
@@ -58,7 +59,9 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
             Assert.fail(e.description)
         }
 
-        println(specTest)
+        if (GeneralConfiguration.PRINT_TEST_OUTPUTS_TO_STDOUT) {
+            println(specTest)
+        }
 
         val filesWithHelpers = includeHelpers(wholeFile, files, specTest)
 
@@ -67,7 +70,11 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
         if (specTest.exception == null) {
             runTest()
         } else {
-            TestExceptionsComparator(wholeFile).run(specTest.exception, runTest)
+            TestExceptionsComparator(wholeFile).run(
+                specTest.exception,
+                printExceptionsToConsole = GeneralConfiguration.PRINT_TEST_OUTPUTS_TO_STDOUT,
+                runTest
+            )
         }
     }
 }

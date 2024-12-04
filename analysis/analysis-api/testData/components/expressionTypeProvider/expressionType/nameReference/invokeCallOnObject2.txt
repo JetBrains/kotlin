@@ -1,0 +1,2 @@
+expression: Foo
+type: Foo.Companion

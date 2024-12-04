@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.codegen.optimization.common.removeAll
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -43,8 +41,7 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
     }
 
     private fun MethodNode.hasOptimizableConditions(): Boolean {
-        val insns = instructions.toArray()
-        return insns.any { it.isIntJump() } && insns.any { it.isIntConst() }
+        return instructions.any { it.isIntJump() } && instructions.any { it.isIntConst() }
     }
 
     private fun AbstractInsnNode.isIntConst() =
@@ -72,8 +69,10 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
                     val insn = insns[i]
                     val frame = frames[i]
 
-                    if (frame == null && insn !is LabelNode) {
-                        deadCode.add(insn)
+                    if (frame == null) {
+                        if (insn !is LabelNode) {
+                            deadCode.add(insn)
+                        }
                         continue
                     }
 
@@ -94,7 +93,7 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
             }
 
         private fun tryRewriteComparisonWithZero(insn: JumpInsnNode, frame: Frame<BasicValue>, actions: ArrayList<() -> Unit>) {
-            val top = frame.top()!!.safeAs<IConstValue>() ?: return
+            val top = frame.top()!! as? IConstValue ?: return
 
             val constCondition = when (insn.opcode) {
                 Opcodes.IFEQ -> top.value == 0
@@ -197,9 +196,9 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
                 in Opcodes.ICONST_M1..Opcodes.ICONST_5 ->
                     IConstValue.of(insn.opcode - Opcodes.ICONST_0)
                 Opcodes.BIPUSH, Opcodes.SIPUSH ->
-                    IConstValue.of(insn.cast<IntInsnNode>().operand)
+                    IConstValue.of((insn as IntInsnNode).operand)
                 Opcodes.LDC -> {
-                    val operand = insn.cast<LdcInsnNode>().cst
+                    val operand = (insn as LdcInsnNode).cst
                     if (operand is Int)
                         IConstValue.of(operand)
                     else

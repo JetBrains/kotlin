@@ -1,0 +1,11 @@
+<caret>:
+  KtContainerNode(66,69): '[0]'
+    NO_CANDIDATES
+
+<caret_singleIfStatement>:
+  KtContainerNode(93,96): '[0]'
+    NO_CANDIDATES
+
+<caret_singleWhenStatement>:
+  KtContainerNode(125,128): '[0]'
+    NO_CANDIDATES

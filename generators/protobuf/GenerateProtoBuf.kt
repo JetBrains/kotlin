@@ -22,7 +22,8 @@ import kotlin.system.exitProcess
 //       make
 //       make install
 // * macOS:
-//     brew install https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb
+//     curl -L https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb > protobuf261.rb
+//     brew install protobuf261.rb
 //
 // You may need to provide custom path to protoc executable, just modify this constant:
 private const val PROTOC_EXE = "protoc"
@@ -45,16 +46,15 @@ class ProtoPath(val file: String, val generateDebug: Boolean = true) {
 val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("core/metadata/src/metadata.proto"),
     ProtoPath("core/metadata/src/builtins.proto"),
-    ProtoPath("js/js.serializer/src/js.proto"),
-    ProtoPath("js/js.serializer/src/js-ast.proto", false),
+    ProtoPath("core/metadata/src/properties_order_extension.proto", generateDebug = false),
+    ProtoPath("js/js.config/src/js.proto"),
+    ProtoPath("js/js.config/src/js-ast.proto", false),
     ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
     ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
     ProtoPath("build-common/src/java_descriptors.proto"),
-    ProtoPath("compiler/util-klib-metadata/src/KlibMetadataProtoBuf.proto"),
+    ProtoPath("compiler/util-klib/src/KlibMetadataProtoBuf.proto"),
     ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false),
-    ProtoPath("compiler/ir/serialization.common/src/KotlinPirCarriers.proto", false),
     ProtoPath("compiler/ir/serialization.jvm/src/JvmIr.proto", false),
-    ProtoPath("plugins/kotlin-serialization/kotlin-serialization-compiler/src/class_extensions.proto", generateDebug = false)
 )
 
 private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/metadata/src/ext_options.proto")

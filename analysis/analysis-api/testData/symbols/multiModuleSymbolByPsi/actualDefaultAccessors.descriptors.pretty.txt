@@ -1,0 +1,6 @@
+// FILE: main.kt
+
+var variable: kotlin.Int
+  get()
+  set(`<set-?>`: kotlin.Int)
+

@@ -1,0 +1,52 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+class Holder<T> {
+    @Composable
+    fun Test(x: T) {
+        A(x as Int)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 2)
+class Holder<T>  {
+  @Composable
+  fun Test(x: T, %composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    val %dirty = %changed
+    if (%changed and 0b0110 == 0) {
+      %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+        %composer.changed(x)
+      } else {
+        %composer.changedInstance(x)
+      }
+      ) 0b0100 else 0b0010
+    }
+    if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %dirty, -1, <>)
+      }
+      A(x, %composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.Test(x, %composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  static val %stable: Int = 0
+}

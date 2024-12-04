@@ -1,0 +1,211 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun Example(
+    a00: Int = 0,
+    a01: Int = 0,
+    a02: Int = 0,
+    a03: Int = 0,
+    a04: Int = 0,
+    a05: Int = 0,
+    a06: Int = 0,
+    a07: Int = 0,
+    a08: Int = 0,
+    a09: Int = 0,
+    a10: Int = 0,
+    a11: Int = 0,
+    a12: Int = 0,
+    a13: Int = 0,
+    a14: Int = 0
+) {
+    // in order
+    Example(
+        a00,
+        a01,
+        a02,
+        a03,
+        a04,
+        a05,
+        a06,
+        a07,
+        a08,
+        a09,
+        a10,
+        a11,
+        a12,
+        a13,
+        a14
+    )
+    // in opposite order
+    Example(
+        a14,
+        a13,
+        a12,
+        a11,
+        a10,
+        a09,
+        a08,
+        a07,
+        a06,
+        a05,
+        a04,
+        a03,
+        a02,
+        a01,
+        a00
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, %composer: Composer?, %changed: Int, %changed1: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example)<Exampl...>,<Exampl...>:Test.kt")
+  val %dirty = %changed
+  val %dirty1 = %changed1
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(a00)) 0b0100 else 0b0010
+  }
+  if (%default and 0b0010 != 0) {
+    %dirty = %dirty or 0b00110000
+  } else if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a01)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0100 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a02)) 0b000100000000 else 0b10000000
+  }
+  if (%default and 0b1000 != 0) {
+    %dirty = %dirty or 0b110000000000
+  } else if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a03)) 0b100000000000 else 0b010000000000
+  }
+  if (%default and 0b00010000 != 0) {
+    %dirty = %dirty or 0b0110000000000000
+  } else if (%changed and 0b0110000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a04)) 0b0100000000000000 else 0b0010000000000000
+  }
+  if (%default and 0b00100000 != 0) {
+    %dirty = %dirty or 0b00110000000000000000
+  } else if (%changed and 0b00110000000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a05)) 0b00100000000000000000 else 0b00010000000000000000
+  }
+  if (%default and 0b01000000 != 0) {
+    %dirty = %dirty or 0b000110000000000000000000
+  } else if (%changed and 0b000110000000000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a06)) 0b000100000000000000000000 else 0b10000000000000000000
+  }
+  if (%default and 0b10000000 != 0) {
+    %dirty = %dirty or 0b110000000000000000000000
+  } else if (%changed and 0b110000000000000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a07)) 0b100000000000000000000000 else 0b010000000000000000000000
+  }
+  if (%default and 0b000100000000 != 0) {
+    %dirty = %dirty or 0b0110000000000000000000000000
+  } else if (%changed and 0b0110000000000000000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a08)) 0b0100000000000000000000000000 else 0b0010000000000000000000000000
+  }
+  if (%default and 0b001000000000 != 0) {
+    %dirty = %dirty or 0b00110000000000000000000000000000
+  } else if (%changed and 0b00110000000000000000000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(a09)) 0b00100000000000000000000000000000 else 0b00010000000000000000000000000000
+  }
+  if (%default and 0b010000000000 != 0) {
+    %dirty1 = %dirty1 or 0b0110
+  } else if (%changed1 and 0b0110 == 0) {
+    %dirty1 = %dirty1 or if (%composer.changed(a10)) 0b0100 else 0b0010
+  }
+  if (%default and 0b100000000000 != 0) {
+    %dirty1 = %dirty1 or 0b00110000
+  } else if (%changed1 and 0b00110000 == 0) {
+    %dirty1 = %dirty1 or if (%composer.changed(a11)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0001000000000000 != 0) {
+    %dirty1 = %dirty1 or 0b000110000000
+  } else if (%changed1 and 0b000110000000 == 0) {
+    %dirty1 = %dirty1 or if (%composer.changed(a12)) 0b000100000000 else 0b10000000
+  }
+  if (%default and 0b0010000000000000 != 0) {
+    %dirty1 = %dirty1 or 0b110000000000
+  } else if (%changed1 and 0b110000000000 == 0) {
+    %dirty1 = %dirty1 or if (%composer.changed(a13)) 0b100000000000 else 0b010000000000
+  }
+  if (%default and 0b0100000000000000 != 0) {
+    %dirty1 = %dirty1 or 0b0110000000000000
+  } else if (%changed1 and 0b0110000000000000 == 0) {
+    %dirty1 = %dirty1 or if (%composer.changed(a14)) 0b0100000000000000 else 0b0010000000000000
+  }
+  if (%dirty and 0b00010010010010010010010010010011 != 0b00010010010010010010010010010010 || %dirty1 and 0b0010010010010011 != 0b0010010010010010 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      a00 = 0
+    }
+    if (%default and 0b0010 != 0) {
+      a01 = 0
+    }
+    if (%default and 0b0100 != 0) {
+      a02 = 0
+    }
+    if (%default and 0b1000 != 0) {
+      a03 = 0
+    }
+    if (%default and 0b00010000 != 0) {
+      a04 = 0
+    }
+    if (%default and 0b00100000 != 0) {
+      a05 = 0
+    }
+    if (%default and 0b01000000 != 0) {
+      a06 = 0
+    }
+    if (%default and 0b10000000 != 0) {
+      a07 = 0
+    }
+    if (%default and 0b000100000000 != 0) {
+      a08 = 0
+    }
+    if (%default and 0b001000000000 != 0) {
+      a09 = 0
+    }
+    if (%default and 0b010000000000 != 0) {
+      a10 = 0
+    }
+    if (%default and 0b100000000000 != 0) {
+      a11 = 0
+    }
+    if (%default and 0b0001000000000000 != 0) {
+      a12 = 0
+    }
+    if (%default and 0b0010000000000000 != 0) {
+      a13 = 0
+    }
+    if (%default and 0b0100000000000000 != 0) {
+      a14 = 0
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, %dirty1, <>)
+    }
+    Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, %composer, 0b1110 and %dirty or 0b01110000 and %dirty or 0b001110000000 and %dirty or 0b0001110000000000 and %dirty or 0b1110000000000000 and %dirty or 0b01110000000000000000 and %dirty or 0b001110000000000000000000 and %dirty or 0b0001110000000000000000000000 and %dirty or 0b1110000000000000000000000000 and %dirty or 0b01110000000000000000000000000000 and %dirty, 0b1110 and %dirty1 or 0b01110000 and %dirty1 or 0b001110000000 and %dirty1 or 0b0001110000000000 and %dirty1 or 0b1110000000000000 and %dirty1, 0)
+    Example(a14, a13, a12, a11, a10, a09, a08, a07, a06, a05, a04, a03, a02, a01, a00, %composer, 0b1110 and %dirty1 shr 0b1100 or 0b01110000 and %dirty1 shr 0b0110 or 0b001110000000 and %dirty1 or 0b0001110000000000 and %dirty1 shl 0b0110 or 0b1110000000000000 and %dirty1 shl 0b1100 or 0b01110000000000000000 and %dirty shr 0b1100 or 0b001110000000000000000000 and %dirty shr 0b0110 or 0b0001110000000000000000000000 and %dirty or 0b1110000000000000000000000000 and %dirty shl 0b0110 or 0b01110000000000000000000000000000 and %dirty shl 0b1100, 0b1110 and %dirty shr 0b1100 or 0b01110000 and %dirty shr 0b0110 or 0b001110000000 and %dirty or 0b0001110000000000 and %dirty shl 0b0110 or 0b1110000000000000 and %dirty shl 0b1100, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, %composer, updateChangedFlags(%changed or 0b0001), updateChangedFlags(%changed1), %default)
+  }
+}

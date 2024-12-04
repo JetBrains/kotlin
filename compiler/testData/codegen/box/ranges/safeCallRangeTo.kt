@@ -1,7 +1,6 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
 
 // WITH_STDLIB
 
@@ -15,10 +14,10 @@ fun dougleRange(x: Double?, y: Double) = x?.rangeTo(y)
 
 inline fun <reified T, R> testSafeRange(x: T, y: T, expectStr: String, safeRange: (T?, T) -> R?) {
     val rNull = safeRange(null, y)
-    assert (rNull == null) { "${T::class.simpleName}: Expected: null, got $rNull" }
+    require (rNull == null) { "${T::class.simpleName}: Expected: null, got $rNull" }
 
     val rxy = safeRange(x, y)
-    assert (rxy?.toString() == expectStr) { "${T::class.simpleName}: Expected: $expectStr, got $rxy" }
+    require (rxy?.toString() == expectStr) { "${T::class.simpleName}: Expected: $expectStr, got $rxy" }
 }
 
 fun box(): String {

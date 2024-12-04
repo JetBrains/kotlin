@@ -1,0 +1,4 @@
+module A {
+    header "A.h"
+    export *
+}

@@ -1,0 +1,7 @@
+> b main.kt:6
+> r
+> fr var
+(ObjHeader *) args = []
+(ObjHeader *) point = [x: ..., y: ...]
+(ObjHeader *) person = []
+> q

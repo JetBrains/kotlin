@@ -1,11 +1,10 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 
-// (supported: JVM_IR, JS_IR(_E6))
+// (supported: JVM_IR, JS_IR(_ES6), NATIVE)
 // Regular JS works too, but without proper hashCode or equals
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // note: taken from ../parameters.kt and ../parametersWithPrimitiveValues.kt
 import kotlin.reflect.KClass
@@ -60,7 +59,7 @@ fun box(): String {
     assert(anno.intArr.contentEquals(intArrayOf(1, 2)))
     assert(anno.arrOfE.contentEquals(arrayOf(E.E0)))
     assert(anno.arrOfA.size == 1)
-//    assert(anno.arrOfK.size == 2) TODO(KT-47703): Array<KClass> to Array<j.l.Class> conversion
+    assert(anno.arrOfK.size == 2)
     val ann = anno.a
     assertEquals(ann.b, 1.toByte())
     assertEquals(ann.s, 1.toShort())

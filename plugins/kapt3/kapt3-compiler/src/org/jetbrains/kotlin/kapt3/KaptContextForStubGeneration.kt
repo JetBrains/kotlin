@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.kapt3
 import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.kapt3.base.KaptContext
+import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -32,13 +34,17 @@ class KaptContextForStubGeneration(
     options: KaptOptions,
     withJdk: Boolean,
     logger: KaptLogger,
-    val project: Project,
-    val bindingContext: BindingContext,
     val compiledClasses: List<ClassNode>,
     val origins: Map<Any, JvmDeclarationOrigin>,
-    val generationState: GenerationState
+    val generationState: GenerationState,
+    val firFiles: List<FirFile>,
 ) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
+
+    val project: Project get() = generationState.project
+    val bindingContext: BindingContext get() = generationState.bindingContext
+
+    val firSession: FirSession? = firFiles.firstOrNull()?.moduleData?.session
 
     override fun preregisterTreeMaker(context: Context) {
         KaptTreeMaker.preRegister(context, this)

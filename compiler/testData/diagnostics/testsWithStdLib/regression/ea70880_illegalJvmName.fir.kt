@@ -1,4 +1,5 @@
-@JvmName(<!NO_VALUE_FOR_PARAMETER!>)<!>
+// RUN_PIPELINE_TILL: FRONTEND
+@JvmName<!NO_VALUE_FOR_PARAMETER!>()<!>
 fun foo() {}
 
 @JvmName(<!ARGUMENT_TYPE_MISMATCH!>42<!>)

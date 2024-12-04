@@ -1,5 +1,0 @@
-KT element: KtDotQualifiedExpression
-FIR element: FirPackageDirectiveImpl
-
-FIR element rendered:
-package a.b.c

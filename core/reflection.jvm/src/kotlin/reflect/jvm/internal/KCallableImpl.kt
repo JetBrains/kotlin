@@ -6,16 +6,16 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.types.asSimpleType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
-import java.util.*
 import kotlin.coroutines.Continuation
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.Caller
+import kotlin.reflect.jvm.internal.calls.getMfvcUnboxMethods
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 import java.lang.reflect.Array as ReflectArray
@@ -112,65 +112,121 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
         return if (isAnnotationConstructor) callAnnotationConstructor(args) else callDefaultMethod(args, null)
     }
 
+    private val _absentArguments = ReflectProperties.lazySoft {
+        val parameters = parameters
+        val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
+        val flattenedParametersSize =
+            if (parametersNeedMFVCFlattening.value) {
+                parameters.sumOf {
+                    if (it.kind == KParameter.Kind.VALUE) getParameterTypeSize(it) else 0
+                }
+            } else {
+                parameters.count { it.kind == KParameter.Kind.VALUE }
+            }
+        val maskSize = (flattenedParametersSize + Integer.SIZE - 1) / Integer.SIZE
+
+        // Array containing the actual function arguments, masks, and +1 for DefaultConstructorMarker or MethodHandle.
+        val arguments = arrayOfNulls<Any?>(parameterSize + maskSize + 1)
+
+        // Set values of primitive (and inline class) arguments to the boxed default values (such as 0, 0.0, false) instead of nulls.
+        parameters.forEach { parameter ->
+            if (parameter.isOptional && !parameter.type.isInlineClassType) {
+                // For inline class types, the javaType refers to the underlying type of the inline class,
+                // but we have to pass null in order to mark the argument as absent for ValueClassAwareCaller.
+                arguments[parameter.index] = defaultPrimitiveValue(parameter.type.javaType)
+            } else if (parameter.isVararg) {
+                arguments[parameter.index] = defaultEmptyArray(parameter.type)
+            }
+        }
+
+        for (i in 0 until maskSize) {
+            arguments[parameterSize + i] = 0
+        }
+
+        arguments
+    }
+
+    private fun getAbsentArguments(): Array<Any?> = _absentArguments().clone()
+
     // See ArgumentGenerator#generate
     internal fun callDefaultMethod(args: Map<KParameter, Any?>, continuationArgument: Continuation<*>?): R {
         val parameters = parameters
-        val arguments = ArrayList<Any?>(parameters.size)
-        var mask = 0
-        val masks = ArrayList<Int>(1)
-        var index = 0
+
+        // Optimization for functions without value/receiver parameters.
+        if (parameters.isEmpty()) {
+            @Suppress("UNCHECKED_CAST")
+            return reflectionCall {
+                caller.call(if (isSuspend) arrayOf(continuationArgument) else emptyArray()) as R
+            }
+        }
+
+        val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
+
+        val arguments = getAbsentArguments().apply {
+            if (isSuspend) {
+                this[parameters.size] = continuationArgument
+            }
+        }
+
+        var valueParameterIndex = 0
         var anyOptional = false
 
+        val hasMfvcParameters = parametersNeedMFVCFlattening.value
         for (parameter in parameters) {
-            if (index != 0 && index % Integer.SIZE == 0) {
-                masks.add(mask)
-                mask = 0
-            }
-
+            val parameterTypeSize = if (hasMfvcParameters) getParameterTypeSize(parameter) else 1
             when {
                 args.containsKey(parameter) -> {
-                    arguments.add(args[parameter])
+                    arguments[parameter.index] = args[parameter]
                 }
                 parameter.isOptional -> {
-                    // For inline class types, the javaType refers to the underlying type of the inline class,
-                    // but we have to pass null in order to mark the argument as absent for InlineClassAwareCaller.
-                    arguments.add(if (parameter.type.isInlineClassType) null else defaultPrimitiveValue(parameter.type.javaType))
-                    mask = mask or (1 shl (index % Integer.SIZE))
+                    if (hasMfvcParameters) {
+                        for (valueSubParameterIndex in valueParameterIndex until (valueParameterIndex + parameterTypeSize)) {
+                            val maskIndex = parameterSize + (valueSubParameterIndex / Integer.SIZE)
+                            arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueSubParameterIndex % Integer.SIZE))
+                        }
+                    } else {
+                        val maskIndex = parameterSize + (valueParameterIndex / Integer.SIZE)
+                        arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueParameterIndex % Integer.SIZE))
+                    }
                     anyOptional = true
                 }
-                parameter.isVararg -> {
-                    arguments.add(defaultEmptyArray(parameter.type))
-                }
+                parameter.isVararg -> {}
                 else -> {
                     throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
                 }
             }
 
             if (parameter.kind == KParameter.Kind.VALUE) {
-                index++
+                valueParameterIndex += parameterTypeSize
             }
         }
 
-        if (continuationArgument != null) {
-            arguments.add(continuationArgument)
-        }
-
         if (!anyOptional) {
-            return call(*arguments.toTypedArray())
+            @Suppress("UNCHECKED_CAST")
+            return reflectionCall {
+                caller.call(arguments.copyOf(parameterSize)) as R
+            }
         }
-
-        masks.add(mask)
 
         val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $descriptor")
 
-        arguments.addAll(masks)
-
-        // DefaultConstructorMarker or MethodHandle
-        arguments.add(null)
-
         @Suppress("UNCHECKED_CAST")
         return reflectionCall {
-            caller.call(arguments.toTypedArray()) as R
+            caller.call(arguments) as R
+        }
+    }
+
+    private val parametersNeedMFVCFlattening = lazy(LazyThreadSafetyMode.PUBLICATION) {
+        parameters.any { it.type.needsMultiFieldValueClassFlattening }
+    }
+
+    private fun getParameterTypeSize(parameter: KParameter): Int {
+        require(parametersNeedMFVCFlattening.value) { "Check if parametersNeedMFVCFlattening is true before" }
+        return if (parameter.type.needsMultiFieldValueClassFlattening) {
+            val type = (parameter.type as KTypeImpl).type.asSimpleType()
+            getMfvcUnboxMethods(type)!!.size
+        } else {
+            1
         }
     }
 
@@ -203,7 +259,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
         }
 
     private fun extractContinuationArgument(): Type? {
-        if ((descriptor as? FunctionDescriptor)?.isSuspend == true) {
+        if (isSuspend) {
             // kotlin.coroutines.Continuation<? super java.lang.String>
             val continuationType = caller.parameterTypes.lastOrNull() as? ParameterizedType
             if (continuationType?.rawType == Continuation::class.java) {

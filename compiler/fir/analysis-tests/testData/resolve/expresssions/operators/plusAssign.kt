@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 operator fun Foo.plusAssign(x: Any) {}
 
 class Foo {

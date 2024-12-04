@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.commonizer.tree.merge
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.commonizer.DefaultCommonizerSettings
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.mergedtree.*
@@ -22,7 +23,12 @@ abstract class AbstractMergeCirTreeTest : KtInlineSourceCommonizerTestCase() {
     private val storageManager = LockBasedStorageManager(this::class.simpleName)
 
     fun mergeCirTree(vararg modules: Pair<String, CirTreeModule>): CirRootNode {
-        return org.jetbrains.kotlin.commonizer.tree.mergeCirTree(storageManager, createDefaultKnownClassifiers(), TargetDependent(*modules))
+        return org.jetbrains.kotlin.commonizer.tree.mergeCirTree(
+            storageManager,
+            createDefaultKnownClassifiers(),
+            TargetDependent(*modules),
+            DefaultCommonizerSettings
+        )
     }
 
     fun CirRootNode.assertSingleModule(): CirModuleNode {

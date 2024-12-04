@@ -1,0 +1,51 @@
+package
+
+public fun bar(/*0*/ model: FlameGraphModel<CallUsageNode /* = CallTreeNode<BaseCallStackElement> */>): kotlin.Unit
+public fun foo(/*0*/ model: FlameGraphModel<CallUsageNode /* = CallTreeNode<BaseCallStackElement> */>): kotlin.Unit
+
+public abstract class BaseCallStackElement {
+    public constructor BaseCallStackElement()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface CallTreeNode</*0*/ out T : kotlin.Any> : TreeNodeWithParent<CallWithValue<T>> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class CallUsageNodeFlameGraphModel</*0*/ Call : kotlin.Any> : FlameGraphModel<CallTreeNode<Call>> {
+    public constructor CallUsageNodeFlameGraphModel</*0*/ Call : kotlin.Any>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class CallUsageNodeFlameGraphModelWithTypealiasedSupertypeArgument</*0*/ Call : kotlin.Any> : FlameGraphModel<CallTreeNodeTypealias<Call> /* = CallTreeNode<Call> */> {
+    public constructor CallUsageNodeFlameGraphModelWithTypealiasedSupertypeArgument</*0*/ Call : kotlin.Any>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface CallWithValue</*0*/ out T : kotlin.Any> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FlameGraphModel</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface TreeNodeWithParent</*0*/ out Data> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+internal typealias CallTreeNodeTypealias</*0*/ K> = CallTreeNode<K>
+internal typealias CallUsageNode = CallTreeNode<BaseCallStackElement>

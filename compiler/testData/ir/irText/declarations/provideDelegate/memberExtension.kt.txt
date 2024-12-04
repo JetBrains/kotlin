@@ -1,31 +1,4 @@
 object Host {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  class StringDelegate {
-    constructor(s: String) /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    val s: String
-      field = s
-      get
-
-    operator fun getValue(receiver: String, p: Any): String {
-      return receiver.plus(other = <this>.<get-s>())
-    }
-
-  }
-
-  operator fun String.provideDelegate(host: Any?, p: Any): StringDelegate {
-    return StringDelegate(s = <this>)
-  }
-
   val String.plusK: String /* by */
     field = (<this>, "K").provideDelegate(host = <this>, p = Host::plusK)
     get(): String {
@@ -36,4 +9,32 @@ object Host {
     field = (<this>, "O").<get-plusK>()
     get
 
+  class StringDelegate {
+    val s: String
+      field = s
+      get
+
+    constructor(s: String) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    operator fun getValue(receiver: String, p: Any): String {
+      return receiver.plus(other = <this>.<get-s>())
+    }
+
+  }
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun String.provideDelegate(host: Any?, p: Any): StringDelegate {
+    return StringDelegate(s = <this>)
+  }
+
 }
+

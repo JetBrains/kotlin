@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -22,9 +25,17 @@ class FirOnlyCallablesScope(val delegate: FirScope) : FirScope() {
 
     override val scopeOwnerLookupNames: List<String>
         get() = delegate.scopeOwnerLookupNames
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirOnlyCallablesScope? {
+        return delegate.withReplacedSessionOrNull(newSession, newScopeSession)?.let { FirOnlyCallablesScope(it) }
+    }
 }
 
 class FirNameAwareOnlyCallablesScope(val delegate: FirContainingNamesAwareScope) : FirContainingNamesAwareScope() {
+    // We want to *avoid* delegation to certain scope functions, so we delegate explicitly instead of using
+    // `FirDelegatingContainingNamesAwareScope`.
+
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         return delegate.processFunctionsByName(name, processor)
     }
@@ -39,4 +50,9 @@ class FirNameAwareOnlyCallablesScope(val delegate: FirContainingNamesAwareScope)
     override fun getCallableNames(): Set<Name> = delegate.getCallableNames()
 
     override fun getClassifierNames(): Set<Name> = emptySet()
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirNameAwareOnlyCallablesScope? {
+        return delegate.withReplacedSessionOrNull(newSession, newScopeSession)?.let { FirNameAwareOnlyCallablesScope(it) }
+    }
 }

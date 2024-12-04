@@ -3,22 +3,21 @@ buildscript {
         mavenLocal()
         maven { url 'https://maven.google.com' }
         mavenCentral()
-        maven { url = uri("https://jcenter.bintray.com/") }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath 'com.android.tools.build:gradle:' + android_tools_version
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
+
+    namespace 'com.example'
+
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.example"
@@ -33,6 +32,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    // Needed for older AGP. It can be removed when the lowest supported AGP version is 4.2.0 or newer.
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -42,10 +47,13 @@ repositories {
     mavenLocal()
     maven { url 'https://maven.google.com' }
     mavenCentral()
-    maven { url = uri("https://jcenter.bintray.com/") }
 }
 
 dependencies {
     implementation 'com.android.support:appcompat-v7:23.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+kotlin {
+    jvmToolchain(8)
 }

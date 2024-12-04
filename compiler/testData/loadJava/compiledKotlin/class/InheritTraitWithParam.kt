@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 package test
 
 interface Aaa<P>

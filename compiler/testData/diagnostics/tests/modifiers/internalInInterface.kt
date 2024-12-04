@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 interface My {
     <!WRONG_MODIFIER_CONTAINING_DECLARATION!>internal<!> val x: Int

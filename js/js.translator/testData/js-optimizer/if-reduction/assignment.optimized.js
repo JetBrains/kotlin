@@ -1,5 +1,6 @@
 function test(n) {
     var result;
+    /*synthetic*/
     result = n >= 0 ? n : -n;
     return result;
 }

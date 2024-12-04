@@ -1,0 +1,17 @@
+package
+
+public final annotation class AnnotationWithArray : kotlin.Annotation {
+    public constructor AnnotationWithArray(/*0*/ array: kotlin.Array<AnnotationWithArray>)
+    public final val array: kotlin.Array<AnnotationWithArray>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class AnnotationWithVararg : kotlin.Annotation {
+    public constructor AnnotationWithVararg(/*0*/ vararg args: AnnotationWithVararg /*kotlin.Array<out AnnotationWithVararg>*/)
+    public final val args: kotlin.Array<out AnnotationWithVararg>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

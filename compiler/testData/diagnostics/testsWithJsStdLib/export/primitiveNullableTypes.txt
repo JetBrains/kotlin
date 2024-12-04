@@ -1,0 +1,34 @@
+package
+
+@kotlin.js.JsExport public fun any(): kotlin.Any?
+@kotlin.js.JsExport public fun arr(): kotlin.Array<kotlin.Int>?
+@kotlin.js.JsExport public fun bool(): kotlin.Boolean?
+@kotlin.js.JsExport public fun boolArr(): kotlin.BooleanArray?
+@kotlin.js.JsExport public fun byte(): kotlin.Byte?
+@kotlin.js.JsExport public fun byteArr(): kotlin.ByteArray?
+@kotlin.js.JsExport public fun char(): kotlin.Char?
+@kotlin.js.JsExport public fun charSeq(): kotlin.CharSequence?
+@kotlin.js.JsExport public fun double(): kotlin.Double?
+@kotlin.js.JsExport public fun doubleArr(): kotlin.DoubleArray?
+@kotlin.js.JsExport public fun float(): kotlin.Float?
+@kotlin.js.JsExport public fun floatArr(): kotlin.FloatArray?
+@kotlin.js.JsExport public fun </*0*/ T> generic(): T?
+@kotlin.js.JsExport public fun int(): kotlin.Int?
+@kotlin.js.JsExport public fun intArr(): kotlin.IntArray?
+@kotlin.js.JsExport public fun long(): kotlin.Long?
+@kotlin.js.JsExport public fun longArr(): kotlin.LongArray?
+@kotlin.js.JsExport public fun nothing(): kotlin.Nothing?
+@kotlin.js.JsExport public fun number(): kotlin.Number?
+@kotlin.js.JsExport public fun short(): kotlin.Short?
+@kotlin.js.JsExport public fun shortArr(): kotlin.ShortArray?
+@kotlin.js.JsExport public fun str(): kotlin.String?
+@kotlin.js.JsExport public fun throwable(): kotlin.Throwable?
+@kotlin.js.JsExport public fun ubyte(): kotlin.UByte?
+@kotlin.js.JsExport public fun ubyteArr(): kotlin.UByteArray?
+@kotlin.js.JsExport public fun uint(): kotlin.UInt?
+@kotlin.js.JsExport public fun uintArr(): kotlin.UIntArray?
+@kotlin.js.JsExport public fun ulong(): kotlin.ULong?
+@kotlin.js.JsExport public fun ulongArr(): kotlin.ULongArray?
+@kotlin.js.JsExport public fun unit(): kotlin.Unit?
+@kotlin.js.JsExport public fun ushort(): kotlin.UShort?
+@kotlin.js.JsExport public fun ushortArr(): kotlin.UShortArray?

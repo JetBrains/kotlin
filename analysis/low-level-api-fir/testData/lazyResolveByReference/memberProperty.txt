@@ -1,0 +1,9 @@
+BODY_RESOLVE:
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|library/TopLevelClass.TopLevelClass|().R|library/TopLevelClass.memberProperty|
+    }

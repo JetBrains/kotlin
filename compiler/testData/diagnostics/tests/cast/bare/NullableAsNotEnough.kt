@@ -1,4 +1,6 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// CHECK_TYPE
 
 interface Tr
 interface G<T>

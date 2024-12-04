@@ -1,0 +1,30 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /TestInitVarFromParameter { // /TestInitVarFromParameter|null[0]
+    final var x // /TestInitVarFromParameter.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestInitVarFromParameter.x.<get-x>|<get-x>(){}[0]
+        final fun <set-x>(kotlin/Int) // /TestInitVarFromParameter.x.<set-x>|<set-x>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int) // /TestInitVarFromParameter.<init>|<init>(kotlin.Int){}[0]
+}
+final class /TestInitVarInClass { // /TestInitVarInClass|null[0]
+    final var x // /TestInitVarInClass.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestInitVarInClass.x.<get-x>|<get-x>(){}[0]
+        final fun <set-x>(kotlin/Int) // /TestInitVarInClass.x.<set-x>|<set-x>(kotlin.Int){}[0]
+    constructor <init>() // /TestInitVarInClass.<init>|<init>(){}[0]
+}
+final class /TestInitVarInInitBlock { // /TestInitVarInInitBlock|null[0]
+    final var x // /TestInitVarInInitBlock.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestInitVarInInitBlock.x.<get-x>|<get-x>(){}[0]
+        final fun <set-x>(kotlin/Int) // /TestInitVarInInitBlock.x.<set-x>|<set-x>(kotlin.Int){}[0]
+    constructor <init>() // /TestInitVarInInitBlock.<init>|<init>(){}[0]
+}
+final class /TestInitVarWithCustomSetter { // /TestInitVarWithCustomSetter|null[0]
+    final var x // /TestInitVarWithCustomSetter.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /TestInitVarWithCustomSetter.x.<get-x>|<get-x>(){}[0]
+        final fun <set-x>(kotlin/Int) // /TestInitVarWithCustomSetter.x.<set-x>|<set-x>(kotlin.Int){}[0]
+    constructor <init>() // /TestInitVarWithCustomSetter.<init>|<init>(){}[0]
+}

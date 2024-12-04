@@ -17,12 +17,54 @@
 package org.jetbrains.kotlin.incremental
 
 import java.io.File
+import java.io.IOException
 
 fun File.isJavaFile() =
         extension.equals("java", ignoreCase = true)
 
-fun File.isKotlinFile(sourceFilesExtensions: List<String>): Boolean =
+fun File.isKotlinFile(sourceFilesExtensions: Collection<String>): Boolean =
     !isJavaFile() && sourceFilesExtensions.any { it.equals(extension, ignoreCase = true) }
 
 fun File.isClassFile(): Boolean =
         extension.equals("class", ignoreCase = true)
+
+/**
+ * Deletes the contents of this directory (not the directory itself).
+ *
+ * If the directory does not exist or if this is a regular file, this method will throw an exception.
+ */
+fun File.deleteDirectoryContents() {
+    when {
+        isDirectory -> listFiles()!!.forEach { it.deleteRecursivelyOrThrow() }
+        isFile -> error("Expected a directory but found a regular file: $path")
+        else -> error("Directory does not exist: $path")
+    }
+}
+
+/** Deletes this file or directory recursively (if it exists), throwing an exception if the deletion failed. */
+fun File.deleteRecursivelyOrThrow() {
+    if (!deleteRecursively()) {
+        throw IOException("Could not delete '$path'")
+    }
+}
+
+/**
+ * Creates this directory (if it does not yet exist).
+ *
+ * If a regular file already exists at this path, this method will throw an exception.
+ */
+@Suppress("SpellCheckingInspection")
+fun File.createDirectory() {
+    when {
+        isDirectory -> Unit
+        isFile -> error("A regular file already exists at this path: $path")
+        else -> {
+            // Note that `mkdirs()` returns `false` if the directory already exists (even though we have checked that the directory did not
+            // exist earlier, it might just have been created by some other thread). Therefore, we need to check if the directory exists
+            // again when `mkdirs()` returns `false`.
+            if (!mkdirs() && !isDirectory) {
+                throw IOException("Could not create directory '$path'")
+            }
+        }
+    }
+}

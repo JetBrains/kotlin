@@ -1,0 +1,2 @@
+OriginalTypeString: UNRESOLVED
+KaType: ERROR_TYPE(Unresolved class UNRESOLVED)

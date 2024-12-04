@@ -1,0 +1,14 @@
+public abstract interface TypeParamOfClass : R|kotlin/Any| {
+    public abstract interface Super<T> : R|kotlin/Any| {
+        public abstract fun foo(): R|T|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub<T> : R|test/TypeParamOfClass.Super<T>| {
+        public abstract fun foo(): R|T|
+
+    }
+
+}

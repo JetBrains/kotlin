@@ -30,6 +30,9 @@ abstract class TreeBasedMember<out T : JCTree>(
         javac: JavacWrapper
 ) : TreeBasedElement<T>(tree, compilationUnit, javac), JavaMember {
 
+    override val isFromSource: Boolean
+        get() = true
+
     override val isDeprecatedInJavaDoc: Boolean
         get() = javac.isDeprecatedInJavaDoc(tree, compilationUnit)
 
@@ -39,6 +42,6 @@ abstract class TreeBasedMember<out T : JCTree>(
     override fun findAnnotation(fqName: FqName) =
             annotations
                     .filter { it.annotation.annotationType.toString().endsWith(fqName.shortName().asString()) }
-                    .find { it.classId?.asSingleFqName() == fqName }
+                    .find { it.classId.asSingleFqName() == fqName }
 
 }

@@ -1,0 +1,56 @@
+KtCallExpression(128,161): 'function(1, { s -> true }, "str")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: O1
+          callableId = null),
+        { s -> true } -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
+          symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+          callableId = null),
+        "str" -> (KaVariableSignature:
+          name = c
+          receiverType = null
+          returnType = kotlin.String
+          symbol = c: T1
+          callableId = null)
+      }
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(a: O1, b: kotlin.Function1<kotlin.Int, kotlin.Boolean>, c: T1): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: O1
+              callableId = null,
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
+              symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+              callableId = null,
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = kotlin.String
+              symbol = c: T1
+              callableId = null
+          ]
+          callableId = /function
+      typeArgumentsMapping = {
+        T1 -> (kotlin.String),
+        O1 -> (kotlin.Int)
+      }

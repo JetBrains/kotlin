@@ -27,6 +27,9 @@ class SamTypeAliasConstructorDescriptorImpl(
     CallableMemberDescriptor.Kind.SYNTHESIZED,
     typeAliasDescriptor.source
 ), SamTypeAliasConstructorDescriptor {
+    override fun getSingleAbstractMethod(): CallableMemberDescriptor =
+        expandedConstructorDescriptor.getSingleAbstractMethod()
+
     override val baseDescriptorForSynthetic: ClassDescriptor
         get() = expandedConstructorDescriptor.baseDescriptorForSynthetic
 }

@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import java.io.Serializable
+import kotlin.reflect.KProperty1
+import kotlin.reflect.jvm.javaField
 
 abstract class CommonToolArguments : Freezable(), Serializable {
     companion object {
@@ -24,31 +26,107 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         private val serialVersionUID = 0L
     }
 
-    var freeArgs: List<String> by FreezableVar(emptyList())
+    var freeArgs: List<String> = emptyList()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Transient
     var errors: ArgumentParseErrors? = null
 
-    @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options")
-    var help: Boolean by FreezableVar(false)
+    @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options.")
+    var help = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
-    @Argument(value = "-X", description = "Print a synopsis of advanced options")
-    var extraHelp: Boolean by FreezableVar(false)
+    @Argument(value = "-X", description = "Print a synopsis of advanced options.")
+    var extraHelp = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
-    @Argument(value = "-version", description = "Display compiler version")
-    var version: Boolean by FreezableVar(false)
+    @Argument(value = "-version", description = "Display the compiler version.")
+    var version = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
-    @Argument(value = "-verbose", description = "Enable verbose logging output")
-    var verbose: Boolean by FreezableVar(false)
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INTERNAL,
+        shouldGenerateDeprecatedKotlinOptions = true,
+    )
+    @Argument(value = "-verbose", description = "Enable verbose logging output.")
+    var verbose = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
-    @Argument(value = "-nowarn", description = "Generate no warnings")
-    var suppressWarnings: Boolean by FreezableVar(false)
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INTERNAL,
+        shouldGenerateDeprecatedKotlinOptions = true,
+    )
+    @Argument(value = "-nowarn", description = "Don't generate any warnings.")
+    var suppressWarnings = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
-    @Argument(value = "-Werror", description = "Report an error if there are any warnings")
-    var allWarningsAsErrors: Boolean by FreezableVar(false)
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
+    )
+    @Argument(value = "-Werror", description = "Report an error if there are any warnings.")
+    var allWarningsAsErrors = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
-    var internalArguments: List<InternalArgument> by FreezableVar(emptyList())
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT,
+    )
+    @Argument(
+        value = "-Wextra",
+        description = "Enable extra checkers for K2."
+    )
+    var extraWarnings = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    var internalArguments: List<InternalArgument> = emptyList()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+}
+
+/**
+ * An argument which should be passed to Kotlin compiler to enable [this] compiler option
+ */
+val KProperty1<out CommonCompilerArguments, *>.cliArgument: String
+    get() {
+        val javaField = javaField
+            ?: error("Java field should be present for $this")
+        val argumentAnnotation = javaField.getAnnotation<Argument>(Argument::class.java)
+        return argumentAnnotation.value
+    }
+
+/**
+ * Returns a string of the form "argument=value" where "argument" is the [Argument.value] of this compiler argument.
+ */
+fun KProperty1<out CommonCompilerArguments, *>.cliArgument(value: String): String {
+    return "$cliArgument=$value"
 }

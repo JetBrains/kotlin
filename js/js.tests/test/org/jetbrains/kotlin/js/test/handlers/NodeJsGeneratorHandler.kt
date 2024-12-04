@@ -22,7 +22,6 @@ import java.io.File
 class NodeJsGeneratorHandler(testServices: TestServices) : AbstractJsArtifactsCollector(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (someAssertionWasFailed) return
-        val allJsFiles = getOnlyJsFilesForRunner(testServices, modulesToArtifact)
 
         val globalDirectives = testServices.moduleStructure.allDirectives
 
@@ -31,8 +30,11 @@ class NodeJsGeneratorHandler(testServices: TestServices) : AbstractJsArtifactsCo
         val generateNodeJsRunner = JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER in globalDirectives
         val skipNodeJs = JsEnvironmentConfigurationDirectives.SKIP_NODE_JS in globalDirectives
         val esModules = JsEnvironmentConfigurationDirectives.ES_MODULES in globalDirectives
+        val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in globalDirectives
 
-        if (dontRunGeneratedCode || !generateNodeJsRunner || skipNodeJs || esModules) return
+        if (dontRunGeneratedCode || !generateNodeJsRunner || skipNodeJs || esModules || onlyIrDce) return
+
+        val allJsFiles = getOnlyJsFilesForRunner(testServices, modulesToArtifact)
 
         val mainModuleName = getMainModuleName(testServices)
         val outputDir = File(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices).absolutePath)

@@ -1,0 +1,59 @@
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: PackageVisibility
+  containingClassId: JavaClass.InnerClass
+  contextReceivers: []
+  hasStableParameterNames: false
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isPrimary: false
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: JavaClass.InnerClass
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: other
+      origin: JAVA_SOURCE
+      receiverParameter: null
+      returnType: KaFlexibleType:
+        annotations: []
+        type: JavaClass!
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: JavaClass.InnerClass
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PACKAGE_PRIVATE
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass.InnerClass
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

@@ -47,7 +47,6 @@ public class BitEncodingTest extends KtUsefulTestCase {
 
         byte[] e = decodeBytes(d);
         assertArrayEquals(message, a, e);
-
     }
 
     private static void assertStringConformsToJVMS(@NotNull String string) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun useDeclaredVariables() {
     val (a, b) = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING, UNRESOLVED_REFERENCE!>unresolved<!>
     a
@@ -5,7 +6,7 @@ fun useDeclaredVariables() {
 }
 
 fun checkersShouldRun() {
-    val (@A a, _) = <!COMPONENT_FUNCTION_MISSING, UNRESOLVED_REFERENCE!>unresolved<!>
+    val (@A a, _) = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING, UNRESOLVED_REFERENCE!>unresolved<!>
 }
 
 annotation class A

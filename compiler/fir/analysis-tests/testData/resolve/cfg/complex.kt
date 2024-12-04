@@ -1,9 +1,8 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 interface AutoCloseable {
     fun close()
 }
-
-fun Throwable.addSuppressed(other: Throwable) {}
 
 internal fun AutoCloseable?.closeFinally(cause: Throwable?) = when {
     this == null -> {}

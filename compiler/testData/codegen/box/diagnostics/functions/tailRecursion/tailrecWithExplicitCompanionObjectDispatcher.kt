@@ -1,12 +1,5 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// IGNORE_BACKEND: JS_IR_ES6
-// DONT_RUN_GENERATED_CODE: JS
 // IGNORE_BACKEND: JVM
 // IGNORE_FIR_DIAGNOSTICS_DIFF
-
-// Light analysis thinks this test passes but it doesn't because JVM backend does not compile this into a tailrec function.
-// IGNORE_LIGHT_ANALYSIS
 
 class C {
     companion object {

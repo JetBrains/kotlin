@@ -7,7 +7,7 @@ class JavaClass {
     }
 }
 
-//FILE: test/J$B.java
+// FILE: test/J$B.java
 package test;
 
 public class J$B {
@@ -38,7 +38,7 @@ class Experiment {
     annotation class Type
 
     @Type
-    data class Group(s: String)
+    data class Group(val s: String)
 }
 
 class Foo {
@@ -82,5 +82,3 @@ class Test1(val zoo: Foo.Bar.Zoo) : Foo.Bar(), IFoo.IBar, IFoo.IBar.IZoo {
     fun a(): Thread.State = Thread.State.NEW
     fun b(foo: JavaClass.Foo, bar: JavaClass.Foo.Bar) {}
 }
-
-// EXPECTED_ERROR class J$B is public, should be declared in a file named J$B.java

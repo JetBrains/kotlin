@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: j/JavaPackageLocal.java
 package j;
 

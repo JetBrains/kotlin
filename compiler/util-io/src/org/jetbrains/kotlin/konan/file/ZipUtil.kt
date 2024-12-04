@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.konan.file
 
-import java.net.URI
 import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributeView
+import java.nio.file.attribute.FileTime
 import java.nio.file.spi.FileSystemProvider
+import java.util.zip.ZipException
 
 // Zip filesystem provider doesn't allow creating several instances of ZipFileSystem from the same URI,
 // so newFileSystem(URI, ...) throws a FileSystemAlreadyExistsException in this case.
@@ -15,7 +17,7 @@ import java.nio.file.spi.FileSystemProvider
 // See also:
 // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=7001822
 // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6994161
-fun File.zipFileSystem(create: Boolean = false): FileSystem {
+internal fun File.zipFileSystem(create: Boolean = false): FileSystem {
     val attributes = hashMapOf("create" to create.toString())
 
     // There is no FileSystems.newFileSystem overload accepting the attribute map.
@@ -47,12 +49,30 @@ fun File.zipDirAs(unixFile: File) {
     }
 }
 
-fun Path.unzipTo(directory: Path) {
-    val zipUri = URI.create("jar:" + this.toUri())
-    FileSystems.newFileSystem(zipUri, emptyMap<String, Any?>(), null).use { zipfs ->
-        val zipPath = zipfs.getPath("/")
-        zipPath.recursiveCopyTo(directory)
+/**
+ * Unpacks the contents of a zip archive located in [this] into the [destinationDirectory].
+ *
+ * @param destinationDirectory The directory to unpack the contents to.
+ * @param resetTimeAttributes Whether to set the newly created files' time attributes
+ * (creation time, last access time, and last modification time) to zero.
+ * @param fromSubdirectory A subdirectory inside the archive to unpack. Specify "/" if you need to unpack the whole archive.
+ */
+fun File.unzipTo(destinationDirectory: File, fromSubdirectory: File = File("/"), resetTimeAttributes: Boolean = false) {
+    withZipFileSystem {
+        it.file(fromSubdirectory).recursiveCopyTo(destinationDirectory, resetTimeAttributes)
     }
+}
+
+/**
+ * Unpacks the contents of a zip archive located in [this] into the [destinationDirectory].
+ *
+ * @param destinationDirectory The directory to unpack the contents to.
+ * @param resetTimeAttributes Whether to set the newly created files' time attributes
+ * (creation time, last access time, and last modification time) to zero.
+ * @param fromSubdirectory A subdirectory inside the archive to unpack. Specify "/" if you need to unpack the whole archive.
+ */
+fun Path.unzipTo(destinationDirectory: Path, fromSubdirectory: Path = Paths.get("/"), resetTimeAttributes: Boolean = false) {
+    File(this).unzipTo(File(destinationDirectory), File(fromSubdirectory), resetTimeAttributes)
 }
 
 fun <T> File.withZipFileSystem(create: Boolean, action: (FileSystem) -> T): T {
@@ -60,3 +80,35 @@ fun <T> File.withZipFileSystem(create: Boolean, action: (FileSystem) -> T): T {
 }
 
 fun <T> File.withZipFileSystem(action: (FileSystem) -> T): T = this.withZipFileSystem(false, action)
+
+private fun File.recursiveCopyTo(destination: File, resetTimeAttributes: Boolean = false) {
+    val sourcePath = javaPath
+    val destPath = destination.javaPath
+    val destFs = destPath.fileSystem
+    val normalizedDestPath = destPath.normalize()
+    Files.walk(sourcePath).forEach next@{ oldPath ->
+
+        val relative = sourcePath.relativize(oldPath)
+
+        // We are copying files between file systems,
+        // so pass the relative path through the String.
+        val newPath = destFs.getPath(destPath.toString(), relative.toString())
+
+        // NOTE: this check is important, it prevents a potential ZipSlip vulnerability
+        if (!newPath.normalize().startsWith(normalizedDestPath)) {
+            throw ZipException("$relative attempted to escape the destination directory $destination")
+        }
+
+        // File systems don't allow replacing an existing root.
+        if (newPath == newPath.root) return@next
+        if (Files.isDirectory(newPath)) {
+            Files.createDirectories(newPath)
+        } else {
+            Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING)
+        }
+        if (resetTimeAttributes) {
+            val zero = FileTime.fromMillis(0)
+            Files.getFileAttributeView(newPath, BasicFileAttributeView::class.java).setTimes(zero, zero, zero);
+        }
+    }
+}

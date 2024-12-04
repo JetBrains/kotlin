@@ -1,13 +1,14 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 import kotlin.experimental.ExperimentalTypeInference
 
 interface Build<T>
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> build(@BuilderInference fn: Builder<T>.() -> Unit): Build<T> = TODO()
+fun <T> build(fn: Builder<T>.() -> Unit): Build<T> = TODO()
 
 interface Builder<T> {
     fun foo(fn: () -> T)

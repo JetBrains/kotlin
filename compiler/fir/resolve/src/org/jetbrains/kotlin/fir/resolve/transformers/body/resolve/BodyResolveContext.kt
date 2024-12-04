@@ -1,50 +1,53 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitContextParameterValue
+import org.jetbrains.kotlin.fir.resolve.calls.ContextReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValueForScriptOrSnippet
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
-import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
+import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.computeImportingScopes
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+import org.jetbrains.kotlin.util.PrivateForInline
 
 class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
-    val dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>,
+    val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
     val targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet(),
     val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
 ) {
@@ -53,33 +56,36 @@ class BodyResolveContext(
     @set:PrivateForInline
     lateinit var file: FirFile
 
-    var towerDataContextsForClassParts = FirTowerDataContextsForClassParts(forMemberDeclarations = FirTowerDataContext())
-        private set
+    @PrivateForInline
+    var regularTowerDataContexts: FirRegularTowerDataContexts = FirRegularTowerDataContexts(regular = FirTowerDataContext())
 
+    // TODO: Rename to postponed
+    @PrivateForInline
+    val specialTowerDataContexts: FirSpecialTowerDataContexts = FirSpecialTowerDataContexts()
+
+    @OptIn(PrivateForInline::class)
     val towerDataContext: FirTowerDataContext
-        get() = towerDataContextsForClassParts.currentContext
+        get() = regularTowerDataContexts.currentContext
+            ?: throw AssertionError("No regular data context found, towerDataMode = $towerDataMode")
 
     @OptIn(PrivateForInline::class)
     var towerDataMode: FirTowerDataMode
-        get() = towerDataContextsForClassParts.mode
+        get() = regularTowerDataContexts.activeMode
         set(value) {
-            towerDataContextsForClassParts.mode = value
+            regularTowerDataContexts = regularTowerDataContexts.replaceTowerDataMode(newMode = value)
         }
 
-    val implicitReceiverStack: ImplicitReceiverStack
-        get() = towerDataContext.implicitReceiverStack
-
-    private val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext>
-        get() = towerDataContextsForClassParts.towerDataContextForAnonymousFunctions
-
-    private val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext>
-        get() = towerDataContextsForClassParts.towerDataContextForCallableReferences
+    val implicitValueStorage: ImplicitValueStorage
+        get() = towerDataContext.implicitValueStorage
 
     @set:PrivateForInline
     var containers: ArrayDeque<FirDeclaration> = ArrayDeque()
 
+    @PrivateForInline
+    val whenSubjectImportingScopes: ArrayDeque<FirWhenSubjectImportingScope?> = ArrayDeque()
+
     @set:PrivateForInline
-    var containingClass: FirRegularClass? = null
+    var containingRegularClass: FirRegularClass? = null
 
     val containerIfAny: FirDeclaration?
         get() = containers.lastOrNull()
@@ -87,20 +93,50 @@ class BodyResolveContext(
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
 
+    @set:PrivateForInline
+    var isInsideAssignmentRhs: Boolean = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withAssignmentRhs(block: () -> R): R {
+        val oldMode = this.isInsideAssignmentRhs
+        this.isInsideAssignmentRhs = true
+        return try {
+            block()
+        } finally {
+            this.isInsideAssignmentRhs = oldMode
+        }
+    }
+
+    /**
+     * This is required to avoid changing current mode into [FirTowerDataMode.CLASS_HEADER_ANNOTATIONS].
+     * E.g., we can visit the same annotation in two ways – during a class visiting and outside of this class
+     */
+    @set:PrivateForInline
+    var insideClassHeader: Boolean = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun withClassHeader(clazz: FirRegularClass, action: () -> Unit) {
+        val old = insideClassHeader
+        insideClassHeader = true
+        try {
+            withContainer(clazz, action)
+        } finally {
+            insideClassHeader = old
+        }
+    }
+
     val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
-    var containingClassDeclarations: ArrayDeque<FirRegularClass> = ArrayDeque()
+    var containingClassDeclarations: ArrayDeque<FirClass> = ArrayDeque()
 
-    val topClassDeclaration: FirRegularClass?
-        get() = containingClassDeclarations.lastOrNull()
-
-    private inline fun <T> withNewTowerDataForClassParts(newContexts: FirTowerDataContextsForClassParts, f: () -> T): T {
-        val old = towerDataContextsForClassParts
-        towerDataContextsForClassParts = newContexts
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
+        val old = regularTowerDataContexts
+        regularTowerDataContexts = newContexts
         return try {
             f()
         } finally {
-            towerDataContextsForClassParts = old
+            regularTowerDataContexts = old
         }
     }
 
@@ -124,19 +160,19 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    private inline fun <T> withContainerClass(declaration: FirRegularClass, f: () -> T): T {
-        val oldContainingClass = containingClass
+    private inline fun <T> withContainerRegularClass(declaration: FirRegularClass, f: () -> T): T {
+        val oldContainingClass = containingRegularClass
         containers.add(declaration)
-        containingClass = declaration
+        containingRegularClass = declaration
         return try {
             f()
         } finally {
             containers.removeLast()
-            containingClass = oldContainingClass
+            containingRegularClass = oldContainingClass
         }
     }
 
-    inline fun <T> withContainingClass(declaration: FirRegularClass, f: () -> T): T {
+    inline fun <T> withContainingClass(declaration: FirClass, f: () -> T): T {
         containingClassDeclarations.add(declaration)
         return try {
             f()
@@ -157,14 +193,14 @@ class BodyResolveContext(
 
     @PrivateForInline
     inline fun <T> withTowerDataMode(mode: FirTowerDataMode, f: () -> T): T {
-        return withTowerModeCleanup {
+        return withTowerDataModeCleanup {
             towerDataMode = mode
             f()
         }
     }
 
     @PrivateForInline
-    inline fun <R> withTowerModeCleanup(l: () -> R): R {
+    inline fun <R> withTowerDataModeCleanup(l: () -> R): R {
         val initialMode = towerDataMode
         return try {
             l()
@@ -175,13 +211,12 @@ class BodyResolveContext(
 
     @PrivateForInline
     fun replaceTowerDataContext(newContext: FirTowerDataContext) {
-        towerDataContextsForClassParts.currentContext = newContext
+        regularTowerDataContexts = regularTowerDataContexts.replaceCurrentlyActiveContext(newContext)
     }
 
     @PrivateForInline
     fun clear() {
-        towerDataContextForAnonymousFunctions.clear()
-        towerDataContextForCallableReferences.clear()
+        specialTowerDataContexts.clear()
         dataFlowAnalyzerContext.reset()
     }
 
@@ -201,8 +236,13 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>) {
-        replaceTowerDataContext(towerDataContext.addReceiver(name, implicitReceiverValue))
+    fun addReceiver(name: Name?, implicitReceiverValue: ImplicitReceiverValue<*>, additionalLabelName: Name? = null) {
+        replaceTowerDataContext(towerDataContext.addReceiver(name, implicitReceiverValue, additionalLabelName))
+    }
+
+    @PrivateForInline
+    fun addAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+        replaceTowerDataContext(towerDataContext.addAnonymousInitializer(anonymousInitializer))
     }
 
     @PrivateForInline
@@ -222,16 +262,32 @@ class BodyResolveContext(
         owner: FirCallableDeclaration,
         type: ConeKotlinType?,
         holder: SessionHolder,
+        additionalLabelName: Name? = null,
         f: () -> T
     ): T = withTowerDataCleanup {
+        val contextReceivers = mutableListOf<ContextReceiverValue>()
+        val contextParameters = mutableListOf<ImplicitContextParameterValue>()
+
+        owner.contextParameters.forEach { receiver ->
+            if (receiver.isLegacyContextReceiver()) {
+                contextReceivers += ContextReceiverValue(
+                    receiver.symbol, receiver.returnTypeRef.coneType, receiver.name, holder.session, holder.scopeSession,
+                )
+            } else {
+                contextParameters += ImplicitContextParameterValue(receiver.symbol, receiver.returnTypeRef.coneType)
+            }
+        }
+
+        replaceTowerDataContext(towerDataContext.addContextGroups(contextReceivers, contextParameters))
+
         if (type != null) {
             val receiver = ImplicitExtensionReceiverValue(
-                owner.symbol,
+                owner.receiverParameter!!.symbol,
                 type,
                 holder.session,
                 holder.scopeSession
             )
-            addReceiver(labelName, receiver)
+            addReceiver(labelName, receiver, additionalLabelName)
         }
 
         f()
@@ -252,7 +308,7 @@ class BodyResolveContext(
         return FirMemberTypeParameterScope(this)
     }
 
-    fun buildSecondaryConstructorParametersScope(constructor: FirConstructor, session: FirSession): FirLocalScope =
+    fun buildConstructorParametersScope(constructor: FirConstructor, session: FirSession): FirLocalScope =
         constructor.valueParameters.fold(FirLocalScope(session)) { acc, param -> acc.storeVariable(param, session) }
 
     @PrivateForInline
@@ -279,11 +335,24 @@ class BodyResolveContext(
 
     // ANALYSIS PUBLIC API
 
+    /**
+     * Pure parameters are those that are not properties.
+     * For example, in code `constructor(p1: Int, val p2: Int)` only `p1` is a pure parameter.
+     *
+     * To be used in contexts, where pure primary constructor parameters are accessible, e.g., property initializers.
+     * In primary constructor itself create new scope using [buildConstructorParametersScope].
+     */
+    @OptIn(PrivateForInline::class)
     fun getPrimaryConstructorPureParametersScope(): FirLocalScope? =
-        towerDataContextsForClassParts.primaryConstructorPureParametersScope
+        regularTowerDataContexts.primaryConstructorPureParametersScope
 
+    /**
+     * To be used in contexts, where primary constructor parameters are accessible, e.g., supertype delegate expression.
+     * In primary constructor itself create new scope using [buildConstructorParametersScope].
+     */
+    @OptIn(PrivateForInline::class)
     fun getPrimaryConstructorAllParametersScope(): FirLocalScope? =
-        towerDataContextsForClassParts.primaryConstructorAllParametersScope
+        regularTowerDataContexts.primaryConstructorAllParametersScope
 
     @OptIn(PrivateForInline::class)
     fun storeClassIfNotNested(klass: FirRegularClass, session: FirSession) {
@@ -297,11 +366,11 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <R> withInferenceSession(inferenceSession: FirInferenceSession, block: () -> R): R {
+    inline fun <R, S : FirInferenceSession> withInferenceSession(inferenceSession: S, block: S.() -> R): R {
         val oldSession = this.inferenceSession
         this.inferenceSession = inferenceSession
         return try {
-            block()
+            inferenceSession.block()
         } finally {
             this.inferenceSession = oldSession
         }
@@ -309,22 +378,32 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousFunctionTowerDataContext(symbol: FirAnonymousFunctionSymbol, f: () -> T): T {
-        return withTowerModeCleanup {
-            towerDataContextsForClassParts.setAnonymousFunctionContextIfAny(symbol)
-            f()
-        }
+        return withTemporaryRegularContext(specialTowerDataContexts.getAnonymousFunctionContext(symbol), f)
     }
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withCallableReferenceTowerDataContext(access: FirCallableReferenceAccess, f: () -> T): T {
-        return withTowerModeCleanup {
-            towerDataContextsForClassParts.setCallableReferenceContextIfAny(access)
-            f()
+        return withTemporaryRegularContext(specialTowerDataContexts.getCallableReferenceContext(access), f)
+    }
+
+    @PrivateForInline
+    inline fun <T> withTemporaryRegularContext(newContext: PostponedAtomsResolutionContext?, f: () -> T): T {
+        val (towerDataContext, newInferenceSession) = newContext ?: return f()
+
+        return withTowerDataModeCleanup {
+            withTowerDataContexts(regularTowerDataContexts.replaceAndSetActiveRegularContext(towerDataContext)) {
+                if (newInferenceSession !== this.inferenceSession) {
+                    withInferenceSession(newInferenceSession) { f() }
+                } else {
+                    f()
+                }
+            }
         }
     }
 
+    @OptIn(PrivateForInline::class)
     fun dropContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-        towerDataContextForAnonymousFunctions.remove(anonymousFunction.symbol)
+        specialTowerDataContexts.dropAnonymousFunctionContext(anonymousFunction.symbol)
     }
 
     @OptIn(PrivateForInline::class)
@@ -335,13 +414,19 @@ class BodyResolveContext(
         BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
             file = this@BodyResolveContext.file
             fileImportsScope += this@BodyResolveContext.fileImportsScope
-            towerDataContextForAnonymousFunctions.putAll(this@BodyResolveContext.towerDataContextForAnonymousFunctions)
-            towerDataContextForCallableReferences.putAll(this@BodyResolveContext.towerDataContextForCallableReferences)
+            specialTowerDataContexts.putAll(this@BodyResolveContext.specialTowerDataContexts)
             containers = this@BodyResolveContext.containers
             containingClassDeclarations = ArrayDeque(this@BodyResolveContext.containingClassDeclarations)
-            containingClass = this@BodyResolveContext.containingClass
+            containingRegularClass = this@BodyResolveContext.containingRegularClass
             replaceTowerDataContext(this@BodyResolveContext.towerDataContext)
             anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
+            // Looks like we should copy this session only for builder inference to be able
+            // to use information from local class inside it.
+            // However, we should not copy other kinds of inference sessions,
+            // otherwise we can "inherit" type variables from there provoking inference problems
+            if (this@BodyResolveContext.inferenceSession is FirPCLAInferenceSession) {
+                inferenceSession = this@BodyResolveContext.inferenceSession
+            }
         }
 
     // withElement PUBLIC API
@@ -359,7 +444,7 @@ class BodyResolveContext(
                 val importingScopes = createImportingScopes(file, holder.session, holder.scopeSession)
                 fileImportsScope += importingScopes
                 addNonLocalTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
-                f()
+                withContainer(file, f)
             }
         }
     }
@@ -368,16 +453,10 @@ class BodyResolveContext(
     fun <T> withRegularClass(
         regularClass: FirRegularClass,
         holder: SessionHolder,
-        forContracts: Boolean = false,
         f: () -> T
     ): T {
         storeClassIfNotNested(regularClass, holder.session)
-        if (forContracts) {
-            return withTypeParametersOf(regularClass) {
-                withContainerClass(regularClass, f)
-            }
-        }
-        return withTowerModeCleanup {
+        return withTowerDataModeCleanup {
             if (!regularClass.isInner && containerIfAny is FirRegularClass) {
                 towerDataMode = if (regularClass.isCompanion) {
                     FirTowerDataMode.COMPANION_OBJECT
@@ -387,7 +466,7 @@ class BodyResolveContext(
             }
 
             withScopesForClass(regularClass, holder) {
-                withContainerClass(regularClass, f)
+                withContainerRegularClass(regularClass, f)
             }
         }
     }
@@ -403,6 +482,11 @@ class BodyResolveContext(
         }
     }
 
+    /**
+     * Changes to the order of scopes should also be reflected in
+     * [org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer.withClassScopes].
+     * Otherwise, we get different behavior between type resolve and body resolve phases.
+     */
     fun <T> withScopesForClass(
         owner: FirClass,
         holder: SessionHolder,
@@ -416,35 +500,46 @@ class BodyResolveContext(
         val towerElementsForClass = holder.collectTowerDataElementsForClass(owner, type)
 
         val base = towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-        val statics = base
-            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
 
-        val companionReceiver = towerElementsForClass.companionReceiver
-        val staticsAndCompanion = if (companionReceiver == null) statics else base
-            .addReceiver(null, companionReceiver)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+        val statics = base
+            .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+
+        val staticsAndCompanion = when (val companionReceiver = towerElementsForClass.companionReceiver) {
+            null -> statics
+            else -> base
+                .addReceiver(null, companionReceiver)
+                .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+        }
 
         val typeParameterScope = (owner as? FirRegularClass)?.typeParameterScope()
 
-        val forMembersResolution =
+        // Type parameters must be inserted before all of staticsAndCompanion.
+        // Optimization: Only rebuild all of staticsAndCompanion that's below type parameters if there are any type parameters.
+        // Otherwise, reuse staticsAndCompanion.
+        val forConstructorHeader = if (typeParameterScope != null) {
+            towerDataContext
+                .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+                .run { towerElementsForClass.companionReceiver?.let { addReceiver(null, it) } ?: this }
+                .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+                // Note: scopes here are in reverse order, so type parameter scope is the most prioritized
+                .addNonLocalScope(typeParameterScope)
+        } else {
             staticsAndCompanion
-                .addReceiver(labelName, towerElementsForClass.thisReceiver)
-                .addNonLocalScopeIfNotNull(typeParameterScope)
+        }
 
-        val scopeForConstructorHeader =
-            staticsAndCompanion.addNonLocalScopeIfNotNull(typeParameterScope)
+        val forMembersResolution = forConstructorHeader
+            .addReceiver(labelName, towerElementsForClass.thisReceiver)
+            .addContextGroups(towerElementsForClass.contextReceivers, emptyList())
 
         /*
          * Scope for enum entries is equal to initial scope for constructor header
          *
-         * The only difference that we add value parameters to local scope for constructors
+         * The only difference is that we add value parameters to local scope for constructors
          *   and should not do this for enum entries
          */
 
         @Suppress("UnnecessaryVariable")
-        val scopeForEnumEntries = scopeForConstructorHeader
+        val scopeForEnumEntries = forConstructorHeader
 
         val newTowerDataContextForStaticNestedClasses =
             if ((owner as? FirRegularClass)?.classKind?.isSingleton == true)
@@ -455,37 +550,188 @@ class BodyResolveContext(
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
         val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
             if (constructor?.isPrimary == true) {
-                constructor.scopesWithPrimaryConstructorParameters(owner, holder.session)
+                constructor.scopesWithPrimaryConstructorParameters(holder.session)
             } else {
                 null to null
             }
 
-        val newContexts = FirTowerDataContextsForClassParts(
-            forMembersResolution,
-            newTowerDataContextForStaticNestedClasses,
-            statics,
-            scopeForConstructorHeader,
-            scopeForEnumEntries,
-            primaryConstructorPureParametersScope,
-            primaryConstructorAllParametersScope
+        val newContexts = FirRegularTowerDataContexts(
+            regular = forMembersResolution,
+            forClassHeaderAnnotations = base,
+            forNestedClasses = newTowerDataContextForStaticNestedClasses,
+            forCompanionObject = statics,
+            forConstructorHeaders = forConstructorHeader,
+            forEnumEntries = scopeForEnumEntries,
+            primaryConstructorPureParametersScope = primaryConstructorPureParametersScope,
+            primaryConstructorAllParametersScope = primaryConstructorAllParametersScope
         )
 
-        return withNewTowerDataForClassParts(newContexts) {
+        return withTowerDataContexts(newContexts) {
             f()
         }
     }
 
-    private fun FirConstructor.scopesWithPrimaryConstructorParameters(
-        ownerClass: FirClass,
-        session: FirSession
-    ): Pair<FirLocalScope, FirLocalScope> {
+    @OptIn(PrivateForInline::class)
+    fun <T> withScript(
+        owner: FirScript,
+        holder: SessionHolder,
+        f: () -> T
+    ): T {
+        val towerElementsForScript = holder.collectTowerDataElementsForScript(owner)
+
+        val base = towerDataContext.addNonLocalTowerDataElements(emptyList())
+        val statics = base
+            .addNonLocalScopeIfNotNull(towerElementsForScript.staticScope)
+
+        val parameterScope = owner.parameters.filter {
+            // for compatibility with old script resolve, the parameters that implicitly copied from the base class c-tor are ignored here
+            // this quirk should be removed after removing base class support (KT-60449)
+            it.origin != FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
+        }.fold(FirLocalScope(holder.session)) { scope, parameter ->
+            scope.storeVariable(parameter, holder.session)
+        }
+
+        val forMembersResolution =
+            statics
+                .addLocalScope(parameterScope)
+                // TODO: temporary solution for avoiding problem described in KT-62712, flatten back after fix
+                .let { baseCtx ->
+                    towerElementsForScript.implicitReceivers.fold(baseCtx) { ctx, it ->
+                        ctx.addReceiver(it.type.classId?.shortClassName, it)
+                    }
+                }
+
+        val newContexts = FirRegularTowerDataContexts(
+            regular = forMembersResolution,
+            forClassHeaderAnnotations = base,
+            forNestedClasses = forMembersResolution,
+            forCompanionObject = statics,
+            forConstructorHeaders = null,
+            forEnumEntries = null,
+            primaryConstructorPureParametersScope = null,
+            primaryConstructorAllParametersScope = null
+        )
+
+        return withTowerDataContexts(newContexts) {
+            withContainer(owner) {
+                f()
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    fun <T> withReplSnippet(
+        replSnippet: FirReplSnippet,
+        holder: SessionHolder,
+        f: () -> T
+    ): T {
+        return withContainer(replSnippet) {
+            withTowerDataCleanup {
+
+                // TODO: robuster matching and error reporting on no extension (KT-72969)
+                for (resolveExt in holder.session.extensionService.replSnippetResolveExtensions) {
+                    val scope = resolveExt.getSnippetScope(replSnippet, holder.session)
+                    if (scope != null) {
+                        addNonLocalTowerDataElement(scope.asTowerDataElement(isLocal = false))
+                        break
+                    }
+                }
+
+                addLocalScope(FirLocalScope(holder.session))
+
+                replSnippet.receivers.mapIndexed { index, receiver ->
+                    ImplicitReceiverValueForScriptOrSnippet(
+                        receiver.symbol,
+                        receiver.typeRef.coneType,
+                        holder.session,
+                        holder.scopeSession,
+                    )
+                }.asReversed().forEach {
+                    val additionalLabelName = it.type.abbreviatedTypeOrSelf.labelName(holder.session)
+                    addReceiver(null, it, additionalLabelName)
+                }
+
+                f()
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    fun <T> withCodeFragment(codeFragment: FirCodeFragment, holder: SessionHolder, f: () -> T): T {
+        val codeFragmentContext = codeFragment.codeFragmentContext ?: error("Context is not set for a code fragment")
+        val towerDataContext = codeFragmentContext.towerDataContext
+
+        val fragmentImportTowerDataElements = computeImportingScopes(file, holder.session, holder.scopeSession)
+            .map { it.asTowerDataElement(isLocal = false) }
+
+        val base = towerDataContext
+            // KT-69102: this line can lead to duplicate context receivers in the implicit receiver stack
+            .addNonLocalTowerDataElements(towerDataContext.nonLocalTowerDataElements)
+            .addNonLocalTowerDataElements(fragmentImportTowerDataElements)
+
+        val baseWithLocalScope = towerDataContext.localScopes.fold(base) { acc, scope -> acc.addLocalScope(scope) }
+
+        val newContext = FirRegularTowerDataContexts(
+            regular = baseWithLocalScope,
+            forClassHeaderAnnotations = baseWithLocalScope,
+            forNestedClasses = baseWithLocalScope,
+            forCompanionObject = baseWithLocalScope,
+            forConstructorHeaders = null,
+            forEnumEntries = null,
+            primaryConstructorPureParametersScope = null,
+            primaryConstructorAllParametersScope = null
+        )
+
+        return withTowerDataContexts(newContext) {
+            withContainer(codeFragment, f)
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withWhenSubjectType(
+        subjectType: ConeKotlinType?,
+        sessionHolder: SessionHolder,
+        f: () -> T,
+    ): T {
+        val session = sessionHolder.session
+
+        val withContextSensitiveResolution =
+            session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveEnumResolutionInWhen)
+
+        if (withContextSensitiveResolution) {
+            val subjectClassSymbol = (subjectType?.lowerBoundIfFlexible() as? ConeClassLikeType)
+                ?.lookupTag?.toRegularClassSymbol(session)?.takeIf { it.fir.classKind == ClassKind.ENUM_CLASS }
+            val whenSubjectImportingScope = subjectClassSymbol?.let {
+                FirWhenSubjectImportingScope(it.classId, session, sessionHolder.scopeSession)
+            }
+            whenSubjectImportingScopes.add(whenSubjectImportingScope)
+        }
+
+        return try {
+            f()
+        } finally {
+            if (withContextSensitiveResolution) {
+                whenSubjectImportingScopes.removeLast()
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withWhenSubjectImportingScope(f: () -> T): T {
+        val whenSubjectImportingScope = whenSubjectImportingScopes.lastOrNull() ?: return f()
+        val newTowerDataContext = towerDataContext.addNonLocalScope(whenSubjectImportingScope)
+        val newContexts = FirRegularTowerDataContexts(newTowerDataContext)
+        return withTowerDataContexts(newContexts) {
+            f()
+        }
+    }
+
+    private fun FirConstructor.scopesWithPrimaryConstructorParameters(session: FirSession): Pair<FirLocalScope, FirLocalScope> {
         var parameterScope = FirLocalScope(session)
         var allScope = FirLocalScope(session)
-        val properties = ownerClass.declarations.filterIsInstance<FirProperty>().associateBy { it.name }
         for (parameter in valueParameters) {
             allScope = allScope.storeVariable(parameter, session)
-            val property = properties[parameter.name]
-            if (property?.source?.kind != KtFakeSourceElementKind.PropertyFromParameter) {
+            if (parameter.correspondingProperty == null) {
                 parameterScope = parameterScope.storeVariable(parameter, session)
             }
         }
@@ -519,14 +765,28 @@ class BodyResolveContext(
                 // Make all value parameters available in the local scope so that even one parameter that refers to another parameter,
                 // which may not be initialized yet, can be resolved. [FirFunctionParameterChecker] will detect and report an error
                 // if an uninitialized parameter is accessed by a preceding parameter.
+                for (contextParameter in function.contextParameters) {
+                    if (!contextParameter.isLegacyContextReceiver()) {
+                        storeVariable(contextParameter, holder.session)
+                    }
+                }
                 for (parameter in function.valueParameters) {
                     storeVariable(parameter, holder.session)
                 }
-                val receiverTypeRef = function.receiverTypeRef
-                withLabelAndReceiverType(function.name, function, receiverTypeRef?.coneType, holder, f)
+                val receiverTypeRef = function.receiverParameter?.typeRef
+                val type = receiverTypeRef?.coneType
+                val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
+                withLabelAndReceiverType(function.name, function, type, holder, additionalLabelName, f)
             } else {
                 f()
             }
+        }
+    }
+
+    private fun ConeKotlinType.labelName(session: FirSession): Name? {
+        return when {
+            !session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers) -> null
+            else -> (this as? ConeLookupTagBasedType)?.lookupTag?.name
         }
     }
 
@@ -543,12 +803,14 @@ class BodyResolveContext(
              *   special towerDataContext
              */
             withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-                getPrimaryConstructorAllParametersScope()?.let { addLocalScope(it) }
-                f()
+                withTowerDataCleanup {
+                    addLocalScope(buildConstructorParametersScope(constructor, session))
+                    f()
+                }
             }
         } else {
             withTowerDataCleanup {
-                addLocalScope(buildSecondaryConstructorParametersScope(constructor, session))
+                addLocalScope(buildConstructorParametersScope(constructor, session))
                 f()
             }
         }
@@ -561,19 +823,17 @@ class BodyResolveContext(
         mode: ResolutionMode,
         f: () -> T
     ): T {
+        require(mode !is ResolutionMode.ContextDependent)
         if (mode !is ResolutionMode.LambdaResolution) {
-            towerDataContextForAnonymousFunctions[anonymousFunction.symbol] = towerDataContext
-        }
-        if (mode is ResolutionMode.ContextDependent || mode is ResolutionMode.ContextDependentDelegate) {
-            return f()
+            storeContextForAnonymousFunction(anonymousFunction)
         }
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope(holder.session))
-            val receiverTypeRef = anonymousFunction.receiverTypeRef
+            val receiverTypeRef = anonymousFunction.receiverParameter?.typeRef
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
             withContainer(anonymousFunction) {
                 withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
-                    if (mode is ResolutionMode.LambdaResolution) {
+                    if (mode is ResolutionMode.LambdaResolution && mode.expectedReturnTypeRef == null) {
                         withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol, f)
                     } else {
                         f()
@@ -581,6 +841,13 @@ class BodyResolveContext(
                 }
             }
         }
+    }
+
+    @OptIn(PrivateForInline::class)
+    fun storeContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        specialTowerDataContexts.storeAnonymousFunctionContext(
+            anonymousFunction.symbol, towerDataContext, inferenceSession
+        )
     }
 
     @OptIn(PrivateForInline::class)
@@ -599,9 +866,22 @@ class BodyResolveContext(
     }
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> forEnumEntry(
+    inline fun <T> withEnumEntry(
+        enumEntry: FirEnumEntry,
         f: () -> T
-    ): T = withTowerDataMode(FirTowerDataMode.ENUM_ENTRY, f)
+    ): T = withTowerDataMode(FirTowerDataMode.ENUM_ENTRY) {
+        withContainer(enumEntry, f)
+    }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> forAnnotation(
+        f: () -> T
+    ): T {
+        return when {
+            containerIfAny is FirRegularClass && !insideClassHeader -> withTowerDataMode(FirTowerDataMode.CLASS_HEADER_ANNOTATIONS, f)
+            else -> f()
+        }
+    }
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousInitializer(
@@ -612,6 +892,7 @@ class BodyResolveContext(
         return withTowerDataCleanup {
             getPrimaryConstructorPureParametersScope()?.let { addLocalScope(it) }
             addLocalScope(FirLocalScope(session))
+            addAnonymousInitializer(anonymousInitializer)
             withContainer(anonymousInitializer, f)
         }
     }
@@ -622,11 +903,17 @@ class BodyResolveContext(
         session: FirSession,
         f: () -> T
     ): T {
-        if (!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) {
+        if ((!valueParameter.name.isSpecial || valueParameter.name != UNDERSCORE_FOR_UNUSED_VAR) && !valueParameter.isLegacyContextReceiver()) {
             storeVariable(valueParameter, session)
         }
         return withContainer(valueParameter, f)
     }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withReceiverParameter(
+        valueParameter: FirReceiverParameter,
+        f: () -> T
+    ): T = withContainer(valueParameter, f)
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withProperty(
@@ -654,15 +941,18 @@ class BodyResolveContext(
             }
         }
         return withTowerDataCleanup {
-            val receiverTypeRef = property.receiverTypeRef
+            val receiverTypeRef = property.receiverParameter?.typeRef
             addLocalScope(FirLocalScope(holder.session))
             if (!forContracts && receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
-                !property.isLocal && property.delegate == null
+                !property.isLocal && property.delegate == null &&
+                property.contextParameters.isEmpty()
             ) {
                 storeBackingField(property, holder.session)
             }
             withContainer(accessor) {
-                withLabelAndReceiverType(property.name, property, receiverTypeRef?.coneType, holder, f)
+                val type = receiverTypeRef?.coneType
+                val additionalLabelName = type?.abbreviatedTypeOrSelf?.labelName(holder.session)
+                withLabelAndReceiverType(property.name, property, type, holder, additionalLabelName, f)
             }
         }
     }
@@ -672,25 +962,6 @@ class BodyResolveContext(
         return withTowerDataCleanup {
             getPrimaryConstructorPureParametersScope()?.let { addLocalScope(it) }
             f()
-        }
-    }
-
-    inline fun <T> forPropertyDelegateAccessors(
-        property: FirProperty,
-        delegateExpression: FirExpression,
-        resolutionContext: ResolutionContext,
-        callCompleter: FirCallCompleter,
-        f: FirDelegatedPropertyInferenceSession.() -> T
-    ) {
-        val inferenceSession = FirDelegatedPropertyInferenceSession(
-            property,
-            delegateExpression,
-            resolutionContext,
-            callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
-        )
-
-        withInferenceSession(inferenceSession) {
-            inferenceSession.f()
         }
     }
 
@@ -729,30 +1000,28 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         return withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-            if (constructor.isPrimary) {
-                getPrimaryConstructorAllParametersScope()?.let {
-                    withTowerDataCleanup {
-                        addLocalScope(it)
-                        f()
-                    }
-                } ?: f()
-            } else {
-                addInaccessibleImplicitReceiverValue(owningClass, holder)
-                withTowerDataCleanup {
-                    addLocalScope(buildSecondaryConstructorParametersScope(constructor, holder.session))
-                    constructor.valueParameters.forEach { storeVariable(it, holder.session) }
-                    f()
+            withTowerDataCleanup {
+                if (!constructor.isPrimary) {
+                    addInaccessibleImplicitReceiverValue(owningClass, holder)
                 }
+                addLocalScope(buildConstructorParametersScope(constructor, holder.session))
+                f()
             }
         }
     }
 
+    @OptIn(PrivateForInline::class)
     fun storeCallableReferenceContext(callableReferenceAccess: FirCallableReferenceAccess) {
-        towerDataContextForCallableReferences[callableReferenceAccess] = towerDataContext
+        specialTowerDataContexts.storeCallableReferenceContext(
+            callableReferenceAccess,
+            towerDataContext.createSnapshot(keepMutable = false),
+            inferenceSession,
+        )
     }
 
+    @OptIn(PrivateForInline::class)
     fun dropCallableReferenceContext(callableReferenceAccess: FirCallableReferenceAccess) {
-        towerDataContextForCallableReferences.remove(callableReferenceAccess)
+        specialTowerDataContexts.dropCallableReferenceContext(callableReferenceAccess)
     }
 
     fun <T> withWhenExpression(whenExpression: FirWhenExpression, session: FirSession, f: () -> T): T {

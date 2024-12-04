@@ -80,7 +80,9 @@ public inline fun check(value: Boolean): Unit {
     contract {
         returns() implies value
     }
-    check(value) { "Check failed." }
+    if (!value) {
+        throw IllegalStateException("Check failed.")
+    }
 }
 
 /**

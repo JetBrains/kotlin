@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi
@@ -20,6 +9,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
@@ -27,8 +17,8 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
+import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
@@ -53,7 +43,7 @@ abstract class KtClassOrObject :
             return EditCommaSeparatedListHelper.addItem(it, superTypeListEntries, superTypeListEntry)
         }
 
-        val psiFactory = KtPsiFactory(this)
+        val psiFactory = KtPsiFactory(project)
         val specifierListToAdd = psiFactory.createSuperTypeCallEntry("A()").replace(superTypeListEntry).parent
         val colon = addBefore(psiFactory.createColon(), getBody())
         return (addAfter(specifierListToAdd, colon) as KtSuperTypeList).entries.first()
@@ -77,7 +67,11 @@ abstract class KtClassOrObject :
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T {
         val body = getOrCreateBody()
         val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.lastChild!!, PsiWhiteSpace::class.java)
-        return body.addAfter(declaration, anchor) as T
+        return if (anchor?.nextSibling is PsiErrorElement) {
+            body.addBefore(declaration, anchor)
+        } else {
+            body.addAfter(declaration, anchor)
+        } as T
     }
 
     inline fun <reified T : KtDeclaration> addDeclarationAfter(declaration: T, anchor: PsiElement?): T {
@@ -90,14 +84,30 @@ abstract class KtClassOrObject :
         return getOrCreateBody().addBefore(declaration, anchorAfter) as T
     }
 
-    fun isTopLevel(): Boolean = stub?.isTopLevel() ?: (parent is KtFile)
+    fun isTopLevel(): Boolean = greenStub?.isTopLevel() ?: isKtFile(parent)
 
     override fun getClassId(): ClassId? {
-        stub?.let { return it.getClassId() }
+        greenStub?.let { return it.getClassId() }
+
+        if (isLocal()) return null
+
         return ClassIdCalculator.calculateClassId(this)
     }
 
-    override fun isLocal(): Boolean = stub?.isLocal() ?: KtPsiUtil.isLocal(this)
+    @Volatile
+    private var isLocal: Boolean? = null
+
+    override fun isLocal(): Boolean {
+        greenStub?.isLocal()?.let { return it }
+
+        isLocal?.let { return it }
+
+        return KtPsiUtil.isLocal(this).also {
+            isLocal = it
+        }
+    }
+
+    fun isData(): Boolean = hasModifier(KtTokens.DATA_KEYWORD)
 
     override fun getDeclarations(): List<KtDeclaration> = getBody()?.declarations.orEmpty()
 
@@ -121,12 +131,11 @@ abstract class KtClassOrObject :
 
     fun isAnnotation(): Boolean = hasModifier(KtTokens.ANNOTATION_KEYWORD)
 
-    fun getDeclarationKeyword(): PsiElement? =
-        findChildByType(
-            TokenSet.create(
-                KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
-            )
-        )
+    fun getDeclarationKeyword(): PsiElement? = findChildByType(classInterfaceObjectTokenSet)
+
+    private val classInterfaceObjectTokenSet = TokenSet.create(
+        KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
+    )
 
     override fun delete() {
         CheckUtil.checkWritable(this)
@@ -139,60 +148,29 @@ abstract class KtClassOrObject :
         }
     }
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (this === another) {
-            return true
-        }
-
-        if (another !is KtClassOrObject) {
-            return false
-        }
-
-        val fq1 = getQualifiedName() ?: return false
-        val fq2 = another.getQualifiedName() ?: return false
-        if (fq1 == fq2) {
-            val thisLocal = isLocal
-            if (thisLocal != another.isLocal) {
-                return false
-            }
-
-            // For non-local classes same fqn is enough
-            // Consider different instances of local classes non-equivalent
-            return !thisLocal
-        }
-
-        return false
+    override fun subtreeChanged() {
+        // most likely, we may not drop isLocal as the class shouldn't survive such a destructive change
+        isLocal = null
+        super.subtreeChanged()
     }
 
-    protected fun getQualifiedName(): String? {
-        val stub = stub
-        if (stub != null) {
-            val fqName = stub.getFqName()
-            return fqName?.asString()
-        }
+    override fun isEquivalentTo(another: PsiElement?): Boolean =
+        this === another ||
+                another is KtClassOrObject &&
+                // Consider different instances of local classes non-equivalent
+                !isLocal() &&
+                !another.isLocal() &&
+                getClassId() == another.getClassId()
 
-        val parts = mutableListOf<String>()
-        var current: KtClassOrObject? = this
-        while (current != null) {
-            val name = current.name ?: return null
-            parts.add(name)
-            current = PsiTreeUtil.getParentOfType(current, KtClassOrObject::class.java)
-        }
-        val file = containingFile as? KtFile ?: return null
-        val fileQualifiedName = file.packageFqName.asString()
-        if (!fileQualifiedName.isEmpty()) {
-            parts.add(fileQualifiedName)
-        }
-        parts.reverse()
-        return parts.joinToString(separator = ".")
-    }
+    override fun getContextReceivers(): List<KtContextReceiver> =
+        contextReceiverList?.let { return it.contextReceivers() } ?: emptyList()
 }
 
 
 fun KtClassOrObject.getOrCreateBody(): KtClassBody {
     getBody()?.let { return it }
 
-    val newBody = KtPsiFactory(this).createEmptyClassBody()
+    val newBody = KtPsiFactory(project).createEmptyClassBody()
     if (this is KtEnumEntry) return addAfter(newBody, initializerList ?: nameIdentifier) as KtClassBody
     return add(newBody) as KtClassBody
 }

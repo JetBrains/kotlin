@@ -22,21 +22,16 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.ICodeFragmentElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.parsing.KotlinParser;
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType;
 
-public class KtBlockCodeFragmentType extends KtFileElementType {
+public class KtBlockCodeFragmentType extends ICodeFragmentElementType {
     private static final String NAME = "kotlin.BLOCK_CODE_FRAGMENT";
 
     public KtBlockCodeFragmentType() {
-        super(NAME);
-    }
-
-    @NotNull
-    @Override
-    public String getExternalId() {
-        return NAME;
+        super(NAME, KotlinLanguage.INSTANCE);
     }
 
     @Override

@@ -12,12 +12,16 @@ import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
 
-fun makeResolveFailureResult(message: String, location: SourceCode.LocationWithId? = null) = makeResolveFailureResult(listOf(message), location)
+fun makeResolveFailureResult(message: String, location: SourceCode.LocationWithId? = null) =
+    makeResolveFailureResult(listOf(message), location)
 
 fun makeResolveFailureResult(messages: Iterable<String>, location: SourceCode.LocationWithId? = null) =
+    makeResolveFailureResult(messages, location, null)
+
+fun makeResolveFailureResult(messages: Iterable<String>, location: SourceCode.LocationWithId?, throwable: Throwable?) =
     ResultWithDiagnostics.Failure(
         messages.map {
-            ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, it, ScriptDiagnostic.Severity.WARNING, location)
+            ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, it, ScriptDiagnostic.Severity.WARNING, location, throwable)
         }
     )
 

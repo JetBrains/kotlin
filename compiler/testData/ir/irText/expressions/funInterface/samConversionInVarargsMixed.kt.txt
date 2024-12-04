@@ -3,6 +3,9 @@ fun interface MyRunnable {
 
 }
 
+fun foo(vararg rs: MyRunnable) {
+}
+
 fun test(a: Any, r: MyRunnable) {
   when {
     a is MyRunnable -> { // BLOCK
@@ -14,5 +17,3 @@ fun test(a: Any, r: MyRunnable) {
   }
 }
 
-fun foo(vararg rs: MyRunnable) {
-}

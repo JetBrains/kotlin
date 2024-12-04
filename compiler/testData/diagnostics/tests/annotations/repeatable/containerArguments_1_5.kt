@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: -RepeatableAnnotations -RepeatableAnnotationContainerConstraints
+// LANGUAGE: -RepeatableAnnotations -RepeatableAnnotationContainerConstraints
 // FULL_JDK
 
 import java.lang.annotation.Repeatable as R
@@ -28,7 +29,6 @@ annotation class C5(val value: Array<A5>, val irrelevant: String)
 annotation class A6
 annotation class C6(val irrelevant: Double, val value: Array<A6> = [])
 
-// Should be an error after fixing KT-47932.
 @R(A7::class)
 annotation class A7(val value: Array<A7>)
 

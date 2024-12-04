@@ -1,0 +1,21 @@
+package
+
+public fun takeIssue(/*0*/ issue: Issue): kotlin.Unit
+public fun </*0*/ Self : kotlin.Any, /*1*/ Target : kotlin.Any> Self.bidir_collection(/*0*/ targetType: kotlin.reflect.KClass<out Target>, /*1*/ f: (Self) -> kotlin.Unit): Delegate<Self, kotlin.collections.Collection<Target>>
+
+public final class Delegate</*0*/ R, /*1*/ T> {
+    public constructor Delegate</*0*/ R, /*1*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun getValue(/*0*/ thisRef: R, /*1*/ property: kotlin.reflect.KProperty<*>): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun setValue(/*0*/ thisRef: R, /*1*/ property: kotlin.reflect.KProperty<*>, /*2*/ value: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Issue {
+    public constructor Issue()
+    public final val strings: kotlin.collections.Collection<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

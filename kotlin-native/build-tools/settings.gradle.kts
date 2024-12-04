@@ -1,22 +1,35 @@
+rootProject.name = "native-build-tools"
+
 pluginManagement {
-    val rootProperties = java.util.Properties().apply {
-        rootDir.resolve("../gradle.properties").reader().use(::load)
-    }
+    apply(from = "../../repo/scripts/cache-redirector.settings.gradle.kts")
+    apply(from = "../../repo/scripts/kotlin-bootstrap.settings.gradle.kts")
+
+    includeBuild("../../repo/gradle-settings-conventions")
 
     repositories {
-        maven("https://cache-redirector.jetbrains.com/maven-central")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         mavenCentral()
+        gradlePluginPortal()
     }
+}
 
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id == "kotlin") {
-                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
-            }
+plugins {
+    id("jvm-toolchain-provisioning")
+    id("develocity")
+    id("kotlin-daemon-config")
+}
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("../../gradle/libs.versions.toml"))
         }
     }
 }
 
-rootProject.name = "kotlin-native-build-tools"
-
-includeBuild("../shared")
+buildscript {
+    val buildGradlePluginVersion = extra["kotlin.build.gradlePlugin.version"]
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
+    }
+}

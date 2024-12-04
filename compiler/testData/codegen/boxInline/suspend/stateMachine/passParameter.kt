@@ -38,6 +38,7 @@ fun builder(c: suspend () -> Unit) {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     val r = inlineMe2 {
         StateMachineChecker.suspendHere()
         StateMachineChecker.suspendHere()

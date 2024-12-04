@@ -30,11 +30,11 @@ fun box(): String {
     val tmp = Unit
     {
 
-    }()
+    }.let { it() }
 
     val tmp2 = {
 
-    }()
+    }.let { it() }
 
     val tmp3 = Blumbs()
     tmp3.t = Unit

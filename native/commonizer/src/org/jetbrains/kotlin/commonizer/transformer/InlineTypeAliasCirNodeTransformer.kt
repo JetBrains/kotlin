@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.transformer
 
+import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.Composite.Companion.plus
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 internal class InlineTypeAliasCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
+    private val settings: CommonizerSettings,
 ) : CirNodeTransformer {
     override fun invoke(root: CirRootNode) {
         root.modules.values.forEach(::invoke)
@@ -86,21 +88,21 @@ internal class InlineTypeAliasCirNodeTransformer(
         fromAliasedClassNode.constructors.forEach { (key, aliasedConstructorNode) ->
             val aliasedConstructor = aliasedConstructorNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.constructors.getOrPut(key) {
-                buildClassConstructorNode(storageManager, targetSize, classifiers, ParentNode(intoClassNode))
+                buildClassConstructorNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedConstructor.withContainingClass(intoClass)
         }
 
         fromAliasedClassNode.functions.forEach { (key, aliasedFunctionNode) ->
             val aliasedFunction = aliasedFunctionNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.functions.getOrPut(key) {
-                buildFunctionNode(storageManager, targetSize, classifiers, ParentNode(intoClassNode))
+                buildFunctionNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedFunction.withContainingClass(intoClass)
         }
 
         fromAliasedClassNode.properties.forEach { (key, aliasedPropertyNode) ->
             val aliasedProperty = aliasedPropertyNode.targetDeclarations[targetIndex] ?: return@forEach
             intoClassNode.properties.getOrPut(key) {
-                buildPropertyNode(storageManager, targetSize, classifiers, ParentNode(intoClassNode))
+                buildPropertyNode(storageManager, targetSize, classifiers, settings, ParentNode(intoClassNode))
             }.targetDeclarations[targetIndex] = aliasedProperty.withContainingClass(intoClass)
         }
     }
@@ -115,7 +117,8 @@ internal class InlineTypeAliasCirNodeTransformer(
             //  Therefore, this artificial class node acts as a fallback with the original type-alias being still the preferred
             //  option for commonization
             nodeRelationship = ParentNode(this) + PreferredNode(typeAliasNode),
-            classId = typeAliasNode.id
+            classId = typeAliasNode.id,
+            settings = settings,
         )
         this.classes[typeAliasNode.classifierName] = classNode
         return classNode
@@ -124,7 +127,7 @@ internal class InlineTypeAliasCirNodeTransformer(
     private fun CirTypeAlias.toArtificialCirClass(targetIndex: Int): CirClass = CirClass.create(
         annotations = emptyList(), name = name, typeParameters = typeParameters, supertypes = resolveSupertypes(targetIndex),
         visibility = this.visibility, modality = Modality.FINAL, kind = ClassKind.CLASS,
-        companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, isExternal = false
+        companion = null, isCompanion = false, isData = false, isValue = false, isInner = false, hasEnumEntries = false
     )
 
     private fun CirTypeAlias.resolveSupertypes(targetIndex: Int): List<CirType> {

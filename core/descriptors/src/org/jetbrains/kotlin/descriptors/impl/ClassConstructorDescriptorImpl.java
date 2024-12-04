@@ -70,7 +70,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
             @NotNull List<TypeParameterDescriptor> typeParameterDescriptors
     ) {
         super.initialize(
-                null, calculateDispatchReceiverParameter(),
+                null, calculateDispatchReceiverParameter(), calculateContextReceiverParameters(),
                 typeParameterDescriptors,
                 unsubstitutedValueParameters, null,
                 Modality.FINAL, visibility);
@@ -95,6 +95,15 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
             }
         }
         return null;
+    }
+
+    @NotNull
+    private List<ReceiverParameterDescriptor> calculateContextReceiverParameters() {
+        ClassDescriptor classDescriptor = getContainingDeclaration();
+        if (!classDescriptor.getContextReceivers().isEmpty()) {
+            return classDescriptor.getContextReceivers();
+        }
+        return Collections.emptyList();
     }
 
     @NotNull

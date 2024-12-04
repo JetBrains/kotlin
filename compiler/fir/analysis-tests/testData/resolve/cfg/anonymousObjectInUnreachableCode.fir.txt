@@ -1,0 +1,11 @@
+FILE: anonymousObjectInUnreachableCode.kt
+    public final fun test(): R|kotlin/Unit| {
+        ^test Unit
+        object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

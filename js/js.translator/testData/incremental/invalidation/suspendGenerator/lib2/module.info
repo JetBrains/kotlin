@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : test.0.kt -> test.kt
+    added file: test.kt
+STEP 1:
+    dependencies: lib1
+    modifications:
+        U : test.1.kt -> test.kt
+    modified ir: test.kt

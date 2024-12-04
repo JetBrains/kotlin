@@ -1,0 +1,45 @@
+FILE: localClassWithCompanionObject.kt
+    public final fun context(): R|kotlin/Unit| {
+        @R|org/jetbrains/kotlin/plugin/sandbox/CompanionWithFoo|() local final class SomeClass : R|kotlin/Any| {
+            public constructor(): R|<local>/SomeClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|org/jetbrains/kotlin/plugin/sandbox/CompanionWithFoo|() local final class Nested : R|kotlin/Any| {
+                public constructor(): R|<local>/SomeClass.Nested| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final companion object Companion : R|kotlin/Any| {
+                    public final fun foo(): R|kotlin/Int|
+
+                    private constructor(): R|<local>/SomeClass.Nested.Companion| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+            public final companion object Companion : R|kotlin/Any| {
+                public final fun foo(): R|kotlin/Int|
+
+                private constructor(): R|<local>/SomeClass.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+        local final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+        local final fun test(): R|kotlin/Unit| {
+            R|<local>/takeInt|(Q|<local>/SomeClass|.R|<local>/SomeClass.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass.Companion|.R|<local>/SomeClass.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass.Nested|.R|<local>/SomeClass.Nested.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass.Nested.Companion|.R|<local>/SomeClass.Nested.Companion.foo|())
+        }
+
+    }

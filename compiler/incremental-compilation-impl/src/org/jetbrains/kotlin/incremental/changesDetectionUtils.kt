@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.info
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.name.FqName
@@ -16,10 +15,10 @@ import java.io.File
 
 internal fun getClasspathChanges(
     classpath: List<File>,
-    changedFiles: ChangedFiles.Known,
+    changedFiles: ChangedFiles.DeterminableFiles.Known,
     lastBuildInfo: BuildInfo,
     modulesApiHistory: ModulesApiHistory,
-    reporter: BuildReporter,
+    reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     abiSnapshots: Map<String, AbiSnapshot>,
     withSnapshot: Boolean,
     caches: IncrementalCacheCommon,
@@ -38,7 +37,7 @@ internal fun getClasspathChanges(
 
     // todo: removed classes could be processed normally
     if (removedClasspath.isNotEmpty()) {
-        reporter.report { "Some files are removed from classpath: $removedClasspath" }
+        reporter.info { "Some files are removed from classpath: $removedClasspath" }
         return ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_REMOVED_ENTRY)
     }
 
@@ -53,7 +52,7 @@ internal fun getClasspathChanges(
                 val actualAbiSnapshot = lastBuildInfo.dependencyToAbiSnapshot[module]
                 if (actualAbiSnapshot == null) {
 
-                    reporter.report { "Some jar are removed from classpath $module" }
+                    reporter.info { "Some jar are removed from classpath $module" }
                     return ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_REMOVED_ENTRY)
                 }
                 val diffData = AbiSnapshotDiffService.doCompute(abiSnapshot, actualAbiSnapshot, caches, scopes)
@@ -63,7 +62,7 @@ internal fun getClasspathChanges(
             }
             return ChangesEither.Known(symbols, fqNames)
         }
-        return reporter.measure(BuildTime.IC_ANALYZE_JAR_FILES) {
+        return reporter.measure(GradleBuildTime.IC_ANALYZE_JAR_FILES) {
             analyzeJarFiles()
         }
     } else {
@@ -73,14 +72,14 @@ internal fun getClasspathChanges(
         val fqNames = HashSet<FqName>()
 
         val historyFilesEither =
-            reporter.measure(BuildTime.IC_FIND_HISTORY_FILES) {
+            reporter.measure(GradleBuildTime.IC_FIND_HISTORY_FILES) {
                 modulesApiHistory.historyFilesForChangedFiles(modifiedClasspath)
             }
 
         val historyFiles = when (historyFilesEither) {
             is Either.Success<Set<File>> -> historyFilesEither.value
             is Either.Error -> {
-                reporter.report { "Could not find history files: ${historyFilesEither.reason}" }
+                reporter.info { "Could not find history files: ${historyFilesEither.reason}" }
                 return ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_HISTORY_IS_NOT_FOUND)
             }
         }
@@ -89,20 +88,20 @@ internal fun getClasspathChanges(
             for (historyFile in historyFiles) {
                 val allBuilds = BuildDiffsStorage.readDiffsFromFile(historyFile, reporter = reporter)
                     ?: return run {
-                        reporter.report { "Could not read diffs from $historyFile" }
+                        reporter.info { "Could not read diffs from $historyFile" }
                         ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_HISTORY_CANNOT_BE_READ)
                     }
 
                 val (knownBuilds, newBuilds) = allBuilds.partition { it.ts <= lastBuildTS }
                 if (knownBuilds.isEmpty()) {
-                    reporter.report { "No previously known builds for $historyFile" }
+                    reporter.info { "No previously known builds for $historyFile" }
                     return ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_HISTORY_NO_KNOWN_BUILDS)
                 }
 
 
                 for (buildDiff in newBuilds) {
                     if (!buildDiff.isIncremental) {
-                        reporter.report { "Non-incremental build from dependency $historyFile" }
+                        reporter.info { "Non-incremental build from dependency $historyFile" }
                         return ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_NON_INCREMENTAL_BUILD_IN_DEP)
 
                     }
@@ -115,7 +114,7 @@ internal fun getClasspathChanges(
             return ChangesEither.Known(symbols, fqNames)
         }
 
-        return reporter.measure(BuildTime.IC_ANALYZE_HISTORY_FILES) {
+        return reporter.measure(GradleBuildTime.IC_ANALYZE_HISTORY_FILES) {
             analyzeHistoryFiles()
         }
     }

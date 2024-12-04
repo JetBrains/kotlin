@@ -1,5 +1,0 @@
-KT element: KtTypeAlias
-FIR element: FirTypeAliasImpl
-
-FIR element rendered:
-public final typealias Str = R|kotlin/String|

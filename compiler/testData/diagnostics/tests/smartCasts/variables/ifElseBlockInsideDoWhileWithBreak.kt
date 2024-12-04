@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 public fun foo(xx: Any): Int {
     var x = xx
     do {

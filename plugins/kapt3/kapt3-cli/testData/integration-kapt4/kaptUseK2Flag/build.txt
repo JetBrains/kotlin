@@ -1,0 +1,11 @@
+# kapt
+-language-version 2.0
+-Xsuppress-version-warnings
+-Kapt-use-k2=true
+-Kapt-mode=compile
+../simple/Test.kt
+
+# after
+Return code: 1
+
+error: [kapt] KAPT "compile" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.

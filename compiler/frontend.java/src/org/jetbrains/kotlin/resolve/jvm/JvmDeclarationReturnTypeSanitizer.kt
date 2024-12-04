@@ -24,22 +24,24 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DeclarationReturnTypeSanitizer
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.WrappedTypeFactory
+import org.jetbrains.kotlin.types.replaceAnnotations
 
 object JvmDeclarationReturnTypeSanitizer : DeclarationReturnTypeSanitizer {
     override fun sanitizeReturnType(
-            inferred: UnwrappedType,
-            wrappedTypeFactory: WrappedTypeFactory,
-            trace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings
+        inferred: UnwrappedType,
+        wrappedTypeFactory: WrappedTypeFactory,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ): UnwrappedType =
-            if (languageVersionSettings.supportsFeature(LanguageFeature.StrictJavaNullabilityAssertions)) {
-                // NB can't check for presence of EnhancedNullability here,
-                // because it will also cause recursion in declaration type resolution.
-                inferred.replaceAnnotations(
+        if (languageVersionSettings.supportsFeature(LanguageFeature.StrictJavaNullabilityAssertions)) {
+            // NB can't check for presence of EnhancedNullability here,
+            // because it will also cause recursion in declaration type resolution.
+            inferred.replaceAttributes(
+                inferred.attributes.replaceAnnotations(
                     FilteredAnnotations(inferred.annotations, languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
                         it != JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
                     }
                 )
-            }
-            else inferred
+            )
+        } else inferred
 }

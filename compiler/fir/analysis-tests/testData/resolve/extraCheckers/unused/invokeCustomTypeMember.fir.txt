@@ -1,0 +1,14 @@
+FILE: invokeCustomTypeMember.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun invoke(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval x: R|Foo| = R|/Foo.Foo|()
+        R|<local>/x|.R|/Foo.invoke|()
+    }

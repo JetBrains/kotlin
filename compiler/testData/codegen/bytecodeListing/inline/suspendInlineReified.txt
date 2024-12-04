@@ -2,16 +2,16 @@
 public final class A {
     // source: 'suspendInlineReified.kt'
     public method <init>(): void
-    public synthetic final method internalFun$main(p0: java.lang.Object): java.lang.Object
-    private synthetic final method privateFun(p0: java.lang.Object): java.lang.Object
-    protected synthetic final method protectedFun(p0: java.lang.Object): java.lang.Object
-    public synthetic final method publicFun(p0: java.lang.Object): java.lang.Object
+    public synthetic final method internalFun$main(p0: kotlin.coroutines.Continuation): java.lang.Object
+    private synthetic final method privateFun(p0: kotlin.coroutines.Continuation): java.lang.Object
+    protected synthetic final method protectedFun(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic final method publicFun(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class SuspendInlineReifiedKt {
     // source: 'suspendInlineReified.kt'
-    public synthetic final static method internalFun(p0: java.lang.Object): java.lang.Object
-    private synthetic final static method privateFun(p0: java.lang.Object): java.lang.Object
-    public synthetic final static method publicFun(p0: java.lang.Object): java.lang.Object
+    public synthetic final static method internalFun(p0: kotlin.coroutines.Continuation): java.lang.Object
+    private synthetic final static method privateFun(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic final static method publicFun(p0: kotlin.coroutines.Continuation): java.lang.Object
 }

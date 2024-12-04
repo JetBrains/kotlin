@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
  */
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
-internal annotation class InternalNonStableExtensionPoints
+annotation class InternalNonStableExtensionPoints
 
 @InternalNonStableExtensionPoints
 interface TypeResolutionInterceptorExtension {
@@ -55,8 +55,6 @@ interface TypeResolutionInterceptorExtension {
 
 @InternalNonStableExtensionPoints
 interface CallResolutionInterceptorExtension {
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptResolvedCallAtomCandidate(
         candidateDescriptor: CallableDescriptor,
         completedCallAtom: ResolvedCallAtom,
@@ -65,8 +63,6 @@ interface CallResolutionInterceptorExtension {
         diagnostics: Collection<KotlinCallDiagnostic>
     ): CallableDescriptor = candidateDescriptor
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptCandidates(
         candidates: Collection<NewResolutionOldInference.MyCandidate>,
         context: BasicCallResolutionContext,
@@ -77,8 +73,6 @@ interface CallResolutionInterceptorExtension {
         tracing: TracingStrategy
     ): Collection<NewResolutionOldInference.MyCandidate> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -89,8 +83,6 @@ interface CallResolutionInterceptorExtension {
         location: LookupLocation
     ): Collection<FunctionDescriptor> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptFunctionCandidates(
         candidates: Collection<FunctionDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -103,8 +95,6 @@ interface CallResolutionInterceptorExtension {
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<FunctionDescriptor> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -115,8 +105,6 @@ interface CallResolutionInterceptorExtension {
         location: LookupLocation
     ): Collection<VariableDescriptor> = candidates
 
-    @Suppress("DEPRECATION")
-    @JvmDefault
     fun interceptVariableCandidates(
         candidates: Collection<VariableDescriptor>,
         scopeTower: ImplicitScopeTower,
@@ -128,17 +116,4 @@ interface CallResolutionInterceptorExtension {
         dispatchReceiver: ReceiverValueWithSmartCastInfo?,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<VariableDescriptor> = candidates
-
-    @Suppress("DeprecatedCallableAddReplaceWith", "DEPRECATION")
-    @Deprecated("Please use dedicated interceptVariableCandidates and interceptFunctionCandidates instead")
-    @JvmDefault
-    fun interceptCandidates(
-        candidates: Collection<FunctionDescriptor>,
-        scopeTower: ImplicitScopeTower,
-        resolutionContext: BasicCallResolutionContext,
-        resolutionScope: ResolutionScope,
-        callResolver: CallResolver?,
-        name: Name,
-        location: LookupLocation
-    ): Collection<FunctionDescriptor> = candidates
 }

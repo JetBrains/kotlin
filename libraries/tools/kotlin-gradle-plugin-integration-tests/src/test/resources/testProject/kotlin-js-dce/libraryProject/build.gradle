@@ -1,0 +1,26 @@
+plugins {
+    id("org.jetbrains.kotlin.js")
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+kotlin {
+    js {
+        nodejs()
+    }
+}
+
+//def compileKotlinJs = tasks.named('compileKotlinJs') {
+//    it.kotlinOptions.outputFile = "${buildDir}/web/examplelib.js"
+//    it.kotlinOptions.sourceMap = true
+//}
+
+//tasks.register('jar', Jar).configure {
+//    dependsOn(compileKotlinJs)
+//    from compileKotlinJs.map { it.destinationDirectory }
+//    include "**/*.js"
+//    include "**/*.js.map"
+//}

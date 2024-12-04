@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class DrawableGrid(var isEnabled: Boolean)
 
 class My {

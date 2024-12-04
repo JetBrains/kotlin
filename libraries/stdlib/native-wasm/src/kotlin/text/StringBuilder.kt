@@ -10,36 +10,33 @@ package kotlin.text
  *
  * String builder can be used to efficiently perform multiple string manipulation operations.
  */
-actual class StringBuilder private constructor (
-        private var array: CharArray) : CharSequence, Appendable {
+public actual class StringBuilder
+private constructor (private var array: CharArray) : CharSequence, Appendable {
 
     /** Constructs an empty string builder. */
-    actual constructor() : this(10)
+    public actual constructor() : this(10)
 
     /** Constructs an empty string builder with the specified initial [capacity]. */
-    actual constructor(capacity: Int) : this(CharArray(capacity))
+    public actual constructor(capacity: Int) : this(CharArray(capacity))
 
     /** Constructs a string builder that contains the same characters as the specified [content] string. */
-    actual constructor(content: String) : this(content.toCharArray()) {
+    public actual constructor(content: String) : this(content.toCharArray()) {
         _length = array.size
     }
 
     /** Constructs a string builder that contains the same characters as the specified [content] char sequence. */
-    actual constructor(content: CharSequence): this(content.length) {
+    public actual constructor(content: CharSequence): this(content.length) {
         append(content)
     }
 
     // Of CharSequence.
     private var _length: Int = 0
-        set(capacity) {
-            ensureCapacity(capacity)
-            field = capacity
-        }
+
     actual override val length: Int
         get() = _length
 
     actual override fun get(index: Int): Char {
-        checkIndex(index)
+        AbstractList.checkElementIndex(index, _length)
         return array[index]
     }
 
@@ -71,7 +68,7 @@ actual class StringBuilder private constructor (
      * For example, reversing `"\uDC00\uD800"` produces `"\uD800\uDC00"` which is a valid surrogate pair.
      */
     // Based on Apache Harmony implementation.
-    actual fun reverse(): StringBuilder {
+    public actual fun reverse(): StringBuilder {
         if (this.length < 2) {
             return this
         }
@@ -143,7 +140,9 @@ actual class StringBuilder private constructor (
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
-    actual fun append(value: Any?): StringBuilder = append(value.toString())
+    public actual fun append(value: Any?): StringBuilder = append(value.toString())
+
+    // TODO: optimize the append overloads with primitive value!
 
     /**
      * Appends the string representation of the specified boolean [value] to this string builder and returns this instance.
@@ -151,40 +150,78 @@ actual class StringBuilder private constructor (
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
-    // TODO: optimize those!
-    actual fun append(value: Boolean): StringBuilder = append(value.toString())
-    fun append(value: Byte): StringBuilder = append(value.toString())
-    fun append(value: Short): StringBuilder = append(value.toString())
-    fun append(value: Int): StringBuilder {
+    public actual fun append(value: Boolean): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified byte [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    public fun append(value: Byte): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified short [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    public fun append(value: Short): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified int [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    public actual fun append(value: Int): StringBuilder {
         ensureExtraCapacity(11)
         _length += insertInt(array, _length, value)
         return this
     }
-    fun append(value: Long): StringBuilder = append(value.toString())
-    fun append(value: Float): StringBuilder = append(value.toString())
-    fun append(value: Double): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified long [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    public actual fun append(value: Long): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified float [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    public actual fun append(value: Float): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified double [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    public actual fun append(value: Double): StringBuilder = append(value.toString())
 
     /**
      * Appends characters in the specified character array [value] to this string builder and returns this instance.
      *
      * Characters are appended in order, starting at the index 0.
      */
-    actual fun append(value: CharArray): StringBuilder {
+    public actual fun append(value: CharArray): StringBuilder {
         ensureExtraCapacity(value.size)
         value.copyInto(array, _length)
         _length += value.size
         return this
     }
 
-    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
-    fun append(value: String): StringBuilder = append(value)
-
     /**
      * Appends the specified string [value] to this string builder and returns this instance.
      *
      * If [value] is `null`, then the four characters `"null"` are appended.
      */
-    actual fun append(value: String?): StringBuilder {
+    public actual fun append(value: String?): StringBuilder {
         val toAppend = value ?: "null"
         ensureExtraCapacity(toAppend.length)
         _length += insertString(array, _length, toAppend)
@@ -196,7 +233,7 @@ actual class StringBuilder private constructor (
      *
      * The capacity is the maximum length this string builder can have before an allocation occurs.
      */
-    actual fun capacity(): Int = array.size
+    public actual fun capacity(): Int = array.size
 
     /**
      * Ensures that the capacity of this string builder is at least equal to the specified [minimumCapacity].
@@ -204,13 +241,9 @@ actual class StringBuilder private constructor (
      * If the current capacity is less than the [minimumCapacity], a new backing storage is allocated with greater capacity.
      * Otherwise, this method takes no action and simply returns.
      */
-    actual fun ensureCapacity(minimumCapacity: Int) {
-        if (minimumCapacity > array.size) {
-            var newSize = array.size * 2 + 2
-            if (minimumCapacity > newSize)
-                newSize = minimumCapacity
-            array = array.copyOf(newSize)
-        }
+    public actual fun ensureCapacity(minimumCapacity: Int) {
+        if (minimumCapacity <= array.size) return
+        ensureCapacityInternal(minimumCapacity)
     }
 
     /**
@@ -219,8 +252,7 @@ actual class StringBuilder private constructor (
      * Returns `-1` if the specified [string] does not occur in this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    actual fun indexOf(string: String): Int {
+    public actual fun indexOf(string: String): Int {
         return (this as CharSequence).indexOf(string, startIndex = 0, ignoreCase = false)
     }
 
@@ -231,8 +263,7 @@ actual class StringBuilder private constructor (
      * Returns `-1` if the specified [string] does not occur in this string builder starting at the specified [startIndex].
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    actual fun indexOf(string: String, startIndex: Int): Int {
+    public actual fun indexOf(string: String, startIndex: Int): Int {
         if (string.isEmpty() && startIndex >= _length) return _length
         return (this as CharSequence).indexOf(string, startIndex, ignoreCase = false)
     }
@@ -244,8 +275,7 @@ actual class StringBuilder private constructor (
      * Returns `-1` if the specified [string] does not occur in this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    actual fun lastIndexOf(string: String): Int {
+    public actual fun lastIndexOf(string: String): Int {
         if (string.isEmpty()) return _length
         return (this as CharSequence).lastIndexOf(string, startIndex = lastIndex, ignoreCase = false)
     }
@@ -257,11 +287,12 @@ actual class StringBuilder private constructor (
      * Returns `-1` if the specified [string] does not occur in this string builder starting at the specified [startIndex].
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    actual fun lastIndexOf(string: String, startIndex: Int): Int {
+    public actual fun lastIndexOf(string: String, startIndex: Int): Int {
         if (string.isEmpty() && startIndex >= _length) return _length
         return (this as CharSequence).lastIndexOf(string, startIndex, ignoreCase = false)
     }
+
+    // TODO: optimize the insert overloads with primitive value!
 
     /**
      * Inserts the string representation of the specified boolean [value] into this string builder at the specified [index] and returns this instance.
@@ -271,22 +302,75 @@ actual class StringBuilder private constructor (
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    // TODO: optimize those!
-    actual fun insert(index: Int, value: Boolean): StringBuilder = insert(index, value.toString())
-    fun insert(index: Int, value: Byte)    = insert(index, value.toString())
-    fun insert(index: Int, value: Short)   = insert(index, value.toString())
-    fun insert(index: Int, value: Int)     = insert(index, value.toString())
-    fun insert(index: Int, value: Long)    = insert(index, value.toString())
-    fun insert(index: Int, value: Float)   = insert(index, value.toString())
-    fun insert(index: Int, value: Double)  = insert(index, value.toString())
+    public actual fun insert(index: Int, value: Boolean): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified byte [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    public fun insert(index: Int, value: Byte): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified short [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    public fun insert(index: Int, value: Short): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified int [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    public actual fun insert(index: Int, value: Int): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified long [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    public actual fun insert(index: Int, value: Long): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified float [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    public actual fun insert(index: Int, value: Float): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified double [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    public actual fun insert(index: Int, value: Double): StringBuilder = insert(index, value.toString())
 
     /**
      * Inserts the specified character [value] into this string builder at the specified [index] and returns this instance.
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    actual fun insert(index: Int, value: Char): StringBuilder {
-        checkInsertIndex(index)
+    public actual fun insert(index: Int, value: Char): StringBuilder {
+        AbstractList.checkPositionIndex(index, _length)
         ensureExtraCapacity(1)
         val newLastIndex = lastIndex + 1
         for (i in newLastIndex downTo index + 1) {
@@ -304,8 +388,8 @@ actual class StringBuilder private constructor (
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    actual fun insert(index: Int, value: CharArray): StringBuilder {
-        checkInsertIndex(index)
+    public actual fun insert(index: Int, value: CharArray): StringBuilder {
+        AbstractList.checkPositionIndex(index, _length)
         ensureExtraCapacity(value.size)
 
         array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + value.size)
@@ -325,7 +409,7 @@ actual class StringBuilder private constructor (
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    actual fun insert(index: Int, value: CharSequence?): StringBuilder {
+    public actual fun insert(index: Int, value: CharSequence?): StringBuilder {
         // Kotlin/JVM inserts the "null" string if the argument is null.
         val toInsert = value ?: "null"
         return insertRange(index, toInsert, 0, toInsert.length)
@@ -339,10 +423,7 @@ actual class StringBuilder private constructor (
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    actual fun insert(index: Int, value: Any?): StringBuilder = insert(index, value.toString())
-
-    @Deprecated("Provided for binary compatibility.", level = DeprecationLevel.HIDDEN)
-    fun insert(index: Int, value: String): StringBuilder = insert(index, value)
+    public actual fun insert(index: Int, value: Any?): StringBuilder = insert(index, value.toString())
 
     /**
      * Inserts the string [value] into this string builder at the specified [index] and returns this instance.
@@ -351,9 +432,9 @@ actual class StringBuilder private constructor (
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    actual fun insert(index: Int, value: String?): StringBuilder {
+    public actual fun insert(index: Int, value: String?): StringBuilder {
         val toInsert = value ?: "null"
-        checkInsertIndex(index)
+        AbstractList.checkPositionIndex(index, _length)
         ensureExtraCapacity(toInsert.length)
         array.copyInto(array, startIndex = index, endIndex = _length, destinationOffset = index + toInsert.length)
         _length += insertString(array, index, toInsert)
@@ -371,7 +452,7 @@ actual class StringBuilder private constructor (
      *
      *  @throws IndexOutOfBoundsException or [IllegalArgumentException] if [newLength] is less than zero.
      */
-    actual fun setLength(newLength: Int) {
+    public actual fun setLength(newLength: Int) {
         if (newLength < 0) {
             throw IllegalArgumentException("Negative new length: $newLength.")
         }
@@ -379,6 +460,7 @@ actual class StringBuilder private constructor (
         if (newLength > _length) {
             array.fill('\u0000', _length, newLength.coerceAtMost(array.size))
         }
+        ensureCapacity(newLength)
         _length = newLength
     }
 
@@ -387,8 +469,8 @@ actual class StringBuilder private constructor (
      *
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
      */
-    actual fun substring(startIndex: Int, endIndex: Int): String {
-        checkBoundsIndexes(startIndex, endIndex, _length)
+    public actual fun substring(startIndex: Int, endIndex: Int): String {
+        AbstractList.checkBoundsIndexes(startIndex, endIndex, _length)
         return unsafeStringFromCharArray(array, startIndex, endIndex - startIndex)
     }
 
@@ -398,8 +480,7 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    actual fun substring(startIndex: Int): String {
+    public actual fun substring(startIndex: Int): String {
         return substring(startIndex, _length)
     }
 
@@ -410,7 +491,7 @@ actual class StringBuilder private constructor (
      * then it may be resized to become more space efficient.
      * Calling this method may, but is not required to, affect the value of the [capacity] property.
      */
-    actual fun trimToSize() {
+    public actual fun trimToSize() {
         if (_length < array.size)
             array = array.copyOf(_length)
     }
@@ -422,8 +503,8 @@ actual class StringBuilder private constructor (
      *
      * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
      */
-    operator fun set(index: Int, value: Char) {
-        checkIndex(index)
+    public operator fun set(index: Int, value: Char) {
+        AbstractList.checkElementIndex(index, _length)
         array[index] = value
     }
 
@@ -437,13 +518,12 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    fun setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder {
+    public fun setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder {
         checkReplaceRange(startIndex, endIndex, _length)
 
         val coercedEndIndex = endIndex.coerceAtMost(_length)
         val lengthDiff = value.length - (coercedEndIndex - startIndex)
-        ensureExtraCapacity(_length + lengthDiff)
+        ensureExtraCapacity(lengthDiff)
         array.copyInto(array, startIndex = coercedEndIndex, endIndex = _length, destinationOffset = startIndex + value.length)
         var replaceIndex = startIndex
         for (index in 0 until value.length) array[replaceIndex++] = value[index] // optimize
@@ -462,9 +542,8 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    fun deleteAt(index: Int): StringBuilder {
-        checkIndex(index)
+    public fun deleteAt(index: Int): StringBuilder {
+        AbstractList.checkElementIndex(index, _length)
         array.copyInto(array, startIndex = index + 1, endIndex = _length, destinationOffset = index)
         --_length
         return this
@@ -479,8 +558,7 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    fun deleteRange(startIndex: Int, endIndex: Int): StringBuilder {
+    public fun deleteRange(startIndex: Int, endIndex: Int): StringBuilder {
         checkReplaceRange(startIndex, endIndex, _length)
 
         val coercedEndIndex = endIndex.coerceAtMost(_length)
@@ -502,10 +580,9 @@ actual class StringBuilder private constructor (
      *  or when that index is out of the [destination] array indices range.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    fun toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length) {
-        checkBoundsIndexes(startIndex, endIndex, _length)
-        checkBoundsIndexes(destinationOffset, destinationOffset + endIndex - startIndex, destination.size)
+    public fun toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length) {
+        AbstractList.checkBoundsIndexes(startIndex, endIndex, _length)
+        AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + endIndex - startIndex, destination.size)
 
         array.copyInto(destination, destinationOffset, startIndex, endIndex)
     }
@@ -522,9 +599,8 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
-        checkBoundsIndexes(startIndex, endIndex, value.size)
+    public fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
+        AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
         value.copyInto(array, _length, startIndex, endIndex)
@@ -542,9 +618,8 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    fun appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
-        checkBoundsIndexes(startIndex, endIndex, value.length)
+    public fun appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
+        AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
         (value as? String)?.let {
@@ -571,10 +646,9 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    fun insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
-        checkBoundsIndexes(startIndex, endIndex, value.length)
-        checkInsertIndex(index)
+    public fun insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
+        AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
+        AbstractList.checkPositionIndex(index, _length)
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
 
@@ -603,10 +677,9 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
-    fun insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
-        checkInsertIndex(index)
-        checkBoundsIndexes(startIndex, endIndex, value.size)
+    public fun insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
+        AbstractList.checkPositionIndex(index, _length)
+        AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
 
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
@@ -620,19 +693,15 @@ actual class StringBuilder private constructor (
     // ---------------------------- private ----------------------------
 
     private fun ensureExtraCapacity(n: Int) {
-        ensureCapacity(_length + n)
+        ensureCapacityInternal(_length + n)
     }
 
-    private fun checkIndex(index: Int) {
-        if (index < 0 || index >= _length) throw IndexOutOfBoundsException()
-    }
-
-    private fun checkInsertIndex(index: Int) {
-        if (index < 0 || index > _length) throw IndexOutOfBoundsException()
-    }
-
-    private fun checkInsertIndexFrom(index: Int, fromIndex: Int) {
-        if (index < fromIndex || index > _length) throw IndexOutOfBoundsException()
+    private fun ensureCapacityInternal(minCapacity: Int) {
+        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
+        if (minCapacity > array.size) {
+            val newSize = AbstractList.newCapacity(array.size, minCapacity)
+            array = array.copyOf(newSize)
+        }
     }
 
     private fun checkReplaceRange(startIndex: Int, endIndex: Int, length: Int) {
@@ -644,6 +713,51 @@ actual class StringBuilder private constructor (
         }
     }
 }
+
+
+/**
+ * Appends the string representation of the specified byte [value] to this string builder and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was appended to this string builder.
+ */
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this.append(value)
+
+/**
+ * Appends the string representation of the specified short [value] to this string builder and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was appended to this string builder.
+ */
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.append(value: Short): StringBuilder = this.append(value)
+
+/**
+ * Inserts the string representation of the specified byte [value] into this string builder at the specified [index] and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was inserted into this string builder at the specified [index].
+ *
+ * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+ */
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBuilder = this.insert(index, value)
+
+/**
+ * Inserts the string representation of the specified short [value] into this string builder at the specified [index] and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was inserted into this string builder at the specified [index].
+ *
+ * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+ */
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.insert(index: Int, value: Short): StringBuilder = this.insert(index, value)
 
 /**
  * Clears the content of this string builder making it empty and returns this instance.
@@ -658,7 +772,6 @@ public actual fun StringBuilder.clear(): StringBuilder = apply { setLength(0) }
  *
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.set(index, value)
 
@@ -672,8 +785,6 @@ public actual inline operator fun StringBuilder.set(index: Int, value: Char): Un
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder =
         this.setRange(startIndex, endIndex, value)
@@ -688,8 +799,6 @@ public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, 
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = this.deleteAt(index)
 
@@ -702,8 +811,6 @@ public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = thi
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder = this.deleteRange(startIndex, endIndex)
 
@@ -720,10 +827,9 @@ public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: In
  *  or when that index is out of the [destination] array indices range.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 @kotlin.internal.InlineOnly
-public actual inline fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length) =
+public actual inline fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length): Unit =
         this.toCharArray(destination, destinationOffset, startIndex, endIndex)
 
 /**
@@ -738,8 +844,6 @@ public actual inline fun StringBuilder.toCharArray(destination: CharArray, desti
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
         this.appendRange(value, startIndex, endIndex)
@@ -754,8 +858,6 @@ public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex:
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
         this.appendRange(value, startIndex, endIndex)
@@ -774,8 +876,6 @@ public actual inline fun StringBuilder.appendRange(value: CharSequence, startInd
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
         this.insertRange(index, value, startIndex, endIndex)
@@ -794,8 +894,6 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
         this.insertRange(index, value, startIndex, endIndex)
@@ -803,97 +901,6 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequen
 
 internal fun insertString(array: CharArray, start: Int, value: String): Int =
         insertString(array, start, value, 0, value.length)
-
-// Method parameters renamings
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Boolean) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Boolean): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Byte) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Byte): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Short) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Short): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Int) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Int): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Long) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Long): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Float) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Float): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: Double) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: Double): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: String) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: String): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use append(value: CharArray) instead", ReplaceWith("append(value = it)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.append(it: CharArray): StringBuilder = this.append(value = it)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use ensureCapacity(minimumCapacity: Int) instead", ReplaceWith("ensureCapacity(minimumCapacity = capacity)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.ensureCapacity(capacity: Int): Unit = this.ensureCapacity(minimumCapacity = capacity)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use insert(index: Int, value: Char) instead", ReplaceWith("insert(index, value = c)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.insert(index: Int, c: Char): StringBuilder = this.insert(index, value = c)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use insert(index: Int, value: CharArray) instead", ReplaceWith("insert(index, value = chars)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.insert(index: Int, chars: CharArray): StringBuilder = this.insert(index, value = chars)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use insert(index: Int, value: CharSequence?) instead", ReplaceWith("insert(index, value = csq)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.insert(index: Int, csq: CharSequence?): StringBuilder = this.insert(index, value = csq)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use insert(index: Int, value: String) instead", ReplaceWith("insert(index, value = string)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.insert(index: Int, string: String): StringBuilder = this.insert(index, value = string)
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
-@Deprecated("Use setLength(newLength: Int) instead", ReplaceWith("setLength(newLength = l)"))
-@kotlin.internal.InlineOnly
-public inline fun StringBuilder.setLength(l: Int) = this.setLength(newLength = l)
 
 // Method renamings
 /**
@@ -922,7 +929,7 @@ public inline fun StringBuilder.insert(index: Int, csq: CharSequence?, start: In
 @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.6")
 @Deprecated("Use set(index: Int, value: Char) instead", ReplaceWith("set(index, value)"))
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.setCharAt(index: Int, value: Char) = this.set(index, value)
+public inline fun StringBuilder.setCharAt(index: Int, value: Char): Unit = this.set(index, value)
 
 /**
  * Removes the character at the specified [index] from this string builder and returns this instance.
@@ -936,4 +943,10 @@ public inline fun StringBuilder.setCharAt(index: Int, value: Char) = this.set(in
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
 @Deprecated("Use deleteAt(index: Int) instead", ReplaceWith("deleteAt(index)"))
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.deleteCharAt(index: Int) = this.deleteAt(index)
+public inline fun StringBuilder.deleteCharAt(index: Int): StringBuilder = this.deleteAt(index)
+
+
+
+internal expect fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int): String
+internal expect fun insertInt(array: CharArray, start: Int, value: Int): Int
+internal expect fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.MusicKit
+
+modules = MusicKit
+compilerOpts = -framework MusicKit
+linkerOpts = -framework MusicKit
+#Disabled: Swift-only framework

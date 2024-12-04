@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.js.backend.ast
 
-import java.util.*
+import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
+import kotlin.collections.ArrayList
 
 class JsObjectScope(parent: JsScope, description: String) : JsScope(parent, description)
 
@@ -31,21 +32,26 @@ open class JsFunctionScope(parent: JsScope, description: String) : JsDeclaration
 }
 
 open class JsDeclarationScope(parent: JsScope, description: String, useParentScopeStack: Boolean = false) : JsScope(parent, description) {
-    private val labelScopes: Stack<LabelScope> =
-            if (parent is JsDeclarationScope && useParentScopeStack) parent.labelScopes else Stack<LabelScope>()
+    private var labelScopesImpl: ArrayList<LabelScope>? =
+        if (parent is JsDeclarationScope && useParentScopeStack) parent.labelScopesImpl else null
 
     private val topLabelScope
-        get() = if (labelScopes.isNotEmpty()) labelScopes.peek() else null
+        get() = labelScopesImpl?.let { if (it.isNotEmpty()) it.last() else null }
+
+    private val labelScopes: ArrayList<LabelScope>
+        get() = labelScopesImpl ?: ArrayList<LabelScope>().also { labelScopesImpl = it }
 
     open fun enterLabel(label: String, outputName: String): JsName {
         val scope = LabelScope(topLabelScope, label, outputName)
-        labelScopes.push(scope)
+        labelScopes.add(scope)
         return scope.labelName
     }
 
     open fun exitLabel() {
-        assert(labelScopes.isNotEmpty()) { "No scope to exit from" }
-        labelScopes.pop()
+        labelScopes.let {
+            assert(it.isNotEmpty()) { "No scope to exit from" }
+            it.removeLast()
+        }
     }
 
     open fun findLabel(label: String): JsName? =
@@ -61,7 +67,7 @@ open class JsDeclarationScope(parent: JsScope, description: String, useParentSco
          * Safe call is necessary, because hasOwnName can be called
          * in constructor before labelName is initialized (see KT-4394)
          */
-        @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY")
+        @Suppress("UNNECESSARY_SAFE_CALL")
         override fun hasOwnName(name: String): Boolean =
                 name in RESERVED_WORDS
                 || name == ident
@@ -70,23 +76,7 @@ open class JsDeclarationScope(parent: JsScope, description: String, useParentSco
     }
 
     companion object {
-        val RESERVED_WORDS: Set<String> = setOf(
-                // keywords
-                "await", "break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if",
-                "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with",
-
-                // future reserved words
-                "class", "const", "enum", "export", "extends", "import", "super",
-
-                // as future reserved words in strict mode
-                "implements", "interface", "let", "package", "private", "protected", "public", "static", "yield",
-
-                // additional reserved words
-                "null", "true", "false",
-
-                // disallowed as variable names in strict mode
-                "eval", "arguments",
-
+        val RESERVED_WORDS: Set<String> = RESERVED_KEYWORDS + setOf(
                 // global identifiers usually declared in a typical JS interpreter
                 "NaN", "isNaN", "Infinity", "undefined",
                 "Error", "Object", "Math", "String", "Number", "Boolean", "Date", "Array", "RegExp", "JSON",
@@ -100,32 +90,3 @@ open class JsDeclarationScope(parent: JsScope, description: String, useParentSco
     }
 }
 
-class DelegatingJsFunctionScopeWithTemporaryParent(
-        private val delegatingScope: JsFunctionScope,
-        parent: JsScope
-) : JsFunctionScope(parent, "<delegating scope to delegatingScope>") {
-
-    override fun hasOwnName(name: String): Boolean =
-            delegatingScope.hasOwnName(name)
-
-    override fun findOwnName(ident: String): JsName? =
-            delegatingScope.findOwnName(ident)
-
-    override fun declareNameUnsafe(identifier: String): JsName =
-            delegatingScope.declareNameUnsafe(identifier)
-
-    override fun declareName(identifier: String): JsName =
-            delegatingScope.declareName(identifier)
-
-    override fun declareFreshName(suggestedName: String): JsName =
-            delegatingScope.declareFreshName(suggestedName)
-
-    override fun enterLabel(label: String, outputName: String): JsName =
-            delegatingScope.enterLabel(label, outputName)
-
-    override fun exitLabel() =
-            delegatingScope.exitLabel()
-
-    override fun findLabel(label: String): JsName? =
-            delegatingScope.findLabel(label)
-}

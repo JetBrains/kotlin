@@ -3,7 +3,7 @@ package
 public final class A : X {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    protected open override /*1*/ fun getFoo(): [ERROR : Error function type]
+    protected open override /*1*/ fun getFoo(): [Error type: Return type for function cannot be resolved]
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

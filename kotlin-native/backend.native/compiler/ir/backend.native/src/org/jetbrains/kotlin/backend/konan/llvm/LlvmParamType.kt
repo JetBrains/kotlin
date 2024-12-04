@@ -6,15 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.ir.allParameters
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.unwrapToPrimitiveOrReference
-import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.isSuspend
 
 /**
  * LLVM function's parameter type with its attributes.
@@ -22,31 +13,6 @@ import org.jetbrains.kotlin.ir.util.isSuspend
 class LlvmParamType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParameterAttribute> = emptyList())
 
 /**
- * A bit better readability for cases when [LlvmParamType] represents return type.
+ * LLVM function's return type with its attributes.
  */
-typealias LlvmRetType = LlvmParamType
-
-internal fun ContextUtils.getLlvmFunctionParameterTypes(function: IrFunction): List<LlvmParamType> {
-    val returnType = getLlvmFunctionReturnType(function).llvmType
-    val paramTypes = ArrayList(function.allParameters.map {
-        LlvmParamType(getLLVMType(it.type), argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
-    })
-    if (function.isSuspend)
-        paramTypes.add(LlvmParamType(kObjHeaderPtr))                       // Suspend functions have implicit parameter of type Continuation<>.
-    if (isObjectType(returnType))
-        paramTypes.add(LlvmParamType(kObjHeaderPtrPtr))
-
-    return paramTypes
-}
-
-internal fun ContextUtils.getLlvmFunctionReturnType(function: IrFunction): LlvmRetType {
-    val returnType = when {
-        function is IrConstructor -> LlvmParamType(voidType)
-        function.isSuspend -> LlvmParamType(kObjHeaderPtr)                // Suspend functions return Any?.
-        else -> LlvmParamType(
-                getLLVMReturnType(function.returnType),
-                argumentAbiInfo.defaultParameterAttributesForIrType(function.returnType)
-        )
-    }
-    return returnType
-}
+class LlvmRetType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParameterAttribute> = emptyList(), val isObjectType: Boolean)

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A
 
 operator fun A.set(vararg i: Int, v: Int) {}

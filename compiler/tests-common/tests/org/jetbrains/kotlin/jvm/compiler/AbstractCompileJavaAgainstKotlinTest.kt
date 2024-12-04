@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForMultifileCompilerTests
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
@@ -33,11 +33,14 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.JavaCompilationResult
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.FrontendBackendConfiguration
+import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.junit.Assert
@@ -45,20 +48,17 @@ import java.io.File
 import java.io.IOException
 import java.lang.annotation.Retention
 
-abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
+abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), FrontendBackendConfiguration {
 
-    @Throws(IOException::class)
     protected fun doTestWithJavac(ktFilePath: String) {
         doTest(ktFilePath, true)
     }
 
-    @Throws(IOException::class)
     protected fun doTestWithoutJavac(ktFilePath: String) {
         doTest(ktFilePath, false)
     }
 
-    @Throws(IOException::class)
-    protected fun doTest(ktFilePath: String, useJavac: Boolean) {
+    protected open fun doTest(ktFilePath: String, useJavac: Boolean) {
         Assert.assertTrue(ktFilePath.endsWith(".kt"))
         val ktFile = File(ktFilePath)
         val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))
@@ -67,6 +67,9 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
 
         val out = File(tmpdir, "out")
 
+        val directives = KotlinTestUtils.parseDirectives(ktFile.readText())
+        if (useFir && directives.contains("IGNORE_FIR")) return
+
         val compiledSuccessfully = if (useJavac) {
             compileKotlinWithJava(
                 listOf(javaFile),
@@ -74,11 +77,18 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
                 out, testRootDisposable
             )
         } else {
-            KotlinTestUtils.compileKotlinWithJava(
+            val result = KotlinTestUtils.compileKotlinWithJava(
                 listOf(javaFile),
                 listOf(ktFile),
-                out, testRootDisposable, javaErrorFile, this::updateConfiguration
+                out, testRootDisposable, this::updateConfiguration
             )
+            if (!javaErrorFile.exists()) {
+                result.assertSuccessful()
+            } else {
+                val errors = if (result is JavaCompilationResult.Failure) result.diagnostics else ""
+                JUnit4Assertions.assertEqualsToFile(javaErrorFile, errors)
+            }
+            result == JavaCompilationResult.Success
         }
 
         if (!compiledSuccessfully) return
@@ -98,7 +108,9 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)
     }
 
-    open fun updateConfiguration(configuration: CompilerConfiguration) {}
+    fun updateConfiguration(configuration: CompilerConfiguration) {
+        configureIrFir(configuration)
+    }
 
     @Throws(IOException::class)
     fun compileKotlinWithJava(
@@ -112,11 +124,11 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, outDir)
-        environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        environment.configuration.messageCollector = MessageCollector.NONE
         updateConfiguration(environment.configuration)
         environment.registerJavac(
             javaFiles = javaFiles,
-            kotlinFiles = listOf(KotlinTestUtils.loadJetFile(environment.project, ktFiles.first()))
+            kotlinFiles = listOf(KotlinTestUtils.loadKtFile(environment.project, ktFiles.first()))
         )
         if (!ktFiles.isEmpty()) {
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)

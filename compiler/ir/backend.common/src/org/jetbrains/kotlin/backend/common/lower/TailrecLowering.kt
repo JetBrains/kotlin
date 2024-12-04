@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.collectTailRecursionCalls
-import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -29,9 +28,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.defaultValueForType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -40,9 +41,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * This pass lowers tail recursion calls in `tailrec` functions.
  *
  * Note: it currently can't handle local functions and classes declared in default arguments.
- * See [deepCopyWithVariables].
  */
-open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
+open class TailrecLowering(val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrFunction) {
             // Lower local declarations
@@ -51,13 +51,17 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
                     element.acceptChildrenVoid(this)
                 }
 
-                override fun visitFunction(declaration: IrFunction) {
+                override fun visitSimpleFunction(declaration: IrSimpleFunction) {
                     declaration.acceptChildrenVoid(this)
-                    lowerTailRecursionCalls(declaration)
+                    if (declaration.isTailrec) {
+                        lowerTailRecursionCalls(declaration)
+                    }
                 }
             })
 
-            lowerTailRecursionCalls(container)
+            if (container is IrSimpleFunction && container.isTailrec) {
+                lowerTailRecursionCalls(container)
+            }
         }
     }
 
@@ -71,7 +75,7 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
 }
 
 private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
-    val tailRecursionCalls = collectTailRecursionCalls(irFunction, ::followFunctionReference)
+    val (tailRecursionCalls, someCallsAreFromOtherFunctions) = collectTailRecursionCalls(irFunction, ::followFunctionReference)
     if (tailRecursionCalls.isEmpty()) {
         return
     }
@@ -80,36 +84,47 @@ private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
     val oldBodyStatements = ArrayList(oldBody.statements)
     val builder = context.createIrBuilder(irFunction.symbol).at(oldBody)
 
-    val parameters = irFunction.explicitParameters
-
     oldBody.statements.clear()
     oldBody.statements += builder.irBlockBody {
-        // Define variables containing current values of parameters:
-        val parameterToVariable = parameters.associateWith {
-            createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
+        // `return recursiveCall(...)` is rewritten into assignments to parameters followed by a jump to the start.
+        // While we may be able to write to the parameters directly, the recursive call may be inside an inline lambda,
+        // so the parameters are captured and assigning to them requires temporarily rewriting their types (see
+        // `SharedVariablesLowering`), and that we can't do. So we have to create new `var`s for this purpose.
+        // TODO: an optimization pass will rewrite the types of vars back since the lambdas are guaranteed to be inlined
+        //  in place (otherwise they can't jump to the start of the function at all), so this is all a waste of CPU time.
+        val parameterToVariable = irFunction.explicitParameters.associateWith {
+            if (someCallsAreFromOtherFunctions || !it.isAssignable)
+                createTmpVariable(irGet(it), nameHint = it.symbol.suggestVariableName(), isMutable = true)
+            else
+                it
         }
-        // (these variables are to be updated on any tail call).
 
-        +irWhile().apply {
-            val loop = this
-            condition = irTrue()
-
+        +irDoWhile().apply loop@{
             body = irBlock(startOffset, endOffset, resultType = context.irBuiltIns.unitType) {
-                // Read variables containing current values of parameters:
-                val parameterToNew = parameters.associateWith {
-                    createTmpVariable(irGet(parameterToVariable[it]!!), nameHint = it.symbol.suggestVariableName())
-                }
                 val transformer = BodyTransformer(
-                    this@lowerTailRecursionCalls, builder, irFunction, loop, parameterToNew, parameterToVariable, tailRecursionCalls
+                    this@lowerTailRecursionCalls, builder, irFunction, this@loop, parameterToVariable, tailRecursionCalls
                 )
                 oldBodyStatements.forEach {
                     +it.transformStatement(transformer)
                 }
-
-                +irBreak(loop)
+                +irBreak(this@loop)
+            }
+            condition = irBlock {
+                // The problem with creating new `var`s is that they do not show up in the debugger, so stopping inside
+                // a nested call will still display the parameters from the outermost call. To fix this, we need to
+                // write the new values back even though the parameters are now otherwise unused.
+                for ((parameter, variable) in parameterToVariable.entries) {
+                    if (parameter.isAssignable && parameter !== variable) {
+                        +irSet(parameter, irGet(variable))
+                    }
+                }
+                +irTrue()
             }
         }
     }.statements
+
+    // TODO BodyTransformer creates temporary variables with wrong parents in nested functions
+    oldBody.patchDeclarationParents(irFunction)
 }
 
 private class BodyTransformer(
@@ -117,10 +132,9 @@ private class BodyTransformer(
     private val builder: IrBuilderWithScope,
     irFunction: IrFunction,
     private val loop: IrLoop,
-    parameterToNew: Map<IrValueParameter, IrValueDeclaration>,
-    private val parameterToVariable: Map<IrValueParameter, IrVariable>,
+    private val parameterToVariable: Map<IrValueParameter, IrValueDeclaration>,
     private val tailRecursionCalls: Set<IrCall>,
-) : VariableRemapper(parameterToNew) {
+) : VariableRemapper(parameterToVariable) {
 
     val parameters = irFunction.explicitParameters
 
@@ -160,7 +174,7 @@ private class BodyTransformer(
         defaultValuedParameters.let { if (lowering.useProperComputationOrderOfTailrecDefaultParameters) it else it.asReversed() }
             .associateWithTo(parameterToArgument) { parameter ->
                 val originalDefaultValue = parameter.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
-                irTemporary(originalDefaultValue.deepCopyWithVariables().patchDeclarationParents(parent).transform(remapper, null))
+                irTemporary(originalDefaultValue.deepCopyWithSymbols(parent).transform(remapper, null))
             }
 
         // Copy the new `val`s into the `var`s declared outside the loop:

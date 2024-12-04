@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument
-// !CHECK_TYPE
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument
+// CHECK_TYPE
 // FILE: F.java
 public interface F<S> {
     void apply(S s);

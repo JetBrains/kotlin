@@ -20,7 +20,7 @@ FILE: blockLocalScopes.kt
             when () {
                 R|<local>/w| ->  {
                     lval message: R|kotlin/String| = String()
-                    R|<local>/message|.R|kotlin/Any.toString|()
+                    R|<local>/message|.R|kotlin/String.toString|()
                 }
                 else ->  {
                     this@R|/A|.R|/A.message|.R|/B.append|()

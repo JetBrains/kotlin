@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 fun test1(ns: String?, vararg nullableStrs: String?) {
     nullableStrs.contains("x")

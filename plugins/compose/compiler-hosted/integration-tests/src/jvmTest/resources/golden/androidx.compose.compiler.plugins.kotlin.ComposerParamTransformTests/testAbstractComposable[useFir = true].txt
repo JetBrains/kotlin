@@ -1,0 +1,55 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+abstract class BaseFoo {
+    @NonRestartableComposable
+    @Composable
+    abstract fun bar()
+}
+
+class FooImpl : BaseFoo() {
+    @NonRestartableComposable
+    @Composable
+    override fun bar() {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+abstract class BaseFoo {
+  @NonRestartableComposable
+  @Composable
+  abstract fun bar(%composer: Composer?, %changed: Int)
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class FooImpl : BaseFoo {
+  @NonRestartableComposable
+  @Composable
+  override fun bar(%composer: Composer?, %changed: Int) {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "C(bar):Test.kt#2487m")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+  }
+  static val %stable: Int = 0
+}

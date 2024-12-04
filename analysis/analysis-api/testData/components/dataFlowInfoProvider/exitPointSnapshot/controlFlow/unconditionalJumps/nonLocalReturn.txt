@@ -1,0 +1,18 @@
+KaDataFlowExitPointSnapshot:
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = numbers.forEach {
+            if (it == 3) {
+                return
+            }
+        }
+    type = kotlin.Unit
+  hasEscapingJumps = true
+  hasJumps = true
+  hasMultipleJumpKinds = false
+  hasMultipleJumpTargets = false
+  jumpExpressions = [
+    return
+  ]
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = []

@@ -3,9 +3,7 @@ public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Collect
     // source: 'genericMutableCollection.kt'
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
-    public abstract <null> method contains(p0: java.lang.Object): boolean
     public abstract <null> method getSize(): int
-    public abstract <null> method remove(p0: java.lang.Object): boolean
     public bridge final <null> method size(): int
     public <null> method toArray(): java.lang.Object[]
 }

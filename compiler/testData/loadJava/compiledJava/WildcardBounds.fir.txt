@@ -1,10 +1,10 @@
 public open class WildcardBounds : R|kotlin/Any| {
-    public/*package*/ open fun foo(x: R|ft<test/WildcardBounds.A<out ft<kotlin/CharSequence, kotlin/CharSequence?>>, test/WildcardBounds.A<out ft<kotlin/CharSequence, kotlin/CharSequence?>>?>|, y: R|ft<test/WildcardBounds.A<in ft<kotlin/String, kotlin/String?>>, test/WildcardBounds.A<in ft<kotlin/String, kotlin/String?>>?>|): R|kotlin/Unit|
+    public/*package*/ open fun foo(x: R|ft<test/WildcardBounds.A<out kotlin/CharSequence!>, test/WildcardBounds.A<out kotlin/CharSequence!>?>|, y: R|ft<test/WildcardBounds.A<in kotlin/String!>, test/WildcardBounds.A<in kotlin/String!>?>|): R|kotlin/Unit|
 
     public constructor(): R|test/WildcardBounds|
 
-    public/*package*/ open class A<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
-        public/*package*/ constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/WildcardBounds.A<T>|
+    public/*package*/ open class A<T : R|kotlin/Any!|> : R|kotlin/Any| {
+        public/*package*/ constructor<T : R|kotlin/Any!|>(): R|test/WildcardBounds.A<T>|
 
     }
 }

@@ -1,0 +1,21 @@
+STEP 0:
+    dependencies: libA, libB, libC, libD
+    added file: m.kt
+STEP 1:
+    dependencies: libA, libB, libC, libD
+STEP 2..6:
+    dependencies: libA, libB, libC, libD
+    updated imports <wasm>: m.kt
+STEP 7:
+    dependencies: libA, libB, libC, libD
+    modifications:
+        U: m.7.kt -> m.kt
+    modified ir: m.kt
+STEP 8:
+    dependencies: libA, libB, libC, libD
+STEP 9:
+    dependencies: libA, libB, libC, libD
+    updated imports <wasm>: m.kt
+STEP 10..13:
+    dependencies: libA, libB, libC, libD
+    updated imports: m.kt

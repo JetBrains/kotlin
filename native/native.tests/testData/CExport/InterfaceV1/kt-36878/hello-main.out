@@ -1,0 +1,6 @@
+ValueClass? = ValueClass(number=153)
+UsualClass? = 128
+UByteArray = UByteArray(storage=[64, -128]): 64, 128
+UIntArray? = UIntArray(storage=[64, 128]): 64, 128
+Foo<ValueClass> = class Foo
+Foo<UsualClass> = class Foo

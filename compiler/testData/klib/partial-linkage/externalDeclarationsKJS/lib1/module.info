@@ -1,0 +1,7 @@
+STEP 0:
+    dependencies: stdlib
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.1 -> l1.kt
+        U : l1.js.1 -> l1.js

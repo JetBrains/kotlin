@@ -1,0 +1,12 @@
+package
+
+public fun invalidFlow(/*0*/ x: Flow<kotlin.Int>): Flow<kotlin.Int>
+@kotlin.OverloadResolutionByLambdaReturnType @kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> Flow<T>.debounce(/*0*/ timeoutMillis: (T) -> kotlin.Long): Flow<T>
+@kotlin.jvm.JvmName(name = "debounceDuration") @kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) @kotlin.OverloadResolutionByLambdaReturnType public fun </*0*/ T> Flow<T>.debounce(/*0*/ timeout: (T) -> kotlin.String): Flow<T>
+
+public final class Flow</*0*/ out T> {
+    public constructor Flow</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

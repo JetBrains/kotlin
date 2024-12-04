@@ -1,0 +1,47 @@
+MODULE main
+	CLASS Kt47300Kt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				kt47300.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 kt47300.kt
+				Kt47300Kt
+				*L
+				1#1,40:1
+				25#1,5:41
+				18#1,12:46
+				*S KotlinDebug
+				*F
+				+ 1 kt47300.kt
+				Kt47300Kt
+				*L
+				18#1:41,5
+				35#1:46,12
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				kt47300.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 kt47300.kt
+				Kt47300Kt
+				*L
+				1#1,40:1
+				29#1:41
+				18#1:42
+				29#1:43
+				*S KotlinDebug
+				*F
+				+ 1 kt47300.kt
+				Kt47300Kt
+				*L
+				18#1:41
+				35#1:42
+				35#1:43
+				*E
+				 } )

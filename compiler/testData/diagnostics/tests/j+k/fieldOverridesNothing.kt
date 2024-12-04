@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +PreferJavaFieldOverload
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +PreferJavaFieldOverload
 
 // FILE: B.java
 
@@ -18,5 +18,5 @@ class C : B() {
 }
 
 fun foo() {
-    C().size
+    C().<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>size<!>
 }

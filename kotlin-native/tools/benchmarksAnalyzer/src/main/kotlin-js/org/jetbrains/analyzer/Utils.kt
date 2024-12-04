@@ -28,14 +28,14 @@ actual fun assert(value: Boolean, lazyMessage: () -> Any) {
 }
 
 actual fun sendGetRequest(url: String, user: String?, password: String?, followLocation: Boolean) : String {
-    val proxyServerAddress = "https://perf-proxy.labs.jb.gg/"
-    val newUrl = proxyServerAddress + url
     val request = XMLHttpRequest()
 
-    request.open("GET", newUrl, false, user, password)
+    request.open("GET", url, false, user, password)
     request.send()
     if (request.status == 200.toShort()) {
         return request.responseText
     }
     error("Request to $url has status ${request.status}")
 }
+
+actual fun getDefaultPerformanceServerUrl() : String? = window.location.origin

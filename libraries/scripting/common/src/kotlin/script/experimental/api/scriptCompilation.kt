@@ -81,6 +81,13 @@ val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key
 val ScriptCompilationConfigurationKeys.filePathPattern by PropertiesCollection.key<String>()
 
 /**
+ * Additional (to the filename extension) RegEx pattern with that the script file name is checked
+ * Preserved for historical reasons for supporting legacy [ScriptTemplateDefinition] annotation parameter
+ */
+@Deprecated("use filePathPattern property instead", level = DeprecationLevel.ERROR)
+val ScriptCompilationConfigurationKeys.fileNamePattern by PropertiesCollection.key<String>()
+
+/**
  * The superclass for target script class
  */
 val ScriptCompilationConfigurationKeys.baseClass by PropertiesCollection.key<KotlinType>(KotlinType(Any::class)) // script base class
@@ -169,6 +176,13 @@ val ScriptCompilationConfigurationKeys.sourceFragments by PropertiesCollection.k
  * Scripting host configuration
  */
 val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>(isTransient = true)
+
+/**
+ * Should the script be always considered standalone
+ * If true, it is ignored when compiled along with other sources (starting from 1.9, according to SkipStandaloneScriptsInSourceRoots language feature)
+ * true by default
+ */
+val ScriptCompilationConfigurationKeys.isStandalone by PropertiesCollection.key<Boolean>(true)
 
 /**
  * The sub-builder DSL for configuring refinement callbacks

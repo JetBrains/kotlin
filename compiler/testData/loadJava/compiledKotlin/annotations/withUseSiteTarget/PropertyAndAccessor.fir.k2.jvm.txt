@@ -1,0 +1,30 @@
+public final annotation class A : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String|): R|test/A|
+
+}
+
+public final annotation class B : R|kotlin/Annotation| {
+    public final val value: R|kotlin/Array<kotlin/String>|
+        public get(): R|kotlin/Array<kotlin/String>|
+
+    public constructor(value: R|kotlin/Array<kotlin/String>|): R|test/B|
+
+}
+
+public abstract interface I : R|kotlin/Any| {
+    @PROPERTY:R|test/A|(value = String(property)) public abstract var propertyAndGetter: R|kotlin/Int|
+        @R|test/B|(value = <implicitArrayOf>(String(getter))) public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    @PROPERTY:R|test/A|(value = String(property)) public abstract var propertyAndSetter: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        @R|test/B|(value = <implicitArrayOf>(String(setter))) public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public abstract var getterAndSetter: R|kotlin/Int|
+        @R|test/A|(value = String(getter)) public get(): R|kotlin/Int|
+        @R|test/B|(value = <implicitArrayOf>(String(setter))) public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+}

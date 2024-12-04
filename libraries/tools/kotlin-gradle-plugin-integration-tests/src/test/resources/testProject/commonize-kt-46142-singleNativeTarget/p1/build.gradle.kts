@@ -33,30 +33,16 @@ kotlin {
         -jvmMain
         -nativePlatformMain
     }
+}
 
-    tasks.register("listNativePlatformMainDependencies") {
-        doLast {
+tasks.register("listNativePlatformMainDependencies") {
+    val intransitiveMetadataConfigurationDependencies = project.configurations.getByName(
+        "nativePlatformMainIntransitiveDependenciesMetadata"
+    ).incoming.artifacts.artifactFiles
 
-            val implementationMetadataConfigurationDependencies = project.configurations.getByName(
-                nativePlatformMain.implementationMetadataConfigurationName
-            ).files
-
-            val intransitiveMetadataConfigurationDependencies = project.configurations.findByName(
-                "nativePlatformMainIntransitiveDependenciesMetadata"
-            )?.files.orEmpty()
-
-            val dependencies = implementationMetadataConfigurationDependencies +
-                    intransitiveMetadataConfigurationDependencies
-
-            logger.quiet("NativePlatformMainDependency | Count: ${dependencies.size}")
-
-            implementationMetadataConfigurationDependencies.forEach { dependencyFile ->
-                logger.quiet("implementationMetadataConfiguration: ${dependencyFile.path}")
-            }
-
-            intransitiveMetadataConfigurationDependencies.forEach { dependencyFile ->
-                logger.quiet("intransitiveMetadataConfiguration: ${dependencyFile.path}")
-            }
+    doLast {
+        intransitiveMetadataConfigurationDependencies.forEach { dependencyFile ->
+            logger.quiet("intransitiveMetadataConfiguration: ${dependencyFile.path}")
         }
     }
 }

@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun getExcludedDirs(project: R|Project|, excludedProjects: R|kotlin/collections/List<Project>|): R|kotlin/collections/List<java/io/File>| {
+        ^getExcludedDirs R|<local>/project|.R|/Project.plugins|.R|/PluginContainer.findPlugin|<R|IdeaPlugin!|>(<getClass>(Q|IdeaPlugin|).R|kotlin/jvm/java|<R|IdeaPlugin|>)?.{ $subj$.R|/IdeaPlugin.excludeDirs| }?.{ $subj$.R|kotlin/collections/toList|<R|java/io/File!|>() } ?: R|kotlin/collections/emptyList|<R|java/io/File|>()
+    }

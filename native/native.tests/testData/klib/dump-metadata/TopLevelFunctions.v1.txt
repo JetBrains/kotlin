@@ -1,0 +1,85 @@
+library {
+  // module name: <TopLevelFunctions.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: Foo
+
+    // signature: /A|null[0]
+    public final annotation class A : kotlin/Annotation {
+
+      // signature: /A.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: /B|null[0]
+    public final annotation class B : kotlin/Annotation {
+
+      // signature: /B.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: /Foo|null[0]
+    public final class Foo : kotlin/Any {
+
+      // signature: /Foo.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    package {
+
+      // signature: /a|-4432112437378250461[0]
+      @A
+      @B
+      public final fun a(): kotlin/Unit
+
+      // signature: /e|8989066053884186758[0]
+      public final fun Foo.e(): kotlin/Unit
+
+      // signature: /f1|-1560136604489335247[0]
+      public final fun f1(x: Foo): kotlin/Unit
+
+      // signature: /f2|8193757935438764272[0]
+      public final fun f2(x: Foo, y: Foo): kotlin/Int
+
+      // signature: /i1|-6444280688669682335[0]
+      public final inline fun i1(block: kotlin/Function0<Foo>): kotlin/Unit
+
+      // signature: /i2|-6849364972861294160[0]
+      public final inline fun i2(noinline block: kotlin/Function0<Foo>): kotlin/Unit
+
+      // signature: /i3|-3309425284353652160[0]
+      public final inline fun i3(crossinline block: kotlin/Function0<Foo>): kotlin/Unit
+
+      // signature: /i4|-6304681376176934836[0]
+      public final fun i4(block: kotlin/Function1<Foo, kotlin/Int>): kotlin/Unit
+
+      // signature: /i5|-3051198308501003303[0]
+      public final fun i5(block: kotlin/Function2<Foo, Foo, kotlin/Int>): kotlin/Unit
+
+      // signature: /i6|6453956519947412951[0]
+      public final fun i6(block: @kotlin/ExtensionFunctionType kotlin/Function1<Foo, kotlin/Int>): kotlin/Unit
+
+      // signature: /i7|-2413842829876213778[0]
+      public final fun i7(block: @kotlin/ExtensionFunctionType kotlin/Function2<Foo, Foo, kotlin/Int>): kotlin/Unit
+
+      // signature: /t1|4730456697336757969[0]
+      public final fun <T#0 /* T */> t1(x: Foo): kotlin/Unit
+
+      // signature: /t2|-90499170678395935[0]
+      public final fun <T#0 /* T */> t2(x: T#0): kotlin/Unit
+
+      // signature: /t3|7012475377071720756[0]
+      public final fun <T#0 /* T */, T#1 /* F */> t3(x: T#0, y: T#1): kotlin/Unit
+
+      // signature: /t4|-3843581059144476593[0]
+      public final inline fun <reified T#0 /* T */> t4(x: T#0): kotlin/Unit
+
+      // signature: /t5|236307131019209421[0]
+      public final fun <T#0 /* T */ : kotlin/Number> t5(x: T#0): kotlin/Unit
+    }
+  }
+}

@@ -1,0 +1,1 @@
+class Foo(vararg ints: kotlin.Int)

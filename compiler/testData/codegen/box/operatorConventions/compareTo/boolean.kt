@@ -1,3 +1,5 @@
+// JVM_TARGET: 1.8
+
 fun checkLess(x: Boolean, y: Boolean) = when {
     x >= y    -> "Fail $x >= $y"
     !(x < y)  -> "Fail !($x < $y)"

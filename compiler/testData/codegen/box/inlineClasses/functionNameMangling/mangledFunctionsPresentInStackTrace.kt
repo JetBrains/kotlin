@@ -1,12 +1,11 @@
-
-// IGNORE_BACKEND: JS, JS_IR, WASM
-// IGNORE_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JVM
+// ^^^ Throwable.stackTrace is available only in JDK
 // FULL_JDK
 // WITH_STDLIB
-// WASM_MUTE_REASON: IGNORED_IN_JS
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Id(val id: String)
 
 fun throws() {

@@ -18,18 +18,29 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtSecondaryConstructor>) : super(stub, KtStubElementTypes.SECONDARY_CONSTRUCTOR)
+    constructor(stub: KotlinConstructorStub<KtSecondaryConstructor>) : super(stub, KtStubElementTypes.SECONDARY_CONSTRUCTOR)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitSecondaryConstructor(this, data)
 
     override fun getContainingClassOrObject() = parent.parent as KtClassOrObject
 
-    override fun getBodyExpression() = findChildByClass(KtBlockExpression::class.java)
+    override fun getBodyExpression(): KtBlockExpression? {
+        val stub = stub
+        if (stub != null) {
+            if (stub.hasBody() == false) {
+                return null
+            }
+            if (containingKtFile.isCompiled) {
+                return null
+            }
+        }
+        return findChildByClass(KtBlockExpression::class.java)
+    }
 
     override fun getConstructorKeyword() = notNullChild<PsiElement>(super.getConstructorKeyword())
 

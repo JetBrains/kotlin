@@ -1,11 +1,19 @@
 import kotlinx.benchmark.gradle.benchmark
 
-val benchmarks_version = "0.3.1"
-
 plugins {
     java
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.benchmark") version "0.3.1"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.6-1"
+}
+
+val benchmarks_version = "0.4.6-1"
+
+repositories {
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies") {
+        content {
+            includeModuleByRegex("org\\.jetbrains\\.kotlinx", "kotlinx-benchmark-runtime.*")
+        }
+    }
 }
 
 dependencies {
@@ -13,10 +21,8 @@ dependencies {
     api(project(":compiler:frontend"))
     api(projectTests(":compiler:tests-common"))
     api(project(":compiler:cli"))
-    api(intellijCoreDep()) { includeJars("intellij-core") }
-    api(jpsStandalone()) { includeJars("jps-model") }
-    api(intellijPluginDep("java"))
-    api(intellijDep()) { includeIntellijCoreJarDependencies(project) }
+    api(intellijCore())
+    api(jpsModel())
     api("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$benchmarks_version")
 }
 
@@ -67,31 +73,42 @@ benchmark {
     }
 }
 
-tasks.matching { it is Zip && it.name == "mainBenchmarkJar" }.configureEach {
-    this as Zip
+tasks.withType<Zip>().matching { it.name == "mainBenchmarkJar" }.configureEach {
     isZip64 = true
     archiveFileName.set("benchmarks.jar")
 }
 
 val benchmarkTasks = listOf("mainBenchmark", "mainFirBenchmark", "mainNiBenchmark")
-tasks.matching { it is JavaExec && it.name in benchmarkTasks }.configureEach {
-    this as JavaExec
-    systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+tasks.withType<JavaExec>().matching { it.name in benchmarkTasks }.configureEach {
+    dependsOn(":createIdeaHomeForTests")
+    systemProperty("idea.home.path", ideaHomePathForTests().get().asFile.canonicalPath)
+    systemProperty("idea.use.native.fs.for.win", false)
 }
 
 tasks.register<JavaExec>("runBenchmark") {
-    // jmhArgs example: -PjmhArgs='CommonCalls -p size=500 -p isIR=true -p useNI=true -f 1'
-    val jmhArgs = if (project.hasProperty("jmhArgs")) project.property("jmhArgs").toString() else ""
-    val resultFilePath = "$buildDir/benchmarks/jmh-result.json"
-    val ideaHome = intellijRootDir().canonicalPath
+    dependsOn(":createIdeaHomeForTests")
 
-    val benchmarkJarPath = "$buildDir/benchmarks/main/jars/benchmarks.jar"
-    args = mutableListOf("-Didea.home.path=$ideaHome", benchmarkJarPath, "-rf", "json", "-rff", resultFilePath) + jmhArgs.split("\\s".toRegex())
-    main = "-jar"
+    // jmhArgs example: -PjmhArgs='CommonCalls -p size=500 -p isIR=true -p useNI=true -f 1'
+    val jmhArgs = project.providers.gradleProperty("jvmArgs")
+    val resultFilePath = project.layout.buildDirectory.file("benchmarks/jmh-result.json")
+    val ideaHome = ideaHomePathForTests()
+
+    val benchmarkJarPath = project.layout.buildDirectory.file("benchmarks/main/jars/benchmarks.jar")
+    argumentProviders.add {
+        listOf(
+            "-Didea.home.path=${ideaHome.get().asFile.canonicalPath}",
+            benchmarkJarPath.get().asFile.toString(),
+            "-rf",
+            "json",
+            "-rff",
+            resultFilePath.get().asFile.toString(),
+        ) + jmhArgs.map { it.split("\\s".toRegex()) }.orElse(emptyList()).get()
+    }
+    mainClass.set("-jar")
 
     doLast {
         if (project.kotlinBuildProperties.isTeamcityBuild) {
-            val jsonArray = com.google.gson.JsonParser.parseString(File(resultFilePath).readText()).asJsonArray
+            val jsonArray = com.google.gson.JsonParser.parseString(resultFilePath.get().asFile.readText()).asJsonArray
             jsonArray.forEach {
                 val benchmark = it.asJsonObject
                 // remove unnecessary name parts from string like this "org.jetbrains.kotlin.benchmarks.CommonCallsBenchmark.benchmark"

@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Out<out X>
 class In<in Y>
@@ -20,7 +21,7 @@ fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
 
     a.foo2(Inv())
     a.foo2(<!TYPE_MISMATCH!>Inv<CharSequence>()<!>)
-    a.foo2<<!UPPER_BOUND_VIOLATED!>Inv<CharSequence><!>>(<!TYPE_MISMATCH!>Inv()<!>)
+    a.foo2<<!UPPER_BOUND_VIOLATED!>Inv<CharSequence><!>>(<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>Inv()<!>)
 
     a.foo3(In())
     a.foo3(In<CharSequence>())
@@ -32,7 +33,7 @@ fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
 
     b.foo2(Inv())
     b.foo2(<!TYPE_MISMATCH!>Inv<CharSequence>()<!>)
-    b.foo2<<!UPPER_BOUND_VIOLATED!>Inv<CharSequence><!>>(<!TYPE_MISMATCH!>Inv()<!>)
+    b.foo2<<!UPPER_BOUND_VIOLATED!>Inv<CharSequence><!>>(<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>Inv()<!>)
 
 
     b.foo3(<!TYPE_MISMATCH!>In<CharSequence>()<!>)

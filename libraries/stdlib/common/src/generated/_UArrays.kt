@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
@@ -323,7 +324,10 @@ public expect fun UShortArray.elementAt(index: Int): UShort
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UInt): UInt {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -335,7 +339,10 @@ public inline fun UIntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> U
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> ULong): ULong {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -347,7 +354,10 @@ public inline fun ULongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UByte): UByte {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -359,7 +369,10 @@ public inline fun UByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UShort): UShort {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -507,8 +520,9 @@ public inline fun UShortArray.findLast(predicate: (UShort) -> Boolean): UShort? 
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -518,8 +532,9 @@ public inline fun UIntArray.first(): UInt {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -529,8 +544,9 @@ public inline fun ULongArray.first(): ULong {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -540,8 +556,9 @@ public inline fun UByteArray.first(): UByte {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -685,7 +702,10 @@ public inline fun UShortArray.firstOrNull(predicate: (UShort) -> Boolean): UShor
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.getOrElse(index: Int, defaultValue: (Int) -> UInt): UInt {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -695,7 +715,10 @@ public inline fun UIntArray.getOrElse(index: Int, defaultValue: (Int) -> UInt): 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.getOrElse(index: Int, defaultValue: (Int) -> ULong): ULong {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -705,7 +728,10 @@ public inline fun ULongArray.getOrElse(index: Int, defaultValue: (Int) -> ULong)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.getOrElse(index: Int, defaultValue: (Int) -> UByte): UByte {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -715,7 +741,10 @@ public inline fun UByteArray.getOrElse(index: Int, defaultValue: (Int) -> UByte)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.getOrElse(index: Int, defaultValue: (Int) -> UShort): UShort {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -726,7 +755,7 @@ public inline fun UShortArray.getOrElse(index: Int, defaultValue: (Int) -> UShor
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.getOrNull(index: Int): UInt? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -737,7 +766,7 @@ public fun UIntArray.getOrNull(index: Int): UInt? {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.getOrNull(index: Int): ULong? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -748,7 +777,7 @@ public fun ULongArray.getOrNull(index: Int): ULong? {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.getOrNull(index: Int): UByte? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -759,7 +788,7 @@ public fun UByteArray.getOrNull(index: Int): UByte? {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.getOrNull(index: Int): UShort? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1263,7 +1292,6 @@ public fun UShortArray.random(random: Random): UShort {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.randomOrNull(): UInt? {
     return randomOrNull(Random)
@@ -1274,7 +1302,6 @@ public inline fun UIntArray.randomOrNull(): UInt? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.randomOrNull(): ULong? {
     return randomOrNull(Random)
@@ -1285,7 +1312,6 @@ public inline fun ULongArray.randomOrNull(): ULong? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.randomOrNull(): UByte? {
     return randomOrNull(Random)
@@ -1296,7 +1322,6 @@ public inline fun UByteArray.randomOrNull(): UByte? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.randomOrNull(): UShort? {
     return randomOrNull(Random)
@@ -1307,7 +1332,6 @@ public inline fun UShortArray.randomOrNull(): UShort? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun UIntArray.randomOrNull(random: Random): UInt? {
     if (isEmpty())
         return null
@@ -1319,7 +1343,6 @@ public fun UIntArray.randomOrNull(random: Random): UInt? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun ULongArray.randomOrNull(random: Random): ULong? {
     if (isEmpty())
         return null
@@ -1331,7 +1354,6 @@ public fun ULongArray.randomOrNull(random: Random): ULong? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun UByteArray.randomOrNull(random: Random): UByte? {
     if (isEmpty())
         return null
@@ -1343,7 +1365,6 @@ public fun UByteArray.randomOrNull(random: Random): UByte? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun UShortArray.randomOrNull(random: Random): UShort? {
     if (isEmpty())
         return null
@@ -3287,56 +3308,16 @@ public inline fun ShortArray.asUShortArray(): UShortArray {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun UIntArray.contentEquals(other: UIntArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun ULongArray.contentEquals(other: ULongArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun UByteArray.contentEquals(other: UByteArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun UShortArray.contentEquals(other: UShortArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3345,8 +3326,16 @@ public infix fun UIntArray?.contentEquals(other: UIntArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3355,8 +3344,16 @@ public infix fun ULongArray?.contentEquals(other: ULongArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3365,57 +3362,21 @@ public infix fun UByteArray?.contentEquals(other: UByteArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
 public infix fun UShortArray?.contentEquals(other: UShortArray?): Boolean {
     return this?.storage.contentEquals(other?.storage)
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UIntArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun ULongArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UByteArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UShortArray.contentHashCode(): Int {
-    return this.contentHashCode()
 }
 
 /**
@@ -3452,58 +3413,6 @@ public fun UByteArray?.contentHashCode(): Int {
 @ExperimentalUnsignedTypes
 public fun UShortArray?.contentHashCode(): Int {
     return this?.storage.contentHashCode()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UIntArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun ULongArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UByteArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UShortArray.contentToString(): String {
-    return this.contentToString()
 }
 
 /**
@@ -4125,7 +4034,7 @@ public fun UShortArray.sort(): Unit {
 @ExperimentalUnsignedTypes
 public fun UIntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -4143,7 +4052,7 @@ public fun UIntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @ExperimentalUnsignedTypes
 public fun ULongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -4161,7 +4070,7 @@ public fun ULongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @ExperimentalUnsignedTypes
 public fun UByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -4179,7 +4088,7 @@ public fun UByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @ExperimentalUnsignedTypes
 public fun UShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    sortArray(this, fromIndex, toIndex)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -5341,6 +5250,10 @@ public fun UShortArray.withIndex(): Iterable<IndexedValue<UShort>> {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 @SinceKotlin("1.3")
@@ -5353,6 +5266,10 @@ public inline fun UIntArray.all(predicate: (UInt) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
@@ -5367,6 +5284,10 @@ public inline fun ULongArray.all(predicate: (ULong) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 @SinceKotlin("1.3")
@@ -5379,6 +5300,10 @@ public inline fun UByteArray.all(predicate: (UByte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
@@ -5942,72 +5867,196 @@ public inline fun UShortArray.forEachIndexed(action: (index: Int, UShort) -> Uni
     for (item in this) action(index++, item)
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the largest element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UIntArray.max(): UInt? {
-    return maxOrNull()
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UIntArray.max(): UInt {
+    if (isEmpty()) throw NoSuchElementException()
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the largest element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun ULongArray.max(): ULong? {
-    return maxOrNull()
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ULongArray.max(): ULong {
+    if (isEmpty()) throw NoSuchElementException()
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the largest element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UByteArray.max(): UByte? {
-    return maxOrNull()
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UByteArray.max(): UByte {
+    if (isEmpty()) throw NoSuchElementException()
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the largest element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UShortArray.max(): UShort? {
-    return maxOrNull()
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UShortArray.max(): UShort {
+    if (isEmpty()) throw NoSuchElementException()
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element yielding the largest value of the given function.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxByOrThrow-U")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UInt? {
-    return maxByOrNull(selector)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UInt {
+    if (isEmpty()) throw NoSuchElementException()
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element yielding the largest value of the given function.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxByOrThrow-U")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): ULong? {
-    return maxByOrNull(selector)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): ULong {
+    if (isEmpty()) throw NoSuchElementException()
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element yielding the largest value of the given function.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxByOrThrow-U")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): UByte? {
-    return maxByOrNull(selector)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): UByte {
+    if (isEmpty()) throw NoSuchElementException()
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element yielding the largest value of the given function.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxByOrThrow-U")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R): UShort? {
-    return maxByOrNull(selector)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R): UShort {
+    if (isEmpty()) throw NoSuchElementException()
+    var maxElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return maxElem
+    var maxValue = selector(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (maxValue < v) {
+            maxElem = e
+            maxValue = v
+        }
+    }
+    return maxElem
 }
 
 /**
@@ -6874,36 +6923,80 @@ public fun UShortArray.maxOrNull(): UShort? {
     return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element having the largest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxWithOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt? {
-    return maxWithOrNull(comparator)
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt {
+    if (isEmpty()) throw NoSuchElementException()
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element having the largest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxWithOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong? {
-    return maxWithOrNull(comparator)
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong {
+    if (isEmpty()) throw NoSuchElementException()
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element having the largest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxWithOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte? {
-    return maxWithOrNull(comparator)
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte {
+    if (isEmpty()) throw NoSuchElementException()
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element having the largest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("maxWithOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UShortArray.maxWith(comparator: Comparator<in UShort>): UShort? {
-    return maxWithOrNull(comparator)
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UShortArray.maxWith(comparator: Comparator<in UShort>): UShort {
+    if (isEmpty()) throw NoSuchElementException()
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
 }
 
 /**
@@ -6966,72 +7059,196 @@ public fun UShortArray.maxWithOrNull(comparator: Comparator<in UShort>): UShort?
     return max
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the smallest element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UIntArray.min(): UInt? {
-    return minOrNull()
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UIntArray.min(): UInt {
+    if (isEmpty()) throw NoSuchElementException()
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the smallest element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun ULongArray.min(): ULong? {
-    return minOrNull()
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ULongArray.min(): ULong {
+    if (isEmpty()) throw NoSuchElementException()
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the smallest element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UByteArray.min(): UByte? {
-    return minOrNull()
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UByteArray.min(): UByte {
+    if (isEmpty()) throw NoSuchElementException()
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the smallest element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UShortArray.min(): UShort? {
-    return minOrNull()
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UShortArray.min(): UShort {
+    if (isEmpty()) throw NoSuchElementException()
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element yielding the smallest value of the given function.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minByOrThrow-U")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UInt? {
-    return minByOrNull(selector)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UInt {
+    if (isEmpty()) throw NoSuchElementException()
+    var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element yielding the smallest value of the given function.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minByOrThrow-U")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): ULong? {
-    return minByOrNull(selector)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): ULong {
+    if (isEmpty()) throw NoSuchElementException()
+    var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element yielding the smallest value of the given function.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minByOrThrow-U")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): UByte? {
-    return minByOrNull(selector)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): UByte {
+    if (isEmpty()) throw NoSuchElementException()
+    var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element yielding the smallest value of the given function.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minByOrThrow-U")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
-public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R): UShort? {
-    return minByOrNull(selector)
+@Suppress("CONFLICTING_OVERLOADS")
+public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R): UShort {
+    if (isEmpty()) throw NoSuchElementException()
+    var minElem = this[0]
+    val lastIndex = this.lastIndex
+    if (lastIndex == 0) return minElem
+    var minValue = selector(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = selector(e)
+        if (minValue > v) {
+            minElem = e
+            minValue = v
+        }
+    }
+    return minElem
 }
 
 /**
@@ -7898,36 +8115,80 @@ public fun UShortArray.minOrNull(): UShort? {
     return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element having the smallest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minWithOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt? {
-    return minWithOrNull(comparator)
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt {
+    if (isEmpty()) throw NoSuchElementException()
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element having the smallest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minWithOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong? {
-    return minWithOrNull(comparator)
+@Suppress("CONFLICTING_OVERLOADS")
+public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong {
+    if (isEmpty()) throw NoSuchElementException()
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element having the smallest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minWithOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte? {
-    return minWithOrNull(comparator)
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte {
+    if (isEmpty()) throw NoSuchElementException()
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6")
-@SinceKotlin("1.3")
+/**
+ * Returns the first element having the smallest value according to the provided [comparator].
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ */
+@SinceKotlin("1.7")
+@kotlin.jvm.JvmName("minWithOrThrow-U")
 @ExperimentalUnsignedTypes
-public fun UShortArray.minWith(comparator: Comparator<in UShort>): UShort? {
-    return minWithOrNull(comparator)
+@Suppress("CONFLICTING_OVERLOADS")
+public fun UShortArray.minWith(comparator: Comparator<in UShort>): UShort {
+    if (isEmpty()) throw NoSuchElementException()
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
 }
 
 /**
@@ -8491,7 +8752,6 @@ public inline fun UShortArray.reduceIndexedOrNull(operation: (index: Int, acc: U
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.reduceOrNull(operation: (acc: UInt, UInt) -> UInt): UInt? {
     if (isEmpty())
@@ -8516,7 +8776,6 @@ public inline fun UIntArray.reduceOrNull(operation: (acc: UInt, UInt) -> UInt): 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.reduceOrNull(operation: (acc: ULong, ULong) -> ULong): ULong? {
     if (isEmpty())
@@ -8541,7 +8800,6 @@ public inline fun ULongArray.reduceOrNull(operation: (acc: ULong, ULong) -> ULon
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.reduceOrNull(operation: (acc: UByte, UByte) -> UByte): UByte? {
     if (isEmpty())
@@ -8566,7 +8824,6 @@ public inline fun UByteArray.reduceOrNull(operation: (acc: UByte, UByte) -> UByt
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.reduceOrNull(operation: (acc: UShort, UShort) -> UShort): UShort? {
     if (isEmpty())
@@ -8895,7 +9152,6 @@ public inline fun UShortArray.reduceRightIndexedOrNull(operation: (index: Int, U
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.reduceRightOrNull(operation: (UInt, acc: UInt) -> UInt): UInt? {
     var index = lastIndex
@@ -8920,7 +9176,6 @@ public inline fun UIntArray.reduceRightOrNull(operation: (UInt, acc: UInt) -> UI
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.reduceRightOrNull(operation: (ULong, acc: ULong) -> ULong): ULong? {
     var index = lastIndex
@@ -8945,7 +9200,6 @@ public inline fun ULongArray.reduceRightOrNull(operation: (ULong, acc: ULong) ->
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.reduceRightOrNull(operation: (UByte, acc: UByte) -> UByte): UByte? {
     var index = lastIndex
@@ -8970,7 +9224,6 @@ public inline fun UByteArray.reduceRightOrNull(operation: (UByte, acc: UByte) ->
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.reduceRightOrNull(operation: (UShort, acc: UShort) -> UShort): UShort? {
     var index = lastIndex
@@ -9403,7 +9656,6 @@ public inline fun UShortArray.runningReduceIndexed(operation: (index: Int, acc: 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.scan(initial: R, operation: (acc: R, UInt) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9422,7 +9674,6 @@ public inline fun <R> UIntArray.scan(initial: R, operation: (acc: R, UInt) -> R)
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.scan(initial: R, operation: (acc: R, ULong) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9441,7 +9692,6 @@ public inline fun <R> ULongArray.scan(initial: R, operation: (acc: R, ULong) -> 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.scan(initial: R, operation: (acc: R, UByte) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9460,7 +9710,6 @@ public inline fun <R> UByteArray.scan(initial: R, operation: (acc: R, UByte) -> 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.scan(initial: R, operation: (acc: R, UShort) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9480,7 +9729,6 @@ public inline fun <R> UShortArray.scan(initial: R, operation: (acc: R, UShort) -
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.scanIndexed(initial: R, operation: (index: Int, acc: R, UInt) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9500,7 +9748,6 @@ public inline fun <R> UIntArray.scanIndexed(initial: R, operation: (index: Int, 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.scanIndexed(initial: R, operation: (index: Int, acc: R, ULong) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9520,7 +9767,6 @@ public inline fun <R> ULongArray.scanIndexed(initial: R, operation: (index: Int,
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.scanIndexed(initial: R, operation: (index: Int, acc: R, UByte) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9540,7 +9786,6 @@ public inline fun <R> UByteArray.scanIndexed(initial: R, operation: (index: Int,
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.scanIndexed(initial: R, operation: (index: Int, acc: R, UShort) -> R): List<R> {
     return runningFoldIndexed(initial, operation)

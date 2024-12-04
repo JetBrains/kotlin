@@ -1,0 +1,10 @@
+KT element: KtNameReferenceExpression
+FIR element: FirPackageDirectiveImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+package a.b.c
+
+FIR FILE:
+FILE: [ResolvedTo(RAW_FIR)] middlePackageNamePart.kt
+    package a.b.c

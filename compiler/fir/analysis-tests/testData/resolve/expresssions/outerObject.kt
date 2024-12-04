@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
  object Outer {
      val x = 0
      fun Nested.foo() {}

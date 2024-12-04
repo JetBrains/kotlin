@@ -1,0 +1,55 @@
+library {
+  // module name: <enum.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/EnumArray
+    // class name: test/JustEnum
+    // class name: test/Weapon
+
+    @test/JustEnum(weapon = test/Weapon.SCISSORS)
+    @test/EnumArray(enumArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      public constructor()
+    }
+
+    @test/EnumArray(enumArray = [test/Weapon.PAPER, test/Weapon.ROCK])
+    public final class test/C2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    public final annotation class test/EnumArray : kotlin/Annotation {
+
+      public constructor(enumArray: kotlin/Array<test/Weapon>)
+
+      public final val enumArray: kotlin/Array<test/Weapon>
+        public final get
+    }
+
+    public final annotation class test/JustEnum : kotlin/Annotation {
+
+      public constructor(weapon: test/Weapon)
+
+      public final val weapon: test/Weapon
+        public final get
+    }
+
+    public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
+
+      private constructor()
+
+      ROCK,
+
+      PAPER,
+
+      SCISSORS,
+
+      // has Enum.entries
+    }
+  }
+}

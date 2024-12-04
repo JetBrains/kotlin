@@ -1,4 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-4455
 // SKIP_JAVAC
+
 // FILE: A.java
 public class A {
     public B b() {}
@@ -19,8 +22,8 @@ class F {
 
 // FILE: main.kt
 fun main(x: A) {
-    x.b().<!UNRESOLVED_REFERENCE!>bar<!>()
-    x.f().<!UNRESOLVED_REFERENCE!>foobaz<!>()
+    x.<!MISSING_DEPENDENCY_CLASS!>b<!>().<!UNRESOLVED_REFERENCE!>bar<!>()
+    x.<!MISSING_DEPENDENCY_CLASS!>f<!>().<!UNRESOLVED_REFERENCE!>foobaz<!>()
 
     <!UNRESOLVED_REFERENCE!>D<!>().baz()
 }

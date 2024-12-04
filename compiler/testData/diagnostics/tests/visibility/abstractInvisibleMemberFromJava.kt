@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
+// LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
 // FILE: base/Base.java
 package base;
 

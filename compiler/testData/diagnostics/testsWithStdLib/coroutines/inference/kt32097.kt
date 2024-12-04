@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -14,7 +15,7 @@ interface Flow<out T> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <T> channelFlow(@BuilderInference block: suspend ProducerScope<T>.() -> Unit): Flow<T> = TODO()
+fun <T> channelFlow(block: suspend ProducerScope<T>.() -> Unit): Flow<T> = TODO()
 
 interface ProducerScope<in E>
 

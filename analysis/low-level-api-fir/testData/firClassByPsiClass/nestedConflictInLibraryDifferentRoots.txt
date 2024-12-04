@@ -1,0 +1,6 @@
+@R|pckg/Caret|() public/*package*/ open inner class AA : R|kotlin/Any| {
+    public/*package*/ open fun correct(): void
+
+    public/*package*/ pckg/Outer.constructor(): R|pckg/Outer.AA|
+
+}

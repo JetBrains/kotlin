@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.lower.callsSuper
+import org.jetbrains.kotlin.backend.common.lower.ConstructorDelegationKind
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.common.lower.delegationKind
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -17,12 +22,44 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+
+private var IrClass.outerThisField: IrField? by irAttribute(followAttributeOwner = false)
+
+internal class NativeInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupport {
+    override fun getOuterThisField(innerClass: IrClass): IrField {
+        require(innerClass.isInner) { "Expected an inner class: ${innerClass.render()}" }
+        return innerClass::outerThisField.getOrSetIfNull {
+            val outerClass = innerClass.parentClassOrNull ?: error("No containing class for inner class ${innerClass.render()}")
+
+            irFactory.buildField {
+                startOffset = innerClass.startOffset
+                endOffset = innerClass.endOffset
+                origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
+                name = "this$0".synthesizedName // TODO: other backends have "$this" here.
+                type = outerClass.defaultType
+                visibility = DescriptorVisibilities.PROTECTED
+                isFinal = true
+                isExternal = false
+                isStatic = false
+            }.also {
+                it.parent = innerClass
+            }
+        }
+    }
+
+    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor = shouldNotBeCalled()
+
+    override fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor = shouldNotBeCalled()
+}
 
 internal class OuterThisLowering(val context: Context) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
@@ -95,7 +132,7 @@ internal class OuterThisLowering(val context: Context) : ClassLoweringPass {
                     return expression
                 }
 
-                val outerThisField = context.specialDeclarationsFactory.getOuterThisField(innerClass)
+                val outerThisField = context.innerClassesSupport.getOuterThisField(innerClass)
                 irThis = IrGetFieldImpl(
                         startOffset, endOffset,
                         outerThisField.symbol, outerThisField.type,
@@ -130,7 +167,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun createOuterThisField() {
-            val outerThisField = context.specialDeclarationsFactory.getOuterThisField(irClass)
+            val outerThisField = context.innerClassesSupport.getOuterThisField(irClass)
             irClass.declarations += outerThisField
             outerThisFieldSymbol = outerThisField.symbol
         }
@@ -145,7 +182,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun lowerConstructor(irConstructor: IrConstructor): IrConstructor {
-            if (irConstructor.callsSuper(context.irBuiltIns)) {
+            if (irConstructor.delegationKind(context.irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER) {
                 // Initializing constructor: initialize 'this.this$0' with '$outer'.
                 val blockBody = irConstructor.body as? IrBlockBody
                         ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")

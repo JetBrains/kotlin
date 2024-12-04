@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // MODULE: m1
 // FILE: a.kt
 
@@ -28,9 +29,9 @@ import p1.*
 import <!DEPRECATION_ERROR!>p2.A<!>
 import p3.*
 
-fun test(a: <!DEPRECATION_ERROR!>A<!>) {
+fun test(a: <!NONE_APPLICABLE!>A<!>) {
     a.<!UNRESOLVED_REFERENCE!>v1<!>
-    a.v2
+    a.<!UNRESOLVED_REFERENCE!>v2<!>
     a.<!UNRESOLVED_REFERENCE!>v3<!>
 }
 
@@ -39,7 +40,7 @@ import p1.*
 import p2.*
 import p3.*
 
-fun test(a: <!UNRESOLVED_REFERENCE!>A<!>) {
+fun test(a: <!NONE_APPLICABLE!>A<!>) {
     a.<!UNRESOLVED_REFERENCE!>v1<!>
     a.<!UNRESOLVED_REFERENCE!>v2<!>
     a.<!UNRESOLVED_REFERENCE!>v3<!>

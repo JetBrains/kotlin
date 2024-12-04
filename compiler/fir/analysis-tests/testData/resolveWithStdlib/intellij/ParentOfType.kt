@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 import kotlin.reflect.KClass
 
 fun <T : Number> Any.parentOfTypes(vararg classes: KClass<out T>): T? {

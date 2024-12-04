@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 annotation class Ann(val x: Int)
 
 data class A(val x: Int, val y: Int)

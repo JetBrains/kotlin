@@ -5,7 +5,9 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:psi"))
-    implementation(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    implementation(kotlinxCollectionsImmutable())
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    implementation(intellijCore())
 }
 
 sourceSets {

@@ -2,22 +2,22 @@ package
 
 public final class C : O.B {
     public constructor C()
-    public final val a: [ERROR : A]?
-    public final val b: [ERROR : B]?
+    public final val a: [Error type: Unresolved type for A]?
+    public final val b: [Error type: Unresolved type for B]?
     public final val c: O.A.FromA? = null
     public final val d: O.B.FromB? = null
     public final val e: O.A.Companion.FromCompanionA? = null
     public final val f: O.B.Companion.FromCompanionB? = null
-    public final val g: [ERROR : Alpha]?
-    public final val h: [ERROR : Beta]?
-    public final val i: [ERROR : Gamma]?
+    public final val g: [Error type: Unresolved type for Alpha]?
+    public final val h: [Error type: Unresolved type for Beta]?
+    public final val i: [Error type: Unresolved type for Gamma]?
     public final val k: O.Alpha.FromAlpha? = null
     public final val l: O.Beta.FromBeta? = null
     public final val m: O.Gamma.FromGamma? = null
     public final val n: C.Companion.FromCompanionC? = null
-    public final val o: [ERROR : FromCompanionAlpha]?
-    public final val p: [ERROR : FromCompanionBeta]?
-    public final val q: [ERROR : FromCompanionGamma]?
+    public final val o: [Error type: Unresolved type for FromCompanionAlpha]?
+    public final val p: [Error type: Unresolved type for FromCompanionBeta]?
+    public final val q: [Error type: Unresolved type for FromCompanionGamma]?
     public final val r: Delta.FromDelta? = null
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

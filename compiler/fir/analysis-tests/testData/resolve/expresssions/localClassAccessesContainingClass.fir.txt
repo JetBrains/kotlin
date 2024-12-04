@@ -6,7 +6,7 @@ FILE: localClassAccessesContainingClass.kt
 
         public final fun foo(): R|kotlin/Unit| {
             local final class Local : R|kotlin/Any| {
-                public constructor(): R|Outer.Local| {
+                public constructor(): R|<local>/Local| {
                     super<R|kotlin/Any|>()
                 }
 

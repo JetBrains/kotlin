@@ -1,0 +1,14 @@
+package
+
+public val falseUpperBoundViolation: AliasOfNumList<kotlin.Int> /* = NumColl<kotlin.collections.List<kotlin.Int>> */
+public val missedUpperBoundViolation: NumList<kotlin.Any> /* = NumColl<kotlin.collections.List<kotlin.Any>> */
+
+public final class NumColl</*0*/ T : kotlin.collections.Collection<kotlin.Number>> {
+    public constructor NumColl</*0*/ T : kotlin.collections.Collection<kotlin.Number>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias AliasOfNumList</*0*/ A3> = NumList<A3>
+public typealias NumList</*0*/ T2> = NumColl<kotlin.collections.List<T2>>
+

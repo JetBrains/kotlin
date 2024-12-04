@@ -16,15 +16,13 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSDictionary.h>
-#import <Foundation/NSError.h>
-#import <Foundation/NSString.h>
+#import <Foundation/Foundation.h>
 
 #import "Exceptions.h"
 #import "ObjCExport.h"
 #import "Porting.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 
 #import "ObjCExportErrors.h"
 
@@ -48,9 +46,12 @@ extern "C" RUNTIME_NORETURN void Kotlin_ObjCExport_trapOnUndeclaredException(KRe
 static char kotlinExceptionOriginChar;
 
 static bool isExceptionOfType(KRef exception, const TypeInfo** types) {
-  if (types) for (int i = 0; types[i] != nullptr; ++i) {
-    // TODO: use fast instance check when possible.
-    if (IsInstance(exception, types[i])) return true;
+  if (types) {
+    const TypeInfo* type = exception->type_info();
+    for (int i = 0; types[i] != nullptr; ++i) {
+      // TODO: use fast instance check when possible.
+      if (IsSubtype(type, types[i])) return true;
+    }
   }
 
   return false;
@@ -138,20 +139,14 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_NSErrorAsException, id error) {
   RETURN_RESULT_OF(Kotlin_ObjCExport_NSErrorAsExceptionImpl, message, kotlinError);
 }
 
-extern "C" void Kotlin_ObjCExport_RethrowNSErrorAsException(id error) {
-    ObjHolder holder;
-    KRef exception = Kotlin_ObjCExport_NSErrorAsException(error, holder.slot());
-    ThrowException(exception);
-}
-
 @interface NSError (NSErrorKotlinException)
-@end;
+@end
 
 @implementation NSError (NSErrorKotlinException)
 -(id)kotlinException {
   auto userInfo = self.userInfo;
   return userInfo == nullptr ? nullptr : userInfo[@"KotlinException"];
 }
-@end;
+@end
 
 #endif

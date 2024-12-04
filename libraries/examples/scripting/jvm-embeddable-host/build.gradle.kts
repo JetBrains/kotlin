@@ -9,9 +9,8 @@ dependencies {
     testRuntimeOnly(project(":kotlin-compiler-embeddable"))
     testRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     testRuntimeOnly(project(":kotlin-scripting-jvm-host"))
-    testRuntimeOnly(project(":kotlin-reflect"))
-    testRuntimeOnly(intellijDep()) { includeJars("guava", rootProject = rootProject) }
-    testApi(commonDep("junit"))
+    testRuntimeOnly(libs.guava)
+    testImplementation(libs.junit4)
 }
 
 sourceSets {

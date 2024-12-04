@@ -1,6 +1,14 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 37
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
 
 /*
  * TESTCASE NUMBER: 1
@@ -34,7 +42,7 @@ fun case_2(a: Any?) {
  */
 fun case_3(x: Int?) {
     while (true) {
-        x ?: return <!USELESS_ELVIS!>?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!><!>
+        x ?: return <!USELESS_ELVIS!>?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!><!>
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
@@ -47,8 +55,8 @@ fun case_4(x: Boolean?) {
         x ?: return
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.equals(10)
 }
 
 /*
@@ -78,7 +86,7 @@ fun case_6(x: Boolean?) {
 // TESTCASE NUMBER: 7
 fun case_7(x: Boolean?) {
     while (true) {
-        if (!(x === false)) return
+        if (!(<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>x === false<!>)) return
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
@@ -89,8 +97,8 @@ fun case_7(x: Boolean?) {
 fun case_8(x: Boolean?) {
     while (x ?: return)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 9
@@ -98,8 +106,8 @@ fun case_9(x: Boolean?) {
     while (x ?: return)
     while (<!SENSELESS_COMPARISON!>x == null<!>)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Nothing")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 10
@@ -121,8 +129,8 @@ fun case_11(x: Boolean?) {
         x
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 12
@@ -132,8 +140,8 @@ fun case_12(x: Boolean?) {
         break && x
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.equals(10)
 }
 
 /*
@@ -160,8 +168,8 @@ fun case_14(x: Boolean?) {
         x ?: return
     } while(false)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 15
@@ -171,8 +179,8 @@ fun case_15(x: Boolean?) {
         println(1)
     } while(false)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.equals(10)
 }
 
 /*
@@ -185,8 +193,8 @@ fun case_16(x: Boolean?) {
         x ?: x!!
     } while(false)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 17
@@ -197,15 +205,15 @@ fun case_17(x: Boolean?, y: Boolean?) {
             false -> x!!
             null -> if (true) if (true) if (true) if (true) if (true) when (y) {
                 <!SENSELESS_COMPARISON!>true<!> -> when (y) {
-                    else -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
+                    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
                 }
                 <!SENSELESS_COMPARISON!>false<!> -> x!!
-                <!SENSELESS_NULL_IN_WHEN!>null<!> -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
+                <!SENSELESS_COMPARISON!>null<!> -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
             } else x!! else x!! else x!! else x!! else x!!
         }
         break@loop
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.not()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x<!>.not()
 }

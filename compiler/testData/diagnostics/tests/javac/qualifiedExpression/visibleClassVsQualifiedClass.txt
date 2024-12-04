@@ -13,7 +13,7 @@ package a {
 }
 
 package other {
-    public fun test(/*0*/ a_: [ERROR : a.b]): kotlin.Unit
+    public fun test(/*0*/ a_: [Error type: Unresolved type for a.b]): kotlin.Unit
 
     public final class a {
         public constructor a()

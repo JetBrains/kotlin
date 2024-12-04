@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 // NI_EXPECTED_FILE
 
 class C {
@@ -13,9 +14,9 @@ class C {
     }
 }
 
-val c = C.<!UNRESOLVED_REFERENCE!>Self<!>.Self()
-val n = C.<!UNRESOLVED_REFERENCE!>Self<!>.Nested()
-val x = C.<!UNRESOLVED_REFERENCE!>Self<!>.X
-val n2 = C.Nested.<!UNRESOLVED_REFERENCE!>Root<!>.Nested.N2()
-val ic = C.<!UNRESOLVED_REFERENCE!>Self<!>.InCompanion()
-val ok = C.<!UNRESOLVED_REFERENCE!>Self<!>.ok
+val c = C.Self.<!UNRESOLVED_REFERENCE!>Self<!>()
+val n = C.Self.<!UNRESOLVED_REFERENCE!>Nested<!>()
+val x = C.Self.<!UNRESOLVED_REFERENCE!>X<!>
+val n2 = C.Nested.Root.<!UNRESOLVED_REFERENCE!>Nested<!>.N2()
+val ic = C.Self.<!UNRESOLVED_REFERENCE!>InCompanion<!>()
+val ok = C.Self.ok

@@ -8,6 +8,7 @@ package kotlin.script.experimental.jvm
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.impl._languageVersion
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
@@ -19,12 +20,16 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
             // configuration shared between all module scripts
             val sharedConfiguration = scriptEvaluationConfiguration.getOrPrepareShared(scriptClass.java.classLoader)
-
+            val configurationForOtherScripts by lazy {
+                sharedConfiguration.with {
+                    reset(ScriptEvaluationConfiguration.previousSnippets)
+                }
+            }
             val sharedScripts = sharedConfiguration[ScriptEvaluationConfiguration.jvm.scriptsInstancesSharingMap]
 
             sharedScripts?.get(scriptClass)?.asSuccess()
                 ?: compiledScript.otherScripts.mapSuccess {
-                    invoke(it, sharedConfiguration)
+                    invoke(it, configurationForOtherScripts)
                 }.onSuccess { importedScriptsEvalResults ->
 
                     val refinedEvalConfiguration =
@@ -67,16 +72,27 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         refinedEvalConfiguration: ScriptEvaluationConfiguration,
         importedScriptsEvalResults: List<EvaluationResult>
     ): Any {
+        val isCompiledWithK2 =
+            refinedEvalConfiguration[ScriptEvaluationConfiguration.compilationConfiguration]
+                ?.get(ScriptCompilationConfiguration._languageVersion)
+                ?.let {
+                    it.substringBefore('.').toIntOrNull()?.let { it >= 2 }
+                } == true
+
         val args = ArrayList<Any?>()
 
         refinedEvalConfiguration[ScriptEvaluationConfiguration.previousSnippets]?.let {
-            if (it.isNotEmpty()) {
-                args.add(it.toTypedArray())
-            }
+            args.add(it.toTypedArray())
         }
 
         refinedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
             args.addAll(it)
+        }
+
+        if (isCompiledWithK2) {
+            refinedEvalConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
+                args.add(it.value)
+            }
         }
 
         importedScriptsEvalResults.forEach {
@@ -86,16 +102,27 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         refinedEvalConfiguration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
             args.addAll(it)
         }
-        refinedEvalConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
-            args.add(it.value)
+
+        if (!isCompiledWithK2) {
+            refinedEvalConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
+                args.add(it.value)
+            }
         }
 
         val ctor = java.constructors.single()
 
+        @Suppress("UNCHECKED_CAST")
+        val wrapper: ScriptExecutionWrapper<Any>? =
+            refinedEvalConfiguration[ScriptEvaluationConfiguration.scriptExecutionWrapper] as ScriptExecutionWrapper<Any>?
+
         val saveClassLoader = Thread.currentThread().contextClassLoader
         Thread.currentThread().contextClassLoader = this.java.classLoader
         return try {
-            ctor.newInstance(*args.toArray())
+            if (wrapper == null) {
+                ctor.newInstance(*args.toArray())
+            } else wrapper.invoke {
+                ctor.newInstance(*args.toArray())
+            }
         } finally {
             Thread.currentThread().contextClassLoader = saveClassLoader
         }

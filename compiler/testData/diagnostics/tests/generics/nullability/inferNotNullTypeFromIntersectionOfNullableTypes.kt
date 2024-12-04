@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// RUN_PIPELINE_TILL: BACKEND
 
 fun simpleTypeAndNumberType(b: Comparable<*>?) {
     if (b is Byte?) {

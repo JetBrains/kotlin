@@ -5,7 +5,7 @@
 ## Headers
 
 * Headers should live in the same folder with it's implementation counterpart (if there's one) **TODO**: This does not work with multiple implementations of a single header.
-* Headers should use header guards
+* Headers can use either `#pragma once` or header guards.
 * Headers that are designed to be included into both `.cpp`/`.mm` and `.c`/`.m` should have extension `.h`
 * Headers that are designed to be included into `.cpp`/`.mm` only should have extension `.hpp`
 
@@ -23,8 +23,6 @@
 * For `extern "C"` declarations emulate namespaces with `Kotlin_[module_name]_` prefixes.
 * To mark type as move-only, privately inherit from `kotlin::MoveOnly`
 * To mark type unmovable and uncopyable, privately inherit from `kotlin::Pinned`
-* All heap-allocated classes should publicly inherit from `KonanAllocatorAware`
-* Use `KStd*` containers and smart pointers instead of `std::*` ones.
 
 ## Naming
 
@@ -46,6 +44,8 @@ to follow stdlib naming conventions.
 ## Formatting
 
 For automated formatting you can use [config for CLion](codestyle/cpp/CLionFormat.xml) or `clang-format` (see [config](.clang-format) at the repo's root). Note, that CLion uses `clang-format` by default; this can be turned off if you prefer to use rules from `CLionFormat.xml`.
+Since 1.8.20 there's also a `:kotlin-native:clangFormat` task that will effectively run `git-clang-format -f $(git merge-base origin/master HEAD) -- kotlin-native/`.
+The task accepts optional arguments `--parent` to specify base branch other than `origin/master`, and `--interactive` to run the tool with `-p` flag and interactively accept or reject formatted patches.
 
 Formatting rules are designed to closely mirror [Kotlin rules](https://kotlinlang.org/docs/reference/coding-conventions.html).
 

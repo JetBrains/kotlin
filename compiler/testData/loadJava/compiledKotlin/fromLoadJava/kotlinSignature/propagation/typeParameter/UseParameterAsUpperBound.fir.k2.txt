@@ -1,0 +1,12 @@
+public abstract interface UseParameterAsUpperBound : R|kotlin/Any| {
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun <A, B : R|A|> foo(a: R|A|, b: R|B|): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/UseParameterAsUpperBound.Super| {
+        public abstract fun <B, A : R|B|> foo(a: R|B|, b: R|A|): R|kotlin/Unit|
+
+    }
+
+}

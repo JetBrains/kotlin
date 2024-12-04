@@ -24,12 +24,18 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JSCODE_ERROR, "JavaScript: {0}", JsCallDataTextRenderer)
         put(ErrorsJs.JSCODE_WARNING, "JavaScript: {0}", JsCallDataTextRenderer)
         put(ErrorsJs.JSCODE_ARGUMENT_SHOULD_BE_CONSTANT, "Argument must be string constant")
+        put(ErrorsJs.JSCODE_ARGUMENT_NON_CONST_EXPRESSION, "Using not constant variables in js() argument expression becomes deprecated and will be an error in future releases")
         put(ErrorsJs.NOT_SUPPORTED, "Cannot translate (not supported yet): ''{0}''", RenderFirstLineOfElementText)
         put(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED, "Argument must be non-empty JavaScript code")
         put(ErrorsJs.NESTED_EXTERNAL_DECLARATION, "Non top-level `external` declaration")
         put(ErrorsJs.WRONG_EXTERNAL_DECLARATION, "Declaration of such kind ({0}) can''t be external", STRING)
         put(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION, "Function types with receiver are prohibited in external declarations")
-        put(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION, "Using inline classes as parameter type or return type of external declarations is not supported")
+        put(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION, "Using value classes as parameter type or return type of external declarations is not supported")
+        put(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING, "Using value classes as parameter type or return type of external declarations is experimental")
+        put(ErrorsJs.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING, "Using enum classes with an `external` qualifier becomes deprecated and will be an error in future releases")
+
+        put(ErrorsJs.NAMED_COMPANION_IN_EXTERNAL_INTERFACE, "Named companions are not allowed inside external interfaces")
+        put(ErrorsJs.NAMED_COMPANION_IN_EXPORTED_INTERFACE, "Named companions are not allowed inside exported interfaces")
 
         put(ErrorsJs.JS_NAME_CLASH, "JavaScript name ({0}) generated for this declaration clashes with another declaration: {1}",
             STRING, Renderers.COMPACT)
@@ -98,17 +104,29 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations")
 
         put(ErrorsJs.WRONG_MULTIPLE_INHERITANCE,
-            "Can't apply multiple inheritance here, since it's impossible to generate bridge for system function {0}",
+            "Can''t apply multiple inheritance here, since it''s impossible to generate bridge for system function {0}",
             Renderers.DECLARATION_NAME_WITH_KIND)
 
         put(ErrorsJs.NESTED_JS_EXPORT, "@JsExport is only allowed on files and top-level declarations")
         put(ErrorsJs.WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) can''t be exported to JS", STRING)
         put(ErrorsJs.NON_EXPORTABLE_TYPE, "Exported declaration uses non-exportable {0} type: {1}", STRING, RENDER_TYPE)
 
+        put(ErrorsJs.NON_CONSUMABLE_EXPORTED_IDENTIFIER, "Exported declaration contains non-consumable identifier '${0}', that can't be represented inside TS definitions and ESM", STRING)
+
+        put(ErrorsJs.JS_EXTERNAL_INHERITORS_ONLY,
+            "External {0} can''t be a parent of non-external {1}",
+            Renderers.DECLARATION_NAME_WITH_KIND,
+            Renderers.DECLARATION_NAME_WITH_KIND)
+
+        put(ErrorsJs.JS_EXTERNAL_ARGUMENT,
+            "Expected argument with external type, but type {0} is non-external",
+            Renderers.RENDER_TYPE)
+
         this
     }
 }
 
+@Suppress("unused") // Used via reflection
 class DefaultErrorMessagesJs : DefaultErrorMessages.Extension {
     override fun getMap(): DiagnosticFactoryToRendererMap = DIAGNOSTIC_FACTORY_TO_RENDERER
 }

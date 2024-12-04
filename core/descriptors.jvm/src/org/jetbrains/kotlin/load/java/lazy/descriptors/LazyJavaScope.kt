@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.components.TypeUsage
+import org.jetbrains.kotlin.types.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -174,6 +174,7 @@ abstract class LazyJavaScope(
                 DescriptorFactory.createExtensionReceiverParameterForCallable(functionDescriptorImpl, it, Annotations.EMPTY)
             },
             getDispatchReceiverParameter(),
+            emptyList(),
             effectiveSignature.typeParameters,
             effectiveSignature.valueParameters,
             effectiveSignature.returnType,
@@ -291,20 +292,29 @@ abstract class LazyJavaScope(
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
-        val propertyDescriptor = createPropertyDescriptor(field)
+        var propertyDescriptor = createPropertyDescriptor(field)
         // Annotations on Java fields are loaded as property annotations, therefore backingField = null below
         propertyDescriptor.initialize(null, null, null, null)
 
         val propertyType = getPropertyType(field)
 
-        propertyDescriptor.setType(propertyType, listOf(), getDispatchReceiverParameter(), null)
+        propertyDescriptor.setType(
+            propertyType,
+            listOf(),
+            getDispatchReceiverParameter(),
+            null,
+            emptyList()
+        )
+        (ownerDescriptor as? ClassDescriptor)?.let { classDescriptor ->
+            propertyDescriptor = c.components.syntheticPartsProvider.modifyField(classDescriptor, propertyDescriptor, c)
+        }
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.type)) {
-            propertyDescriptor.setCompileTimeInitializer(
+            propertyDescriptor.setCompileTimeInitializerFactory {
                 c.storageManager.createNullableLazyValue {
                     c.components.javaPropertyInitializerEvaluator.getInitializerConstant(field, propertyDescriptor)
                 }
-            )
+            }
         }
 
         c.components.javaResolverCache.recordField(field, propertyDescriptor)

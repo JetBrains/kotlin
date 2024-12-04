@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// LANGUAGE: +CallableReferencesToClassMembersWithEmptyLHS
 
 import kotlin.reflect.KFunction0
 

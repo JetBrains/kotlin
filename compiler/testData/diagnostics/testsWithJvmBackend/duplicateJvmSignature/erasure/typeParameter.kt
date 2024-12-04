@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
-<!CONFLICTING_JVM_DECLARATIONS!>fun <T> foo(x: T): T<!> {null!!}
-<!CONFLICTING_JVM_DECLARATIONS!>fun foo(x: Any): Any<!> {null!!}
+<!CONFLICTING_JVM_DECLARATIONS!>fun <T> foo(x: T): T {null!!}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(x: Any): Any {null!!}<!>

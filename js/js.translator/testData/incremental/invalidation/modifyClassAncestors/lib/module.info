@@ -1,0 +1,75 @@
+STEP 0:
+    added file: a.kt, b.kt, c.kt, d.kt
+STEP 1:
+    modifications:
+        U: b.1.kt -> b.kt
+    modified ir: b.kt
+STEP 2:
+    modifications:
+        U: b.2.kt -> b.kt
+    modified ir: b.kt
+    updated imports <wasm>: c.kt, d.kt
+STEP 3:
+    modifications:
+        U: b.3.kt -> b.kt
+    modified ir: b.kt
+    updated exports <wasm>: b.kt
+    updated imports <wasm>: c.kt, d.kt
+STEP 4:
+    modifications:
+        U: b.4.kt -> b.kt
+    modified ir: b.kt
+    updated exports <wasm>: b.kt
+    updated imports <wasm>: c.kt, d.kt
+STEP 5:
+    modifications:
+        U: b.5.kt -> b.kt
+    modified ir: b.kt
+    updated exports <wasm>: b.kt
+    updated imports <wasm>: c.kt, d.kt
+STEP 6:
+    modifications:
+        U: b.6.kt -> b.kt
+    modified ir: b.kt
+    updated exports <wasm>: b.kt
+    updated imports <wasm>: c.kt, d.kt
+STEP 7:
+    modifications:
+        U: b.7.kt -> b.kt
+        U: c.7.kt -> c.kt
+    modified ir: b.kt, c.kt
+    updated exports: a.kt, b.kt
+    updated imports: d.kt
+STEP 8:
+    modifications:
+        U: b.8.kt -> b.kt
+    modified ir: b.kt
+STEP 9:
+    modifications:
+        U: b.9.kt -> b.kt
+    modified ir: b.kt
+    updated imports <wasm>: c.kt, d.kt
+STEP 10:
+    modifications:
+        U: b.10.kt -> b.kt
+    modified ir: b.kt
+    updated exports: b.kt
+    updated imports: c.kt, d.kt
+STEP 11:
+    modifications:
+        U: b.11.kt -> b.kt
+    modified ir: b.kt
+    updated exports: b.kt
+    updated imports: c.kt, d.kt
+STEP 12:
+    modifications:
+        U: b.12.kt -> b.kt
+    modified ir: b.kt
+    updated exports: b.kt
+    updated imports: c.kt, d.kt
+STEP 13:
+    modifications:
+        U: b.13.kt -> b.kt
+    modified ir: b.kt
+    updated exports: b.kt
+    updated imports: c.kt, d.kt

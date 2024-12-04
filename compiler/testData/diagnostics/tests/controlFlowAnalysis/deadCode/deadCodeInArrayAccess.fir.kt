@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testArrayAccess1(array: Array<Any>) {
     array<!UNREACHABLE_CODE!>[<!>todo()<!UNREACHABLE_CODE!>]<!>
@@ -34,7 +35,7 @@ fun testArrayAssignment4(n: Nothing) {
 
 fun testArrayPlusAssign(array: Array<Any>) {
     operator fun Any.plusAssign(a: Any) {}
-    array<!UNREACHABLE_CODE!>[<!>1<!UNREACHABLE_CODE!>] +=<!> todo()
+    <!UNREACHABLE_CODE!>array<!><!UNREACHABLE_CODE!>[<!><!UNREACHABLE_CODE!>1<!><!UNREACHABLE_CODE!>] +=<!> todo()
 }
 
 fun todo(): Nothing = throw Exception()

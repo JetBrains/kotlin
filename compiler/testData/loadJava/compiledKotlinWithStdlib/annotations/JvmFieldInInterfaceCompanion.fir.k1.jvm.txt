@@ -1,0 +1,13 @@
+public abstract interface I : R|kotlin/Any| {
+    public final companion object Companion : R|kotlin/Any| {
+        field:@FIELD:R|kotlin/jvm/JvmField|() public final val x: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        field:@FIELD:R|kotlin/jvm/JvmField|() public final val y: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        private constructor(): R|test/I.Companion|
+
+    }
+
+}

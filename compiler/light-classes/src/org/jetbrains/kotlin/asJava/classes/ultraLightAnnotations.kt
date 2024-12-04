@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
+import com.intellij.psi.impl.compiled.ClsJavaCodeReferenceElementImpl
 import com.intellij.psi.impl.light.LightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -27,27 +28,26 @@ class KtUltraLightNullabilityAnnotation(
     override fun getQualifiedName(): String? = member.qualifiedNameForNullabilityAnnotation
 }
 
-fun AnnotationDescriptor.toLightAnnotation(ultraLightSupport: KtUltraLightSupport, parent: PsiElement) =
-    KtUltraLightSimpleAnnotation(
-        fqName?.asString(),
-        allValueArguments.map { it.key.asString() to it.value },
-        ultraLightSupport,
-        parent
-    )
+fun AnnotationDescriptor.toLightAnnotation(parent: PsiElement) = KtUltraLightSimpleAnnotation(
+    fqName?.asString(),
+    allValueArguments.map { it.key.asString() to it.value },
+    parent,
+)
 
-fun DeclarationDescriptor.obtainLightAnnotations(
-    ultraLightSupport: KtUltraLightSupport,
-    parent: PsiElement
-): List<KtLightAbstractAnnotation> = annotations.map { it.toLightAnnotation(ultraLightSupport, parent) }
+fun DeclarationDescriptor.obtainLightAnnotations(parent: PsiElement): List<KtLightAbstractAnnotation> =
+    annotations.map { it.toLightAnnotation(parent) }
 
 class KtUltraLightSimpleAnnotation(
     private val annotationFqName: String?,
     private val argumentsList: List<Pair<String, ConstantValue<*>>>,
-    private val ultraLightSupport: KtUltraLightSupport,
     parent: PsiElement,
     private val nameReferenceElementProvider: (() -> PsiJavaCodeReferenceElement?)? = null,
-) : KtLightAbstractAnnotation(parent, computeDelegate = null) {
-    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = nameReferenceElementProvider?.invoke()
+) : KtLightAbstractAnnotation(parent) {
+    private val _nameReferenceElement: PsiJavaCodeReferenceElement? by lazyPub {
+        nameReferenceElementProvider?.invoke() ?: annotationFqName?.let { ClsJavaCodeReferenceElementImpl(parent, it) }
+    }
+
+    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = _nameReferenceElement
 
     private val parameterList = ParameterListImpl()
 
@@ -68,7 +68,7 @@ class KtUltraLightSimpleAnnotation(
     private inner class ParameterListImpl : KtLightElementBase(this@KtUltraLightSimpleAnnotation), PsiAnnotationParameterList {
         private val _attributes: Array<PsiNameValuePair> by lazyPub {
             argumentsList.map {
-                PsiNameValuePairForAnnotationArgument(it.first, it.second, ultraLightSupport, this)
+                PsiNameValuePairForAnnotationArgument(it.first, it.second, this)
             }.toTypedArray()
         }
 
@@ -83,16 +83,15 @@ class KtUltraLightSimpleAnnotation(
 private class PsiNameValuePairForAnnotationArgument(
     private val _name: String = "",
     private val constantValue: ConstantValue<*>,
-    private val ultraLightSupport: KtUltraLightSupport,
-    parent: PsiElement
+    parent: PsiElement,
 ) : KtLightElementBase(parent), PsiNameValuePair {
     override val kotlinOrigin: KtElement? get() = null
 
     private val _value by lazyPub {
-        constantValue.toAnnotationMemberValue(this, ultraLightSupport)
+        constantValue.toAnnotationMemberValue(this)
     }
 
-    override fun setValue(p0: PsiAnnotationMemberValue) = cannotModify()
+    override fun setValue(newValue: PsiAnnotationMemberValue) = cannotModify()
 
     override fun getNameIdentifier() = LightIdentifier(parent.manager, _name)
 
@@ -103,16 +102,11 @@ private class PsiNameValuePairForAnnotationArgument(
     override fun getName() = _name
 }
 
-private fun ConstantValue<*>.toAnnotationMemberValue(
-    parent: PsiElement, ultraLightSupport: KtUltraLightSupport
-): PsiAnnotationMemberValue? = when (this) {
-
-    is AnnotationValue -> value.toLightAnnotation(ultraLightSupport, parent)
-
-    is ArrayValue ->
-        KtUltraLightPsiArrayInitializerMemberValue(lightParent = parent) { arrayLiteralParent ->
-            this.value.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent, ultraLightSupport) }
-        }
+private fun ConstantValue<*>.toAnnotationMemberValue(parent: PsiElement): PsiAnnotationMemberValue? = when (this) {
+    is AnnotationValue -> value.toLightAnnotation(parent)
+    is ArrayValue -> KtUltraLightPsiArrayInitializerMemberValue(lightParent = parent) { arrayLiteralParent ->
+        this.value.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
+    }
 
     is ErrorValue -> null
     else -> createPsiLiteral(parent)

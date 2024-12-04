@@ -1,0 +1,14 @@
+fun interface Cmp<T : Any?> {
+  abstract fun compare(a: T, b: T): Int
+
+}
+
+fun bar() {
+  return foo<Int>(comparator = local fun <anonymous>(a: Int, b: Int): Int {
+    return a.minus(other = b)
+  }
+ /*-> Cmp<Int> */, x = 1)
+}
+
+fun <T : Any?> foo(comparator: Cmp<in T>, x: T) {
+}

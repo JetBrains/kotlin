@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun <T> foo(l: MutableList<T>): MutableList<T> = l
 fun test(l: MutableList<out Int>) {

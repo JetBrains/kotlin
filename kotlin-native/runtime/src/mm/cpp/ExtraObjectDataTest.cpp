@@ -6,12 +6,13 @@
 #include "ExtraObjectData.hpp"
 
 #include <atomic>
-#include <thread>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "AllocatorTestSupport.hpp"
 #include "ObjectTestSupport.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;
@@ -19,8 +20,7 @@ using namespace kotlin;
 namespace {
 
 struct EmptyPayload {
-    using Field = ObjHeader* EmptyPayload::*;
-    static constexpr std::array<Field, 0> kFields{};
+    static constexpr test_support::NoRefFields<EmptyPayload> kFields{};
 };
 
 class ExtraObjectDataTest : public testing::Test {
@@ -29,8 +29,8 @@ public:
 
     ~ExtraObjectDataTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
-        mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
-        mm::GlobalData::Instance().objectFactory().ClearForTests();
+        mm::GlobalData::Instance().gc().ClearForTests();
+        mm::GlobalData::Instance().allocator().clearForTests();
     }
 };
 
@@ -49,10 +49,10 @@ TEST_F(ExtraObjectDataTest, Install) {
     EXPECT_TRUE(object.header()->has_meta_object());
     EXPECT_THAT(object.header()->meta_object(), extraData.AsMetaObjHeader());
     EXPECT_THAT(object.header()->type_info(), typeInfo);
-    EXPECT_FALSE(extraData.HasWeakReferenceCounter());
+    EXPECT_FALSE(extraData.HasRegularWeakReferenceImpl());
     EXPECT_THAT(extraData.GetBaseObject(), object.header());
 
-    mm::ExtraObjectData::Uninstall(object.header());
+    alloc::test_support::detachAndDestroyExtraObjectData(extraData);
 
     EXPECT_FALSE(object.header()->has_meta_object());
     EXPECT_THAT(object.header()->type_info(), typeInfo);
@@ -67,7 +67,7 @@ TEST_F(ExtraObjectDataTest, ConcurrentInstall) {
 
     std::atomic<bool> canStart(false);
     std::atomic<int> readyCount(0);
-    std::vector<std::thread> threads;
+    std::vector<ScopedThread> threads;
     std::vector<mm::ExtraObjectData*> actual(kThreadCount, nullptr);
 
     for (int i = 0; i < kThreadCount; ++i) {
@@ -78,16 +78,15 @@ TEST_F(ExtraObjectDataTest, ConcurrentInstall) {
             }
             auto& extraData = mm::ExtraObjectData::Install(object.header());
             actual[i] = &extraData;
-            mm::GlobalData::Instance().threadRegistry().CurrentThreadData()->Publish();
+            // Really only needed for legacy allocators.
+            mm::GlobalData::Instance().threadRegistry().CurrentThreadData()->allocator().prepareForGC();
         });
     }
 
     while (readyCount < kThreadCount) {
     }
     canStart = true;
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
 
     std::vector<mm::ExtraObjectData*> expected(kThreadCount, actual[0]);
 

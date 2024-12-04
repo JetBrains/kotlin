@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
-import java.lang.reflect.Field
-import java.lang.reflect.Member
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
+import java.lang.reflect.*
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty
@@ -25,6 +23,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
 import kotlin.reflect.jvm.internal.calls.*
+import kotlin.reflect.jvm.isAccessible
 
 internal abstract class KPropertyImpl<out V> private constructor(
     override val container: KDeclarationContainerImpl,
@@ -48,9 +47,9 @@ internal abstract class KPropertyImpl<out V> private constructor(
     val boundReceiver
         get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
 
-    override val isBound: Boolean get() = rawBoundReceiver != CallableReference.NO_RECEIVER
+    override val isBound: Boolean get() = rawBoundReceiver !== CallableReference.NO_RECEIVER
 
-    private val _javaField: ReflectProperties.LazyVal<Field?> = ReflectProperties.lazy {
+    private val _javaField = lazy(PUBLICATION) {
         when (val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)) {
             is KotlinProperty -> {
                 val descriptor = jvmSignature.descriptor
@@ -77,7 +76,7 @@ internal abstract class KPropertyImpl<out V> private constructor(
         }
     }
 
-    val javaField: Field? get() = _javaField()
+    val javaField: Field? get() = _javaField.value
 
     protected fun computeDelegateSource(): Member? {
         if (!descriptor.isDelegated) return null
@@ -105,6 +104,7 @@ internal abstract class KPropertyImpl<out V> private constructor(
 
             val realReceiver1 = (if (isBound) boundReceiver else receiver1).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
             val realReceiver2 = (if (isBound) receiver1 else receiver2).takeIf { it !== EXTENSION_PROPERTY_DELEGATE }
+            (fieldOrMethod as? AccessibleObject)?.isAccessible = isAccessible
             when (fieldOrMethod) {
                 null -> null
                 is Field -> fieldOrMethod.get(realReceiver1)
@@ -176,7 +176,7 @@ internal abstract class KPropertyImpl<out V> private constructor(
             property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY)
         }
 
-        override val caller: Caller<*> by ReflectProperties.lazy {
+        override val caller: Caller<*> by lazy(PUBLICATION) {
             computeCallerForAccessor(isGetter = true)
         }
 
@@ -197,7 +197,7 @@ internal abstract class KPropertyImpl<out V> private constructor(
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)
         }
 
-        override val caller: Caller<*> by ReflectProperties.lazy {
+        override val caller: Caller<*> by lazy(PUBLICATION) {
             computeCallerForAccessor(isGetter = false)
         }
 
@@ -271,8 +271,9 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
                     if (property.descriptor.isUnderlyingPropertyOfInlineClass() &&
                         property.descriptor.visibility == DescriptorVisibilities.INTERNAL
                     ) {
-                        val unboxMethod = property.descriptor.containingDeclaration.toInlineClass()?.getUnboxMethod(property.descriptor)
-                            ?: throw KotlinReflectionInternalError("Underlying property of inline class $property should have a field")
+                        val unboxMethod =
+                            property.descriptor.containingDeclaration.toInlineClass()?.getInlineClassUnboxMethod(property.descriptor)
+                                ?: throw KotlinReflectionInternalError("Underlying property of inline class $property should have a field")
                         if (isBound) InternalUnderlyingValOfInlineClass.Bound(unboxMethod, boundReceiver)
                         else InternalUnderlyingValOfInlineClass.Unbound(unboxMethod)
                     } else {
@@ -288,7 +289,7 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
                     if (isBound) CallerImpl.Method.BoundJvmStaticInObject(accessor)
                     else CallerImpl.Method.JvmStaticInObject(accessor)
                 else ->
-                    if (isBound) CallerImpl.Method.BoundStatic(accessor, boundReceiver)
+                    if (isBound) CallerImpl.Method.BoundStatic(accessor, isCallByToValueClassMangledMethod = false, boundReceiver)
                     else CallerImpl.Method.Static(accessor)
             }
         }
@@ -316,7 +317,7 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
             return if (isBound) CallerImpl.Method.BoundInstance(accessor, boundReceiver)
             else CallerImpl.Method.Instance(accessor)
         }
-    }.createInlineClassAwareCallerIfNeeded(descriptor)
+    }.createValueClassAwareCallerIfNeeded(descriptor)
 }
 
 private fun PropertyDescriptor.isJvmFieldPropertyInCompanionObject(): Boolean {

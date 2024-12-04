@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -26,13 +27,27 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-interface FileLoweringPass {
+interface ModuleLoweringPass {
+    fun lower(irModule: IrModuleFragment)
+}
+
+interface FileLoweringPass : ModuleLoweringPass {
     fun lower(irFile: IrFile)
 
-    object Empty : FileLoweringPass {
-        override fun lower(irFile: IrFile) {
-            // Do nothing
+    override fun lower(irModule: IrModuleFragment) {
+        for (file in irModule.files) {
+            try {
+                lower(file)
+            } catch (e: CompilationException) {
+                e.initializeFileDetails(file)
+                throw e
+            } catch (e: KotlinExceptionWithAttachments) {
+                throw e
+            } catch (e: Throwable) {
+                throw e.wrapWithCompilationException("Internal error in file lowering", file, null)
+            }
         }
     }
 }
@@ -65,23 +80,6 @@ interface BodyAndScriptBodyLoweringPass : BodyLoweringPass {
     fun lowerScriptBody(irDeclarationContainer: IrDeclarationContainer, container: IrDeclaration)
 
     override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
-}
-
-fun FileLoweringPass.lower(
-    moduleFragment: IrModuleFragment
-) = moduleFragment.files.forEach {
-    try {
-        lower(it)
-    } catch (e: CompilationException) {
-        e.file = it
-        throw e
-    } catch (e: Throwable) {
-        throw e.wrapWithCompilationException(
-            "Internal error in file lowering",
-            it,
-            null
-        )
-    }
 }
 
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
@@ -138,15 +136,14 @@ private class DeclarationContainerLoweringVisitor(
 
 fun BodyLoweringPass.runOnFilePostfix(
     irFile: IrFile,
-    withLocalDeclarations: Boolean = false,
-    allowDeclarationModification: Boolean = false
+    withLocalDeclarations: Boolean = false
 ) {
-    val visitor = BodyLoweringVisitor(this, withLocalDeclarations, allowDeclarationModification)
+    val visitor = BodyLoweringVisitor(this, withLocalDeclarations)
     for (declaration in ArrayList(irFile.declarations)) {
         try {
             declaration.accept(visitor, null)
         } catch (e: CompilationException) {
-            e.file = irFile
+            e.initializeFileDetails(irFile)
             throw e
         } catch (e: Throwable) {
             throw e.wrapWithCompilationException(
@@ -158,11 +155,8 @@ fun BodyLoweringPass.runOnFilePostfix(
     }
 }
 
-fun BodyAndScriptBodyLoweringPass.runOnFilePostfix(
-    irFile: IrFile,
-    allowDeclarationModification: Boolean = false
-) {
-    val visitor = ScriptBodyLoweringVisitor(this, allowDeclarationModification)
+fun BodyAndScriptBodyLoweringPass.runOnFilePostfix(irFile: IrFile) {
+    val visitor = ScriptBodyLoweringVisitor(this)
     for (declaration in ArrayList(irFile.declarations)) {
         declaration.accept(visitor, null)
     }
@@ -171,7 +165,6 @@ fun BodyAndScriptBodyLoweringPass.runOnFilePostfix(
 private open class BodyLoweringVisitor(
     private val loweringPass: BodyLoweringPass,
     private val withLocalDeclarations: Boolean,
-    private val allowDeclarationModification: Boolean,
 ) : IrElementVisitor<Unit, IrDeclaration?> {
     override fun visitElement(element: IrElement, data: IrDeclaration?) {
         element.acceptChildren(this, data)
@@ -191,42 +184,26 @@ private open class BodyLoweringVisitor(
         if (withLocalDeclarations) body.acceptChildren(this, null)
         val stageController = data!!.factory.stageController
         stageController.restrictTo(data) {
-            if (allowDeclarationModification) {
-                loweringPass.lower(body, data)
-            } else {
-                stageController.bodyLowering {
-                    loweringPass.lower(body, data)
-                }
-            }
+            loweringPass.lower(body, data)
         }
     }
 
     override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
-        declaration.thisReceiver.accept(this, declaration)
+        declaration.thisReceiver?.accept(this, declaration)
         ArrayList(declaration.statements).forEach { it.accept(this, declaration) }
     }
 }
 
 private class ScriptBodyLoweringVisitor(
-    private val loweringPass: BodyAndScriptBodyLoweringPass,
-    private val allowDeclarationModification: Boolean
-) : BodyLoweringVisitor(loweringPass, false, allowDeclarationModification) {
+    private val loweringPass: BodyAndScriptBodyLoweringPass
+) : BodyLoweringVisitor(loweringPass, false) {
 
     override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
         declaration.thisReceiver?.accept(this, declaration)
         declaration.typeParameters.forEach { it.accept(this, declaration) }
         ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
         if (declaration.origin == IrDeclarationOrigin.SCRIPT_CLASS) {
-            val stageController = declaration.factory.stageController
-            stageController.restrictTo(declaration) {
-                if (allowDeclarationModification) {
-                    loweringPass.lowerScriptBody(declaration, declaration)
-                } else {
-                    stageController.bodyLowering {
-                        loweringPass.lowerScriptBody(declaration, declaration)
-                    }
-                }
-            }
+            loweringPass.lowerScriptBody(declaration, declaration)
         }
     }
 }
@@ -244,7 +221,7 @@ interface DeclarationTransformer : FileLoweringPass {
                 declaration.acceptVoid(visitor)
                 transformFlatRestricted(declaration)
             } catch (e: CompilationException) {
-                e.file = irFile
+                e.initializeFileDetails(irFile)
                 throw e
             } catch (e: Throwable) {
                 throw e.wrapWithCompilationException(
@@ -265,13 +242,6 @@ interface DeclarationTransformer : FileLoweringPass {
     private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
-        }
-
-        override fun visitBody(body: IrBody) {
-            if (transformer.withLocalDeclarations) {
-                super.visitBody(body)
-            }
-            // else stop
         }
 
         override fun visitFunction(declaration: IrFunction) {
@@ -322,7 +292,9 @@ interface DeclarationTransformer : FileLoweringPass {
             declaration.typeParameters.forEach { it.accept(this, null) }
             ArrayList(declaration.declarations).forEach { it.accept(this, null) }
 
-            declaration.declarations.transformFlat(transformer::transformFlatRestricted)
+            declaration.declarations.transformFlat {
+                transformer.transformFlatRestricted(it)
+            }
         }
 
         override fun visitScript(declaration: IrScript) {
@@ -333,7 +305,15 @@ interface DeclarationTransformer : FileLoweringPass {
             }
             declaration.statements.transformSubsetFlat(transformer::transformFlatRestricted)
 
-            declaration.thisReceiver.accept(this, null)
+            declaration.thisReceiver?.accept(this, null)
+        }
+    }
+}
+
+fun <C> Action<IrElement, C>.toMultiModuleAction(): Action<Iterable<IrModuleFragment>, C> {
+    return { state, modules, context ->
+        modules.forEach { module ->
+            this(state, module, context)
         }
     }
 }

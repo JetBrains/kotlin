@@ -1,9 +1,14 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: WASM
-// DONT_TARGET_EXACT_BACKEND: JS
+
+// This test fails on Native with test grouping and package renaming enabled,
+// because the latter doesn't yet handle annotation toString implementations properly.
+// Disable test grouping as a workaround:
+// NATIVE_STANDALONE
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
+
 
 package test
 
@@ -45,7 +50,7 @@ fun box(): String {
     )
     val s = anno.toString()
     val targetJVM = "@test.Anno(s=OK, i=42, f=2.718281828, u=43, e=E0, a=@test.A(b=1, s=1, i=1, f=1.0, d=1.0, l=1, c=c, bool=true), " +
-            "k=interface test.A (Kotlin reflection is not available), arr=[], intArr=[1, 2], arrOfE=[E0], arrOfA=[@test.Empty()])"
+            "k=interface test.A, arr=[], intArr=[1, 2], arrOfE=[E0], arrOfA=[@test.Empty()])"
     val targetJS = "@test.Anno(s=OK, i=42, f=2.718281828, u=43, e=E0, a=@test.A(b=1, s=1, i=1, f=1, d=1, l=1, c=c, bool=true), k=class A, arr=[...], intArr=[...], arrOfE=[...], arrOfA=[...])"
     val targetNative = targetJVM
         .replace(" (Kotlin reflection is not available)", "")

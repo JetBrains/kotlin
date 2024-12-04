@@ -98,7 +98,7 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
             is ReplEvalResult.Error ->
                 when {
                     result is ReplEvalResult.Error.Runtime && result.cause != null ->
-                        throw ScriptException(result.cause)
+                        throw ScriptException((result.cause as? java.lang.Exception) ?: RuntimeException(result.cause))
                     result is ReplEvalResult.Error.CompileTime && result.location != null ->
                         throw ScriptException(result.message, result.location.path, result.location.line, result.location.column)
                     else -> throw ScriptException(result.message)

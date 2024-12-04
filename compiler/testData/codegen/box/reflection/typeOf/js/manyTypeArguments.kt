@@ -1,5 +1,4 @@
-// !OPT_IN: kotlin.ExperimentalStdlibApi
-// TARGET_BACKEND: JS
+// TARGET_BACKEND: JS_IR
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
 

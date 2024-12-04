@@ -1,13 +1,14 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     companion object Comp {}
 
     fun foo() {
-        <!INVISIBLE_REFERENCE!>Comp<!>()
+        <!UNRESOLVED_REFERENCE!>Comp<!>()
     }
 }
 
 object B {
-    private val x = <!INVISIBLE_REFERENCE!>B<!>()
+    private val x = <!UNRESOLVED_REFERENCE!>B<!>()
 }
 
 class D {

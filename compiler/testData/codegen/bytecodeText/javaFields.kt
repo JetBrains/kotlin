@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM_IR
+
 // FILE: Java1.java
 public class Java1 { 
   public int f;
@@ -15,6 +17,8 @@ open class Kotlin2 : Java2() {
 }
 
 fun test1(j: Kotlin2) = j.f
+
+// 0 GETFIELD Java1.f : I
 
 // @Kotlin2.class:
 // 1 GETFIELD Java2.f : I

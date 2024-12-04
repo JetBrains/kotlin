@@ -1204,7 +1204,11 @@ static size_t mi_os_numa_node_countx(void) {
 
 _Atomic(size_t)  _mi_numa_node_count; // = 0   // cache the node count
 
+#if defined(KONAN_MI_MALLOC)
+__attribute__((annotate("no_external_calls_check"))) size_t _mi_os_numa_node_count_get(void) {
+#else
 size_t _mi_os_numa_node_count_get(void) {
+#endif
   size_t count = mi_atomic_load_acquire(&_mi_numa_node_count);
   if (count <= 0) {
     long ncount = mi_option_get(mi_option_use_numa_nodes); // given explicitly?

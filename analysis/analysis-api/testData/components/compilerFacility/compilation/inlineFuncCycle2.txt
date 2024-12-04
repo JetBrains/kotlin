@@ -1,0 +1,27 @@
+CODE_COMPILATION_EXCEPTION:
+Inline functions have a cyclic dependency:
+[home/main.kt]
+FILE: main.kt
+    public final fun Greeting(name: R|kotlin/String|): R|kotlin/Unit| {
+        R|com/example/ui/Text|(<strcat>(R|<local>/name|, String(!)).R|kotlin/String.plus|(Q|com/example/module1/moduleClass1|.R|com/example/module1/moduleClass1.Companion.giveMeString|()))
+    }
+
+[com.example.module1/moduleClass1.kt]
+public final inline fun giveMeString(): R|kotlin/String| {
+    ^giveMeString this@R|com/example/module1/moduleClass1.Companion|.R|com/example/module1/moduleClass1.Companion.secret|().R|kotlin/String.plus|(R|com/example/module2/a|())
+}
+
+[com.example.module2/A.kt]
+public final inline fun a(): R|kotlin/String| {
+    ^a String(Hi).R|kotlin/String.plus|(R|com/example/module2/b|())
+}
+
+[com.example.module2/B.kt]
+public final inline fun b(): R|kotlin/String| {
+    ^b String(Hi).R|kotlin/String.plus|(R|com/example/module2/c|())
+}
+
+[com.example.module2/C.kt]
+public final inline fun c(): R|kotlin/String| {
+    ^c String(Hi).R|kotlin/String.plus|(R|com/example/module2/a|())
+}

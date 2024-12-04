@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm").version("<pluginMarkerVersion>")
+    kotlin("jvm")
     `maven-publish`
 }
 
@@ -11,6 +11,7 @@ repositories {
     mavenCentral()
 }
 
+kotlin.jvmToolchain(8)
 kotlin.target.compilations {
     all {
         kotlinOptions {
@@ -33,8 +34,8 @@ kotlin.target.compilations {
     }
 
     val benchmark by creating {
+        associateWith(main)
         defaultSourceSet.dependencies {
-            associateWith(main)
             implementation(kotlin("reflect"))
         }
     }
@@ -42,7 +43,7 @@ kotlin.target.compilations {
 
 val runBenchmark by tasks.registering(JavaExec::class) {
     classpath = kotlin.target.compilations["benchmark"].run { runtimeDependencyFiles + output.allOutputs }
-    main = "com.example.ABenchmarkKt"
+    mainClass.set("com.example.ABenchmarkKt")
 }
 
 publishing {

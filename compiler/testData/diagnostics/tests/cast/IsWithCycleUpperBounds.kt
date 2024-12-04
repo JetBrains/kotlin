@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // check that there is no SOE on checking for instance
 interface Visitor<T>

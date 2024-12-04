@@ -1,12 +1,12 @@
 package
 
 public final data class A {
-    public constructor A(/*0*/ x: kotlin.collections.Set<[ERROR : CLassNotFound]> = ...)
-    public final val x: kotlin.collections.Set<[ERROR : CLassNotFound]>
-    public final operator /*synthesized*/ fun component1(): kotlin.collections.Set<[ERROR : CLassNotFound]>
-    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.collections.Set<[ERROR : CLassNotFound]> = ...): A
+    public constructor A(/*0*/ x: kotlin.collections.Set<[Error type: Unresolved type for CLassNotFound]> = ...)
+    public final val x: kotlin.collections.Set<[Error type: Unresolved type for CLassNotFound]>
+    public final operator /*synthesized*/ fun component1(): kotlin.collections.Set<[Error type: Unresolved type for CLassNotFound]>
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.collections.Set<[Error type: Unresolved type for CLassNotFound]> = ...): A
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    public final fun with(/*0*/ x: kotlin.collections.Set<[ERROR : CLassNotFound]>? = ...): kotlin.Unit
+    public final fun with(/*0*/ x: kotlin.collections.Set<[Error type: Unresolved type for CLassNotFound]>? = ...): kotlin.Unit
 }

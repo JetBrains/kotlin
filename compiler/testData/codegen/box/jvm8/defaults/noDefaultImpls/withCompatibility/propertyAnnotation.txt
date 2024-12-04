@@ -1,0 +1,33 @@
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class MyAnn {
+    // source: 'propertyAnnotation.kt'
+}
+
+@kotlin.Metadata
+public final class PropertyAnnotationKt {
+    // source: 'propertyAnnotation.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Test$DefaultImpls {
+    // source: 'propertyAnnotation.kt'
+    public synthetic deprecated static @MyAnn method getProp$annotations(): void
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: Test): java.lang.String
+    public final inner class Test$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Test {
+    // source: 'propertyAnnotation.kt'
+    public synthetic static method access$getProp$jd(p0: Test): java.lang.String
+    public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public final inner class Test$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class TestClass {
+    // source: 'propertyAnnotation.kt'
+    public method <init>(): void
+}

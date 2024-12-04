@@ -6,71 +6,63 @@
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
 
+#include "Allocator.hpp"
+#include "CallsChecker.hpp"
 #include "Exceptions.h"
 #include "ExtraObjectData.hpp"
-#include "Freezing.hpp"
 #include "GC.hpp"
 #include "GlobalsRegistry.hpp"
-#include "InitializationScheme.hpp"
 #include "KAssert.h"
 #include "Natives.h"
+#include "ObjCBackRef.hpp"
 #include "ObjectOps.hpp"
 #include "Porting.h"
+#include "ReferenceOps.hpp"
 #include "Runtime.h"
-#include "StableRefRegistry.hpp"
+#include "SafePoint.hpp"
+#include "SpecialRefRegistry.hpp"
+#include "StableRef.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ThreadState.hpp"
 #include "Utils.hpp"
+#include "MemoryDump.hpp"
 
 using namespace kotlin;
 
-// TODO: This name does not make sense anymore.
-// Delete all means of creating this type directly as it only serves
-// as a typedef for `mm::StableRefRegistry::Node`.
-class ForeignRefManager : Pinned {
-public:
-    ForeignRefManager() = delete;
-    ~ForeignRefManager() = delete;
-};
-
-namespace {
-
-// `reinterpret_cast` to it and back to the same type
-// will yield precisely the same pointer, so it's safe.
-ALWAYS_INLINE ForeignRefManager* ToForeignRefManager(mm::StableRefRegistry::Node* data) {
-    return reinterpret_cast<ForeignRefManager*>(data);
-}
-
-ALWAYS_INLINE mm::StableRefRegistry::Node* FromForeignRefManager(ForeignRefManager* manager) {
-    return reinterpret_cast<mm::StableRefRegistry::Node*>(manager);
-}
-
-} // namespace
-
-ObjHeader* ObjHeader::GetWeakCounter() {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetWeakReferenceCounter();
-}
-
-ObjHeader* ObjHeader::GetOrSetWeakCounter(ObjHeader* counter) {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetOrSetWeakReferenceCounter(this, counter);
-}
-
 #ifdef KONAN_OBJC_INTEROP
 
-void* ObjHeader::GetAssociatedObject() {
-    if (!has_meta_object()) {
+PERFORMANCE_INLINE void* ObjHeader::GetAssociatedObject() const {
+    auto metaObject = meta_object_or_null();
+    if (metaObject == nullptr) {
         return nullptr;
     }
-    return *GetAssociatedObjectLocation();
+    return mm::ExtraObjectData::FromMetaObjHeader(metaObject).AssociatedObject().load(std::memory_order_acquire);
 }
 
-void** ObjHeader::GetAssociatedObjectLocation() {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetAssociatedObjectLocation();
+PERFORMANCE_INLINE void ObjHeader::SetAssociatedObject(void* obj) {
+    auto& extraObject = mm::ExtraObjectData::FromMetaObjHeader(meta_object());
+    // TODO: Consider additional filtering based on types:
+    //       * have some kind of an allowlist that can be populated by the user
+    //         to specify that objects of these types must be finalized only on
+    //         the main thread.
+    //       * prepopulate it for the system frameworks.
+    //       * if that were to be done at runtime, library authors could register
+    //         their types in a library initialization code.
+    if (pthread_main_np() == 1) {
+        extraObject.setFlag(mm::ExtraObjectData::FLAGS_RELEASE_ON_MAIN_QUEUE);
+    }
+    return extraObject.AssociatedObject().store(obj, std::memory_order_release);
 }
 
-void ObjHeader::SetAssociatedObject(void* obj) {
-    *GetAssociatedObjectLocation() = obj;
+PERFORMANCE_INLINE void* ObjHeader::CasAssociatedObject(void* expectedObj, void* obj) {
+    auto& extraObject = mm::ExtraObjectData::FromMetaObjHeader(meta_object());
+    bool success = extraObject.AssociatedObject().compare_exchange_strong(expectedObj, obj);
+    // TODO: Consider additional filtering outlined above.
+    if (success && pthread_main_np() == 1) {
+        extraObject.setFlag(mm::ExtraObjectData::FLAGS_RELEASE_ON_MAIN_QUEUE);
+    }
+    return expectedObj;
 }
 
 #endif // KONAN_OBJC_INTEROP
@@ -82,21 +74,18 @@ MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
 
 // static
 void ObjHeader::destroyMetaObject(ObjHeader* object) {
-    mm::ExtraObjectData::Uninstall(object);
+    RuntimeAssert(object->has_meta_object(), "Object must have a meta object set");
+    auto &extraObject = *mm::ExtraObjectData::Get(object);
+    alloc::destroyExtraObjectData(extraObject);
 }
 
-ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
-    // TODO: Freeze TF_IMMUTABLE objects upon creation.
-    return mm::IsFrozen(obj) || ((obj->type_info()->flags_ & TF_IMMUTABLE) != 0);
-}
-
-ALWAYS_INLINE bool isShareable(const ObjHeader* obj) {
-    // TODO: Remove when legacy MM is gone.
-    return true;
-}
-
-extern "C" MemoryState* InitMemory(bool firstRuntime) {
+extern "C" MemoryState* InitMemory() {
+    mm::waitGlobalDataInitialized();
     return mm::ToMemoryState(mm::ThreadRegistry::Instance().RegisterCurrentThread());
+}
+
+void kotlin::initGlobalMemory() noexcept {
+    mm::GlobalData::init();
 }
 
 extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
@@ -107,17 +96,15 @@ extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
     auto* node = mm::FromMemoryState(state);
     if (destroyRuntime) {
         ThreadStateGuard guard(state, ThreadState::kRunnable);
-        node->Get()->gc().PerformFullGC();
-        // TODO: Also make sure that finalizers are run.
+        mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+        // TODO: Why not just destruct `GC` object and its thread data counterpart entirely?
+        mm::GlobalData::Instance().gc().StopFinalizerThreadIfRunning();
     }
-    mm::ThreadRegistry::Instance().Unregister(node);
-    if (destroyRuntime) {
+    if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
+        // we can clear reference in advance, as Unregister function can't use it anyway
         mm::ThreadRegistry::ClearCurrentThreadData();
     }
-}
-
-extern "C" void RestoreMemory(MemoryState*) {
-    // TODO: Remove when legacy MM is gone.
+    mm::ThreadRegistry::Instance().Unregister(node);
 }
 
 extern "C" void ClearMemoryForTests(MemoryState* state) {
@@ -137,93 +124,59 @@ extern "C" OBJ_GETTER(AllocArrayInstance, const TypeInfo* typeInfo, int32_t elem
     RETURN_RESULT_OF(mm::AllocateArray, threadData, typeInfo, static_cast<uint32_t>(elements));
 }
 
-extern "C" ALWAYS_INLINE OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-
-    RETURN_RESULT_OF(mm::InitThreadLocalSingleton, threadData, location, typeInfo, ctor);
-}
-
-extern "C" ALWAYS_INLINE OBJ_GETTER(InitSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-
-    RETURN_RESULT_OF(mm::InitSingleton, threadData, location, typeInfo, ctor);
-}
-
 extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
     // Null `initialValue` means that the appropriate value was already set by static initialization.
     if (initialValue != nullptr) {
-        mm::SetHeapRef(location, const_cast<ObjHeader*>(initialValue));
+        UpdateHeapRef(location, const_cast<ObjHeader*>(initialValue));
     }
 }
 
-extern "C" const MemoryModel CurrentMemoryModel = MemoryModel::kExperimental;
-
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void SetStackRef(ObjHeader** location, const ObjHeader* object) {
-    mm::SetStackRef(location, const_cast<ObjHeader*>(object));
-}
-
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void SetHeapRef(ObjHeader** location, const ObjHeader* object) {
-    mm::SetHeapRef(location, const_cast<ObjHeader*>(object));
-}
-
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
-    mm::SetHeapRef(location, nullptr);
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
+    mm::RefAccessor<false>{location} = nullptr;
 }
 
 extern "C" RUNTIME_NOTHROW void ZeroArrayRefs(ArrayHeader* array) {
     for (uint32_t index = 0; index < array->count_; ++index) {
         ObjHeader** location = ArrayAddressOfElementAt(array, index);
-        mm::SetHeapRef(location, nullptr);
+        mm::RefFieldAccessor{location} = nullptr;
     }
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void ZeroStackRef(ObjHeader** location) {
-    mm::SetStackRef(location, nullptr);
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void ZeroStackRef(ObjHeader** location) {
+    mm::StackRefAccessor{location} = nullptr;
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
-    mm::SetStackRef(location, const_cast<ObjHeader*>(object));
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
+    mm::StackRefAccessor{location} = const_cast<ObjHeader*>(object);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
-    mm::SetHeapRef(location, const_cast<ObjHeader*>(object));
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
+    mm::RefAccessor<false>{location} = const_cast<ObjHeader*>(object);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) {
-    if (object == nullptr) return;
-    ObjHeader* result = nullptr; // No need to store this value in a rootset.
-    mm::CompareAndSwapHeapRef(location, nullptr, const_cast<ObjHeader*>(object), &result);
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
+    mm::RefAccessor<false>{location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex,
-                                                                           int toIndex, int count) {
-    RuntimeFail("Only for legacy MM");
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    ObjHeader* actual = expectedValue;
+    mm::RefAccessor<false>{location}.compareAndExchange(actual, newValue, std::memory_order_seq_cst);
+    RETURN_OBJ(actual);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
-    mm::SetStackRef(returnSlot, const_cast<ObjHeader*>(object));
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+    return mm::RefAccessor<false>{location}.compareAndExchange(expectedValue, newValue, std::memory_order_seq_cst);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(
-        SwapHeapRefLocked, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock, int32_t* cookie) {
-    RETURN_RESULT_OF(mm::CompareAndSwapHeapRef, location, expectedValue, newValue);
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) {
+    RETURN_OBJ(mm::RefAccessor<false>{location}.exchange(newValue, std::memory_order_seq_cst));
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void SetHeapRefLocked(
-        ObjHeader** location, ObjHeader* newValue, int32_t* spinlock, int32_t* cookie) {
-    mm::SetHeapRefAtomic(location, newValue);
-}
-
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock, int32_t* cookie) {
-    RETURN_RESULT_OF(mm::ReadHeapRefAtomic, location);
-}
-
-extern "C" OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index) {
-    // TODO: Remove when legacy MM is gone.
-    ThrowNotImplementedError();
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
+    UpdateStackRef(returnSlot, object);
 }
 
 extern "C" RUNTIME_NOTHROW void EnterFrame(ObjHeader** start, int parameters, int count) {
@@ -250,112 +203,56 @@ extern "C" RUNTIME_NOTHROW FrameOverlay* getCurrentFrame() {
     return threadData->shadowStack().getCurrentFrame();
 }
 
-extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void CheckCurrentFrame(ObjHeader** frame) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void CheckCurrentFrame(ObjHeader** frame) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     return threadData->shadowStack().checkCurrentFrame(reinterpret_cast<FrameOverlay*>(frame));
 }
 
 extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
-    memory->GetThreadData()->tls().AddRecord(key, size);
+    auto* threadData = memory->GetThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->tls().AddRecord(key, size);
 }
 
 extern "C" RUNTIME_NOTHROW void CommitTLSStorage(MemoryState* memory) {
-    memory->GetThreadData()->tls().Commit();
+    auto* threadData = memory->GetThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->tls().Commit();
 }
 
 extern "C" RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
-    memory->GetThreadData()->tls().Clear();
+    auto* threadData = memory->GetThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->tls().Clear();
 }
 
 extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
-    return mm::ThreadRegistry::Instance().CurrentThreadData()->tls().Lookup(key, index);
-}
-
-extern "C" RUNTIME_NOTHROW void GC_RegisterWorker(void* worker) {
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do
-}
-
-extern "C" RUNTIME_NOTHROW void GC_UnregisterWorker(void* worker) {
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do
-}
-
-extern "C" RUNTIME_NOTHROW void GC_CollectorCallback(void* worker) {
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    return threadData->tls().Lookup(key, index);
 }
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
+    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+}
+
+extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
+    mm::GlobalData::Instance().gcScheduler().schedule();
+}
+
+extern "C" RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd) {
+    auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
+
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    threadData->gc().PerformFullGC();
-}
-
-extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
-    // TODO: Remove when legacy MM is gone.
-    ThrowIllegalArgumentException();
-}
-
-// TODO: Maybe a pair of suspend/resume or start/stop may be useful in the future?
-//       The other pair is likely to be removed.
-
-extern "C" void Kotlin_native_internal_GC_suspend(ObjHeader*) {
-    // Nothing to do
-}
-
-extern "C" void Kotlin_native_internal_GC_resume(ObjHeader*) {
-    // Nothing to do
-}
-
-extern "C" void Kotlin_native_internal_GC_stop(ObjHeader*) {
-    // Nothing to do
-}
-
-extern "C" void Kotlin_native_internal_GC_start(ObjHeader*) {
-    // Nothing to do
-}
-
-extern "C" void Kotlin_native_internal_GC_setThreshold(ObjHeader*, int32_t value) {
-    if (value < 0) {
-        ThrowIllegalArgumentException();
-    }
-    mm::GlobalData::Instance().gcScheduler().config().threshold = static_cast<size_t>(value);
-}
-
-extern "C" int32_t Kotlin_native_internal_GC_getThreshold(ObjHeader*) {
-    auto threshold = mm::GlobalData::Instance().gcScheduler().config().threshold.load();
-    auto maxValue = std::numeric_limits<int32_t>::max();
-    if (threshold > static_cast<size_t>(maxValue)) {
-        return maxValue;
-    }
-    return static_cast<int32_t>(maxValue);
-}
-
-extern "C" void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value) {
-    // TODO: Remove when legacy MM is gone.
-    ThrowIllegalArgumentException();
-}
-
-extern "C" int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader*) {
-    // TODO: Remove when legacy MM is gone.
-    ThrowIllegalArgumentException();
-}
-
-extern "C" void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value) {
-    if (value < 0) {
-        ThrowIllegalArgumentException();
-    }
-    mm::GlobalData::Instance().gcScheduler().config().allocationThresholdBytes = static_cast<size_t>(value);
-}
-
-extern "C" int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*) {
-    auto threshold = mm::GlobalData::Instance().gcScheduler().config().allocationThresholdBytes.load();
-    auto maxValue = std::numeric_limits<int64_t>::max();
-    if (threshold > static_cast<size_t>(maxValue)) {
-        return maxValue;
-    }
-    return static_cast<int64_t>(maxValue);
+    threadData->suspensionData().requestThreadsSuspension("Memory dump");
+    CallsCheckerIgnoreGuard guard;
+    // We're in the runnable state, but everything else (including the GC thread) will be suspended.
+    // It's fine to wait for that suspension and execute long-running operations (I/O) here.
+    mm::WaitForThreadsSuspension();
+    bool success = mm::DumpMemory(fd);
+    mm::ResumeThreads();
+    return success;
 }
 
 extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {
@@ -366,190 +263,170 @@ extern "C" KBoolean Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*) {
     return mm::GlobalData::Instance().gcScheduler().config().autoTune.load();
 }
 
-extern "C" OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, ObjHeader*) {
-    // TODO: Remove when legacy MM is gone.
-    RETURN_OBJ(nullptr);
+extern "C" KLong Kotlin_native_internal_GC_getRegularGCIntervalMicroseconds(ObjHeader*) {
+    return mm::GlobalData::Instance().gcScheduler().config().regularGcIntervalMicroseconds.load();
 }
 
-extern "C" OBJ_GETTER(Kotlin_native_internal_GC_findCycle, ObjHeader*, ObjHeader* root) {
-    // TODO: Remove when legacy MM is gone.
-    RETURN_OBJ(nullptr);
+extern "C" void Kotlin_native_internal_GC_setRegularGCIntervalMicroseconds(ObjHeader*, KLong value) {
+    RuntimeAssert(value >= 0, "Must be handled by the caller");
+    mm::GlobalData::Instance().gcScheduler().config().regularGcIntervalMicroseconds = value;
 }
 
-extern "C" bool Kotlin_native_internal_GC_getCyclicCollector(ObjHeader* gc) {
-    // TODO: Remove when legacy MM is gone.
-    return false;
+extern "C" KLong Kotlin_native_internal_GC_getTargetHeapBytes(ObjHeader*) {
+    return mm::GlobalData::Instance().gcScheduler().config().targetHeapBytes.load();
 }
 
-extern "C" void Kotlin_native_internal_GC_setCyclicCollector(ObjHeader* gc, bool value) {
-    // TODO: Remove when legacy MM is gone.
-    if (value)
-        ThrowIllegalArgumentException();
+extern "C" void Kotlin_native_internal_GC_setTargetHeapBytes(ObjHeader*, KLong value) {
+    RuntimeAssert(value >= 0, "Must be handled by the caller");
+    mm::GlobalData::Instance().gcScheduler().config().targetHeapBytes = value;
 }
 
-extern "C" bool Kotlin_Any_isShareable(ObjHeader* thiz) {
-    // TODO: Remove when legacy MM is gone.
-    return true;
+extern "C" KDouble Kotlin_native_internal_GC_getTargetHeapUtilization(ObjHeader*) {
+    return mm::GlobalData::Instance().gcScheduler().config().targetHeapUtilization.load();
 }
 
-extern "C" void Kotlin_Any_share(ObjHeader* thiz) {
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do
+extern "C" void Kotlin_native_internal_GC_setTargetHeapUtilization(ObjHeader*, KDouble value) {
+    RuntimeAssert(value > 0 && value <= 1, "Must be handled by the caller");
+    mm::GlobalData::Instance().gcScheduler().config().targetHeapUtilization = value;
+}
+
+extern "C" KLong Kotlin_native_internal_GC_getMaxHeapBytes(ObjHeader*) {
+    return mm::GlobalData::Instance().gcScheduler().config().maxHeapBytes.load();
+}
+
+extern "C" void Kotlin_native_internal_GC_setMaxHeapBytes(ObjHeader*, KLong value) {
+    RuntimeAssert(value >= 0, "Must be handled by the caller");
+    mm::GlobalData::Instance().gcScheduler().config().maxHeapBytes = value;
+}
+
+extern "C" KLong Kotlin_native_internal_GC_getMinHeapBytes(ObjHeader*) {
+    return mm::GlobalData::Instance().gcScheduler().config().minHeapBytes.load();
+}
+
+extern "C" void Kotlin_native_internal_GC_setMinHeapBytes(ObjHeader*, KLong value) {
+    RuntimeAssert(value >= 0, "Must be handled by the caller");
+    mm::GlobalData::Instance().gcScheduler().config().minHeapBytes = value;
+}
+
+extern "C" KDouble Kotlin_native_internal_GC_getHeapTriggerCoefficient(ObjHeader*) {
+    return mm::GlobalData::Instance().gcScheduler().config().heapTriggerCoefficient.load();
+}
+
+extern "C" void Kotlin_native_internal_GC_setHeapTriggerCoefficient(ObjHeader*, KDouble value) {
+    RuntimeAssert(value > 0 && value <= 1, "Must be handled by the caller");
+    mm::GlobalData::Instance().gcScheduler().config().heapTriggerCoefficient = value;
+}
+
+extern "C" KBoolean Kotlin_native_internal_GC_getPauseOnTargetHeapOverflow(ObjHeader*) {
+    return mm::GlobalData::Instance().gcScheduler().config().mutatorAssists();
+}
+
+extern "C" void Kotlin_native_internal_GC_setPauseOnTargetHeapOverflow(ObjHeader*, KBoolean value) {
+    mm::GlobalData::Instance().gcScheduler().config().setMutatorAssists(value);
+}
+
+extern "C" KBoolean Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_isAvailable(ObjHeader* gc) {
+    return mm::GlobalData::Instance().gc().mainThreadFinalizerProcessorAvailable();
+}
+
+extern "C" KLong Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMaxTimeInTask(ObjHeader* gc) {
+    KLong result;
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor([&](auto& config) noexcept -> void {
+        result = std::chrono::duration_cast<std::chrono::microseconds>(config.maxTimeInTask).count();
+    });
+    return result;
+}
+
+extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMaxTimeInTask(ObjHeader* gc, KLong value) {
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor(
+            [=](auto& config) noexcept -> void { config.maxTimeInTask = std::chrono::microseconds(value); });
+}
+
+extern "C" KLong Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getMinTimeBetweenTasks(ObjHeader* gc) {
+    KLong result;
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor([&](auto& config) noexcept -> void {
+        result = std::chrono::duration_cast<std::chrono::microseconds>(config.minTimeBetweenTasks).count();
+    });
+    return result;
+}
+
+extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setMinTimeBetweenTasks(ObjHeader* gc, KLong value) {
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor(
+            [=](auto& config) noexcept -> void { config.minTimeBetweenTasks = std::chrono::microseconds(value); });
+}
+
+extern "C" KULong Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_getBatchSize(ObjHeader* gc) {
+    KULong result;
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor(
+            [&](auto& config) noexcept -> void { result = config.batchSize; });
+    return result;
+}
+
+extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setBatchSize(ObjHeader* gc, KULong value) {
+    mm::GlobalData::Instance().gc().configureMainThreadFinalizerProcessor([=](auto& config) noexcept -> void { config.batchSize = value; });
 }
 
 extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
-    memory->GetThreadData()->gc().PerformFullGC();
-}
-
-extern "C" bool TryAddHeapRef(const ObjHeader* object) {
-    RuntimeFail("Only for legacy MM");
-}
-
-extern "C" RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
-    RuntimeFail("Only for legacy MM");
-}
-
-extern "C" RUNTIME_NOTHROW OBJ_GETTER(TryRef, ObjHeader* object) {
-    // TODO: With CMS this needs:
-    //       * during marking phase if `object` is unmarked: barrier (might be automatic because of the stack write)
-    //         and return `object`;
-    //       * during marking phase if `object` is marked: return `object`;
-    //       * during sweeping phase if `object` is unmarked: return nullptr;
-    //       * during sweeping phase if `object` is marked: return `object`;
-    RETURN_OBJ(object);
-}
-
-extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
-    // TODO: Remove when legacy MM is gone.
-    return true;
+    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 }
 
 extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
     if (!object)
         return nullptr;
 
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    return mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
+    AssertThreadState(ThreadState::kRunnable);
+    return static_cast<mm::RawSpecialRef*>(mm::StableRef::create(object));
 }
 
 extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
-    DisposeStablePointerFor(kotlin::mm::GetMemoryState(), pointer);
-}
+    if (!pointer) return;
 
-extern "C" RUNTIME_NOTHROW void DisposeStablePointerFor(MemoryState* memoryState, void* pointer) {
-    if (!pointer)
-        return;
-
-    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
-    mm::StableRefRegistry::Instance().UnregisterStableRef(memoryState->GetThreadData(), node);
+    // Can be safely called in any thread state.
+    mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)).dispose();
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
     if (!pointer)
         RETURN_OBJ(nullptr);
 
-    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
-    ObjHeader* object = **node;
-    RETURN_OBJ(object);
+    AssertThreadState(ThreadState::kRunnable);
+    RETURN_OBJ(*mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)));
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
     if (!pointer)
         RETURN_OBJ(nullptr);
 
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
-    ObjHeader* object = **node;
-    // Make sure `object` stays in the rootset: put it on the stack before removing it from `StableRefRegistry`.
-    mm::SetStackRef(OBJ_RESULT, object);
-    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
-    return object;
-}
-
-extern "C" void MutationCheck(ObjHeader* obj) {
-    if (obj->local()) return;
-    if (!isPermanentOrFrozen(obj)) return;
-
-    ThrowInvalidMutabilityException(obj);
-}
-
-extern "C" RUNTIME_NOTHROW void CheckLifetimesConstraint(ObjHeader* obj, ObjHeader* pointee) {
-    // TODO: Consider making it a `RuntimeCheck`. Probably all `RuntimeCheck`s and `RuntimeAssert`s should specify
-    //       that their firing is a compiler bug and should be reported.
-    if (!obj->local() && pointee != nullptr && pointee->local()) {
-        konan::consolePrintf("Attempt to store a stack object %p into a heap object %p\n", pointee, obj);
-        konan::consolePrintf("This is a compiler bug, please report it to https://kotl.in/issue\n");
-        konan::abort();
-    }
-}
-
-extern "C" void FreezeSubgraph(ObjHeader* obj) {
-    if (auto* blocker = mm::FreezeSubgraph(obj)) {
-        ThrowFreezingException(obj, blocker);
-    }
-}
-
-extern "C" void EnsureNeverFrozen(ObjHeader* obj) {
-    if (!mm::EnsureNeverFrozen(obj)) {
-        ThrowFreezingException(obj, obj);
-    }
-}
-
-extern "C" ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
     AssertThreadState(ThreadState::kRunnable);
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do.
-    return nullptr;
+    mm::StableRef stableRef(static_cast<mm::RawSpecialRef*>(pointer));
+    auto* obj = *stableRef;
+    UpdateStackRef(OBJ_RESULT, obj);
+    std::move(stableRef).dispose();
+    return obj;
 }
 
-extern "C" ForeignRefContext InitForeignRef(ObjHeader* object) {
-    AssertThreadState(ThreadState::kRunnable);
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    auto* node = mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
-    return ToForeignRefManager(node);
+// it would be inlined manually in RemoveRedundantSafepointsPass
+extern "C" RUNTIME_NOTHROW NO_INLINE void Kotlin_mm_safePointFunctionPrologue() {
+    mm::safePoint();
 }
 
-extern "C" void DeinitForeignRef(ObjHeader* object, ForeignRefContext context) {
-    AssertThreadState(ThreadState::kRunnable);
-    RuntimeAssert(context != nullptr, "DeinitForeignRef must not be called for InitLocalForeignRef");
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    auto* node = FromForeignRefManager(context);
-    RuntimeAssert(object == **node, "Must correspond to the same object");
-    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
+extern "C" RUNTIME_NOTHROW PERFORMANCE_INLINE void Kotlin_mm_safePointWhileLoopBody() {
+    mm::safePoint();
 }
 
-extern "C" bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context) {
-    // TODO: Remove when legacy MM is gone.
-    return true;
-}
-
-extern "C" void AdoptReferenceFromSharedVariable(ObjHeader* object) {
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do.
-}
-
-extern "C" void CheckGlobalsAccessible() {
-    // TODO: Remove when legacy MM is gone.
-    // Always accessible
-}
-
-extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_mm_safePointFunctionPrologue() {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gc().SafePointFunctionPrologue();
-}
-
-extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_mm_safePointWhileLoopBody() {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gc().SafePointLoopBody();
-}
-
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
+extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debug() {
+    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
+}
+
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
+    SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
+}
+
+extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_debug() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
 }
 
@@ -558,13 +435,67 @@ MemoryState* kotlin::mm::GetMemoryState() noexcept {
 }
 
 bool kotlin::mm::IsCurrentThreadRegistered() noexcept {
-    return ThreadRegistry::Instance().IsCurrentThreadRegistered();
+    return ThreadRegistry::IsCurrentThreadRegistered();
 }
 
-ALWAYS_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentrant) noexcept : reentrant_(reentrant) {
+PERFORMANCE_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentrant) noexcept : reentrant_(reentrant) {
     Kotlin_initRuntimeIfNeeded();
     thread_ = mm::GetMemoryState();
     oldState_ = SwitchThreadState(thread_, ThreadState::kRunnable, reentrant_);
 }
 
-const bool kotlin::kSupportsMultipleMutators = kotlin::gc::kSupportsMultipleMutators;
+void kotlin::StartFinalizerThreadIfNeeded() noexcept {
+    mm::GlobalData::Instance().gc().StartFinalizerThreadIfNeeded();
+}
+
+bool kotlin::FinalizersThreadIsRunning() noexcept {
+    return mm::GlobalData::Instance().gc().FinalizersThreadIsRunning();
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object) {
+    gc::GC::processObjectInMark(state, object);
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object) {
+    gc::GC::processArrayInMark(state, object->array());
+}
+
+RUNTIME_NOTHROW extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
+    // Empty object. Nothing to do.
+    // TODO: Try to generate it in the code generator.
+}
+
+extern "C" OBJ_GETTER(makePermanentWeakReferenceImpl, ObjHeader*);
+extern "C" OBJ_GETTER(makeObjCWeakReferenceImpl, void*);
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
+    if (referred->permanent()) {
+        RETURN_RESULT_OF(makePermanentWeakReferenceImpl, referred);
+    }
+#if KONAN_OBJC_INTEROP
+    if (IsInstanceInternal(referred, theObjCObjectWrapperTypeInfo)) {
+        RETURN_RESULT_OF(makeObjCWeakReferenceImpl, referred->GetAssociatedObject());
+    }
+#endif // KONAN_OBJC_INTEROP
+    RETURN_RESULT_OF(mm::createRegularWeakReferenceImpl, referred);
+}
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader* weakRef) {
+    RETURN_RESULT_OF(mm::derefRegularWeakReferenceImpl, weakRef);
+}
+
+RUNTIME_NOTHROW extern "C" void DisposeRegularWeakReferenceImpl(ObjHeader* weakRef) {
+    mm::disposeRegularWeakReferenceImpl(weakRef);
+}
+
+void kotlin::OnMemoryAllocation(size_t totalAllocatedBytes) noexcept {
+    mm::GlobalData::Instance().gcScheduler().setAllocatedBytes(totalAllocatedBytes);
+}
+
+void kotlin::initObjectPool() noexcept {
+    alloc::initObjectPool();
+}
+
+void kotlin::compactObjectPoolInCurrentThread() noexcept {
+    alloc::compactObjectPoolInCurrentThread();
+}

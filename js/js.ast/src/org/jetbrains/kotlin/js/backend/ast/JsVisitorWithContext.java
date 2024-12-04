@@ -101,6 +101,9 @@ public abstract class JsVisitorWithContext {
     public void endVisit(@NotNull JsContinue x, @NotNull JsContext ctx) {
     }
 
+    public void endVisit(@NotNull JsYield x, @NotNull JsContext ctx) {
+    }
+
     public void endVisit(@NotNull JsDebugger x, @NotNull JsContext ctx) {
     }
 
@@ -199,6 +202,9 @@ public abstract class JsVisitorWithContext {
         endVisit((JsExpression) x, ctx);
     }
 
+    public void endVisit(@NotNull JsSuperRef x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
+    }
     public void endVisit(@NotNull JsThrow x, @NotNull JsContext ctx) {
     }
 
@@ -212,6 +218,9 @@ public abstract class JsVisitorWithContext {
     }
 
     public void endVisit(@NotNull JsSingleLineComment x, @NotNull JsContext ctx) {
+    }
+
+    public void endVisit(@NotNull JsMultiLineComment x, @NotNull JsContext ctx) {
     }
 
     public void endVisit(@NotNull JsExport x, @NotNull JsContext ctx) {
@@ -265,6 +274,10 @@ public abstract class JsVisitorWithContext {
     }
 
     public boolean visit(@NotNull JsContinue x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsYield x, @NotNull JsContext ctx) {
         return true;
     }
 
@@ -380,6 +393,9 @@ public abstract class JsVisitorWithContext {
         return true;
     }
 
+    public boolean visit(@NotNull JsSuperRef x, @NotNull JsContext ctx) {
+        return true;
+    }
     public boolean visit(@NotNull JsThrow x, @NotNull JsContext ctx) {
         return true;
     }
@@ -401,6 +417,10 @@ public abstract class JsVisitorWithContext {
     }
 
     public boolean visit(@NotNull JsSingleLineComment x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsMultiLineComment x, @NotNull JsContext ctx) {
         return true;
     }
 

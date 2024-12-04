@@ -69,10 +69,11 @@ KtFile: PropertiesWithFunctionReceiversRecovery.kt
       PsiElement(get)('get')
       PsiErrorElement:Accessor body expected
         <empty list>
-      PsiErrorElement:Expecting '('
-        <empty list>
-      PsiErrorElement:Expecting ')'
-        <empty list>
+      VALUE_PARAMETER_LIST
+        PsiErrorElement:Expecting '('
+          <empty list>
+        PsiErrorElement:Expecting ')'
+          <empty list>
       BLOCK
         PsiElement(LBRACE)('{')
         PsiWhiteSpace(' ')

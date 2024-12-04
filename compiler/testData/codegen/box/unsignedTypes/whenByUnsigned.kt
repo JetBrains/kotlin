@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 
 const val M1: UInt = 2147483648u
 const val M2: ULong = 9223372036854775808UL

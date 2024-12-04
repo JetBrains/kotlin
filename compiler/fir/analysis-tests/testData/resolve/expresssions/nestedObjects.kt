@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object A {
     object B {
         object A

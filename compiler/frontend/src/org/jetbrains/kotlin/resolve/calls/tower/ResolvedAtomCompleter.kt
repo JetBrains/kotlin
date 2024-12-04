@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker
 import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
@@ -41,12 +42,12 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResolvedAtomCompleter(
     private val resultSubstitutor: NewTypeSubstitutor,
@@ -60,10 +61,11 @@ class ResolvedAtomCompleter(
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
     private val typeApproximator: TypeApproximator,
-    private val missingSupertypesResolver: MissingSupertypesResolver
+    private val missingSupertypesResolver: MissingSupertypesResolver,
+    private val callComponents: KotlinCallComponents,
 ) {
     private val topLevelCallCheckerContext = CallCheckerContext(
-        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver
+        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver, callComponents,
     )
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
@@ -185,7 +187,8 @@ class ResolvedAtomCompleter(
                 resolutionContextForPartialCall.replaceBindingTrace(topLevelTrace),
                 deprecationResolver,
                 moduleDescriptor,
-                missingSupertypesResolver
+                missingSupertypesResolver,
+                callComponents,
             )
         else
             topLevelCallCheckerContext
@@ -239,7 +242,7 @@ class ResolvedAtomCompleter(
                 ?: return (subResolvedAtoms!!.single() as ResolvedLambdaAtom).isCoercedToUnit
             val returnTypes =
                 resultArgumentsInfo.nonErrorArguments.map {
-                    val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
+                    val type = (it as? SimpleKotlinCallArgument)?.receiver?.receiverValue?.type ?: return@map null
                     val unwrappedType = when (type) {
                         is WrappedType -> type.unwrap()
                         is UnwrappedType -> type
@@ -273,6 +276,7 @@ class ResolvedAtomCompleter(
         val returnType =
             (if (resolvedAtom?.isCoercedToUnit == true) builtIns.unitType else resolvedAtom?.returnType) ?: descriptor.returnType
         val extensionReceiverType = resolvedAtom?.receiver ?: descriptor.extensionReceiverParameter?.type
+        val contextReceiversTypes = resolvedAtom?.contextReceivers ?: descriptor.contextReceiverParameters.map { it.type }
         val dispatchReceiverType = descriptor.dispatchReceiverParameter?.type
         val valueParameterTypes = resolvedAtom?.parameters ?: descriptor.valueParameters.map { it.type }
 
@@ -282,19 +286,23 @@ class ResolvedAtomCompleter(
             descriptor.setReturnType(it.approximatedType)
         }
 
-        val extensionReceiverFromDescriptor = descriptor.extensionReceiverParameter
-        val substitutedReceiverType = extensionReceiverType?.substituteAndApproximate(substitutor)?.also {
-            if (extensionReceiverFromDescriptor is ReceiverParameterDescriptorImpl && extensionReceiverFromDescriptor.type.shouldBeUpdated()) {
-                extensionReceiverFromDescriptor.setOutType(it.approximatedType)
+        fun ReceiverParameterDescriptor.setOutTypeIfNecessary(processedType: FunctionLiteralTypes.ProcessedType) {
+            if (this is ReceiverParameterDescriptorImpl && type.shouldBeUpdated()) {
+                setOutType(processedType.approximatedType)
             }
         }
 
-        val dispatchReceiverFromDescriptor = descriptor.dispatchReceiverParameter
-        dispatchReceiverType?.substituteAndApproximate(substitutor)?.also {
-            if (dispatchReceiverFromDescriptor is ReceiverParameterDescriptorImpl && dispatchReceiverFromDescriptor.type.shouldBeUpdated()) {
-                dispatchReceiverFromDescriptor.setOutType(it.approximatedType)
-            }
+        val extensionReceiverFromDescriptor = descriptor.extensionReceiverParameter
+        val substitutedReceiverType = extensionReceiverType?.substituteAndApproximate(substitutor)?.also {
+            extensionReceiverFromDescriptor?.setOutTypeIfNecessary(it)
         }
+
+        val substitutedContextReceiversTypes = descriptor.contextReceiverParameters.mapIndexedNotNull { i, contextReceiver ->
+            contextReceiversTypes.getOrNull(i)?.substituteAndApproximate(substitutor)?.also { contextReceiver.setOutTypeIfNecessary(it) }
+        }
+
+        val dispatchReceiverFromDescriptor = descriptor.dispatchReceiverParameter
+        dispatchReceiverType?.substituteAndApproximate(substitutor)?.also { dispatchReceiverFromDescriptor?.setOutTypeIfNecessary(it) }
 
         val substitutedValueParameterTypes = descriptor.valueParameters.mapIndexedNotNull { i, valueParameter ->
             valueParameterTypes.getOrNull(i)?.substituteAndApproximate(substitutor)?.also {
@@ -304,7 +312,12 @@ class ResolvedAtomCompleter(
             }
         }
 
-        return FunctionLiteralTypes(substitutedReturnType, substitutedValueParameterTypes, substitutedReceiverType)
+        return FunctionLiteralTypes(
+            substitutedReturnType,
+            substitutedValueParameterTypes,
+            substitutedReceiverType,
+            substitutedContextReceiversTypes
+        )
     }
 
     private fun completeLambda(resolvedAtom: ResolvedLambdaAtom) {
@@ -319,7 +332,10 @@ class ResolvedAtomCompleter(
         }
 
         val descriptor = topLevelTrace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? SimpleFunctionDescriptorImpl
-            ?: throw AssertionError("No function descriptor for resolved lambda argument")
+            ?:
+            // Normally we should not be here, but in IDE partial resolve mode lambda analysis can be dropped,
+            // and it's possible we don't have any descriptor
+            return
 
         val substitutedLambdaTypes = substituteFunctionLiteralDescriptor(lambda, descriptor, resultSubstitutor)
 
@@ -334,6 +350,7 @@ class ResolvedAtomCompleter(
             builtIns,
             existingLambdaType.annotations,
             substitutedLambdaTypes.receiverType?.substitutedType,
+            substitutedLambdaTypes.contextReceiverTypes.map { it.substitutedType },
             substitutedLambdaTypes.parameterTypes.map { it.substitutedType },
             null, // parameter names transforms to special annotations, so they are already taken from parameter types
             substitutedLambdaTypes.returnType.substitutedType,
@@ -349,13 +366,17 @@ class ResolvedAtomCompleter(
                 .replaceBindingTrace(topLevelTrace)
             val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
 
-            kotlinToResolvedCallTransformer.updateRecordedType(
+            val updatedType = kotlinToResolvedCallTransformer.updateRecordedType(
                 argumentExpression,
                 parameter = null,
                 context = newContext,
                 reportErrorForTypeMismatch = true,
                 convertedArgumentType = null
             )
+
+            if (updatedType != null) {
+                NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(updatedType, argumentExpression, topLevelTrace, moduleDescriptor)
+            }
         }
     }
 
@@ -434,7 +455,6 @@ class ResolvedAtomCompleter(
         )
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun KotlinType.replaceFunctionTypeArgumentsByDescriptor(descriptor: CallableDescriptor) =
         when (descriptor) {
             is CallableMemberDescriptor -> {
@@ -640,7 +660,8 @@ class ResolvedAtomCompleter(
 class FunctionLiteralTypes(
     val returnType: ProcessedType,
     val parameterTypes: List<ProcessedType>,
-    val receiverType: ProcessedType?
+    val receiverType: ProcessedType?,
+    val contextReceiverTypes: List<ProcessedType>
 ) {
     class ProcessedType(val substitutedType: KotlinType, val approximatedType: KotlinType)
 }

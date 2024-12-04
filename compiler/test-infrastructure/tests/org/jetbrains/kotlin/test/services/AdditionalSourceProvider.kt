@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
+import java.nio.file.Paths
 
 abstract class AdditionalSourceProvider(val testServices: TestServices) : ServicesAndDirectivesContainer {
     /**
@@ -22,10 +23,10 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
         return globalDirectives.contains(directive) || module.directives.contains(directive)
     }
 
-    protected fun File.toTestFile(): TestFile {
+    protected fun File.toTestFile(relativePath: String? = null): TestFile {
         return TestFile(
-            this.name,
-            this.readText(),
+            relativePath?.let(Paths::get)?.resolve(name)?.toString() ?: name,
+            this.useLines { it.joinToString("\n") },
             originalFile = this,
             startLineNumberInOriginalFile = 0,
             isAdditional = true,

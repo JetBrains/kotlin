@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = <constructor>(vararg strings: kotlin.String): Annotation
-substitutor = <empty substitutor>

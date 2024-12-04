@@ -1,14 +1,15 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
+@file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.internal
 
+import kotlin.experimental.ExperimentalNativeApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-import kotlin.coroutines.native.internal.*
-import kotlin.native.concurrent.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 @ExportForCppRuntime
 private fun Kotlin_ObjCExport_createContinuationArgumentImpl(
@@ -29,7 +30,7 @@ private object EmptyCompletion : Continuation<Any?> {
     override val context: CoroutineContext
         get() = EmptyCoroutineContext
 
-    @OptIn(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalNativeApi::class)
     override fun resumeWith(result: Result<Any?>) {
         val exception = result.exceptionOrNull() ?: return
         processUnhandledException(exception)
@@ -62,8 +63,10 @@ internal fun interceptedContinuation(continuation: Continuation<Any?>): Continua
 
 @FilterExceptions
 @GCUnsafeCall("Kotlin_ObjCExport_runCompletionSuccess")
+@Escapes(0b010) // result escapes into a stable ref.
 private external fun runCompletionSuccess(completionHolder: Any, result: Any?)
 
 @FilterExceptions
 @GCUnsafeCall("Kotlin_ObjCExport_runCompletionFailure")
+@Escapes(0b0010) // exception escapes into a stable ref.
 private external fun runCompletionFailure(completionHolder: Any, exception: Throwable, exceptionTypes: NativePtr)

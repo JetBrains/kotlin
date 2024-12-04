@@ -1,4 +1,4 @@
-depends = CoreFoundation Security darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
 language = Objective-C
 package = platform.ServiceManagement
 modules = ServiceManagement

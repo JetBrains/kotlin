@@ -1,0 +1,5 @@
+package
+
+public inline fun notInlining(/*0*/ noinline block1: () -> kotlin.Unit, /*1*/ block2: () -> kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit
+

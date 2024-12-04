@@ -14,28 +14,53 @@ let args = KotlinArray<NSString>(size: Int32(CommandLine.arguments.count - 1), i
 let companion = BenchmarkEntryWithInit.Companion()
 
 var swiftLauncher = SwiftLauncher()
-swiftLauncher.add(name: "createMultigraphOfInt", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+swiftLauncher.addBase(name: "createMultigraphOfInt", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).createMultigraphOfInt() }))
-    swiftLauncher.add(name: "fillCityMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "fillCityMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).fillCityMap() }))
-    swiftLauncher.add(name: "searchRoutesInSwiftMultigraph", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "searchRoutesInSwiftMultigraph", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).searchRoutesInSwiftMultigraph () }))
-    swiftLauncher.add(name: "searchTravelRoutes", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addExtended(name: "searchTravelRoutes", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).searchTravelRoutes() }))
-    swiftLauncher.add(name: "availableTransportOnMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "availableTransportOnMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).availableTransportOnMap() }))
-    swiftLauncher.add(name: "allPlacesMapedByInterests", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addExtended(name: "allPlacesMapedByInterests", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).allPlacesMapedByInterests() }))
-    swiftLauncher.add(name: "getAllPlacesWithStraightRoutesTo", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "getAllPlacesWithStraightRoutesTo", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).getAllPlacesWithStraightRoutesTo() }))
-    swiftLauncher.add(name: "goToAllAvailablePlaces", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addExtended(name: "goToAllAvailablePlaces", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).goToAllAvailablePlaces() }))
-    swiftLauncher.add(name: "removeVertexAndEdgesSwiftMultigraph", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "removeVertexAndEdgesSwiftMultigraph", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).removeVertexAndEdgesSwiftMultigraph() }))
-    swiftLauncher.add(name: "stringInterop", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "stringInterop", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).stringInterop() }))
-    swiftLauncher.add(name: "simpleFunction", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
+    swiftLauncher.addBase(name: "simpleFunction", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).simpleFunction() }))
+swiftLauncher.addBase(
+    name: "WeakRefBenchmark.aliveReference",
+    benchmark: BenchmarkEntryWithInitAndValidation.companion.create(
+        ctor: { return WeakRefBenchmark() },
+        benchmark: { ($0 as! WeakRefBenchmark).aliveReference() },
+        validation: { ($0 as! WeakRefBenchmark).clean() }
+    )
+)
+swiftLauncher.addBase(
+    name: "WeakRefBenchmark.deadReference",
+    benchmark: BenchmarkEntryWithInitAndValidation.companion.create(
+        ctor: { return WeakRefBenchmark() },
+        benchmark: { ($0 as! WeakRefBenchmark).deadReference() },
+        validation: { ($0 as! WeakRefBenchmark).clean() }
+    )
+)
+swiftLauncher.addBase(
+    name: "WeakRefBenchmark.dyingReference",
+    benchmark: BenchmarkEntryWithInitAndValidation.companion.create(
+        ctor: { return WeakRefBenchmark() },
+        benchmark: { ($0 as! WeakRefBenchmark).dyingReference() },
+        validation: { ($0 as! WeakRefBenchmark).clean() }
+    )
+)
+
 runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [BenchmarkResult] in
     if arguments is BaseBenchmarkArguments {
         let argumentsList: BaseBenchmarkArguments = arguments as! BaseBenchmarkArguments
@@ -46,8 +71,8 @@ runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [Benc
             verbose: argumentsList.verbose)
     }
     return [BenchmarkResult]()
-}, parseArgs: { (args: KotlinArray,  benchmarksListAction: (() -> KotlinUnit)) -> BenchmarkArguments? in
-    return runner.parse(args: args, benchmarksListAction: swiftLauncher.benchmarksListAction) },
+}, parseArgs: { (args: KotlinArray,  benchmarksListAction: ((KotlinBoolean) -> KotlinUnit)) -> BenchmarkArguments? in
+    return runner.parse(args: args, benchmarksListAction: { (baseOnly: KotlinBoolean) in swiftLauncher.benchmarksListAction(baseOnly: baseOnly.boolValue) }) },
   collect: { (benchmarks: [BenchmarkResult], arguments: BenchmarkArguments) -> Void in
     runner.collect(results: benchmarks, arguments: arguments)
-}, benchmarksListAction: swiftLauncher.benchmarksListAction)
+}, benchmarksListAction: { (baseOnly: KotlinBoolean) in swiftLauncher.benchmarksListAction(baseOnly: baseOnly.boolValue) })

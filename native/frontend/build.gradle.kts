@@ -6,7 +6,9 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(project(":core:compiler.common.native"))
+    compileOnly(project(":compiler:ir.objcinterop"))
+    compileOnly(intellijCore())
     api(project(":native:kotlin-native-utils"))
 }
 

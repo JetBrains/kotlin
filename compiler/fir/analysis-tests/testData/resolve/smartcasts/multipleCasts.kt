@@ -1,4 +1,5 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: BACKEND
+// DUMP_CFG
 // There would be ambiguities if some expression was smartcasted to (A & B) and foo() was called.
 // There was a bug where 2 variables were "bound" together if they are assigned from the same function call or property.
 interface A {

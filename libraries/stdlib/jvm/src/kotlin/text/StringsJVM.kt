@@ -130,7 +130,7 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 @Deprecated("Use uppercase() instead.", ReplaceWith("uppercase(Locale.getDefault())", "java.util.Locale"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
 
@@ -151,7 +151,7 @@ public actual inline fun String.uppercase(): String = (this as java.lang.String)
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @Deprecated("Use lowercase() instead.", ReplaceWith("lowercase(Locale.getDefault())", "java.util.Locale"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
 
@@ -172,7 +172,6 @@ public actual inline fun String.lowercase(): String = (this as java.lang.String)
  * Concatenates characters in this [CharArray] into a String.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun CharArray.concatToString(): String {
     return String(this)
 }
@@ -187,7 +186,6 @@ public actual fun CharArray.concatToString(): String {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
@@ -204,7 +202,6 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
@@ -217,7 +214,6 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun ByteArray.decodeToString(): String {
     return String(this)
 }
@@ -234,7 +230,6 @@ public actual fun ByteArray.decodeToString(): String {
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.decodeToString(
     startIndex: Int = 0,
@@ -262,7 +257,6 @@ public actual fun ByteArray.decodeToString(
  * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.encodeToByteArray(): ByteArray {
     return this.toByteArray(Charsets.UTF_8)
 }
@@ -279,7 +273,6 @@ public actual fun String.encodeToByteArray(): ByteArray {
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.encodeToByteArray(
     startIndex: Int = 0,
@@ -317,9 +310,14 @@ public actual inline fun String.toCharArray(): CharArray = (this as java.lang.St
  * @param destinationOffset the position in the array to copy to.
  * @param startIndex the start offset (inclusive) of the substring to copy.
  * @param endIndex the end offset (exclusive) of the substring to copy.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
+ *  or when that index is out of the [destination] array indices range.
  */
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 @kotlin.internal.InlineOnly
-public inline fun String.toCharArray(
+public actual inline fun String.toCharArray(
     destination: CharArray,
     destinationOffset: Int = 0,
     startIndex: Int = 0,
@@ -330,53 +328,56 @@ public inline fun String.toCharArray(
 }
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses this string as a format string and returns a string obtained
+ * by substituting format specifiers in the format string with the provided arguments,
  * using the default locale.
+ *
+ * See [java.util.Formatter] class documentation
+ * for the syntax of format specifiers for the format string.
+ *
+ * @sample samples.text.Strings.formatExtension
  */
 @kotlin.internal.InlineOnly
 public inline fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
 
 /**
- * Uses the provided [format] as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses the provided [format] as a format string and returns a string obtained
+ * by substituting format specifiers in the format string with the provided arguments,
  * using the default locale.
+ *
+ * See [java.util.Formatter] class documentation
+ * for the syntax of format specifiers for the format string.
+ *
+ * @sample samples.text.Strings.formatStatic
  */
 @kotlin.internal.InlineOnly
 public inline fun String.Companion.format(format: String, vararg args: Any?): String = java.lang.String.format(format, *args)
 
 /**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
- * using the specified locale.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.internal.InlineOnly
-public inline fun String.format(locale: Locale, vararg args: Any?): String = java.lang.String.format(locale, this, *args)
-
-/**
- * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses this string as a format string and returns a string obtained
+ * by substituting format specifiers in the format string with the provided arguments,
  * using the specified locale. If [locale] is `null` then no localization is applied.
+ *
+ * See [java.util.Formatter] class documentation
+ * for the syntax of format specifiers for the format string.
+ *
+ * @sample samples.text.Strings.formatWithLocaleExtension
  */
 @SinceKotlin("1.4")
-@JvmName("formatNullable")
 @kotlin.internal.InlineOnly
 public inline fun String.format(locale: Locale?, vararg args: Any?): String = java.lang.String.format(locale, this, *args)
 
 /**
- * Uses the provided [format] as a format string and returns a string obtained by substituting the specified arguments,
- * using the specified locale.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.internal.InlineOnly
-public inline fun String.Companion.format(locale: Locale, format: String, vararg args: Any?): String =
-    java.lang.String.format(locale, format, *args)
-
-/**
- * Uses the provided [format] as a format string and returns a string obtained by substituting the specified arguments,
+ * Uses the provided [format] as a format string and returns a string obtained
+ * by substituting format specifiers in the format string with the provided arguments,
  * using the specified locale. If [locale] is `null` then no localization is applied.
+ *
+ * See [java.util.Formatter] class documentation
+ * for the syntax of format specifiers for the format string.
+ *
+ * @sample samples.text.Strings.formatWithLocaleStatic
  */
 @SinceKotlin("1.4")
-@JvmName("formatNullable")
 @kotlin.internal.InlineOnly
 public inline fun String.Companion.format(locale: Locale?, format: String, vararg args: Any?): String =
     java.lang.String.format(locale, format, *args)
@@ -633,13 +634,6 @@ public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: 
 public inline fun String.intern(): String = (this as java.lang.String).intern()
 
 /**
- * Returns `true` if this string is empty or consists solely of whitespace characters.
- *
- * @sample samples.text.Strings.stringIsBlank
- */
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
-
-/**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
  */
 @kotlin.internal.InlineOnly
@@ -668,7 +662,8 @@ public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequenc
  * @param otherOffset the start offset in the other string of the substring to compare.
  * @param length the length of the substring to compare.
  */
-public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean =
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean =
     if (!ignoreCase)
         (this as java.lang.String).regionMatches(thisOffset, other, otherOffset, length)
     else
@@ -678,7 +673,7 @@ public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int
  * Returns a copy of this string converted to lower case using the rules of the specified locale.
  */
 @Deprecated("Use lowercase() instead.", ReplaceWith("lowercase(locale)"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toLowerCase(locale: java.util.Locale): String = lowercase(locale)
 
@@ -699,7 +694,7 @@ public inline fun String.lowercase(locale: Locale): String = (this as java.lang.
  * Returns a copy of this string converted to upper case using the rules of the specified locale.
  */
 @Deprecated("Use uppercase() instead.", ReplaceWith("uppercase(locale)"))
-@DeprecatedSinceKotlin(warningSince = "1.5")
+@DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.1")
 @kotlin.internal.InlineOnly
 public inline fun String.toUpperCase(locale: java.util.Locale): String = uppercase(locale)
 
@@ -761,7 +756,6 @@ public actual fun String.capitalize(): String {
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.LowPriorityInOverloadResolution // To avoid conflicts in function references, as this function was introduced later than common capitalize()
 public fun String.capitalize(locale: Locale): String {
     if (isNotEmpty()) {
@@ -790,8 +784,7 @@ public fun String.capitalize(locale: Locale): String {
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase(Locale.getDefault()) }", "java.util.Locale"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 public actual fun String.decapitalize(): String {
-    @Suppress("DEPRECATION")
-    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).lowercase(Locale.getDefault()) + substring(1) else this
 }
 
 /**
@@ -801,7 +794,6 @@ public actual fun String.decapitalize(): String {
 @Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase(locale) }"))
 @DeprecatedSinceKotlin(warningSince = "1.5")
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.LowPriorityInOverloadResolution // To avoid conflicts in function references, as this function was introduced later than common decapitalize()
 public fun String.decapitalize(locale: Locale): String {
     return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).lowercase(locale) + substring(1) else this

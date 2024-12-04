@@ -63,7 +63,7 @@ function getObjectValueAny(x) {
 external fun isTestString(x: String): Boolean
 external fun getTestString(): String
 external fun concatStrings(x: String, y: String): String
-//external fun concatStringsNullable(x: String?, y: String?): String?
+external fun concatStringsNullable(x: String?, y: String?): String?
 
 external fun isTrueBoolean(x: Boolean): Boolean
 external fun isFalseBoolean(x: Boolean): Boolean
@@ -72,10 +72,8 @@ external fun getFalseBoolean(): Boolean
 
 external interface EI
 
-external fun createJsObjectAsAny(): Any
 external fun createJsObjectAsExternalInterface(): EI
 external fun getObjectValueEI(x: EI): String
-external fun getObjectValueAny(x: Any): String
 
 fun box(): String {
     // Strings
@@ -84,7 +82,7 @@ fun box(): String {
     if (getTestString() != "Test string") return "Fail getTestString"
     if (concatStrings("A", "B") != "AB") return "Fail concatStrings 1"
     if (concatStrings("Привет ", "😀\uD83D") != "Привет 😀\uD83D") return "Fail concatStrings 2"
-//    if (concatStringsNullable("A", "B") != "AB") return "Fail concatStringsNullable 1"
+    if (concatStringsNullable("A", "B") != "AB") return "Fail concatStringsNullable 1"
 
     // Boolean
     if (!isTrueBoolean(true)) return "Fail !isTrueBoolean"
@@ -98,15 +96,6 @@ fun box(): String {
     val objAsEI: EI = createJsObjectAsExternalInterface()
     if (getObjectValueEI(objAsEI) != "object created by createJsObjectAsExternalInterface")
         return "Fail createJsObjectAsExternalInterface + getObjectValueEI"
-    if (getObjectValueAny(objAsEI) != "object created by createJsObjectAsExternalInterface")
-        return "Fail createJsObjectAsExternalInterface + getObjectValueAny"
-
-    // Any
-    val objAsAny: Any = createJsObjectAsAny()
-    if (getObjectValueAny(objAsAny) != "object created by createJsObjectAsAny")
-        return "Fail createJsObjectAsAny + getObjectValueAny"
-    if (getObjectValueEI(objAsAny as EI) != "object created by createJsObjectAsAny")
-        return "Fail createJsObjectAsAny + getObjectValueEI"
 
     return "OK"
 }

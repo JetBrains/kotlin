@@ -1,5 +1,6 @@
-// !LANGUAGE: -SoundSmartcastForEnumEntries
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -SoundSmartcastForEnumEntries
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // SKIP_TXT
 
 enum class Message(val text: String?) {

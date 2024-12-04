@@ -2,14 +2,14 @@ package
 
 package foo {
     public val f: () -> ???
-    public val s: [ERROR : Type for java]
-    public val ss: [ERROR : Type for System]
-    public val sss: [ERROR : Type for X]
+    public val s: [Error type: Not found recorded type for java]
+    public val ss: [Error type: Not found recorded type for System]
+    public val sss: [Error type: Not found recorded type for X]
     public val x: kotlin.String
-    public val xs: [ERROR : Type for java.lang]
-    public val xss: [ERROR : Type for java.lang.System]
-    public val xsss: [ERROR : Type for foo.X]
-    public val xssss: [ERROR : Type for foo]
+    public val xs: [Error type: Not found recorded type for java.lang]
+    public val xss: [Error type: Not found recorded type for java.lang.System]
+    public val xsss: [Error type: Not found recorded type for foo.X]
+    public val xssss: [Error type: Not found recorded type for foo]
     public fun main(): kotlin.Unit
 
     public final class X {

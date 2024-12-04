@@ -1,0 +1,49 @@
+library {
+  // module name: <property_accessors.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+
+    public abstract class test/A : kotlin/Any {
+
+      public constructor()
+
+      public abstract val a: kotlin/Int
+        public abstract get
+
+      public abstract var b: kotlin/Int
+        public abstract get
+        protected abstract /* non-default */ set(value: kotlin/Int)
+
+      public final val c: kotlin/Int
+        public final get
+
+      public final val d: kotlin/Int
+        public final /* non-default */ get
+
+      public final var e: kotlin/Int
+        public final /* non-default */ get
+        public final /* non-default */ set(value: kotlin/Int)
+
+      public final var f: kotlin/Int
+        public final get
+        private final /* non-default */ set(value: kotlin/Int)
+
+      public open val g: kotlin/Int
+        public open get
+
+      public open val h: kotlin/Int
+        public open /* non-default */ get
+
+      public open var k: kotlin/Int
+        public open /* non-default */ get
+        public open /* non-default */ set(value: kotlin/Int)
+
+      public open var l: kotlin/Int
+        public open get
+        protected open /* non-default */ set(value: kotlin/Int)
+    }
+  }
+}

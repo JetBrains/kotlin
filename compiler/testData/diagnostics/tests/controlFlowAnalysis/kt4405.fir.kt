@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-4405 Control-flow analysis is not performed for some local declarations
 
 package d

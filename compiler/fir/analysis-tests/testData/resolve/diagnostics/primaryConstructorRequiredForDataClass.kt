@@ -1,9 +1,10 @@
-data <!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>class A<!> {}
+// RUN_PIPELINE_TILL: FRONTEND
+data <!DATA_CLASS_WITHOUT_PARAMETERS!>class A<!> {}
 
-data <!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>class B<!> {
+data <!DATA_CLASS_WITHOUT_PARAMETERS!>class B<!> {
     constructor()
 }
 
-data <!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>class C<!> {
+data <!DATA_CLASS_WITHOUT_PARAMETERS!>class C<!> {
     constructor(x: Int)
 }

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -53,13 +54,18 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
     }
 
-    protected int runJava(@NotNull String testDataDir, @Nullable String logName, @NotNull String... arguments) throws Exception {
+    protected int runJava(@NotNull String testDataDir, @Nullable String logName, @NotNull String... arguments) {
         GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(testDataDir);
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 
         StringBuilder executionLog = new StringBuilder();
-        int exitCode = runProcess(commandLine, executionLog);
+        int exitCode;
+        try {
+            exitCode = runProcess(commandLine, executionLog);
+        } catch (ExecutionException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
 
         if (logName == null) {
             assertEquals("Non-zero exit code", 0, exitCode);
@@ -88,6 +94,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         content = normalizePath(content, tmpdir, "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
         content = normalizePath(content, new File(KtTestUtil.getHomeDirectory()), "[KotlinProjectHome]");
+        content = normalizePath(content, new File(System.getProperty("java.home")), "[JavaHome]");
         content = content.replaceAll(Pattern.quote(KotlinCompilerVersion.VERSION), "[KotlinVersion]");
         content = content.replaceAll("\\(JRE .+\\)", "(JRE [JREVersion])");
         content = StringUtil.convertLineSeparators(content);

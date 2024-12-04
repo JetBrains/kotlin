@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 abstract class Runnable(val arg: Int) {
     abstract fun run(): Int
 }
@@ -15,7 +16,7 @@ fun foo(): Int {
         }
         k.run()
         val d: Int = c
-        return a <!UNSAFE_OPERATOR_CALL!>+<!> d
+        return a + d
     }
     else return -1
 }

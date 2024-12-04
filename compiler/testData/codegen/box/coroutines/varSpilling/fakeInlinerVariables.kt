@@ -107,29 +107,29 @@ class Test {
 
             cache.getOrPutByString(i1.str) { i1 }
 
-            assertEquals(i1, cache.getByString(i1.str.toLowerCase()))
-            assertEquals(i1, cache.getByString(i1.str.toUpperCase()))
+            assertEquals(i1, cache.getByString(i1.str.lowercase()))
+            assertEquals(i1, cache.getByString(i1.str.uppercase()))
             assertEquals(i1, cache.getById(i1.id))
-            expectAnyFailure { cache.getByString(i2.str.toLowerCase()) }
-            expectAnyFailure { cache.getByString(i2.str.toUpperCase()) }
+            expectAnyFailure { cache.getByString(i2.str.lowercase()) }
+            expectAnyFailure { cache.getByString(i2.str.uppercase()) }
             expectAnyFailure { cache.getById(i2.id) }
 
             cache.removeById(i2.id)
 
-            assertEquals(i1, cache.getByString(i1.str.toLowerCase()))
-            assertEquals(i1, cache.getByString(i1.str.toUpperCase()))
+            assertEquals(i1, cache.getByString(i1.str.lowercase()))
+            assertEquals(i1, cache.getByString(i1.str.uppercase()))
             assertEquals(i1, cache.getById(i1.id))
-            expectAnyFailure { cache.getByString(i2.str.toLowerCase()) }
-            expectAnyFailure { cache.getByString(i2.str.toUpperCase()) }
+            expectAnyFailure { cache.getByString(i2.str.lowercase()) }
+            expectAnyFailure { cache.getByString(i2.str.uppercase()) }
             expectAnyFailure { cache.getById(i2.id) }
 
             cache.removeById(i1.id)
 
-            expectAnyFailure { cache.getByString(i1.str.toLowerCase()) }
-            expectAnyFailure { cache.getByString(i1.str.toUpperCase()) }
+            expectAnyFailure { cache.getByString(i1.str.lowercase()) }
+            expectAnyFailure { cache.getByString(i1.str.uppercase()) }
             expectAnyFailure { cache.getById(i1.id) }
-            expectAnyFailure { cache.getByString(i2.str.toLowerCase()) }
-            expectAnyFailure { cache.getByString(i2.str.toUpperCase()) }
+            expectAnyFailure { cache.getByString(i2.str.lowercase()) }
+            expectAnyFailure { cache.getByString(i2.str.uppercase()) }
             expectAnyFailure { cache.getById(i2.id) }
         }
     }

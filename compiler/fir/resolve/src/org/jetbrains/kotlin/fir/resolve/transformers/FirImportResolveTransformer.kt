@@ -5,25 +5,20 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.builder.buildErrorImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
-import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeImportFromSingleton
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirImportResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
-    override val transformer = FirImportResolveTransformer(session)
+class FirImportResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
+    session, scopeSession, FirResolvePhase.IMPORTS
+) {
+    override val transformer: FirImportResolveTransformer = FirImportResolveTransformer(session)
 }
 
 open class FirImportResolveTransformer protected constructor(
@@ -42,15 +37,16 @@ open class FirImportResolveTransformer protected constructor(
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
-        return file.also {
+        withFileAnalysisExceptionWrapping(file) {
             val prevValue = currentFile
             currentFile = file
             try {
-                it.transformChildren(this, null)
+                file.transformChildren(this, null)
             } finally {
                 currentFile = prevValue
             }
         }
+        return file
     }
 
     override fun transformImport(import: FirImport, data: Any?): FirImport {
@@ -62,25 +58,18 @@ open class FirImportResolveTransformer protected constructor(
             return transformImportForFqName(fqName, import)
         }
 
-        val parentFqName = fqName.parent()
         currentFile?.let {
-            session.lookupTracker?.recordLookup(fqName.shortName(), parentFqName.asString(), import.source, it.source)
+            session.lookupTracker?.recordFqNameLookup(fqName, import.source, it.source)
         }
-        return transformImportForFqName(parentFqName, import)
+        return transformImportForFqName(fqName.parent(), import)
     }
 
     protected open val FqName.isAcceptable: Boolean
         get() = true
 
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): FirImport {
-        val (packageFqName, relativeClassFqName, classSymbol) = resolveToPackageOrClass(symbolProvider, fqName) ?: return delegate
-        val firClass = classSymbol?.fir as? FirRegularClass
-        if (delegate.isAllUnder && firClass?.classKind?.isSingleton == true) {
-            return buildErrorImport {
-                this.delegate = delegate
-                this.diagnostic = ConeImportFromSingleton(firClass.name)
-            }
-        }
+        val (packageFqName, relativeClassFqName) = findLongestExistingPackage(symbolProvider, fqName)
+
         return buildResolvedImport {
             this.delegate = delegate
             this.packageFqName = packageFqName
@@ -88,28 +77,3 @@ open class FirImportResolveTransformer protected constructor(
         }
     }
 }
-
-fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageOrClass? {
-    var currentPackage = fqName
-
-    val pathSegments = fqName.pathSegments()
-    var prefixSize = pathSegments.size
-    while (!currentPackage.isRoot && prefixSize > 0) {
-        if (symbolProvider.getPackage(currentPackage) != null) {
-            break
-        }
-        currentPackage = currentPackage.parent()
-        prefixSize--
-    }
-
-    if (currentPackage == fqName) return PackageOrClass(currentPackage, null, null)
-    val relativeClassFqName =
-        FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
-
-    val classId = ClassId(currentPackage, relativeClassFqName, false)
-    val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
-
-    return PackageOrClass(currentPackage, relativeClassFqName, symbol)
-}
-
-data class PackageOrClass(val packageFqName: FqName, val relativeClassFqName: FqName?, val classSymbol: FirClassLikeSymbol<*>?)

@@ -10,7 +10,7 @@ open class A {
     fun test(): String {
         return {
             publicField + internalField + protectedField
-        }()
+        }.let { it() }
     }
 }
 

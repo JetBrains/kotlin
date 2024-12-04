@@ -1,59 +1,51 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import java.util.*
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent? = null) =
-    apply {
-        val visitor = initialParent?.let { PatchDeclarationParentsVisitor(it) } ?: PatchDeclarationParentsVisitor()
-        acceptVoid(visitor)
+/**
+ * For each [IrDeclaration] in the IR subtree with the root in `this`, sets its [IrDeclaration.parent]
+ * property to its _actual_ parent in the subtree.
+ *
+ * @param initialParent If this parameter is not `null`, assign topmost [IrDeclaration]s'
+ * parents to that value (starting with `this`, if it is an [IrDeclaration]).
+ * If null, skip those topmost [IrDeclaration]s' and start assigning parents one level below
+ * (this is, once an [IrDeclarationParent] is found).
+ */
+fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent? = null): T = apply {
+    accept(PatchDeclarationParentsVisitor, initialParent)
+}
+
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+abstract class DeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
+    override fun visitElement(element: IrElement, actualParent: IrDeclarationParent?) {
+        element.acceptChildren(this, actualParent)
     }
 
-class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
-
-    constructor(containingDeclaration: IrDeclarationParent) : this() {
-        declarationParentsStack.push(containingDeclaration)
+    override fun visitPackageFragment(declaration: IrPackageFragment, actualParent: IrDeclarationParent?) {
+        declaration.acceptChildren(this, declaration)
     }
 
-    private val declarationParentsStack = ArrayDeque<IrDeclarationParent>()
-
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitPackageFragment(declaration: IrPackageFragment) {
-        declarationParentsStack.push(declaration)
-        super.visitPackageFragment(declaration)
-        declarationParentsStack.pop()
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase) {
-        patchParent(declaration)
-
-        if (declaration is IrDeclarationParent) {
-            declarationParentsStack.push(declaration)
+    override fun visitDeclaration(declaration: IrDeclarationBase, actualParent: IrDeclarationParent?) {
+        if (actualParent != null) {
+            handleParent(declaration, actualParent)
         }
 
-        super.visitDeclaration(declaration)
-
-        if (declaration is IrDeclarationParent) {
-            declarationParentsStack.pop()
-        }
+        val downParent = declaration as? IrDeclarationParent ?: actualParent
+        declaration.acceptChildren(this, downParent)
     }
 
-    private fun patchParent(declaration: IrDeclaration) {
-        declaration.parent = declarationParentsStack.peekFirst()
+    protected abstract fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent)
+}
+
+private object PatchDeclarationParentsVisitor : DeclarationParentsVisitor() {
+    override fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent) {
+        declaration.parent = actualParent
     }
 }

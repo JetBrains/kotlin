@@ -1,5 +1,6 @@
-// !LANGUAGE: +EliminateAmbiguitiesWithExternalTypeParameters
-// WITH_RUNTIME
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +EliminateAmbiguitiesWithExternalTypeParameters
+// WITH_STDLIB
 
 class AllCollection<T> {
     fun <K, T> addAll(vararg values: T, values2: Array<K>) = "OK" // 1
@@ -8,5 +9,5 @@ class AllCollection<T> {
 
 fun main(c: AllCollection<Any?>) {
     // KT-49620
-    c.<!OVERLOAD_RESOLUTION_AMBIGUITY!>addAll<!>(arrayOf(""), values2 = arrayOf(""))
+    c.addAll(arrayOf(""), values2 = arrayOf(""))
 }

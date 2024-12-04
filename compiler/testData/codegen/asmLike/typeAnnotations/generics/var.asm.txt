@@ -1,0 +1,306 @@
+public abstract interface foo/Ann : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+<U:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/In : java/lang/Object {
+
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/Inv : java/lang/Object {
+
+}
+
+<V:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/Out : java/lang/Object {
+
+}
+
+public final class foo/VarKt : java/lang/Object {
+    Lfoo/Inv<Ljava/lang/Number;>;
+    private static foo.Inv f01
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+
+    Lfoo/In<-Ljava/lang/Number;>;
+    private static foo.In f02
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+
+    Lfoo/Out<+Ljava/lang/Number;>;
+    private static foo.Out f03
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+
+    Lfoo/Inv<Lfoo/Inv<Ljava/lang/Number;>;>;
+    private static foo.Inv f04
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;0;
+
+    Lfoo/Inv<Lfoo/In<Ljava/lang/Number;>;>;
+    private static foo.Inv f05
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;0;
+
+    Lfoo/Inv<Lfoo/Out<Ljava/lang/Number;>;>;
+    private static foo.Inv f06
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;0;
+
+    Lfoo/In<-Lfoo/Inv<Ljava/lang/Number;>;>;
+    private static foo.In f07
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;
+
+    Lfoo/In<-Lfoo/In<-Ljava/lang/Number;>;>;
+    private static foo.In f08
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/In<-Lfoo/Out<+Ljava/lang/Number;>;>;
+    private static foo.In f09
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Out<+Lfoo/Inv<Ljava/lang/Number;>;>;
+    private static foo.Out f10
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;
+
+    Lfoo/Out<+Lfoo/In<-Ljava/lang/Number;>;>;
+    private static foo.Out f11
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Out<+Lfoo/Out<+Ljava/lang/Number;>;>;
+    private static foo.Out f12
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<-Ljava/lang/Number;>;
+    private static foo.Inv f13
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+
+    Lfoo/Inv<+Ljava/lang/Number;>;
+    private static foo.Inv f14
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+
+    Lfoo/In<-Ljava/lang/Number;>;
+    private static foo.In f15
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+
+    Lfoo/Out<+Ljava/lang/Number;>;
+    private static foo.Out f16
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+
+    Lfoo/Inv<-Lfoo/Inv<Ljava/lang/Number;>;>;
+    private static foo.Inv f17
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;
+
+    Lfoo/Inv<-Lfoo/In<-Ljava/lang/Number;>;>;
+    private static foo.Inv f18
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<-Lfoo/Out<+Ljava/lang/Number;>;>;
+    private static foo.Inv f19
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<+Lfoo/Inv<Ljava/lang/Number;>;>;
+    private static foo.Inv f20
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;
+
+    Lfoo/Inv<+Lfoo/In<-Ljava/lang/Number;>;>;
+    private static foo.Inv f21
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<+Lfoo/Out<+Ljava/lang/Number;>;>;
+    private static foo.Inv f22
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<-Lfoo/Inv<-Ljava/lang/Number;>;>;
+    private static foo.Inv f23
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<-Lfoo/In<-Ljava/lang/Number;>;>;
+    private static foo.Inv f24
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<-Lfoo/Out<+Ljava/lang/Number;>;>;
+    private static foo.Inv f25
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<+Lfoo/Inv<+Ljava/lang/Number;>;>;
+    private static foo.Inv f26
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<+Lfoo/In<-Ljava/lang/Number;>;>;
+    private static foo.Inv f27
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<+Lfoo/Out<+Ljava/lang/Number;>;>;
+    private static foo.Inv f28
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*0;*
+
+    Lfoo/Inv<Ljava/lang/Number;>;
+    private static foo.Inv f29
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) : FIELD, 0; // invisible
+
+    Lfoo/In<Ljava/lang/Number;>;
+    private static foo.In f30
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) : FIELD, 0; // invisible
+
+    Lfoo/Out<Ljava/lang/Number;>;
+    private static foo.Out f31
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) : FIELD, 0; // invisible
+
+    Lfoo/Inv<Ljava/lang/Number;>;
+    private static foo.Inv f32
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+
+    Lfoo/In<Ljava/lang/Number;>;
+    private static foo.In f33
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+
+    Lfoo/Out<Ljava/lang/Number;>;
+    private static foo.Out f34
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+
+    Lfoo/Inv<Ljava/lang/Number;>;
+    private static foo.Inv f35
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : FIELD, null // invisible
+
+    Lfoo/In<-Ljava/lang/Number;>;
+    private static foo.In f36
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : FIELD, null // invisible
+
+    Lfoo/Out<+Ljava/lang/Number;>;
+    private static foo.Out f37
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) : FIELD, null // invisible
+
+    Lfoo/Inv<Ljava/lang/Number;>;
+    private static foo.Inv f38
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : FIELD, null // invisible
+
+    Lfoo/In<Ljava/lang/Number;>;
+    private static foo.In f39
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : FIELD, null // invisible
+
+    Lfoo/Out<Ljava/lang/Number;>;
+    private static foo.Out f40
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) : FIELD, null // invisible
+
+    Lfoo/Inv<Ljava/lang/Number;>;
+    private static foo.Inv f41
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;
+      @Lkotlin/jvm/JvmWildcard;([]) : FIELD, 0; // invisible
+
+    Lfoo/In<-Ljava/lang/Number;>;
+    private static foo.In f42
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : FIELD, 0;* // invisible
+
+    Lfoo/Out<+Ljava/lang/Number;>;
+    private static foo.Out f43
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : FIELD, 0;* // invisible
+
+    Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;
+    private static foo.Inv f44
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : FIELD, 0;0;* // invisible
+
+    Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;
+    private static foo.Inv f45
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : FIELD, 0;0;* // invisible
+
+    Lfoo/Inv<Lfoo/In<-Ljava/lang/Number;>;>;
+    private static foo.Inv f46
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : FIELD, 0;0;* // invisible
+
+    Lfoo/Inv<Lfoo/Out<+Ljava/lang/Number;>;>;
+    private static foo.Inv f47
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lfoo/Ann;([]) : FIELD, 0;0;*
+      @Lkotlin/jvm/JvmWildcard;([]) : FIELD, 0;0;* // invisible
+
+    static void <clinit>()
+
+    private static void getF32$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+
+    private static void getF33$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+
+    private static void getF34$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+
+    private static void getF35$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+
+    private static void getF36$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+
+    private static void getF37$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=true]) // invisible
+
+    private static void getF38$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+
+    private static void getF39$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+
+    private static void getF40$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([suppress=false]) // invisible
+
+    private static void getF46$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+
+    private static void getF47$annotations()
+      @Lkotlin/jvm/JvmSuppressWildcards;([]) // invisible
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun Any?.foo(my: My) = my === this
 
 class My(val x: Any)

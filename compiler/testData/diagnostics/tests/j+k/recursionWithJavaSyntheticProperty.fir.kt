@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: X.java
 
 public class X {
@@ -8,5 +9,5 @@ public class X {
 
 class A : X() {
     // TODO: DEBUG_INFO_MISSING_UNRESOLVED indicates a bug here
-    override fun getFoo() = foo
+    override fun getFoo() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>foo<!>
 }

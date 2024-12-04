@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val x get() = 1
 
 val y: Int get() = 1

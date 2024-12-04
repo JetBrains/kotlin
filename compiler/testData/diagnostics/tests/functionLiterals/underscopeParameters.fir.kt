@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 fun foo(block: (Int, String) -> Unit) { }
 fun foobar(block: (Double) -> Unit) { }

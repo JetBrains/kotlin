@@ -1,0 +1,19 @@
+package
+
+public abstract class Base</*0*/ X, /*1*/ Y> : TA<X, Y> /* = (x: X) -> Y */ {
+    public constructor Base</*0*/ X, /*1*/ Y>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ x: X): Y
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Impl : Base<kotlin.Any, kotlin.Any> {
+    public constructor Impl()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ x: kotlin.Any): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias TA</*0*/ X, /*1*/ Y> = (x: X) -> Y
+

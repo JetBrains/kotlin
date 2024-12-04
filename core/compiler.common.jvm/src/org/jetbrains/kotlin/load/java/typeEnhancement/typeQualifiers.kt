@@ -16,7 +16,7 @@ enum class MutabilityQualifier {
     MUTABLE
 }
 
-class JavaTypeQualifiers(
+data class JavaTypeQualifiers(
     val nullability: NullabilityQualifier?,
     val mutability: MutabilityQualifier?,
     val definitelyNotNull: Boolean,

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package boundsWithSubstitutors
     open class A<T>
@@ -6,7 +7,7 @@ package boundsWithSubstitutors
     class C : A<C>()
 
     val a = B<C>()
-    val a1 = B<<!UPPER_BOUND_VIOLATED!>Int<!>>()
+    val a1 = B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Int<!>>()
 
     class X<A, B : A>()
 

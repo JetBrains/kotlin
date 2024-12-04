@@ -1,5 +1,4 @@
-//!LANGUAGE: +DefinitelyNonNullableTypes
-// IGNORE_BACKEND_FIR: ANY
+// LANGUAGE: +DefinitelyNonNullableTypes
 // SKIP_KT_DUMP
 
 fun interface FIn<in T> {

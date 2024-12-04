@@ -1,45 +1,73 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// WITH_STDLIB
+// LANGUAGE: +CustomEqualsInValueClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
-inline class IC1(val x: Any) {
+@JvmInline
+value class IC1(val x: Any) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>(x: Any) {}
 
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>(x: Any) {}
 
-    override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>equals<!>(other: Any?): Boolean = true
-    override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>hashCode<!>(): Int = 0
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS!>equals<!>(other: Any?): Boolean = true
+    override fun hashCode(): Int = 0
 }
 
-inline class IC2(val x: Any) {
+@JvmInline
+value class IC2(val x: Any) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>(x: Any) {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>(): Any = TODO()
 
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>(x: Any) {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>(): Any = TODO()
 
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>equals<!>(my: Any, other: Any): Boolean = true
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>hashCode<!>(a: Any): Int = 0
+    fun equals(my: Any, other: Any): Boolean = true
+    fun hashCode(a: Any): Int = 0
 }
 
-inline class IC3(val x: Any) {
+@JvmInline
+value class IC3(val x: Any) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>(x: Any): Any = TODO()
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>(x: Any): Any = TODO()
 
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>equals<!>(): Boolean = true
+    fun equals(): Boolean = true
 }
 
 interface WithBox {
     fun box(): String
 }
 
-inline class IC4(val s: String) : WithBox {
+@JvmInline
+value class IC4(val s: String) : WithBox {
     override fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>(): String = ""
 }
 
-inline class IC5(val a: String) {
-    constructor(i: Int) : this(i.toString()) <!SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS!>{<!>
+@JvmInline
+value class IC5(val a: String) {
+    constructor(i: Int) : this(i.toString()) {
         TODO("something")
     }
+}
+
+@JvmInline
+value class IC6(val a: String) {
+    fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> equals(other: IC6): Boolean = true
+}
+
+@JvmInline
+value class IC7<T>(val a: String) {
+    fun equals(other: IC7<*>): Boolean = true
+}
+
+@JvmInline
+value class IC8<T>(val a: String) {
+    fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>IC8<T><!>): Boolean = true
+}
+
+@JvmInline
+value class IC9<T>(val a: String) {
+    fun equals(other: <!TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS!>IC9<String><!>): Boolean = true
 }

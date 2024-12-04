@@ -1,7 +1,9 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 
 import kotlin.contracts.*
 
+@OptIn(ExperimentalContracts::class)
 inline fun inlineRun(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.AT_LEAST_ONCE)
@@ -9,6 +11,7 @@ inline fun inlineRun(block: () -> Unit) {
     block()
 }
 
+@OptIn(ExperimentalContracts::class)
 fun myRun(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.AT_LEAST_ONCE)

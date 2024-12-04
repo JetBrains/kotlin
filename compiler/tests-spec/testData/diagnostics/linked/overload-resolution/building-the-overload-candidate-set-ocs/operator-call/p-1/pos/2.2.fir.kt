@@ -1,5 +1,4 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNNECESSARY_SAFE_CALL -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNNECESSARY_SAFE_CALL -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -21,15 +20,15 @@ package testPackCase2
 
 fun case2(a: A?, c: C) {
 
-    <!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>a?.b += c<!>
+    <!DEBUG_INFO_CALL("fqName: testPackCase2.B.plusAssign; typeCall: operator function")!>a?.b += c<!>
     a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>plusAssign(c)<!>
 
     val x = {
-        <!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>a?.b += c<!>
+        <!DEBUG_INFO_CALL("fqName: testPackCase2.B.plusAssign; typeCall: operator function")!>a?.b += c<!>
         a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>plusAssign(c)<!>
     }()
 
-    <!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>a?.b += { c }()<!>
+    <!DEBUG_INFO_CALL("fqName: testPackCase2.B.plusAssign; typeCall: operator function")!>a?.b += { c }()<!>
 
     a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase2.plusAssign; typeCall: operator extension function")!>plusAssign({ c }())<!>
 
@@ -60,15 +59,15 @@ package testPackCase3
 
 fun case3(a: A?, c: C) {
 
-    <!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>a?.b += c<!>
+    <!DEBUG_INFO_CALL("fqName: testPackCase3.B.plusAssign; typeCall: operator function")!>a?.b += c<!>
     a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>plusAssign(c)<!>
 
     val x = {
-        <!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>a?.b += c<!>
+        <!DEBUG_INFO_CALL("fqName: testPackCase3.B.plusAssign; typeCall: operator function")!>a?.b += c<!>
         a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>plusAssign(c)<!>
     }()
 
-    <!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>a?.b += { c }()<!>
+    <!DEBUG_INFO_CALL("fqName: testPackCase3.B.plusAssign; typeCall: operator function")!>a?.b += { c }()<!>
 
     a?.b.<!DEBUG_INFO_CALL("fqName: testPackCase3.plusAssign; typeCall: operator extension function")!>plusAssign({ c }())<!>
 

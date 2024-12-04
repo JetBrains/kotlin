@@ -1,0 +1,15 @@
+MODULE main
+	CLASS Test.class
+		CLASS METADATA
+			FUNCTION genericMemberExtFun--ndakOA(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* X */>
+					K2
+						<T#0 /* X */ : kotlin/Any?>
+			FUNCTION genericMemberFun--ndakOA(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* X */>
+					K2
+						<T#0 /* X */ : kotlin/Any?>

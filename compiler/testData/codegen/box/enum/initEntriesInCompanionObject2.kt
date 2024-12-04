@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: WASM
-
 var l = ""
 
 enum class Foo {

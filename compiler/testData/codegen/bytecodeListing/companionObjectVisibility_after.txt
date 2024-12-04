@@ -44,7 +44,7 @@ final class TestPrivateCompanionInInterface$Companion {
 @kotlin.Metadata
 public interface TestPrivateCompanionInInterface {
     // source: 'companionObjectVisibility_after.kt'
-    public synthetic final static @org.jetbrains.annotations.NotNull field Companion: TestPrivateCompanionInInterface$Companion
+    public synthetic final static field Companion: TestPrivateCompanionInInterface$Companion
     static method <clinit>(): void
     public final inner class TestPrivateCompanionInInterface$Companion
 }

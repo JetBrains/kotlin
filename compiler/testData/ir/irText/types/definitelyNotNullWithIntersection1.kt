@@ -1,6 +1,6 @@
-//!LANGUAGE: +DefinitelyNonNullableTypes
-// IGNORE_BACKEND_FIR: ANY
+// LANGUAGE: +DefinitelyNonNullableTypes
 // SKIP_KT_DUMP
+// FIR_IDENTICAL
 
 class In<in I>
 

@@ -1,0 +1,76 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun Test(content: @Composable () -> Unit) {
+    val updatedContent by rememberUpdatedState(content)
+    Defer {
+        UiContent {
+            updatedContent()
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableInferredTarget(scheme = "[UI[UI]]")
+fun Test(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>,<{>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val updatedContent by {
+      val updatedContent%delegate = rememberUpdatedState(content, %composer, 0b1110 and %dirty)
+      get() {
+        return updatedContent%delegate.getValue(null, ::updatedContent%delegate)
+      }
+    }
+    Defer(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<{>:Test.kt")
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        UiContent(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+          sourceInformation(%composer, "C<update...>:Test.kt")
+          if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            <get-updatedContent>()(%composer, 0)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+        }, %composer, 0b00110110))
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110))
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

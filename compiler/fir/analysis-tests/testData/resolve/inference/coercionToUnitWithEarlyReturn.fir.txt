@@ -18,7 +18,7 @@ FILE: coercionToUnitWithEarlyReturn.kt
                 }
             }
 
-            ^ R|<local>/x|?.{ $subj$.R|/A.unit|() }
+            R|<local>/x|?.{ $subj$.R|/A.unit|() }
         }
 
         R|/foo|(R|<local>/lambda|)

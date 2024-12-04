@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkCondition
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
+import org.jetbrains.kotlin.fir.expressions.FirBooleanOperatorExpression
 
-object FirLogicExpressionTypeChecker : FirLogicExpressionChecker() {
-    override fun check(expression: FirBinaryLogicExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirLogicExpressionTypeChecker : FirBooleanOperatorExpressionChecker(MppCheckerKind.Common) {
+    override fun check(expression: FirBooleanOperatorExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         checkCondition(expression.leftOperand, context, reporter)
         checkCondition(expression.rightOperand, context, reporter)
     }

@@ -1,0 +1,8 @@
+package
+
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ K : V, /*1*/ V : kotlin.CharSequence> build7(/*0*/ builderAction: kotlin.collections.MutableMap<K, V>.() -> kotlin.collections.MutableMap<kotlin.String, V>): kotlin.collections.MutableMap<kotlin.String, V>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ K, /*1*/ V> buildMap(/*0*/ builderAction: kotlin.collections.MutableMap<K, V>.() -> kotlin.Unit): kotlin.collections.Map<K, V>
+public fun foo(): kotlin.collections.MutableMap<kotlin.CharSequence, *>
+public fun </*0*/ K> id(/*0*/ x: K): K
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun main(): kotlin.Unit
+public fun </*0*/ E> kotlin.collections.MutableMap<E, *>.swap(/*0*/ x: kotlin.collections.MutableMap<E, *>): kotlin.Unit

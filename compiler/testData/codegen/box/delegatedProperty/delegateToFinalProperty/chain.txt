@@ -1,0 +1,44 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'chain.kt'
+    private final @org.jetbrains.annotations.NotNull field b: B
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getB(): B
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'chain.kt'
+    private final @org.jetbrains.annotations.NotNull field c: C
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getC(): C
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'chain.kt'
+    private final @org.jetbrains.annotations.NotNull field d: D
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getD(): D
+}
+
+@kotlin.Metadata
+public final class ChainKt {
+    // source: 'chain.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final static @org.jetbrains.annotations.NotNull field a: A
+    private final static field x$delegate: int
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getA(): A
+    public final static @org.jetbrains.annotations.NotNull method getValue(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class D {
+    // source: 'chain.kt'
+    private final field e: int
+    public method <init>(): void
+    public final method getE(): int
+}

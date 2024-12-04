@@ -10,7 +10,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind;
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.builtins.StandardNames.*;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
+import static org.jetbrains.kotlin.builtins.StandardNames.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public abstract class KotlinBuiltIns {
@@ -315,7 +315,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getKSuspendFunction(int parameterCount) {
-        Name name = Name.identifier(FunctionClassKind.KSuspendFunction.getClassNamePrefix() + parameterCount);
+        Name name = Name.identifier(FunctionTypeKind.KSuspendFunction.INSTANCE.getClassNamePrefix() + parameterCount);
         return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME.child(name));
     }
 
@@ -352,6 +352,12 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getKClass() {
         return getBuiltInClassByFqName(FqNames.kClass.toSafe());
+    }
+
+
+    @NotNull
+    public ClassDescriptor getKType() {
+        return getBuiltInClassByFqName(FqNames.kType.toSafe());
     }
 
     @NotNull
@@ -575,9 +581,18 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public KotlinType getArrayElementType(@NotNull KotlinType arrayType) {
+        KotlinType result = getArrayElementTypeOrNull(arrayType);
+        if (result == null) {
+            throw new IllegalStateException("not array: " + arrayType);
+        }
+        return result;
+    }
+
+    @Nullable
+    public KotlinType getArrayElementTypeOrNull(@NotNull KotlinType arrayType) {
         if (isArray(arrayType)) {
             if (arrayType.getArguments().size() != 1) {
-                throw new IllegalStateException();
+                return null;
             }
             return arrayType.getArguments().get(0).getType();
         }
@@ -593,7 +608,7 @@ public abstract class KotlinBuiltIns {
         }
 
 
-        throw new IllegalStateException("not array: " + arrayType);
+        return null;
     }
 
     @Nullable
@@ -665,7 +680,10 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument, @NotNull Annotations annotations) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return KotlinTypeFactory.simpleNotNullType(annotations, getArray(), types);
+        return KotlinTypeFactory.simpleNotNullType(
+                TypeAttributesKt.toDefaultAttributes(annotations),
+                getArray(),
+                types);
     }
 
     @NotNull
@@ -677,7 +695,7 @@ public abstract class KotlinBuiltIns {
     public SimpleType getEnumType(@NotNull SimpleType argument) {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return KotlinTypeFactory.simpleNotNullType(Annotations.Companion.getEMPTY(), getEnum(), types);
+        return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Companion.getEmpty(), getEnum(), types);
     }
 
     @NotNull
@@ -892,6 +910,24 @@ public abstract class KotlinBuiltIns {
         return isNotNullConstructedFromGivenClass(type, FqNames.unit);
     }
 
+    /**
+     * Returns <code>true</code> if the <code>descriptor</code>'s return type is not <code>Unit</code>,
+     * or it overrides a function with a non-<code>Unit</code> return type.
+     */
+    public static boolean mayReturnNonUnitValue(@NotNull FunctionDescriptor descriptor) {
+        KotlinType functionReturnType = descriptor.getReturnType();
+        assert functionReturnType != null : "Function return typed type must be resolved.";
+        boolean mayReturnNonUnitValue = !isUnit(functionReturnType);
+        for (FunctionDescriptor overriddenDescriptor : descriptor.getOriginal().getOverriddenDescriptors()) {
+            if (mayReturnNonUnitValue)
+                break;
+            KotlinType overriddenFunctionReturnType = overriddenDescriptor.getReturnType();
+            assert overriddenFunctionReturnType != null : "Function return typed type must be resolved.";
+            mayReturnNonUnitValue = !isUnit(overriddenFunctionReturnType);
+        }
+        return mayReturnNonUnitValue;
+    }
+
     public static boolean isUnitOrNullableUnit(@NotNull KotlinType type) {
         return isConstructedFromGivenClass(type, FqNames.unit);
     }
@@ -927,6 +963,10 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isString(@Nullable KotlinType type) {
         return type != null && isNotNullConstructedFromGivenClass(type, FqNames.string);
+    }
+
+    public static boolean isUnsignedNumber(@Nullable KotlinType type) {
+        return type != null && (isUByte(type) || isUShort(type) || isUInt(type) || isULong(type));
     }
 
     public static boolean isCharSequenceOrNullableCharSequence(@Nullable KotlinType type) {
@@ -971,10 +1011,6 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNonPrimitiveArray(@NotNull ClassDescriptor descriptor) {
         return classFqNameEquals(descriptor, FqNames.array);
-    }
-
-    public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
-        return classFqNameEquals(descriptor, FqNames.cloneable);
     }
 
     // This function only checks presence of Deprecated annotation at declaration-site, it doesn't take into account @DeprecatedSinceKotlin

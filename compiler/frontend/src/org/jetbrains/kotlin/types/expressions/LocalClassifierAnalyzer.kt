@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.*
@@ -75,6 +74,7 @@ class LocalClassifierAnalyzer(
     private val additionalClassPartsProvider: AdditionalClassPartsProvider,
     private val sealedClassInheritorsProvider: SealedClassInheritorsProvider,
     private val controlFlowInformationProviderFactory: ControlFlowInformationProvider.Factory,
+    private val absentDescriptorHandler: AbsentDescriptorHandler
 ) {
     fun processClassOrObject(
         scope: LexicalWritableScope?,
@@ -115,6 +115,7 @@ class LocalClassifierAnalyzer(
             ),
             analyzerServices,
             controlFlowInformationProviderFactory,
+            absentDescriptorHandler
         )
 
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(

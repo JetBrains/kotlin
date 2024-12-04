@@ -1,13 +1,27 @@
+val aFloat: A<Float>
+  field = A<Float>(value = 0.0F)
+  get
+
+val aInt: Float
+  field = { // BLOCK
+    val tmp_0: A<Float> = <get-aFloat>()
+    val tmp_1: Int = 1
+    val tmp_2: Float = tmp_0.get(i = tmp_1)
+    tmp_0.set(i = tmp_1, v = tmp_2.dec())
+    tmp_2
+  }
+  get
+
 class A<T : Any?> {
+  private val value: T
+    field = value
+    private get
+
   constructor(value: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  private val value: T
-    field = value
-    private get
 
   operator fun get(i: Int): T {
     return <this>.<get-value>()
@@ -18,16 +32,3 @@ class A<T : Any?> {
 
 }
 
-val aFloat: A<Float>
-  field = A<Float>(value = 0.0F)
-  get
-
-val aInt: Float
-  field = { // BLOCK
-    val tmp0_array: A<Float> = <get-aFloat>()
-    val tmp1_index0: Int = 1
-    val tmp2: Float = tmp0_array.get(i = tmp1_index0)
-    tmp0_array.set(i = tmp1_index0, v = tmp2.dec())
-    tmp2
-  }
-  get

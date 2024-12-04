@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
+// LANGUAGE: +NestedClassesInEnumEntryShouldBeInner
 
 class A {
     inner class B {

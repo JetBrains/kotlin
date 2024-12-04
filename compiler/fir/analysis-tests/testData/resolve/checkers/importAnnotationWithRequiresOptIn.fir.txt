@@ -1,0 +1,9 @@
+FILE: a.kt
+    @R|kotlin/RequiresOptIn|() public final annotation class MyOptIn : R|kotlin/Annotation| {
+        public constructor(): R|MyOptIn| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: b.kt
+    package vvv

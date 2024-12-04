@@ -56,10 +56,14 @@ object JvmProtoBufUtil {
      */
     @JvmStatic
     fun writeData(message: MessageLite, stringTable: JvmStringTable): Array<String> =
-        BitEncoding.encodeBytes(ByteArrayOutputStream().apply {
+        BitEncoding.encodeBytes(writeDataBytes(stringTable, message))
+
+    @JvmStatic
+    fun writeDataBytes(stringTable: JvmStringTable, message: MessageLite) =
+        ByteArrayOutputStream().apply {
             stringTable.serializeTo(this)
             message.writeTo(this)
-        }.toByteArray())
+        }.toByteArray()
 
     // returns JVM signature in the format: "equals(Ljava/lang/Object;)Z"
     fun getJvmMethodSignature(
@@ -132,5 +136,5 @@ object JvmProtoBufUtil {
 
     @JvmStatic
     fun isNewPlaceForBodyGeneration(proto: ProtoBuf.Class): Boolean =
-        JvmFlags.ARE_INTERFACE_METHOD_BODIES_INSIDE.get(proto.getExtension(JvmProtoBuf.jvmClassFlags))
+        JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE.get(proto.getExtension(JvmProtoBuf.jvmClassFlags))
 }

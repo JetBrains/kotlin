@@ -8,10 +8,15 @@ description = "Kotlin/Native utils"
 dependencies {
     compileOnly(kotlinStdlib())
     api(project(":kotlin-util-io"))
+    api(project(":kotlin-util-klib"))
+    api(platform(project(":kotlin-gradle-plugins-bom")))
 
-    testImplementation(commonDep("junit:junit"))
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testImplementation(project(":kotlin-reflect"))
+    testImplementation(libs.junit4)
+    testImplementation(kotlinStdlib())
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
@@ -19,18 +24,21 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+configureKotlinCompileTasksGradleCompatibility()
+
 tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            languageVersion = "1.4"
-            apiVersion = "1.4"
-            freeCompilerArgs += "-Xsuppress-version-warnings"
-        }
+    withType<Test>().configureEach {
+        useJUnitPlatform()
     }
 }
 
-// TODO: this single known external consumer of this artifact is Kotlin/Native backend,
-//  so publishing could be stopped after migration to monorepo
 publish()
 
-standardPublicJars()
+runtimeJar {
+    // JPMS can't handle the jar file name. Fix that by specifying a valid module name in the manifest:
+    manifest.attributes["Automatic-Module-Name"] = "kotlin.native_utils"
+    // See https://youtrack.jetbrains.com/issue/KT-72063.
+}
+
+sourcesJar()
+javadocJar()

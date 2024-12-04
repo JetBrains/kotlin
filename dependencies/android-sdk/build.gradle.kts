@@ -1,6 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
-import javax.inject.Inject
 
 repositories {
     ivy {
@@ -8,7 +7,7 @@ repositories {
         patternLayout {
             artifact("[artifact]-[revision].[ext]")
             artifact("[artifact]_[revision](-[classifier]).[ext]")
-            artifact("[artifact]_[revision](-[classifier]).[ext]")
+            artifact("[artifact]_[revision](_[classifier]).[ext]")
         }
         metadataSources {
             artifact()
@@ -25,14 +24,23 @@ repositories {
     }
 }
 
+val platformToolsVersion = "r28.0.1"
+val sdkToolsVersion = "4333796" /*26.1.1*/
+val emulatorVersion = "5264690"
+
+dependencies {
+    listOf("linux", "windows", "darwin").forEach {
+        implicitDependencies("google:platform-tools:$platformToolsVersion:$it@zip")
+        implicitDependencies("google:sdk-tools-$it:$sdkToolsVersion@zip")
+        implicitDependencies("google:emulator-$it:$emulatorVersion@zip")
+    }
+}
+
 val androidSdk by configurations.creating
 val androidJar by configurations.creating
-val androidPlatform by configurations.creating
-val buildTools by configurations.creating
 val androidEmulator by configurations.creating
 
-val libsDestDir = File(buildDir, "androidSdk/platforms/android-26")
-val sdkDestDir = File(buildDir, "androidSdk")
+val sdkDestDirName = "androidSdk"
 
 val toolsOs = when {
     OperatingSystem.current().isWindows -> "windows"
@@ -84,12 +92,11 @@ fun unzipSdkTask(
     val dependency = "google:$sdkName:$sdkVer${coordinatesSuffix.takeIf { it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
     dependencies.add(createdCfg.name, dependency)
 
-    val sdkDestDir = sdkDestDir
     val unzipTask = tasks.register("unzip_$id") {
         val cfg = project.configurations.getByName(id)
         dependsOn(cfg)
         inputs.files(cfg)
-        val targetDir = project.file("$sdkDestDir/$destinationSubdir")
+        val targetDir = project.layout.buildDirectory.dir("$sdkDestDirName/$destinationSubdir")
         outputs.dirs(targetDir)
         val injected = project.objects.newInstance<Injected>()
         val fs = injected.fs
@@ -126,30 +133,92 @@ fun unzipSdkTask(
     return unzipTask
 }
 
-unzipSdkTask("platform", "26_r02", "platforms/android-26", "", androidPlatform, 1, prepareTask = preparePlatform)
-unzipSdkTask("android_m2repository", "r44", "extras/android", "")
-unzipSdkTask("platform-tools", "r28.0.1", "", toolsOsDarwin)
-unzipSdkTask("sdk-tools-$toolsOsDarwin", "4333796"/*26.1.1*/, "", "")
-unzipSdkTask("build-tools", "r28.0.3", "build-tools/28.0.3", toolsOs, buildTools, 1)
-unzipSdkTask("build-tools", "r29.0.3", "build-tools/29.0.3", toolsOs, buildTools, 1)
-unzipSdkTask("emulator-$toolsOsDarwin", "5264690", "", "", prepareTask = prepareEmulator)
-unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default","r05", prepareTask = prepareEmulator)
-if (!kotlinBuildProperties.isTeamcityBuild) {
-    unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
+fun androidPlatform(version: String): TaskProvider<Task> {
+    val artifactId = if (version.startsWith("22_")) "android" else "platform"
+    return unzipSdkTask(
+        sdkName = artifactId,
+        sdkVer = version,
+        destinationSubdir = "platforms/android-${version.substringBefore("_").substringBefore("-")}",
+        coordinatesSuffix = "",
+        additionalConfig = configurations.implicitDependencies.get(),
+        dirLevelsToSkipOnUnzip = 1,
+        prepareTask = preparePlatform
+    )
 }
+
+fun androidBuildTools(version: String): TaskProvider<Task> {
+    val revision = when (version) {
+        "34.0.0" -> "r34"
+        "35.0.0" -> "r35"
+        else -> "r$version"
+    }
+
+    @Suppress("LocalVariableName")
+    val buildTools_30_0_3_artifactId = mapOf(
+        "windows" to "91936d4ee3ccc839f0addd53c9ebf087b1e39251.build-tools",
+        "macosx" to "f6d24b187cc6bd534c6c37604205171784ac5621.build-tools"
+    ).withDefault { "build-tools" }
+
+    listOf("linux", "windows", "macosx").forEach {
+        dependencies {
+            val artifactId = if (version == "30.0.3")
+                buildTools_30_0_3_artifactId.getValue(it)
+            else
+                "build-tools"
+            implicitDependencies("google:$artifactId:$revision:$it@zip")
+        }
+    }
+
+    val artifactId = if (version == "30.0.3")
+        buildTools_30_0_3_artifactId.getValue(toolsOs)
+    else
+        "build-tools"
+
+    return unzipSdkTask(
+        sdkName = artifactId,
+        sdkVer = revision,
+        destinationSubdir = "build-tools/$version",
+        coordinatesSuffix = toolsOs,
+        dirLevelsToSkipOnUnzip = 1
+    )
+}
+
+androidPlatform("22_r02")
+androidPlatform("23_r03")
+androidPlatform("24_r02")
+androidPlatform("26_r02")
+androidPlatform("27_r03")
+androidPlatform("28_r06")
+androidPlatform("30_r03")
+androidPlatform("31_r01")
+androidPlatform("33_r02")
+androidPlatform("34-ext7_r02")
+
+androidBuildTools("29.0.3")
+androidBuildTools("30.0.3")
+androidBuildTools("33.0.1")
+androidBuildTools("34.0.0")
+androidBuildTools("35.0.0")
+
+unzipSdkTask("android_m2repository", "r44", "extras/android", "")
+unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)
+unzipSdkTask("sdk-tools-$toolsOsDarwin", sdkToolsVersion, "", "")
+unzipSdkTask("emulator-$toolsOsDarwin", emulatorVersion, "", "", prepareTask = prepareEmulator)
+unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default", "r05", prepareTask = prepareEmulator)
+unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
 
 val clean by task<Delete> {
-    delete(buildDir)
+    delete(layout.buildDirectory)
 }
 
-artifacts.add(androidSdk.name, file("$sdkDestDir")) {
+artifacts.add(androidSdk.name, layout.buildDirectory.dir(sdkDestDirName)) {
     builtBy(prepareSdk)
 }
 
-artifacts.add(androidJar.name, file("$libsDestDir/android.jar")) {
+artifacts.add(androidJar.name, layout.buildDirectory.file("$sdkDestDirName/platforms/android-26/android.jar")) {
     builtBy(preparePlatform)
 }
 
-artifacts.add(androidEmulator.name, file("$sdkDestDir")) {
+artifacts.add(androidEmulator.name, layout.buildDirectory.dir(sdkDestDirName)) {
     builtBy(prepareEmulator)
 }

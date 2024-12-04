@@ -180,6 +180,9 @@ object ComparableOps : TemplateGroupBase() {
         body { "return $defaultImpl" }
         specialFor(Primitives) {
             inlineOnly()
+            on(Platform.Common) {
+                inline()
+            }
             var convertBack = "to$primitive()"
             on(Platform.JS) {
                 convertBack = "unsafeCast<$primitive>()"
@@ -381,6 +384,9 @@ object ComparableOps : TemplateGroupBase() {
         body { "return $defaultImpl" }
         specialFor(Primitives) {
             inlineOnly()
+            on(Platform.Common) {
+                inline()
+            }
             var convertBack = "to$primitive()"
             on(Platform.JS) {
                 convertBack = "unsafeCast<$primitive>()"

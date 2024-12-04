@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.test.TestJavacVersion
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
-    @Suppress("RemoveExplicitTypeArguments")
-    val JVM_TARGET by enumDirective<JvmTarget>(
+    val JVM_TARGET by enumDirective(
         description = "Target bytecode version",
         additionalParser = JvmTarget.Companion::fromString
     )
@@ -35,29 +32,21 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val USE_PSI_CLASS_FILES_READING by directive("Use a slower (PSI-based) class files reading implementation")
-    val USE_JAVAC by directive("Enable javac integration")
-    val SKIP_JAVA_SOURCES by directive("Don't add java sources to compile classpath")
-    val INCLUDE_JAVA_AS_BINARY by directive(
-        "Compile this java file into jar and add it to classpath instead of compiling Kotlin with Java sources",
-        applicability = DirectiveApplicability.File
-    )
-    val ALL_JAVA_AS_BINARY by directive(
-        "Compile all java files into jar and add it to classpath instead of compiling Kotlin with Java sources",
-        applicability = DirectiveApplicability.Global
-    )
-    val COMPILE_JAVA_USING by enumDirective<TestJavacVersion>(
-        "Compile all including java files using javac of specific version",
-        applicability = DirectiveApplicability.Global
+
+    val USE_JAVAC by directive("Enable javac integration (has no effect on non-K1 tests)")
+    val JAVAC_EXPECTED_FILE by directive("Dump descriptors to .javac.txt file if $USE_JAVAC is enabled")
+    val SKIP_JAVAC by directive("Skip the test if $USE_JAVAC is enabled")
+
+    val PROVIDE_JAVA_AS_BINARIES by directive(
+        "Compile Kotlin with classpath JAR binaries for all .java sources instead of with .java sources themselves"
     )
 
-    @Suppress("RemoveExplicitTypeArguments")
-    val STRING_CONCAT by enumDirective<JvmStringConcat>(
+    val STRING_CONCAT by enumDirective(
         description = "Configure mode of string concatenation",
         additionalParser = JvmStringConcat.Companion::fromString
     )
 
-    @Suppress("RemoveExplicitTypeArguments")
-    val ASSERTIONS_MODE by enumDirective<JVMAssertionsMode>(
+    val ASSERTIONS_MODE by enumDirective(
         description = "Configure jvm assertions mode",
         additionalParser = JVMAssertionsMode.Companion::fromString
     )
@@ -80,4 +69,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Enable serialization of JVM IR",
         additionalParser = JvmSerializeIrMode.Companion::fromString
     )
+
+    val ENABLE_DEBUG_MODE by directive("Enable debug mode for compilation")
 }

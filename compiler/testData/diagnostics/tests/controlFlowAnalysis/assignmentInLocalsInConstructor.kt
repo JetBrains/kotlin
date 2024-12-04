@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Tests for KT-13597 (val assignment inside local object in constructor)
 
 class Test {

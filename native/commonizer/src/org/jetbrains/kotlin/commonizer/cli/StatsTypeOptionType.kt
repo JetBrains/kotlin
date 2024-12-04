@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.commonizer.cli
 
 import org.jetbrains.kotlin.commonizer.stats.StatsType
 
-internal object StatsTypeOptionType : OptionType<StatsType>("log-stats", DESCRIPTION, mandatory = false) {
+internal object StatsTypeOptionType : OptionType<StatsType>(STATS_TYPE_ALIAS, DESCRIPTION, mandatory = false) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<StatsType> {
         val value = StatsType.values().firstOrNull { it.name.equals(rawValue, ignoreCase = true) }
             ?: onError("Invalid stats type: $rawValue")

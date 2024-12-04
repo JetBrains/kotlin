@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ R> f(/*0*/ block: () -> R?): R?
+public fun </*0*/ T : kotlin.String> g(): T?
+public fun main(): kotlin.Unit

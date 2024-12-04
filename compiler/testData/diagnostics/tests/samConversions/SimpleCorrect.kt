@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +SamConversionPerArgument
+// LANGUAGE: +SamConversionPerArgument
 // FILE: J.java
 public interface J {
     public void foo1(Runnable r);

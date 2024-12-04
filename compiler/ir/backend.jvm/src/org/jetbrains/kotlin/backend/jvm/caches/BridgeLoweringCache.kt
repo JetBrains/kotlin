@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.caches
 
-import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.SpecialBridge
@@ -13,31 +12,37 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.org.objectweb.asm.commons.Method
-import java.util.concurrent.ConcurrentHashMap
+
+// TODO: consider moving this cache out to the backend and using it everywhere throughout the codegen.
+// It might benefit performance, but can lead to confusing behavior if some declarations are changed along the way.
+// For example, adding an override for a declaration whose signature is already cached can result in incorrect signature
+// if its return type is a primitive type, and the new override's return type is an object type.
+private var IrFunction.cachedJvmSignature: Method? by irAttribute(followAttributeOwner = false)
 
 class BridgeLoweringCache(private val context: JvmBackendContext) {
     private val specialBridgeMethods = SpecialBridgeMethods(context)
 
-    // TODO: consider moving this cache out to the backend context and using it everywhere throughout the codegen.
-    // It might benefit performance, but can lead to confusing behavior if some declarations are changed along the way.
-    // For example, adding an override for a declaration whose signature is already cached can result in incorrect signature
-    // if its return type is a primitive type, and the new override's return type is an object type.
-    private val signatureCache = ConcurrentHashMap<IrFunctionSymbol, Method>()
-
     fun computeJvmMethod(function: IrFunction): Method =
-        signatureCache.getOrPut(function.symbol) { context.methodSignatureMapper.mapAsmMethod(function) }
+        function::cachedJvmSignature.getOrSetIfNull {
+            context.defaultMethodSignatureMapper.mapAsmMethod(function)
+        }
 
     private fun canHaveSpecialBridge(function: IrSimpleFunction): Boolean {
         if (function.name in specialBridgeMethods.specialMethodNames)
             return true
         // Function name could be mangled by inline class rules
         val functionName = function.name.asString()
-        if (specialBridgeMethods.specialMethodNames.any { functionName.startsWith(it.asString() + "-") })
-            return true
-        return false
+        return specialBridgeMethods.specialMethodNames.any {
+            // Optimized version of functionName.startsWith(it.asString() + "-") which is a hot spot
+            val specialMethodNameString = it.asString()
+            val specialMethodNameLength = specialMethodNameString.length
+            functionName.startsWith(specialMethodNameString) && functionName.length > specialMethodNameLength && functionName[specialMethodNameLength] == '-'
+        }
     }
 
     fun computeSpecialBridge(function: IrSimpleFunction): SpecialBridge? {
@@ -54,7 +59,8 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
         val specialMethodInfo = specialBridgeMethods.getSpecialMethodInfo(function)
         if (specialMethodInfo != null)
             return SpecialBridge(
-                overridden = function, signature = computeJvmMethod(function),
+                overridden = function,
+                signature = computeJvmMethod(function),
                 needsGenericSignature = specialMethodInfo.needsGenericSignature,
                 methodInfo = specialMethodInfo,
                 needsUnsubstitutedBridge = specialMethodInfo.needsUnsubstitutedBridge
@@ -63,7 +69,9 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
         val specialBuiltInInfo = specialBridgeMethods.getBuiltInWithDifferentJvmName(function)
         if (specialBuiltInInfo != null)
             return SpecialBridge(
-                function, computeJvmMethod(function), specialBuiltInInfo.needsGenericSignature,
+                overridden = function,
+                signature = computeJvmMethod(function),
+                needsGenericSignature = specialBuiltInInfo.needsGenericSignature,
                 isOverriding = specialBuiltInInfo.isOverriding
             )
 

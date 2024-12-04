@@ -24,16 +24,15 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
 
-class SafeExtensionInvokeCallReceiver(
+internal class SafeExtensionInvokeCallReceiver(
     val generator: GeneratorWithScope,
     val startOffset: Int,
     val endOffset: Int,
-    val callBuilder: CallBuilder,
-    val functionReceiver: IntermediateValue,
-    val extensionInvokeReceiver: IntermediateValue
+    private val callBuilder: CallBuilder,
+    private val functionReceiver: IntermediateValue,
+    private val extensionInvokeReceiver: IntermediateValue
 ) : CallReceiver {
-
-    override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
+    override fun call(builder: CallExpressionBuilder): IrExpression {
         // extensionInvokeReceiver is actually a first argument:
         //      receiver?.extFun(p1, ..., pN)
         //      =>
@@ -49,7 +48,7 @@ class SafeExtensionInvokeCallReceiver(
             "Safe extension 'invoke' call should have null as its 1st value argument, got: ${callBuilder.irValueArgumentsByIndex[0]}"
         }
         callBuilder.irValueArgumentsByIndex[0] = safeReceiverValue.load()
-        val irResult = withDispatchAndExtensionReceivers(functionReceiver, null)
+        val irResult = builder.withReceivers(functionReceiver, null, emptyList())
 
         val resultType = irResult.type.makeNullable()
 
@@ -63,4 +62,3 @@ class SafeExtensionInvokeCallReceiver(
         }
     }
 }
-

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -61,7 +61,22 @@ class ApiVersion private constructor(
         val KOTLIN_1_8 = createByLanguageVersion(LanguageVersion.KOTLIN_1_8)
 
         @JvmField
-        val LATEST: ApiVersion = createByLanguageVersion(LanguageVersion.values().last())
+        val KOTLIN_1_9 = createByLanguageVersion(LanguageVersion.KOTLIN_1_9)
+
+        @JvmField
+        val KOTLIN_2_0 = createByLanguageVersion(LanguageVersion.KOTLIN_2_0)
+
+        @JvmField
+        val KOTLIN_2_1 = createByLanguageVersion(LanguageVersion.KOTLIN_2_1)
+
+        @JvmField
+        val KOTLIN_2_2 = createByLanguageVersion(LanguageVersion.KOTLIN_2_2)
+
+        @JvmField
+        val KOTLIN_2_3 = createByLanguageVersion(LanguageVersion.KOTLIN_2_3)
+
+        @JvmField
+        val LATEST: ApiVersion = createByLanguageVersion(LanguageVersion.entries.last())
 
         @JvmField
         val LATEST_STABLE: ApiVersion = createByLanguageVersion(LanguageVersion.LATEST_STABLE)

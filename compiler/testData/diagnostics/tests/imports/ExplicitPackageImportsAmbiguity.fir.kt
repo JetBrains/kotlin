@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package a.x
 
@@ -14,4 +15,4 @@ package c
 import a.<!PACKAGE_CANNOT_BE_IMPORTED!>x<!>
 import b.<!PACKAGE_CANNOT_BE_IMPORTED!>x<!>
 
-class Y : <!UNRESOLVED_REFERENCE!>x.X<!>
+class Y : <!UNRESOLVED_REFERENCE!>x<!>.X

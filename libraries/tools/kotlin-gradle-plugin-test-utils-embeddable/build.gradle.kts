@@ -12,6 +12,7 @@ plugins {
 val projectsToInclude = listOf(
     ":compiler:test-infrastructure-utils",
     ":compiler:tests-common",
+    ":compiler:tests-compiler-utils",
     ":compiler:incremental-compilation-impl",
     ":kotlin-build-common"
 )
@@ -21,8 +22,6 @@ dependencies {
         api(projectTests(projectName)) { isTransitive = false }
         embedded(projectTests(projectName)) { isTransitive = false }
     }
-
-    embedded(intellijDep()) { includeJars("idea_rt") }
 }
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())

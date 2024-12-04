@@ -40,8 +40,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport.LanguageVersionDependent
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
@@ -104,12 +106,12 @@ class DoubleColonExpressionResolver(
     fun visitClassLiteralExpression(expression: KtClassLiteralExpression, c: ExpressionTypingContext): KotlinTypeInfo {
         if (expression.isEmptyLHS) {
             // "::class" will maybe mean "this::class", a class of "this" instance
-            c.trace.report(UNSUPPORTED.on(expression, "Class literals with empty left hand side are not yet supported"))
+            c.trace.report(UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.on(expression))
         } else {
             val result = resolveDoubleColonLHS(expression, c)
 
             if (c.inferenceSession is BuilderInferenceSession && result?.type?.contains { it is StubTypeForBuilderInference } == true) {
-                c.inferenceSession.addOldCallableReferenceCalls(expression)
+                c.inferenceSession.addExpression(expression)
             }
 
             if (result != null && !result.type.isError) {
@@ -127,7 +129,7 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        return createTypeInfo(ErrorUtils.createErrorType("Unresolved class"), c)
+        return createTypeInfo(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, expression.text), c)
     }
 
     private fun checkClassLiteral(
@@ -269,7 +271,7 @@ class DoubleColonExpressionResolver(
     private fun KtQualifiedExpression.buildNewExpressionForReservedGenericPropertyCallChainResolution(): KtExpression? {
         val parts = this.getQualifierChainParts()?.map { it.getQualifiedNameStringPart() ?: return null } ?: return null
         val qualifiedExpressionText = parts.joinToString(separator = ".")
-        return KtPsiFactory(this, markGenerated = false).createExpression(qualifiedExpressionText)
+        return KtPsiFactory(project, markGenerated = false).createExpression(qualifiedExpressionText)
     }
 
     private fun resolveReservedExpressionOnLHS(expression: KtExpression, c: ExpressionTypingContext): DoubleColonLHS.Expression? {
@@ -479,7 +481,7 @@ class DoubleColonExpressionResolver(
         val classifier = qualifierResolutionResult.classifierDescriptor
         if (classifier == null) {
             typeResolver.resolveTypeProjections(
-                typeResolutionContext, ErrorUtils.createErrorType("No type").constructor, qualifierResolutionResult.allProjections
+                typeResolutionContext, ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, expression.text).constructor, qualifierResolutionResult.allProjections
             )
             return null
         }
@@ -498,7 +500,7 @@ class DoubleColonExpressionResolver(
 
             val arguments = descriptor.typeConstructor.parameters.map(TypeUtils::makeStarProjection)
             KotlinTypeFactory.simpleType(
-                Annotations.EMPTY, descriptor.typeConstructor, arguments,
+                TypeAttributes.Empty, descriptor.typeConstructor, arguments,
                 possiblyBareType.isNullable || doubleColonExpression.hasQuestionMarks
             )
         } else {
@@ -534,7 +536,7 @@ class DoubleColonExpressionResolver(
         if (callableReference.getReferencedName().isEmpty()) {
             if (!expression.isEmptyLHS) resolveDoubleColonLHS(expression, c)
             c.trace.report(UNRESOLVED_REFERENCE.on(callableReference, callableReference))
-            val errorType = ErrorUtils.createErrorType("Empty callable reference")
+            val errorType = ErrorUtils.createErrorType(ErrorTypeKind.EMPTY_CALLABLE_REFERENCE)
             return dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression)
         }
 
@@ -555,7 +557,7 @@ class DoubleColonExpressionResolver(
         val dataFlowInfo = (lhs as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
 
         if (c.inferenceSession is BuilderInferenceSession && result?.contains { it is StubTypeForBuilderInference } == true) {
-            c.inferenceSession.addOldCallableReferenceCalls(expression)
+            c.inferenceSession.addExpression(expression)
         }
 
         return dataFlowAnalyzer.checkType(createTypeInfo(result, dataFlowInfo), expression, c)
@@ -612,7 +614,7 @@ class DoubleColonExpressionResolver(
             trace.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(simpleName, descriptor))
         }
         if (descriptor is VariableDescriptor && descriptor !is PropertyDescriptor) {
-            trace.report(UNSUPPORTED.on(simpleName, "References to variables aren't supported yet"))
+            trace.report(UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS.on(simpleName))
         }
     }
 
@@ -636,7 +638,7 @@ class DoubleColonExpressionResolver(
         )
 
         functionDescriptor.initialize(
-            null, null, emptyList(),
+            null, null, emptyList(), emptyList(),
             createValueParametersForInvokeInFunctionType(functionDescriptor, type.arguments.dropLast(1)),
             type.arguments.last().type,
             Modality.FINAL,
@@ -743,7 +745,9 @@ class DoubleColonExpressionResolver(
         return when {
             resolutionResults.isNothing -> null
             else -> ResolutionResultsAndTraceCommitCallback(resolutionResults) {
-                checkReservedYield(reference, outerContext.trace)
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+                    checkReservedYield(reference, outerContext.trace)
+                }
                 if (resolutionMode != ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS || resolutionResults.isSuccess) {
                     temporaryTrace.commit()
                 }
@@ -830,6 +834,9 @@ class DoubleColonExpressionResolver(
     }
 
     companion object {
+        private fun contextReceiverTypesFor(descriptor: CallableDescriptor): List<KotlinType> =
+            descriptor.contextReceiverParameters.map { it.type }
+
         private fun receiverTypeFor(descriptor: CallableDescriptor, lhs: DoubleColonLHS?): KotlinType? =
             (descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter)?.let { (lhs as? DoubleColonLHS.Type)?.type }
 
@@ -849,6 +856,7 @@ class DoubleColonExpressionResolver(
             reflectionTypes: ReflectionTypes,
             scopeOwnerDescriptor: DeclarationDescriptor
         ): KotlinType? {
+            val contextReceiverTypes = contextReceiverTypesFor(descriptor)
             val receiverType = receiverTypeFor(descriptor, lhs)
             return when (descriptor) {
                 is FunctionDescriptor -> {
@@ -857,7 +865,7 @@ class DoubleColonExpressionResolver(
                     val parametersNames = descriptor.valueParameters.map { it.name }
                     return reflectionTypes.getKFunctionType(
                         Annotations.EMPTY, receiverType,
-                        parametersTypes, parametersNames, returnType, descriptor.builtIns, descriptor.isSuspend
+                        contextReceiverTypes, parametersTypes, parametersNames, returnType, descriptor.builtIns, descriptor.isSuspend
                     )
                 }
                 is PropertyDescriptor -> {

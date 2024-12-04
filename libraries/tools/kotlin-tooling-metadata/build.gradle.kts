@@ -7,9 +7,10 @@ plugins {
 publish()
 sourcesJar()
 javadocJar()
+configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
     implementation(kotlinStdlib())
-    implementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    implementation(commonDependency("com.google.code.gson:gson"))
+    testImplementation(kotlinTest("junit"))
 }

@@ -1,23 +1,4 @@
-open annotation class Storage : Annotation {
-  constructor(value: String) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val value: String
-    field = value
-    get
-
-}
-
 open annotation class State : Annotation {
-  constructor(name: String, storages: Array<Storage>) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val name: String
     field = name
     get
@@ -25,6 +6,25 @@ open annotation class State : Annotation {
   val storages: Array<Storage>
     field = storages
     get
+
+  constructor(name: String, storages: Array<Storage>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open annotation class Storage : Annotation {
+  val value: String
+    field = value
+    get
+
+  constructor(value: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -37,3 +37,4 @@ class Test {
   }
 
 }
+

@@ -3,8 +3,6 @@ FILE: complex.kt
         public abstract fun close(): R|kotlin/Unit|
 
     }
-    public final fun R|kotlin/Throwable|.addSuppressed(other: R|kotlin/Throwable|): R|kotlin/Unit| {
-    }
     internal final fun R|AutoCloseable?|.closeFinally(cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
         ^closeFinally when () {
             ==(this@R|/closeFinally|, Null(null)) ->  {
@@ -17,7 +15,7 @@ FILE: complex.kt
                     this@R|/closeFinally|.R|/AutoCloseable.close|()
                 }
                 catch (closeException: R|kotlin/Throwable|) {
-                    R|<local>/cause|.R|/addSuppressed|(R|<local>/closeException|)
+                    R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)
                 }
 
             }
@@ -26,13 +24,16 @@ FILE: complex.kt
     }
     public final inline fun <reified T : R|kotlin/Any|> R|kotlin/collections/List<*>|.firstIsInstanceOrNull(): R|T?| {
          {
-            lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>| = this@R|/firstIsInstanceOrNull|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<CapturedType(*)>|>|()
+            lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>| = this@R|/firstIsInstanceOrNull|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval element: R|kotlin/Any?| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()
-                when () {
-                    (R|<local>/element| is R|T|) ->  {
-                        ^firstIsInstanceOrNull R|<local>/element|
+                 {
+                    when () {
+                        (R|<local>/element| is R|T|) ->  {
+                            ^firstIsInstanceOrNull R|<local>/element|
+                        }
                     }
+
                 }
 
             }

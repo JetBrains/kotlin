@@ -1,9 +1,10 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 // exhaustive
 fun test1(n: Nothing) = when (n) { }
 fun test2(n: Nothing?) = when (n) {
-    <!SENSELESS_NULL_IN_WHEN!>null<!> -> {}
+    <!SENSELESS_COMPARISON!>null<!> -> {}
 }
 
 // not exhaustive

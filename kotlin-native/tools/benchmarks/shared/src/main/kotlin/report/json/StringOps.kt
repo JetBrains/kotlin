@@ -18,8 +18,8 @@ package org.jetbrains.report.json
 
 private fun toHexChar(i: Int) : Char {
     val d = i and 0xf
-    return if (d < 10) (d + '0'.toInt()).toChar()
-    else (d - 10 + 'a'.toInt()).toChar()
+    return if (d < 10) (d + '0'.code).toChar()
+    else (d - 10 + 'a'.code).toChar()
 }
 
 private val ESCAPE_CHARS: Array<String?> = arrayOfNulls<String>(128).apply {
@@ -30,12 +30,12 @@ private val ESCAPE_CHARS: Array<String?> = arrayOfNulls<String>(128).apply {
         val c4 = toHexChar(c)
         this[c] = "\\u$c1$c2$c3$c4"
     }
-    this['"'.toInt()] = "\\\""
-    this['\\'.toInt()] = "\\\\"
-    this['\t'.toInt()] = "\\t"
-    this['\b'.toInt()] = "\\b"
-    this['\n'.toInt()] = "\\n"
-    this['\r'.toInt()] = "\\r"
+    this['"'.code] = "\\\""
+    this['\\'.code] = "\\\\"
+    this['\t'.code] = "\\t"
+    this['\b'.code] = "\\b"
+    this['\n'.code] = "\\n"
+    this['\r'.code] = "\\r"
     this[0x0c] = "\\f"
 }
 
@@ -44,7 +44,7 @@ internal fun StringBuilder.printQuoted(value: String)  {
     var lastPos = 0
     val length = value.length
     for (i in 0 until length) {
-        val c = value[i].toInt()
+        val c = value[i].code
         // Do not replace this constant with C2ESC_MAX (which is smaller than ESCAPE_CHARS size),
         // otherwise JIT won't eliminate range check and won't vectorize this loop
         if (c >= ESCAPE_CHARS.size) continue // no need to escape

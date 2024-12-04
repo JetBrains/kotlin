@@ -99,7 +99,7 @@ extern struct backtrace_state *backtrace_create_state (
 
 typedef int (*backtrace_full_callback) (void *data, uintptr_t pc,
 					const char *filename, int lineno, int column,
-					const char *function);
+					const char *function, int is_nodebug);
 
 /* Get a full stack backtrace.  SKIP is the number of frames to skip;
    passing 0 will start the trace with the function calling

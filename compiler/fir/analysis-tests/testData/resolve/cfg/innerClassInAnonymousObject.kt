@@ -1,7 +1,8 @@
-// !DUMP_CFG
+// RUN_PIPELINE_TILL: FRONTEND
+// DUMP_CFG
 
 val x = object {
-    class Nested {
+    <!NESTED_CLASS_NOT_ALLOWED!>class Nested<!> {
         fun foo() {}
     }
 }

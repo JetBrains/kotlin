@@ -1,0 +1,1 @@
+java.lang.AssertionError: Lower bound {A<(Any..Any?)> & B} of a flexible type must be a subtype of the upper bound {A<CapturedType(*)> & B}

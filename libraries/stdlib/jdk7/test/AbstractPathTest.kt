@@ -4,9 +4,12 @@
  */
 
 package kotlin.jdk7.test
+
 import java.nio.file.Path
+import kotlin.io.path.createSymbolicLinkPointingTo
 import kotlin.io.path.deleteIfExists
-import kotlin.test.*
+import kotlin.io.path.deleteRecursively
+import kotlin.test.AfterTest
 
 abstract class AbstractPathTest {
     private val cleanUpActions = mutableListOf<Pair<Path, (Path) -> Unit>>()
@@ -17,7 +20,7 @@ abstract class AbstractPathTest {
     }
 
     fun Path.cleanupRecursively(): Path {
-        cleanUpActions.add(this to { it.toFile().deleteRecursively() })
+        cleanUpActions.add(this to { it.deleteRecursively() })
         return this
     }
 
@@ -29,6 +32,42 @@ abstract class AbstractPathTest {
             } catch (e: Throwable) {
                 println("Failed to execute cleanup action for $path")
             }
+        }
+    }
+
+    fun Path.tryCreateSymbolicLinkTo(original: Path): Path? {
+        return try {
+            this.createSymbolicLinkPointingTo(original)
+        } catch (e: Exception) {
+            // the underlying OS may not support symbolic links or may require a privilege
+            println("Creating a symbolic link failed with $e")
+            null
+        }
+    }
+
+    fun withRestrictedRead(vararg paths: Path, alsoReset: List<Path> = emptyList(), block: () -> Unit) {
+        try {
+            if (paths.all { it.toFile().setReadable(false) }) {
+                block()
+            } else {
+                System.err.println("Couldn't restrict read access")
+            }
+        } finally {
+            paths.forEach { it.toFile().setReadable(true) }
+            alsoReset.forEach { it.toFile().setReadable(true) }
+        }
+    }
+
+    fun withRestrictedWrite(vararg paths: Path, alsoReset: List<Path> = emptyList(), block: () -> Unit) {
+        try {
+            if (paths.all { it.toFile().setWritable(false) }) {
+                block()
+            } else {
+                System.err.println("Couldn't restrict write access")
+            }
+        } finally {
+            paths.forEach { it.toFile().setWritable(true) }
+            alsoReset.forEach { it.toFile().setWritable(true) }
         }
     }
 }

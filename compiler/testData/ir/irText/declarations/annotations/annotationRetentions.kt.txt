@@ -1,0 +1,42 @@
+@Retention(value = AnnotationRetention.BINARY)
+open annotation class Binary : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Retention(value = AnnotationRetention.RUNTIME)
+open annotation class Runtime : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Retention(value = AnnotationRetention.SOURCE)
+open annotation class Source : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Binary
+fun binary() {
+}
+
+@Runtime
+fun runtime() {
+}
+
+@Source
+fun source() {
+}
+

@@ -1,0 +1,90 @@
+internal final class IntInt : R|kotlin/Any| {
+    public constructor(): R|test/IntInt|
+
+    internal final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/IntInt.Companion|
+
+    }
+
+}
+
+internal final class IntPri : R|kotlin/Any| {
+    public constructor(): R|test/IntPri|
+
+    private final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/IntPri.Companion|
+
+    }
+
+}
+
+internal final class IntPub : R|kotlin/Any| {
+    public constructor(): R|test/IntPub|
+
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/IntPub.Companion|
+
+    }
+
+}
+
+private final class PriInt : R|kotlin/Any| {
+    public constructor(): R|test/PriInt|
+
+    internal final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/PriInt.Companion|
+
+    }
+
+}
+
+private final class PriPri : R|kotlin/Any| {
+    public constructor(): R|test/PriPri|
+
+    private final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/PriPri.Companion|
+
+    }
+
+}
+
+private final class PriPub : R|kotlin/Any| {
+    public constructor(): R|test/PriPub|
+
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/PriPub.Companion|
+
+    }
+
+}
+
+public final class PubInt : R|kotlin/Any| {
+    public constructor(): R|test/PubInt|
+
+    internal final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/PubInt.Companion|
+
+    }
+
+}
+
+public final class PubPri : R|kotlin/Any| {
+    public constructor(): R|test/PubPri|
+
+    private final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/PubPri.Companion|
+
+    }
+
+}
+
+public final class PubPub : R|kotlin/Any| {
+    public constructor(): R|test/PubPub|
+
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/PubPub.Companion|
+
+    }
+
+}
+

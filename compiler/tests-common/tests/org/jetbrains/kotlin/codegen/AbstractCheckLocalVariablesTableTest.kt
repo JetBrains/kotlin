@@ -1,25 +1,12 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.openapi.util.text.StringUtil
-import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.org.objectweb.asm.*
 import org.junit.Assert
 import java.io.File
@@ -34,8 +21,8 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
         compile(files)
 
         try {
-            val filteredLines = filterTestFileForTargetBackend(wholeFile)
-            val classAndMethod = parseClassAndMethodSignature(filteredLines)
+            val lines = wholeFile.readLines()
+            val classAndMethod = parseClassAndMethodSignature(lines)
             val split = classAndMethod.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             assert(split.size == 2) { "Exactly one dot is expected: $classAndMethod" }
             val classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+")
@@ -52,27 +39,11 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             val actualLocalVariables = readLocalVariable(classReader, methodName)
             checkLocalVariableTypes(classReader, methodName, actualLocalVariables)
 
-            doCompare(filteredLines, actualLocalVariables)
+            doCompare(lines, actualLocalVariables)
         } catch (e: Throwable) {
             printReport(wholeFile)
             throw e
         }
-    }
-
-    // TODO: Refactor test infrastructure to share filtering with AbstractBytecodeTextTest
-    private fun filterTestFileForTargetBackend(testFile: File): List<String> {
-        val filteredLines = mutableListOf<String>()
-        var currentBackend = TargetBackend.ANY
-        for (line in testFile.readLines()) {
-            if (line.contains(JVM_TEMPLATES)) {
-                currentBackend = TargetBackend.JVM
-            } else if (line.contains(JVM_IR_TEMPLATES)) {
-                currentBackend = TargetBackend.JVM_IR
-            } else if (currentBackend == TargetBackend.ANY || currentBackend == backend) {
-                filteredLines.add(line)
-            }
-        }
-        return filteredLines
     }
 
     private fun doCompare(
@@ -86,7 +57,10 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
     private fun getActualVariablesAsString(list: List<LocalVariable>) = if (backend.isIR) {
         // Ignore local index.
-        list.map { it.toString().replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
+        list.map {
+            it.toString().replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*")
+                .replaceFirst("<name for destructuring parameter [0-9]+>".toRegex(), "<destruct>") // use FIR name for it
+        }
             .sorted()
             .joinToString("\n")
     } else {
@@ -98,7 +72,10 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
         return if (backend.isIR) {
             // Ignore local index.
             variableLines
-                .map { it.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
+                .map {
+                    it.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*")
+                        .replaceFirst("<name for destructuring parameter [0-9]+>".toRegex(), "<destruct>") // use FIR name for it
+                }
                 .sorted()
                 .joinToString("\n")
         } else {
@@ -106,17 +83,14 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
         }
     }
 
-    private class LocalVariable internal constructor(
+    private class LocalVariable(
         val name: String,
         val type: String,
         val index: Int,
         val startLabelNumber: Int,
         val endLabelNumber: Int
     ) {
-
-        override fun toString(): String {
-            return "// VARIABLE : NAME=$name TYPE=$type INDEX=$index"
-        }
+        override fun toString(): String = "// VARIABLE : NAME=$name TYPE=$type INDEX=$index"
     }
 
     private fun parseClassAndMethodSignature(testFileLines: List<String>): String {
@@ -131,11 +105,6 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
     }
 
     companion object {
-
-        private const val JVM_TEMPLATES = "// JVM_TEMPLATES"
-
-        private const val JVM_IR_TEMPLATES = "// JVM_IR_TEMPLATES"
-
         private val methodPattern = Pattern.compile("^// METHOD : *(.*)")
 
         private fun readLocalVariable(cr: ClassReader, methodName: String): List<LocalVariable> {
@@ -176,7 +145,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
             val visitor = Visitor()
             cr.accept(visitor, ClassReader.SKIP_FRAMES)
-            TestCase.assertTrue(
+            assertTrue(
                 "Method not found: $methodName. Methods found were: ${visitor.methodsFound.joinToString()}",
                 visitor.methodFound
             )
@@ -261,10 +230,10 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                             Type.INT_TYPE -> "I"
                             Type.FLOAT_TYPE-> "F"
                             Type.DOUBLE_TYPE -> "D"
-                            Type.LONG_TYPE -> "J";
+                            Type.LONG_TYPE -> "J"
                             else -> "Ljava/lang/Object;"
                         }
-                        parameterIndex += it.size;
+                        parameterIndex += it.size
                     }
                 }
 
@@ -459,8 +428,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
             val visitor = Visitor()
             cr.accept(visitor, ClassReader.SKIP_FRAMES)
-            TestCase.assertTrue("method not found: $methodName", visitor.methodFound)
+            assertTrue("method not found: $methodName", visitor.methodFound)
         }
     }
 }
-

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 
 interface CodeAnalyzerInitializer {
@@ -24,10 +23,10 @@ interface CodeAnalyzerInitializer {
 
     companion object {
         fun getInstance(project: Project): CodeAnalyzerInitializer =
-            ServiceManager.getService(project, CodeAnalyzerInitializer::class.java)!!
+            project.getService(CodeAnalyzerInitializer::class.java)!!
     }
 }
 
-class DummyCodeAnalyzerInitializer : CodeAnalyzerInitializer {
-    override fun createTrace(): BindingTrace = BindingTraceContext(true)
+class DummyCodeAnalyzerInitializer(val project: Project) : CodeAnalyzerInitializer {
+    override fun createTrace(): BindingTrace = BindingTraceContext(/* allowSliceRewrite = */ true, project)
 }

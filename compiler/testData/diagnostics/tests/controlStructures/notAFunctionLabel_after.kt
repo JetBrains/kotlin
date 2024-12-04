@@ -1,4 +1,5 @@
-// !LANGUAGE: +RestrictReturnStatementTarget
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +RestrictReturnStatementTarget
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)

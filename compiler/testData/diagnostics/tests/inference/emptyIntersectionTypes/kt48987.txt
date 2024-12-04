@@ -1,0 +1,3 @@
+package
+
+public fun box(): kotlin.String

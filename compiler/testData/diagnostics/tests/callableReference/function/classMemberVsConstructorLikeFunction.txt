@@ -1,7 +1,7 @@
 package
 
 public val f: kotlin.reflect.KFunction1<test.Foo, kotlin.Unit>
-public val g: [ERROR : Type for Foo::length]
+public val g: [Error type: Not found recorded type for Foo::length]
 public fun Foo(): kotlin.String
 
 package test {

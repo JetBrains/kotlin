@@ -56,7 +56,7 @@ public class OSProcessHandler extends BaseOSProcessHandler {
     @NotNull
     public static ModalityState getDefaultModality() {
         Application app = ApplicationManager.getApplication();
-        return app == null ? ModalityState.NON_MODAL : app.getDefaultModalityState();
+        return app == null ? ModalityState.nonModal() : app.getDefaultModalityState();
     }
 
     /**
@@ -187,7 +187,7 @@ public class OSProcessHandler extends BaseOSProcessHandler {
 
     @Override
     protected void onOSProcessTerminated(int exitCode) {
-        if (myModality != ModalityState.NON_MODAL) {
+        if (myModality != ModalityState.nonModal()) {
             ProgressManager.getInstance().runProcess(() -> super.onOSProcessTerminated(exitCode), new EmptyProgressIndicator(myModality));
         } else {
             super.onOSProcessTerminated(exitCode);

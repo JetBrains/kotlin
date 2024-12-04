@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+
 package test
 
 typealias OI = Outer.Inner

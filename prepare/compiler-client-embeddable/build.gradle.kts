@@ -16,18 +16,15 @@ val testCompilationClasspath by configurations.creating
 dependencies {
     embedded(project(":compiler:cli-common")) { isTransitive = false }
     embedded(project(":daemon-common")) { isTransitive = false }
-    embedded(project(":daemon-common-new")) { isTransitive = false }
     embedded(project(":kotlin-daemon-client")) { isTransitive = false }
     
     testApi(project(":compiler:cli-common"))
     testApi(project(":daemon-common"))
-    testApi(project(":daemon-common-new"))
     testApi(project(":kotlin-daemon-client"))
-    testApi(commonDep("junit:junit"))
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(libs.junit4)
+    testApi(kotlinTest("junit"))
     testCompilerClasspath(project(":kotlin-compiler"))
-    testCompilerClasspath(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    testCompilerClasspath(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testCompilerClasspath(project(":kotlin-scripting-compiler"))
     testCompilerClasspath(project(":kotlin-daemon"))
     testCompilationClasspath(kotlinStdlib())
@@ -40,6 +37,7 @@ sourceSets {
 }
 
 projectTest {
+    dependsOn(":kotlin-compiler:jar")
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
     val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }

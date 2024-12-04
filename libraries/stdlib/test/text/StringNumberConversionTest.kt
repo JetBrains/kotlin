@@ -1,12 +1,18 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.text
 
-import test.*
+import test.TestPlatform
+import test.testExceptOn
+import test.testOn
 import kotlin.test.*
+
+private fun testOnNativeAndJvm(action: () -> Unit) {
+    testOn({ p -> p == TestPlatform.Jvm || p == TestPlatform.Native }, action)
+}
 
 class StringNumberConversionTest {
 
@@ -136,6 +142,9 @@ class StringNumberConversionTest {
 
     @Test fun toDouble() {
         compareConversion(String::toDouble, String::toDoubleOrNull, ::doubleTotalOrderEquals) {
+            assertProduces("0", 0.0)
+            assertProduces("-0", -0.0)
+            assertProduces("+0", 0.0)
             assertProduces("-77", -77.0)
             assertProduces("77.", 77.0)
             assertProduces("77.0", 77.0)
@@ -145,13 +154,315 @@ class StringNumberConversionTest {
             assertProduces("7.7e1", 77.0)
             assertProduces("+770e-1", 77.0)
 
-            assertProduces("-NaN", -Double.NaN)
+            assertProduces("NaN", Double.NaN)
+            assertProduces("Infinity", Double.POSITIVE_INFINITY)
             assertProduces("+Infinity", Double.POSITIVE_INFINITY)
+            assertProduces("-NaN", -Double.NaN)
+            assertProduces("-Infinity", Double.NEGATIVE_INFINITY)
 
             assertFailsOrNull("7..7")
             assertFailsOrNull("007 not a number")
             assertFailsOrNull("")
             assertFailsOrNull("   ")
+            assertFailsOrNull("2.-")
+            assertFailsOrNull("0e12notvalid3")
+            assertFailsOrNull("Inf1N1tY")
+            assertFailsOrNull("0xNaN")
+            assertFailsOrNull("-")
+            assertFailsOrNull("+")
+
+            testExceptOn(TestPlatform.Js) {
+                assertFailsOrNull("naN")
+                assertFailsOrNull("-nAn")
+                assertFailsOrNull("-infinity")
+            }
+
+            testExceptOn(TestPlatform.Native) {
+                assertProduces("123e2147483647", Double.POSITIVE_INFINITY)
+                assertProduces("-123e2147483647", Double.NEGATIVE_INFINITY)
+
+                assertProduces("123e20000000000", Double.POSITIVE_INFINITY)
+                assertProduces("-123e20000000000", Double.NEGATIVE_INFINITY)
+
+                assertProduces("123e30000000000", Double.POSITIVE_INFINITY)
+                assertProduces("-123e30000000000", Double.NEGATIVE_INFINITY)
+            }
+
+            assertProduces("123e-2147483647", 0.0)
+            assertProduces("-123e-2147483647", -0.0)
+
+            assertProduces("123e-20000000000", 0.0)
+            assertProduces("-123e-20000000000", -0.0)
+
+            assertProduces("123e-30000000000", 0.0)
+            assertProduces("-123e-30000000000", -0.0)
+
+            assertProduces("0e9999999999999", 0.0)
+            assertProduces("-0e9999999999999", -0.0)
+
+            assertFailsOrNull(".")
+
+            // Test invalid hex notations
+            // 1. No integer nor fractional part
+            assertFailsOrNull("0x.")
+            assertFailsOrNull("0x.p")
+            assertFailsOrNull("0x.p1")
+            // 2. Missing exponent
+            // TODO: run on all platforms after fixing KT-72509
+            testExceptOn(TestPlatform.Js) {
+                assertFailsOrNull("0x11ff33")
+                assertFailsOrNull("0x1f")
+                assertFailsOrNull("0x2D")
+            }
+            assertFailsOrNull("0x.11ff33")
+            // 3. Invalid exponent
+            assertFailsOrNull("0x11ff33.22ee44")
+            assertFailsOrNull("0x11ff33P")
+            assertFailsOrNull("0x.11ff33p")
+            assertFailsOrNull("0x11ff33.22ee44P")
+
+            testOnNativeAndJvm {
+                // Valid hex numbers
+                // 1. No fractional part
+                assertProduces("0x11ff33p2", 4_717_772.0)
+                assertProduces("0x11ff33P2", 4_717_772.0)
+                assertProduces("0x11ff33.P2", 4_717_772.0)
+                // 2. No integer part
+                assertProduces("0x.11ff33P2", 0.2812011241912842)
+                // 3. Both integer and fractional parts
+                assertProduces("0x11.ff33P2", 71.98748779296875)
+                // 4. Negative exponent
+                assertProduces("0x11.ff33p-2", 4.499217987060547)
+                // 5. Negative mantissa
+                assertProduces("-0x11.ff33p-2", -4.499217987060547)
+            }
+
+            // Invalid exponent notations
+            assertFailsOrNull("123z4")
+            assertFailsOrNull("123e4t")
+            assertFailsOrNull(".123z4")
+            assertFailsOrNull(".123e4t")
+            assertFailsOrNull("2.123z4")
+            assertFailsOrNull("2.123e4t")
+            assertFailsOrNull("123e+")
+            assertFailsOrNull("123e-")
+
+            testOnNativeAndJvm {
+                // Valid float suffix
+                assertProduces("1f", 1.0)
+                assertProduces("1.5f", 1.5)
+                assertProduces("1234f", 1234.0)
+                assertProduces("123e4f", 1230_000.0)
+                assertProduces("1F", 1.0)
+                assertProduces("1.5F", 1.5)
+                assertProduces("1234F", 1234.0)
+                assertProduces("123e4F", 1230_000.0)
+                assertProduces("0x34.0P0F", 52.0)
+                assertProduces("0x34.P0f", 52.0)
+                assertProduces("0x.340P6F", 13.0)
+
+                // Valid double suffix
+                assertProduces("1d", 1.0)
+                assertProduces("1.5d", 1.5)
+                assertProduces("1234d", 1234.0)
+                assertProduces("123e4d", 1230_000.0)
+                assertProduces("1D", 1.0)
+                assertProduces("1.5D", 1.5)
+                assertProduces("1234D", 1234.0)
+                assertProduces("123e4D", 1230_000.0)
+                assertProduces("0x34.0P0D", 52.0)
+                assertProduces("0x34.P0d", 52.0)
+                assertProduces("0x.340P6D", 13.0)
+
+                // Invalid hexadecimal exponent
+                assertFailsOrNull("0x23P+")
+                assertFailsOrNull("0x23p-")
+            }
+
+            // Invalid float suffix
+            assertFailsOrNull("1g")
+            assertFailsOrNull("1.5g")
+            assertFailsOrNull("1234g")
+            assertFailsOrNull("123e4g")
+
+            // Test exponent signs
+            assertProduces("1e+1", 10.0)
+            assertProduces("1e-1", 0.1)
+
+            // Invalid exponents
+            assertFailsOrNull("1ez1")
+            assertFailsOrNull("1e+z1")
+            assertFailsOrNull("1e-z1")
+
+            testOnNativeAndJvm {
+                // Test special whitespace characters as trailing or leading characters
+                for (i in 0..0x20) {
+                    assertProduces("${i.toChar()}77", 77.0)
+                    assertProduces("77${i.toChar()}", 77.0)
+                }
+            }
+        }
+    }
+
+    @Test fun toFloat() {
+        compareConversion(String::toFloat, String::toFloatOrNull, ::floatTotalOrderEquals) {
+            assertProduces("0", 0f)
+            assertProduces("-0", -0f)
+            assertProduces("+0", 0f)
+            assertProduces("-77", -77.0f)
+            assertProduces("77.", 77.0f)
+            assertProduces("77.0", 77.0f)
+            assertProduces("-1.77", -1.77f)
+            assertProduces("+.77", 0.77f)
+            assertProduces("\t-77 \n", -77.0f)
+            assertProduces("7.7e1", 77.0f)
+            assertProduces("+770e-1", 77.0f)
+
+            assertProduces("NaN", Float.NaN)
+            assertProduces("Infinity", Float.POSITIVE_INFINITY)
+            assertProduces("+Infinity", Float.POSITIVE_INFINITY)
+            assertProduces("-NaN", -Float.NaN)
+            assertProduces("-Infinity", Float.NEGATIVE_INFINITY)
+
+            assertFailsOrNull("7..7")
+            assertFailsOrNull("007 not a number")
+            assertFailsOrNull("")
+            assertFailsOrNull("   ")
+            assertFailsOrNull("2.-")
+            assertFailsOrNull("0e12notvalid3")
+            assertFailsOrNull("Inf1N1tY")
+            assertFailsOrNull("0xNaN")
+            assertFailsOrNull("-")
+            assertFailsOrNull("+")
+
+            testExceptOn(TestPlatform.Js) {
+                assertFailsOrNull("naN")
+                assertFailsOrNull("-nAn")
+                assertFailsOrNull("-infinity")
+            }
+
+            testExceptOn(TestPlatform.Native) {
+                assertProduces("123e2147483647", Float.POSITIVE_INFINITY)
+                assertProduces("-123e2147483647", Float.NEGATIVE_INFINITY)
+
+                assertProduces("123e20000000000", Float.POSITIVE_INFINITY)
+                assertProduces("-123e20000000000", Float.NEGATIVE_INFINITY)
+
+                assertProduces("123e30000000000", Float.POSITIVE_INFINITY)
+                assertProduces("-123e30000000000", Float.NEGATIVE_INFINITY)
+            }
+
+            assertProduces("123e-2147483647", 0.0f)
+            assertProduces("-123e-2147483647", -0.0f)
+
+            assertProduces("123e-20000000000", 0.0f)
+            assertProduces("-123e-20000000000", -0.0f)
+
+            assertProduces("123e-30000000000", 0.0f)
+            assertProduces("-123e-30000000000", -0.0f)
+
+            assertProduces("0e9999999999999", 0.0f)
+            assertProduces("-0e9999999999999", -0.0f)
+
+            assertFailsOrNull(".")
+
+            // Test invalid hex notations
+            // 1. No integer nor fractional part
+            assertFailsOrNull("0x.")
+            assertFailsOrNull("0x.p")
+            assertFailsOrNull("0x.p1")
+            // 2. Missing exponent
+            // TODO: run on all platforms after fixing KT-72509
+            testExceptOn(TestPlatform.Js) {
+                assertFailsOrNull("0x11ff33")
+                assertFailsOrNull("0x1f")
+                assertFailsOrNull("0x2D")
+            }
+            assertFailsOrNull("0x.11ff33")
+            // 3. Invalid exponent
+            assertFailsOrNull("0x11ff33.22ee44")
+            assertFailsOrNull("0x11ff33P")
+            assertFailsOrNull("0x.11ff33p")
+            assertFailsOrNull("0x11ff33.22ee44P")
+
+            testOnNativeAndJvm {
+                // Valid hex numbers
+                // 1. No fractional part
+                assertProduces("0x11ff33p2", 4_717_772.0f)
+                assertProduces("0x11ff33P2", 4_717_772.0f)
+                assertProduces("0x11ff33.P2", 4_717_772.0f)
+                // 2. No integer part
+                assertProduces("0x.11ff33P2", 0.28120112f)
+                // 3. Both integer and fractional parts
+                assertProduces("0x11.ff33P2", 71.98749f)
+                // 4. Negative exponent
+                assertProduces("0x11.ff33p-2", 4.499218f)
+                // 5. Negative mantissa
+                assertProduces("-0x11.ff33p-2", -4.499218f)
+            }
+
+            // Invalid exponent notations
+            assertFailsOrNull("123z4")
+            assertFailsOrNull("123e4t")
+            assertFailsOrNull(".123z4")
+            assertFailsOrNull(".123e4t")
+            assertFailsOrNull("2.123z4")
+            assertFailsOrNull("2.123e4t")
+
+            testOnNativeAndJvm {
+                // Valid float suffix
+                assertProduces("1f", 1.0f)
+                assertProduces("1.5f", 1.5f)
+                assertProduces("1234f", 1234.0f)
+                assertProduces("123e4f", 1230_000.0f)
+                assertProduces("1F", 1.0f)
+                assertProduces("1.5F", 1.5f)
+                assertProduces("1234F", 1234.0f)
+                assertProduces("123e4F", 1230_000.0f)
+                assertProduces("0x34.0P0F", 52f)
+                assertProduces("0x34.P0f", 52f)
+                assertProduces("0x.340P6F", 13f)
+
+                // Valid double suffix
+                assertProduces("1d", 1.0f)
+                assertProduces("1.5d", 1.5f)
+                assertProduces("1234d", 1234.0f)
+                assertProduces("123e4d", 1230_000.0f)
+                assertProduces("1D", 1.0f)
+                assertProduces("1.5D", 1.5f)
+                assertProduces("1234D", 1234.0f)
+                assertProduces("123e4D", 1230_000.0f)
+                assertProduces("0x34.0P0D", 52f)
+                assertProduces("0x34.P0d", 52f)
+                assertProduces("0x.340P6D", 13f)
+
+                // Invalid hexadecimal exponent
+                assertFailsOrNull("0x23P+")
+                assertFailsOrNull("0x23p-")
+            }
+
+            // Invalid float suffix
+            assertFailsOrNull("1g")
+            assertFailsOrNull("1.5g")
+            assertFailsOrNull("1234g")
+            assertFailsOrNull("123e4g")
+
+            // Test exponent signs
+            assertProduces("1e+1", 10.0f)
+            assertProduces("1e-1", 0.1f)
+
+            // Invalid exponents
+            assertFailsOrNull("1ez1")
+            assertFailsOrNull("1e+z1")
+            assertFailsOrNull("1e-z1")
+
+            testOnNativeAndJvm {
+                // Test special whitespace characters as trailing or leading characters
+                for (i in 0..0x20) {
+                    assertProduces("${i.toChar()}77", 77.0f)
+                    assertProduces("77${i.toChar()}", 77.0f)
+                }
+            }
         }
     }
 
@@ -213,17 +524,16 @@ class StringNumberConversionTest {
             assertFailsOrNull("   ")
         }
 
-        @Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
         compareConversionWithRadix(String::toUInt, String::toUIntOrNull) {
             assertProduces(10, "0", 0u)
             assertProduces(10, "473", 473u)
             assertProduces(10, "+42", 42u)
             assertProduces(10, "2147483647", 2147483647u)
 
-            assertProduces(16, "FF", 255)
+            assertProduces(16, "FF", 255u)
             assertProduces(16, "ffFFff01", 0u - 255u)
-            assertProduces(2, "1100110", 102)
-            assertProduces(27, "Kona", 411787)
+            assertProduces(2, "1100110", 102u)
+            assertProduces(27, "Kona", 411787u)
 
             assertFailsOrNull(10, "-0")
             assertFailsOrNull(10, "42949672940")
@@ -309,7 +619,50 @@ class StringNumberConversionTest {
     @Test fun longToStringWithRadix() {
         assertEquals("7f11223344556677", 0x7F11223344556677.toString(radix = 16))
         assertEquals("hazelnut", 1356099454469L.toString(radix = 36))
-        assertEquals("-8000000000000000", Long.MIN_VALUE.toString(radix = 16))
+
+        val values = listOf(Int.MAX_VALUE.toLong(), Int.MIN_VALUE.toLong(), Int.MAX_VALUE + 2L, Long.MAX_VALUE, Long.MIN_VALUE)
+        val expected = listOf(
+            2 to listOf("1111111111111111111111111111111", "-10000000000000000000000000000000", "10000000000000000000000000000001", "111111111111111111111111111111111111111111111111111111111111111", "-1000000000000000000000000000000000000000000000000000000000000000"),
+            3 to listOf("12112122212110202101", "-12112122212110202102", "12112122212110202110", "2021110011022210012102010021220101220221", "-2021110011022210012102010021220101220222"),
+            4 to listOf("1333333333333333", "-2000000000000000", "2000000000000001", "13333333333333333333333333333333", "-20000000000000000000000000000000"),
+            5 to listOf("13344223434042", "-13344223434043", "13344223434044", "1104332401304422434310311212", "-1104332401304422434310311213"),
+            6 to listOf("553032005531", "-553032005532", "553032005533", "1540241003031030222122211", "-1540241003031030222122212"),
+            7 to listOf("104134211161", "-104134211162", "104134211163", "22341010611245052052300", "-22341010611245052052301"),
+            8 to listOf("17777777777", "-20000000000", "20000000001", "777777777777777777777", "-1000000000000000000000"),
+            9 to listOf("5478773671", "-5478773672", "5478773673", "67404283172107811827", "-67404283172107811828"),
+            10 to listOf("2147483647", "-2147483648", "2147483649", "9223372036854775807", "-9223372036854775808"),
+            11 to listOf("a02220281", "-a02220282", "a02220283", "1728002635214590697", "-1728002635214590698"),
+            12 to listOf("4bb2308a7", "-4bb2308a8", "4bb2308a9", "41a792678515120367", "-41a792678515120368"),
+            13 to listOf("282ba4aaa", "-282ba4aab", "282ba4aac", "10b269549075433c37", "-10b269549075433c38"),
+            14 to listOf("1652ca931", "-1652ca932", "1652ca933", "4340724c6c71dc7a7", "-4340724c6c71dc7a8"),
+            15 to listOf("c87e66b7", "-c87e66b8", "c87e66b9", "160e2ad3246366807", "-160e2ad3246366808"),
+            16 to listOf("7fffffff", "-80000000", "80000001", "7fffffffffffffff", "-8000000000000000"),
+            17 to listOf("53g7f548", "-53g7f549", "53g7f54a", "33d3d8307b214008", "-33d3d8307b214009"),
+            18 to listOf("3928g3h1", "-3928g3h2", "3928g3h3", "16agh595df825fa7", "-16agh595df825fa8"),
+            19 to listOf("27c57h32", "-27c57h33", "27c57h34", "ba643dci0ffeehh", "-ba643dci0ffeehi"),
+            20 to listOf("1db1f927", "-1db1f928", "1db1f929", "5cbfjia3fh26ja7", "-5cbfjia3fh26ja8"),
+            21 to listOf("140h2d91", "-140h2d92", "140h2d93", "2heiciiie82dh97", "-2heiciiie82dh98"),
+            22 to listOf("ikf5bf1", "-ikf5bf2", "ikf5bf3", "1adaibb21dckfa7", "-1adaibb21dckfa8"),
+            23 to listOf("ebelf95", "-ebelf96", "ebelf97", "i6k448cf4192c2", "-i6k448cf4192c3"),
+            24 to listOf("b5gge57", "-b5gge58", "b5gge59", "acd772jnc9l0l7", "-acd772jnc9l0l8"),
+            25 to listOf("8jmdnkm", "-8jmdnkn", "8jmdnko", "64ie1focnn5g77", "-64ie1focnn5g78"),
+            26 to listOf("6oj8ion", "-6oj8ioo", "6oj8iop", "3igoecjbmca687", "-3igoecjbmca688"),
+            27 to listOf("5ehncka", "-5ehnckb", "5ehnckc", "27c48l5b37oaop", "-27c48l5b37oaoq"),
+            28 to listOf("4clm98f", "-4clm98g", "4clm98h", "1bk39f3ah3dmq7", "-1bk39f3ah3dmq8"),
+            29 to listOf("3hk7987", "-3hk7988", "3hk7989", "q1se8f0m04isb", "-q1se8f0m04isc"),
+            30 to listOf("2sb6cs7", "-2sb6cs8", "2sb6cs9", "hajppbc1fc207", "-hajppbc1fc208"),
+            31 to listOf("2d09uc1", "-2d09uc2", "2d09uc3", "bm03i95hia437", "-bm03i95hia438"),
+            32 to listOf("1vvvvvv", "-2000000", "2000001", "7vvvvvvvvvvvv", "-8000000000000"),
+            33 to listOf("1lsqtl1", "-1lsqtl2", "1lsqtl3", "5hg4ck9jd4u37", "-5hg4ck9jd4u38"),
+            34 to listOf("1d8xqrp", "-1d8xqrq", "1d8xqrr", "3tdtk1v8j6tpp", "-3tdtk1v8j6tpq"),
+            35 to listOf("15v22um", "-15v22un", "15v22uo", "2pijmikexrxp7", "-2pijmikexrxp8"),
+            36 to listOf("zik0zj", "-zik0zk", "zik0zl", "1y2p0ij32e8e7", "-1y2p0ij32e8e8"),
+        )
+        for ((base, expectedValues) in expected) {
+            for ((index, value) in values.withIndex()) {
+                assertEquals(expectedValues[index], value.toString(base), "$value in base $base")
+            }
+        }
 
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37L.toString(radix = 37) }
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1L.toString(radix = 1) }
@@ -366,6 +719,8 @@ class StringNumberConversionTest {
 
 internal fun doubleTotalOrderEquals(a: Double?, b: Double?): Boolean = (a as Any?) == b
 
+internal fun floatTotalOrderEquals(a: Float?, b: Float?): Boolean = (a as Any?) == b
+
 internal fun <T : Any> compareConversion(
     convertOrFail: (String) -> T,
     convertOrNull: (String) -> T?,
@@ -396,7 +751,7 @@ internal class ConversionContext<T : Any>(
     }
 
     fun assertProduces(input: String, output: T) {
-        assertEquals(output, convertOrFail(input.removeLeadingPlusOnJava6()), input, "convertOrFail")
+        assertEquals(output, convertOrFail(input), input, "convertOrFail")
         assertEquals(output, convertOrNull(input), input, "convertOrNull")
     }
 
@@ -411,7 +766,7 @@ internal class ConversionWithRadixContext<T : Any>(
     val convertOrNull: (String, Int) -> T?
 ) {
     fun assertProduces(radix: Int, input: String, output: T) {
-        assertEquals(output, convertOrFail(input.removeLeadingPlusOnJava6(), radix))
+        assertEquals(output, convertOrFail(input, radix))
         assertEquals(output, convertOrNull(input, radix))
     }
 
@@ -420,5 +775,31 @@ internal class ConversionWithRadixContext<T : Any>(
                                                { convertOrFail(input, radix) })
 
         assertNull(convertOrNull(input, radix), message = "On input \"$input\" with radix $radix")
+    }
+}
+
+class FpNumberToStringTest {
+    @Test fun doubleTest() {
+        assertEquals((0.5).toString(), "0.5")
+        assertEquals((-0.5).toString(), "-0.5")
+        testExceptOn(TestPlatform.Js) {
+            assertEquals((0.0).toString(), "0.0")
+            assertEquals((-0.0).toString(), "-0.0")
+        }
+        assertEquals(Double.NaN.toString(), "NaN")
+        assertEquals(Double.POSITIVE_INFINITY.toString(), "Infinity")
+        assertEquals(Double.NEGATIVE_INFINITY.toString(), "-Infinity")
+    }
+
+    @Test fun floatTest() {
+        assertEquals((0.5f).toString(), "0.5")
+        assertEquals((-0.5f).toString(), "-0.5")
+        testExceptOn(TestPlatform.Js) {
+            assertEquals((0.0f).toString(), "0.0")
+            assertEquals((-0.0f).toString(), "-0.0")
+        }
+        assertEquals(Float.NaN.toString(), "NaN")
+        assertEquals(Float.POSITIVE_INFINITY.toString(), "Infinity")
+        assertEquals(Float.NEGATIVE_INFINITY.toString(), "-Infinity")
     }
 }

@@ -6,15 +6,19 @@
 #ifndef RUNTIME_STACK_TRACE_H
 #define RUNTIME_STACK_TRACE_H
 
-#include "cpp_support/Span.hpp"
-#include "Memory.h"
-#include "Types.h"
+#include <algorithm>
+#include <string>
+#include <vector>
+
+#include "Common.h"
+#include "Utils.hpp"
+#include "std_support/Span.hpp"
 
 namespace kotlin {
 
 namespace internal {
 
-NO_INLINE KStdVector<void*> GetCurrentStackTrace(size_t skipFrames) noexcept;
+NO_INLINE std::vector<void*> GetCurrentStackTrace(size_t skipFrames) noexcept;
 NO_INLINE size_t GetCurrentStackTrace(size_t skipFrames, std_support::span<void*> buffer) noexcept;
 
 enum class StackTraceCapacityKind {
@@ -23,9 +27,7 @@ enum class StackTraceCapacityKind {
 
 template <StackTraceCapacityKind kind>
 constexpr size_t GetMaxStackTraceDepth() noexcept {
-#if KONAN_NO_BACKTRACE
-    return 0;
-#elif USE_GCC_UNWIND
+#if USE_GCC_UNWIND
     return std::numeric_limits<size_t>::max();
 #else
     switch (kind) {
@@ -73,18 +75,46 @@ public:
         return std_support::span<void* const>(buffer_.data(), size());
     }
 
+    bool operator==(const StackTrace& other) const noexcept {
+        return std::equal(begin(), end(), other.begin(), other.end());
+    }
+
+    bool operator!=(const StackTrace& other) const noexcept {
+        return !(*this == other);
+    }
+
     // Maximal stacktrace depth that can be collected due to implementation limitations.
     // Note that this limitation doesn't take into account the skipFrames parameter.
     // I.e. real size of a returned stacktrace will be limited by (maxDepth - skipFrames).
     static constexpr size_t maxDepth =
             std::min(internal::GetMaxStackTraceDepth<internal::StackTraceCapacityKind::kFixed>(), Capacity);
 
+    NO_INLINE static StackTrace current(size_t skipFrames, size_t depthLimit) {
+        StackTrace result;
+        auto fullTraceSize = internal::GetCurrentStackTrace(
+                skipFrames + 1, std_support::span<void*>(result.buffer_.data(), result.buffer_.size()));
+        result.size_ = std::min(fullTraceSize, depthLimit);
+        return result;
+    }
+
     NO_INLINE static StackTrace current(size_t skipFrames = 0) noexcept {
+        // Avoid delegating to current(skipFrames, depth)
+        // to have the same number of "service" frames for both overloads.
         StackTrace result;
         result.size_ = internal::GetCurrentStackTrace(
                 skipFrames + 1, std_support::span<void*>(result.buffer_.data(), result.buffer_.size()));
         return result;
     }
+
+    struct TestSupport : private Pinned {
+        static StackTrace constructFrom(std::initializer_list<void*> values) {
+            StackTrace result;
+            size_t elementsCount = std::min(values.size(), result.buffer_.size());
+            std::copy_n(values.begin(), elementsCount, result.buffer_.begin());
+            result.size_ = elementsCount;
+            return result;
+        }
+    };
 
 private:
     size_t size_;
@@ -123,23 +153,48 @@ public:
         return std_support::span<void* const>(buffer_.data(), size());
     }
 
+    bool operator==(const StackTrace& other) const noexcept {
+        return std::equal(begin(), end(), other.begin(), other.end());
+    }
+
+    bool operator!=(const StackTrace& other) const noexcept {
+        return !(*this == other);
+    }
+
     // Maximal stacktrace depth that can be collected due to implementation limitations.
     // Note that this limitation doesn't take into account the skipFrames parameter.
     // I.e. real size of a returned stacktrace will be limited by (maxDepth - skipFrames).
     static constexpr size_t maxDepth = internal::GetMaxStackTraceDepth<internal::StackTraceCapacityKind::kDynamic>();
 
-    NO_INLINE static StackTrace current(size_t skipFrames = 0) {
-        StackTrace result;
-        result.buffer_ = internal::GetCurrentStackTrace(skipFrames + 1);
-        return result;
+    NO_INLINE static StackTrace current(size_t skipFrames, size_t depthLimit) {
+        auto traceElements = internal::GetCurrentStackTrace(skipFrames + 1);
+        if (traceElements.size() > depthLimit) {
+            traceElements.resize(depthLimit);
+        }
+        return StackTrace(std::move(traceElements));
     }
 
+    NO_INLINE static StackTrace current(size_t skipFrames = 0) {
+        // Avoid delegating to current(skipFrames, depth)
+        // to have the same number of "service" frames for both overloads.
+        auto traceElements = internal::GetCurrentStackTrace(skipFrames + 1);
+        return StackTrace(std::move(traceElements));
+    }
+
+    struct TestSupport : private Pinned {
+        static StackTrace constructFrom(std::initializer_list<void*> values) {
+            std::vector<void*> traceElements(values);
+            return StackTrace(std::move(traceElements));
+        }
+    };
+
 private:
-    KStdVector<void*> buffer_;
+    explicit StackTrace(std::vector<void*>&& buffer) noexcept : buffer_(buffer) {}
+
+    std::vector<void*> buffer_;
 };
 
-
-KStdVector<KStdString> GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept;
+std::vector<std::string> GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept;
 
 // It's not always safe to extract SourceInfo during unhandled exception termination.
 void DisallowSourceInfo();
@@ -147,5 +202,17 @@ void DisallowSourceInfo();
 void PrintStackTraceStderr();
 
 } // namespace kotlin
+
+template <size_t Capacity>
+struct std::hash<kotlin::StackTrace<Capacity>> {
+    size_t operator()(kotlin::StackTrace<Capacity> value) const {
+        size_t result = 0;
+        std::hash<void*> hasher;
+        for (void* p : value) {
+            result += kotlin::CombineHash(result, hasher(p));
+        }
+        return result;
+    }
+};
 
 #endif // RUNTIME_STACK_TRACE_H

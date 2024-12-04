@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
@@ -146,8 +148,10 @@ fun <T : Any> mapType(
         }
 
         descriptor is TypeParameterDescriptor -> {
+            val upperBound = descriptor.representativeUpperBound
             val type = mapType(
-                descriptor.representativeUpperBound, factory, mode, typeMappingConfiguration,
+                if (kotlinType.isMarkedNullable) upperBound.makeNullable() else upperBound,
+                factory, mode, typeMappingConfiguration,
                 writeGenericType = DO_NOTHING_3, descriptorTypeWriter = null
             )
             descriptorTypeWriter?.writeTypeVariable(descriptor.getName(), type)

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A(val w: Int) {
     val x: Int
     val useUnitialized = <!UNINITIALIZED_VARIABLE!>x<!> +

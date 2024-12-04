@@ -9,6 +9,7 @@
             </classpath>
             <withKotlin>
                 <compilerarg value="-Xallow-kotlin-package"/>
+                <compilerarg line="-Xuse-fir-lt=false"/>
             </withKotlin>
         </javac>
         <jar destfile="${temp}/literals.jar">

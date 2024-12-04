@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
 
+
 class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
     fun `test simple class`() {
@@ -94,6 +95,73 @@ class HierarchicalClassCommonizationTest : AbstractInlineSourcesCommonizationTes
                     val abcd: Int
                } 
                 """
+        )
+    }
+
+    fun `test annotations on class and interface`() {
+        val result = commonize {
+            outputTarget("(a, b)", "(a, b, c)")
+            registerDependency("a", "b", "c", "(a, b)", "(a, b, c)") {
+                source(
+                    """
+                    annotation class A1
+                    annotation class A2
+                    annotation class A3
+                """.trimIndent()
+                )
+            }
+
+            simpleSingleSourceTarget(
+                "a", """
+                @A1 @A2 @A3
+                class MyClass
+                    
+                @A1 @A2 @A3
+                interface MyInterface
+                """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "b", """
+                @A1 @A2
+                class MyClass
+                
+                @A1 @A2
+                interface MyInterface
+
+            """.trimIndent()
+            )
+
+            simpleSingleSourceTarget(
+                "c", """
+                @A1
+                class MyClass
+                
+                @A1 
+                interface MyInterface
+            """.trimIndent()
+            )
+        }
+
+        result.assertCommonized(
+            "(a, b)", """
+                @A1 @A2
+                expect class MyClass()
+                
+                @A1 @A2
+                expect interface MyInterface
+
+            """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "(a, b, c)", """
+                @A1
+                expect class MyClass()
+        
+                @A1
+                expect interface MyInterface
+            """.trimIndent()
         )
     }
 }

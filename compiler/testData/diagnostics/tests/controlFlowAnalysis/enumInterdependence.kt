@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class A(val v: A) {
     A1(<!UNINITIALIZED_ENUM_ENTRY!>A2<!>),
     A2(A1),

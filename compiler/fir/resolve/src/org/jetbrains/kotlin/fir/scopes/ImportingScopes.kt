@@ -6,65 +6,132 @@
 package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.firScriptResolutionConfigurators
+import org.jetbrains.kotlin.fir.importTracker
 import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.reportImportDirectives
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
+import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private val ALL_IMPORTS = scopeSessionKey<FirFile, ListStorageFirScope>()
-private val INVISIBLE_DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultStarImportingScope>()
-private val VISIBLE_DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultStarImportingScope>()
-private val DEFAULT_SIMPLE_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultSimpleImportingScope>()
+private val DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultStarImportKey, FirSingleLevelDefaultStarImportingScope>()
+private val DEFAULT_SIMPLE_IMPORT = scopeSessionKey<DefaultSimpleImportKey, FirDefaultSimpleImportingScope>()
+private val DEFAULT_SCRIPT_STAR_IMPORT = scopeSessionKey<FirFile, FirExplicitStarImportingScope>()
+private val DEFAULT_SCRIPT_SIMPLE_IMPORT = scopeSessionKey<FirFile, FirExplicitSimpleImportingScope>()
+
+private data class DefaultStarImportKey(val priority: DefaultImportPriority, val excludedImportNames: Set<FqName>)
+
+private data class DefaultSimpleImportKey(val priority: DefaultImportPriority, val excludedImportNames: Set<FqName>)
 
 fun createImportingScopes(
     file: FirFile,
     session: FirSession,
     scopeSession: ScopeSession,
-    useCaching: Boolean = true
+    useCaching: Boolean = true,
 ): List<FirScope> = if (useCaching) {
     scopeSession.getOrBuild(file, ALL_IMPORTS) {
-        ListStorageFirScope(doCreateImportingScopes(file, session, scopeSession))
+        ListStorageFirScope(computeImportingScopes(file, session, scopeSession))
     }.result
 } else {
-    doCreateImportingScopes(file, session, scopeSession)
+    computeImportingScopes(file, session, scopeSession)
 }
 
-private fun doCreateImportingScopes(
+internal fun computeImportingScopes(
     file: FirFile,
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
+    includeDefaultImports: Boolean = true,
+    includePackageImport: Boolean = true
 ): List<FirScope> {
-    return listOf(
-        // from low priority to high priority
-        scopeSession.getOrBuild(DefaultImportPriority.LOW, INVISIBLE_DEFAULT_STAR_IMPORT) {
-            FirDefaultStarImportingScope(session, scopeSession, FirImportingScopeFilter.INVISIBLE_CLASSES, DefaultImportPriority.LOW)
-        },
-        scopeSession.getOrBuild(DefaultImportPriority.HIGH, INVISIBLE_DEFAULT_STAR_IMPORT) {
-            FirDefaultStarImportingScope(session, scopeSession, FirImportingScopeFilter.INVISIBLE_CLASSES, DefaultImportPriority.HIGH)
-        },
-        FirExplicitStarImportingScope(file.imports, session, scopeSession, FirImportingScopeFilter.INVISIBLE_CLASSES),
-        // TODO: invisible classes from current package should go before this point
-        scopeSession.getOrBuild(DefaultImportPriority.LOW, VISIBLE_DEFAULT_STAR_IMPORT) {
-            FirDefaultStarImportingScope(session, scopeSession, FirImportingScopeFilter.MEMBERS_AND_VISIBLE_CLASSES, DefaultImportPriority.LOW)
-        },
-        scopeSession.getOrBuild(DefaultImportPriority.HIGH, VISIBLE_DEFAULT_STAR_IMPORT) {
-            FirDefaultStarImportingScope(session, scopeSession, FirImportingScopeFilter.MEMBERS_AND_VISIBLE_CLASSES, DefaultImportPriority.HIGH)
-        },
-        FirExplicitStarImportingScope(file.imports, session, scopeSession, FirImportingScopeFilter.MEMBERS_AND_VISIBLE_CLASSES),
+    file.lazyResolveToPhase(FirResolvePhase.IMPORTS)
+    val excludedImportNames =
+        file.imports.filter { it.aliasName != null }.mapNotNullTo(hashSetOf()) { it.importedFqName }.ifEmpty { emptySet() }
 
-        scopeSession.getOrBuild(DefaultImportPriority.LOW, DEFAULT_SIMPLE_IMPORT) {
-            FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW)
-        },
-        scopeSession.getOrBuild(DefaultImportPriority.HIGH, DEFAULT_SIMPLE_IMPORT) {
-            FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH)
-        },
-        scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {
-            FirPackageMemberScope(file.packageFqName, session)
-        },
+    val excludedNamesInPackage =
+        excludedImportNames.mapNotNullTo(mutableSetOf()) {
+            if (it.parent() == file.packageFqName) it.shortName() else null
+        }
+
+    session.importTracker?.let { tracker ->
+        file.imports.map { import ->
+            tracker.reportImportDirectives(file.sourceFile?.path, import.importedFqName?.asString())
+        }
+    }
+
+    val script = file.declarations.firstOrNull() as? FirScript
+    val scriptDefaultImports by lazy(LazyThreadSafetyMode.NONE) {
+        script?.let {
+            val importResolveTransformer = FirImportResolveTransformer(session)
+            session.extensionService.firScriptResolutionConfigurators.flatMap {
+                it.getScriptDefaultImports(script).map { firImport ->
+                    (importResolveTransformer.transformImport(firImport, null) as? FirResolvedImport) ?: firImport
+                }
+            }
+        }?.partition { it.isAllUnder }
+    }
+
+    return buildList {
+        if (includeDefaultImports) {
+            this += FirDefaultStarImportingScope(
+                scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.HIGH, excludedImportNames), DEFAULT_STAR_IMPORT) {
+                    FirSingleLevelDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.HIGH, excludedImportNames)
+                },
+                scopeSession.getOrBuild(DefaultStarImportKey(DefaultImportPriority.LOW, excludedImportNames), DEFAULT_STAR_IMPORT) {
+                    FirSingleLevelDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.LOW, excludedImportNames)
+                },
+            )
+            if (script != null) {
+                this += scopeSession.getOrBuild(file, DEFAULT_SCRIPT_STAR_IMPORT) {
+                    FirExplicitStarImportingScope(scriptDefaultImports?.first.orEmpty(), session, scopeSession, excludedImportNames)
+                }
+            }
+        }
+
+        this += FirExplicitStarImportingScope(file.imports, session, scopeSession, excludedImportNames)
+
+        if (includeDefaultImports) {
+            this += scopeSession.getOrBuild(DefaultSimpleImportKey(DefaultImportPriority.LOW, excludedImportNames), DEFAULT_SIMPLE_IMPORT) {
+                FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW, excludedImportNames)
+            }
+            this += scopeSession.getOrBuild(DefaultSimpleImportKey(DefaultImportPriority.HIGH, excludedImportNames), DEFAULT_SIMPLE_IMPORT) {
+                FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH, excludedImportNames)
+            }
+            if (script != null) {
+                this += scopeSession.getOrBuild(file, DEFAULT_SCRIPT_SIMPLE_IMPORT) {
+                    FirExplicitSimpleImportingScope(scriptDefaultImports?.second.orEmpty(), session, scopeSession)
+                }
+            }
+        }
+
+        if (includePackageImport) {
+            this += when {
+                excludedNamesInPackage.isEmpty() ->
+                    // Supposed to be the most common branch, so we cache it
+                    scopeSession.getOrBuild(file.packageFqName to session, PACKAGE_MEMBER) {
+                        FirPackageMemberScope(file.packageFqName, session, excludedNames = emptySet())
+                    }
+                else ->
+                    FirPackageMemberScope(file.packageFqName, session, excludedNames = excludedNamesInPackage)
+            }
+        }
         // TODO: explicit simple importing scope should have highest priority (higher than inner scopes added in process)
-        FirExplicitSimpleImportingScope(file.imports, session, scopeSession)
-    )
+        this += FirExplicitSimpleImportingScope(file.imports, session, scopeSession)
+    }
 }
 
-private class ListStorageFirScope(val result: List<FirScope>) : FirScope()
+private class ListStorageFirScope(val result: List<FirScope>) : FirScope() {
+    /*
+     * such a scope should not be accessible from call-sites
+     */
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirScope? {
+        shouldNotBeCalled()
+    }
+}

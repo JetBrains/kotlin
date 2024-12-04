@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1300
 // MODULE: libA
 // FILE: libA.kt
 inline fun foo() = (object : II {}).ok()
@@ -16,6 +15,9 @@ inline fun bar() = foo()
 
 // MODULE: main(libB)
 // FILE: main.kt
+
+// CHECK_BREAKS_COUNT: function=box count=0
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0
 fun box() = bar()
 
 

@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /XAlign { // /XAlign|null[0]
+    final val bits // /XAlign.bits|{}bits[0]
+        final fun <get-bits>(): kotlin/Long // /XAlign.bits.<get-bits>|<get-bits>(){}[0]
+    constructor <init>() // /XAlign.<init>|<init>(){}[0]
+    constructor <init>(kotlin/Long) // /XAlign.<init>|<init>(kotlin.Long){}[0]
+}

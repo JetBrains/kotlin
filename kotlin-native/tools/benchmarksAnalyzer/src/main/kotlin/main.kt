@@ -4,9 +4,7 @@
  */
 
 import kotlinx.cli.*
-import org.jetbrains.analyzer.sendGetRequest
-import org.jetbrains.analyzer.readFile
-import org.jetbrains.analyzer.SummaryBenchmarksReport
+import org.jetbrains.analyzer.*
 import org.jetbrains.renders.*
 import org.jetbrains.report.*
 import org.jetbrains.report.json.*
@@ -22,9 +20,12 @@ abstract class Connector {
 
 object ArtifactoryConnector : Connector() {
     override val connectorPrefix = "artifactory:"
-    val artifactoryUrl = "https://repo.labs.intellij.net/kotlin-native-benchmarks"
+    lateinit var artifactoryUrl : String
 
     override fun getFileContent(fileLocation: String, user: String?): String {
+        if (!this::artifactoryUrl.isInitialized) {
+            throw IllegalStateException("--arifactory-url option is required to use artifactory-hosted results")
+        }
         val fileParametersSize = 3
         val fileDescription = fileLocation.substringAfter(connectorPrefix)
         val fileParameters = fileDescription.split(':', limit = fileParametersSize)
@@ -47,9 +48,12 @@ object ArtifactoryConnector : Connector() {
 
 object TeamCityConnector : Connector() {
     override val connectorPrefix = "teamcity:"
-    val teamCityUrl = "http://buildserver.labs.intellij.net"
+    lateinit var teamCityUrl : String
 
     override fun getFileContent(fileLocation: String, user: String?): String {
+        if (!this::teamCityUrl.isInitialized) {
+            throw IllegalStateException("--teamcity-url option is required to use artifactory-hosted results")
+        }
         val fileDescription = fileLocation.substringAfter(connectorPrefix)
         val buildLocator = fileDescription.substringBeforeLast(':')
         val fileName = fileDescription.substringAfterLast(':')
@@ -67,9 +71,12 @@ object TeamCityConnector : Connector() {
 
 object DBServerConnector : Connector() {
     override val connectorPrefix = ""
-    val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg"
+    lateinit var serverUrl: String
 
     override fun getFileContent(fileLocation: String, user: String?): String {
+        if (!this::serverUrl.isInitialized) {
+            throw IllegalStateException("--server-url option is required")
+        }
         val buildNumber = fileLocation.substringBefore(':')
         val target = fileLocation.substringAfter(':')
         if (target == buildNumber) {
@@ -171,13 +178,27 @@ fun main(args: Array<String>) {
     val flatReport by argParser.option(ArgType.Boolean, "flat", "f", "Generate fflat report without splitting into stable and unstable becnhmarks")
             .default(false)
 
-    argParser.parse(args)
-    // Get unstable benchmarks.
-    val unstableBenchmarks = if (!flatReport) DBServerConnector.getUnstableBenchmarks() else null
+    val serverUrlArg by argParser.option(ArgType.String, "server-url", description = "Url of performance server")
+    val teamCityUrl by argParser.option(ArgType.String, "teamcity-url", description = "Url of teamcity server")
+    val artifactoryUrl by argParser.option(ArgType.String, "artifactory-url", description = "Url of artifactory server")
 
-    unstableBenchmarks ?:
-        if (!flatReport)
-            println("Failed to get access to server and get unstable benchmarks list!")
+    argParser.parse(args)
+
+    val serverUrl = serverUrlArg ?: getDefaultPerformanceServerUrl()
+
+    teamCityUrl?.let { TeamCityConnector.teamCityUrl = it }
+    artifactoryUrl?.let { ArtifactoryConnector.artifactoryUrl = it }
+    serverUrl?.let { DBServerConnector.serverUrl = it }
+
+    // Get unstable benchmarks.
+    val unstableBenchmarks = if (!flatReport && serverUrl != null) {
+        DBServerConnector.getUnstableBenchmarks()
+    } else {
+        null
+    }
+
+    if (!flatReport && unstableBenchmarks == null)
+        println("Failed to get access to server and get unstable benchmarks list, use -f option to assume it's empty.")
 
     // Read contents of file.
     val mainBenchsReport = mergeReportsWithDetailedFlags(getBenchmarkReport(mainReport, user))

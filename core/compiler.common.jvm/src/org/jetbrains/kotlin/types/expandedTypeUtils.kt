@@ -21,19 +21,25 @@ private fun TypeSystemCommonBackendContext.computeExpandedTypeInner(
     val typeParameter = classifier.getTypeParameterClassifier()
 
     return when {
-        typeParameter != null ->
-            computeExpandedTypeInner(typeParameter.getRepresentativeUpperBound(), visitedClassifiers)
+        typeParameter != null -> {
+            val upperBound = typeParameter.getRepresentativeUpperBound()
+            computeExpandedTypeInner(upperBound, visitedClassifiers)
                 ?.let { expandedUpperBound ->
-                    if (expandedUpperBound.isNullableType() || !kotlinType.isMarkedNullable())
-                        expandedUpperBound
-                    else
-                        expandedUpperBound.makeNullable()
+                    val upperBoundIsPrimitiveOrInlineClass =
+                        upperBound.typeConstructor().isInlineClass() || upperBound is SimpleTypeMarker && upperBound.isPrimitiveType()
+                    when {
+                        expandedUpperBound is SimpleTypeMarker && expandedUpperBound.isPrimitiveType() &&
+                                kotlinType.isNullableType() && upperBoundIsPrimitiveOrInlineClass -> upperBound.makeNullable()
+                        expandedUpperBound.isNullableType() || !kotlinType.isMarkedNullable() -> expandedUpperBound
+                        else -> expandedUpperBound.makeNullable()
+                    }
                 }
+        }
 
         classifier.isInlineClass() -> {
             // kotlinType is the boxed inline class type
 
-            val underlyingType = kotlinType.getSubstitutedUnderlyingType() ?: return null
+            val underlyingType = kotlinType.getUnsubstitutedUnderlyingType() ?: return null
             val expandedUnderlyingType = computeExpandedTypeInner(underlyingType, visitedClassifiers) ?: return null
             when {
                 !kotlinType.isNullableType() -> expandedUnderlyingType

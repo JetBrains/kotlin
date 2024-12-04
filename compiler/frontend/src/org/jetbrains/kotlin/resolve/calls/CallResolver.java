@@ -336,7 +336,7 @@ public class CallResolver {
         else if (calleeExpression instanceof KtConstructorDelegationReferenceExpression) {
             KtConstructorDelegationCall delegationCall = (KtConstructorDelegationCall) context.call.getCallElement();
             DeclarationDescriptor container = context.scope.getOwnerDescriptor();
-            assert container instanceof ConstructorDescriptor : "Trying to resolve JetConstructorDelegationCall not in constructor. scope.ownerDescriptor = " + container;
+            assert container instanceof ConstructorDescriptor : "Trying to resolve KtConstructorDelegationCall not in constructor. scope.ownerDescriptor = " + container;
             return (OverloadResolutionResults) resolveConstructorDelegationCall(
                     context,
                     delegationCall,
@@ -357,7 +357,7 @@ public class CallResolver {
                 parameterTypes.add(NO_EXPECTED_TYPE);
             }
             expectedType = FunctionTypesKt.createFunctionType(
-                    builtIns, Annotations.Companion.getEMPTY(), null, parameterTypes, null, context.expectedType
+                    builtIns, Annotations.Companion.getEMPTY(), null, Collections.emptyList(), parameterTypes, null, context.expectedType
             );
         }
         KotlinType calleeType = expressionTypingServices.safeGetType(
@@ -382,6 +382,7 @@ public class CallResolver {
         KtReferenceExpression functionReference = expression.getConstructorReferenceExpression();
         KtTypeReference typeReference = expression.getTypeReference();
         if (functionReference == null || typeReference == null) {
+            CallResolverUtilKt.checkForConstructorCallOnFunctionalType(typeReference, context);
             return checkArgumentTypesAndFail(context); // No type there
         }
         KotlinType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);

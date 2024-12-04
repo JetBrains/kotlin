@@ -1,5 +1,4 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
 
 /*
@@ -244,7 +243,7 @@ fun case_20() {
     }
 
     if (<!SENSELESS_COMPARISON!>a.B19.C19.D19 === null<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & kotlin.Nothing")!>a.B19.C19.D19<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & kotlin.Nothing")!>a.B19.C19.D19<!>
     }
 }
 

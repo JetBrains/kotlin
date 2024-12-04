@@ -83,6 +83,7 @@ interface JavaResolverSettings {
     val correctNullabilityForNotNullTypeParameter: Boolean
     val typeEnhancementImprovementsInStrictMode: Boolean
     val ignoreNullabilityForErasedValueParameters: Boolean
+    val enhancePrimitiveArrays: Boolean
 
     object Default : JavaResolverSettings {
         override val correctNullabilityForNotNullTypeParameter: Boolean
@@ -93,18 +94,23 @@ interface JavaResolverSettings {
 
         override val ignoreNullabilityForErasedValueParameters: Boolean
             get() = false
+
+        override val enhancePrimitiveArrays: Boolean
+            get() = false
     }
 
     companion object {
         fun create(
             correctNullabilityForNotNullTypeParameter: Boolean,
             typeEnhancementImprovementsInStrictMode: Boolean,
-            ignoreNullabilityForErasedValueParameters: Boolean
+            ignoreNullabilityForErasedValueParameters: Boolean,
+            enhancePrimitiveArrays: Boolean,
         ): JavaResolverSettings =
             object : JavaResolverSettings {
                 override val correctNullabilityForNotNullTypeParameter get() = correctNullabilityForNotNullTypeParameter
                 override val typeEnhancementImprovementsInStrictMode get() = typeEnhancementImprovementsInStrictMode
                 override val ignoreNullabilityForErasedValueParameters get() = ignoreNullabilityForErasedValueParameters
+                override val enhancePrimitiveArrays get() = enhancePrimitiveArrays
             }
     }
 }

@@ -1,13 +1,14 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
 fun safeIsString(x: Any?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returns(true) implies (x is String)
-    }<!>
+    }
     return x?.let { it is String }
 }
 
@@ -28,7 +29,7 @@ fun equalsFalse(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        x.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
@@ -52,7 +53,7 @@ fun notEqualsTrue(x: Any?) {
 
 fun notEqualsFalse(x: Any?) {
     if (safeIsString(x) != false) {
-        x.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>

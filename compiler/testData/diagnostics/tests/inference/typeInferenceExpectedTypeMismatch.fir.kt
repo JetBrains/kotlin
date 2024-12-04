@@ -1,9 +1,10 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package typeInferenceExpectedTypeMismatch
 
 import java.util.*
 
 fun test() {
-    val s : Set<Int> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>newList()<!>
+    val s : Set<Int> = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!><!CANNOT_INFER_PARAMETER_TYPE!>newList<!>()<!>
     use(s)
 }
 

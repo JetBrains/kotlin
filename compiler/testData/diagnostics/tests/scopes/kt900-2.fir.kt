@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package d
 
 //import from objects before properties resolve
@@ -14,7 +15,7 @@ val y: T = Y
 fun f() {
     bar()
     R.bar()
-    <!UNRESOLVED_REFERENCE!>B<!>.foo()
+    B.foo()
 }
 
 object M {

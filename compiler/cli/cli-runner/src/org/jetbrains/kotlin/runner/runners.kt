@@ -84,30 +84,24 @@ abstract class AbstractRunner : Runner {
 
 class MainClassRunner(override val className: String) : AbstractRunner() {
     override fun createClassLoader(classpath: List<URL>): ClassLoader =
-            URLClassLoader(classpath.toTypedArray(), null)
+        URLClassLoader(classpath.toTypedArray(), getPlatformClassLoader())
 }
 
 class JarRunner(private val path: String) : AbstractRunner() {
     override val className: String =
-            try {
-                val jar = JarFile(path)
-                try {
-                    jar.manifest.mainAttributes.getValue(Attributes.Name.MAIN_CLASS)
-                }
-                finally {
-                    jar.close()
-                }
+        try {
+            JarFile(path).use { jar ->
+                jar.manifest.mainAttributes.getValue(Attributes.Name.MAIN_CLASS)
             }
-            catch (e: IOException) {
-                throw RunnerException("could not read manifest from " + path + ": " + e.message)
-            }
-            ?: throw RunnerException("no Main-Class entry found in manifest in $path")
+        } catch (e: IOException) {
+            throw RunnerException("could not read manifest from " + path + ": " + e.message)
+        } ?: throw RunnerException("no Main-Class entry found in manifest in $path")
 
     override fun createClassLoader(classpath: List<URL>): ClassLoader {
         // 'kotlin *.jar' ignores the passed classpath as 'java -jar' does
         // TODO: warn on non-empty classpath?
 
-        return URLClassLoader(arrayOf(File(path).toURI().toURL()), null)
+        return URLClassLoader(arrayOf(File(path).toURI().toURL()), getPlatformClassLoader())
     }
 }
 
@@ -176,3 +170,10 @@ class ExpressionRunner(private val code: String) : RunnerWithCompiler() {
         runCompiler(compilerClasspath, compilerArgs)
     }
 }
+
+private fun getPlatformClassLoader(): ClassLoader? =
+    try {
+        ClassLoader::class.java.getDeclaredMethod("getPlatformClassLoader")?.invoke(null) as? ClassLoader?
+    } catch (_: Exception) {
+        null
+    }

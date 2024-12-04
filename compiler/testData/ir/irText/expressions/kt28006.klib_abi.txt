@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final val /test1 // /test1|{}test1[0]
+    final fun <get-test1>(): kotlin/String // /test1.<get-test1>|<get-test1>(){}[0]
+final val /test2 // /test2|{}test2[0]
+    final fun <get-test2>(): kotlin/String // /test2.<get-test2>|<get-test2>(){}[0]
+final const val /testConst1 // /testConst1|{}testConst1[0]
+    final fun <get-testConst1>(): kotlin/String // /testConst1.<get-testConst1>|<get-testConst1>(){}[0]
+final const val /testConst2 // /testConst2|{}testConst2[0]
+    final fun <get-testConst2>(): kotlin/String // /testConst2.<get-testConst2>|<get-testConst2>(){}[0]
+final const val /testConst3 // /testConst3|{}testConst3[0]
+    final fun <get-testConst3>(): kotlin/String // /testConst3.<get-testConst3>|<get-testConst3>(){}[0]
+final const val /testConst4 // /testConst4|{}testConst4[0]
+    final fun <get-testConst4>(): kotlin/String // /testConst4.<get-testConst4>|<get-testConst4>(){}[0]
+final fun /test1(kotlin/Int): kotlin/String // /test1|test1(kotlin.Int){}[0]
+final fun /test2(kotlin/Int): kotlin/String // /test2|test2(kotlin.Int){}[0]
+final fun /test3(kotlin/Int): kotlin/String // /test3|test3(kotlin.Int){}[0]

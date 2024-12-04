@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class My {
 
     val x = <!DEBUG_INFO_LEAKING_THIS!>foo<!>()

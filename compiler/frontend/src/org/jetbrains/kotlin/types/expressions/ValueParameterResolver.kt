@@ -50,7 +50,7 @@ class ValueParameterResolver(
         inferenceSession: InferenceSession?
     ) {
         val scopeForDefaultValue =
-            LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, LexicalScopeKind.DEFAULT_VALUE)
+            LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, listOf(), LexicalScopeKind.DEFAULT_VALUE)
 
         val contextForDefaultValue = ExpressionTypingContext.newContext(
             trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE,
@@ -75,7 +75,6 @@ class ValueParameterResolver(
         NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(
             type,
             defaultValue,
-            context.languageVersionSettings,
             context.trace,
             constantExpressionEvaluator.module
         )

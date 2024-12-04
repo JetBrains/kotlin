@@ -17,32 +17,36 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class IrLazyProperty(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    startOffset: Int,
+    endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrPropertySymbol,
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor,
-    override val name: Name,
+    override var name: Name,
     override var visibility: DescriptorVisibility,
-    override val modality: Modality,
-    override val isVar: Boolean,
-    override val isConst: Boolean,
-    override val isLateinit: Boolean,
-    override val isDelegated: Boolean,
-    override val isExternal: Boolean,
-    override val isExpect: Boolean,
-    override val isFakeOverride: Boolean,
+    override var modality: Modality,
+    override var isVar: Boolean,
+    override var isConst: Boolean,
+    override var isLateinit: Boolean,
+    override var isDelegated: Boolean,
+    override var isExternal: Boolean,
+    override var isExpect: Boolean,
+    override var isFakeOverride: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrProperty(), IrLazyDeclarationBase {
+    override var startOffset: Int = startOffset
+        set(_) = shouldNotBeCalled()
+    override var endOffset: Int = endOffset
+        set(_) = shouldNotBeCalled()
+
     init {
         symbol.bind(this)
     }
-
-    override var parent: IrDeclarationParent by createLazyParent()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
@@ -88,4 +92,8 @@ class IrLazyProperty(
     override var attributeOwnerId: IrAttributeContainer
         get() = this
         set(_) = error("We should never need to change attributeOwnerId of external declarations.")
+
+    override var originalBeforeInline: IrAttributeContainer?
+        get() = this
+        set(_) = error("We should never need to change originalBeforeInline of external declarations.")
 }

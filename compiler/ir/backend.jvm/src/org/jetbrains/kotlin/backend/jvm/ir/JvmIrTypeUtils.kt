@@ -1,31 +1,28 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.codegen.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrScript
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.isLocal
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
 
 /**
  * Perform as much type erasure as is significant for JVM signature generation.
@@ -40,33 +37,40 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  * `T : Comparable<T>` is replaced by `Comparable<*>`.
  */
 fun IrType.eraseTypeParameters(): IrType = when (this) {
-    is IrErrorType -> this
     is IrSimpleType ->
         when (val owner = classifier.owner) {
             is IrScript -> {
                 assert(arguments.isEmpty()) { "Script can't be generic: " + owner.render() }
-                IrSimpleTypeImpl(classifier, hasQuestionMark, emptyList(), annotations)
+                IrSimpleTypeImpl(classifier, nullability, emptyList(), annotations)
             }
-            is IrClass -> IrSimpleTypeImpl(classifier, hasQuestionMark, arguments.map { it.eraseTypeParameters() }, annotations)
-            is IrTypeParameter -> {
-                val upperBound = owner.erasedUpperBound
-                IrSimpleTypeImpl(
-                    upperBound.symbol,
-                    isNullable(),
-                    // Should not affect JVM signature, but may result in an invalid type object
-                    List(upperBound.typeParameters.size) { IrStarProjectionImpl },
-                    owner.annotations
-                )
-            }
+            is IrClass -> IrSimpleTypeImpl(classifier, nullability, arguments.map { it.eraseTypeParameters() }, annotations)
+            is IrTypeParameter -> owner.erasedType(isNullable())
             else -> error("Unknown IrSimpleType classifier kind: $owner")
         }
+    is IrErrorType ->
+        this
     else -> error("Unknown IrType kind: $this")
+}
+
+fun IrType.eraseIfTypeParameter(): IrType {
+    val typeParameter = (this as? IrSimpleType)?.classifier?.owner as? IrTypeParameter ?: return this
+    return typeParameter.erasedType(isNullable())
+}
+
+private fun IrTypeParameter.erasedType(isNullable: Boolean): IrType {
+    val upperBound = erasedUpperBound
+    return IrSimpleTypeImpl(
+        upperBound.symbol,
+        isNullable,
+        // Should not affect JVM signature, but may result in an invalid type object
+        List(upperBound.typeParameters.size) { IrStarProjectionImpl },
+        annotations
+    )
 }
 
 private fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
     is IrStarProjection -> this
     is IrTypeProjection -> makeTypeProjection(type.eraseTypeParameters(), variance)
-    else -> error("Unknown IrTypeArgument kind: $this")
 }
 
 /**
@@ -87,10 +91,14 @@ val IrTypeParameter.erasedUpperBound: IrClass
     }
 
 val IrType.erasedUpperBound: IrClass
-    get() = when (val classifier = classifierOrNull) {
-        is IrClassSymbol -> classifier.owner
-        is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
-        is IrScriptSymbol -> classifier.owner.targetClass!!.owner
+    get() = when (this) {
+        is IrSimpleType -> when (val classifier = classifier.owner) {
+            is IrClass -> classifier
+            is IrTypeParameter -> classifier.erasedUpperBound
+            is IrScript -> classifier.targetClass?.owner ?: error(render())
+            else -> error(render())
+        }
+        is IrErrorType -> symbol.owner
         else -> error(render())
     }
 
@@ -107,7 +115,7 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
         return classifier.owner.representativeUpperBound.defaultValue(startOffset, endOffset, context)
     }
 
-    if (this !is IrSimpleType || hasQuestionMark || classOrNull?.owner?.isInline != true)
+    if (this !is IrSimpleType || this.isMarkedNullable() || classOrNull?.owner?.isSingleFieldValueClass != true)
         return IrConstImpl.defaultValueForType(startOffset, endOffset, this)
 
     val underlyingType = unboxInlineClass()
@@ -119,10 +127,20 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
     }
 }
 
-fun IrType.isInlineClassType(): Boolean =
-    erasedUpperBound.isInline
+fun IrType.isInlineClassType(): Boolean {
+    // Workaround for KT-69856
+    return if (this is IrSimpleType && classifier.owner is IrScript) {
+        false
+    } else {
+        erasedUpperBound.isSingleFieldValueClass
+    }
+}
 
-val IrType.upperBound: IrType
+fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiFieldValueClass
+
+fun IrType.isValueClassType(): Boolean = erasedUpperBound.isValue
+
+val IrType.upperBound: IrSimpleType
     get() = erasedUpperBound.symbol.starProjectedType
 
 fun IrType.eraseToScope(scopeOwner: IrTypeParametersContainer): IrType =
@@ -133,21 +151,20 @@ fun IrType.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrType {
     return when (classifier) {
         is IrClassSymbol ->
             IrSimpleTypeImpl(
-                classifier, hasQuestionMark, arguments.map { it.eraseToScope(visibleTypeParameters) }, annotations
+                classifier, nullability, arguments.map { it.eraseToScope(visibleTypeParameters) }, annotations
             )
         is IrTypeParameterSymbol ->
             if (classifier.owner in visibleTypeParameters)
                 this
             else
-                upperBound.withHasQuestionMark(this.hasQuestionMark)
-        else -> error("unknown IrType classifier kind: ${classifier.owner.render()}")
+                upperBound.mergeNullability(this)
+        is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
     }
 }
 
 private fun IrTypeArgument.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrTypeArgument = when (this) {
     is IrStarProjection -> this
     is IrTypeProjection -> makeTypeProjection(type.eraseToScope(visibleTypeParameters), variance)
-    else -> error("unknown type projection kind: ${render()}")
 }
 
 fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrTypeParameter> =
@@ -159,4 +176,14 @@ fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrT
         .toSet()
 
 val IrType.isReifiedTypeParameter: Boolean
-    get() = classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
+    get() = (classifierOrNull as? IrTypeParameterSymbol)?.owner?.isReified == true
+
+val IrTypeParameter.representativeUpperBound: IrType
+    get() {
+        assert(superTypes.isNotEmpty()) { "Upper bounds should not be empty: ${render()}" }
+
+        return superTypes.firstOrNull {
+            val irClass = it.classOrNull?.owner ?: return@firstOrNull false
+            irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
+        } ?: superTypes.first()
+    }

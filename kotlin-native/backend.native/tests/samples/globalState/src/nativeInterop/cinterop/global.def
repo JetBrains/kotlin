@@ -1,0 +1,11 @@
+package = sample.globalstate
+
+---
+typedef struct {
+  int x;
+  float f;
+  char* string;
+  void* kotlinObject;
+} SharedDataStruct;
+
+SharedDataStruct sharedData;

@@ -1,0 +1,4 @@
+-p
+program
+-l
+$TESTDATA_DIR$/unpackedExampleKlib

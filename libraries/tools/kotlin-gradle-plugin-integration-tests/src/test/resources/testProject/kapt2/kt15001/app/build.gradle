@@ -3,8 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace "com.example.kt15001"
+
     compileSdkVersion 23
-    buildToolsVersion "25.0.2"
+
+    kotlin {
+        jvmToolchain(8)
+    }
 
     defaultConfig {
         applicationId "com.example.kt15001"

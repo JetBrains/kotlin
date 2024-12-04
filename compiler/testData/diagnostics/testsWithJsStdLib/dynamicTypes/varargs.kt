@@ -1,4 +1,5 @@
-// !MARK_DYNAMIC_CALLS
+// FIR_IDENTICAL
+// MARK_DYNAMIC_CALLS
 
 fun test() {
     v()

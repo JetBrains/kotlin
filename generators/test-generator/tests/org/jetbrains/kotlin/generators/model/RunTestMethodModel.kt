@@ -11,7 +11,8 @@ class RunTestMethodModel(
     val targetBackend: TargetBackend,
     val testMethodName: String,
     val testRunnerMethodName: String,
-    val additionalRunnerArguments: List<String> = emptyList()
+    val additionalRunnerArguments: List<String> = emptyList(),
+    val withTransformer: Boolean = false
 ) : MethodModel {
     object Kind : MethodModel.Kind()
 

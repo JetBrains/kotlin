@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test_1(b: Boolean) {
     val x = <!NO_ELSE_IN_WHEN!>when<!> (b) {
         true -> 1

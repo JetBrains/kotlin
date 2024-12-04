@@ -1,11 +1,10 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: WASM
-// DONT_TARGET_EXACT_BACKEND: JS
 
 // (supported: JVM_IR, JS_IR(_E6))
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 
 // FILE: a.kt

@@ -1,0 +1,3 @@
+KtNameReferenceExpression(187,192): 'check'
+  KtSimpleNameReference:
+    (in dependency4.MyInterface) fun check(list: dependency2.ListAlias<dependency3.SetAlias<kotlin.String> /* = kotlin.collections.Set<kotlin.String> */> /* = kotlin.collections.List<dependency3.SetAlias<kotlin.String> /* = kotlin.collections.Set<kotlin.String> */> */)

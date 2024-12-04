@@ -6,11 +6,14 @@ plugins {
 dependencies {
     api(project(":compiler:ir.psi2ir"))
     api(project(":compiler:backend.jvm"))
-    api(project(":compiler:ir.tree.impl"))
+    api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.serialization.jvm"))
     implementation(project(":compiler:backend.jvm.lower"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    implementation(project(":compiler:backend.jvm.codegen"))
+    compileOnly(intellijCore())
 }
+
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" {

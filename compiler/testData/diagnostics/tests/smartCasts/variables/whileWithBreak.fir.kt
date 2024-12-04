@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun String.next(): String {
     return "abc"
 }
@@ -13,5 +14,5 @@ fun list(start: String) {
         e = e.next()
     }
     // e can never be null but we do not know it
-    e<!UNSAFE_CALL!>.<!>hashCode()
+    e.hashCode()
 }

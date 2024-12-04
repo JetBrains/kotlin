@@ -54,8 +54,8 @@ internal open class KProperty1Proxy(
 internal class KMutableProperty1Proxy(
     state: KPropertyState, callInterceptor: CallInterceptor
 ) : KProperty1Proxy(state, callInterceptor), KMutableProperty1<Any?, Any?> {
-    override val setter: KMutableProperty1.Setter<Any?, Any?> =
-        object : Setter(state.property.setter!!), KMutableProperty1.Setter<Any?, Any?> {
+    override val setter: KMutableProperty1.Setter<Any?, Any?>
+        get() = object : Setter(state.property.setter!!), KMutableProperty1.Setter<Any?, Any?> {
             override fun invoke(p1: Any?, p2: Any?) = call(p1, p2)
 
             override fun call(vararg args: Any?) {

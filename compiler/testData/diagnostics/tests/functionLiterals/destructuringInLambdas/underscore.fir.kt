@@ -1,5 +1,6 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 data class A(val x: Int, val y: String)
 data class B(val u: Double, val w: Short)
 
@@ -46,11 +47,11 @@ fun bar() {
         _ checkType { _<String>() }
     }
 
-    foo { (`_`, `_`) ->
+    foo { (<!REDECLARATION!>`_`<!>, <!REDECLARATION!>`_`<!>) ->
         _ checkType { _<String>() }
     }
 
-    foo { (_: String, b) ->
+    foo { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>_: String<!>, b) ->
         <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }

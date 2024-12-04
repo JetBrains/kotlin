@@ -28,7 +28,6 @@ fun <T : CirSimpleType> T.makeNullable(): T {
             index = index,
             isMarkedNullable = true
         )
-        else -> error("Unsupported type: $this")
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -85,21 +84,25 @@ internal tailrec fun computeExpandedType(underlyingType: CirClassOrTypeAliasType
 internal inline fun CirDeclaration.unsupported(): Nothing = error("This method should never be called on ${this::class.java}, $this")
 
 internal fun CirClassOrTypeAliasType.withParentArguments(
-    parentArguments: List<CirTypeProjection>, parentIsMarkedNullable: Boolean
+    parentArguments: List<CirTypeProjection>
 ): CirClassOrTypeAliasType {
-    val newIsMarkedNullable = isMarkedNullable || parentIsMarkedNullable
-
     val newArguments = arguments.map { oldArgument ->
         if (oldArgument !is CirRegularTypeProjection) return@map oldArgument
-        if (oldArgument.type !is CirTypeParameterType) return@map oldArgument
-        parentArguments[oldArgument.type.index]
+
+        when (val type = oldArgument.type) {
+            is CirTypeParameterType -> parentArguments[type.index]
+            is CirClassOrTypeAliasType -> CirRegularTypeProjection(
+                oldArgument.projectionKind, type.withParentArguments(parentArguments)
+            )
+            else -> oldArgument
+        }
     }
 
-    return when (val newUnderlyingType = makeNullableIfNecessary(newIsMarkedNullable).withArguments(newArguments)) {
+    return when (val newType = withArguments(newArguments)) {
         this -> this
-        is CirClassType -> newUnderlyingType
-        is CirTypeAliasType -> newUnderlyingType.withUnderlyingType(
-            newUnderlyingType.underlyingType.withParentArguments(parentArguments, newIsMarkedNullable)
+        is CirClassType -> newType
+        is CirTypeAliasType -> newType.withUnderlyingType(
+            newType.underlyingType.withParentArguments(parentArguments)
         )
     }
 }

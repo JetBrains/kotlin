@@ -1,0 +1,2 @@
+expression: arr[0]
+type: kotlin.Unit

@@ -1,0 +1,28 @@
+---
+typedef float __attribute__ ((__vector_size__ (16)))   KVector4f;
+typedef int   __attribute__ ((__vector_size__ (16)))   KVector4i32;
+
+struct Complex {
+    unsigned int ui;
+    KVector4f vec4f;
+    struct Complex* next;
+    int arr[2];
+};
+
+struct Complex produceComplex() {
+    struct Complex complex = {
+            .ui = 128,
+            .vec4f = {1.0, 1.0, 1.0, 1.0},
+            .next = 0,
+            .arr = {-51, -19}
+    };
+    return complex;
+};
+
+static float sendV4F(KVector4f v) {
+	return v[0] + 2 * v[1] + 4 * v[2] + 8 * v[3];
+}
+
+static int sendV4I(KVector4i32 v) {
+	return v[0] + 2 * v[1] + 4 * v[2] + 8 * v[3];
+}

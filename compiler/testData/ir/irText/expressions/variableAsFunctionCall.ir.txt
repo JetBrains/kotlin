@@ -12,19 +12,19 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
     VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (f: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'f: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
   FUN name:test2 visibility:public modality:FINAL <> (f:@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:f index:0 type:@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (f: @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit declared in <root>'
-        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'f: @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit> declared in <root>.test2' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
           p1: CONST String type=kotlin.String value="hello"
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.String declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String origin=null
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=null
           $this: CALL 'public final fun k (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
             $receiver: CONST String type=kotlin.String value="hello"
   FUN name:test4 visibility:public modality:FINAL <> (ns:kotlin.String?) returnType:kotlin.String?
@@ -39,20 +39,20 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
               WHEN type=kotlin.Function0<kotlin.String>? origin=null
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val tmp_1: kotlin.String? [val] declared in <root>.test4' type=kotlin.String? origin=null
+                    arg0: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.test4' type=kotlin.String? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
                   then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun k (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
-                    $receiver: GET_VAR 'val tmp_1: kotlin.String? [val] declared in <root>.test4' type=kotlin.String? origin=null
+                    $receiver: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.test4' type=kotlin.String? origin=null
           WHEN type=kotlin.String? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: kotlin.Function0<kotlin.String>? [val] declared in <root>.test4' type=kotlin.Function0<kotlin.String>? origin=null
+                arg0: GET_VAR 'val tmp_0: kotlin.Function0<kotlin.String>? declared in <root>.test4' type=kotlin.Function0<kotlin.String>? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String origin=null
-                $this: GET_VAR 'val tmp_0: kotlin.Function0<kotlin.String>? [val] declared in <root>.test4' type=kotlin.Function0<kotlin.String>? origin=null
+              then: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=null
+                $this: GET_VAR 'val tmp_0: kotlin.Function0<kotlin.String>? declared in <root>.test4' type=kotlin.Function0<kotlin.String>? origin=null

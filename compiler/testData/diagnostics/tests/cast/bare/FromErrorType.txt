@@ -1,6 +1,6 @@
 package
 
-public fun foo(/*0*/ p: [ERROR : P]): kotlin.Unit
+public fun foo(/*0*/ p: [Error type: Unresolved type for P]): kotlin.Unit
 
 public final class G</*0*/ T> {
     public constructor G</*0*/ T>()

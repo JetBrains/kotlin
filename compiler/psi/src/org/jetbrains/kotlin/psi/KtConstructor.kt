@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi
@@ -22,13 +11,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
+import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
+import org.jetbrains.kotlin.psi.stubs.elements.KtConstructorElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPlaceHolderStub<T>>, KtFunction {
+abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinConstructorStub<T>>, KtFunction {
     protected constructor(node: ASTNode) : super(node)
-    protected constructor(stub: KotlinPlaceHolderStub<T>, nodeType: KtPlaceHolderStubElementType<T>) : super(stub, nodeType)
+    protected constructor(stub: KotlinConstructorStub<T>, nodeType: KtConstructorElementType<T>) : super(stub, nodeType)
 
     abstract fun getContainingClassOrObject(): KtClassOrObject
 
@@ -39,6 +28,8 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPla
     override fun getValueParameters() = valueParameterList?.parameters ?: emptyList()
 
     override fun getReceiverTypeReference() = null
+
+    override fun getContextReceivers(): List<KtContextReceiver> = emptyList()
 
     override fun getTypeReference() = null
 
@@ -51,9 +42,30 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPla
 
     override fun getEqualsToken() = null
 
-    override fun hasBlockBody() = bodyExpression != null
+    override fun hasBlockBody() = hasBody()
 
-    override fun hasBody() = bodyExpression != null
+    fun isDelegatedCallToThis(): Boolean {
+        greenStub?.let { return it.isDelegatedCallToThis() }
+        return when (this) {
+            is KtPrimaryConstructor -> false
+            is KtSecondaryConstructor -> getDelegationCallOrNull()?.isCallToThis() ?: true
+            else -> throw IllegalStateException("Unknown constructor type: $this")
+        }
+    }
+
+    fun isExplicitDelegationCall(): Boolean {
+        greenStub?.let { return it.isExplicitDelegationCall() }
+        return when (this) {
+            is KtPrimaryConstructor -> false
+            is KtSecondaryConstructor -> getDelegationCallOrNull()?.isImplicit == false
+            else -> throw IllegalStateException("Unknown constructor type: $this")
+        }
+    }
+
+    override fun hasBody(): Boolean {
+        greenStub?.let { return it.hasBody() }
+        return bodyExpression != null
+    }
 
     override fun hasDeclaredReturnType() = false
 
@@ -88,8 +100,8 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPla
 
     override fun getTextOffset(): Int {
         return getConstructorKeyword()?.textOffset
-                ?: valueParameterList?.textOffset
-                ?: super.getTextOffset()
+            ?: valueParameterList?.textOffset
+            ?: super.getTextOffset()
     }
 
     override fun getUseScope(): SearchScope {

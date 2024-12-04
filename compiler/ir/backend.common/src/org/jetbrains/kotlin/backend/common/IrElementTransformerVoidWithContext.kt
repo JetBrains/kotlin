@@ -35,6 +35,21 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
     protected open fun createScope(declaration: IrSymbolOwner): ScopeWithIr =
         ScopeWithIr(Scope(declaration.symbol), declaration)
 
+    protected fun unsafeEnterScope(declaration: IrSymbolOwner) {
+        scopeStack.push(createScope(declaration))
+    }
+
+    protected fun unsafeLeaveScope() {
+        scopeStack.pop()
+    }
+
+    protected inline fun <T> withinScope(declaration: IrSymbolOwner, fn: () -> T): T {
+        unsafeEnterScope(declaration)
+        val result = fn()
+        unsafeLeaveScope()
+        return result
+    }
+
     final override fun visitFile(declaration: IrFile): IrFile {
         scopeStack.push(createScope(declaration))
         val result = visitFileNew(declaration)

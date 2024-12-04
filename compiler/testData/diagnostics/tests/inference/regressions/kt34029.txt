@@ -1,7 +1,7 @@
 package
 
 public val foo1: MyClass.MyObject
-public val foo2: [ERROR : Type for MyClass<Boolean>.MyObject]
+public val foo2: [Error type: Not found recorded type for MyClass<Boolean>.MyObject]
 
 public open class MyClass</*0*/ T> {
     public constructor MyClass</*0*/ T>()

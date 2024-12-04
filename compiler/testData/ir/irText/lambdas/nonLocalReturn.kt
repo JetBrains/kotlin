@@ -1,5 +1,9 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
+// IGNORE_BACKEND: JS_IR
+
+// KT-61141: In testLrmFoo1 and testLrmFoo2, `print (message: kotlin.Any?)` instead of `print (message: kotlin.Int)`
+// IGNORE_BACKEND: NATIVE
 
 fun test0() {
     run {

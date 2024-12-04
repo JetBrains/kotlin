@@ -1,0 +1,39 @@
+//
+// Source
+// ------------------------------------------
+
+val a = compositionLocalOf { 123 }
+@Composable fun Foo() {
+    val b = a.current
+    print(b)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static getA()Landroidx/compose/runtime/ProvidableCompositionLocal;
+  public final static Foo(Landroidx/compose/runtime/Composer;I)V
+  static <clinit>()V
+  private final static Landroidx/compose/runtime/ProvidableCompositionLocal; a
+  final static INNERCLASS TestKt%a%1 null null
+  final static INNERCLASS TestKt%Foo%1 null null
+}
+final class TestKt%Foo%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %%changed
+  OUTERCLASS TestKt Foo (Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Foo%1 null null
+}
+final class TestKt%a%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+  <init>()V
+  public final invoke()Ljava/lang/Integer;
+  public synthetic bridge invoke()Ljava/lang/Object;
+  static <clinit>()V
+  public final static LTestKt%a%1; INSTANCE
+  OUTERCLASS TestKt null
+  final static INNERCLASS TestKt%a%1 null null
+}

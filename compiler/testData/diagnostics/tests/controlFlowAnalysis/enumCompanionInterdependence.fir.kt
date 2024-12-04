@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class B(val x: Int) {
     B1(1),
     B2(2);
@@ -9,7 +10,7 @@ enum class B(val x: Int) {
 }
 
 enum class C(val x: Int) {
-    C1(<!UNINITIALIZED_VARIABLE!>SUM<!>),
+    C1(<!UNINITIALIZED_ENUM_COMPANION!>SUM<!>),
     C2(1);
 
     companion object {
@@ -26,8 +27,8 @@ enum class Fruit(personal: Int) {
         val common = 20
     }
 
-    val score = personal + <!UNINITIALIZED_VARIABLE!>common<!>
-    val score2 = { personal + <!UNINITIALIZED_VARIABLE!>common<!> }()
+    val score = personal + <!UNINITIALIZED_ENUM_COMPANION!>common<!>
+    val score2 = { personal + common }()
 }
 
 // Another example from KT-11769

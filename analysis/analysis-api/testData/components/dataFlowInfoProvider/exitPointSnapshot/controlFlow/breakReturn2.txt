@@ -1,0 +1,21 @@
+KaDataFlowExitPointSnapshot:
+  defaultExpressionInfo = DefaultExpressionInfo:
+    expression = if (foo() == 5) {
+                return 1
+            } else if (foo() == 6) {
+                break
+            }
+    type = kotlin.Unit
+  hasEscapingJumps = true
+  hasJumps = true
+  hasMultipleJumpKinds = true
+  hasMultipleJumpTargets = true
+  jumpExpressions = [
+    return 1,
+    break
+  ]
+  returnValueType = kotlin.Int
+  valuedReturnExpressions = [
+    return 1
+  ]
+  variableReassignments = []

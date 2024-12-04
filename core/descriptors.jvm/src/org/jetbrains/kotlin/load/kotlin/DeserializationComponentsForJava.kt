@@ -27,11 +27,7 @@ import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclara
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
-import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.JavaClassesTracker
-import org.jetbrains.kotlin.load.java.JavaModuleAnnotationsProvider
-import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluator
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.SignaturePropagator
@@ -40,6 +36,7 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.typeEnhancement.JavaTypeEnhancement
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -48,7 +45,9 @@ import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.DefaultTypeAttributeTranslator
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
 // Otherwise injector generator is not smart enough to deduce, for example, which package fragment provider DeserializationComponents needs
@@ -63,7 +62,8 @@ class DeserializationComponentsForJava(
     errorReporter: ErrorReporter,
     lookupTracker: LookupTracker,
     contractDeserializer: ContractDeserializer,
-    kotlinTypeChecker: NewKotlinTypeChecker
+    kotlinTypeChecker: NewKotlinTypeChecker,
+    typeAttributeTranslators: TypeAttributeTranslators
 ) {
     val components: DeserializationComponents
 
@@ -77,7 +77,9 @@ class DeserializationComponentsForJava(
             additionalClassPartsProvider = jvmBuiltIns?.customizer ?: AdditionalClassPartsProvider.None,
             platformDependentDeclarationFilter = jvmBuiltIns?.customizer ?: PlatformDependentDeclarationFilter.NoPlatformDependent,
             extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY,
-            kotlinTypeChecker = kotlinTypeChecker, samConversionResolver = SamConversionResolverImpl(storageManager, emptyList())
+            kotlinTypeChecker = kotlinTypeChecker, samConversionResolver = SamConversionResolverImpl(storageManager, emptyList()),
+            typeAttributeTranslators = typeAttributeTranslators.translators,
+            enumEntriesDeserializationSupport = JvmEnumEntriesDeserializationSupport,
         )
     }
 
@@ -118,7 +120,7 @@ class DeserializationComponentsForJava(
             val deserializationComponentsForJava =
                 makeDeserializationComponentsForJava(
                     module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
-                    kotlinClassFinder, deserializedDescriptorResolver, errorReporter
+                    kotlinClassFinder, deserializedDescriptorResolver, errorReporter, MetadataVersion.INSTANCE
                 )
 
             deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)
@@ -179,15 +181,17 @@ fun makeDeserializationComponentsForJava(
     lazyJavaPackageFragmentProvider: LazyJavaPackageFragmentProvider,
     reflectKotlinClassFinder: KotlinClassFinder,
     deserializedDescriptorResolver: DeserializedDescriptorResolver,
-    errorReporter: ErrorReporter
+    errorReporter: ErrorReporter,
+    metadataVersion: MetadataVersion
 ): DeserializationComponentsForJava {
     val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
-    val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(
-        module, notFoundClasses, storageManager, reflectKotlinClassFinder
+    val binaryClassAnnotationAndConstantLoader = createBinaryClassAnnotationAndConstantLoader(
+        module, notFoundClasses, storageManager, reflectKotlinClassFinder, metadataVersion
     )
     return DeserializationComponentsForJava(
         storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,
         binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider, notFoundClasses,
-        errorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT, NewKotlinTypeChecker.Default
+        errorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT, NewKotlinTypeChecker.Default,
+        TypeAttributeTranslators(listOf(DefaultTypeAttributeTranslator))
     )
 }

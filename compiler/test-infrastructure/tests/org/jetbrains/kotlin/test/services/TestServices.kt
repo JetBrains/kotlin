@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.test.services
 
-import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
-import org.jetbrains.kotlin.fir.utils.NullableArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.TypeRegistry
+import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
+import org.jetbrains.kotlin.util.ArrayMapAccessor
+import org.jetbrains.kotlin.util.ComponentArrayOwner
+import org.jetbrains.kotlin.util.NullableArrayMapAccessor
+import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.reflect.KClass
 
 interface TestService
@@ -28,7 +29,7 @@ class TestServices : ComponentArrayOwner<TestService, TestService>(){
     override val typeRegistry: TypeRegistry<TestService, TestService>
         get() = Companion
 
-    companion object : TypeRegistry<TestService, TestService>() {
+    companion object : ConeTypeRegistry<TestService, TestService>() {
         inline fun <reified T : TestService> testServiceAccessor(): ArrayMapAccessor<TestService, TestService, T> {
             return generateAccessor(T::class)
         }
@@ -38,7 +39,10 @@ class TestServices : ComponentArrayOwner<TestService, TestService>(){
         }
     }
 
-    fun register(data: ServiceRegistrationData) {
+    fun register(data: ServiceRegistrationData, skipAlreadyRegistered: Boolean) {
+        if (skipAlreadyRegistered && getOrNull(data.kClass) != null) {
+            return
+        }
         registerComponent(data.kClass, data.serviceConstructor(this))
     }
 
@@ -46,8 +50,8 @@ class TestServices : ComponentArrayOwner<TestService, TestService>(){
         registerComponent(kClass, service)
     }
 
-    fun register(data: List<ServiceRegistrationData>) {
-        data.forEach { register(it) }
+    fun register(data: List<ServiceRegistrationData>, skipAlreadyRegistered: Boolean) {
+        data.forEach { register(it, skipAlreadyRegistered) }
     }
 }
 

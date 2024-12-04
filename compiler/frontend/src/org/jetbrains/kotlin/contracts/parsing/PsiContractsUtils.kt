@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.contracts.parsing
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CALLS_IN_PLACE
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 object ContractsDslNames {
@@ -91,6 +89,6 @@ fun DeclarationDescriptor.isEqualsDescriptor(): Boolean =
             this.returnType?.isBoolean() == true && this.valueParameters.singleOrNull()?.type?.isNullableAny() == true // signature matches
 
 internal fun ResolvedCall<*>.firstArgumentAsExpressionOrNull(): KtExpression? =
-    this.valueArgumentsByIndex?.firstOrNull()?.safeAs<ExpressionValueArgument>()?.valueArgument?.getArgumentExpression()
+    (this.valueArgumentsByIndex?.firstOrNull() as? ExpressionValueArgument)?.valueArgument?.getArgumentExpression()
 
 private fun DeclarationDescriptor.equalsDslDescriptor(dslName: Name): Boolean = this.name == dslName && this.isFromContractDsl()

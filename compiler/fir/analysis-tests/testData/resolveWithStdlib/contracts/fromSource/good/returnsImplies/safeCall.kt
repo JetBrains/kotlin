@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: BACKEND
+// OPT_IN: kotlin.RequiresOptIn
 import kotlin.contracts.*
 
 @OptIn(ExperimentalContracts::class)
@@ -12,9 +13,9 @@ fun test1(x: String?): Int? {
 
 @OptIn(ExperimentalContracts::class)
 fun test2(x: String?): Int? {
-    <!WRONG_IMPLIES_CONDITION!>contract {
-        returnsNotNull() implies (x is Boolean)
-    }<!>
+    contract {
+        <!WRONG_IMPLIES_CONDITION!>returnsNotNull() implies (<!USELESS_IS_CHECK!>x is Boolean<!>)<!>
+    }
 
     return x?.length
 }

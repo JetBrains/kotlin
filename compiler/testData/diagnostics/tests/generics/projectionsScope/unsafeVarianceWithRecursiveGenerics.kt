@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface UpdatableRendering<out T : UpdatableRendering<T>> {
     fun canUpdateFrom(another: @UnsafeVariance T): Boolean
 }

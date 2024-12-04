@@ -25,25 +25,6 @@ fun canInlineArgumentsInPlace(methodNode: MethodNode): Boolean {
     // When inlining arguments in-place, we instead replace corresponding variable load instructions in the inline function method body
     // with bytecode for evaluating a given argument.
     // We can do so if such transformation keeps the evaluation order intact, possibly disregarding class initialization.
-    //
-    // This is true for many simple @InlineOnly functions from Kotlin standard library.
-    // For example, bytecode for 'inline fun println(message: Any?)' is:
-    //      GETSTATIC java/lang/System.out : Ljava/io/PrintStream;
-    //      ALOAD 0
-    //      INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V
-    // Basic inlining for 'println("Hello, world!")' would produce (skipping labels and line numbers):
-    //      // evaluate arguments, storing them to local variables
-    //      LDC "Hello, world!"
-    //      ASTORE 0
-    //      GETSTATIC java/lang/System.out : Ljava/io/PrintStream;
-    //      ALOAD 0
-    //      INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V
-    // With argument "Hello, world!" inlined in-place it would be:
-    //      GETSTATIC java/lang/System.out : Ljava/io/PrintStream;
-    //      LDC "Hello, world!"
-    //      INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V
-    // Such inlining is possible because we consider it OK to reorder 'GETSTATIC java/lang/System.out : Ljava/io/PrintStream;' instruction
-    // with any argument evaluation instructions ('LDC "Hello, world!"' in this case).
 
     val tcbStartLabels = methodNode.tryCatchBlocks.mapTo(HashSet()) { it.start }
 
@@ -152,7 +133,6 @@ internal data class FieldSignature(
 
 private val whitelistedStaticFields: Set<FieldSignature> =
     hashSetOf(
-        FieldSignature("java/lang/System", "out", "Ljava/io/PrintStream;"),
         FieldSignature("kotlin/Result", "Companion", "Lkotlin/Result\$Companion;"),
         FieldSignature("kotlin/_Assertions", "ENABLED", "Z")
     )

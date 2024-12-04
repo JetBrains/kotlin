@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun interface KRunnable {
     fun invoke()

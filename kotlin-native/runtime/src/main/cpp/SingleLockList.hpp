@@ -12,40 +12,34 @@
 #include <mutex>
 #include <type_traits>
 
-#include "Alloc.h"
-#include "Mutex.hpp"
-#include "Types.h"
+#include "concurrent/Mutex.hpp"
 #include "Utils.hpp"
+#include "std_support/Memory.hpp"
 
 namespace kotlin {
 
 // TODO: Consider different locking mechanisms.
-template <typename Value, typename Mutex>
+template <typename Value, typename Mutex, typename Allocator = std::allocator<Value>>
 class SingleLockList : private Pinned {
 public:
     class Node;
 
 private:
-    class NodeDeleter {
-    public:
-        void operator()(Node* node) const { delete node; }
-    };
-
-    using NodeOwner = std::unique_ptr<Node, NodeDeleter>;
+    using NodeAllocator = typename std::allocator_traits<Allocator>::template rebind_alloc<Node>;
+    using NodeOwner = std::unique_ptr<Node, std_support::allocator_deleter<Node, NodeAllocator>>;
 
 public:
-    class Node : private Pinned, public KonanAllocatorAware {
+    // TODO: Maybe just hide `Node` altogether?
+    class Node : private Pinned {
     public:
+        template <typename... Args>
+        explicit Node(const Allocator& allocator, Args&&... args) noexcept :
+            value_(std::forward<Args>(args)...), next_(std_support::nullptr_unique<Node>(allocator)) {}
+
         Value* Get() noexcept { return &value_; }
 
     private:
         friend class SingleLockList;
-
-        template <typename... Args>
-        Node(Args&&... args) noexcept : value_(std::forward<Args>(args)...) {}
-
-        // Make sure `Node` can only be deleted by `SingleLockList` itself.
-        ~Node() = default;
 
         Value value_;
         NodeOwner next_;
@@ -54,7 +48,7 @@ public:
 
     class Iterator {
     public:
-        using difference_type = void;
+        using difference_type = std::ptrdiff_t;
         using value_type = Value;
         using pointer = Value*;
         using reference = Value&;
@@ -90,6 +84,11 @@ public:
         std::unique_lock<Mutex> guard_;
     };
 
+    SingleLockList() noexcept = default;
+
+    explicit SingleLockList(const Allocator& allocator) noexcept :
+        allocator_(allocator), root_(std_support::nullptr_unique<Node, NodeAllocator>(allocator)) {}
+
     ~SingleLockList() {
         AssertCorrectUnsafe();
         // Make sure not to blow up the stack by nested `~Node` calls.
@@ -102,12 +101,12 @@ public:
     // TODO: Consider making `Emplace` append to `last_`.
     template <typename... Args>
     Node* Emplace(Args&&... args) noexcept {
-        auto* nodePtr = new Node(std::forward<Args>(args)...);
-        NodeOwner node(nodePtr);
+        auto node = std_support::allocate_unique<Node>(allocator_, allocator_, std::forward<Args>(args)...);
+        auto* nodePtr = node.get();
         std::lock_guard<Mutex> guard(mutex_);
         AssertCorrectUnsafe();
         if (root_) {
-            root_->previous_ = node.get();
+            root_->previous_ = nodePtr;
         } else {
             last_ = nodePtr;
         }
@@ -125,7 +124,8 @@ public:
             last_ = node->previous_;
         }
         if (root_.get() == node) {
-            root_ = std::move(node->next_);
+            auto next = std::move(node->next_);
+            root_ = std::move(next);
             if (root_) {
                 root_->previous_ = nullptr;
             }
@@ -165,6 +165,7 @@ private:
         }
     }
 
+    [[no_unique_address]] NodeAllocator allocator_;
     NodeOwner root_;
     Node* last_ = nullptr;
     Mutex mutex_;

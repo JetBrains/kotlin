@@ -5,10 +5,10 @@
 package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.generators.util.methodModelLocator
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
 
 class SingleClassTestModel(
@@ -23,7 +23,8 @@ class SingleClassTestModel(
     private val testRunnerMethodName: String,
     private val additionalRunnerArguments: List<String>,
     override val annotations: List<AnnotationModel>,
-    override val tags: List<String>
+    override val tags: List<String>,
+    private val additionalMethods: Collection<MethodModel>,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -32,11 +33,17 @@ class SingleClassTestModel(
         val result: MutableList<MethodModel> = ArrayList()
         result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments))
         result.add(TestAllFilesPresentMethodModel())
+        result.addAll(additionalMethods)
         FileUtil.processFilesRecursively(rootFile) { file: File ->
             if (!file.isDirectory && filenamePattern.matcher(file.name).matches()) {
                 result.addAll(getTestMethodsFromFile(file))
             }
             true
+        }
+        if (result.any { it is TransformingTestMethodModel && it.shouldBeGenerated() }) {
+            val additionalRunner =
+                RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments, withTransformer = true)
+            result.add(additionalRunner)
         }
         result.sortedWith { o1: MethodModel, o2: MethodModel -> o1.name.compareTo(o2.name, ignoreCase = true) }
     }
@@ -45,10 +52,8 @@ class SingleClassTestModel(
         get() = emptyList()
 
     private fun getTestMethodsFromFile(file: File): Collection<MethodModel> {
-        return listOf(
-            SimpleTestMethodModel(
-                rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored, tags = emptyList()
-            )
+        return methodModelLocator(
+            rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored, tags = emptyList()
         )
     }
 

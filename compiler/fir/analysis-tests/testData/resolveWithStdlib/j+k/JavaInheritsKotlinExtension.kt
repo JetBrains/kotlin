@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Inheritor.java
 
 public class Inheritor extends Second {

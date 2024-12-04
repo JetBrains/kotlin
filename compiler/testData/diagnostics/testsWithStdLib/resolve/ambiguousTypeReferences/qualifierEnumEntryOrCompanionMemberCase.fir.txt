@@ -1,0 +1,52 @@
+FILE: Some.kt
+    package some
+
+    public final enum class Some : R|kotlin/Enum<some/Some>| {
+        private constructor(): R|some/Some| {
+            super<R|kotlin/Enum<some/Some>|>()
+        }
+
+        public final static enum entry foo: R|some/Some|
+        public final static fun values(): R|kotlin/Array<some/Some>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|some/Some| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<some/Some>|
+            public get(): R|kotlin/enums/EnumEntries<some/Some>|
+
+    }
+FILE: Some.kt
+    package some2
+
+    public final enum class Some : R|kotlin/Enum<some2/Some>| {
+        private constructor(): R|some2/Some| {
+            super<R|kotlin/Enum<some2/Some>|>()
+        }
+
+        public final static enum entry foo: R|some2/Some|
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|some2/Some.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val foo: R|kotlin/String| = String(2')
+                public get(): R|kotlin/String|
+
+        }
+
+        public final static fun values(): R|kotlin/Array<some2/Some>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|some2/Some| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<some2/Some>|
+            public get(): R|kotlin/enums/EnumEntries<some2/Some>|
+
+    }
+FILE: main.kt
+    public final fun test(): R|some2/Some| {
+        ^test Q|some2/Some|.R|some2/Some.foo|
+    }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 @BadAnnotation(<!ARGUMENT_TYPE_MISMATCH!>1<!>)

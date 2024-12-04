@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /C { // /C|null[0]
+    final val x // /C.x|{}x[0]
+        final fun <get-x>(): kotlin/IntArray // /C.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin/IntArray) // /C.<init>|<init>(kotlin.IntArray){}[0]
+}
+final fun /bar(): kotlin/Int // /bar|bar(){}[0]
+final fun /foo(): kotlin/IntArray // /foo|foo(){}[0]
+final fun /testCall() // /testCall|testCall(){}[0]
+final fun /testMember(/C) // /testMember|testMember(C){}[0]
+final fun /testVariable() // /testVariable|testVariable(){}[0]

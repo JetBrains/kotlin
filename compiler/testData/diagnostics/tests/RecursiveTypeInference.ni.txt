@@ -1,19 +1,19 @@
 package
 
 package a {
-    public val foo: [ERROR : Error function type]
-    public fun bar(): [ERROR : Error function type]
+    public val foo: [Error type: Return type for function cannot be resolved]
+    public fun bar(): [Error type: Return type for function cannot be resolved]
 }
 
 package b {
-    public fun bar(): [ERROR : Error function type]
-    public fun foo(): [ERROR : Error function type]
+    public fun bar(): [Error type: Return type for function cannot be resolved]
+    public fun foo(): [Error type: Return type for function cannot be resolved]
 }
 
 package c {
-    public fun bar(): [ERROR : Error function type]
-    public fun bazz(): [ERROR : Error function type]
-    public fun foo(): [ERROR : Error function type]
+    public fun bar(): [Error type: Return type for function cannot be resolved]
+    public fun bazz(): [Error type: Return type for function cannot be resolved]
+    public fun foo(): [Error type: Return type for function cannot be resolved]
 }
 
 package ok {

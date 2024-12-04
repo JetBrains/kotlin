@@ -1,0 +1,24 @@
+KT element: KtNameReferenceExpression
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|<local>/m|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayAccessConvention_propertyAccess.kt
+    public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
+
+        public abstract operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] k: R|K|, [ResolvedTo(CONTRACTS)] v: R|V|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] m: R|MyMap<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+         {
+            [ResolvedTo(BODY_RESOLVE)] lval <array>: R|MyMap<kotlin/String, kotlin/Int>| = R|<local>/m|
+            [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/String| = String(a)
+            R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.plus|(Int(1)))
+        }
+
+        Unit
+    }

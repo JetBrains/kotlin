@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface A {
     fun bar() {}
 
@@ -11,7 +12,7 @@ open class B {
     open fun baz() {}
 }
 
-<!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B() {
+<!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B() {
     override fun foo() {
         super.foo()
 

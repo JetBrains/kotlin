@@ -1,8 +1,10 @@
 import java.io.File
 pluginManagement {
+    apply(from = "../../../repo/scripts/cache-redirector.settings.gradle.kts")
+    apply(from = "../../../repo/scripts/kotlin-bootstrap.settings.gradle.kts")
+
     repositories {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        jcenter()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -13,8 +15,9 @@ buildscript {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         mavenCentral()
     }
+    val buildGradlePluginVersion = extra["kotlin.build.gradlePlugin.version"]
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.32")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
     }
 }
 

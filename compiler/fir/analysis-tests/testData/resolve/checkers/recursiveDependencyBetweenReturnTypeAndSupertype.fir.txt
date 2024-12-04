@@ -1,0 +1,19 @@
+FILE: recursiveDependencyBetweenReturnTypeAndSupertype.kt
+    public abstract interface A : R|Test| {
+    }
+    public open class Test : R|kotlin/Any| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun <T> result(): R|A| {
+            ^result object : R|A| {
+                private constructor(): R|<anonymous><T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }

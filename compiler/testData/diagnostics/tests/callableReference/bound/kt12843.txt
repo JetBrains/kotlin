@@ -6,7 +6,7 @@ public final class Foo {
     public constructor Foo()
     public final fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun f(): [ERROR : Error function type]
+    public final fun f(): [Error type: Return type for function cannot be resolved]
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

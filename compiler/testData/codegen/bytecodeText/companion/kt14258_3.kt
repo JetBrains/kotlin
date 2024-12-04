@@ -23,12 +23,4 @@ class My {
 // 1 INVOKESTATIC My.access\$setMy\$cp
 // 1 INVOKESPECIAL My\$Companion.setMy
 
-// JVM_TEMPLATES
-// 2 GETSTATIC My.my
-// 1 INVOKESTATIC My\$Companion.access\$setMy\$p
-// 1 INVOKESTATIC My.access\$getMy\$cp
-// 1 INVOKESPECIAL My\$Companion.getMy
-
-// IR only generates the accessors actually needed
-// JVM_IR_TEMPLATES
 // 1 GETSTATIC My.my

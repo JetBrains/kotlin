@@ -16,7 +16,6 @@ class TargetProvider(
 interface ModulesProvider {
     open class ModuleInfo(
         val name: String,
-        val originalLocation: File,
         val cInteropAttributes: CInteropModuleAttributes?
     )
 

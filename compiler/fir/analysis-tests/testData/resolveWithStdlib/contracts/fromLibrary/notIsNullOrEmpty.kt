@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun test_1(s: String?) {
     when {
         !s.isNullOrEmpty() -> s.length // Should be OK

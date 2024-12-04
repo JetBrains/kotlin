@@ -1,10 +1,7 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.util.Properties
 import java.io.FileReader
-
-extra["versions.native-platform"] = "0.14"
-
-
 
 buildscript {
     java.util.Properties().also {
@@ -15,46 +12,30 @@ buildscript {
         extra[key] = value
     }
 
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
-
     extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
-    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
     extra["bootstrapKotlinRepo"] = project.bootstrapKotlinRepo
     extra["bootstrapKotlinVersion"] = project.bootstrapKotlinVersion
 
-    repositories {
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        mavenCentral()
-        jcenter()
-        project.bootstrapKotlinRepo?.let {
-            maven(url = it)
-        }
-    }
-
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.32")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     }
 }
 
-apply{
-    plugin("kotlin")
-    plugin("kotlin-sam-with-receiver")
-}
 plugins {
     `kotlin-dsl`
-    //kotlin("multiplatform") version "${project.bootstrapKotlinVersion}"
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.plugin.sam.with.receiver")
+    //kotlin("multiplatform")
 }
 
-val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+kotlin {
+    jvmToolchain(8)
+}
+
 repositories {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-    jcenter()
     mavenCentral()
     gradlePluginPortal()
-    extra["bootstrapKotlinRepo"]?.let {
-        maven(url = it)
-    }
 }
 
 tasks.validatePlugins.configure {
@@ -62,61 +43,51 @@ tasks.validatePlugins.configure {
 }
 
 
-sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
-    kotlin.filter.exclude("**/FileCheckTest.kt")
-    kotlin.filter.exclude("**/bitcode/**")
-    kotlin.filter.exclude("**/testing/**")
-    kotlin.filter.exclude("**/CompilationDatabase.kt")
-
-    kotlin.srcDir("../../../build-tools/src/main/kotlin")
-    kotlin.srcDir("../../../performance/buildSrc/src/main/kotlin")
-    kotlin.srcDir("../../../shared/src/library/kotlin")
-    kotlin.srcDir("../../../shared/src/main/kotlin")
-    kotlin.srcDir("../../benchmarks/shared/src/main/kotlin/report")
-    kotlin.srcDir("../../../../native/utils/src")
+sourceSets["main"].kotlin {
+    srcDir("../../../performance/buildSrc/src/main/kotlin")
+    srcDir("../../../shared/src/library/kotlin")
+    srcDir("../../../shared/src/main/kotlin")
+    srcDir("../../benchmarks/shared/src/main/kotlin/report")
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs +=
-        listOf("-opt-in=kotlin.RequiresOptIn",
-               "-Xskip-runtime-version-check",
-               "-opt-in=kotlin.ExperimentalStdlibApi")
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.optIn.addAll(
+        listOf(
+                "kotlin.RequiresOptIn",
+                "kotlin.ExperimentalStdlibApi",
+        )
+    )
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.32")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
-    api("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
-    api("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+
     compileOnly(gradleApi())
     val kotlinVersion = project.bootstrapKotlinVersion
-    val ktorVersion = "1.2.1"
     val slackApiVersion = "1.2.0"
-    val shadowVersion = "5.1.0"
-    val metadataVersion = "0.0.1-dev-10"
+    val shadowVersion = "8.3.0"
+
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+    api("org.jetbrains.kotlin:kotlin-native-utils:${kotlinVersion}")
+    api("org.jetbrains.kotlin:kotlin-util-klib:${kotlinVersion}")
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("com.ullink.slack:simpleslackapi:$slackApiVersion")
 
-    implementation("io.ktor:ktor-client-auth:$ktorVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
-
     api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
 
     // Located in <repo root>/shared and always provided by the composite build.
     //api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
-    implementation("com.github.jengelman.gradle.plugins:shadow:$shadowVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
+    implementation("com.gradleup.shadow:shadow-gradle-plugin:$shadowVersion")
 }
 
 afterEvaluate {
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            languageVersion = "1.4"
-            apiVersion = "1.4"
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions {
+            languageVersion = KotlinVersion.KOTLIN_1_6
+            apiVersion = KotlinVersion.KOTLIN_1_6
         }
     }
 }

@@ -1,0 +1,9 @@
+KT element: KtProperty
+KT element text:
+public const val min: kotlin.UInt = COMPILED_CODE /* compiled code */
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final const [ResolvedTo(BODY_RESOLVE)] val min: R|kotlin/UInt| = UInt(0)
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/UInt|

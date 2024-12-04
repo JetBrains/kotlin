@@ -1,7 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: wrong ABSTRACT_MEMBER_NOT_IMPLEMENTED, probably provoked by override mapping error
 // TARGET_BACKEND: JVM
-
 // FILE: J.java
 
 public class J {

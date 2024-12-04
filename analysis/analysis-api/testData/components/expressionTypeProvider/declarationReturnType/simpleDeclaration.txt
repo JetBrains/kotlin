@@ -1,0 +1,10 @@
+i@(1,1) : kotlin.Int
+j@(2,1) : kotlin.Int
+s@(3,1) : kotlin.String
+procedure@(4,1) : kotlin.Unit
+procedure@(5,1) : kotlin.Unit
+  i@(5,15) : kotlin.Int
+returnIntOne@(6,1) : kotlin.Int
+id@(7,1) : kotlin.Int
+  i@(7,8) : kotlin.Int
+throwException@(8,1) : kotlin.Nothing

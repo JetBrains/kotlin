@@ -22,14 +22,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.model.TypeVariance
-import org.jetbrains.kotlin.types.model.convertVariance
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun resolveKtPrimitive(
     csBuilder: ConstraintSystemBuilder,
@@ -38,10 +34,12 @@ fun resolveKtPrimitive(
     diagnosticsHolder: KotlinDiagnosticsHolder,
     receiverInfo: ReceiverInfo,
     convertedType: UnwrappedType?,
-    inferenceSession: InferenceSession?
+    inferenceSession: InferenceSession?,
+    selectorCall: KotlinCall? = null,
 ): ResolvedAtom = when (argument) {
-    is SimpleKotlinCallArgument ->
-        checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, convertedType, inferenceSession)
+    is SimpleKotlinCallArgument -> checkSimpleArgument(
+        csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, convertedType, inferenceSession, selectorCall
+    )
 
     is LambdaKotlinCallArgument ->
         preprocessLambdaArgument(csBuilder, argument, expectedType, diagnosticsHolder)
@@ -86,7 +84,7 @@ private fun preprocessLambdaArgument(
 
     if (expectedType != null) {
         val lambdaType = createFunctionType(
-            csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver,
+            csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver, resolvedArgument.contextReceivers,
             resolvedArgument.parameters, null, resolvedArgument.returnType, resolvedArgument.isSuspend
         )
         csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPositionImpl(argument))
@@ -105,7 +103,7 @@ private fun extraLambdaInfo(
     val isSuspend = expectedType?.isSuspendFunctionType ?: false
 
     val isFunctionSupertype = expectedType != null && KotlinBuiltIns.isNotNullOrNullableFunctionSupertype(expectedType)
-    val argumentAsFunctionExpression = argument.safeAs<FunctionExpression>()
+    val argumentAsFunctionExpression = argument as? FunctionExpression
 
     val typeVariable = TypeVariableForLambdaReturnType(builtIns, "_L")
 
@@ -114,12 +112,20 @@ private fun extraLambdaInfo(
         argumentAsFunctionExpression?.returnType ?: expectedType?.arguments?.singleOrNull()?.type?.unwrap()?.takeIf { isFunctionSupertype }
         ?: typeVariable.defaultType
 
+    val contextReceiversTypes = argumentAsFunctionExpression?.contextReceiversTypes?.mapIndexed { index, contextReceiverType ->
+        if (contextReceiverType != null) {
+            contextReceiverType
+        } else {
+            diagnosticsHolder.addDiagnostic(NotEnoughInformationForLambdaParameter(argument, index))
+            ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_LAMBDA_CONTEXT_RECEIVER_TYPE)
+        }
+    } ?: emptyList()
     val parameters = argument.parametersTypes?.mapIndexed { index, parameterType ->
         if (parameterType != null) {
             parameterType
         } else {
             diagnosticsHolder.addDiagnostic(NotEnoughInformationForLambdaParameter(argument, index))
-            ErrorUtils.createErrorType("<Unknown lambda parameter type>")
+            ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_LAMBDA_PARAMETER_TYPE)
         }
     } ?: emptyList()
 
@@ -130,6 +136,7 @@ private fun extraLambdaInfo(
         argument,
         isSuspend,
         receiverType,
+        contextReceiversTypes,
         parameters,
         returnType,
         typeVariable.takeIf { newTypeVariableUsed },
@@ -146,7 +153,8 @@ private fun extractLambdaInfoFromFunctionalType(
     val parametersTypes = argument.parametersTypes
     val expectedParameters = expectedType.getValueParameterTypesFromFunctionType()
     val expectedReceiver = expectedType.getReceiverTypeFromFunctionType()?.unwrap()
-    val argumentAsFunctionExpression = argument.safeAs<FunctionExpression>()
+    val expectedContextReceivers = expectedType.getContextReceiverTypesFromFunctionType().map { it.unwrap() }.toTypedArray()
+    val argumentAsFunctionExpression = argument as? FunctionExpression
 
     val receiverFromExpected = argumentAsFunctionExpression?.receiverType == null && expectedReceiver != null
 
@@ -186,6 +194,7 @@ private fun extractLambdaInfoFromFunctionalType(
                 type.orExpected(index)
             } ?: expectedParameters.map { it.type.unwrap() }) to (if (receiverFromExpected) expectedReceiver else null)
     }
+    val contextReceivers = (argumentAsFunctionExpression?.contextReceiversTypes ?: expectedContextReceivers).filterNotNull()
 
     val returnType = argumentAsFunctionExpression?.returnType ?: expectedType.getReturnTypeFromFunctionType().unwrap()
 
@@ -193,6 +202,7 @@ private fun extractLambdaInfoFromFunctionalType(
         argument,
         expectedType.isSuspendFunctionType,
         receiver,
+        contextReceivers,
         parameters,
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,

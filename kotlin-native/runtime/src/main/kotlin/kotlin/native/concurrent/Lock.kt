@@ -5,44 +5,48 @@
 
 package kotlin.native.concurrent
 
-import kotlin.native.internal.Frozen
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.*
 
 @ThreadLocal
 private object CurrentThread {
-    val id = Any().freeze()
+    val id = Any()
 }
 
-@Frozen
+@OptIn(ExperimentalNativeApi::class)
 internal class Lock {
     private val locker_ = AtomicInt(0)
     private val reenterCount_ = AtomicInt(0)
 
     // TODO: make it properly reschedule instead of spinning.
+    @OptIn(ExperimentalStdlibApi::class)
     fun lock() {
         val lockData = CurrentThread.id.hashCode()
         loop@ do {
-            val old = locker_.compareAndSwap(0, lockData)
+            val old = locker_.compareAndExchange(0, lockData)
             when (old) {
                 lockData -> {
                     // Was locked by us already.
-                    reenterCount_.increment()
+                    reenterCount_.incrementAndFetch()
                     break@loop
                 }
                 0 -> {
                     // We just got the lock.
-                    assert(reenterCount_.value == 0)
+                    assert(reenterCount_.load() == 0)
                     break@loop
                 }
             }
         } while (true)
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     fun unlock() {
-        if (reenterCount_.value > 0) {
-            reenterCount_.decrement()
+        if (reenterCount_.load() > 0) {
+            reenterCount_.decrementAndFetch()
         } else {
             val lockData = CurrentThread.id.hashCode()
-            val old = locker_.compareAndSwap(lockData, 0)
+            val old = locker_.compareAndExchange(lockData, 0)
             assert(old == lockData)
         }
     }

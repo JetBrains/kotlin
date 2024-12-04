@@ -26,14 +26,14 @@ public final class Outer</*0*/ E> {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public final class Nested : Inv<[ERROR : Inner]> {
+    public final class Nested : Inv<[Error type: Type for error type constructor (Inner)]> {
         public constructor Nested()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public object Obj : Inv<[ERROR : Inner]> {
+    public object Obj : Inv<[Error type: Type for error type constructor (Inner)]> {
         private constructor Obj()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

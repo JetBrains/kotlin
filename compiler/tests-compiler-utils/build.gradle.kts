@@ -13,7 +13,6 @@ dependencies {
     testApi(project(":compiler:util"))
     testApi(project(":compiler:tests-mutes"))
     testApi(project(":compiler:backend"))
-    testApi(project(":compiler:ir.ir2cfg"))
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:frontend.java"))
     testApi(project(":compiler:util"))
@@ -23,24 +22,21 @@ dependencies {
     testApi(project(":compiler:cli-js"))
     testApi(project(":compiler:serialization"))
     testApi(project(":compiler:fir:entrypoint"))
+    testApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testApi(project(":compiler:backend.jvm.entrypoint"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(project(":kotlin-preloader"))
-    testApi(commonDep("com.android.tools:r8"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(commonDependency("com.android.tools:r8"))
+    testCompileOnly(intellijCore())
 
-    testApi(intellijDep()) {
-        includeJars(
-            "guava",
-            "trove4j",
-            "asm-all",
-            "log4j",
-            "jdom",
-            rootProject = rootProject
-        )
-        isTransitive = false
-    }
+    testApi(libs.guava)
+    testApi(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    testApi(libs.intellij.asm)
+    testApi(commonDependency("org.jetbrains.intellij.deps:log4j"))
+    testApi(intellijJDom())
 }
+
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { none() }

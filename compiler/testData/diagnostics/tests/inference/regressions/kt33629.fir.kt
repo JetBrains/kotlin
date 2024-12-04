@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <E> emptyList(): List<E> = TODO()
 
@@ -16,5 +17,5 @@ fun acquireIntervals(): List<Interval> = TODO()
 
 fun main() {
     buildTree(acquireIntervals())
-        ?: emptyList()
+        ?: <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 }

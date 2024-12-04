@@ -1,0 +1,5 @@
+/test.kt:(68,70): warning: The function 'fun <C : Any!> foo(): (Mutable)List<C!>!' defined in '/JI' from an interface is generic, but the function 'fun foo(): (MutableList<Any?>..List<*>?)' defined in '/JC' from a delegate is not.
+Such an implementation can provoke runtime errors. This will become an error in Kotlin 2.3.
+
+/test.kt:(90,92): warning: The function 'fun <T> foo(): List<T>' defined in '/KI' from an interface is generic, but the function 'fun foo(): (List<Any?>..List<*>)' defined in '/JKC' from a delegate is not.
+Such an implementation can provoke runtime errors. This will become an error in Kotlin 2.3.

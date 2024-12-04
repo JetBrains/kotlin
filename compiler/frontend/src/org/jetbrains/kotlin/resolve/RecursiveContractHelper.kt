@@ -15,20 +15,17 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 import org.jetbrains.kotlin.psi.psiUtil.isFirstStatement
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /*
  * See KT-26386 and KT-30410
  */
 fun disableContractsInsideContractsBlock(call: Call, descriptor: CallableDescriptor?, scope: LexicalScope, trace: BindingTrace) {
-    call.callElement.safeAs<KtExpression>()?.let { callExpression ->
+    (call.callElement as? KtExpression)?.let { callExpression ->
         if (callExpression.isFirstStatement() && callExpression.isContractDescriptionCallPsiCheck()) {
             if (descriptor?.isContractCallDescriptor() != true) {
-                scope.ownerDescriptor
-                    .safeAs<FunctionDescriptor>()
-                    ?.getUserData(ContractProviderKey)
-                    ?.safeAs<LazyContractProvider>()
-                    ?.setContractDescription(null)
+                val functionDescriptor = scope.ownerDescriptor as? FunctionDescriptor
+                val contractProvider = functionDescriptor?.getUserData(ContractProviderKey) as? LazyContractProvider
+                contractProvider?.setContractDescription(null)
             } else {
                 trace.record(BindingContext.IS_CONTRACT_DECLARATION_BLOCK, callExpression, true)
             }

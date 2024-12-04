@@ -1,0 +1,33 @@
+class Inv1<X : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Inv2<Y : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+private fun <G : Any?> getSelectOptions(options: Inv1<out G>): Inv1<out Inv2<G>> {
+  return TODO()
+}
+
+fun <T : Any?> myRun(callback: Function0<T>): T {
+  return TODO()
+}
+
+internal fun <F : Any?> useSelectOptions(options: Inv1<out F>): Inv1<out Inv2<F>> {
+  return myRun<Inv1<out Inv2<F>>>(callback = local fun <anonymous>(): Inv1<out Inv2<F>> {
+    return getSelectOptions<F>(options = options)
+  }
+)
+}
+

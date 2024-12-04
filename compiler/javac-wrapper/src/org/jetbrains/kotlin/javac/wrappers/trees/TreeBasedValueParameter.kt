@@ -40,13 +40,16 @@ class TreeBasedValueParameter(
     override fun findAnnotation(fqName: FqName) =
             annotations
                     .filter { it.annotation.annotationType.toString().endsWith(fqName.shortName().asString()) }
-                    .find { it.classId?.asSingleFqName() == fqName }
+                    .find { it.classId.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = javac.isDeprecatedInJavaDoc(tree, compilationUnit)
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())
+
+    override val isFromSource: Boolean
+        get() = true
 
     override val type: JavaType
         get() = TreeBasedType.create(tree.getType(), compilationUnit, javac, annotations, containingElement)

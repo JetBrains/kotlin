@@ -1,0 +1,13 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] multipleTopLevelUnitFunctions.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo1(): R|kotlin/Unit| {
+        <Unresolved name: println>#(String(foo1))
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo2(): R|kotlin/Unit| {
+        <Unresolved name: println>#(String(foo2))
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo3(): R|kotlin/Unit| {
+        <Unresolved name: println>#(String(foo3))
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo4(): R|kotlin/Unit| {
+        <Unresolved name: println>#(String(foo4))
+    }

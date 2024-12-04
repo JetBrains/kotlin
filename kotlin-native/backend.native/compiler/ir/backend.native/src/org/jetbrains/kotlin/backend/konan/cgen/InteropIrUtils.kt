@@ -1,31 +1,30 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.cgen
 
-import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.isAny
+import org.jetbrains.kotlin.backend.konan.ir.superClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
+import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isUnsigned
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal fun IrType.isCEnumType(): Boolean {
-    val simpleType = this as? IrSimpleType ?: return false
-    if (simpleType.hasQuestionMark) return false
-    val enumClass = simpleType.classifier.owner as? IrClass ?: return false
+    if (isNullable()) return false
+    val enumClass = classOrNull?.owner ?: return false
     if (!enumClass.isEnumClass) return false
 
     return enumClass.superTypes
@@ -35,6 +34,7 @@ internal fun IrType.isCEnumType(): Boolean {
 private val cCall = RuntimeNames.cCall
 
 // Make sure external stubs always get proper annotaions.
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
         this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
                 // LazyIr doesn't pass annotations from descriptor to IrValueParameter.
@@ -53,11 +53,10 @@ internal fun IrSimpleFunction.objCReturnsRetained() = hasCCallAnnotation("Return
 internal fun IrClass.getCStructSpelling(): String? =
         getAnnotationArgumentValue(FqName("kotlinx.cinterop.internal.CStruct"), "spelling")
 
-internal fun IrType.isTypeOfNullLiteral(): Boolean = this is IrSimpleType && hasQuestionMark
-        && classifier.isClassWithFqName(StandardNames.FqNames.nothing)
+internal fun IrType.isTypeOfNullLiteral(): Boolean = isNullableNothing()
 
 internal fun IrType.isVector(): Boolean {
-    if (this is IrSimpleType && !this.hasQuestionMark) {
+    if (this is IrSimpleType && !this.isNullable()) {
         return classifier.isClassWithFqName(KonanFqNames.Vector128.toUnsafe())
     }
     return false
@@ -70,15 +69,13 @@ internal fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuilt
 
     if (isObjCObjectType()) return true
 
-    val descriptor = classifierOrNull?.descriptor ?: return false
-    val builtIns = (irBuiltIns as IrBuiltInsOverDescriptors).builtIns
-
-    return when (descriptor) {
-        builtIns.any,
-        builtIns.string,
-        builtIns.list, builtIns.mutableList,
-        builtIns.set,
-        builtIns.map -> true
+    return when (classifierOrNull) {
+        irBuiltIns.anyClass,
+        irBuiltIns.stringClass,
+        irBuiltIns.listClass,
+        irBuiltIns.mutableListClass,
+        irBuiltIns.setClass,
+        irBuiltIns.mapClass -> true
         else -> false
     }
 }

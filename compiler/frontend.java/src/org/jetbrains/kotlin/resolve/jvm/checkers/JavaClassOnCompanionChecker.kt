@@ -20,12 +20,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeAttributes
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 
 class JavaClassOnCompanionChecker : CallChecker {
@@ -44,8 +44,9 @@ class JavaClassOnCompanionChecker : CallChecker {
             val javaLangClass = actualType.constructor.declarationDescriptor as? ClassDescriptor ?: return
 
             val arguments = listOf(TypeProjectionImpl(containingClass.defaultType))
-            val expectedType = KotlinTypeFactory.simpleType(Annotations.EMPTY, javaLangClass.typeConstructor, arguments,
-                                                            actualType.isMarkedNullable)
+            val expectedType = KotlinTypeFactory.simpleType(
+                TypeAttributes.Empty, javaLangClass.typeConstructor, arguments,
+                actualType.isMarkedNullable)
             context.trace.report(ErrorsJvm.JAVA_CLASS_ON_COMPANION.on(reportOn, actualType, expectedType))
         }
     }

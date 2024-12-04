@@ -1,0 +1,13 @@
+@0:0..20:0 FILE fqName:test fileName:/topLevelFuns.kt
+  @3:0..14 FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    @3:12..14 BLOCK_BODY
+  @9:0..14 FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    @9:12..14 BLOCK_BODY
+  @12:0..15:14 FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      @12:0..14:1 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+        @13:4..21 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+          @13:4..21 CONST String type=kotlin.String value="UNUSED_VARIABLE"
+    @15:12..14 BLOCK_BODY
+  @18:0..19:14 FUN name:test3 visibility:private modality:FINAL <> () returnType:kotlin.Unit
+    @19:12..14 BLOCK_BODY

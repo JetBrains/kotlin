@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package nestedObejcts
 
 object A {
@@ -12,7 +13,7 @@ object A {
             val a = A
             val b = B
             val x = nestedObejcts.A.B.A
-            val y = this@A
+            val y = this<!AMBIGUOUS_LABEL!>@A<!>
         }
     }
 

@@ -1,4 +1,6 @@
-// !LANGUAGE: +LateinitTopLevelProperties +LateinitLocalVariables
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// LANGUAGE: +LateinitTopLevelProperties +LateinitLocalVariables
 import kotlin.reflect.KProperty
 
 class CustomDelegate {
@@ -6,7 +8,9 @@ class CustomDelegate {
     operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) {}
 }
 
-public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var p2: String) {
+typealias AN = Any?
+
+public abstract class A<T: Any, V: String?, Z: AN>(<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var p2: String) {
 
     public <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val a: String
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val b: T
@@ -24,6 +28,7 @@ public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER!>la
     }
 
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e1: V
+    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e1x: AN
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e2: String?
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e3: Int
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var e4: Int?

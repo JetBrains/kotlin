@@ -5,14 +5,24 @@
 
 package kotlin.script.experimental.jsr223.test
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.scripting.compiler.plugin.runAndCheckResults
+import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
+import java.io.File
 import java.lang.management.ManagementFactory
+import java.nio.file.Files.createTempDirectory
+import java.nio.file.Files.createTempFile
 import javax.script.*
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
+import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
 // duplicating it here to avoid dependency on the implementation - it may interfere with tests
 private const val KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY = "kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader"
@@ -25,6 +35,11 @@ fun callLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
 
 @Suppress("unused") // accessed from the tests below
 inline fun inlineCallLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
+
+@Suppress("unused", "UNCHECKED_CAST") // accessed from the tests below
+fun ScriptTemplateWithBindings.myFunFromBindings(n: Int): Int =
+    (bindings["myFunFromBindings"] as (Int) -> Int).invoke(n)
+
 
 class KotlinJsr223ScriptEngineIT {
 
@@ -114,7 +129,7 @@ class KotlinJsr223ScriptEngineIT {
         try {
             engine.eval("java.lang.fish")
             Assert.fail("Script error expected")
-        } catch (e: ScriptException) {}
+        } catch (_: ScriptException) {}
 
         val res1 = engine.eval("val x = 3")
         Assert.assertNull(res1)
@@ -167,26 +182,27 @@ class KotlinJsr223ScriptEngineIT {
     @Test
     fun testInvocable() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
-        val res1 = engine.eval("""
+        val res0 = engine.eval("""
 fun fn(x: Int) = x + 2
 val obj = object {
     fun fn1(x: Int) = x + 3
 }
 obj
 """)
-        Assert.assertNotNull(res1)
+        Assert.assertNotNull(res0)
         val invocator = engine as? Invocable
         Assert.assertNotNull(invocator)
+        val res1 = invocator!!.invokeFunction("fn", 6)
+        Assert.assertEquals(8, res1)
         assertThrows(NoSuchMethodException::class.java) {
-            invocator!!.invokeFunction("fn1", 3)
+            invocator.invokeFunction("fn1", 3)
         }
-        val res2 = invocator!!.invokeFunction("fn", 3)
+        val res2 = invocator.invokeFunction("fn", 3)
         Assert.assertEquals(5, res2)
-        // TODO: fix and restore
-//        assertThrows(NoSuchMethodException::class.java) {
-//            invocator!!.invokeMethod(res1, "fn", 3)
-//        }
-        val res3 = invocator.invokeMethod(res1, "fn1", 3)
+        assertThrows(NoSuchMethodException::class.java) {
+            invocator.invokeMethod(res0, "fn", 3)
+        }
+        val res3 = invocator.invokeMethod(res0, "fn1", 3)
         Assert.assertEquals(6, res3)
     }
 
@@ -205,12 +221,17 @@ obj
     fun testSimpleCompilableWithBindings() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")
         engine.put("z", 33)
-        val comp = (engine as Compilable).compile("val x = 10 + bindings[\"z\"] as Int\nx + 20")
-        val res1 = comp.eval()
+        val comp1 = (engine as Compilable).compile("val x = 10 + bindings[\"z\"] as Int\nx + 20")
+        val comp2 = (engine as Compilable).compile("val x = 10 + z\nx + 20")
+        val res1 = comp1.eval()
         Assert.assertEquals(63, res1)
+        val res12 = comp2.eval()
+        Assert.assertEquals(63, res12)
         engine.put("z", 44)
-        val res2 = comp.eval()
+        val res2 = comp1.eval()
         Assert.assertEquals(74, res2)
+        val res22 = comp2.eval()
+        Assert.assertEquals(74, res22)
     }
 
     @Test
@@ -254,6 +275,10 @@ obj
             put("boundValue", 100)
         })
         Assert.assertEquals(111, result2)
+
+        engine.put("nullable", null)
+        val result3 = engine.eval("bindings[\"nullable\"]?.let { it as Int } ?: -1")
+        Assert.assertEquals(-1, result3)
     }
 
     @Test
@@ -273,6 +298,10 @@ obj
             put("boundValue", 100)
         })
         Assert.assertEquals(111, result2)
+
+        engine.put("nullable", null)
+        val result3 = engine.eval("nullable?.let { it as Int } ?: -1")
+        Assert.assertEquals(-1, result3)
     }
 
     @Test
@@ -320,6 +349,36 @@ obj
         Assert.assertEquals(5, res2)
         val res3 = engine.eval("y + 2")
         Assert.assertEquals(7, res3)
+    }
+
+    @Test
+    fun testEvalInEvalWithBindingsWithLambda() {
+        // the problem (KT-67747) is only reproducible with INDY lambdas
+        withProperty(
+            "kotlin.script.base.compiler.arguments",
+            getPropertyValue = { listOfNotNull(it?.takeIf(String::isNotBlank), "-Xlambdas=indy").joinToString(" ") }
+        ) {
+            val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+            // code here is somewhat similar to one used in Spring's KotlinScriptTemplateTests
+            val res1 = engine.eval(
+                """
+            fun f(script: String): Int {
+                val bindings = javax.script.SimpleBindings()
+                bindings.put("myFunFromBindings", { i: Int -> i * 7 })
+                return eval(script, bindings) as Int
+            }
+            """.trimIndent()
+            )
+            Assert.assertNull(res1)
+            // Note that direct call to the lambda stored in bindings is not possible, so the additional helper
+            // [kotlin.script.experimental.jsr223.test.myFunFromBindings] is used (as in Spring)
+            val script = """
+            import kotlin.script.experimental.jsr223.test.*
+            myFunFromBindings(6)
+            """.trimIndent()
+            val res2 = (engine as Invocable).invokeFunction("f", script)
+            Assert.assertEquals(42, res2)
+        }
     }
 
     @Test
@@ -376,6 +435,67 @@ obj
             else System.setProperty(KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY, prevProp)
         }
     }
+
+    @Test
+    fun testInliningInJdk171() {
+        val jdk17 = try {
+            KtTestUtil.getJdk17Home()
+        } catch (_: NoClassDefFoundError) {
+            println("IGNORED: Test infrastructure doesn't work yet with embeddable compiler")
+            return
+        }
+        val javaExe = if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "java.exe" else "java"
+        val runtime = File(jdk17, "bin" + File.separator + javaExe)
+
+        val tempDir = createTempDirectory(KotlinJsr223ScriptEngineIT::class.simpleName!!)
+        try {
+            val outJar = createTempFile(tempDir, "inlining17", ".jar").toFile()
+            val compileCp = System.getProperty("testCompilationClasspath")!!.split(File.pathSeparator).map(::File)
+            Assert.assertTrue(
+                "Expecting \"testCompilationClasspath\" property to contain stdlib jar:\n$compileCp",
+                compileCp.any { it.name.startsWith("kotlin-stdlib") }
+            )
+            val paths = PathUtil.kotlinPathsForDistDirectory
+            runAndCheckResults(
+                listOf(
+                    runtime.absolutePath,
+                    "-cp", paths.compilerClasspath.joinToString(File.pathSeparator),
+                    K2JVMCompiler::class.java.name,
+                    K2JVMCompilerArguments::noStdlib.cliArgument,
+                    K2JVMCompilerArguments::classpath.cliArgument, compileCp.joinToString(File.pathSeparator) { it.path },
+                    K2JVMCompilerArguments::destination.cliArgument, outJar.absolutePath,
+                    K2JVMCompilerArguments::jvmTarget.cliArgument, "17",
+                    "libraries/scripting/jsr223-test/testData/testJsr223Inlining.kt"
+                ),
+                additionalEnvVars = listOf("JAVA_HOME" to jdk17.absolutePath)
+            )
+
+            val runtimeCp = System.getProperty("testJsr223RuntimeClasspath")!!.split(File.pathSeparator).map(::File) + outJar
+            Assert.assertTrue(
+                "Expecting \"testJsr223RuntimeClasspath\" property to contain JSR223 jar:\n$runtimeCp",
+                runtimeCp.any { it.name.startsWith("kotlin-scripting-jsr223") }
+            )
+
+            runAndCheckResults(
+                listOf(runtime.absolutePath, "-cp", runtimeCp.joinToString(File.pathSeparator) { it.path }, "TestJsr223InliningKt"),
+                listOf("OK")
+            )
+        } finally {
+            tempDir.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
+    fun testEvalWithCompilationError() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")
+        val compilable: Compilable = engine as Compilable
+        assertThrows(ScriptException::class.java) {
+            compilable.compile("foo")
+        }
+        compilable.compile("true")
+        engine.eval("val x = 3")
+        compilable.compile("x")
+    }
 }
 
 fun assertThrows(exceptionClass: Class<*>, body: () -> Unit) {
@@ -385,6 +505,23 @@ fun assertThrows(exceptionClass: Class<*>, body: () -> Unit) {
     } catch (e: Throwable) {
         if (!exceptionClass.isAssignableFrom(e.javaClass)) {
             Assert.fail("Expecting an exception of type ${exceptionClass.name} but got ${e.javaClass.name}")
+        }
+    }
+}
+
+internal fun <T> withProperty(name: String, getPropertyValue: (String?) -> String?, body: () -> T): T {
+    val prevPropertyVal = System.getProperty(name)
+    val value = getPropertyValue(prevPropertyVal)
+    when (value) {
+        null -> System.clearProperty(name)
+        else -> System.setProperty(name, value)
+    }
+    try {
+        return body()
+    } finally {
+        when (prevPropertyVal) {
+            null -> System.clearProperty(name)
+            else -> System.setProperty(name, prevPropertyVal)
         }
     }
 }

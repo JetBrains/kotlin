@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // WITH_STDLIB
 
 // ISSUE: KT-35684
@@ -13,7 +13,7 @@ fun test() {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <U> sequence(@BuilderInference block: suspend Inv<U>.() -> Unit) {}
+fun <U> sequence(block: suspend Inv<U>.() -> Unit) {}
 
 interface Inv<T> {
     fun yield(element: T)

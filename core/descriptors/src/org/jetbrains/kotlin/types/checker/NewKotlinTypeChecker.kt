@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -27,8 +26,6 @@ import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasNotNullSupertype
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
 
 object SimpleClassicTypeSystemContext : ClassicTypeSystemContext
-
-class ClassicTypeSystemContextImpl(override val builtIns: KotlinBuiltIns) : ClassicTypeSystemContext
 
 object StrictEqualityTypeChecker {
 
@@ -47,17 +44,22 @@ object StrictEqualityTypeChecker {
 
 }
 
-object ErrorTypesAreEqualToAnything : KotlinTypeChecker {
+open class IsErrorTypeEqualToAnythingTypeChecker(
+    private val typeChecker: NewKotlinTypeCheckerImpl,
+    private val isErrorTypeEqualToAnything: Boolean,
+) : KotlinTypeChecker {
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
-        NewKotlinTypeChecker.Default.run {
-            createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true).isSubtypeOf(subtype.unwrap(), supertype.unwrap())
+        typeChecker.run {
+            createClassicTypeCheckerState(isErrorTypeEqualToAnything).isSubtypeOf(subtype.unwrap(), supertype.unwrap())
         }
 
     override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
-        NewKotlinTypeChecker.Default.run {
-            createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true).equalTypes(a.unwrap(), b.unwrap())
+        typeChecker.run {
+            createClassicTypeCheckerState(isErrorTypeEqualToAnything).equalTypes(a.unwrap(), b.unwrap())
         }
 }
+
+object ErrorTypesAreEqualToAnything : IsErrorTypeEqualToAnythingTypeChecker(NewKotlinTypeChecker.Default, isErrorTypeEqualToAnything = true)
 
 interface NewKotlinTypeChecker : KotlinTypeChecker {
     val kotlinTypeRefiner: KotlinTypeRefiner

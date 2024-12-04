@@ -26,6 +26,6 @@ enum class AndroidProgramType(
     NativeActivity(null, LinkerOutputKind.DYNAMIC_LIBRARY, true);
 
     companion object {
-        val Default = NativeActivity
+        val Default = Standalone
     }
 }

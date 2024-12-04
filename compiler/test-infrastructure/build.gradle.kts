@@ -6,18 +6,16 @@ plugins {
 dependencies {
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:cli"))
-    testApi(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCore())
 
-    testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
 
-    testRuntimeOnly(intellijDep()) {
-        includeJars("jna", rootProject = rootProject)
-    }
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 }
+
+optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }

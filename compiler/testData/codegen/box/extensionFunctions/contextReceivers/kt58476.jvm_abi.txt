@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Kt58476Kt.class
+		PACKAGE METADATA
+			FUNCTION caller(Lkotlin/jvm/functions/Function3;)LMyOutput;
+				Property: class.metadata.function.valueParameters
+					K1
+						(block: @kotlin/ExtensionFunctionType @kotlin/ContextFunctionTypeParams(count = 1) suspend kotlin/Function3<InContext, MyReciever, kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?>)
+					K2
+						(block: @kotlin/ContextFunctionTypeParams(count = 1) @kotlin/ExtensionFunctionType suspend kotlin/Function3<InContext, MyReciever, kotlin/coroutines/Continuation<kotlin/Int>, kotlin/Any?>)

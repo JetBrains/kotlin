@@ -8,36 +8,41 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.typeArguments
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.ir.util.isElseBranch
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+/**
+ * Transforms statement-like-expression nodes into pure-statement to make it easily transform into JS.
+ */
 class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlockDecomposerLowering(context) {
     override fun unreachableExpression(): IrExpression =
         JsIrBuilder.buildCall(context.intrinsics.unreachable, context.irBuiltIns.nothingType)
 }
 
-abstract class AbstractBlockDecomposerLowering(
-    private val context: JsCommonBackendContext
-) : BodyLoweringPass {
+abstract class AbstractBlockDecomposerLowering(private val context: JsCommonBackendContext) : BodyLoweringPass {
 
     private val nothingType = context.irBuiltIns.nothingType
 
@@ -72,9 +77,7 @@ abstract class AbstractBlockDecomposerLowering(
                     val lastStatement = newBody.statements.last()
                     val actualParent = if (newBody.statements.size > 1 || lastStatement !is IrReturn || lastStatement.value != expression) {
                         expression = JsIrBuilder.buildCall(initFunction.symbol, expression.type)
-                        context.irFactory.stageController.unrestrictDeclarationListsAccess {
-                            (container.parent as IrDeclarationContainer).declarations += initFunction
-                        }
+                        (container.parent as IrDeclarationContainer).declarations += initFunction
                         initFunction
                     } else {
                         container
@@ -96,7 +99,7 @@ abstract class AbstractBlockDecomposerLowering(
 }
 
 class BlockDecomposerTransformer(
-    private val context: CommonBackendContext,
+    private val context: JsCommonBackendContext,
     private val unreachableExpression: () -> IrExpression
 ) : IrElementTransformerVoid() {
     private lateinit var function: IrDeclarationParent
@@ -112,6 +115,9 @@ class BlockDecomposerTransformer(
     private val unitValue get() = JsIrBuilder.buildGetObjectValue(unitType, context.irBuiltIns.unitClass)
 
     private val booleanNotSymbol = context.irBuiltIns.booleanNotSymbol
+
+    private val boxIntrinsic = context.inlineClassesUtils.boxIntrinsic
+    private val unboxIntrinsic = context.inlineClassesUtils.unboxIntrinsic
 
     override fun visitScript(declaration: IrScript): IrStatement {
         function = declaration
@@ -168,7 +174,7 @@ class BlockDecomposerTransformer(
 
     private fun destructureComposite(expression: IrStatement) = (expression as? IrComposite)?.statements ?: listOf(expression)
 
-    private inner class BreakContinueUpdater(val breakLoop: IrLoop, val continueLoop: IrLoop) : IrElementTransformer<IrLoop> {
+    private inner class BreakContinueUpdater(val breakLoop: IrLoop, val continueLoop: IrLoop) : IrTransformer<IrLoop>() {
         override fun visitBreak(jump: IrBreak, data: IrLoop) = jump.apply {
             if (loop == data) loop = breakLoop
         }
@@ -402,7 +408,7 @@ class BlockDecomposerTransformer(
             }
 
             if (compositeCount == 0) {
-                val branches = results.map { (cond, res, orig) ->
+                val branches = results.memoryOptimizedMap { (cond, res, orig) ->
                     when {
                         isElseBranch(orig) -> IrElseBranchImpl(orig.startOffset, orig.endOffset, cond, res)
                         else /* IrBranch */ -> IrBranchImpl(orig.startOffset, orig.endOffset, cond, res)
@@ -414,17 +420,34 @@ class BlockDecomposerTransformer(
             val block = IrBlockImpl(expression.startOffset, expression.endOffset, unitType, expression.origin)
 
             // TODO: consider decomposing only when it is really required
-            results.fold(block) { appendBlock, (cond, res, orig) ->
+            results.foldIndexed(block) { i, appendBlock, (cond, res, orig) ->
                 val condStatements = destructureComposite(cond)
                 val condValue = condStatements.last() as IrExpression
 
                 appendBlock.statements += condStatements.run { subList(0, lastIndex) }
 
                 JsIrBuilder.buildBlock(unitType).also {
-                    val elseBlock = if (isElseBranch(orig)) null else it
-                    val ifElseNode =
-                        JsIrBuilder.buildIfElse(orig.startOffset, orig.endOffset, unitType, condValue, res, elseBlock, expression.origin)
-                    appendBlock.statements += ifElseNode
+                    val elseBlock = it.takeIf { results.lastIndex != i }
+                    val additionalStatements = when {
+                        isElseBranch(orig) -> (res as? IrBlock)?.statements ?: listOf(res)
+                        else -> listOf(
+                            JsIrBuilder.buildIfElse(
+                                startOffset = UNDEFINED_OFFSET,
+                                endOffset = UNDEFINED_OFFSET,
+                                type = unitType,
+                                cond = condValue,
+                                thenBranch = res,
+                                elseBranch = elseBlock,
+                                origin = expression.origin,
+                                thenBranchStartOffset = orig.startOffset,
+                                thenBranchEndOffset = orig.endOffset,
+                                elseBranchStartOffset = UNDEFINED_OFFSET,
+                                elseBranchEndOffset = UNDEFINED_OFFSET,
+                            )
+                        )
+                    }
+
+                    appendBlock.statements += additionalStatements
                 }
             }
 
@@ -495,7 +518,7 @@ class BlockDecomposerTransformer(
             val newStatements = mutableListOf<IrStatement>()
             val arguments = mapArguments(expression.arguments, compositeCount, newStatements)
 
-            newStatements += expression.run { IrStringConcatenationImpl(startOffset, endOffset, type, arguments.map { it!! }) }
+            newStatements += expression.run { IrStringConcatenationImpl(startOffset, endOffset, type, arguments.memoryOptimizedMap { it!! }) }
             return JsIrBuilder.buildComposite(expression.type, newStatements)
         }
 
@@ -519,18 +542,58 @@ class BlockDecomposerTransformer(
                     compositesLeft == 0 -> value
                     index == 0 && dontDetachFirstArgument -> value
                     value == null -> value
-                    value.isPure(anyVariable = false, context = context) -> value
+                    value.isPure(anyVariable = false, symbols = context.ir.symbols) -> value
                     else -> {
                         // TODO: do not wrap if value is pure (const, variable, etc)
-                        val irVar = makeTempVar(value.type, value)
-                        newStatements += irVar
-                        JsIrBuilder.buildGetValue(irVar.symbol)
+                        val (newArg, tempVar) = mapArgument(value)
+                        newStatements += tempVar
+                        newArg
                     }
                 }
 
                 arguments += newArg
             }
             return arguments
+        }
+
+        /**
+         * Move the passing argument and store it in a temporary variable.
+         * However, the box and unbox intrinsics should be preserved in the call.
+         * They can be used later for optimizations, for example, in [EqualityAndComparisonCallsTransformer].
+         * Example:
+         *      foo(boxIntrinsic(<expr>))
+         * should be transformed to:
+         *      var tmp = <expr>
+         *      foo(boxIntrinsic(tmp))
+         */
+        private fun mapArgument(arg: IrExpression): Pair<IrExpression, IrVariable> {
+            var saveToTmp = arg
+            var rootIntrinsicCall: IrCall? = null
+            var lastIntrinsicCall: IrCall? = null
+            while (saveToTmp is IrCall && (saveToTmp.symbol == boxIntrinsic || saveToTmp.symbol == unboxIntrinsic)) {
+                if (lastIntrinsicCall == null) {
+                    lastIntrinsicCall = JsIrBuilder.buildCall(saveToTmp.symbol, saveToTmp.type, saveToTmp.typeArguments.filterNotNull())
+                    rootIntrinsicCall = lastIntrinsicCall
+                } else {
+                    val nextCall = JsIrBuilder.buildCall(saveToTmp.symbol, saveToTmp.type, saveToTmp.typeArguments.filterNotNull())
+                    lastIntrinsicCall.putValueArgument(0, nextCall)
+                    lastIntrinsicCall = nextCall
+                }
+                saveToTmp = saveToTmp.getValueArgument(0)
+                    ?: irError("expect passing 1 argument to boxing intrinsic") {
+                        withIrEntry("arg", arg)
+                        withIrEntry("saveToTmp", saveToTmp)
+                    }
+            }
+
+            val irTempVar = makeTempVar(saveToTmp.type, saveToTmp)
+            val irGetTempVar = JsIrBuilder.buildGetValue(irTempVar.symbol)
+            val newArg = lastIntrinsicCall?.let {
+                it.putValueArgument(0, irGetTempVar)
+                rootIntrinsicCall
+            } ?: irGetTempVar
+
+            return newArg to irTempVar
         }
 
         // TODO: remove this when vararg is lowered
@@ -696,9 +759,9 @@ class BlockDecomposerTransformer(
             val irVar = makeTempVar(aTry.type)
 
             val newTryResult = wrap(aTry.tryResult, irVar)
-            val newCatches = aTry.catches.map {
+            val newCatches = aTry.catches.memoryOptimizedMap {
                 val newCatchBody = wrap(it.result, irVar)
-                IrCatchImpl(it.startOffset, it.endOffset, it.catchParameter, newCatchBody)
+                IrCatchImpl(it.startOffset, it.endOffset, it.catchParameter, newCatchBody, it.origin)
             }
 
             val newTry = aTry.run { IrTryImpl(startOffset, endOffset, unitType, newTryResult, newCatches, finallyExpression) }
@@ -743,7 +806,7 @@ class BlockDecomposerTransformer(
             if (hasComposites) {
                 val irVar = makeTempVar(expression.type)
 
-                val newBranches = decomposedResults.map { (branch, condition, result) ->
+                val newBranches = decomposedResults.memoryOptimizedMap { (branch, condition, result) ->
                     val newResult = wrap(result, irVar)
                     when {
                         isElseBranch(branch) -> IrElseBranchImpl(branch.startOffset, branch.endOffset, condition, newResult)
@@ -757,7 +820,7 @@ class BlockDecomposerTransformer(
 
                 return JsIrBuilder.buildComposite(expression.type, listOf(irVar, newWhen, JsIrBuilder.buildGetValue(irVar.symbol)))
             } else {
-                val newBranches = decomposedResults.map { (branch, condition, result) ->
+                val newBranches = decomposedResults.memoryOptimizedMap { (branch, condition, result) ->
                     when {
                         isElseBranch(branch) -> IrElseBranchImpl(branch.startOffset, branch.endOffset, condition, result)
                         else /* IrBranch  */ -> IrBranchImpl(branch.startOffset, branch.endOffset, condition, result)

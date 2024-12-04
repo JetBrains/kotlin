@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1822 Error 'cannot infer visibility' required
 package kt1822
 
@@ -10,7 +11,7 @@ interface T {
 }
 
 class G : C(), T {
-    override fun foo() {} //should be an error "cannot infer visibility"; for now 'public' is inferred in such cases
+    override fun <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>foo<!>() {} //should be an error "cannot infer visibility"; for now 'public' is inferred in such cases
 }
 
 open class A {

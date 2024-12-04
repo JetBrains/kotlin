@@ -16,6 +16,9 @@
 
 package kotlinx.cinterop
 
+import org.jetbrains.kotlin.utils.NativeMemoryAllocator
+import org.jetbrains.kotlin.utils.ThreadSafeDisposableHelper
+import sun.misc.Unsafe
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.LongConsumer
 import kotlin.reflect.KClass
@@ -58,9 +61,60 @@ private fun getVariableCType(type: KType): CType<*>? {
     }
 }
 
-private val structTypeCache = ConcurrentHashMap<Class<*>, CType<*>>()
+internal class Caches {
+    val structTypeCache = ConcurrentHashMap<Class<*>, CType<*>>()
+    val createdStaticFunctions = ConcurrentHashMap<FunctionSpec, CPointer<CFunction<*>>>()
 
-private fun getStructCType(structClass: KClass<*>): CType<*> = structTypeCache.computeIfAbsent(structClass.java) {
+    // TODO: No concurrent bag or something in Java?
+    private val createdTypeStructs = mutableListOf<NativePtr>()
+    private val createdCifs = mutableListOf<NativePtr>()
+    private val createdClosures = mutableListOf<NativePtr>()
+
+    fun addTypeStruct(ptr: NativePtr) {
+        synchronized(createdTypeStructs) { createdTypeStructs.add(ptr) }
+    }
+
+    fun addCif(ptr: NativePtr) {
+        synchronized(createdCifs) { createdCifs.add(ptr) }
+    }
+
+    fun addClosure(ptr: NativePtr) {
+        synchronized(createdClosures) { createdClosures.add(ptr) }
+    }
+
+    fun disposeFfi() {
+        createdTypeStructs.forEach { ffiFreeTypeStruct0(it) }
+        createdCifs.forEach { ffiFreeCif0(it) }
+        createdClosures.forEach { ffiFreeClosure0(it) }
+    }
+}
+
+@PublishedApi
+internal val jvmCallbacksDisposeHelper = ThreadSafeDisposableHelper(
+        {
+            NativeMemoryAllocator.init()
+            Caches()
+        },
+        {
+            try {
+                it.disposeFfi()
+            } finally {
+                NativeMemoryAllocator.dispose()
+            }
+        }
+)
+
+inline fun <R> usingJvmCInteropCallbacks(block: () -> R) = jvmCallbacksDisposeHelper.usingDisposable(block)
+
+object JvmCInteropCallbacks {
+    fun init() = jvmCallbacksDisposeHelper.create()
+    fun dispose() = jvmCallbacksDisposeHelper.dispose()
+}
+
+private val caches: Caches
+    get() = jvmCallbacksDisposeHelper.holder ?: error("Caches hasn't been created")
+
+private fun getStructCType(structClass: KClass<*>): CType<*> = caches.structTypeCache.computeIfAbsent(structClass.java) {
     // Note that struct classes are not supposed to be user-defined,
     // so they don't require to be checked strictly.
 
@@ -192,15 +246,13 @@ private fun isStatic(function: Function<*>): Boolean {
     }
 }
 
-private data class FunctionSpec(val functionClass: Class<*>, val returnType: KType, val parameterTypes: List<KType>)
-
-private val createdStaticFunctions = ConcurrentHashMap<FunctionSpec, CPointer<CFunction<*>>>()
+internal data class FunctionSpec(val functionClass: Class<*>, val returnType: KType, val parameterTypes: List<KType>)
 
 @Suppress("UNCHECKED_CAST")
 @PublishedApi
 internal fun <F : Function<*>> staticCFunctionImpl(function: F, returnType: KType, vararg parameterTypes: KType): CPointer<CFunction<F>> {
     val spec = FunctionSpec(function.javaClass, returnType, parameterTypes.asList())
-    return createdStaticFunctions.computeIfAbsent(spec) {
+    return caches.createdStaticFunctions.computeIfAbsent(spec) {
         createStaticCFunction(function, spec)
     } as CPointer<CFunction<F>>
 }
@@ -300,8 +352,8 @@ private inline fun ffiClosureImpl(
  *
  * This description omits the details that are irrelevant for the ABI.
  */
-private abstract class CType<T> internal constructor(val ffiType: ffi_type) {
-    internal constructor(ffiTypePtr: Long) : this(interpretPointed<ffi_type>(ffiTypePtr))
+internal abstract class CType<T> constructor(val ffiType: ffi_type) {
+    constructor(ffiTypePtr: Long) : this(interpretPointed<ffi_type>(ffiTypePtr))
     abstract fun read(location: NativePtr): T
     abstract fun write(location: NativePtr, value: T): Unit
 }
@@ -384,7 +436,7 @@ internal class ffi_type(rawPtr: NativePtr) : COpaque(rawPtr)
 /**
  * Reference to `ffi_cif` struct instance.
  */
-internal class ffi_cif(rawPtr: NativePtr) : COpaque(rawPtr)
+private class ffi_cif(rawPtr: NativePtr) : COpaque(rawPtr)
 
 private external fun ffiTypeVoid(): Long
 private external fun ffiTypeUInt8(): Long
@@ -398,6 +450,7 @@ private external fun ffiTypeSInt64(): Long
 private external fun ffiTypePointer(): Long
 
 private external fun ffiTypeStruct0(elements: Long): Long
+private external fun ffiFreeTypeStruct0(ptr: Long)
 
 /**
  * Allocates and initializes `ffi_type` describing the struct.
@@ -405,15 +458,19 @@ private external fun ffiTypeStruct0(elements: Long): Long
  * @param elements types of the struct elements
  */
 private fun ffiTypeStruct(elementTypes: List<ffi_type>): ffi_type {
-    val elements = persistentHeap.allocArrayOfPointersTo(*elementTypes.toTypedArray(), null)
+    val elements = nativeHeap.allocArrayOfPointersTo(*elementTypes.toTypedArray(), null)
     val res = ffiTypeStruct0(elements.rawValue)
     if (res == 0L) {
         throw OutOfMemoryError()
     }
+
+    caches.addTypeStruct(res)
+
     return interpretPointed(res)
 }
 
 private external fun ffiCreateCif0(nArgs: Int, rType: Long, argTypes: Long): Long
+private external fun ffiFreeCif0(ptr: Long)
 
 /**
  * Creates and prepares an `ffi_cif`.
@@ -425,7 +482,7 @@ private external fun ffiCreateCif0(nArgs: Int, rType: Long, argTypes: Long): Lon
  */
 private fun ffiCreateCif(returnType: ffi_type, paramTypes: List<ffi_type>): ffi_cif {
     val nArgs = paramTypes.size
-    val argTypes = persistentHeap.allocArrayOfPointersTo(*paramTypes.toTypedArray(), null)
+    val argTypes = nativeHeap.allocArrayOfPointersTo(*paramTypes.toTypedArray(), null)
     val res = ffiCreateCif0(nArgs, returnType.rawPtr, argTypes.rawValue)
 
     when (res) {
@@ -435,10 +492,13 @@ private fun ffiCreateCif(returnType: ffi_type, paramTypes: List<ffi_type>): ffi_
         -3L -> throw Error("libffi error occurred")
     }
 
+    caches.addCif(res)
+
     return interpretPointed(res)
 }
 
-private external fun ffiCreateClosure0(ffiCif: Long, userData: Any): Long
+private external fun ffiCreateClosure0(ffiCif: Long, ffiClosure: Long, userData: Any): Long
+private external fun ffiFreeClosure0(ptr: Long)
 
 /**
  * Uses libffi to allocate a native function which will call [impl] when invoked.
@@ -446,34 +506,27 @@ private external fun ffiCreateClosure0(ffiCif: Long, userData: Any): Long
  * @param ffiCif describes the type of the function to create
  */
 private fun ffiCreateClosure(ffiCif: ffi_cif, impl: FfiClosureImpl): NativePtr {
-    val res = ffiCreateClosure0(ffiCif.rawPtr, userData = impl)
+    val ffiClosure = nativeHeap.alloc(Long.SIZE_BYTES, 8)
 
-    when (res) {
-        0L -> throw OutOfMemoryError()
-        -1L -> throw Error("libffi error occurred")
+    try {
+        val res = ffiCreateClosure0(ffiCif.rawPtr, ffiClosure.rawPtr, userData = impl)
+
+        when (res) {
+            0L -> throw OutOfMemoryError()
+            -1L -> throw Error("libffi error occurred")
+        }
+
+        caches.addClosure(unsafe.getLong(ffiClosure.rawPtr))
+
+        return res
+    } finally {
+        nativeHeap.free(ffiClosure)
     }
-
-    return res
 }
 
-// Callbacks are globally cached and outlive the memory allocated by nativeHeap,
-// which gets forcibly reclaimed at the end of the compiler invocation.
-// So use an ad hoc allocator that is not affected.
-// Note: this is mostly a workaround, but proper solution would require a significant rework of this machinery.
-private object persistentHeap : NativeFreeablePlacement {
-    override fun alloc(size: Long, align: Int): NativePointed {
-        return interpretOpaquePointed(
-                nativeMemUtils.allocRaw(
-                        if (size == 0L) 1L else size, // It is a hack: `nativeMemUtils.allocRaw` can't allocate zero bytes
-                        align
-                )
-        )
-    }
-
-    override fun free(mem: NativePtr) {
-        nativeMemUtils.freeRaw(mem)
-    }
-
+private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {
+    isAccessible = true
+    return@with this.get(null) as Unsafe
 }
 
 private external fun newGlobalRef(any: Any): Long

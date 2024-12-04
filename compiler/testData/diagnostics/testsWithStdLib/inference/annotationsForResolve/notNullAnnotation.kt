@@ -1,4 +1,5 @@
-// !LANGUAGE: -TypeEnhancementImprovementsInStrictMode
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -TypeEnhancementImprovementsInStrictMode
 
 // FILE: SmartFMap.java
 
@@ -22,5 +23,5 @@ interface TypePredicate : (KotlinType) -> Boolean {
 
 fun <T : Any?> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
     keys.fold(SmartFMap.emptyMap<T, TypePredicate>()) { map, key ->
-        map.plus(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>key<!>, this)
+        map.plus(<!TYPE_MISMATCH!>key<!>, this)
     }

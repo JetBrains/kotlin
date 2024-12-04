@@ -1,0 +1,7 @@
+operator fun invoke(p1: P1, p2: P2): R
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String

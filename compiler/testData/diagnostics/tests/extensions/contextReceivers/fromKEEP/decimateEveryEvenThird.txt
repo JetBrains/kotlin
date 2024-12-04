@@ -1,0 +1,3 @@
+package
+
+public fun kotlin.collections.List<kotlin.Int>.decimateEveryEvenThird(): kotlin.sequences.Sequence<kotlin.Int>

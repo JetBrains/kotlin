@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /Box { // /Box|null[0]
+    final val value // /Box.value|{}value[0]
+        final fun <get-value>(): #A // /Box.value.<get-value>|<get-value>(){}[0]
+    constructor <init>(#A) // /Box.<init>|<init>(1:0){}[0]
+}
+final inline fun <#A: reified kotlin/Any?> /testArray(kotlin/Int, crossinline kotlin/Function0<#A>): kotlin/Array<#A> // /testArray|testArray(kotlin.Int;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
+final fun /testSimple(): /Box<kotlin/Long> // /testSimple|testSimple(){}[0]

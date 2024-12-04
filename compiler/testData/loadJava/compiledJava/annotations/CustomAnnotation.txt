@@ -11,7 +11,7 @@ public interface CustomAnnotation {
         enum entry ONE
 
         private constructor MyEnum()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.CustomAnnotation.MyEnum!): kotlin.Int
@@ -19,6 +19,7 @@ public interface CustomAnnotation {
         public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.CustomAnnotation.MyEnum!>!
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.CustomAnnotation.MyEnum>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.CustomAnnotation.MyEnum
         public final /*synthesized*/ fun values(): kotlin.Array<test.CustomAnnotation.MyEnum>
     }

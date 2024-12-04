@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 
 fun <R> foo(f: () -> R): R = f()
 

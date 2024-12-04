@@ -1,5 +1,5 @@
-// COMPARE_WITH_LIGHT_TREE
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 package foo
 
@@ -28,8 +28,8 @@ fun <T> fooT2() : (t : T) -> T {
 
 fun main(args : Array<String>) {
     args.foo()()
-    args.foo1(<!NO_VALUE_FOR_PARAMETER{PSI}!>)<!>(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
-    <!UNRESOLVED_REFERENCE!>a<!>.foo1(<!NO_VALUE_FOR_PARAMETER{PSI}!>)<!>(<!NO_VALUE_FOR_PARAMETER{LT}!>)<!>
+    args.foo1()<!NO_VALUE_FOR_PARAMETER!>()<!>
+    <!UNRESOLVED_REFERENCE!>a<!>.foo1()<!NO_VALUE_FOR_PARAMETER!>()<!>
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     args.foo1()(1)
@@ -48,7 +48,7 @@ fun main(args : Array<String>) {
 
     val b = fooT2<Int>()(1)
     checkSubtype<Int>(b)
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
 
     <!FUNCTION_EXPECTED!>1<!>()
     <!FUNCTION_EXPECTED!>1<!>{}
@@ -58,30 +58,30 @@ fun main(args : Array<String>) {
 fun f() :  Int.() -> Unit = {}
 
 fun main1() {
-    1.(<!FUNCTION_EXPECTED!>fun Int.() = 1<!>)();
+    1.(fun Int.() = 1)();
     {1}();
     (fun (x : Int) = x)(1)
-    1.(<!FUNCTION_EXPECTED!>fun Int.(x : Int) = x<!>)(1);
+    1.(fun Int.(x : Int) = x)(1);
     l@{1}()
-    1.((<!FUNCTION_EXPECTED!>fun Int.() = 1<!>))()
-    1.(<!FUNCTION_EXPECTED!>f()<!>)()
-    1.<!FUNCTION_EXPECTED!>if(true){f()}else{f()}<!>()
-    1.<!FUNCTION_EXPECTED!>if(true)(fun Int.() {})else{f()}<!>()
+    1.((fun Int.() = 1))()
+    1.(f())()
+    1.if(true){f()}else{f()}()
+    1.if(true)(fun Int.() {})else{f()}()
 
     1.<!FUNCTION_EXPECTED!>"sdf"<!>()
 
     1.<!ILLEGAL_SELECTOR!>"sdf"<!>
     1.<!ILLEGAL_SELECTOR!>{}<!>
-    1.<!ILLEGAL_SELECTOR!><!INVALID_IF_AS_EXPRESSION!>if<!> (true) {}<!>
+    1.<!ILLEGAL_SELECTOR!>if (true) {}<!>
 }
 
 fun test() {
-    {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
-    (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    "sd".(<!FUNCTION_EXPECTED!>fun Int.() = 1<!>)()
+    {x : Int -> 1}<!NO_VALUE_FOR_PARAMETER!>()<!>;
+    (fun Int.() = 1)<!NO_VALUE_FOR_PARAMETER!>()<!>
+    "sd".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>(fun Int.() = 1)<!>()
     val i : Int? = null
-    i.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)();
-    <!INAPPLICABLE_CANDIDATE!>{}<!><Int>()
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>1<!UNNECESSARY_SAFE_CALL!>?.<!>(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()<!>
+    i.<!UNSAFE_IMPLICIT_INVOKE_CALL!>(fun Int.() = 1)<!>();
+    {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
+    1<!UNNECESSARY_SAFE_CALL!>?.<!>(fun Int.() = 1)()
     1.<!NO_RECEIVER_ALLOWED!>{}<!>()
 }

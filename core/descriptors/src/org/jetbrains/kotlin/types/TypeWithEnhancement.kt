@@ -34,8 +34,8 @@ class SimpleTypeWithEnhancement(
 
     override val origin get() = delegate
 
-    override fun replaceAnnotations(newAnnotations: Annotations): SimpleType =
-        origin.replaceAnnotations(newAnnotations).wrapEnhancement(enhancement) as SimpleType
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
+        origin.replaceAttributes(newAttributes).wrapEnhancement(enhancement) as SimpleType
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType = origin.makeNullableAsSpecified(newNullability)
         .wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability)) as SimpleType
@@ -61,8 +61,8 @@ class FlexibleTypeWithEnhancement(
 ) : FlexibleType(origin.lowerBound, origin.upperBound),
     TypeWithEnhancement {
 
-    override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType =
-        origin.replaceAnnotations(newAnnotations).wrapEnhancement(enhancement)
+    override fun replaceAttributes(newAttributes: TypeAttributes): UnwrappedType =
+        origin.replaceAttributes(newAttributes).wrapEnhancement(enhancement)
 
     override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType =
         origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability))

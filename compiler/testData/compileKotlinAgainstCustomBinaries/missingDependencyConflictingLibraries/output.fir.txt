@@ -1,0 +1,25 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:7:8: error: cannot access class 'a.A.Inner'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeA(b1.produceA())
+       ^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:7:20: error: cannot access class 'a.A.Inner'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeA(b1.produceA())
+                   ^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:8:8: error: cannot access class 'a.A.Inner'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeA(b1.produceAGeneric("foo"))
+       ^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:8:20: error: cannot access class 'a.A.Inner'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeA(b1.produceAGeneric("foo"))
+                   ^^^^^^^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:12:8: error: cannot access class 'a.AA.Inner'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeAA(b1.produceAA())
+       ^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:12:21: error: cannot access class 'a.AA.Inner'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeAA(b1.produceAA())
+                    ^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:16:8: error: cannot access class 'a.AAA.Inner.InnerInner'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeAAA(b1.produceAAA())
+       ^^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyConflictingLibraries/source.kt:16:22: error: cannot access class 'a.AAA.Inner.InnerInner'. Check your module classpath for missing or conflicting dependencies.
+    b2.consumeAAA(b1.produceAAA())
+                     ^^^^^^^^^^
+COMPILATION_ERROR

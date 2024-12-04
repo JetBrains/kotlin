@@ -3,11 +3,11 @@ fun Int.bar(c: C) {
     this = c
 }
 ---------------------
-               <v0>: {<: [ERROR : C]}   NEW: magic[FAKE_INITIALIZER](c: C) -> <v0>
-               <v2>: *                  NEW: magic[VALUE_CONSUMER](this|<v1>) -> <v2>
-this           <v1>: *                  COPY
-this           <v1>: *                  NEW: r(this, <this>) -> <v1>
-c              <v3>: *                  NEW: r(c) -> <v3>
+               <v0>: {<: [Error type: Unresolved type for C]}   NEW: magic[FAKE_INITIALIZER](c: C) -> <v0>
+               <v2>: *                                          NEW: magic[VALUE_CONSUMER](this|<v1>) -> <v2>
+this           <v1>: *                                          COPY
+this           <v1>: *                                          NEW: r(this, <this>) -> <v1>
+c              <v3>: *                                          NEW: r(c) -> <v3>
 this = c       !<v4>: *
-{ this = c }   !<v4>: *                 COPY
+{ this = c }   !<v4>: *                                         COPY
 =====================

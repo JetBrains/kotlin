@@ -1,0 +1,20 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Some { // /Some|null[0]
+    final val a // /Some.a|{}a[0]
+        final fun <get-a>(): kotlin/String // /Some.a.<get-a>|<get-a>(){}[0]
+    final val b // /Some.b|{}b[0]
+        final fun <get-b>(): dynamic // /Some.b.<get-b>|<get-b>(){}[0]
+    constructor <init>(kotlin/String, dynamic) // /Some.<init>|<init>(kotlin.String;<dynamic>){}[0]
+    final fun component1(): kotlin/String // /Some.component1|component1(){}[0]
+    final fun component2(): dynamic // /Some.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., dynamic = ...): /Some // /Some.copy|copy(kotlin.String;<dynamic>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Some.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Some.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Some.toString|toString(){}[0]
+}
+final fun /box(): kotlin/String // /box|box(){}[0]

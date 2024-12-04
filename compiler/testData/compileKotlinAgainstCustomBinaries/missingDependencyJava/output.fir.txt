@@ -1,0 +1,10 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyJava/source.kt:4:17: error: cannot access class 'test.Bar'. Check your module classpath for missing or conflicting dependencies.
+    val bar = f.getBar()
+                ^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyJava/source.kt:5:5: error: cannot access class 'test.Bar'. Check your module classpath for missing or conflicting dependencies.
+    bar.bar()
+    ^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyJava/source.kt:5:9: error: unresolved reference 'bar'.
+    bar.bar()
+        ^^^
+COMPILATION_ERROR

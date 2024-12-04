@@ -1,3 +1,2 @@
-fun test() {
-    val x: Any
-}
+fun test()
+

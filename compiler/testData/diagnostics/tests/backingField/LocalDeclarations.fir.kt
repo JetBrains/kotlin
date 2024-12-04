@@ -1,4 +1,5 @@
-// !LANGUAGE: +RestrictionOfValReassignmentViaBackingField
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +RestrictionOfValReassignmentViaBackingField
 
 class Outer {
     val i: Int = 1

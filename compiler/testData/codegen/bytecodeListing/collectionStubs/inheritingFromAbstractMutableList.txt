@@ -11,6 +11,7 @@ public abstract class AMListD {
     public bridge method remove(p0: double): boolean
     public bridge final method remove(p0: int): double
     public bridge final method remove(p0: java.lang.Object): boolean
+    public abstract method removeAt(p0: int): java.lang.Double
     public synthetic bridge method removeAt(p0: int): java.lang.Object
 }
 
@@ -27,5 +28,6 @@ public abstract class AMListI {
     public bridge final method remove(p0: int): int
     public bridge method remove(p0: java.lang.Integer): boolean
     public bridge final method remove(p0: java.lang.Object): boolean
+    public abstract method removeAt(p0: int): java.lang.Integer
     public synthetic bridge method removeAt(p0: int): java.lang.Object
 }

@@ -1,15 +1,14 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
-import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
@@ -19,8 +18,11 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -28,10 +30,31 @@ import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-val ANNOTATION_IMPLEMENTATION = object : IrDeclarationOriginImpl("ANNOTATION_IMPLEMENTATION", isSynthetic = true) {}
+val ANNOTATION_IMPLEMENTATION by IrDeclarationOriginImpl.Synthetic
 
-class AnnotationImplementationLowering(
+/**
+ * Creates synthetic annotations implementations and uses them in annotations constructor calls.
+ *
+ * For example:
+ *
+ *     annotation class A(val value: String)
+ *     fun f(): A = A("")
+ *
+ * becomes
+ *
+ *     annotation class A(val value: String)
+ *     fun f(): A = annotationImpl$A$0("")
+ *
+ *     class annotationImpl$A$0(override val value: String) : A {
+ *         override fun equals(other: Any?): Boolean = ...
+ *         override fun hashCode(): Int = ...
+ *         override fun toString(): String = ...
+ *         fun annotationType(): Class<*> = A::class.java // (JVM-only)
+ *     }
+ */
+open class AnnotationImplementationLowering(
     val transformer: (IrFile) -> AnnotationImplementationTransformer
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -44,34 +67,46 @@ class AnnotationImplementationLowering(
     }
 }
 
-abstract class AnnotationImplementationTransformer(val context: BackendContext, val irFile: IrFile?) : IrElementTransformerVoidWithContext() {
+abstract class AnnotationImplementationTransformer(val context: CommonBackendContext, val symbolTable: ReferenceSymbolTable, val irFile: IrFile?) :
+    IrElementTransformerVoidWithContext() {
     internal val implementations: MutableMap<IrClass, IrClass> = mutableMapOf()
 
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        declaration.takeIf { declaration.isAnnotationClass }?.constructors?.singleOrNull()?.apply {
-            // Compatibility hack. Now, frontend generates constructor body for annotations and makes them open
-            // but, if one gets annotation from pre-1.6.20 klib, it would have no constructor body and would be final,
-            // so we need to fix it
-            if (body == null) {
-                declaration.modality = Modality.OPEN
-                body = context.createIrBuilder(symbol)
-                    .irBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
-                        +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-                        +IrInstanceInitializerCallImpl(startOffset, endOffset, declaration.symbol, context.irBuiltIns.unitType)
-                    }
-            }
-        }
+        declaration.addConstructorBodyForCompatibility()
         return super.visitClassNew(declaration)
     }
+
+    protected fun IrClass.addConstructorBodyForCompatibility() {
+        if (!isAnnotationClass) return
+        val primaryConstructor = constructors.singleOrNull() ?: return
+
+        if (primaryConstructor.body != null) return
+        // Compatibility hack. Now, frontend generates constructor body for annotations and makes them open
+        // but, if one gets annotation from pre-1.6.20 klib, it would have no constructor body and would be final,
+        // so we need to fix it
+        modality = Modality.OPEN
+        primaryConstructor.body = context.createIrBuilder(symbol)
+            .irBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
+                +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                +IrInstanceInitializerCallImpl(
+                    startOffset,
+                    endOffset,
+                    this@addConstructorBodyForCompatibility.symbol,
+                    context.irBuiltIns.unitType
+                )
+            }
+    }
+
+    abstract fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall): IrConstructor
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val constructedClass = expression.type.classOrNull?.owner ?: return super.visitConstructorCall(expression)
         if (!constructedClass.isAnnotationClass) return super.visitConstructorCall(expression)
-        if (constructedClass.typeParameters.isNotEmpty()) return super.visitConstructorCall(expression) // Not supported yet
+        require(expression.symbol.owner.isPrimary) { "Non-primary constructors of annotations are not supported" }
 
         val implClass = implementations.getOrPut(constructedClass) { createAnnotationImplementation(constructedClass) }
-        val ctor = implClass.constructors.single()
+        val ctor = chooseConstructor(implClass, expression)
         val newCall = IrConstructorCallImpl.fromSymbolOwner(
             expression.startOffset,
             expression.endOffset,
@@ -93,9 +128,36 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 
         destination.symbol.owner.valueParameters.forEachIndexed { index, parameter ->
             val valueArg = argumentsByName[parameter.name]
-            if (parameter.defaultValue == null && valueArg == null)
-                error("Usage of default value argument for this annotation is not yet possible.\n" +
-                       "Please specify value for '${source.type.classOrNull?.owner?.name}.${parameter.name}' explicitly")
+
+            if (parameter.defaultValue == null && valueArg == null) {
+                // if parameter is vararg, put an empty array as argument
+                // The vararg is already lowered to array, so `isVararg` is false.
+                if (parameter.type.isBoxedArray || parameter.type.isPrimitiveArray() || parameter.type.isUnsignedArray()) {
+                    val arrayType = parameter.type
+
+                    val arrayConstructorCall =
+                        if (arrayType.isBoxedArray) {
+                            val arrayFunction = context.ir.symbols.arrayOfNulls
+                            IrCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayFunction)
+                        } else {
+                            val arrayConstructor = arrayType.classOrNull!!.constructors.single {
+                                it.owner.valueParameters.size == 1 && it.owner.valueParameters.single().type == context.irBuiltIns.intType
+                            }
+                            IrConstructorCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayConstructor)
+                        }
+                    arrayConstructorCall.putValueArgument(
+                        0,
+                        IrConstImpl.int(source.startOffset, source.endOffset, context.irBuiltIns.intType, 0)
+                    )
+                    destination.putValueArgument(index, arrayConstructorCall)
+                    return
+                } else {
+                    error(
+                        "Usage of default value argument for this annotation is not yet possible.\n" +
+                                "Please specify value for '${source.type.classOrNull?.owner?.name}.${parameter.name}' explicitly"
+                    )
+                }
+            }
             destination.putValueArgument(index, valueArg)
         }
     }
@@ -116,9 +178,10 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         }.apply {
             parent = localDeclarationParent ?: irFile
                     ?: error("irFile in transformer should be specified when creating synthetic implementation")
-            createImplicitParameterDeclarationWithWrappedDescriptor()
+            createThisReceiverParameter()
             superTypes = listOf(annotationClass.defaultType)
             platformSetup()
+            // Type parameters can be copied from annotationClass, but in fact they are never used by any of the backends.
         }
 
         val ctor = subclass.addConstructor {
@@ -143,26 +206,29 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         // (although annotations imported from Java do have)
         val props = declarations.filterIsInstance<IrProperty>()
         if (props.isNotEmpty()) return props
-        return declarations.filterIsInstance<IrSimpleFunction>().filter { it.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR }
+        return declarations
+            .filterIsInstanceAnd<IrSimpleFunction> { it.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR }
             .mapNotNull { it.correspondingPropertySymbol?.owner }
     }
 
-    open fun IrBuilderWithScope.kClassExprToJClassIfNeeded(irExpression: IrExpression): IrExpression = irExpression
-
     abstract fun getArrayContentEqualsSymbol(type: IrType): IrFunctionSymbol
 
+    open fun IrExpression.transformArrayEqualsArgument(type: IrType, irBuilder: IrBlockBodyBuilder): IrExpression = this
+
     fun generatedEquals(irBuilder: IrBlockBodyBuilder, type: IrType, arg1: IrExpression, arg2: IrExpression): IrExpression =
-        if (type.isArray() || type.isPrimitiveArray()) {
+        if (type.isArray() || type.isPrimitiveArray() || type.isUnsignedArray()) {
             val requiredSymbol = getArrayContentEqualsSymbol(type)
+            val lhs = arg1.transformArrayEqualsArgument(type, irBuilder)
+            val rhs = arg2.transformArrayEqualsArgument(type, irBuilder)
             irBuilder.irCall(
                 requiredSymbol
             ).apply {
                 if (requiredSymbol.owner.extensionReceiverParameter != null) {
-                    extensionReceiver = arg1
-                    putValueArgument(0, arg2)
+                    extensionReceiver = lhs
+                    putValueArgument(0, rhs)
                 } else {
-                    putValueArgument(0, arg1)
-                    putValueArgument(1, arg2)
+                    putValueArgument(0, lhs)
+                    putValueArgument(1, rhs)
                 }
             }
         } else
@@ -194,7 +260,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         }
 
         val generator = AnnotationImplementationMemberGenerator(
-            context, implClass,
+            context, symbolTable, implClass,
             nameForToString = "@" + annotationClass.fqNameWhenAvailable!!.asString(),
             forbidDirectFieldAccess = forbidDirectFieldAccessInMethods
         ) { type, a, b ->
@@ -208,12 +274,13 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 }
 
 class AnnotationImplementationMemberGenerator(
-    backendContext: BackendContext,
+    loweringContext: LoweringContext,
+    symbolTable: ReferenceSymbolTable,
     irClass: IrClass,
     val nameForToString: String,
     forbidDirectFieldAccess: Boolean,
-    val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression,
-) : LoweringDataClassMemberGenerator(backendContext, irClass, ANNOTATION_IMPLEMENTATION, forbidDirectFieldAccess) {
+    val selectEquals: IrBlockBodyBuilder.(IrType, IrExpression, IrExpression) -> IrExpression
+) : LoweringDataClassMemberGenerator(loweringContext, symbolTable, irClass, ANNOTATION_IMPLEMENTATION, forbidDirectFieldAccess) {
 
     override fun IrClass.classNameForToString(): String = nameForToString
 
@@ -225,9 +292,13 @@ class AnnotationImplementationMemberGenerator(
 
     override fun getHashCodeOf(builder: IrBuilderWithScope, property: IrProperty, irValue: IrExpression): IrExpression = with(builder) {
         val propertyValueHashCode = getHashCodeOf(property.type, irValue)
-        val propertyNameHashCode = getHashCodeOf(backendContext.irBuiltIns.stringType, irString(property.name.toString()))
+        val propertyNameHashCode = getHashCodeOf(loweringContext.irBuiltIns.stringType, irString(property.name.toString()))
         val multiplied = irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, propertyNameHashCode, irInt(127))
         return irCallOp(context.irBuiltIns.intXorSymbol, context.irBuiltIns.intType, multiplied, propertyValueHashCode)
+    }
+
+    private fun IrBuilderWithScope.getHashCodeOf(type: IrType, irValue: IrExpression): IrExpression {
+        return getHashCodeOf(getHashCodeFunctionInfo(type), irValue)
     }
 
     // Manual implementation of equals is required for following reasons:
@@ -236,7 +307,7 @@ class AnnotationImplementationMemberGenerator(
     //    (DataClassMembersGenerator typically tries to access fields)
     // 3. Custom equals function should be used on properties
     fun generateEqualsUsingGetters(equalsFun: IrSimpleFunction, typeForEquals: IrType, properties: List<IrProperty>) = equalsFun.apply {
-        body = backendContext.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+        body = loweringContext.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
             val irType = typeForEquals
             fun irOther() = irGet(valueParameters[0])
             fun irThis() = irGet(dispatchReceiverParameter!!)
@@ -255,3 +326,4 @@ class AnnotationImplementationMemberGenerator(
         }
     }
 }
+

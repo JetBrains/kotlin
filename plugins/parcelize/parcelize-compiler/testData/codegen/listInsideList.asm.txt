@@ -1,13 +1,13 @@
 public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final Test createFromParcel(android.os.Parcel in)
+    public final Test createFromParcel(android.os.Parcel parcel)
 
-    public java.lang.Object createFromParcel(android.os.Parcel p0)
+    public java.lang.Object createFromParcel(android.os.Parcel source)
 
     public final Test[] newArray(int size)
 
-    public java.lang.Object[] newArray(int p0)
+    public java.lang.Object[] newArray(int size)
 }
 
 public final class Test : java/lang/Object, android/os/Parcelable {
@@ -23,64 +23,48 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public final java.util.List getNames()
 
-    public void writeToParcel(android.os.Parcel parcel, int flags) {
+    public void writeToParcel(android.os.Parcel out, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (parcel)
+          LDC (out)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          ALOAD (1)
           ALOAD (0)
           GETFIELD (Test, names, Ljava/util/List;)
-          DUP_X1
-          INVOKEINTERFACE (java/util/Collection, size, ()I)
+          ASTORE (3)
+          ALOAD (1)
+          ALOAD (3)
+          INVOKEINTERFACE (java/util/List, size, ()I)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
-          INVOKEINTERFACE (java/util/Collection, iterator, ()Ljava/util/Iterator;)
+          ALOAD (3)
+          INVOKEINTERFACE (java/util/List, iterator, ()Ljava/util/Iterator;)
+          ASTORE (4)
         LABEL (L1)
-          DUP
+          ALOAD (4)
           INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
           IFEQ (L2)
-          DUP
-          ALOAD (1)
-          SWAP
+          ALOAD (4)
           INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
           CHECKCAST (java/util/List)
-          DUP_X1
-          INVOKEINTERFACE (java/util/Collection, size, ()I)
+          ASTORE (5)
+          ALOAD (1)
+          ALOAD (5)
+          INVOKEINTERFACE (java/util/List, size, ()I)
           INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
-          INVOKEINTERFACE (java/util/Collection, iterator, ()Ljava/util/Iterator;)
+          ALOAD (5)
+          INVOKEINTERFACE (java/util/List, iterator, ()Ljava/util/Iterator;)
+          ASTORE (6)
         LABEL (L3)
-          DUP
+          ALOAD (6)
           INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
-          IFEQ (L4)
-          DUP
+          IFEQ (L1)
           ALOAD (1)
-          SWAP
+          ALOAD (6)
           INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
-          CHECKCAST (java/util/ArrayList)
-          DUP_X1
-          INVOKEINTERFACE (java/util/Collection, size, ()I)
-          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
-          INVOKEINTERFACE (java/util/Collection, iterator, ()Ljava/util/Iterator;)
-        LABEL (L5)
-          DUP
-          INVOKEINTERFACE (java/util/Iterator, hasNext, ()Z)
-          IFEQ (L6)
-          DUP
-          ALOAD (1)
-          SWAP
-          INVOKEINTERFACE (java/util/Iterator, next, ()Ljava/lang/Object;)
-          CHECKCAST (java/lang/String)
-          INVOKEVIRTUAL (android/os/Parcel, writeString, (Ljava/lang/String;)V)
-          GOTO (L5)
-        LABEL (L6)
-          POP
+          CHECKCAST (java/util/List)
+          INVOKEVIRTUAL (android/os/Parcel, writeStringList, (Ljava/util/List;)V)
           GOTO (L3)
-        LABEL (L4)
-          POP
-          GOTO (L1)
         LABEL (L2)
-          POP
           RETURN
-        LABEL (L7)
+        LABEL (L4)
     }
 }

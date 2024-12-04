@@ -1,0 +1,15 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+    }
+
+    plugins {
+        id "org.jetbrains.kotlin.js" version "$kotlin_version"
+        id "org.jetbrains.kotlin.test.fixes.android" version "$test_fixes_version"
+    }
+}
+
+rootProject.name = "base2"

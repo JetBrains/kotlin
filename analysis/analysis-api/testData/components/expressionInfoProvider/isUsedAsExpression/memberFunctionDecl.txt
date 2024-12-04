@@ -1,0 +1,5 @@
+expression: FUN
+text: fun test(): Int {
+        return 45 * K
+    }
+isUsedAsExpression: false

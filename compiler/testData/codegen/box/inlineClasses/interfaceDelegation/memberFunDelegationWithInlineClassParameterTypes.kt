@@ -1,8 +1,11 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+// JVM_ABI_K1_K2_DIFF: KT-63855
+
 import kotlin.test.assertEquals
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class S(val x: String)
 
 interface IFoo<T> {

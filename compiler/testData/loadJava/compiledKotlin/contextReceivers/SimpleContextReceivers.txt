@@ -1,0 +1,16 @@
+package test
+
+context(test.B) public val h: kotlin.Int
+    context(test.B) public fun `<get-h>`(): kotlin.Int
+context(test.A) public fun g(): kotlin.Unit
+
+public interface A {
+}
+
+public interface B {
+}
+
+context(test.A) public final class C {
+    /*primary*/ public constructor C()
+    context(test.B) public final fun f(): kotlin.Unit
+}

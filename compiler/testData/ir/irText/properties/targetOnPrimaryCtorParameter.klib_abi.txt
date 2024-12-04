@@ -1,0 +1,27 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Foo { // /Foo|null[0]
+    final var param // /Foo.param|{}param[0]
+        final fun <get-param>(): kotlin/Int // /Foo.param.<get-param>|<get-param>(){}[0]
+        final fun <set-param>(kotlin/Int) // /Foo.param.<set-param>|<set-param>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int) // /Foo.<init>|<init>(kotlin.Int){}[0]
+}
+open annotation class /NoTarget : kotlin/Annotation { // /NoTarget|null[0]
+    constructor <init>() // /NoTarget.<init>|<init>(){}[0]
+}
+open annotation class /ParameterOnly : kotlin/Annotation { // /ParameterOnly|null[0]
+    constructor <init>() // /ParameterOnly.<init>|<init>(){}[0]
+}
+open annotation class /PropValueField : kotlin/Annotation { // /PropValueField|null[0]
+    constructor <init>() // /PropValueField.<init>|<init>(){}[0]
+}
+open annotation class /PropertyOnly : kotlin/Annotation { // /PropertyOnly|null[0]
+    constructor <init>() // /PropertyOnly.<init>|<init>(){}[0]
+}
+open annotation class /PropertyOnly2 : kotlin/Annotation { // /PropertyOnly2|null[0]
+    constructor <init>() // /PropertyOnly2.<init>|<init>(){}[0]
+}

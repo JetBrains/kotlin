@@ -1,0 +1,13 @@
+KtDeclaration: KtProperty
+Symbol:
+var foo: kotlin.Int
+  get()
+  set(value: kotlin.Int)
+
+Signature:
+KaVariableSignature:
+  name = foo
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = var foo: kotlin.Int
+  callableId = /foo

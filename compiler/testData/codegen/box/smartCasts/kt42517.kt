@@ -1,9 +1,7 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: JAVA
+// TARGET_BACKEND: JVM
+// ^^^ java.lang.reflect.* is available only in JDK
 // WITH_STDLIB
 // FULL_JDK
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS
 
 fun Any.copyValueIfNeeded(): Any {
     return when (this) {

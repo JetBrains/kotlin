@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.languageVersionSettings
 
-object FirExplicitBackingFieldsUnsupportedChecker : FirBackingFieldChecker() {
+object FirExplicitBackingFieldsUnsupportedChecker : FirBackingFieldChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirBackingField, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirDefaultPropertyBackingField &&
             !context.session.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)

@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.SimpleType
 import java.util.*
 
@@ -159,7 +160,7 @@ object JavaAnnotationTargetMapper {
                 JavaAnnotationMapper.TARGET_ANNOTATION_ALLOWED_TARGETS,
                 module.builtIns.getBuiltInClassByFqName(StandardNames.FqNames.target)
             )
-            parameterDescriptor?.type ?: ErrorUtils.createErrorType("Error: AnnotationTarget[]")
+            parameterDescriptor?.type ?: ErrorUtils.createErrorType(ErrorTypeKind.UNMAPPED_ANNOTATION_TARGET_TYPE)
         }
     }
 

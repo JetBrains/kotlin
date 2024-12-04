@@ -1,0 +1,28 @@
+KT element: KtNamedFunction
+FIR element: FirSimpleFunctionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] duplicatedClasses.kt
+    public final [ResolvedTo(STATUS)] class SomeClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] get(): <implicit>
+
+    }
+    public final [ResolvedTo(STATUS)] class SomeClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        }
+
+    }

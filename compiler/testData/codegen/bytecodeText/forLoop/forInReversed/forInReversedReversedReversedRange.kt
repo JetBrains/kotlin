@@ -42,7 +42,6 @@ fun box(): String {
 // 3 getFirst
 // 3 getLast
 
-// JVM_IR_TEMPLATES
 // 15 ILOAD
 // 9 ISTORE
 // 3 IADD

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: MyRunnable.java
 public interface MyRunnable {
     Object foo(int x);

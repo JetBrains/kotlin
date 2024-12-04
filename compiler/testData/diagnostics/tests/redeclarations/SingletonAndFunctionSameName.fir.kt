@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun Foo() = 42
 
 object Foo {
@@ -10,7 +11,7 @@ object Foo {
 
 fun En() = 239
 
-enum class En {
+enum class <!CONFLICTING_OVERLOADS!>En<!> {
     ENTRY,
 
     SUBCLASS { };

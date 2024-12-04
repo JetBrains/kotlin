@@ -7,17 +7,15 @@
 #define RUNTIME_MM_THREAD_DATA_H
 
 #include <atomic>
+#include <cstdint>
+#include <vector>
 
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
 #include "GC.hpp"
-#include "GCScheduler.hpp"
-#include "ObjectFactory.hpp"
-#include "ExtraObjectDataFactory.hpp"
 #include "ShadowStack.hpp"
-#include "StableRefRegistry.hpp"
+#include "SpecialRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
-#include "Types.h"
 #include "Utils.hpp"
 #include "ThreadSuspension.hpp"
 
@@ -30,39 +28,36 @@ namespace mm {
 // Pin it in memory to prevent accidental copying.
 class ThreadData final : private Pinned {
 public:
-    explicit ThreadData(int threadId) noexcept :
+    explicit ThreadData(uintptr_t threadId) noexcept :
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
-        stableRefThreadQueue_(StableRefRegistry::Instance()),
-        extraObjectDataThreadQueue_(ExtraObjectDataFactory::Instance()),
-        gcScheduler_(GlobalData::Instance().gcScheduler().NewThreadData()),
+        specialRefRegistry_(SpecialRefRegistry::instance()),
+        gcScheduler_(GlobalData::Instance().gcScheduler(), *this),
+        allocator_(GlobalData::Instance().allocator()),
         gc_(GlobalData::Instance().gc(), *this),
-        objectFactoryThreadQueue_(GlobalData::Instance().objectFactory(), gc_),
-        suspensionData_(ThreadState::kNative) {}
+        suspensionData_(ThreadState::kNative, *this) {}
 
     ~ThreadData() = default;
 
-    int threadId() const noexcept { return threadId_; }
+    uintptr_t threadId() const noexcept { return threadId_; }
 
     GlobalsRegistry::ThreadQueue& globalsThreadQueue() noexcept { return globalsThreadQueue_; }
 
     ThreadLocalStorage& tls() noexcept { return tls_; }
 
-    StableRefRegistry::ThreadQueue& stableRefThreadQueue() noexcept { return stableRefThreadQueue_; }
-
-    ExtraObjectDataFactory::ThreadQueue& extraObjectDataThreadQueue() noexcept { return extraObjectDataThreadQueue_; }
+    SpecialRefRegistry::ThreadQueue& specialRefRegistry() noexcept { return specialRefRegistry_; }
 
     ThreadState state() noexcept { return suspensionData_.state(); }
 
     ThreadState setState(ThreadState state) noexcept { return suspensionData_.setState(state); }
 
-    ObjectFactory<gc::GC>::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
-
     ShadowStack& shadowStack() noexcept { return shadowStack_; }
 
-    KStdVector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
+    std::vector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
 
-    gc::GCSchedulerThreadData& gcScheduler() noexcept { return gcScheduler_; }
+    gcScheduler::GCScheduler::ThreadData& gcScheduler() noexcept { return gcScheduler_; }
+
+    alloc::Allocator::ThreadData& allocator() noexcept { return allocator_; }
 
     gc::GC::ThreadData& gc() noexcept { return gc_; }
 
@@ -71,29 +66,25 @@ public:
     void Publish() noexcept {
         // TODO: These use separate locks, which is inefficient.
         globalsThreadQueue_.Publish();
-        stableRefThreadQueue_.Publish();
-        objectFactoryThreadQueue_.Publish();
-        extraObjectDataThreadQueue_.Publish();
+        specialRefRegistry_.publish();
     }
 
     void ClearForTests() noexcept {
         globalsThreadQueue_.ClearForTests();
-        stableRefThreadQueue_.ClearForTests();
-        objectFactoryThreadQueue_.ClearForTests();
-        extraObjectDataThreadQueue_.ClearForTests();
+        specialRefRegistry_.clearForTests();
+        allocator_.clearForTests();
     }
 
 private:
-    const int threadId_;
+    const uintptr_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
     ThreadLocalStorage tls_;
-    StableRefRegistry::ThreadQueue stableRefThreadQueue_;
-    ExtraObjectDataFactory::ThreadQueue extraObjectDataThreadQueue_;
+    SpecialRefRegistry::ThreadQueue specialRefRegistry_;
     ShadowStack shadowStack_;
-    gc::GCSchedulerThreadData gcScheduler_;
+    gcScheduler::GCScheduler::ThreadData gcScheduler_;
+    alloc::Allocator::ThreadData allocator_;
     gc::GC::ThreadData gc_;
-    ObjectFactory<gc::GC>::ThreadQueue objectFactoryThreadQueue_;
-    KStdVector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
+    std::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
     ThreadSuspensionData suspensionData_;
 };
 

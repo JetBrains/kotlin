@@ -44,8 +44,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
-class KotlinParserDefinition : ParserDefinition {
-
+/**
+ * Creates [org.jetbrains.kotlin.psi.KtCommonFile] when java psi is not available e.g. on JB Client.
+ * Otherwise, normal [KotlinParserDefinition] should be used.
+ */
+open class KotlinCommonParserDefinition : ParserDefinition {
     override fun createLexer(project: Project): Lexer = KotlinLexer()
 
     override fun createParser(project: Project): PsiParser = KotlinParser(project)
@@ -72,8 +75,10 @@ class KotlinParserDefinition : ParserDefinition {
         }
     }
 
-    override fun createFile(fileViewProvider: FileViewProvider): PsiFile = KtFile(fileViewProvider, false)
+    @Suppress("DEPRECATION")
+    override fun createFile(fileViewProvider: FileViewProvider): PsiFile = org.jetbrains.kotlin.psi.KtCommonFile(fileViewProvider, false)
 
+    @Deprecated("Deprecated in Java")
     override fun spaceExistanceTypeBetweenTokens(left: ASTNode, right: ASTNode): ParserDefinition.SpaceRequirements {
         val rightTokenType = right.elementType
 
@@ -97,6 +102,16 @@ class KotlinParserDefinition : ParserDefinition {
 
         // Default
         return MAY
+    }
+}
+
+/*
+ * The class is open, so it can have a custom implementation for the language injection in the IDE.
+ * See KTIJ-31032
+ */
+open class KotlinParserDefinition : KotlinCommonParserDefinition() {
+    override fun createFile(fileViewProvider: FileViewProvider): PsiFile {
+        return KtFile(fileViewProvider, false)
     }
 
     companion object {

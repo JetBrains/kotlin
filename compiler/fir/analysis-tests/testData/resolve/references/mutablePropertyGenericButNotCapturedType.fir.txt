@@ -1,0 +1,34 @@
+FILE: mutablePropertyGenericButNotCapturedType.kt
+    public final class Generic<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Generic<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Klass<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Klass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var mutableProperty: R|Generic<T>| = R|/Generic.Generic|<R|T|>()
+            public get(): R|Generic<T>|
+            public set(value: R|Generic<T>|): R|kotlin/Unit|
+
+        public final fun testWithinClass(): R|kotlin/Unit| {
+            lval mutableProperty: R|kotlin/reflect/KMutableProperty1<Klass<T>, Generic<T>>| = Q|Klass|<R|T|>::R|/Klass.mutableProperty|
+            R|<local>/mutableProperty|.R|SubstitutionOverride<kotlin/reflect/KMutableProperty1.set: R|kotlin/Unit|>|(this@R|/Klass|, R|/Generic.Generic|<R|T|>())
+        }
+
+    }
+    public final fun testConcreteType(): R|kotlin/Unit| {
+        lval mutableProperty: R|kotlin/reflect/KMutableProperty1<Klass<kotlin/Int>, Generic<kotlin/Int>>| = Q|Klass|<R|kotlin/Int|>::R|SubstitutionOverride</Klass.mutableProperty: R|Generic<kotlin/Int>|>|
+        R|<local>/mutableProperty|.R|SubstitutionOverride<kotlin/reflect/KMutableProperty1.set: R|kotlin/Unit|>|(R|/Klass.Klass|<R|kotlin/Int|>(), R|/Generic.Generic|<R|kotlin/Int|>())
+    }
+    public final fun <A> testGenericType(): R|kotlin/Unit| {
+        lval mutableProperty: R|kotlin/reflect/KMutableProperty1<Klass<A>, Generic<A>>| = Q|Klass|<R|A|>::R|SubstitutionOverride</Klass.mutableProperty: R|Generic<A>|>|
+        R|<local>/mutableProperty|.R|SubstitutionOverride<kotlin/reflect/KMutableProperty1.set: R|kotlin/Unit|>|(R|/Klass.Klass|<R|A|>(), R|/Generic.Generic|<R|A|>())
+    }
+    public final fun <S : R|kotlin/CharSequence|> testGenericTypeWithBounds(): R|kotlin/Unit| {
+        lval mutableProperty: R|kotlin/reflect/KMutableProperty1<Klass<S>, Generic<S>>| = Q|Klass|<R|S|>::R|SubstitutionOverride</Klass.mutableProperty: R|Generic<S>|>|
+        R|<local>/mutableProperty|.R|SubstitutionOverride<kotlin/reflect/KMutableProperty1.set: R|kotlin/Unit|>|(R|/Klass.Klass|<R|S|>(), R|/Generic.Generic|<R|S|>())
+    }

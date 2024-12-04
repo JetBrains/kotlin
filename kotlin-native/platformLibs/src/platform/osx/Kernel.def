@@ -1,0 +1,6 @@
+depends = darwin posix
+language = C
+package = platform.Kernel
+
+headers = Kernel/kern/hv_io_notifier.h
+headerFilter = Kernel/**

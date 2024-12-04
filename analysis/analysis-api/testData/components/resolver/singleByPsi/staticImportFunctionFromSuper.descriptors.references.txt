@@ -1,0 +1,6 @@
+KtNameReferenceExpression(97,100): 'foo'
+  KtSimpleNameReference:
+    (in one.two.BaseClass) fun foo()
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

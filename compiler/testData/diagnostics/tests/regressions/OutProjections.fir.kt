@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class Point() {
 }
 
@@ -8,7 +9,7 @@ fun <T> f(expression : T) : G<out T> = G<T>()
 
 fun foo() : G<Point> {
   val p = Point()
-  return <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>f<Point>(p)<!>
+  return <!RETURN_TYPE_MISMATCH!>f<Point>(p)<!>
 }
 
 class Out<out T>() {}

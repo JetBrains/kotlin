@@ -1,0 +1,17 @@
+package
+
+public fun f(): kotlin.Unit
+public fun </*0*/ T> flowOf(/*0*/ value: T): Flow<T>
+public fun </*0*/ T, /*1*/ R> Flow<T>.transform(/*0*/ transform: FlowCollector<R>.(T) -> kotlin.Unit): Flow<R>
+
+public interface Flow</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FlowCollector</*0*/ in T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -41,10 +39,10 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.findSynchronizedAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.resolve.jvm.isInlineClassThatRequiresMangling
+import org.jetbrains.kotlin.resolve.jvm.isValueClassThatRequiresMangling
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
-import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 
 class LocalFunInlineChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -58,9 +56,7 @@ class LocalFunInlineChecker : DeclarationChecker {
     }
 }
 
-class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVersionSettings) : DeclarationChecker {
-    private val isLessJVM18 = jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion
-
+class JvmStaticChecker(languageVersionSettings: LanguageVersionSettings) : DeclarationChecker {
     private val supportJvmStaticInInterface = languageVersionSettings.supportsFeature(LanguageFeature.JvmStaticInInterface)
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -91,9 +87,6 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
                 descriptor is DeclarationDescriptorWithVisibility
             ) {
                 checkForInterface(descriptor, diagnosticHolder, declaration)
-                if (isLessJVM18) {
-                    diagnosticHolder.report(ErrorsJvm.JVM_STATIC_IN_INTERFACE_1_6.on(declaration))
-                }
             } else {
                 diagnosticHolder.report(
                     (if (supportJvmStaticInInterface) ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
@@ -155,7 +148,7 @@ class JvmNameAnnotationChecker : DeclarationChecker {
         if (descriptor is CallableMemberDescriptor) {
             if (DescriptorUtils.isOverride(descriptor) || descriptor.isOverridable) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
-            } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling()) {
+            } else if (descriptor.containingDeclaration.isValueClassThatRequiresMangling()) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }
         }
@@ -165,24 +158,6 @@ class JvmNameAnnotationChecker : DeclarationChecker {
         val containingDescriptor = descriptor.containingDeclaration
 
         return containingDescriptor is PackageFragmentDescriptor || containingDescriptor is ClassDescriptor
-    }
-}
-
-class VolatileAnnotationChecker : DeclarationChecker {
-    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is PropertyDescriptor) return
-
-        val fieldAnnotation = descriptor.backingField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
-        if (fieldAnnotation != null && !descriptor.isVar) {
-            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(fieldAnnotation) ?: return
-            context.trace.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
-        }
-
-        val delegateAnnotation = descriptor.delegateField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
-        if (delegateAnnotation != null) {
-            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(delegateAnnotation) ?: return
-            context.trace.report(ErrorsJvm.VOLATILE_ON_DELEGATE.on(annotationEntry))
-        }
     }
 }
 
@@ -198,7 +173,7 @@ class SynchronizedAnnotationChecker : DeclarationChecker {
             } else if (descriptor.isInline) {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_INLINE.on(annotationEntry))
             } else if (descriptor.isSuspend) {
-                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_SUSPEND.on(annotationEntry))
+                context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_SUSPEND.on(context.languageVersionSettings, annotationEntry))
             } else if (descriptor.containingDeclaration.let { it is ClassDescriptor && it.isValue }) {
                 context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_VALUE_CLASS.on(annotationEntry))
             }
@@ -254,7 +229,7 @@ class OverloadsAnnotationChecker : DeclarationChecker {
                     (requiresFunctionNameManglingForParameterTypes(descriptor) || requiresFunctionNameManglingForReturnType(descriptor)) ->
                 diagnosticHolder.report(ErrorsJvm.OVERLOADS_ANNOTATION_MANGLED_FUNCTION.on(annotationEntry))
 
-            descriptor is ClassConstructorDescriptor && shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor) ->
+            descriptor is ClassConstructorDescriptor && shouldHideConstructorDueToValueClassTypeValueParameters(descriptor) ->
                 diagnosticHolder.report(ErrorsJvm.OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR.on(annotationEntry))
         }
     }

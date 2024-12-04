@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // SKIP_JAVAC
 // SOURCE_RETENTION_ANNOTATIONS
 // JSR305_GLOBAL_REPORT: strict
@@ -56,7 +57,7 @@ public class A {
 // FILE: main.kt
 fun main(a: A) {
     a.foo("").length
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
     a.bar("")<!UNSAFE_CALL!>.<!>length
     a.bar(null)?.length

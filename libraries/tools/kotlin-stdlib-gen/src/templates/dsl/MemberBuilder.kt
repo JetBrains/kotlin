@@ -13,7 +13,7 @@ private fun getDefaultSourceFile(f: Family): SourceFile = when (f) {
     Iterables, Collections, Lists -> SourceFile.Collections
     Sequences -> SourceFile.Sequences
     Sets -> SourceFile.Sets
-    Ranges, RangesOfPrimitives, ProgressionsOfPrimitives -> SourceFile.Ranges
+    Ranges, OpenRanges, RangesOfPrimitives, ProgressionsOfPrimitives -> SourceFile.Ranges
     ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives -> SourceFile.Arrays
     ArraysOfUnsigned -> SourceFile.UArrays
     Maps -> SourceFile.Maps
@@ -57,6 +57,7 @@ class MemberBuilder(
     var inline: Inline = Inline.No; private set
     var infix: Boolean = false; private set
     var operator: Boolean = false; private set
+    var explicitActual: Boolean = false; private set
     val typeParams = mutableListOf<String>()
     var primaryTypeParameter: String? = null; private set
     var customReceiver: String? = null; private set
@@ -94,6 +95,7 @@ class MemberBuilder(
         }
     }
     fun inlineOnly() { inline = Inline.Only }
+    fun explicitActual(value: Boolean = true) { explicitActual = value }
 
     fun receiver(value: String) { customReceiver = value }
     @Deprecated("Use receiver()", ReplaceWith("receiver(value)"))
@@ -184,7 +186,7 @@ class MemberBuilder(
         val isImpl: Boolean
         if (!legacyMode) {
             headerOnly = target.platform == Platform.Common && hasPlatformSpecializations
-            isImpl = target.platform != Platform.Common && Platform.Common in allowedPlatforms
+            isImpl = explicitActual || target.platform != Platform.Common && Platform.Common in allowedPlatforms
         }
         else {
             // legacy mode when all is headerOnly + no_impl
@@ -268,6 +270,7 @@ class MemberBuilder(
             Strings -> "String"
             CharSequences -> "CharSequence"
             Ranges -> "ClosedRange<$receiverT>"
+            OpenRanges -> "OpenEndRange<$receiverT>"
             ArraysOfPrimitives, ArraysOfUnsigned -> primitive?.let { it.name + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
             RangesOfPrimitives -> primitive?.let { it.name + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
             ProgressionsOfPrimitives -> primitive?.let { it.name + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")

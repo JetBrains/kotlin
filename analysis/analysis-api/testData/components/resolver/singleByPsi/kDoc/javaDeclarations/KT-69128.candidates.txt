@@ -1,0 +1,15 @@
+<caret_1>:
+  KDocName(30,51): 'ReferredContainerJava'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(60,81): 'ReferredContainerJava'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(109,130): 'ReferredContainerJava'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(154,175): 'ReferredContainerJava'
+    NO_CANDIDATES

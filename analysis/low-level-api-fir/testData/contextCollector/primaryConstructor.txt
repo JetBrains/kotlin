@@ -1,0 +1,31 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: Foo
+
+FILE: [ResolvedTo(IMPORTS)] primaryConstructor.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/String| = String(foo), [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] val a: R|kotlin/String| = R|<local>/a|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+    }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.util.ir2string
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -177,7 +177,12 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
 
             closureBuilder.declareVariable(this.thisReceiver)
             if (this.isInner) {
-                closureBuilder.declareVariable((this.parent as IrClass).thisReceiver)
+                val receiver = when (val parent = this.parent) {
+                    is IrClass -> parent.thisReceiver
+                    is IrScript -> parent.thisReceiver
+                    else -> error("unexpected parent $parent")
+                }
+                closureBuilder.declareVariable(receiver)
                 includeInParent(closureBuilder)
             }
 
@@ -278,6 +283,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: ClosureBuilder?) {
             super.visitFunctionAccess(expression, data)
+            processScriptCapturing(expression.dispatchReceiver, expression.symbol.owner, data)
             processMemberAccess(expression.symbol.owner, data)
         }
 
@@ -303,6 +309,17 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
                 (it.owner as? IrConstructor)?.closureBuilder ?: it
             }
             typeParameterContainerScopeBuilder?.seeType(expression.type)
+        }
+
+        private fun processScriptCapturing(receiverExpression: IrExpression?, declaration: IrDeclaration, data: ClosureBuilder?) {
+            if (receiverExpression == null) {
+                val parent = declaration.parent
+                if (parent is IrScript) {
+                    data?.seeVariable(parent.thisReceiver!!.symbol)
+                } else if (parent is IrClass && parent.origin == IrDeclarationOrigin.SCRIPT_CLASS) {
+                    data?.seeVariable(parent.thisReceiver!!.symbol)
+                }
+            }
         }
 
         private fun processMemberAccess(declaration: IrDeclaration, parentClosure: ClosureBuilder?) {

@@ -1,0 +1,18 @@
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files: lib1/l1, lib2/inlineChildProxy, lib2/inlineChild, lib2/simpleFunction, lib2/inlineFunctionProxy, lib2/simpleChild, lib2/inlineFunction, main, main/m, main/m.export
+STEP 1..4:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files: lib1/l1, lib2/inlineChildProxy, lib2/inlineChild, lib2/simpleFunction, lib2/inlineFunctionProxy, lib2/simpleChild, lib2/inlineFunction
+STEP 5:
+    libs: lib1, lib2, main
+    dirty js modules: lib1
+    dirty js files: lib1/l1
+STEP 6..7:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files: lib1/l1, lib2/inlineChildProxy, lib2/inlineChild, lib2/simpleFunction, lib2/inlineFunctionProxy, lib2/simpleChild, lib2/inlineFunction

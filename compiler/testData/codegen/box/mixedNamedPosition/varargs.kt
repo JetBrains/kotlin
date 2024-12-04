@@ -1,4 +1,4 @@
-// !LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
+// LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition
 
 fun foo1(
     vararg p1: Int,

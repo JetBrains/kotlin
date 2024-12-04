@@ -7,7 +7,7 @@ final class DP$provideDelegate$1 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -36,7 +36,7 @@ public final class H1 {
     private final static @org.jetbrains.annotations.NotNull field property$delegate: kotlin.Lazy
     static method <clinit>(): void
     public method <init>(): void
-    public synthetic final static method access$getProperty$cp(): kotlin.Lazy
+    public synthetic final static method access$getProperty$delegate$cp(): kotlin.Lazy
     public final inner class H1$Companion
 }
 
@@ -49,7 +49,7 @@ final class H2$Companion$property$2 {
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -69,6 +69,6 @@ public final class H2 {
     inner (anonymous) class H2$Companion$property$2
     static method <clinit>(): void
     public method <init>(): void
-    public synthetic final static method access$getProperty$cp(): kotlin.Lazy
+    public synthetic final static method access$getProperty$delegate$cp(): kotlin.Lazy
     public final inner class H2$Companion
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package test
 
 import <!UNRESOLVED_REFERENCE!>some<!>.<!SYNTAX!><!>

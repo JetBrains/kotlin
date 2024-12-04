@@ -1,6 +1,0 @@
-KT element: KtPropertyAccessor
-FIR element: FirPropertyAccessorImpl
-
-FIR element rendered:
-public set(value: R|kotlin/String|): R|kotlin/Unit| {
-}

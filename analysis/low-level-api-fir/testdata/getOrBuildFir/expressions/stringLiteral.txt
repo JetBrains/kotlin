@@ -1,5 +1,0 @@
-KT element: KtStringTemplateExpression
-FIR element: FirConstExpressionImpl
-
-FIR element rendered:
-String(string)

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface A {
     fun foo(a1: Int, a2: Double)
 }
@@ -18,5 +19,5 @@ fun test1(d: D) {
 }
 
 fun test2(c: C) {
-    c.foo(<!NAMED_PARAMETER_NOT_FOUND!>b1<!> = 1, <!NAMED_PARAMETER_NOT_FOUND!>b2<!> = 1.0<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
+    c.foo(<!NAME_FOR_AMBIGUOUS_PARAMETER!>b1<!> = 1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b2<!> = 1.0)
 }

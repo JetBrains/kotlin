@@ -1,0 +1,21 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <root_package_library>
+final class /Class : /Interface, /Interface.NestedInterface { // /Class|null[0]
+    final val property // /Class.property|{}property[0]
+        final fun <get-property>(): kotlin/String // /Class.property.<get-property>|<get-property>(){}[0]
+    constructor <init>(kotlin/String) // /Class.<init>|<init>(kotlin.String){}[0]
+    final fun function(): kotlin/String // /Class.function|function(){}[0]
+    final class NestedClass { // /Class.NestedClass|null[0]
+        constructor <init>() // /Class.NestedClass.<init>|<init>(){}[0]
+    }
+}
+abstract interface /Interface { // /Interface|null[0]
+    abstract interface NestedInterface // /Interface.NestedInterface|null[0]
+}
+final val /property // /property|{}property[0]
+    final fun <get-property>(): kotlin/String // /property.<get-property>|<get-property>(){}[0]
+final fun /function(): kotlin/String // /function|function(){}[0]

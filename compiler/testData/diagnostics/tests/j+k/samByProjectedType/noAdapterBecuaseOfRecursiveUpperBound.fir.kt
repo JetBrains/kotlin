@@ -1,4 +1,6 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// FIR_DUMP
 // FILE: Function.java
 public interface Function<E extends CharSequence, F extends java.util.Map<String, E>> {
     E handle(F f);

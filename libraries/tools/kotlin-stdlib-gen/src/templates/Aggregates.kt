@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,6 +36,10 @@ object Aggregates : TemplateGroupBase() {
         doc {
             """
             Returns `true` if all ${f.element.pluralize()} match the given [predicate].
+            
+            Note that if the ${f.collection} contains no ${f.element.pluralize()}, the function returns `true` 
+            because there are no ${f.element.pluralize()} in it that _do not_ match the predicate.
+            See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article. 
             """
         }
         sample("samples.collections.Collections.Aggregates.all")
@@ -315,8 +319,9 @@ object Aggregates : TemplateGroupBase() {
     val f_minMax = sequence {
         val genericSpecializations = PrimitiveType.floatingPointPrimitives + setOf(null)
 
-        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+        fun def(op: String, nullable: Boolean, legacy: Boolean = false, orNull: String = "OrNull".ifOrEmpty(nullable)) =
             fn("$op$orNull()") {
+                if (legacy) platforms(Platform.JVM)
                 include(Iterables, genericSpecializations)
                 include(Sequences, genericSpecializations)
                 include(ArraysOfObjects, genericSpecializations)
@@ -325,13 +330,14 @@ object Aggregates : TemplateGroupBase() {
                 include(CharSequences)
             } builder {
                 typeParam("T : Comparable<T>")
-                returns("T?")
+                returns("T" + "?".ifOrEmpty(nullable))
 
                 val isFloat = primitive?.isFloatingPoint() == true
+                val isUnsigned = family == ArraysOfUnsigned
 
-                if (!nullable) {
+                if (!nullable || legacy) suppress("CONFLICTING_OVERLOADS")
+                if (legacy) {
                     deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull()", warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6"))
-
                     val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
                     if (isFloat && isGeneric) {
                         since("1.1")
@@ -342,11 +348,18 @@ object Aggregates : TemplateGroupBase() {
                     return@builder
                 }
 
+                val doOnEmpty = if (nullable) "return null" else "throw NoSuchElementException()"
+
                 since("1.4")
+                if (!nullable) since("1.7")
 
                 doc {
-                    "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element} or `null` if there are no ${f.element.pluralize()}." +
+                    "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}." +
                     if (isFloat) "\n\n" + "If any of ${f.element.pluralize()} is `NaN` returns `NaN`." else ""
+                }
+                if (!nullable) {
+                    throws("NoSuchElementException", "if the ${f.collection} is empty.")
+                    annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
                 }
 
                 val acc = op
@@ -357,7 +370,7 @@ object Aggregates : TemplateGroupBase() {
                 body {
                     """
                     val iterator = iterator()
-                    if (!iterator.hasNext()) return null
+                    if (!iterator.hasNext()) $doOnEmpty
                     var $acc = iterator.next()
                     while (iterator.hasNext()) {
                         val e = iterator.next()
@@ -368,7 +381,7 @@ object Aggregates : TemplateGroupBase() {
                 }
                 body(ArraysOfObjects, ArraysOfPrimitives, CharSequences, ArraysOfUnsigned) {
                     """
-                    if (isEmpty()) return null
+                    if (isEmpty()) $doOnEmpty
                     var $acc = this[0]
                     for (i in 1..lastIndex) {
                         val e = this[i]
@@ -379,39 +392,52 @@ object Aggregates : TemplateGroupBase() {
                 }
             }
 
-        for (op in listOf("min", "max"))
+        for (op in listOf("min", "max")) {
             for (nullable in listOf(false, true))
                 yield(def(op, nullable))
+            yield(def(op, nullable = true, legacy = true, orNull = ""))
+        }
     }
 
     val f_minMaxBy = sequence {
-        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+        fun def(op: String, nullable: Boolean, legacy: Boolean = false, orNull: String = "OrNull".ifOrEmpty(nullable)) =
             fn("$op$orNull(selector: (T) -> R)") {
+                if (legacy) platforms(Platform.JVM)
                 includeDefault()
                 include(Maps, CharSequences, ArraysOfUnsigned)
             } builder {
                 inline()
                 specialFor(ArraysOfUnsigned) { inlineOnly() }
-                specialFor(Maps) { if (op == "maxBy" || nullable) inlineOnly() }
+                specialFor(Maps) { if (op == "maxBy" || !legacy) inlineOnly() }
                 typeParam("R : Comparable<R>")
-                returns("T?")
+                returns("T" + "?".ifOrEmpty(nullable))
+                val isUnsigned = family == ArraysOfUnsigned
 
-                if (!nullable) {
+                if (!nullable || legacy) suppress("CONFLICTING_OVERLOADS")
+                if (legacy) {
                     deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(selector)", warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6"))
                     body { "return ${op}OrNull(selector)" }
                     return@builder
                 }
 
-                since("1.4")
+                val doOnEmpty = if (nullable) "return null" else "throw NoSuchElementException()"
 
-                doc { "Returns the first ${f.element} yielding the ${if (op == "maxBy") "largest" else "smallest"} value of the given function or `null` if there are no ${f.element.pluralize()}." }
+                since("1.4")
+                if (!nullable) since("1.7")
+
+                doc { "Returns the first ${f.element} yielding the ${if (op == "maxBy") "largest" else "smallest"} value of the given function${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}." }
                 sample("samples.collections.Collections.Aggregates.$op$orNull")
+
+                if (!nullable) {
+                    throws("NoSuchElementException", "if the ${f.collection} is empty.")
+                    annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
+                }
 
                 val (elem, value, cmp) = if (op == "minBy") Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
                 body {
                     """
                     val iterator = iterator()
-                    if (!iterator.hasNext()) return null
+                    if (!iterator.hasNext()) $doOnEmpty
         
                     var $elem = iterator.next()
                     if (!iterator.hasNext()) return $elem
@@ -429,7 +455,7 @@ object Aggregates : TemplateGroupBase() {
                 }
                 body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
                     """
-                    if (isEmpty()) return null
+                    if (isEmpty()) $doOnEmpty
         
                     var $elem = this[0]
                     val lastIndex = this.lastIndex
@@ -449,35 +475,47 @@ object Aggregates : TemplateGroupBase() {
                 body(Maps) { "return entries.$op$orNull(selector)" }
             }
 
-        for (op in listOf("minBy", "maxBy"))
+        for (op in listOf("minBy", "maxBy")) {
             for (nullable in listOf(false, true))
                 yield(def(op, nullable))
+            yield(def(op, nullable = true, legacy = true, orNull = ""))
+        }
     }
 
     val f_minMaxWith = sequence {
-        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+        fun def(op: String, nullable: Boolean, legacy: Boolean = false, orNull: String = "OrNull".ifOrEmpty(nullable)) =
             fn("$op$orNull(comparator: Comparator<in T>)") {
+                if (legacy) platforms(Platform.JVM)
                 includeDefault()
                 include(Maps, CharSequences, ArraysOfUnsigned)
             } builder {
-                specialFor(Maps) { if (op == "maxWith" || nullable) inlineOnly() }
-                returns("T?")
+                specialFor(Maps) { if (op == "maxWith" || !legacy) inlineOnly() }
+                returns("T" + "?".ifOrEmpty(nullable))
+                val isUnsigned = family == ArraysOfUnsigned
 
-                if (!nullable) {
+                if (!nullable || legacy) suppress("CONFLICTING_OVERLOADS")
+                if (legacy) {
                     deprecate(Deprecation("Use ${op}OrNull instead.", "this.${op}OrNull(comparator)", warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.6"))
                     body { "return ${op}OrNull(comparator)" }
                     return@builder
                 }
 
-                since("1.4")
+                val doOnEmpty = if (nullable) "return null" else "throw NoSuchElementException()"
 
-                doc { "Returns the first ${f.element} having the ${if (op == "maxWith") "largest" else "smallest"} value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
+                since("1.4")
+                if (!nullable) since("1.7")
+
+                doc { "Returns the first ${f.element} having the ${if (op == "maxWith") "largest" else "smallest"} value according to the provided [comparator]${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}." }
+                if (!nullable) {
+                    throws("NoSuchElementException", "if the ${f.collection} is empty.")
+                    annotation("@kotlin.jvm.JvmName(\"${op}OrThrow${"-U".ifOrEmpty(isUnsigned)}\")")
+                }
 
                 val (acc, cmp) = if (op == "minWith") Pair("min", ">") else Pair("max", "<")
                 body {
                     """
                     val iterator = iterator()
-                    if (!iterator.hasNext()) return null
+                    if (!iterator.hasNext()) $doOnEmpty
         
                     var $acc = iterator.next()
                     while (iterator.hasNext()) {
@@ -489,7 +527,7 @@ object Aggregates : TemplateGroupBase() {
                 }
                 body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
                     """
-                    if (isEmpty()) return null
+                    if (isEmpty()) $doOnEmpty
                     var $acc = this[0]
                     for (i in 1..lastIndex) {
                         val e = this[i]
@@ -501,9 +539,11 @@ object Aggregates : TemplateGroupBase() {
                 body(Maps) { "return entries.$op$orNull(comparator)" }
             }
 
-        for (op in listOf("minWith", "maxWith"))
+        for (op in listOf("minWith", "maxWith")) {
             for (nullable in listOf(false, true))
                 yield(def(op, nullable))
+            yield(def(op, nullable = true, legacy = true, orNull = ""))
+        }
     }
 
     fun f_minMaxOf() = sequence {
@@ -526,10 +566,10 @@ object Aggregates : TemplateGroupBase() {
                     """ +
                     """
                     If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
-                    """.ifOrEmpty(isFloat) +
-                    """
-                    @throws NoSuchElementException if the ${f.collection} is empty.
-                    """.ifOrEmpty(!nullable)
+                    """.ifOrEmpty(isFloat)
+                }
+                if (!nullable) {
+                    throws("NoSuchElementException", "if the ${f.collection} is empty.")
                 }
 
                 if (!isFloat) typeParam("R : Comparable<R>")
@@ -1148,7 +1188,6 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1173,7 +1212,6 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
 
         doc { reduceDoc("reduceOrNull") }
@@ -1273,7 +1311,6 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1299,7 +1336,6 @@ object Aggregates : TemplateGroupBase() {
         include(Lists, ArraysOfObjects)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
         doc { reduceDoc("reduceRightOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
@@ -1420,7 +1456,6 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1518,7 +1553,6 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1618,7 +1652,6 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 

@@ -1,6 +1,6 @@
 package
 
-public val a: [ERROR : Return not allowed]
+public val a: [Error type: Return not allowed]
 public fun bbb(): kotlin.Unit
 public fun blockAndAndMismatch(): kotlin.Int
 public fun blockAndAndMismatch1(): kotlin.Int
@@ -47,6 +47,7 @@ public fun nonBlockNoReturnIfUnitInOneBranch(): kotlin.Int
 public fun nonBlockReturnIfEmptyIf(): kotlin.Int
 public fun none(): kotlin.Unit
 public fun returnNothing(): kotlin.Nothing
+public fun returnNothingEmpty(): kotlin.Nothing
 public fun test1(): kotlin.Any
 public fun test2(): kotlin.Any
 public fun test3(): kotlin.Any

@@ -1,6 +1,6 @@
 package
 
-public val test1: [ERROR : Type for C1_Alias()]
+public val test1: [Error type: Not found recorded type for C1_Alias()]
 public val test2: C2_Alias /* = C2 */
 
 @kotlin.SinceKotlin(version = "1.1") public open class C1 {

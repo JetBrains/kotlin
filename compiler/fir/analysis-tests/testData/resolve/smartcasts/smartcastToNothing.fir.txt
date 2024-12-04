@@ -34,11 +34,14 @@ FILE: smartcastToNothing.kt
             lval <iterator>: R|kotlin/collections/Iterator<kotlin/Nothing>| = R|<local>/results|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Nothing>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval result: R|kotlin/Nothing| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Nothing|>|()
-                R|<local>/s| = R|<local>/result|
-                when () {
-                    R|<local>/result|.<Unresolved name: b># ->  {
-                        break@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
+                 {
+                    R|<local>/s| = R|<local>/result|
+                    when () {
+                        R|<local>/result|.<Unresolved name: b># ->  {
+                            break@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
+                        }
                     }
+
                 }
 
             }
@@ -49,4 +52,18 @@ FILE: smartcastToNothing.kt
             ^ R|<local>/it|.R|/A.a|
         }
         ) }
+    }
+    public final fun test_1(a: R|kotlin/String?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|kotlin/Nothing?|) ->  {
+                lval b: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|kotlin/String.length| }
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|kotlin/Nothing|) ->  {
+                lval b: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.length|
+            }
+        }
+
     }

@@ -1,7 +1,7 @@
 import foo.bar.configureFromBuildSrc
 
 plugins {
-    kotlin("jvm") version "<pluginMarkerVersion>"
+    kotlin("jvm")
 }
 
 kotlin {

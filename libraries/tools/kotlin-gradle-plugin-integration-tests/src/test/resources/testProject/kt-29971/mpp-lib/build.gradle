@@ -4,21 +4,11 @@ plugins {
 
 kotlin {
 	js()
-
-	sourceSets {
-		commonMain {
-			dependencies {
-				implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-			}
-		}
-		jsMain {
-			dependencies {
-				implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-			}
-		}
-	}
 }
 
 // While this plugin seems not to do anything in this setup, IT IS needed to reproduce KT-29971
-apply plugin: "application"
-mainClassName = "foo"
+plugins.apply("application")
+
+application {
+	mainClass = "foo"
+}

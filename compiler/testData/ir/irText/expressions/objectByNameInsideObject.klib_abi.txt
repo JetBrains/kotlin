@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /Base { // /Base|null[0]
+    final val f1 // /Base.f1|{}f1[0]
+        final fun <get-f1>(): kotlin/Function0<kotlin/Any> // /Base.f1.<get-f1>|<get-f1>(){}[0]
+    constructor <init>(kotlin/Function0<kotlin/Any>) // /Base.<init>|<init>(kotlin.Function0<kotlin.Any>){}[0]
+}
+final object /Thing : /Base { // /Thing|null[0]
+    final fun test1(): /Thing // /Thing.test1|test1(){}[0]
+    final fun test2(): /Thing // /Thing.test2|test2(){}[0]
+}

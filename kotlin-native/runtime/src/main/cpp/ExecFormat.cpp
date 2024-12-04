@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-
 #include "ExecFormat.h"
-#include "Types.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <vector>
+
+#include "Porting.h"
 
 #if USE_ELF_SYMBOLS
 
@@ -57,7 +61,7 @@ struct SymRecord {
   char* strtab;
 };
 
-typedef KStdVector<SymRecord> SymRecordList;
+typedef std::vector<SymRecord> SymRecordList;
 
 SymRecordList* symbols = nullptr;
 
@@ -75,7 +79,7 @@ Elf_Ehdr* findElfHeader() {
 
 void initSymbols() {
   RuntimeAssert(symbols == nullptr, "Init twice");
-  symbols = konanConstructInstance<SymRecordList>();
+  symbols = new SymRecordList();
   Elf_Ehdr* ehdr = findElfHeader();
   if (ehdr == nullptr) return;
   RuntimeAssert(strncmp((const char*)ehdr->e_ident, ELFMAG, SELFMAG) == 0, "Must be an ELF");
@@ -158,10 +162,10 @@ static void* mapModuleFile(HMODULE hModule) {
   DWORD bufferLength = 64;
   wchar_t* buffer = nullptr;
   for (;;) {
-    auto newBuffer = (wchar_t*)konanAllocMemory(sizeof(wchar_t) * bufferLength);
+    auto newBuffer = (wchar_t*)std::calloc(bufferLength, sizeof(wchar_t));
     RuntimeAssert(newBuffer != nullptr, "Out of memory");
     if (buffer != nullptr) {
-      konanFreeMemory(buffer);
+      std::free(buffer);
     }
     buffer = newBuffer;
 
@@ -177,7 +181,7 @@ static void* mapModuleFile(HMODULE hModule) {
     }
 
     // Invalid result.
-    konanFreeMemory(buffer);
+    std::free(buffer);
     return nullptr;
   }
 
@@ -190,7 +194,7 @@ static void* mapModuleFile(HMODULE hModule) {
       /* dwFlagsAndAttributes = */ FILE_ATTRIBUTE_NORMAL,
       /* hTemplateFile = */ nullptr
   );
-  konanFreeMemory(buffer);
+  std::free(buffer);
   if (hFile == INVALID_HANDLE_VALUE) {
     // Can't open module file.
     return nullptr;
@@ -262,14 +266,22 @@ class SymbolTable {
     return (const void*)(imageBase + sectionHeader->VirtualAddress + symbol->Value);
   }
 
+  // Finds symbol having nearest smaller address
   IMAGE_SYMBOL* findFunctionSymbol(const void* address) {
+    IMAGE_SYMBOL* result = nullptr;
+    auto addressPtr = reinterpret_cast<uintptr_t>(address);
+    auto resultPtr = reinterpret_cast<uintptr_t>(nullptr);
     for (DWORD i = 0; i < numberOfSymbols; ++i) {
       IMAGE_SYMBOL* symbol = &symbols[i];
-      if (symbol->Type == 0x20 && address == getSymbolAddress(symbol)) {
-        return symbol;
+      if (symbol->Type == 0x20) {
+          auto symbolPtr = reinterpret_cast<uintptr_t>(getSymbolAddress(symbol));
+          if(resultPtr < symbolPtr && symbolPtr <= addressPtr) {
+            resultPtr = symbolPtr;
+            result = symbol;
+          }
       }
     }
-    return nullptr;
+    return result;
   }
 
  public:
@@ -322,7 +334,7 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
     int rv = GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
                reinterpret_cast<LPCWSTR>(&AddressToSymbol), &hModule);
     RuntimeAssert(rv != 0, "GetModuleHandleExW fails");
-    theExeSymbolTable = konanConstructInstance<SymbolTable>(hModule);
+    theExeSymbolTable = new SymbolTable(hModule);
   }
   return theExeSymbolTable->functionAddressToSymbol(address, resultBuffer, resultBufferSize, resultOffset);
 }
@@ -344,7 +356,7 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
     } else if (info.dli_fname) {
         result = info.dli_fname;
         resultOffset = reinterpret_cast<ptrdiff_t>(address) - reinterpret_cast<ptrdiff_t>(info.dli_fbase);
-    } else if (0 < konan::snprintf(symbuf, sizeof(symbuf), "%p", info.dli_saddr)) {
+    } else if (0 < std::snprintf(symbuf, sizeof(symbuf), "%p", info.dli_saddr)) {
         result = symbuf;
         resultOffset = reinterpret_cast<ptrdiff_t>(address) - reinterpret_cast<ptrdiff_t>(info.dli_saddr);
     } else {

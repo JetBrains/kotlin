@@ -8,37 +8,45 @@ package test
 import java.util.*
 import kotlin.test.assertEquals
 
+private val isJava8 = System.getProperty("java.version").startsWith("1.8.")
+
+internal fun testOnJvm8(f: () -> Unit) {
+    if (isJava8) {
+        f()
+    }
+}
+
+internal fun testOnJvm9AndAbove(f: () -> Unit) {
+    if (!isJava8) {
+        f()
+    }
+}
+
+
 public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
     assertEquals(expected?.javaClass, actual?.javaClass)
 }
 
-private val isJava6 = System.getProperty("java.version").startsWith("1.6.")
-
-internal actual fun String.removeLeadingPlusOnJava6(): String =
-    if (isJava6) removePrefix("+") else this
-
-private val isJava7 = System.getProperty("java.version").startsWith("1.7.")
-
-private val isJava8AndAbove = !isJava6 && !isJava7
-
-internal actual inline fun testOnNonJvm6And7(f: () -> Unit) {
-    if (isJava8AndAbove) {
-        f()
-    }
-}
-internal inline fun testOnJvm7AndAbove(f: () -> Unit) {
-    if (!isJava6) {
-        f()
-    }
-}
-public actual fun testOnJvm(action: () -> Unit) = action()
-public actual fun testOnJs(action: () -> Unit) {}
+public actual val TestPlatform.Companion.current: TestPlatform get() = TestPlatform.Jvm
 
 @Suppress("HasPlatformType", "UNCHECKED_CAST")
 public fun <T> platformNull() = Collections.singletonList(null as T).first()
 
 public actual val isFloat32RangeEnforced: Boolean = true
 
-public actual val supportsSuppressedExceptions: Boolean get() = !isJava6
+public actual val supportsOctalLiteralInRegex: Boolean get() = true
 
-public actual val supportsNamedCapturingGroup: Boolean get() = !isJava6
+public actual val supportsEscapeAnyCharInRegex: Boolean get() = true
+
+public actual val regexSplitUnicodeCodePointHandling: Boolean get() = false
+
+public actual object BackReferenceHandling {
+    actual val captureLargestValidIndex: Boolean get() = true
+
+    actual val notYetDefinedGroup: HandlingOption = HandlingOption.MATCH_NOTHING
+    actual val notYetDefinedNamedGroup: HandlingOption = HandlingOption.THROW
+    actual val enclosingGroup: HandlingOption = HandlingOption.MATCH_NOTHING
+    actual val nonExistentGroup: HandlingOption = HandlingOption.MATCH_NOTHING
+    actual val nonExistentNamedGroup: HandlingOption = HandlingOption.THROW
+    actual val groupZero: HandlingOption = HandlingOption.THROW
+}

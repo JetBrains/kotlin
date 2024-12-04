@@ -1,7 +1,4 @@
 FILE fqName:<root> fileName:/whenReturnUnit.kt
-  FUN name:run visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
-    BLOCK_BODY
   FUN name:branch visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
@@ -16,13 +13,16 @@ FILE fqName:<root> fileName:/whenReturnUnit.kt
                   WHEN type=kotlin.Unit origin=WHEN
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
+                        arg0: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=1
-                      then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                      then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
                         reason: CONST String type=kotlin.String value="1"
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
+                        arg0: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=2
-                      then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+                      then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
                         reason: CONST String type=kotlin.String value="2"
+  FUN name:run visibility:public modality:FINAL <> (block:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:block index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY

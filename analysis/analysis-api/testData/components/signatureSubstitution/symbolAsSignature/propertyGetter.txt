@@ -1,0 +1,11 @@
+KtDeclaration: KtPropertyAccessor
+Symbol:
+get()
+
+Signature:
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = <getter>(): kotlin.Int
+  valueParameters = []
+  callableId = null

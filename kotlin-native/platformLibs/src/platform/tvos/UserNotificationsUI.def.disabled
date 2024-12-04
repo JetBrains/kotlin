@@ -1,0 +1,8 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.UserNotificationsUI
+
+modules = UserNotificationsUI
+compilerOpts = -framework UserNotificationsUI
+linkerOpts = -framework UserNotificationsUI
+# Disabled: Not officially available for tvOS.

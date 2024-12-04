@@ -1,0 +1,6 @@
+public abstract interface LoadIterableWithConflict<T> : R|kotlin/Any| {
+    public abstract fun getIterable(): R|kotlin/collections/MutableIterable<T>?|
+
+    public abstract fun setIterable(p0: R|kotlin/collections/MutableIterable<T>?|): R|kotlin/Unit|
+
+}

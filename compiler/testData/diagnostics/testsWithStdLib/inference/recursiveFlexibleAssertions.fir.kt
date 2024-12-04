@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
 // Issue: KT-35844
 
 // ---------------------- AssertJ declarations --------------------------
@@ -26,6 +26,9 @@ ELEMENT_ASSERT extends AbstractAssert<ELEMENT_ASSERT, ELEMENT>>
 extends AbstractAssert<SELF, ACTUAL> implements ObjectEnumerableAssert<SELF, ELEMENT> {}
 
 // FILE: AbstractListAssert.java
+
+import java.util.List;
+
 public abstract class AbstractListAssert<
         SELF extends AbstractListAssert<SELF, ACTUAL, ELEMENT, ELEMENT_ASSERT>,
 ACTUAL extends List<? extends ELEMENT>,
@@ -38,7 +41,14 @@ implements IndexedObjectEnumerableAssert<SELF, ELEMENT> {
     }
 }
 
+// FILE: ObjectAssert.java
+
+public class ObjectAssert<ELEMENT> extends AbstractAssert<ObjectAssert<ELEMENT>, ELEMENT> {}
+
 // FILE: ListAssert.java
+
+import java.util.List;
+
 public class ListAssert<ELEMENT> extends AbstractListAssert<ListAssert<ELEMENT>, List<? extends ELEMENT>, ELEMENT, ObjectAssert<ELEMENT>> {}
 
 // FILE: AbstractCharSequenceAssert.java
@@ -73,7 +83,5 @@ fun test() {
         true -> Assertions.assertThat(listOf("foo")).isNotEmpty
         else -> Assertions.assertThat("bar").isEqualTo("bar")
     }
-    // TODO: FIR
-    // {AbstractAssert<*, out Any!>! & EnumerableAssert<*, {Comparable<*> & java.io.Serializable!}>!} with unfolded flexible nullability
-    <!DEBUG_INFO_EXPRESSION_TYPE("AbstractAssert<*, out kotlin.Any..kotlin.Any?!> & EnumerableAssert<*, out kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?>..AbstractAssert<*, out kotlin.Any..kotlin.Any?!>? & EnumerableAssert<*, out kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?>?")!>assertion<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(AbstractAssert<*, out (kotlin.Any..kotlin.Any?)> & EnumerableAssert<*, out (kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?)>..AbstractAssert<*, out (kotlin.Any..kotlin.Any?)>? & EnumerableAssert<*, out (kotlin.Comparable<kotlin.String & kotlin.Char> & java.io.Serializable..kotlin.Comparable<kotlin.String & kotlin.Char>? & java.io.Serializable?)>?)")!>assertion<!>
 }

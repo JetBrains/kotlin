@@ -7,6 +7,7 @@ apply plugin: 'maven-publish'
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
 kotlin {
+    jvmToolchain(8)
     jvm("jvmWithJava") {
         withJava()
         attributes { attribute(complexLibAttribute, 'jvmWithJava') }
@@ -15,22 +16,22 @@ kotlin {
             kotlinOptions.jvmTarget = "1.8"
         }
     }
-    jvm("jvm16") {
-        attributes { attribute(complexLibAttribute, 'jvm16') }
+    jvm("jvm9") {
+        attributes { attribute(complexLibAttribute, 'jvm9') }
 
         compilations.all {
-            kotlinOptions.jvmTarget = "1.6"
+            kotlinOptions.jvmTarget = "9"
         }
     }
     // This is for iPhone emulator
-    // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
+    // Switch here to iosArm64 to build library for iPhone device
     iosX64("iosSimLib") {
         binaries {
             // framework()
             // Creating static library with a custom name.
             staticLib('customNameForiosSimLib') {
                 outputDirectory = file("fooCustomNameForiosSimLib") // outputDir is a `val` property.
-                linkTask.destinationDir = file("fooCustomNameForiosSimLib")
+                linkTask.destinationDirectory = file("fooCustomNameForiosSimLib")
             }
         }
     }
@@ -39,7 +40,7 @@ kotlin {
     targets.all {
         compilations.all {
             kotlinOptions {
-                freeCompilerArgs += ["-progressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform", "-Xskip-prerelease-check"]
+                freeCompilerArgs += ["-progressive", "-XXLanguage:+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform", "-Xskip-prerelease-check"]
             }
         }
     }
@@ -53,14 +54,14 @@ kotlin {
         }
 
         // creating a diamond
-        jvmJavaJvm16Main {
+        jvmJavaJvm9Main {
             dependsOn commonMain
             dependencies {
                 api project(":api-jvm")
             }
         }
 
-        jvmJavaJvm16Test {
+        jvmJavaJvm9Test {
             dependsOn commonTest
         }
 
@@ -76,30 +77,30 @@ kotlin {
         }
 
         // setting up the targets source sets
-        jvm16Main {
+        jvm9Main {
             dependencies { }
 
             // connecting to the diamond
-            dependsOn jvmJavaJvm16Main
+            dependsOn jvmJavaJvm9Main
         }
-        jvm16Test {
+        jvm9Test {
             dependencies { }
 
             // connecting to the diamond
-            dependsOn jvmJavaJvm16Test
+            dependsOn jvmJavaJvm9Test
         }
         jvmWithJavaMain {
             dependencies {  }
 
             // connecting to the diamond
-            dependsOn jvmJavaJvm16Main
+            dependsOn jvmJavaJvm9Main
             dependsOn jvmWithJavaiOSMain
         }
         jvmWithJavaTest {
             dependencies { }
 
             // connecting to the diamond
-            dependsOn jvmJavaJvm16Test
+            dependsOn jvmJavaJvm9Test
             dependsOn jvmWithJavaiOSTest
         }
 

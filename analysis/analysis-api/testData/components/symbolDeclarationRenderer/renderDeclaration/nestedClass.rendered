@@ -1,10 +1,10 @@
-abstract class Base {
-    constructor(s: String)
-    val s: String
+abstract class Base(s: String) {
+  val s: String
 }
+
 class Outer {
-    class Derived : Base {
-        constructor(s: String)
-    }
-    object Obj : Base
+  class Derived(s: String) : Base()
+
+  object Obj : Base()
 }
+

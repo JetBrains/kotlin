@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.AutomatedDeviceEnrollment
+
+modules = AutomatedDeviceEnrollment
+compilerOpts = -framework AutomatedDeviceEnrollment
+linkerOpts = -framework AutomatedDeviceEnrollment
+#Disabled: Swift-only framework

@@ -32,12 +32,12 @@ public interface Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     public abstract fun neOk11(): Inv<out I>
     public abstract fun neOk2(): In<O>
     public abstract fun neOk3(): In<In<I>>
-    public abstract fun neOk30(): [ERROR : Pair]<I>
-    public abstract fun neOk31(): Pair<I, [ERROR : Inv]>
-    public abstract fun neOk32(): [ERROR : Inv]
-    public abstract fun neOk33(): Inv<[ERROR : No type element]>
-    public abstract fun neOk34(): Inv<[ERROR : C]>
-    public abstract fun neOk35(): [ERROR : Inv]<P, P>
+    public abstract fun neOk30(): [Error type: Type for error type constructor (Pair)]<I>
+    public abstract fun neOk31(): Pair<I, [Error type: Type for error type constructor (Inv)]>
+    public abstract fun neOk32(): [Error type: Type for error type constructor (Inv)]
+    public abstract fun neOk33(): Inv<[Error type: No type specified for unknown element]>
+    public abstract fun neOk34(): Inv<[Error type: Unresolved type for C]>
+    public abstract fun neOk35(): [Error type: Type for error type constructor (Inv)]<P, P>
     public abstract fun neOk4(): Inv<I>
     public abstract fun neOk5(): Inv<O>
     public abstract fun neOk6(): Pair<In<O>, I>

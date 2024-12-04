@@ -34,7 +34,7 @@ public:
     explicit ScopedMockFunction(testing::MockFunction<F>** globalMockLocation) : globalMockLocation_(globalMockLocation) {
         RuntimeCheck(globalMockLocation != nullptr, "ScopedMockFunction needs non-null global mock location");
         RuntimeCheck(*globalMockLocation == nullptr, "ScopedMockFunction needs null global mock");
-        mock_ = make_unique<Mock>();
+        mock_ = std::make_unique<Mock>();
         *globalMockLocation_ = mock_.get();
     }
 
@@ -69,7 +69,7 @@ public:
 private:
     // Can be null if moved-out of.
     testing::MockFunction<F>** globalMockLocation_;
-    KStdUniquePtr<Mock> mock_;
+    std::unique_ptr<Mock> mock_;
 };
 
 template<bool Strict = true>

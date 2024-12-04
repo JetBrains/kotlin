@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
@@ -58,7 +59,11 @@ interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {
      */
     var hasBuilderInferenceAnnotation: Boolean
         get() = false
-        set(@Suppress("UNUSED_PARAMETER") value) {}
+        set(_) {}
+
+    var builderInferenceSession: InferenceSession?
+        get() = null
+        set(_) {}
 
     /**
      * parametersTypes == null means, that there is no declared arguments
@@ -72,6 +77,8 @@ interface FunctionExpression : LambdaKotlinCallArgument {
 
     // null means that there function can not have receiver
     val receiverType: UnwrappedType?
+
+    val contextReceiversTypes: Array<UnwrappedType?>
 
     // null means that return type is not declared, for fun(){ ... } returnType == Unit
     val returnType: UnwrappedType?

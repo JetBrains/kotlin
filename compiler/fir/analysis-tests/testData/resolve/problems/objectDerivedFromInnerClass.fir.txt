@@ -4,7 +4,7 @@ FILE: objectDerivedFromInnerClass.kt
             super<R|kotlin/Any|>()
         }
 
-        public final inner class Inner : R|kotlin/Any| {
+        public open inner class Inner : R|kotlin/Any| {
             public Outer.constructor(): R|Outer.Inner| {
                 super<R|kotlin/Any|>()
             }

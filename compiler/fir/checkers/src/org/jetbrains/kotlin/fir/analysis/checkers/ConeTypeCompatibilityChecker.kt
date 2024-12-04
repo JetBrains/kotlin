@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.collectUpperBounds
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.types.Variance
 object ConeTypeCompatibilityChecker {
 
     private val javaClassClassId = ClassId.fromString("java/lang/Class")
+    private val kotlinClassClassId = ClassId.fromString("kotlin/reflect/KClass")
+
 
     /**
      * The result returned by [ConeTypeCompatibilityChecker]. Note the order of enum entries matters.
@@ -87,9 +89,6 @@ object ConeTypeCompatibilityChecker {
 
         // Next can simply focus on the type hierarchy and don't need to worry about nullability.
         val compatibilityUpperBound = when {
-            all {
-                it.isPrimitive
-            } -> Compatibility.SOFT_INCOMPATIBLE // TODO: remove after KT-46383 is fixed
             all {
                 it.isConcreteType()
             } -> Compatibility.HARD_INCOMPATIBLE
@@ -134,6 +133,9 @@ object ConeTypeCompatibilityChecker {
             return Compatibility.COMPATIBLE
         }
 
+        // TODO: Due to KT-49358, we skip any checks on Java and Kotlin refection class.
+        if (upperBounds.any { it.classId == javaClassClassId || it.classId == kotlinClassClassId }) return Compatibility.COMPATIBLE
+
         val leafClassesOrInterfaces = computeLeafClassesOrInterfaces(upperBoundClasses)
         this.areClassesOrInterfacesCompatible(leafClassesOrInterfaces, compatibilityUpperBound)?.let { return it }
 
@@ -148,9 +150,6 @@ object ConeTypeCompatibilityChecker {
         }
 
         if (upperBounds.size < 2) return Compatibility.COMPATIBLE
-
-        // TODO: Due to KT-49358, we skip any checks on Java class.
-        if (upperBounds.any { it.classId == javaClassClassId }) return Compatibility.COMPATIBLE
 
         // Base types are compatible. Now we check type parameters.
 
@@ -236,49 +235,24 @@ object ConeTypeCompatibilityChecker {
         return null
     }
 
-    /**
-     * Collects the upper bounds as [ConeClassLikeType].
-     */
-    private fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
-        if (this == null) return emptySet()
-        return when (this) {
-            is ConeClassErrorType -> emptySet() // Ignore error types
-            is ConeLookupTagBasedType -> when (this) {
-                is ConeClassLikeType -> setOf(this)
-                is ConeTypeVariableType -> {
-                    (lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol.collectUpperBounds()
-                }
-                is ConeTypeParameterType -> lookupTag.typeParameterSymbol.collectUpperBounds()
-                else -> throw IllegalStateException("missing branch for ${javaClass.name}")
-            }
-            is ConeDefinitelyNotNullType -> original.collectUpperBounds()
-            is ConeIntersectionType -> intersectedTypes.flatMap { it.collectUpperBounds() }.toSet()
-            is ConeFlexibleType -> upperBound.collectUpperBounds()
-            is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectUpperBounds() }?.toSet().orEmpty()
-            is ConeStubType, is ConeIntegerLiteralType -> throw IllegalStateException("$this should not reach here")
-        }
-    }
-
-    private fun FirTypeParameterSymbol?.collectUpperBounds(): Set<ConeClassLikeType> {
-        if (this == null) return emptySet()
-        return resolvedBounds.flatMap { it.coneTypeSafe<ConeKotlinType>().collectUpperBounds() }.toSet()
-    }
-
     private fun ConeKotlinType?.collectLowerBounds(): Set<ConeClassLikeType> {
         if (this == null) return emptySet()
         return when (this) {
-            is ConeClassErrorType -> emptySet() // Ignore error types
+            is ConeErrorType -> emptySet() // Ignore error types
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
-                is ConeTypeVariableType -> emptySet()
                 is ConeTypeParameterType -> emptySet()
-                else -> throw IllegalStateException("missing branch for ${javaClass.name}")
+                else -> error("missing branch for ${javaClass.name}")
             }
+            is ConeTypeVariableType -> emptySet()
             is ConeDefinitelyNotNullType -> original.collectLowerBounds()
             is ConeIntersectionType -> intersectedTypes.flatMap { it.collectLowerBounds() }.toSet()
             is ConeFlexibleType -> lowerBound.collectLowerBounds()
             is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectLowerBounds() }?.toSet().orEmpty()
-            is ConeStubType, is ConeIntegerLiteralType -> throw IllegalStateException("$this should not reach here")
+            is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
+            is ConeStubType, is ConeIntegerLiteralConstantType -> {
+                error("$this should not reach here")
+            }
         }
     }
 
@@ -316,7 +290,6 @@ object ConeTypeCompatibilityChecker {
     }
 
     /** Converts type arguments in a [ConeClassLikeType] to a [TypeArgumentMapping]. */
-    @OptIn(ExperimentalStdlibApi::class)
     private fun ConeClassLikeType.toTypeArgumentMapping(
         ctx: ConeInferenceContext,
         envMapping: Map<FirTypeParameterSymbol, BoundTypeArgument> = emptyMap(),
@@ -335,9 +308,9 @@ object ConeTypeCompatibilityChecker {
                     is ConeKotlinTypeConflictingProjection -> BoundTypeArgument(coneTypeProjection.type, Variance.INVARIANT)
                     is ConeKotlinType ->
                         when (typeParameter.variance) {
-                            Variance.IN_VARIANCE -> BoundTypeArgument(coneTypeProjection.type, Variance.IN_VARIANCE)
-                            Variance.OUT_VARIANCE -> BoundTypeArgument(coneTypeProjection.type, Variance.OUT_VARIANCE)
-                            else -> BoundTypeArgument(coneTypeProjection.type, Variance.INVARIANT)
+                            Variance.IN_VARIANCE -> BoundTypeArgument(coneTypeProjection, Variance.IN_VARIANCE)
+                            Variance.OUT_VARIANCE -> BoundTypeArgument(coneTypeProjection, Variance.OUT_VARIANCE)
+                            else -> BoundTypeArgument(coneTypeProjection, Variance.INVARIANT)
                         }
                 }
                 val coneKotlinType = boundTypeArgument.type
@@ -386,20 +359,18 @@ object ConeTypeCompatibilityChecker {
 
     private fun FirClassLikeSymbol<*>.getSuperTypes(): List<ConeClassLikeType> {
         return when (this) {
-            is FirTypeAliasSymbol -> listOfNotNull(resolvedExpandedTypeRef.coneTypeSafe())
-            is FirClassSymbol<*> -> resolvedSuperTypeRefs.mapNotNull { it.coneTypeSafe() }
-            else -> emptyList()
+            is FirTypeAliasSymbol -> listOfNotNull(resolvedExpandedTypeRef.coneType as? ConeClassLikeType)
+            is FirClassSymbol<*> -> resolvedSuperTypeRefs.mapNotNull { it.coneType as? ConeClassLikeType }
         }
     }
 
     private fun ConeClassLikeType.getClassLikeElement(ctx: ConeInferenceContext): FirClassLikeSymbol<*>? =
-        ctx.symbolProvider.getSymbolByLookupTag(lookupTag)
+        lookupTag.toSymbol(ctx.session)
 
     private fun FirClassLikeSymbol<*>.getTypeParameter(index: Int): FirTypeParameterSymbol? {
         return when (this) {
             is FirTypeAliasSymbol -> typeParameterSymbols[index]
             is FirClassSymbol<*> -> typeParameterSymbols[index]
-            else -> return null
         }
     }
 
@@ -425,7 +396,7 @@ object ConeTypeCompatibilityChecker {
 
     private fun ConeClassLikeLookupTag.toFirClassWithSuperClasses(
         ctx: ConeInferenceContext
-    ): FirClassWithSuperClasses? = when (val klass = ctx.symbolProvider.getSymbolByLookupTag(this)) {
+    ): FirClassWithSuperClasses? = when (val klass = toSymbol(ctx.session)) {
         is FirTypeAliasSymbol -> klass.fullyExpandedClass(ctx.session)?.let { FirClassWithSuperClasses(it, ctx) }
         is FirClassSymbol<*> -> FirClassWithSuperClasses(klass, ctx)
         else -> null
@@ -435,10 +406,9 @@ object ConeTypeCompatibilityChecker {
         val isInterface: Boolean get() = firClass.isInterface
 
         val superClasses: Set<FirClassWithSuperClasses> by lazy {
-            firClass.superConeTypes.mapNotNull { it.lookupTag.toFirClassWithSuperClasses(ctx) }.toSet()
+            firClass.resolvedSuperTypes.mapNotNull { it.classLikeLookupTagIfAny?.toFirClassWithSuperClasses(ctx) }.toSet()
         }
 
-        @OptIn(ExperimentalStdlibApi::class)
         val thisAndAllSuperClasses: Set<FirClassWithSuperClasses> by lazy {
             val queue = ArrayDeque<FirClassWithSuperClasses>()
             queue.addLast(this)
@@ -478,7 +448,6 @@ object ConeTypeCompatibilityChecker {
                 return when (this) {
                     is FirAnonymousObjectSymbol -> true
                     is FirRegularClassSymbol -> modality == Modality.FINAL
-                    else -> error("unknown type of FirClass $this")
                 }
             }
     }

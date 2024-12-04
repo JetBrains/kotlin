@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.mpp.FunctionSymbolMarker;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitution;
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import java.util.Collection;
 import java.util.List;
 
-public interface FunctionDescriptor extends CallableMemberDescriptor {
+public interface FunctionDescriptor extends CallableMemberDescriptor, FunctionSymbolMarker {
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
@@ -107,6 +108,9 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         @NotNull
         @Override
         CopyBuilder<D> setReturnType(@NotNull KotlinType type);
+
+        @NotNull
+        CopyBuilder<D> setContextReceiverParameters(@NotNull List<ReceiverParameterDescriptor> contextReceiverParameters);
 
         @NotNull
         CopyBuilder<D> setExtensionReceiverParameter(@Nullable ReceiverParameterDescriptor extensionReceiverParameter);

@@ -1,0 +1,30 @@
+package
+
+public fun main(/*0*/ flag: kotlin.Boolean): kotlin.Unit
+
+public open class Selectors {
+    public constructor Selectors()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ T : kotlin.Any!> select(/*0*/ a: T!, /*1*/ b: T!): T!
+}
+
+public interface Ticker {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun tick(/*0*/ s: kotlin.String!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Tickers {
+    public constructor Tickers()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun consumeTicker(/*0*/ ticker: Ticker!): kotlin.Unit
+}

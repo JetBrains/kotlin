@@ -5,17 +5,21 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
-import org.jetbrains.kotlin.generators.TestGroupSuite
-import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.AnalysisApiTestGroup
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.generate
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
-    generateTestGroupSuiteWithJUnit5(args) {
+    generate(args) {
         generateTests()
     }
 }
 
-private fun TestGroupSuite.generateTests() {
+private fun AnalysisApiTestGroup.generateTests() {
     generateAnalysisApiTests()
-    generateFirLowLevelApiTests()
+    suiteBasedTests {
+        generateFirLowLevelApiTests()
+        generateDecompiledTests()
+        generateSymbolLightClassesTests()
+    }
 }

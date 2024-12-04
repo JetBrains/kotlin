@@ -1,4 +1,5 @@
-// !LANGUAGE: +ConsiderExtensionReceiverFromConstrainsInLambda
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ConsiderExtensionReceiverFromConstrainsInLambda
 // FIR_IDENTICAL
 // SKIP_TXT
 

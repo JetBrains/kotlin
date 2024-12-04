@@ -1,4 +1,5 @@
-// !LANGUAGE: +ExpectedTypeFromCast
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ExpectedTypeFromCast
 
 fun foo() = 1
 

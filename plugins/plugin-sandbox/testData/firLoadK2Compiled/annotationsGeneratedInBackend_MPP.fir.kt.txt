@@ -1,0 +1,70 @@
+// FILE: module_common_annotationsGeneratedInBackend_MPP.kt
+package test
+
+@AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+class VerySpecificNameInCommon {
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+  val x: Int
+    field = x
+    @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+    get
+
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+  class Derived {
+    @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+  constructor(@AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])]) x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+  fun foo() {
+  }
+
+}
+
+// FILE: module_main_annotationsGeneratedInBackend_MPP.kt
+package test
+
+@AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+class VerySpecificNameInPlatform {
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+  val x: Int
+    field = x
+    @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+    get
+
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+  class Derived {
+    @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+  constructor(@AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])]) x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @AnnotationToAdd(booleanValue = true, byteValue = 1B, charValue = 'c', doubleValue = 4.2, floatValue = 2.4F, intValue = 42, longValue = 24L, shortValue = 7S, stringValue = "OK", vararg = [ArrayAnnotation(annotations = []), ArrayAnnotation(annotations = [SimpleAnnotation(x = 1)]), ArrayAnnotation(annotations = [SimpleAnnotation(x = 2), SimpleAnnotation(x = 3)])])
+  fun foo() {
+  }
+
+}
+

@@ -18,6 +18,10 @@ package org.jetbrains.kotlin.metadata;
 
 import "core/metadata/src/ext_options.proto";
 
+// Changes to this proto are tracked by versions of proto files that include `import metadata.proto`.
+// Namely BuiltInsBinaryVersion, MetadataVersion, JsMetadataVersion, KlibMetadataVersion, and probably something else.
+// See their KDocs.
+
 option java_outer_classname = "ProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
@@ -211,6 +215,7 @@ message Class {
     isExpect
     isInline
     isFun
+    hasEnumEntries
   */
   optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
 
@@ -224,6 +229,9 @@ message Class {
   repeated int32 supertype_id = 2 [packed = true, (type_id_in_table) = true];
 
   repeated int32 nested_class_name = 7 [packed = true, (name_id_in_table) = true];
+
+  repeated Type context_receiver_type = 20;
+  repeated int32 context_receiver_type_id = 21 [packed = true, (type_id_in_table) = true];
 
   repeated Constructor constructor = 8;
   repeated Function function = 9;
@@ -239,12 +247,17 @@ message Class {
   optional Type inline_class_underlying_type = 18;
   optional int32 inline_class_underlying_type_id = 19 [(type_id_in_table) = true];
 
+  repeated int32 multi_field_value_class_underlying_name = 22 [packed = true, (name_id_in_table) = true];
+  repeated Type multi_field_value_class_underlying_type = 23;
+  repeated int32 multi_field_value_class_underlying_type_id = 24 [packed = true, (type_id_in_table) = true];
+
   optional TypeTable type_table = 30;
 
   // Index into the VersionRequirementTable
   repeated int32 version_requirement = 31;
 
   optional VersionRequirementTable version_requirement_table = 32;
+  repeated CompilerPluginData compiler_plugin_data = 33;
 
   extensions 100 to 18999;
 }
@@ -284,6 +297,7 @@ message Constructor {
 
   // Index into the VersionRequirementTable
   repeated int32 version_requirement = 31;
+  repeated CompilerPluginData compiler_plugin_data = 32;
 
   extensions 100 to 18999;
 }
@@ -316,6 +330,9 @@ message Function {
   optional Type receiver_type = 5;
   optional int32 receiver_type_id = 8 [(type_id_in_table) = true];
 
+  repeated Type context_receiver_type = 10;
+  repeated int32 context_receiver_type_id = 11 [packed = true, (type_id_in_table) = true];
+
   repeated ValueParameter value_parameter = 6;
 
   optional TypeTable type_table = 30;
@@ -324,6 +341,7 @@ message Function {
   repeated int32 version_requirement = 31;
 
   optional Contract contract = 32;
+  repeated CompilerPluginData compiler_plugin_data = 33;
 
   extensions 100 to 18999;
 }
@@ -357,6 +375,9 @@ message Property {
   optional Type receiver_type = 5;
   optional int32 receiver_type_id = 10 [(type_id_in_table) = true];
 
+  repeated Type context_receiver_type = 12;
+  repeated int32 context_receiver_type_id = 13 [packed = true, (type_id_in_table) = true];
+
   optional ValueParameter setter_value_parameter = 6;
 
   /*
@@ -376,6 +397,7 @@ message Property {
 
   // Index into the VersionRequirementTable
   repeated int32 version_requirement = 31;
+  repeated CompilerPluginData compiler_plugin_data = 32;
 
   extensions 100 to 18999;
 }
@@ -421,6 +443,7 @@ message TypeAlias {
 
   // Index into the VersionRequirementTable
   repeated int32 version_requirement = 31;
+  repeated CompilerPluginData compiler_plugin_data = 32;
 
   extensions 100 to 199;
 }
@@ -583,4 +606,9 @@ message Expression {
   // Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
   // it is optimized and embedded straight into this message.
   repeated Expression or_argument = 7;
+}
+
+message CompilerPluginData {
+  required int32 plugin_id = 1 [(string_id_in_table) = true];
+  required bytes data = 2;
 }

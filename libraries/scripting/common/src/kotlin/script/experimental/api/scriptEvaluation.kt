@@ -51,7 +51,7 @@ fun ScriptEvaluationConfiguration?.with(body: ScriptEvaluationConfiguration.Buil
 /**
  * The list of actual script implicit receiver object, in the same order as specified in {@link ScriptCompilationConfigurationKeys#implicitReceivers}
  */
-val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any>>()
+val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any?>>()
 
 /**
  * The map of names to actual provided properties objects, according to the properties specified in
@@ -95,6 +95,24 @@ val ScriptEvaluationConfigurationKeys.hostConfiguration by PropertiesCollection.
  * The callback that will be called on the script compilation immediately before starting the compilation
  */
 val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by PropertiesCollection.key<List<RefineEvaluationConfigurationData>>(isTransient = true)
+
+interface ScriptExecutionWrapper<T> {
+    fun invoke(block: () -> T): T
+}
+
+/**
+ *  An optional user-defined wrapper which is called with the code that actually executes script body
+ */
+val ScriptEvaluationConfigurationKeys.scriptExecutionWrapper by PropertiesCollection.key<ScriptExecutionWrapper<*>>(isTransient = true)
+
+/**
+ * A helper to enable passing lambda directly to the scriptExecutionWrapper "keyword"
+ */
+fun <T> ScriptEvaluationConfiguration.Builder.scriptExecutionWrapper(wrapper: (() -> T) -> T) {
+    ScriptEvaluationConfiguration.scriptExecutionWrapper.put(object : ScriptExecutionWrapper<T> {
+        override fun invoke(block: () -> T): T = wrapper(block)
+    })
+}
 
 /**
  * A helper to enable scriptsInstancesSharingMap with default implementation

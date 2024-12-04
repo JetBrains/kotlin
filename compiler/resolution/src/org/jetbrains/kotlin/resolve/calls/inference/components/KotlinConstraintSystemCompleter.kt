@@ -11,20 +11,21 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionC
 import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
-import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.resolve.calls.model.MultiLambdaBuilderInferenceRestriction
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
     val variableFixationFinder: VariableFixationFinder,
-    private val postponedArgumentInputTypesResolver: PostponedArgumentInputTypesResolver,
+    private val postponedArgumentsInputTypesResolver: PostponedArgumentInputTypesResolver,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     fun runCompletion(
@@ -74,29 +75,42 @@ class KotlinConstraintSystemCompleter(
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
 
         completion@ while (true) {
-            // TODO
+            // TODO: This is very slow
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
-            if (completionMode == ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA && hasLambdaToAnalyze(postponedArguments)) return
+
+            if (completionMode == ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA && hasLambdaToAnalyze(
+                    languageVersionSettings,
+                    postponedArguments
+                )
+            ) return
 
             // Stage 1: analyze postponed arguments with fixed parameter types
-            if (analyzeArgumentWithFixedParameterTypes(postponedArguments, analyze))
+            if (analyzeArgumentWithFixedParameterTypes(languageVersionSettings, postponedArguments, analyze))
                 continue
 
-            val isThereAnyReadyForFixationVariable = isThereAnyReadyForFixationVariable(
-                completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments
-            )
+            val isThereAnyReadyForFixationVariable = variableFixationFinder.findFirstVariableForFixation(
+                this,
+                getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
+                postponedArguments,
+                completionMode,
+                topLevelType
+            ) != null
 
             // If there aren't any postponed arguments and ready for fixation variables, then completion isn't needed: nothing to do
             if (postponedArguments.isEmpty() && !isThereAnyReadyForFixationVariable)
                 break
 
-            val postponedArgumentsWithRevisableType = postponedArguments.filterIsInstance<PostponedAtomWithRevisableExpectedType>()
+            val postponedArgumentsWithRevisableType = postponedArguments
+                .filterIsInstance<PostponedAtomWithRevisableExpectedType>()
             val dependencyProvider =
-                TypeVariableDependencyInformationProvider(notFixedTypeVariables, postponedArguments, topLevelType, this)
+                TypeVariableDependencyInformationProvider(
+                    notFixedTypeVariables, postponedArguments, topLevelType, this,
+                    languageVersionSettings,
+                )
 
             // Stage 2: collect parameter types for postponed arguments
-            val wasBuiltNewExpectedTypeForSomeArgument = postponedArgumentInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
-                asConstraintSystemCompletionContext(),
+            val wasBuiltNewExpectedTypeForSomeArgument = postponedArgumentsInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
+                this,
                 postponedArgumentsWithRevisableType,
                 completionMode,
                 dependencyProvider,
@@ -109,8 +123,8 @@ class KotlinConstraintSystemCompleter(
             if (completionMode == ConstraintSystemCompletionMode.FULL) {
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedArguments) {
-                    val wasFixedSomeVariable = postponedArgumentInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
-                        asConstraintSystemCompletionContext(),
+                    val variableWasFixed = postponedArgumentsInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
+                        this,
                         argument,
                         postponedArguments,
                         topLevelType,
@@ -119,32 +133,36 @@ class KotlinConstraintSystemCompleter(
                         findResolvedAtomBy(it, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
                     }
 
-                    if (wasFixedSomeVariable)
+                    if (variableWasFixed)
                         continue@completion
                 }
 
                 // Stage 4: create atoms with revised expected types if needed
                 for (argument in postponedArgumentsWithRevisableType) {
-                    val wasTransformedSomeArgument = transformToAtomWithNewFunctionalExpectedType(
-                        asConstraintSystemCompletionContext(), argument, diagnosticsHolder
+                    val argumentWasTransformed = transformToAtomWithNewFunctionalExpectedType(
+                        this, argument, diagnosticsHolder
                     )
 
-                    if (wasTransformedSomeArgument)
+                    if (argumentWasTransformed)
                         continue@completion
                 }
             }
 
             // Stage 5: analyze the next ready postponed argument
-            if (analyzeNextReadyPostponedArgument(postponedArguments, completionMode, analyze))
+            if (analyzeNextReadyPostponedArgument(languageVersionSettings, postponedArguments, completionMode, analyze))
                 continue
 
             // Stage 6: fix next ready type variable with proper constraints
-            if (fixNextReadyVariable(completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments))
-                continue
+            if (
+                fixNextReadyVariable(
+                    completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments, diagnosticsHolder
+                )
+            ) continue
 
             // Stage 7: try to complete call with the builder inference if there are uninferred type variables
-            val areThereAppearedProperConstraintsForSomeVariable =
-                tryToCompleteWithBuilderInference(completionMode, topLevelType, postponedArguments, analyze)
+            val areThereAppearedProperConstraintsForSomeVariable = tryToCompleteWithBuilderInference(
+                completionMode, topLevelAtoms, topLevelType, postponedArguments, collectVariablesFromContext, diagnosticsHolder, analyze
+            )
 
             if (areThereAppearedProperConstraintsForSomeVariable)
                 continue
@@ -164,13 +182,39 @@ class KotlinConstraintSystemCompleter(
         }
     }
 
+    fun prepareLambdaAtomForFactoryPattern(
+        atom: ResolvedLambdaAtom,
+        candidate: SimpleResolutionCandidate,
+        diagnosticsHolder: KotlinDiagnosticsHolder,
+    ): ResolvedLambdaAtom {
+        val returnVariable = TypeVariableForLambdaReturnType(candidate.callComponents.builtIns, "_R")
+        val csBuilder = candidate.getSystem().getBuilder()
+        csBuilder.registerVariable(returnVariable)
+        val functionalType: KotlinType = csBuilder.buildCurrentSubstitutor().safeSubstitute(candidate.getSystem().asConstraintSystemCompleterContext(), atom.expectedType!!) as KotlinType
+        val expectedType = KotlinTypeFactory.simpleType(
+            functionalType.attributes,
+            functionalType.constructor,
+            functionalType.arguments.dropLast(1) + returnVariable.defaultType.asTypeProjection(),
+            functionalType.isMarkedNullable
+        )
+        csBuilder.addSubtypeConstraint(
+            expectedType,
+            functionalType,
+            ArgumentConstraintPositionImpl(atom.atom)
+        )
+        return atom.transformToResolvedLambda(csBuilder, diagnosticsHolder, expectedType, returnVariable)
+    }
+
     private fun ConstraintSystemCompletionContext.tryToCompleteWithBuilderInference(
         completionMode: ConstraintSystemCompletionMode,
+        topLevelAtoms: List<ResolvedAtom>,
         topLevelType: UnwrappedType,
         postponedArguments: List<PostponedResolvedAtom>,
+        collectVariablesFromContext: Boolean,
+        diagnosticsHolder: KotlinDiagnosticsHolder,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
-        if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return false
+        if (completionMode != ConstraintSystemCompletionMode.FULL) return false
 
         val useBuilderInferenceOnlyIfNeeded = languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)
 
@@ -178,36 +222,70 @@ class KotlinConstraintSystemCompleter(
         if (!useBuilderInferenceOnlyIfNeeded) return false
 
         val lambdaArguments = postponedArguments.filterIsInstance<ResolvedLambdaAtom>().takeIf { it.isNotEmpty() } ?: return false
+
+        fun ResolvedLambdaAtom.notFixedInputTypeVariables(): List<TypeVariableTypeConstructorMarker> =
+            inputTypes.flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
+
         val useBuilderInferenceWithoutAnnotation =
             languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
-        val allNotFixedInputTypeVariables = mutableSetOf<TypeVariableTypeConstructorMarker>()
 
+        val checkForDangerousBuilderInference =
+            !languageVersionSettings.supportsFeature(LanguageFeature.NoBuilderInferenceWithoutAnnotationRestriction)
+
+        // Let's call builder lambda (BL) a lambda that has non-zero not fixed input type variables in
+        // type arguments of it's input types
+        // ex: MutableList<T>.() -> Unit
+        // During type inference of call-site such lambda will be considered BL, if
+        // T not fixed yet
+        // Given we have two or more builder lambdas among postponed arguments, it could result in incorrect type inference due to
+        // incorrect constraint propagation into common system
+        // See KT-53740
+        // Constraint propagation into common system happens at
+        // org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem
+        val dangerousBuilderInferenceWithoutAnnotation =
+            lambdaArguments.size >= 2 && lambdaArguments.count { it.notFixedInputTypeVariables().isNotEmpty() } >= 2
+
+        val builder = getBuilder()
         for (argument in lambdaArguments) {
-            if (!argument.atom.hasBuilderInferenceAnnotation && !useBuilderInferenceWithoutAnnotation)
-                continue
+            val reallyHasBuilderInferenceAnnotation = argument.atom.hasBuilderInferenceAnnotation
 
-            val notFixedInputTypeVariables = argument.inputTypes
-                .map { it.extractTypeVariables() }.flatten().filter { it !in fixedTypeVariables }
+            // no annotation and builder inference without annotation is disabled
+            if (!reallyHasBuilderInferenceAnnotation && !useBuilderInferenceWithoutAnnotation) continue
 
+            // Imitate having builder inference annotation. TODO: Remove after getting rid of @BuilderInference
+            if (!reallyHasBuilderInferenceAnnotation) {
+                argument.atom.hasBuilderInferenceAnnotation = true
+            }
+
+            val notFixedInputTypeVariables = argument.notFixedInputTypeVariables()
+
+            // lambda is subject to builder inference past this point
             if (notFixedInputTypeVariables.isEmpty()) continue
 
-            allNotFixedInputTypeVariables.addAll(notFixedInputTypeVariables)
+            // we have dangerous inference situation
+            // if lambda annotated with BuilderInference it's probably safe, due to type shape
+            // otherwise report multi-lambda builder inference restriction diagnostic
+            if (checkForDangerousBuilderInference && dangerousBuilderInferenceWithoutAnnotation && !reallyHasBuilderInferenceAnnotation) {
+                for (variable in notFixedInputTypeVariables) {
+                    diagnosticsHolder.addDiagnostic(MultiLambdaBuilderInferenceRestriction(argument.atom, variable.typeParameter))
+                }
+            }
 
             for (variable in notFixedInputTypeVariables) {
-                getBuilder().markPostponedVariable(notFixedTypeVariables.getValue(variable).typeVariable)
+                builder.markPostponedVariable(notFixedTypeVariables.getValue(variable).typeVariable)
             }
 
             analyze(argument)
         }
 
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, allNotFixedInputTypeVariables.toList(), postponedArguments, completionMode, topLevelType
+            this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms), postponedArguments, completionMode, topLevelType
         )
 
         // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
         // (after analysing a lambda with the builder inference)
         // otherwise we don't continue and report "not enough type information" error
-        return variableForFixation?.hasProperConstraint == true
+        return variableForFixation?.isReady == true
     }
 
     private fun transformToAtomWithNewFunctionalExpectedType(
@@ -215,8 +293,8 @@ class KotlinConstraintSystemCompleter(
         argument: PostponedAtomWithRevisableExpectedType,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Boolean = with(c) {
-        val revisedExpectedType: UnwrappedType =
-            argument.revisedExpectedType?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }?.cast() ?: return false
+        val revisedExpectedType: UnwrappedType = argument.revisedExpectedType
+            ?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() } as UnwrappedType? ?: return false
 
         when (argument) {
             is PostponedCallableReferenceAtom ->
@@ -231,130 +309,25 @@ class KotlinConstraintSystemCompleter(
         return true
     }
 
-    private fun ConstraintSystemCompletionContext.analyzeArgumentWithFixedParameterTypes(
-        postponedArguments: List<PostponedResolvedAtom>,
-        analyze: (PostponedResolvedAtom) -> Unit
-    ): Boolean {
-        val useBuilderInferenceOnlyIfNeeded = languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)
-        val argumentToAnalyze = if (useBuilderInferenceOnlyIfNeeded) {
-            findPostponedArgumentWithFixedInputTypes(postponedArguments)
-        } else {
-            findPostponedArgumentWithFixedOrPostponedInputTypes(postponedArguments)
-        }
-
-        if (argumentToAnalyze != null) {
-            analyze(argumentToAnalyze)
-            return true
-        }
-
-        return false
-    }
-
-    private fun ConstraintSystemCompletionContext.analyzeNextReadyPostponedArgument(
-        postponedArguments: List<PostponedResolvedAtom>,
-        completionMode: ConstraintSystemCompletionMode,
-        analyze: (PostponedResolvedAtom) -> Unit
-    ): Boolean {
-        if (completionMode == ConstraintSystemCompletionMode.FULL) {
-            val argumentWithTypeVariableAsExpectedType = findPostponedArgumentWithRevisableExpectedType(postponedArguments)
-
-            if (argumentWithTypeVariableAsExpectedType != null) {
-                analyze(argumentWithTypeVariableAsExpectedType)
-                return true
-            }
-        }
-
-        return analyzeArgumentWithFixedParameterTypes(postponedArguments, analyze)
-    }
-
-    private fun analyzeRemainingNotAnalyzedPostponedArgument(
-        postponedArguments: List<PostponedResolvedAtom>,
-        analyze: (PostponedResolvedAtom) -> Unit
-    ): Boolean {
-        val remainingNotAnalyzedPostponedArgument = postponedArguments.firstOrNull { !it.analyzed }
-
-        if (remainingNotAnalyzedPostponedArgument != null) {
-            analyze(remainingNotAnalyzedPostponedArgument)
-            return true
-        }
-
-        return false
-    }
-
-    fun prepareLambdaAtomForFactoryPattern(
-        atom: ResolvedLambdaAtom,
-        candidate: SimpleResolutionCandidate,
-        diagnosticsHolder: KotlinDiagnosticsHolder,
-    ): ResolvedLambdaAtom {
-        val returnVariable = TypeVariableForLambdaReturnType(candidate.callComponents.builtIns, "_R")
-        val csBuilder = candidate.getSystem().getBuilder()
-        csBuilder.registerVariable(returnVariable)
-        val functionalType: KotlinType = csBuilder.buildCurrentSubstitutor().safeSubstitute(candidate.getSystem().asConstraintSystemCompleterContext(), atom.expectedType!!) as KotlinType
-        val expectedType = KotlinTypeFactory.simpleType(
-            functionalType.annotations,
-            functionalType.constructor,
-            functionalType.arguments.dropLast(1) + returnVariable.defaultType.asTypeProjection(),
-            functionalType.isMarkedNullable
-        )
-        csBuilder.addSubtypeConstraint(
-            expectedType,
-            functionalType,
-            ArgumentConstraintPositionImpl(atom.atom)
-        )
-        return atom.transformToResolvedLambda(csBuilder, diagnosticsHolder, expectedType, returnVariable)
-    }
-
-    private fun ConstraintSystemCompletionContext.hasLambdaToAnalyze(
-        postponedArguments: List<PostponedResolvedAtom>
-    ): Boolean {
-        return analyzeArgumentWithFixedParameterTypes(postponedArguments) {}
-    }
-
-    private fun findPostponedArgumentWithRevisableExpectedType(postponedArguments: List<PostponedResolvedAtom>) =
-        postponedArguments.firstOrNull { argument -> argument is PostponedAtomWithRevisableExpectedType }
-
-    private fun ConstraintSystemCompletionContext.findPostponedArgumentWithFixedOrPostponedInputTypes(
-        postponedArguments: List<PostponedResolvedAtom>
-    ) = postponedArguments.firstOrNull { argument -> argument.inputTypes.all { containsOnlyFixedOrPostponedVariables(it) } }
-
-    private fun ConstraintSystemCompletionContext.findPostponedArgumentWithFixedInputTypes(postponedArguments: List<PostponedResolvedAtom>) =
-        postponedArguments.firstOrNull { argument -> argument.inputTypes.all { containsOnlyFixedVariables(it) } }
-
-    private fun fixVariable(
-        c: ConstraintSystemCompletionContext,
-        variableWithConstraints: VariableWithConstraints,
-        topLevelAtoms: List<ResolvedAtom>
-    ) {
-        fixVariable(c, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN, topLevelAtoms)
-    }
-
-    private fun fixVariable(
-        c: ConstraintSystemCompletionContext,
-        variableWithConstraints: VariableWithConstraints,
-        direction: TypeVariableDirectionCalculator.ResolveDirection,
-        topLevelAtoms: List<ResolvedAtom>
-    ) {
-        val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
-        val variable = variableWithConstraints.typeVariable
-        val resolvedAtom = findResolvedAtomBy(variable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
-        c.fixVariable(variable, resultType, FixVariableConstraintPositionImpl(variable, resolvedAtom))
-    }
-
     private fun ConstraintSystemCompletionContext.fixNextReadyVariable(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<ResolvedAtom>,
         topLevelType: UnwrappedType,
         collectVariablesFromContext: Boolean,
         postponedArguments: List<PostponedResolvedAtom>,
+        diagnosticsHolder: KotlinDiagnosticsHolder
     ): Boolean {
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
-            postponedArguments, completionMode, topLevelType,
+            this,
+            getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
+            postponedArguments,
+            completionMode,
+            topLevelType
         ) ?: return false
 
-        if (!variableForFixation.hasProperConstraint) return false
+        if (!variableForFixation.isReady) return false
 
-        fixVariable(this, notFixedTypeVariables.getValue(variableForFixation.variable), topLevelAtoms)
+        fixVariable(this, notFixedTypeVariables.getValue(variableForFixation.variable), topLevelAtoms, diagnosticsHolder)
 
         return true
     }
@@ -373,37 +346,46 @@ class KotlinConstraintSystemCompleter(
                 postponedArguments, completionMode, topLevelType,
             ) ?: break
 
-            assert(!variableForFixation.hasProperConstraint) {
+            assert(!variableForFixation.isReady) {
                 "At this stage there should be no remaining variables with proper constraints"
             }
 
             if (completionMode == ConstraintSystemCompletionMode.PARTIAL) break
 
             val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
-            val typeVariable = variableWithConstraints.typeVariable
-            val resolvedAtom = findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
-
-            if (resolvedAtom != null) {
-                addError(
-                    NotEnoughInformationForTypeParameterImpl(typeVariable, resolvedAtom, couldBeResolvedWithUnrestrictedBuilderInference())
-                )
-            }
-
-            val resultErrorType = when {
-                typeVariable is TypeVariableFromCallableDescriptor -> {
-                    ErrorUtils.createUninferredParameterType(typeVariable.originalTypeParameter)
-                }
-                typeVariable is TypeVariableForLambdaParameterType && typeVariable.atom is LambdaKotlinCallArgument -> {
-                    diagnosticsHolder.addDiagnostic(
-                        NotEnoughInformationForLambdaParameter(typeVariable.atom, typeVariable.index)
-                    )
-                    ErrorUtils.createErrorType("Cannot infer lambda parameter type")
-                }
-                else -> ErrorUtils.createErrorType("Cannot infer type variable $typeVariable")
-            }
-
-            fixVariable(typeVariable, resultErrorType, FixVariableConstraintPositionImpl(typeVariable, resolvedAtom))
+            processVariableWhenNotEnoughInformation(variableWithConstraints, topLevelAtoms, diagnosticsHolder)
         }
+    }
+
+    private fun ConstraintSystemCompletionContext.processVariableWhenNotEnoughInformation(
+        variableWithConstraints: VariableWithConstraints,
+        topLevelAtoms: List<ResolvedAtom>,
+        diagnosticsHolder: KotlinDiagnosticsHolder
+    ) {
+        val typeVariable = variableWithConstraints.typeVariable
+        val resolvedAtom = findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
+
+        if (resolvedAtom != null) {
+            addError(
+                NotEnoughInformationForTypeParameterImpl(typeVariable, resolvedAtom, couldBeResolvedWithUnrestrictedBuilderInference())
+            )
+        }
+
+        val resultErrorType = when {
+            typeVariable is TypeVariableFromCallableDescriptor -> {
+                ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_TYPE_VARIABLE, typeVariable.originalTypeParameter.name.asString())
+            }
+            typeVariable is TypeVariableForLambdaParameterType && typeVariable.atom is LambdaKotlinCallArgument -> {
+                diagnosticsHolder.addDiagnostic(
+                    NotEnoughInformationForLambdaParameter(typeVariable.atom, typeVariable.index)
+                )
+                ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_LAMBDA_PARAMETER_TYPE)
+            }
+            else -> ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_TYPE_VARIABLE, typeVariable.toString())
+        }
+
+        fixVariable(typeVariable, resultErrorType, FixVariableConstraintPositionImpl(typeVariable, resolvedAtom))
+
     }
 
     private fun ConstraintSystemCompletionContext.getOrderedAllTypeVariables(
@@ -416,19 +398,27 @@ class KotlinConstraintSystemCompleter(
         fun getVariablesFromRevisedExpectedType(revisedExpectedType: KotlinType?) =
             revisedExpectedType?.arguments?.map { it.type.constructor }?.filterIsInstance<TypeVariableTypeConstructor>()
 
-        fun ResolvedAtom.process(to: LinkedHashSet<TypeConstructor>) {
+        // Note that it's important to use Set here, because several atoms can share the same type variable
+        val result = linkedSetOf<TypeConstructor>()
+
+        fun ResolvedAtom.collectAllTypeVariables() {
             val typeVariables = when (this) {
-                is LambdaWithTypeVariableAsExpectedTypeAtom -> getVariablesFromRevisedExpectedType(revisedExpectedType).orEmpty()
-                is ResolvedCallAtom -> freshVariablesSubstitutor.freshVariables.map { it.freshTypeConstructor }
-                is PostponedCallableReferenceAtom ->
+                is ResolvedLambdaAtom -> {
+                    listOfNotNull(typeVariableForLambdaReturnType?.freshTypeConstructor)
+                }
+                is LambdaWithTypeVariableAsExpectedTypeAtom -> {
+                    getVariablesFromRevisedExpectedType(revisedExpectedType).orEmpty()
+                }
+                is PostponedCallableReferenceAtom -> {
                     getVariablesFromRevisedExpectedType(revisedExpectedType).orEmpty() +
                             candidate?.freshVariablesSubstitutor?.freshVariables?.map { it.freshTypeConstructor }.orEmpty()
+                }
+                is ResolvedCallAtom -> freshVariablesSubstitutor.freshVariables.map { it.freshTypeConstructor }
                 is ResolvedCallableReferenceArgumentAtom -> candidate?.freshVariablesSubstitutor?.freshVariables?.map { it.freshTypeConstructor }.orEmpty()
-                is ResolvedLambdaAtom -> listOfNotNull(typeVariableForLambdaReturnType?.freshTypeConstructor)
                 else -> emptyList()
             }
 
-            typeVariables.mapNotNullTo(to) {
+            typeVariables.mapNotNullTo(result) {
                 it.takeIf { notFixedTypeVariables.containsKey(it) }
             }
 
@@ -436,21 +426,19 @@ class KotlinConstraintSystemCompleter(
              * Hack for completing error candidates in delegate resolve
              */
             if (this is StubResolvedAtom && typeVariable in notFixedTypeVariables) {
-                to += typeVariable
+                result += typeVariable
             }
 
             if (analyzed) {
-                subResolvedAtoms?.forEach { it.process(to) }
+                subResolvedAtoms?.forEach { it.collectAllTypeVariables() }
             }
         }
 
-        // Note that it's important to use Set here, because several atoms can share the same type variable
-        val result = linkedSetOf<TypeConstructor>()
-        for (primitive in topLevelAtoms) {
-            primitive.process(result)
+        for (topLevelAtom in topLevelAtoms) {
+            topLevelAtom.collectAllTypeVariables()
         }
 
-        assert(result.size == notFixedTypeVariables.size) {
+        require(result.size == notFixedTypeVariables.size) {
             val notFoundTypeVariables = notFixedTypeVariables.keys.toMutableSet().apply { removeAll(result) }
             "Not all type variables found: $notFoundTypeVariables"
         }
@@ -458,24 +446,60 @@ class KotlinConstraintSystemCompleter(
         return result.toList()
     }
 
-    private fun ConstraintSystemCompletionContext.isThereAnyReadyForFixationVariable(
-        completionMode: ConstraintSystemCompletionMode,
+    private fun fixVariable(
+        c: ConstraintSystemCompletionContext,
+        variableWithConstraints: VariableWithConstraints,
         topLevelAtoms: List<ResolvedAtom>,
-        topLevelType: UnwrappedType,
-        collectVariablesFromContext: Boolean,
-        postponedArguments: List<PostponedResolvedAtom>
-    ) = variableFixationFinder.findFirstVariableForFixation(
-        this,
-        getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
-        postponedArguments,
-        completionMode,
-        topLevelType,
-    ) != null
+        diagnosticsHolder: KotlinDiagnosticsHolder
+    ) {
+        fixVariable(c, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN, topLevelAtoms, diagnosticsHolder)
+    }
+
+    private fun reportWarningIfFixedIntoDeclaredUpperBounds(
+        diagnosticsHolder: KotlinDiagnosticsHolder,
+        variableWithConstraints: VariableWithConstraints,
+        resultType: KotlinTypeMarker
+    ) {
+        var upperBoundType: KotlinTypeMarker? = null
+        val constraintFromDeclaredUpperBoundExists = variableWithConstraints.constraints.any { constraint ->
+            val position = constraint.position.from.let { basicPosition ->
+                if (basicPosition is IncorporationConstraintPosition) basicPosition.from else basicPosition
+            }
+            if (position is BuilderInferenceSubstitutionConstraintPosition<*> && position.isFromNotSubstitutedDeclaredUpperBound) {
+                upperBoundType = constraint.type
+                true
+            } else {
+                false
+            }
+        }
+
+        if (constraintFromDeclaredUpperBoundExists && upperBoundType == resultType) {
+            diagnosticsHolder.addDiagnostic(
+                KotlinConstraintSystemDiagnostic(InferredIntoDeclaredUpperBounds(variableWithConstraints.typeVariable))
+            )
+        }
+    }
+
+    private fun fixVariable(
+        c: ConstraintSystemCompletionContext,
+        variableWithConstraints: VariableWithConstraints,
+        direction: TypeVariableDirectionCalculator.ResolveDirection,
+        topLevelAtoms: List<ResolvedAtom>,
+        diagnosticsHolder: KotlinDiagnosticsHolder
+    ) {
+        val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
+        val variable = variableWithConstraints.typeVariable
+        val resolvedAtom = findResolvedAtomBy(variable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
+
+        reportWarningIfFixedIntoDeclaredUpperBounds(diagnosticsHolder, variableWithConstraints, resultType)
+
+        c.fixVariable(variable, resultType, FixVariableConstraintPositionImpl(variable, resolvedAtom))
+    }
 
     companion object {
         fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<ResolvedAtom>): List<PostponedResolvedAtom> {
             fun ResolvedAtom.process(to: MutableList<PostponedResolvedAtom>) {
-                to.addIfNotNull(this.safeAs<PostponedResolvedAtom>()?.takeUnless { it.analyzed })
+                to.addIfNotNull((this as? PostponedResolvedAtom)?.takeUnless { it.analyzed })
 
                 if (analyzed) {
                     subResolvedAtoms?.forEach { it.process(to) }

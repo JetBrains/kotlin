@@ -1,0 +1,13 @@
+@kotlin.Metadata
+public final class DpKt {
+    // source: 'dp.kt'
+    public final static method getDp(@org.jetbrains.annotations.NotNull p0: View, p1: int): int
+}
+
+@kotlin.Metadata
+public final class View {
+    // source: 'dp.kt'
+    private final field coefficient: int
+    public method <init>(): void
+    public final method getCoefficient(): int
+}

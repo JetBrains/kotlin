@@ -18,12 +18,16 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string>
 
 #include "cbigint.h"
 #include "../Exceptions.h"
 #include "../KString.h"
 #include "../Natives.h"
+#include "../Porting.h"
 #include "../utf8.h"
+
+using namespace kotlin;
 
 #if defined(LINUX) || defined(FREEBSD) || defined(MACOSX) || defined(ZOS) || defined(AIX)
 #define USE_LL
@@ -116,8 +120,8 @@ static const U_32 tens[] = {
         } \
     }
 
-#define allocateU64(x, n) if (!((x) = (U_64*) konan::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
-#define release(r) if ((r)) konan::free((r));
+#define allocateU64(x, n) if (!((x) = (U_64*) std::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
+#define release(r) if ((r)) std::free((r));
 
 KFloat createFloat(const char *s, KInt e) {
   /* assumes s is a null terminated string with at least one
@@ -538,14 +542,15 @@ OutOfMemory:
 #endif
 
 extern "C" KFloat
-Kotlin_native_FloatingPointParser_parseFloatImpl(KString s, KInt e)
+Kotlin_native_FloatingPointParser_parseFloatImpl(KConstRef s, KInt e)
 {
-  const KChar* utf16 = CharArrayAddressOfElementAt(s, 0);
-  KStdString utf8;
-  utf8.reserve(s->count_);
-  TRY_CATCH(utf8::utf16to8(utf16, utf16 + s->count_, back_inserter(utf8)),
-            utf8::unchecked::utf16to8(utf16, utf16 + s->count_, back_inserter(utf8)),
-            /* Illegal UTF-16 string. */ ThrowNumberFormatException());
+  std::string utf8;
+  try {
+    utf8 = kotlin::to_string<KStringConversionMode::CHECKED>(s);
+  } catch (...) {
+    /* Illegal string. */
+    ThrowNumberFormatException();
+  }
   const char *str = utf8.c_str();
   auto flt = createFloat(str, e);
 

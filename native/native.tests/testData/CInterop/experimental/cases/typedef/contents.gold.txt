@@ -1,0 +1,43 @@
+library {
+  // module name: <dependency.def>
+
+  library fragment {
+    // package name: dependency
+
+    // class name: dependency/T
+    // class name: dependency/T.Companion
+
+    @kotlinx/cinterop/internal/CStruct(spelling = "struct  { }")
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public final class dependency/T : kotlinx/cinterop/CStructVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CStruct.VarType(size = 0L, align = 1)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object dependency/T.Companion : kotlinx/cinterop/CStructVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      public typealias MyInt = kotlin/Int /* = kotlin/Int */
+
+      public typealias MyIntVar = kotlinx/cinterop/IntVarOf<dependency/MyInt^> /* = kotlinx/cinterop/IntVarOf<kotlin/Int /* = dependency/MyInt^ */> */
+
+      public typealias MyPointer = kotlinx/cinterop/COpaquePointer^ /* = kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = kotlinx/cinterop/COpaquePointer^ */ */
+
+      public typealias MyPointerVar = kotlinx/cinterop/CPointerVarOf<dependency/MyPointer^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed> /* = dependency/MyPointer^ */> */
+
+      public typealias MyS = cnames/structs/S /* = cnames/structs/S */
+
+      public typealias MyT = dependency/T /* = dependency/T */
+    }
+  }
+}

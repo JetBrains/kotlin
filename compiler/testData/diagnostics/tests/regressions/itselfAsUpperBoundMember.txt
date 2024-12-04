@@ -2,9 +2,9 @@ package
 
 public final class My {
     public constructor My()
-    public final val </*0*/ T : [ERROR : Cyclic upper bounds]> prop: [ERROR : ?]
+    public final val </*0*/ T : [Error type: Cyclic upper bounds]> prop: [Error type: Error type parameter]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun </*0*/ T : [ERROR : Cyclic upper bounds]> foo(): kotlin.Unit
+    public final fun </*0*/ T : [Error type: Cyclic upper bounds]> foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

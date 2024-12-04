@@ -7,7 +7,7 @@
 
 package test.text
 
-import test.supportsNamedCapturingGroup
+import test.*
 import kotlin.test.*
 
 class RegexTest {
@@ -53,6 +53,20 @@ class RegexTest {
         assertFailsWith<IndexOutOfBoundsException> { p.find(input, -1) }
         assertFailsWith<IndexOutOfBoundsException> { p.find(input, input.length + 1) }
         assertEquals(null, p.find(input, input.length))
+    }
+
+    @Test fun matchEscapeSurrogatePair() {
+        if (!supportsEscapeAnyCharInRegex) return
+
+        val regex = "\\\uD83D\uDE00".toRegex()
+        assertTrue(regex.matches("\uD83D\uDE00"))
+    }
+
+    @Test fun matchEscapeRandomChar() {
+        if (!supportsEscapeAnyCharInRegex) return
+
+        val regex = "\\-".toRegex()
+        assertTrue(regex.matches("-"))
     }
 
     @Test fun matchIgnoreCase() {
@@ -151,6 +165,162 @@ class RegexTest {
             assertEquals("", g1)
             assertEquals("bye", g2)
             assertEquals(listOf("", "bye"), m.destructured.toList())
+        }
+    }
+
+    @Test fun matchNamedGroups() {
+        val regex = "\\b(?<city>[A-Za-z\\s]+),\\s(?<state>[A-Z]{2}):\\s(?<areaCode>[0-9]{3})\\b".toRegex()
+        val input = "Coordinates: Austin, TX: 123"
+
+        val match = regex.find(input)!!
+        assertEquals(listOf("Austin, TX: 123", "Austin", "TX", "123"), match.groupValues)
+
+        val namedGroups = match.groups
+        assertEquals(4, namedGroups.size)
+        assertEquals("Austin", namedGroups["city"]?.value)
+        assertEquals("TX", namedGroups["state"]?.value)
+        assertEquals("123", namedGroups["areaCode"]?.value)
+    }
+
+    @Test fun matchDuplicateGroupName() {
+        // should fail with IllegalArgumentException, but JS fails with SyntaxError
+        testExceptOn(TestPlatform.Js) {
+            assertFails { "(?<hi>hi)|(?<hi>bye)".toRegex() }
+        }
+        assertFails { "(?<first>\\d+)-(?<first>\\d+)".toRegex() }
+    }
+
+    @Test fun matchOptionalNamedGroup() {
+        "(?<hi>hi)|(?<bye>bye)".toRegex(RegexOption.IGNORE_CASE).let { regex ->
+            val hiMatch = regex.find("Hi!")!!
+            val hiGroups = hiMatch.groups
+            assertEquals(3, hiGroups.size)
+            assertEquals("Hi", hiGroups["hi"]?.value)
+            assertEquals(null, hiGroups["bye"])
+            assertFailsWith<IllegalArgumentException> { hiGroups["hello"] }
+
+            val byeMatch = regex.find("bye...")!!
+            val byeGroups = byeMatch.groups
+            assertEquals(3, byeGroups.size)
+            assertEquals(null, byeGroups["hi"])
+            assertEquals("bye", byeGroups["bye"]?.value)
+            assertFailsWith<IllegalArgumentException> { byeGroups["goodbye"] }
+        }
+
+        "(?<hi>hi)|bye".toRegex(RegexOption.IGNORE_CASE).let { regex ->
+            val hiMatch = regex.find("Hi!")!!
+            val hiGroups = hiMatch.groups
+            assertEquals(2, hiGroups.size)
+            assertEquals("Hi", hiGroups["hi"]?.value)
+            assertFailsWith<IllegalArgumentException> { hiGroups["bye"] }
+
+            // Named group collection consisting of a single 'null' group value
+            val byeMatch = regex.find("bye...")!!
+            val byeGroups = byeMatch.groups
+            assertEquals(2, byeGroups.size)
+            assertEquals(null, byeGroups["hi"])
+            assertFailsWith<IllegalArgumentException> { byeGroups["bye"] }
+        }
+    }
+
+    @Test fun matchWithBackReference() {
+        "(\\w+), yes \\1".toRegex().let { regex ->
+            val match = regex.find("Do you copy? Sir, yes Sir!")!!
+            assertEquals("Sir, yes Sir", match.value)
+            assertEquals("Sir", match.groups[1]?.value)
+
+            assertNull(regex.find("Do you copy? Sir, yes I do!"))
+        }
+
+        // capture the largest valid group index
+        "(\\w+), yes \\12".let { pattern ->
+            if (BackReferenceHandling.captureLargestValidIndex) {
+                val match = pattern.toRegex().find("Do you copy? Sir, yes Sir2")!!
+                assertEquals("Sir, yes Sir2", match.value)
+                assertEquals("Sir", match.groups[1]?.value)
+            } else {
+                // JS throws SyntaxError
+                assertFails { pattern.toRegex() }
+            }
+        }
+
+        // back reference to a group with large index
+        "0(1(2(3(4(5(6(7(8(9(A(B(C))))))))\\11))))".toRegex().let { regex ->
+            val match = regex.find("0123456789ABCBC")!!
+            assertEquals("BC", match.groups[11]?.value)
+            assertEquals("56789ABC", match.groups[5]?.value)
+            assertEquals("456789ABCBC", match.groups[4]?.value)
+        }
+
+        testInvalidBackReference(BackReferenceHandling.nonExistentGroup, pattern = "a(a)\\2")
+        testInvalidBackReference(BackReferenceHandling.enclosingGroup, pattern = "a(a\\1)")
+        testInvalidBackReference(BackReferenceHandling.notYetDefinedGroup, pattern = "a\\1(a)")
+
+        testInvalidBackReference(BackReferenceHandling.groupZero, pattern = "aa\\0")
+        testInvalidBackReference(BackReferenceHandling.groupZero, pattern = "a\\0a")
+    }
+
+    @Test fun matchCharWithOctalValue() {
+        if (supportsOctalLiteralInRegex) {
+            assertEquals("aa", "a\\0141".toRegex().find("aaaa")?.value)
+        } else {
+            assertFails { "a\\0141".toRegex() }
+        }
+    }
+
+    @Test fun matchNamedGroupsWithBackReference() {
+        "(?<title>\\w+), yes \\k<title>".toRegex().let { regex ->
+            val match = regex.find("Do you copy? Sir, yes Sir!")!!
+            assertEquals("Sir, yes Sir", match.value)
+            assertEquals("Sir", match.groups["title"]?.value)
+
+            assertNull(regex.find("Do you copy? Sir, yes I do!"))
+        }
+
+        testInvalidBackReference(BackReferenceHandling.nonExistentNamedGroup, pattern = "a(a)\\k<name>")
+        testInvalidBackReference(BackReferenceHandling.enclosingGroup, pattern = "a(?<first>a\\k<first>)")
+        testInvalidBackReference(BackReferenceHandling.notYetDefinedNamedGroup, pattern = "a\\k<first>(?<first>a)")
+    }
+
+    @Test fun matchNamedGroupCollection() {
+        val regex = "(?<hi>hi)".toRegex(RegexOption.IGNORE_CASE)
+        val hiMatch = regex.find("Hi!")!!
+        val hiGroups = hiMatch.groups as MatchNamedGroupCollection
+        assertEquals("Hi", hiGroups["hi"]?.value)
+    }
+
+    private fun testInvalidBackReference(option: HandlingOption, pattern: String, input: CharSequence = "aaaa", matchValue: String = "aa") {
+        when (option) {
+            HandlingOption.IGNORE_BACK_REFERENCE_EXPRESSION ->
+                assertEquals(matchValue, pattern.toRegex().find(input)?.value)
+            HandlingOption.THROW ->
+                // should fail with IllegalArgumentException, but JS fails with SyntaxError
+                assertFails { pattern.toRegex() }
+            HandlingOption.MATCH_NOTHING ->
+                assertNull(pattern.toRegex().find(input))
+        }
+    }
+
+    @Test fun invalidNamedGroupDeclaration() {
+        // should fail with IllegalArgumentException, but JS fails with SyntaxError
+
+        assertFails {
+            "(?<".toRegex()
+        }
+        assertFails {
+            "(?<)".toRegex()
+        }
+        assertFails {
+            "(?<name".toRegex()
+        }
+        assertFails {
+            "(?<name)".toRegex()
+        }
+        assertFails {
+            "(?<name>".toRegex()
+        }
+        assertFails {
+            "(?<>\\w+), yes \\k<>".toRegex()
         }
     }
 
@@ -262,7 +432,10 @@ class RegexTest {
         // inserts the first captured group
         assertEquals("(123)-(456)", pattern.replace(input, "($1)"))
 
-        assertEquals("$&-$&", pattern.replace(input, Regex.escapeReplacement("$&")))
+        for (r in listOf("$&", "\\$", "\\ $", "$\\")) {
+            assertEquals("$r-$r", pattern.replace(input, Regex.escapeReplacement(r)))
+        }
+
         assertEquals("X-456", pattern.replaceFirst(input, "X"))
 
         val longInput = "0123456789ABC"
@@ -281,20 +454,12 @@ class RegexTest {
     }
 
     @Test fun replaceWithNamedGroups() {
-        if (!supportsNamedCapturingGroup) {
-            assertFails {
-                val pattern = Regex("(?<first>\\d+)-(?<second>\\d+)")
-                pattern.replace("123-456", "\${first}+\${second}")
-            }
-            return
-        }
-
         val pattern = Regex("(?<first>\\d+)-(?<second>\\d+)")
 
         "123-456".let { input ->
             assertEquals("(123-456)", pattern.replace(input, "($0)"))
             assertEquals("123+456", pattern.replace(input, "$1+$2"))
-            // take largest legal group number reference
+            // take the largest legal group number reference
             assertEquals("1230+456", pattern.replace(input, "$10+$2"))
             assertEquals("123+456", pattern.replace(input, "$01+$2"))
             // js refers to named capturing groups with "$<name>" syntax
@@ -304,6 +469,11 @@ class RegexTest {
             // missing trailing '}'
             assertFailsWith<IllegalArgumentException>("\${first+\${second}") { pattern.replace(input, "\${first+\${second}") }
             assertFailsWith<IllegalArgumentException>("\${first}+\${second") { pattern.replace(input, "\${first}+\${second") }
+
+            // non-existent group name
+            assertFailsWith<IllegalArgumentException>("\${first}+\${second}+\$third") {
+                pattern.replace(input, "\${first}+\${second}+\$third")
+            }
         }
 
         "123-456-789-012".let { input ->
@@ -311,6 +481,16 @@ class RegexTest {
             assertEquals("123/456-789/012", pattern.replace(input, "\${first}/\${second}"))
             assertEquals("123/456-789-012", pattern.replaceFirst(input, "\${first}/\${second}"))
         }
+    }
+
+    @Test fun replaceWithNamedOptionalGroups() {
+        val regex = "(?<hi>hi)|(?<bye>bye)".toRegex(RegexOption.IGNORE_CASE)
+
+        assertEquals("[Hi, ]gh wall", regex.replace("High wall", "[$1, $2]"))
+        assertEquals("[Hi, ]gh wall", regex.replace("High wall", "[\${hi}, \${bye}]"))
+
+        assertEquals("Good[, bye], Mr. Holmes", regex.replace("Goodbye, Mr. Holmes", "[$1, $2]"))
+        assertEquals("Good[, bye], Mr. Holmes", regex.replace("Goodbye, Mr. Holmes", "[\${hi}, \${bye}]"))
     }
 
     @Test fun replaceEvaluator() {
@@ -347,12 +527,19 @@ class RegexTest {
     @Test fun splitByEmptyMatch() {
         val input = "test"
 
-        val emptyMatch = "".toRegex()
+        for (pattern in listOf("", "(?<=)")) {
+            val emptyMatch = pattern.toRegex()
 
-        testSplitEquals(listOf("", "t", "e", "s", "t", ""), input, emptyMatch)
-        testSplitEquals(listOf("", "t", "est"), input, emptyMatch, limit = 3)
+            testSplitEquals(listOf("", "t", "e", "s", "t", ""), input, emptyMatch)
+            testSplitEquals(listOf("", "t", "est"), input, emptyMatch, limit = 3)
 
-        testSplitEquals("".split(""), "", emptyMatch)
+            testSplitEquals("".split(""), "", emptyMatch)
+
+            testSplitEquals(
+                if (regexSplitUnicodeCodePointHandling) listOf("", "\uD83D\uDE04", "\uD801", "") else listOf("", "\uD83D", "\uDE04", "\uD801", ""),
+                "\uD83D\uDE04\uD801", emptyMatch
+            )
+        }
 
         val emptyMatchBeforeT = "(?=t)".toRegex()
 
@@ -395,6 +582,18 @@ class RegexTest {
 
         assertFailsWith<NoSuchElementException> { matches.next() }
         assertFailsWith<NoSuchElementException> { splits.next() }
+    }
+
+    @Test fun findAllEmoji() {
+        val input = "\uD83D\uDE04\uD801x"
+        val regex = ".".toRegex()
+
+        val matches = regex.findAll(input).toList()
+        val values = matches.map { it.value }
+        val ranges = matches.map { it.range }
+
+        assertEquals(listOf("\uD83D\uDE04", "\uD801", "x"), values)
+        assertEquals(listOf(0..1, 2..2, 3..3), ranges)
     }
 
 }

@@ -1,0 +1,25 @@
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <interop_class_inheritor_library>
+final class interop_class_inheritor.test/Derived : interop_class_inheritor/Base { // interop_class_inheritor.test/Derived|null[0]
+    final var nonOverriddenProperty // interop_class_inheritor.test/Derived.nonOverriddenProperty|-9006076905898583858[0]
+        final fun <get-nonOverriddenProperty>(): kotlin/Int // interop_class_inheritor.test/Derived.nonOverriddenProperty.<get-nonOverriddenProperty>|2758692278606108838[0]
+        final fun <set-nonOverriddenProperty>(kotlin/Int) // interop_class_inheritor.test/Derived.nonOverriddenProperty.<set-nonOverriddenProperty>|-2229258798912660779[0]
+    final var overriddenProperty // interop_class_inheritor.test/Derived.overriddenProperty|-1390063372067425061[0]
+        final fun <get-overriddenProperty>(): kotlin/Int // interop_class_inheritor.test/Derived.overriddenProperty.<get-overriddenProperty>|7022302077100732862[0]
+        final fun <set-overriddenProperty>(kotlin/Int) // interop_class_inheritor.test/Derived.overriddenProperty.<set-overriddenProperty>|-4304223391766217362[0]
+    constructor <init>() // interop_class_inheritor.test/Derived.<init>|-5645683436151566731[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // interop_class_inheritor.test/Derived.equals|-2081205089284609834[0]
+    final fun hashCode(): kotlin/Int // interop_class_inheritor.test/Derived.hashCode|3409210261493131192[0]
+    final fun init(): interop_class_inheritor/Base? // interop_class_inheritor.test/Derived.init|-3274032692079634155[0]
+    final fun nonOverriddenFunction() // interop_class_inheritor.test/Derived.nonOverriddenFunction|3505898422087519936[0]
+    final fun nonOverriddenProperty(): kotlin/Int // interop_class_inheritor.test/Derived.nonOverriddenProperty|-355772021403371063[0]
+    final fun overriddenFunction() // interop_class_inheritor.test/Derived.overriddenFunction|-6472102329825707726[0]
+    final fun overriddenProperty(): kotlin/Int // interop_class_inheritor.test/Derived.overriddenProperty|-7224960608403565684[0]
+    final fun setNonOverriddenProperty(kotlin/Int) // interop_class_inheritor.test/Derived.setNonOverriddenProperty|-5242067576658008142[0]
+    final fun setOverriddenProperty(kotlin/Int) // interop_class_inheritor.test/Derived.setOverriddenProperty|-8479216322956180924[0]
+    final fun toString(): kotlin/String // interop_class_inheritor.test/Derived.toString|-1522858123163872138[0]
+}

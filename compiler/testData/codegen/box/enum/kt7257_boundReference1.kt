@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: KT-62714, KT-63880
 
 enum class X {
     B {

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 // KT-6026 Exception on instantiating a nested class in an anonymous object
 
 val oo = object {

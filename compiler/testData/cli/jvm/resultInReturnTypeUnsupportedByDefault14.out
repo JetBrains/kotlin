@@ -1,5 +1,0 @@
-warning: language version 1.4 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/jvm/resultInReturnType.kt:1:5: error: 'kotlin.Result' cannot be used as a return type
-fun foo() = Result.success(42)
-    ^
-COMPILATION_ERROR

@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTUME
+// WITH_STDLIB
 
 // See also: KT-42083
 

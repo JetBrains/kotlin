@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class AHolder(val a: Int)
 
 class F {

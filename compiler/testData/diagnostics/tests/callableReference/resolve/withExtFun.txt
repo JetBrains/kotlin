@@ -1,11 +1,11 @@
 package
 
-public val x0: [ERROR : Type for A::foo]
+public val x0: [Error type: Not found recorded type for A::foo]
 public val x1: (A) -> kotlin.Unit
 public val x2: kotlin.reflect.KProperty1<A, kotlin.Int>
 public val x3: kotlin.reflect.KProperty1<A, kotlin.Int>
 public val x4: (A) -> kotlin.String
-public val y0: [ERROR : Type for A::bar]
+public val y0: [Error type: Not found recorded type for A::bar]
 public val y1: (A) -> kotlin.Unit
 public val y2: kotlin.reflect.KProperty1<A, kotlin.Int>
 public val y3: kotlin.reflect.KProperty1<A, kotlin.Int>

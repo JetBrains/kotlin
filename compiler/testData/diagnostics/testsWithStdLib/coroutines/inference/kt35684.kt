@@ -1,6 +1,6 @@
-// !LANGUAGE: +NewInference
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-35684
 
 import kotlin.experimental.ExperimentalTypeInference
@@ -26,7 +26,7 @@ fun test_3() {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <U> sequence(@BuilderInference block: suspend Inv<U>.() -> Unit): U = null!!
+fun <U> sequence(block: suspend Inv<U>.() -> Unit): U = null!!
 
 interface Inv<T> {
     fun yield(element: T)

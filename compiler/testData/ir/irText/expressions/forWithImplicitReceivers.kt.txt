@@ -1,3 +1,39 @@
+class IntCell {
+  var value: Int
+    field = value
+    get
+    set
+
+  constructor(value: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface IReceiver {
+  operator fun IntCell.hasNext(): Boolean {
+    return greater(arg0 = <this>.<get-value>(), arg1 = 0)
+  }
+
+  operator fun FiveTimes.iterator(): IntCell {
+    return IntCell(value = 5)
+  }
+
+  operator fun IntCell.next(): Int {
+    return { // BLOCK
+      val tmp_0: IntCell = <this>
+      { // BLOCK
+        val tmp_1: Int = tmp_0.<get-value>()
+        tmp_0.<set-value>(<set-?> = tmp_1.dec())
+        tmp_1
+      }
+    }
+  }
+
+}
+
 object FiveTimes {
   private constructor() /* primary */ {
     super/*Any*/()
@@ -7,50 +43,15 @@ object FiveTimes {
 
 }
 
-class IntCell {
-  constructor(value: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  var value: Int
-    field = value
-    get
-    set
-
-}
-
-interface IReceiver {
-  operator fun FiveTimes.iterator(): IntCell {
-    return IntCell(value = 5)
-  }
-
-  operator fun IntCell.hasNext(): Boolean {
-    return greater(arg0 = <this>.<get-value>(), arg1 = 0)
-  }
-
-  operator fun IntCell.next(): Int {
-    return { // BLOCK
-      val tmp0_this: IntCell = <this>
-      { // BLOCK
-        val tmp1: Int = tmp0_this.<get-value>()
-        tmp0_this.<set-value>(<set-?> = tmp1.dec())
-        tmp1
-      }
-    }
-  }
-
-}
-
 fun IReceiver.test() {
   { // BLOCK
-    val tmp0_iterator: IntCell = (<this>, FiveTimes).iterator()
-    while ((<this>, tmp0_iterator).hasNext()) { // BLOCK
-      val i: Int = (<this>, tmp0_iterator).next()
+    val tmp_2: IntCell = (<this>, FiveTimes).iterator()
+    while ((<this>, tmp_2).hasNext()) { // BLOCK
+      val i: Int = (<this>, tmp_2).next()
       { // BLOCK
         println(message = i)
       }
     }
   }
 }
+

@@ -1,17 +1,5 @@
 class Outer {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   inner class Inner {
-    constructor(x: Int) /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
     val x: Int
       field = x
       get
@@ -20,6 +8,19 @@ class Outer {
       <this>.this/*Inner*/(x = 0)
     }
 
+    constructor(x: Int) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
   }
 
 }
+

@@ -28,13 +28,7 @@ public class KotlinModuleFileType implements FileType {
     public static final String EXTENSION = "kotlin_module";
     public static final KotlinModuleFileType INSTANCE = new KotlinModuleFileType();
 
-    private final NotNullLazyValue<Icon> myIcon = new NotNullLazyValue<Icon>() {
-        @NotNull
-        @Override
-        protected Icon compute() {
-            return KotlinIconProviderService.getInstance().getFileIcon();
-        }
-    };
+    private final NotNullLazyValue<Icon> myIcon = NotNullLazyValue.lazy(() -> KotlinIconProviderService.getInstance().getFileIcon());
 
     private KotlinModuleFileType() {}
 

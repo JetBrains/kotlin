@@ -1,0 +1,142 @@
+STATUS:
+TARGET: public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] value: R|kotlin/String|): R|kotlin/Unit|
+FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] var result: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] set([ResolvedTo(STATUS)] value: R|T|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|A<kotlin/String>| = LAZY_EXPRESSION
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=B] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/String|): R|kotlin/Unit|
+FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var result: R|T|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] get(): R|T|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|T|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|A<kotlin/String>| = LAZY_EXPRESSION
+
+    }
+
+CONTRACTS:
+TARGET: public [ResolvedTo(CONTRACTS)] [ContainingClassKey=B] set([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit|
+FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(CONTRACTS)] var result: R|T|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): R|T|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] set([ResolvedTo(CONTRACTS)] value: R|T|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|A<kotlin/String>| = LAZY_EXPRESSION
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=B] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit|
+FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var result: R|T|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] get(): R|T|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|A<kotlin/String>| = LAZY_EXPRESSION
+
+    }
+
+CONSTANT_EVALUATION:
+TARGET: public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=B] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|kotlin/String|): R|kotlin/Unit|
+FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(CONSTANT_EVALUATION)] var result: R|T|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] get(): R|T|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] set([ResolvedTo(CONSTANT_EVALUATION)] value: R|T|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|A<kotlin/String>| = LAZY_EXPRESSION
+
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=B] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String|): R|kotlin/Unit|
+FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] var result: R|T|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|T|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|T|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|A<kotlin/String>| = LAZY_EXPRESSION
+
+    }
+
+BODY_RESOLVE:
+TARGET: public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit|
+FILE: [ResolvedTo(IMPORTS)] delegationPropertySetter.kt
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] var result: R|T|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|T|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|T|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] a: R|A<kotlin/String>|): R|B| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|A<kotlin/String>| = LAZY_EXPRESSION
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] delegationPropertySetter.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface A<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] var result: R|T|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|T|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A<kotlin/String>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor([ResolvedTo(BODY_RESOLVE)] a: R|A<kotlin/String>|): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|A<kotlin/String>| = R|<local>/a|
+
+    }

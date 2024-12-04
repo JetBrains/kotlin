@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
-import org.jetbrains.kotlin.load.java.components.TypeUsage
+import org.jetbrains.kotlin.types.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.childForClassOrPackage
@@ -39,8 +38,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 class LazyJavaClassDescriptor(
     val outerContext: LazyJavaResolverContext,
@@ -165,7 +162,6 @@ class LazyJavaClassDescriptor(
     override fun isDefinitelyNotSamInterface(): Boolean {
         if (kind != ClassKind.INTERFACE) return true
 
-        val candidates = jClass.methods.filter { it.isAbstract && it.typeParameters.isEmpty() }
         // From the definition of function interfaces in the Java specification (pt. 9.8):
         // "methods that are members of I that do not have the same signature as any public instance method of the class Object"
         // It means that if an interface declares `int hashCode()` then the method won't be taken into account when
@@ -173,14 +169,24 @@ class LazyJavaClassDescriptor(
         // We make here a conservative check just filtering out methods by name.
         // If we ignore a method with wrong signature (different from one in Object) it's not very bad,
         // we'll just say that the interface MAY BE a SAM when it's not and then more detailed check will be applied.
-        if (candidates.count { it.name.identifier !in PUBLIC_METHOD_NAMES_IN_OBJECT } > 1) return true
+        var foundSamMethod = false
+        for (method in jClass.methods) {
+            if (method.isAbstract && method.typeParameters.isEmpty() &&
+                method.name.identifier !in PUBLIC_METHOD_NAMES_IN_OBJECT) {
+                // found 2nd method candidate
+                if (foundSamMethod) {
+                    return true
+                }
+                foundSamMethod = true
+            }
+        }
 
         // If we have default methods the interface could be a SAM even while a super interface has more than one abstract method
         if (jClass.methods.any { !it.isAbstract && it.typeParameters.isEmpty() }) return false
 
         // Check if any of the super-interfaces contain too many methods to be a SAM
         return typeConstructor.supertypes.any {
-            it.constructor.declarationDescriptor.safeAs<LazyJavaClassDescriptor>()?.isDefinitelyNotSamInterface == true
+            (it.constructor.declarationDescriptor as? LazyJavaClassDescriptor)?.isDefinitelyNotSamInterface == true
         }
     }
 
@@ -191,14 +197,14 @@ class LazyJavaClassDescriptor(
 
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = if (modality == Modality.SEALED) {
         val attributes = TypeUsage.COMMON.toAttributes()
-        jClass.permittedTypes.mapNotNull {
+        jClass.permittedTypes.mapNotNullTo(mutableListOf()) {
             c.typeResolver.transformJavaType(it, attributes).constructor.declarationDescriptor as? ClassDescriptor
-        }
+        }.sortedBy { it.fqNameSafe.asString() }
     } else {
         emptyList()
     }
 
-    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
+    override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = null
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 
@@ -281,7 +287,7 @@ class LazyJavaClassDescriptor(
                 else -> return null
             }
 
-            return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, classDescriptor, parametersAsTypeProjections)
+            return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, classDescriptor, parametersAsTypeProjections)
         }
 
         private fun getPurelyImplementsFqNameFromAnnotation(): FqName? {

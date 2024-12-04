@@ -1,6 +1,8 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-// !JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: all-compatibility
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
 // JVM_TARGET: 1.8
@@ -10,8 +12,7 @@ interface Path {
     fun Int.extension(maxDepth: Int = 42)
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class RealPath(val x: Int) : Path {
     override fun dispatch(maxDepth: Int) = Unit
 

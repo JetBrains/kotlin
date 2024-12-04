@@ -1,4 +1,4 @@
-depends = AVFoundation ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreMedia CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+depends = AVFAudio AVFoundation ApplicationServices AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreMIDI CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MediaToolbox Metal OpenGLCommon QuartzCore Security UniformTypeIdentifiers cups darwin libkern osx posix
 language = Objective-C
 package = platform.MediaPlayer
 modules = MediaPlayer

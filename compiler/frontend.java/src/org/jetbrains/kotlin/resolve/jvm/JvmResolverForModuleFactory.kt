@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.container.tryGetService
+import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -37,8 +37,10 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
+import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JvmPlatformParameters(
@@ -61,7 +63,9 @@ class JvmResolverForModuleFactory(
         moduleContent: ModuleContent<M>,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings,
-        sealedInheritorsProvider: SealedClassInheritorsProvider
+        sealedInheritorsProvider: SealedClassInheritorsProvider,
+        resolveOptimizingOptions: OptimizingOptions?,
+        absentDescriptorHandlerClass: Class<out AbsentDescriptorHandler>?
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -114,10 +118,13 @@ class JvmResolverForModuleFactory(
             lookupTracker,
             ExpectActualTracker.DoNothing,
             InlineConstTracker.DoNothing,
+            EnumWhenTracker.DoNothing,
             packagePartProvider,
             languageVersionSettings,
             sealedInheritorsProvider = sealedInheritorsProvider,
-            useBuiltInsProvider = platformParameters.useBuiltinsProviderForModule(moduleInfo)
+            useBuiltInsProvider = platformParameters.useBuiltinsProviderForModule(moduleInfo),
+            optimizingOptions = resolveOptimizingOptions,
+            absentDescriptorHandlerClass = absentDescriptorHandlerClass
         )
 
         val providersForModule = arrayListOf(

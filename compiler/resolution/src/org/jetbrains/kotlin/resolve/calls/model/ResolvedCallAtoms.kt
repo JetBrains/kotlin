@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateFactory
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.utils.SmartList
@@ -73,7 +74,7 @@ class ResolvedCallableReferenceCallAtom(
     reflectionCandidateType: UnwrappedType? = null,
     candidate: CallableReferenceResolutionCandidate? = null
 ) : MutableResolvedCallAtom(
-    atom, candidateDescriptor, explicitReceiverKind, dispatchReceiverArgument, extensionReceiverArgument, reflectionCandidateType, candidate
+    atom, candidateDescriptor, explicitReceiverKind, dispatchReceiverArgument, extensionReceiverArgument, emptyList(), reflectionCandidateType, candidate
 ), ResolvedCallableReferenceAtom
 
 open class MutableResolvedCallAtom(
@@ -81,10 +82,12 @@ open class MutableResolvedCallAtom(
     originalCandidateDescriptor: CallableDescriptor, // original candidate descriptor
     override val explicitReceiverKind: ExplicitReceiverKind,
     override val dispatchReceiverArgument: SimpleKotlinCallArgument?,
-    override val extensionReceiverArgument: SimpleKotlinCallArgument?,
+    override var extensionReceiverArgument: SimpleKotlinCallArgument?,
+    override val extensionReceiverArgumentCandidates: List<SimpleKotlinCallArgument>?,
     open val reflectionCandidateType: UnwrappedType? = null,
     open val candidate: CallableReferenceResolutionCandidate? = null
 ) : ResolvedCallAtom() {
+    override var contextReceiversArguments: List<SimpleKotlinCallArgument> = listOf()
     override lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     override lateinit var freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor
@@ -158,12 +161,15 @@ open class MutableResolvedCallAtom(
     override fun toString(): String = "$atom, candidate = $candidateDescriptor"
 }
 
-fun ResolutionCandidate.markCandidateForCompatibilityResolve() {
+fun ResolutionCandidate.markCandidateForCompatibilityResolve(needToReportWarning: Boolean = true) {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
-    addDiagnostic(LowerPriorityToPreserveCompatibility.asDiagnostic())
+    addDiagnostic(LowerPriorityToPreserveCompatibility(needToReportWarning).asDiagnostic())
 }
 
-fun CallableReferencesCandidateFactory.markCandidateForCompatibilityResolve(diagnostics: SmartList<KotlinCallDiagnostic>) {
+fun CallableReferencesCandidateFactory.markCandidateForCompatibilityResolve(
+    diagnostics: SmartList<KotlinCallDiagnostic>,
+    needToReportWarning: Boolean = true,
+) {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
-    diagnostics.add(LowerPriorityToPreserveCompatibility.asDiagnostic())
+    diagnostics.add(LowerPriorityToPreserveCompatibility(needToReportWarning).asDiagnostic())
 }

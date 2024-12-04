@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 data class MyClass(val x: String?)
 
 fun foo(y: MyClass): Int {

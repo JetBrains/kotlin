@@ -1,9 +1,9 @@
 import kotlin.collections.*
 
-const val a1 = setOf(1, 2, 3).<!EVALUATED: `3`!>size<!>
-const val a2 = setOf(1, 2, 3, 3, 2, 1).<!EVALUATED: `3`!>size<!>
-const val b = emptySet<Int>().<!EVALUATED: `0`!>size<!>
-const val c = setOf<Int>().<!EVALUATED: `0`!>hashCode()<!>
+const val a1 = <!EVALUATED: `3`!>setOf(1, 2, 3).size<!>
+const val a2 = <!EVALUATED: `3`!>setOf(1, 2, 3, 3, 2, 1).size<!>
+const val b = <!EVALUATED: `0`!>emptySet<Int>().size<!>
+const val c = <!EVALUATED: `0`!>setOf<Int>().hashCode()<!>
 
 @CompileTimeCalculation
 fun getSum(set: Set<Int>): Int {

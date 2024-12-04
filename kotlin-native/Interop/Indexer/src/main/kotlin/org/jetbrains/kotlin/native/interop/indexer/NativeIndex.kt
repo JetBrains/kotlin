@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.native.interop.indexer
 
-enum class Language(val sourceFileExtension: String) {
-    C("c"),
-    CPP("cpp"),
-    OBJECTIVE_C("m")
+enum class Language(val sourceFileExtension: String, val clangLanguageName: String) {
+    C("c", "c"),
+    CPP("cpp", "c++"),
+    OBJECTIVE_C("m", "objective-c")
 }
 
 interface HeaderInclusionPolicy {
@@ -48,11 +48,11 @@ sealed class NativeLibraryHeaderFilter {
             val excludeDepdendentModules: Boolean
     ) : NativeLibraryHeaderFilter()
 
-    class Predefined(val headers: Set<String>) : NativeLibraryHeaderFilter()
+    class Predefined(val headers: Set<String>, val modules: List<String>) : NativeLibraryHeaderFilter()
 }
 
 interface Compilation {
-    val includes: List<String>
+    val includes: List<IncludeInfo>
     val additionalPreambleLines: List<String>
     val compilerArgs: List<String>
     val language: Language
@@ -93,30 +93,38 @@ data class CompilationWithPCH(
     constructor(compilerArgs: List<String>, precompiledHeader: String, language: Language)
             : this(compilerArgs + listOf("-include-pch", precompiledHeader), language)
 
-    override val includes: List<String>
+    override val includes: List<IncludeInfo>
         get() = emptyList()
 
     override val additionalPreambleLines: List<String>
         get() = emptyList()
 }
 
-// TODO: Compilation hierarchy seems to require some refactoring.
+/**
+ *
+ *  @param objCClassesIncludingCategories Objective-C classes that should be merged with categories from the same file.
+ *
+ * TODO: Compilation hierarchy seems to require some refactoring.
+ */
+data class NativeLibrary(
+        override val includes: List<IncludeInfo>,
+        override val additionalPreambleLines: List<String>,
+        override val compilerArgs: List<String>,
+        val headerToIdMapper: HeaderToIdMapper,
+        override val language: Language,
+        val excludeSystemLibs: Boolean, // TODO: drop?
+        val headerExclusionPolicy: HeaderExclusionPolicy,
+        val headerFilter: NativeLibraryHeaderFilter,
+        val objCClassesIncludingCategories: Set<String>,
+        val allowIncludingObjCCategoriesFromDefFile: Boolean,
+) : Compilation
 
-data class NativeLibrary(override val includes: List<String>,
-                         override val additionalPreambleLines: List<String>,
-                         override val compilerArgs: List<String>,
-                         val headerToIdMapper: HeaderToIdMapper,
-                         override val language: Language,
-                         val excludeSystemLibs: Boolean, // TODO: drop?
-                         val headerExclusionPolicy: HeaderExclusionPolicy,
-                         val headerFilter: NativeLibraryHeaderFilter) : Compilation
-
-data class IndexerResult(val index: NativeIndex, val compilation: CompilationWithPCH)
+data class IndexerResult(val index: NativeIndex, val compilation: Compilation)
 
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
  */
-fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): IndexerResult = buildNativeIndexImpl(library, verbose)
+fun buildNativeIndex(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean = true): IndexerResult = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders)
 
 /**
  * This class describes the IR of definitions from C header file(s).
@@ -144,9 +152,11 @@ data class HeaderId(val value: String)
 
 data class Location(val headerId: HeaderId)
 
-interface TypeDeclaration {
+interface LocatableDeclaration {
     val location: Location
 }
+
+interface TypeDeclaration : LocatableDeclaration
 
 sealed class StructMember(val name: String) {
     abstract val offset: Long?
@@ -178,6 +188,7 @@ class AnonymousInnerRecord(val def: StructDef) : StructMember("") {
 abstract class StructDecl(val spelling: String) : TypeDeclaration {
 
     abstract val def: StructDef?
+    abstract val isAnonymous: Boolean
 }
 
 /**
@@ -233,6 +244,7 @@ class EnumConstant(val name: String, val value: Long, val isExplicitlyDefined: B
 abstract class EnumDef(val spelling: String, val baseType: Type) : TypeDeclaration {
 
     abstract val constants: List<EnumConstant>
+    abstract val isAnonymous: Boolean
 }
 
 sealed class ObjCContainer {
@@ -248,19 +260,42 @@ sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclar
 data class ObjCMethod(
         val selector: String, val encoding: String, val parameters: List<Parameter>, private val returnType: Type,
         val isVariadic: Boolean, val isClass: Boolean, val nsConsumesSelf: Boolean, val nsReturnsRetained: Boolean,
-        val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean
+        val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean, val isDirect: Boolean
 ) {
 
-    fun returnsInstancetype(): Boolean = returnType is ObjCInstanceType
+    fun containsInstancetype(): Boolean = returnType.containsInstancetype() // Clang doesn't allow parameter types to use instancetype.
 
-    fun getReturnType(container: ObjCClassOrProtocol): Type = if (returnType is ObjCInstanceType) {
-        when (container) {
-            is ObjCClass -> ObjCObjectPointer(container, returnType.nullability, protocols = emptyList())
-            is ObjCProtocol -> ObjCIdType(returnType.nullability, protocols = listOf(container))
-        }
+    fun getReturnType(container: ObjCClassOrProtocol): Type = if (returnType.containsInstancetype()) {
+        returnType.substituteInstancetype(container)
     } else {
+        // Fast path, avoid allocating copies.
         returnType
     }
+}
+
+// Clang seems to allow using instancetype only inside certain kinds of types.
+// The implementation below therefore covers only particular cases, based on the experiments with Clang and common sense.
+private fun Type.containsInstancetype(): Boolean = when (this) {
+    is ObjCInstanceType -> true
+
+    is ObjCBlockPointer -> this.returnType.containsInstancetype()
+    is FunctionType -> this.returnType.containsInstancetype()
+    is PointerType -> this.pointeeType.containsInstancetype()
+
+    else -> false
+}
+
+private fun Type.substituteInstancetype(container: ObjCClassOrProtocol): Type = when (this) {
+    is ObjCInstanceType -> when (container) {
+        is ObjCClass -> ObjCObjectPointer(container, this.nullability, protocols = emptyList())
+        is ObjCProtocol -> ObjCIdType(this.nullability, protocols = listOf(container))
+    }
+
+    is ObjCBlockPointer -> this.copy(returnType = this.returnType.substituteInstancetype(container))
+    is FunctionType -> this.copy(returnType = this.returnType.substituteInstancetype(container))
+    is PointerType -> this.copy(pointeeType = this.pointeeType.substituteInstancetype(container))
+
+    else -> this
 }
 
 data class ObjCProperty(val name: String, val getter: ObjCMethod, val setter: ObjCMethod?) {
@@ -270,10 +305,14 @@ data class ObjCProperty(val name: String, val getter: ObjCMethod, val setter: Ob
 abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
     abstract val binaryName: String?
     abstract val baseClass: ObjCClass?
+    /**
+     * Categories whose methods and properties should be generated as members of Kotlin class.
+     */
+    abstract val includedCategories: List<ObjCCategory>
 }
 abstract class ObjCProtocol(name: String) : ObjCClassOrProtocol(name)
 
-abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContainer()
+abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContainer(), LocatableDeclaration
 
 /**
  * C function parameter.

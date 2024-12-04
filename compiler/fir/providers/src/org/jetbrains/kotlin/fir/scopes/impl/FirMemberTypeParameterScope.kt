@@ -5,12 +5,21 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
 import org.jetbrains.kotlin.name.Name
 
 class FirMemberTypeParameterScope(callableMember: FirMemberDeclaration) : FirTypeParameterScope() {
     override val typeParameters: Map<Name, List<FirTypeParameter>> =
         callableMember.typeParameters.filterIsInstance<FirTypeParameter>().groupBy { it.name }
+
+    @DelicateScopeAPI
+    override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirMemberTypeParameterScope? {
+        return null
+    }
 }

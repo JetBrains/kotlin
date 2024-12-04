@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: PsiElement.java
 
 public interface PsiElement {

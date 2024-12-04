@@ -4,24 +4,24 @@ public fun fa(/*0*/ a: A): kotlin.Unit
 public fun fb(/*0*/ b: B): kotlin.Unit
 
 public final data class A {
-    public constructor A(/*0*/ i: kotlin.Int, /*1*/ j: [ERROR : G])
+    public constructor A(/*0*/ i: kotlin.Int, /*1*/ j: [Error type: Unresolved type for G])
     public final val i: kotlin.Int
-    public final val j: [ERROR : G]
+    public final val j: [Error type: Unresolved type for G]
     public final operator /*synthesized*/ fun component1(): kotlin.Int
-    public final operator /*synthesized*/ fun component2(): [ERROR : G]
-    public final /*synthesized*/ fun copy(/*0*/ i: kotlin.Int = ..., /*1*/ j: [ERROR : G] = ...): A
+    public final operator /*synthesized*/ fun component2(): [Error type: Unresolved type for G]
+    public final /*synthesized*/ fun copy(/*0*/ i: kotlin.Int = ..., /*1*/ j: [Error type: Unresolved type for G] = ...): A
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
 public final data class B {
-    public constructor B(/*0*/ i: [ERROR : G], /*1*/ j: [ERROR : G])
-    public final val i: [ERROR : G]
-    public final val j: [ERROR : G]
-    public final operator /*synthesized*/ fun component1(): [ERROR : G]
-    public final operator /*synthesized*/ fun component2(): [ERROR : G]
-    public final /*synthesized*/ fun copy(/*0*/ i: [ERROR : G] = ..., /*1*/ j: [ERROR : G] = ...): B
+    public constructor B(/*0*/ i: [Error type: Unresolved type for G], /*1*/ j: [Error type: Unresolved type for G])
+    public final val i: [Error type: Unresolved type for G]
+    public final val j: [Error type: Unresolved type for G]
+    public final operator /*synthesized*/ fun component1(): [Error type: Unresolved type for G]
+    public final operator /*synthesized*/ fun component2(): [Error type: Unresolved type for G]
+    public final /*synthesized*/ fun copy(/*0*/ i: [Error type: Unresolved type for G] = ..., /*1*/ j: [Error type: Unresolved type for G] = ...): B
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String

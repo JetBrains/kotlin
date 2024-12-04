@@ -1,5 +1,9 @@
-// !OPT_IN: kotlin.ExperimentalStdlibApi
+// FIR_IDENTICAL
 // WITH_STDLIB
+// IGNORE_BACKEND: JS_IR
+
+// KT-61141: mustCheckInImports throws kotlin.IllegalStateException instead of java.lang.IllegalStateException
+// IGNORE_BACKEND: NATIVE
 
 abstract class Visibility(val name: String, val isPublicAPI: Boolean) {
     open val internalDisplayName: String

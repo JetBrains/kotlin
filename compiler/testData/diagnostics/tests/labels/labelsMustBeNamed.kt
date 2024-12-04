@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
+
 fun foo(a: Any?): Int {
     <!SYNTAX!>@<!>{ ->
         return<!SYNTAX!>@<!>

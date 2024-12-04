@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -230,14 +230,19 @@ public actual fun CharArray.asList(): List<Char> {
 }
 
 /**
- * Returns `true` if the two specified arrays are *deeply* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *deeply* equal to one another.
  * 
- * If two corresponding elements are nested arrays, they are also compared deeply.
- * If any of arrays contains itself on any nesting level the behavior is undefined.
+ * Two arrays are considered deeply equal if they have the same size, and elements at corresponding indices are deeply equal.
+ * That is, if two corresponding elements are nested arrays, they are also compared deeply.
+ * Elements of other types are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
- * The elements of other types are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * If any of the arrays contain themselves at any nesting level, the behavior is undefined.
+ * 
+ * @param other the array to compare deeply with this array.
+ * @return `true` if the two arrays are deeply equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentDeepEquals
  */
 @SinceKotlin("1.1")
 @kotlin.internal.LowPriorityInOverloadResolution
@@ -246,16 +251,21 @@ public actual infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>):
 }
 
 /**
- * Returns `true` if the two specified arrays are *deeply* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *deeply* equal to one another.
  * 
- * The specified arrays are also considered deeply equal if both are `null`.
+ * Two arrays are considered deeply equal if they have the same size, and elements at corresponding indices are deeply equal.
+ * That is, if two corresponding elements are nested arrays, they are also compared deeply.
+ * Elements of other types are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  * 
- * If two corresponding elements are nested arrays, they are also compared deeply.
- * If any of arrays contains itself on any nesting level the behavior is undefined.
+ * The arrays are also considered deeply equal if both are `null`.
  * 
- * The elements of other types are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * If any of the arrays contain themselves at any nesting level, the behavior is undefined.
+ * 
+ * @param other the array to compare deeply with this array.
+ * @return `true` if the two arrays are deeply equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.contentDeepEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun <T> Array<out T>?.contentDeepEquals(other: Array<out T>?): Boolean {
@@ -315,137 +325,181 @@ public actual fun <T> Array<out T>?.contentDeepToString(): String {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * If the arrays contain nested arrays, use [contentDeepEquals] to recursively compare their elements.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.arrayContentEquals
  */
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
+public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
     return this.contentEquals(other)
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
+public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
     return this.contentEquals(other)
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
+public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
     return this.contentEquals(other)
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun IntArray.contentEquals(other: IntArray): Boolean {
+public infix fun IntArray.contentEquals(other: IntArray): Boolean {
     return this.contentEquals(other)
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun LongArray.contentEquals(other: LongArray): Boolean {
+public infix fun LongArray.contentEquals(other: LongArray): Boolean {
     return this.contentEquals(other)
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
  */
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
+public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
     return this.contentEquals(other)
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
  */
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
+public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
     return this.contentEquals(other)
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.booleanArrayContentEquals
  */
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
+public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
     return this.contentEquals(other)
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.charArrayContentEquals
  */
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun CharArray.contentEquals(other: CharArray): Boolean {
+public infix fun CharArray.contentEquals(other: CharArray): Boolean {
     return this.contentEquals(other)
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * If the arrays contain nested arrays, use [contentDeepEquals] to recursively compare their elements.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.arrayContentEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun <T> Array<out T>?.contentEquals(other: Array<out T>?): Boolean {
@@ -459,11 +513,16 @@ public actual infix fun <T> Array<out T>?.contentEquals(other: Array<out T>?): B
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun ByteArray?.contentEquals(other: ByteArray?): Boolean {
@@ -477,11 +536,16 @@ public actual infix fun ByteArray?.contentEquals(other: ByteArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun ShortArray?.contentEquals(other: ShortArray?): Boolean {
@@ -495,11 +559,16 @@ public actual infix fun ShortArray?.contentEquals(other: ShortArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun IntArray?.contentEquals(other: IntArray?): Boolean {
@@ -513,11 +582,16 @@ public actual infix fun IntArray?.contentEquals(other: IntArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun LongArray?.contentEquals(other: LongArray?): Boolean {
@@ -531,11 +605,18 @@ public actual infix fun LongArray?.contentEquals(other: LongArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun FloatArray?.contentEquals(other: FloatArray?): Boolean {
@@ -549,11 +630,18 @@ public actual infix fun FloatArray?.contentEquals(other: FloatArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * Elements are compared for equality using the [equals][Any.equals] function.
+ * This means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.doubleArrayContentEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun DoubleArray?.contentEquals(other: DoubleArray?): Boolean {
@@ -567,11 +655,16 @@ public actual infix fun DoubleArray?.contentEquals(other: DoubleArray?): Boolean
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.booleanArrayContentEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun BooleanArray?.contentEquals(other: BooleanArray?): Boolean {
@@ -585,11 +678,16 @@ public actual infix fun BooleanArray?.contentEquals(other: BooleanArray?): Boole
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
  * 
- * The elements are compared for equality with the [equals][Any.equals] function.
- * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.charArrayContentEquals
  */
 @SinceKotlin("1.4")
 public actual infix fun CharArray?.contentEquals(other: CharArray?): Boolean {
@@ -608,7 +706,7 @@ public actual infix fun CharArray?.contentEquals(other: CharArray?): Boolean {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun <T> Array<out T>.contentHashCode(): Int {
+public fun <T> Array<out T>.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -618,7 +716,7 @@ public actual fun <T> Array<out T>.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun ByteArray.contentHashCode(): Int {
+public fun ByteArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -628,7 +726,7 @@ public actual fun ByteArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun ShortArray.contentHashCode(): Int {
+public fun ShortArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -638,7 +736,7 @@ public actual fun ShortArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun IntArray.contentHashCode(): Int {
+public fun IntArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -648,7 +746,7 @@ public actual fun IntArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun LongArray.contentHashCode(): Int {
+public fun LongArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -658,7 +756,7 @@ public actual fun LongArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun FloatArray.contentHashCode(): Int {
+public fun FloatArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -668,7 +766,7 @@ public actual fun FloatArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun DoubleArray.contentHashCode(): Int {
+public fun DoubleArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -678,7 +776,7 @@ public actual fun DoubleArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun BooleanArray.contentHashCode(): Int {
+public fun BooleanArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -688,7 +786,7 @@ public actual fun BooleanArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun CharArray.contentHashCode(): Int {
+public fun CharArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -808,7 +906,7 @@ public actual fun CharArray?.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun <T> Array<out T>.contentToString(): String {
+public fun <T> Array<out T>.contentToString(): String {
     return this.contentToString()
 }
 
@@ -820,7 +918,7 @@ public actual fun <T> Array<out T>.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun ByteArray.contentToString(): String {
+public fun ByteArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -832,7 +930,7 @@ public actual fun ByteArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun ShortArray.contentToString(): String {
+public fun ShortArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -844,7 +942,7 @@ public actual fun ShortArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun IntArray.contentToString(): String {
+public fun IntArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -856,7 +954,7 @@ public actual fun IntArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun LongArray.contentToString(): String {
+public fun LongArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -868,7 +966,7 @@ public actual fun LongArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun FloatArray.contentToString(): String {
+public fun FloatArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -880,7 +978,7 @@ public actual fun FloatArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun DoubleArray.contentToString(): String {
+public fun DoubleArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -892,7 +990,7 @@ public actual fun DoubleArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun BooleanArray.contentToString(): String {
+public fun BooleanArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -904,7 +1002,7 @@ public actual fun BooleanArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun CharArray.contentToString(): String {
+public fun CharArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -1020,15 +1118,7 @@ public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -1054,15 +1144,7 @@ public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -1088,15 +1170,7 @@ public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -1122,15 +1196,7 @@ public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: In
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -1156,15 +1222,7 @@ public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: 
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -1190,15 +1248,7 @@ public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -1224,15 +1274,7 @@ public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -1258,15 +1300,7 @@ public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -1292,15 +1326,7 @@ public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: 
     AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    if (this !== destination || destinationOffset <= startIndex) {
-        for (index in 0 until rangeSize) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    } else {
-        for (index in rangeSize - 1 downTo 0) {
-            destination[destinationOffset + index] = this[startIndex + index]
-        }
-    }
+    kotlin.wasm.internal.copyWasmArray(this.storage, destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
@@ -1499,7 +1525,7 @@ public actual fun CharArray.copyOf(newSize: Int): CharArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
 public actual fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfNulls(newSize)
 }
 
 /**
@@ -1777,7 +1803,7 @@ internal fun CharArray.copyOfUninitializedElements(fromIndex: Int, toIndex: Int)
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-internal fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
+internal actual fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T> {
     return copyOfUninitializedElements(0, newSize)
 }
 
@@ -1865,7 +1891,8 @@ internal fun CharArray.copyOfUninitializedElements(newSize: Int): CharArray {
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1882,7 +1909,8 @@ public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1899,7 +1927,8 @@ public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1916,7 +1945,8 @@ public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: I
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1933,7 +1963,8 @@ public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int =
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1950,7 +1981,8 @@ public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1967,7 +1999,8 @@ public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: I
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1984,7 +2017,8 @@ public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex:
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -2001,7 +2035,8 @@ public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toInde
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -2299,7 +2334,7 @@ public actual inline fun <T> Array<T>.plusElement(element: T): Array<T> {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun IntArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2308,7 +2343,7 @@ public actual fun IntArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun LongArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2317,7 +2352,7 @@ public actual fun LongArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun ByteArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2326,7 +2361,7 @@ public actual fun ByteArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun ShortArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2335,7 +2370,7 @@ public actual fun ShortArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun DoubleArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2344,7 +2379,7 @@ public actual fun DoubleArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun FloatArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2353,7 +2388,7 @@ public actual fun FloatArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun CharArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2364,7 +2399,7 @@ public actual fun CharArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArrayOfComparable
  */
 public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2383,7 +2418,8 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2400,7 +2436,8 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIn
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2417,7 +2454,8 @@ public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2434,7 +2472,8 @@ public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2451,7 +2490,8 @@ public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2468,7 +2508,8 @@ public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2485,7 +2526,8 @@ public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2502,7 +2544,8 @@ public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Uni
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    if (fromIndex < toIndex - 1) sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2527,7 +2570,8 @@ public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit 
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArrayWith(this, fromIndex, toIndex, comparator)
 }
 
 /**

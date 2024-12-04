@@ -5,46 +5,45 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.toIrType
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.symbols.Fir2IrBindableSymbol
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.properties.ReadWriteProperty
 
-interface AbstractFir2IrLazyDeclaration<F, D : IrDeclaration> :
-    IrDeclaration, IrDeclarationParent, Fir2IrComponents where F : FirMemberDeclaration, F : FirAnnotationContainer {
+interface AbstractFir2IrLazyDeclaration<F> :
+    IrDeclaration, IrLazyDeclarationBase, Fir2IrComponents where F : FirDeclaration {
 
     val fir: F
-    override val symbol: Fir2IrBindableSymbol<*, D>
 
     override val factory: IrFactory
-        get() = irFactory
+        get() = IrFactoryImpl
 
-    var typeParameters: List<IrTypeParameter>
-
-    fun prepareTypeParameters() {
-        typeParameters = fir.typeParameters.mapIndexedNotNull { index, typeParameter ->
-            if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null
-            classifierStorage.getIrTypeParameter(typeParameter, index).apply {
-                parent = this@AbstractFir2IrLazyDeclaration
-                if (superTypes.isEmpty()) {
-                    superTypes = typeParameter.bounds.map { it.toIrType(typeConverter) }
-                }
-            }
-        }
-    }
-
-    fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
+    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
+        // Normally lazy resolve would be not necessary here,
+        // but in context of Kotlin project itself opened in IDE we can have here
+        // an annotated built-in function in sources, like arrayOfNull (KT-70856).
+        // For any other project, built-ins functions come from libraries and it's not actual.
+        fir.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
         fir.annotations.mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }
     }
+
+    override val stubGenerator: DeclarationStubGenerator
+        get() = shouldNotBeCalled()
+    override val typeTranslator: TypeTranslator
+        get() = shouldNotBeCalled()
 }
+
+internal fun mutationNotSupported(): Nothing =
+    error("Mutation of Fir2Ir lazy elements is not possible")

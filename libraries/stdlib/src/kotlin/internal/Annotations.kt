@@ -22,7 +22,7 @@ internal annotation class Exact
 /**
  * Specifies that a corresponding member has the lowest priority in overload resolution.
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class LowPriorityInOverloadResolution
 
@@ -110,3 +110,9 @@ internal enum class RequireKotlinVersionKind {
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.2")
 internal annotation class ContractsDsl
+
+/**
+ * Allows matching an actual declaration for the annotated expect from serialized builtins dependency on JVM
+ */
+@OptionalExpectation
+internal expect annotation class ActualizeByJvmBuiltinProvider()

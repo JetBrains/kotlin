@@ -1,0 +1,1 @@
+fun kotlin.String.foo(): kotlin.Int

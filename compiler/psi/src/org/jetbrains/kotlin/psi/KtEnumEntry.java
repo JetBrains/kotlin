@@ -17,17 +17,17 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiEnumConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class KtEnumEntry extends KtClass {
     public KtEnumEntry(@NotNull ASTNode node) {
@@ -35,7 +35,7 @@ public class KtEnumEntry extends KtClass {
     }
 
     public KtEnumEntry(@NotNull KotlinClassStub stub) {
-        super(stub);
+        super(stub, KtStubElementTypes.ENUM_ENTRY);
     }
 
     @NotNull
@@ -64,25 +64,22 @@ public class KtEnumEntry extends KtClass {
     }
 
     @Override
-    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitEnumEntry(this, data);
+    public boolean isEquivalentTo(@Nullable PsiElement another) {
+        if (this == another) return true;
+        if (!(another instanceof KtEnumEntry)) return false;
+        KtEnumEntry anotherEnumEntry = (KtEnumEntry) another;
+
+        if (!Objects.equals(getName(), anotherEnumEntry.getName())) return false;
+
+        KtClassOrObject thisContainingClass = KtPsiUtilKt.getContainingClassOrObject(this);
+        if (thisContainingClass == null) return false;
+
+        KtClassOrObject anotherContainingClass = KtPsiUtilKt.getContainingClassOrObject(anotherEnumEntry);
+        return thisContainingClass.isEquivalentTo(anotherContainingClass);
     }
 
     @Override
-    public boolean isEquivalentTo(@Nullable PsiElement another) {
-        if (another instanceof PsiEnumConstant) {
-            PsiEnumConstant enumConstant = (PsiEnumConstant) another;
-            PsiClass containingClass = enumConstant.getContainingClass();
-            if (containingClass != null) {
-                String containingClassQName = containingClass.getQualifiedName();
-                if (containingClassQName != null && enumConstant.getName() != null) {
-                    String theirFQName = containingClassQName + "." + enumConstant.getName();
-                    if (theirFQName.equals(getQualifiedName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return super.isEquivalentTo(another);
+    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
+        return visitor.visitEnumEntry(this, data);
     }
 }

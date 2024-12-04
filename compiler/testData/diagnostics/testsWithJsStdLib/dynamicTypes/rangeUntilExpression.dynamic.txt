@@ -1,0 +1,2 @@
+public final operator fun rangeUntil(/*0*/ p0: dynamic): dynamic
+public final fun rangeUntil(/*0*/ p0: dynamic): dynamic

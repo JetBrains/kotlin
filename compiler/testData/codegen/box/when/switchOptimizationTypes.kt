@@ -1,14 +1,11 @@
 // WITH_STDLIB
 // CHECK_CASES_COUNT: function=intFoo count=3
 // CHECK_IF_COUNT: function=intFoo count=0
-// CHECK_CASES_COUNT: function=shortFoo count=3 TARGET_BACKENDS=JS
-// CHECK_CASES_COUNT: function=shortFoo count=0 IGNORED_BACKENDS=JS
+// CHECK_CASES_COUNT: function=shortFoo count=0
 // CHECK_IF_COUNT: function=shortFoo count=0
-// CHECK_CASES_COUNT: function=byteFoo count=3 TARGET_BACKENDS=JS
-// CHECK_CASES_COUNT: function=byteFoo count=0 IGNORED_BACKENDS=JS
+// CHECK_CASES_COUNT: function=byteFoo count=0
 // CHECK_IF_COUNT: function=byteFoo count=0
-// CHECK_CASES_COUNT: function=charFoo count=3 TARGET_BACKENDS=JS
-// CHECK_CASES_COUNT: function=charFoo count=0 IGNORED_BACKENDS=JS
+// CHECK_CASES_COUNT: function=charFoo count=0
 // CHECK_IF_COUNT: function=charFoo count=0
 
 fun intFoo(x: Int): Int {

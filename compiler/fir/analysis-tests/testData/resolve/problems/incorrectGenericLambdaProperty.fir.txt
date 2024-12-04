@@ -1,0 +1,13 @@
+FILE: incorrectGenericLambdaProperty.kt
+    public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        lval <T> passIt: R|(ERROR CLASS: No type for parameter) -> ERROR CLASS: Symbol not found for T| = fun <anonymous>(<destruct>: <ERROR TYPE REF: No type for parameter>): <ERROR TYPE REF: Symbol not found for T> <inline=Unknown>  {
+            lval t: <ERROR TYPE REF: Symbol not found for T> = R|<local>/<destruct>|.<Unresolved name: component1>#()
+            ^  {
+                R|<local>/t|
+            }
+
+        }
+
+        R|<local>/passIt<CS errors: <local>/passIt>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>.R|SubstitutionOverride<kotlin/Function1.invoke: <ERROR TYPE REF: Symbol not found for T>><Inapplicable(INAPPLICABLE): kotlin/Function1.invoke>#|<R|kotlin/Int|>(Int(1))
+        R|<local>/passIt<CS errors: <local>/passIt>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>.R|SubstitutionOverride<kotlin/Function1.invoke: <ERROR TYPE REF: Symbol not found for T>>|(Int(1))
+    }

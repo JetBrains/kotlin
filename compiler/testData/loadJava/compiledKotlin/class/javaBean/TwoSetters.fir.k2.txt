@@ -1,0 +1,8 @@
+public open class TwoSetters : R|kotlin/Any| {
+    public open fun setSize(p0: R|kotlin/String?|): R|kotlin/Unit|
+
+    public open fun setSize(p0: R|kotlin/Int|): R|kotlin/Unit|
+
+    public constructor(): R|test/TwoSetters|
+
+}

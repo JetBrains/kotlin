@@ -1,5 +1,0 @@
-KT element: KtParameter
-FIR element: FirValueParameterImpl
-
-FIR element rendered:
-y: R|kotlin/String|

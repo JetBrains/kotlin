@@ -1,4 +1,5 @@
 // FULL_JDK
+
 class DStringIterator(d: Iterator<String>) : Iterator<String> by d
 
 class DStringListIterator(d: ListIterator<String>) : ListIterator<String> by d

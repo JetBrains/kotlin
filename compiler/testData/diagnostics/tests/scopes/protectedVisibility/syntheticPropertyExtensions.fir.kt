@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: abc/A.java
 package abc;
 public class A {
@@ -22,7 +23,7 @@ class B : A() {
         b.bar = b.bar + ""
 
         a.<!INVISIBLE_REFERENCE!>foo<!>
-        <!INVISIBLE_SETTER!>a.bar<!> = a.bar + ""
+        a.<!INVISIBLE_SETTER!>bar<!> = a.bar + ""
 
         if (a is B) {
             a.foo
@@ -32,12 +33,12 @@ class B : A() {
         if (d.x is B) {
             d.x.abc // Ok
             d.x.<!INVISIBLE_REFERENCE!>foo<!>
-            <!INVISIBLE_SETTER!>d.x.bar<!> = d.x.bar + ""
+            d.x.<!INVISIBLE_SETTER!>bar<!> = d.x.bar + ""
         }
     }
 }
 
 fun baz(a: A) {
     a.<!INVISIBLE_REFERENCE!>foo<!>
-    <!INVISIBLE_SETTER!>a.bar<!> = a.bar + ""
+    a.<!INVISIBLE_SETTER!>bar<!> = a.bar + ""
 }

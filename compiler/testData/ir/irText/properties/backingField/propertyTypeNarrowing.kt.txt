@@ -1,0 +1,28 @@
+class A {
+  val it: Int
+    field = 4
+    get
+
+  val p: Int
+    field = 5
+    get(): Int {
+      return <this>.#p
+    }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun test(): Int {
+    return <this>.<get-it>().plus(other = 3)
+  }
+
+}
+
+fun test() {
+  val d: Unit = test()
+  val b: Int = A().<get-p>().plus(other = 2)
+}
+

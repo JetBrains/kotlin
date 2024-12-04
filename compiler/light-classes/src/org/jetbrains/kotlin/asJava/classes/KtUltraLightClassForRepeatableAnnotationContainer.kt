@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -22,7 +23,7 @@ class KtUltraLightClassForRepeatableAnnotationContainer(classOrObject: KtClassOr
     override fun getParent() = containingClass
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
-    override fun getContainingClass(): KtLightClassForSourceDeclaration? = create(classOrObject, jvmDefaultMode)
+    override fun getContainingClass(): KtLightClass? = classOrObject.toLightClass()
     override fun getScope(): PsiElement? = containingClass
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
     override fun getOwnFields(): List<KtLightField> = emptyList()
@@ -81,7 +82,7 @@ private class KtUltraLightModifierListForRepeatableAnnotationContainer(
 ) : KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
     override fun hasModifierProperty(name: String): Boolean = name in modifiers
     override fun copy() = KtUltraLightModifierListForRepeatableAnnotationContainer(containingClass, support)
-    override fun PsiAnnotation.additionalConverter(): KtLightAbstractAnnotation? = tryConvertAsRepeatableContainer(support)
+    override fun PsiAnnotation.additionalConverter(): KtLightAbstractAnnotation? = tryConvertAsRepeatableContainer()
     override val annotationsFilter: ((KtLightAbstractAnnotation) -> Boolean) = { it.qualifiedName in allowedAnnotations }
 
     companion object {

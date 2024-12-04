@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ T> f(/*0*/ t: @kotlin.ContextFunctionTypeParams(count = 42) T, /*1*/ tt: @kotlin.ContextFunctionTypeParams(count = 1) kotlin.Int): kotlin.Unit
+public fun test(): kotlin.Unit

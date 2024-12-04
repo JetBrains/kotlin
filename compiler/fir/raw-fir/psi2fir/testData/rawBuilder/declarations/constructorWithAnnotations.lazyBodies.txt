@@ -1,0 +1,7 @@
+FILE: constructorWithAnnotations.kt
+    public final? class A : R|kotlin/Any| {
+        public? constructor(param: @Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) Collection<@Anno(LAZY_EXPRESSION) String>> = LAZY_EXPRESSION): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

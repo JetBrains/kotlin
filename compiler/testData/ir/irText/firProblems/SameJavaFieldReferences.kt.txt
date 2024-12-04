@@ -2,3 +2,4 @@ fun foo() {
   val ref1: KProperty0<String> = SomeJavaClass::someJavaField
   val ref2: KProperty0<String> = SomeJavaClass::someJavaField
 }
+

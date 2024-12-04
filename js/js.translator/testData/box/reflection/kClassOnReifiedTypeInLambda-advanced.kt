@@ -1,6 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1320
-// IGNORE_BACKEND: JS
-
 // FILE: lib.kt
 // RECOMPILE
 package foo

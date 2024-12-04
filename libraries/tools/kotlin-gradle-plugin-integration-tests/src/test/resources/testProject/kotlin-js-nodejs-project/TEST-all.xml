@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results>
+  <testsuite name="Tests" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="testHello[node]" classname="Tests" time="..." />
+    <system-out />
+    <system-err />
+  </testsuite>
+  <testsuite name="Tests3" tests="1" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="testHello[node]" classname="Tests3" time="...">
+      <failure message="..." type="IllegalArgumentException">...</failure>
+    </testcase>
+    <system-out />
+    <system-err />
+  </testsuite>
+</results>

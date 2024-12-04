@@ -8,22 +8,38 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.addFakeOverrides
+import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.ir.util.irError
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * Symbols for builtins that are available without any context and are not specific to any backend
  * (but specific to the frontend)
  */
+@OptIn(InternalSymbolFinderAPI::class)
 abstract class IrBuiltIns {
+    abstract val symbolFinder: SymbolFinder
     abstract val languageVersionSettings: LanguageVersionSettings
 
     abstract val irFactory: IrFactory
@@ -82,6 +98,7 @@ abstract class IrBuiltIns {
     abstract val kCallableClass: IrClassSymbol
     abstract val kPropertyClass: IrClassSymbol
     abstract val kClassClass: IrClassSymbol
+    abstract val kTypeClass: IrClassSymbol
     abstract val kProperty0Class: IrClassSymbol
     abstract val kProperty1Class: IrClassSymbol
     abstract val kProperty2Class: IrClassSymbol
@@ -100,6 +117,15 @@ abstract class IrBuiltIns {
     abstract val primitiveIrTypesWithComparisons: List<IrType>
     abstract val primitiveFloatingPointIrTypes: List<IrType>
 
+    abstract val byteIterator: IrClassSymbol
+    abstract val charIterator: IrClassSymbol
+    abstract val shortIterator: IrClassSymbol
+    abstract val intIterator: IrClassSymbol
+    abstract val longIterator: IrClassSymbol
+    abstract val floatIterator: IrClassSymbol
+    abstract val doubleIterator: IrClassSymbol
+    abstract val booleanIterator: IrClassSymbol
+
     abstract val byteArray: IrClassSymbol
     abstract val charArray: IrClassSymbol
     abstract val shortArray: IrClassSymbol
@@ -115,6 +141,7 @@ abstract class IrBuiltIns {
     abstract val primitiveArrayForType: Map<IrType?, IrClassSymbol>
 
     abstract val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol>
+    abstract val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?>
 
     abstract val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
     abstract val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
@@ -155,15 +182,7 @@ abstract class IrBuiltIns {
     abstract fun suspendFunctionN(arity: Int): IrClass
     abstract fun kSuspendFunctionN(arity: Int): IrClass
 
-    // TODO: drop variants from segments, add helper from whole fqn
-    abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>
-    abstract fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol>
-    abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
-    abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
-
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
-
-    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
 
     abstract fun getNonBuiltInFunctionsByExtensionReceiver(
         name: Name, vararg packageNameSegments: String
@@ -177,10 +196,24 @@ abstract class IrBuiltIns {
     abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment
+    abstract val kotlinInternalPackageFragment: IrExternalPackageFragment
+
+    protected fun createIntrinsicConstEvaluationClass(): IrClass {
+        return irFactory.buildClass {
+            name = StandardClassIds.Annotations.IntrinsicConstEvaluation.shortClassName
+            kind = ClassKind.ANNOTATION_CLASS
+            modality = Modality.FINAL
+        }.apply {
+            parent = kotlinInternalPackageFragment
+            createThisReceiverParameter()
+            addConstructor { isPrimary = true }
+            addFakeOverrides(IrTypeSystemContextImpl(this@IrBuiltIns))
+        }
+    }
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
-        val BUILTIN_OPERATOR = object : IrDeclarationOriginImpl("OPERATOR") {}
+        val BUILTIN_OPERATOR = IrDeclarationOriginImpl("OPERATOR")
     }
 }
 
@@ -198,4 +231,86 @@ object BuiltInOperatorNames {
     const val ILLEGAL_ARGUMENT_EXCEPTION = "illegalArgumentException"
     const val ANDAND = "ANDAND"
     const val OROR = "OROR"
+    const val CHECK_NOT_NULL = "CHECK_NOT_NULL"
+}
+
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@Target(AnnotationTarget.CLASS)
+annotation class InternalSymbolFinderAPI
+
+@InternalSymbolFinderAPI
+abstract class SymbolFinder {
+    // TODO: drop variants from segments, add helper from whole fqn
+    abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>
+    abstract fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol>
+    abstract fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol>
+    abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
+    abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
+
+    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
+
+    fun topLevelClass(fqName: FqName): IrClassSymbol =
+        findClass(fqName.shortName(), fqName.parent()) ?: error("No class ${fqName} found")
+
+    fun topLevelClass(classId: ClassId): IrClassSymbol =
+        findClass(classId.shortClassName, classId.packageFqName) ?: error("No class $classId found")
+
+    fun topLevelClass(packageName: FqName, name: String): IrClassSymbol =
+        findClass(Name.identifier(name), packageName) ?: error("No class ${packageName}.${name} found")
+
+    fun topLevelProperties(packageName: FqName, name: String): Iterable<IrPropertySymbol> =
+        findProperties(Name.identifier(name), packageName)
+
+    inline fun topLevelProperty(packageName: FqName, name: String, condition: (IrPropertySymbol) -> Boolean = { true }): IrPropertySymbol {
+        val elements = topLevelProperties(packageName, name).filter(condition)
+        require(elements.isNotEmpty()) { "No property ${packageName}.$name found corresponding given condition" }
+        require(elements.size == 1) {
+            "Several properties ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}"
+        }
+        return elements.single()
+    }
+
+    fun topLevelFunctions(packageName: FqName, name: String): Iterable<IrSimpleFunctionSymbol> =
+        findFunctions(Name.identifier(name), packageName)
+
+    inline fun topLevelFunction(
+        packageName: FqName,
+        name: String,
+        condition: (IrFunctionSymbol) -> Boolean = { true },
+    ): IrSimpleFunctionSymbol {
+        val elements = topLevelFunctions(packageName, name).filter(condition)
+        require(elements.isNotEmpty()) { "No function ${packageName}.$name found corresponding given condition" }
+        require(elements.size == 1) {
+            "Several functions ${packageName}.$name found corresponding given condition:\n${elements.joinToString("\n")}"
+        }
+        return elements.single()
+    }
+
+    inline fun findTopLevelPropertyGetter(packageName: FqName, name: String, predicate: (IrPropertySymbol) -> Boolean = { true }) =
+        findGetter(topLevelProperty(packageName, name, predicate))
+            ?: irError("Cannot find getter for $packageName.$name")
+
+    abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
+
+    abstract fun findMemberFunction(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol?
+    abstract fun findMemberProperty(clazz: IrClassSymbol, name: Name): IrPropertySymbol?
+    abstract fun findMemberPropertyGetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol?
+    abstract fun findPrimaryConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
+    abstract fun findNoParametersConstructor(clazz: IrClassSymbol): IrConstructorSymbol?
+    abstract fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol?
+
+    abstract fun getName(clazz: IrClassSymbol): Name
+    abstract fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean
+    abstract fun isExtensionReceiverClass(function: IrFunctionSymbol, expected: IrClassSymbol?): Boolean
+    abstract fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean?
+    abstract fun getValueParametersCount(function: IrFunctionSymbol): Int
+    abstract fun getTypeParametersCount(function: IrFunctionSymbol): Int
+    abstract fun isTypeParameterUpperBoundClass(property: IrPropertySymbol, index: Int, expected: IrClassSymbol): Boolean
+    abstract fun isValueParameterClass(function: IrFunctionSymbol, index: Int, expected: IrClassSymbol?): Boolean
+    abstract fun isReturnClass(function: IrFunctionSymbol, expected: IrClassSymbol): Boolean
+    abstract fun isValueParameterTypeArgumentClass(function: IrFunctionSymbol, index: Int, argumentIndex: Int, expected: IrClassSymbol?): Boolean
+    abstract fun isValueParameterNullable(function: IrFunctionSymbol, index: Int): Boolean?
+    abstract fun isExpect(function: IrFunctionSymbol): Boolean
+    abstract fun isSuspend(functionSymbol: IrFunctionSymbol): Boolean
+    abstract fun getVisibility(function: IrFunctionSymbol): DescriptorVisibility
 }

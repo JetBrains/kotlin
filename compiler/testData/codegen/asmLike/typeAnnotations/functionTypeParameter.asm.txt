@@ -67,10 +67,6 @@ public final class foo/Kotlin : java/lang/Object {
       @Lfoo/TypeAnn;([name="Generic"]) : METHOD_TYPE_PARAMETER_BOUND 1, 1, null
       @Lfoo/TypeAnn;([name="Generic Argument"]) : METHOD_TYPE_PARAMETER_BOUND 1, 1, 0;
       @Lfoo/ClassTypeAnn;([name="Any"]) : METHOD_TYPE_PARAMETER_BOUND 1, 0, null
-
-    <T:Ljava/lang/Object;:Lfoo/Generic<Ljava/lang/String;>;>()V
-    public final void whereClauseWithAnnotation()
-      @Lfoo/TypeParameterAnn;([name="T"]) : METHOD_TYPE_PARAMETER 0, null
 }
 
 public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {

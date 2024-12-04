@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Lazy<T> {
     operator fun getValue(a1: Any, a2: Any): T
 }

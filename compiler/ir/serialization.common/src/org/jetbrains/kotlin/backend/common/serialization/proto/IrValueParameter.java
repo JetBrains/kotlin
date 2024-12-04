@@ -81,11 +81,6 @@ public final class IrValueParameter extends
             defaultValue_ = input.readInt32();
             break;
           }
-          case 840: {
-            bitField0_ |= 0x00000010;
-            index_ = input.readInt32();
-            break;
-          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -180,27 +175,11 @@ public final class IrValueParameter extends
     return defaultValue_;
   }
 
-  public static final int INDEX_FIELD_NUMBER = 105;
-  private int index_;
-  /**
-   * <code>optional int32 index = 105;</code>
-   */
-  public boolean hasIndex() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
-  }
-  /**
-   * <code>optional int32 index = 105;</code>
-   */
-  public int getIndex() {
-    return index_;
-  }
-
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     nameType_ = 0L;
     varargElementType_ = 0;
     defaultValue_ = 0;
-    index_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -239,9 +218,6 @@ public final class IrValueParameter extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeInt32(4, defaultValue_);
     }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeInt32(105, index_);
-    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -266,10 +242,6 @@ public final class IrValueParameter extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(4, defaultValue_);
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(105, index_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -373,8 +345,6 @@ public final class IrValueParameter extends
       bitField0_ = (bitField0_ & ~0x00000004);
       defaultValue_ = 0;
       bitField0_ = (bitField0_ & ~0x00000008);
-      index_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -414,10 +384,6 @@ public final class IrValueParameter extends
         to_bitField0_ |= 0x00000008;
       }
       result.defaultValue_ = defaultValue_;
-      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-        to_bitField0_ |= 0x00000010;
-      }
-      result.index_ = index_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -435,9 +401,6 @@ public final class IrValueParameter extends
       }
       if (other.hasDefaultValue()) {
         setDefaultValue(other.getDefaultValue());
-      }
-      if (other.hasIndex()) {
-        setIndex(other.getIndex());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -631,38 +594,6 @@ public final class IrValueParameter extends
     public Builder clearDefaultValue() {
       bitField0_ = (bitField0_ & ~0x00000008);
       defaultValue_ = 0;
-      
-      return this;
-    }
-
-    private int index_ ;
-    /**
-     * <code>optional int32 index = 105;</code>
-     */
-    public boolean hasIndex() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>optional int32 index = 105;</code>
-     */
-    public int getIndex() {
-      return index_;
-    }
-    /**
-     * <code>optional int32 index = 105;</code>
-     */
-    public Builder setIndex(int value) {
-      bitField0_ |= 0x00000010;
-      index_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional int32 index = 105;</code>
-     */
-    public Builder clearIndex() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      index_ = 0;
       
       return this;
     }

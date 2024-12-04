@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FILE: Aaa.java
 // http://youtrack.jetbrains.com/issue/KT-1880

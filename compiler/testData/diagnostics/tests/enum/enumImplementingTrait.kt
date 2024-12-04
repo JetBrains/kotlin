@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface T1 {
     fun foo()
 }

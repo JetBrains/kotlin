@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface KtScope {
     fun getAllNames(): Set<String>
 }

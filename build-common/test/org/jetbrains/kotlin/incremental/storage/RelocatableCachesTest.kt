@@ -6,14 +6,19 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.TestWithWorkingDir
+import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class RelocatableCachesTest : TestWithWorkingDir() {
+class RelocatableCachesTest {
+
+    @TempDir
+    lateinit var workingDir: File
+
     @Test
     fun testLookupStorageAddAllReversedFiles() {
         val originalRoot = workingDir.resolve("original")
@@ -45,17 +50,21 @@ class RelocatableCachesTest : TestWithWorkingDir() {
      * Fills lookup storage in [projectRoot] with N fq-names,
      * where i_th fq-name myscope_i.MyClass_i has lookups for previous fq-names (from 0 to i-1)
      */
-    private fun fillLookupStorage(projectRoot: File, reverseFiles: Boolean, reverseLookups: Boolean) {
+    private fun fillLookupStorage(projectRoot: File, reverseFiles: Boolean, reverseLookups: Boolean, storeFullFqNames: Boolean = false) {
         val storageRoot = projectRoot.storageRoot
         val fileToPathConverter = RelativeFileToPathConverter(projectRoot)
-        val lookupStorage = LookupStorage(storageRoot, fileToPathConverter)
+        val icContext = IncrementalCompilationContext(
+            pathConverterForSourceFiles = fileToPathConverter,
+            storeFullFqNamesInLookupCache = storeFullFqNames,
+        )
+        val lookupStorage = LookupStorage(storageRoot, icContext)
         val files = LinkedHashSet<String>()
         val symbols = LinkedHashSet<LookupSymbol>()
         val lookups = MultiMap.createOrderedSet<LookupSymbol, String>()
 
         for (i in 0..10) {
             val newSymbol = LookupSymbol(name = "MyClass_$i", scope = "myscope_$i")
-            val newSourcePath = projectRoot.resolve("src/${newSymbol.asRelativePath()}").canonicalFile.invariantSeparatorsPath
+            val newSourcePath = projectRoot.resolve("src/${newSymbol.asRelativePath()}").absoluteFile.invariantSeparatorsPath
             symbols.add(newSymbol)
 
             for (lookedUpSymbol in symbols) {
@@ -68,7 +77,7 @@ class RelocatableCachesTest : TestWithWorkingDir() {
         val filesToAdd = if (reverseFiles) files.reversedSet() else files
         val lookupsToAdd = if (reverseLookups) lookups.reversedMultiMap() else lookups
         lookupStorage.addAll(lookupsToAdd, filesToAdd)
-        lookupStorage.flush(memoryCachesOnly = false)
+        lookupStorage.flush()
     }
 
     private val File.storageRoot: File

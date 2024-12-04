@@ -107,15 +107,6 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         checkAccess("A", "PublicClass", ACC_PUBLIC);
     }
 
-    public void testLambdaClassFlags() {
-        InnerClassAttribute foo = new InnerClassAttribute("A$foo$1", null, null, ACC_STATIC | ACC_FINAL);
-        InnerClassAttribute bar = new InnerClassAttribute("A$bar$1", null, null, ACC_STATIC | ACC_FINAL);
-
-        extractAndCompareInnerClasses("A", foo, bar);
-        extractAndCompareInnerClasses("A$foo$1", foo);
-        extractAndCompareInnerClasses("A$bar$1", bar);
-    }
-
     private void checkAccess(@NotNull String outerName, @NotNull String innerName, int accessFlags) {
         String name = outerName + "$" + innerName;
         InnerClassAttribute attribute = CollectionsKt.single(extractInnerClasses(name), value -> innerName.equals(value.innerName));

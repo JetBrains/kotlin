@@ -1,4 +1,3 @@
 $TESTDATA_DIR$/firHello.kt
--Xuse-fir
 -d
 $TEMP_DIR$

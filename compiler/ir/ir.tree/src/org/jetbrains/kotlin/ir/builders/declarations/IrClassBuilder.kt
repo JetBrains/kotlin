@@ -17,9 +17,10 @@ class IrClassBuilder : IrDeclarationBuilder() {
     var isInner: Boolean = false
     var isData: Boolean = false
     var isExternal: Boolean = false
-    var isInline: Boolean = false
+    var isValue: Boolean = false
     var isExpect: Boolean = false
     var isFun: Boolean = false
+    var hasEnumEntries: Boolean = false
 
     fun updateFrom(from: IrClass) {
         super.updateFrom(from)
@@ -30,8 +31,9 @@ class IrClassBuilder : IrDeclarationBuilder() {
         isInner = from.isInner
         isData = from.isData
         isExternal = from.isExternal
-        isInline = from.isInline
+        isValue = from.isValue
         isExpect = from.isExpect
         isFun = from.isFun
+        hasEnumEntries = from.hasEnumEntries
     }
 }

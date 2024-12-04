@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR, WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 fun interface Foo : () -> Int
 

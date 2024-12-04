@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     val a: Number
         <!WRONG_MODIFIER_TARGET!>abstract<!> field = 1

@@ -1,0 +1,6 @@
+KtAnnotationEntry: @A
+
+Resolved annotation symbol:
+annotation class A
+
+Applicable targets: [ANNOTATION_CLASS, BACKING_FIELD, CLASS, CONSTRUCTOR, FIELD, FUNCTION, LOCAL_VARIABLE, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER]

@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 @file:OptIn(ExperimentalTypeInference::class)
 
@@ -10,10 +11,9 @@ class GenericController<T> {
     suspend fun yield(t: T) {}
 }
 
-@BuilderInference
 suspend fun <K> GenericController<K>.yieldAll(s: Collection<K>) {}
 
-fun <S> generate(@BuilderInference g: suspend GenericController<S>.() -> Unit): S = TODO()
+fun <S> generate(g: suspend GenericController<S>.() -> Unit): S = TODO()
 
 val test1 = generate {
     yield(4)

@@ -1,0 +1,12 @@
+FILE: elvisReturnSimple.kt
+    public final fun stringReturnInLeftLen(s: R|kotlin/String?|): R|kotlin/Int| {
+        lval s1: R|kotlin/Nothing| = when () {
+            !=(R|<local>/s|, Null(null)) ->  {
+                ^stringReturnInLeftLen R|<local>/s|.R|kotlin/String.length|
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+         ?: ^stringReturnInLeftLen Int(0)
+    }

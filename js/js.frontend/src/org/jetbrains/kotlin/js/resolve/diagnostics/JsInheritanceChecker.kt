@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -44,10 +45,12 @@ object JsInheritanceChecker : DeclarationChecker {
             }
         }
 
-        if (descriptor is ClassDescriptor &&
-            descriptor.defaultType.immediateSupertypes().any { it.isBuiltinFunctionalTypeOrSubtype && !it.isSuspendFunctionTypeOrSubtype }
-        ) {
-            context.trace.report(ErrorsJs.IMPLEMENTING_FUNCTION_INTERFACE.on(declaration as KtClassOrObject))
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowImplementingFunctionInterface)) {
+            if (descriptor is ClassDescriptor &&
+                descriptor.defaultType.immediateSupertypes().any { it.isBuiltinFunctionalTypeOrSubtype && !it.isSuspendFunctionTypeOrSubtype }
+            ) {
+                context.trace.report(ErrorsJs.IMPLEMENTING_FUNCTION_INTERFACE.on(declaration as KtClassOrObject))
+            }
         }
     }
 

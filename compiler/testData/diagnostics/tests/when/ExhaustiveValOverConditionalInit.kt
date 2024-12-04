@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
@@ -28,7 +29,7 @@ fun bar(a: Boolean, b: Boolean): Int {
     if (a) {
         x = 1
     }
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (b) {
+    <!NO_ELSE_IN_WHEN!>when<!> (b) {
         false -> <!VAL_REASSIGNMENT!>x<!> = 3
     }
     return <!UNINITIALIZED_VARIABLE!>x<!>

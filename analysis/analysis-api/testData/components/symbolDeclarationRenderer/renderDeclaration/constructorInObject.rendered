@@ -1,12 +1,12 @@
-object A {
-    constructor()
-}
+object A
+
 enum class B {
-    X,
+  X
 }
+
 class C {
-    companion object {
-        constructor()
-    }
+  companion object
 }
+
 val anonObject: Any
+

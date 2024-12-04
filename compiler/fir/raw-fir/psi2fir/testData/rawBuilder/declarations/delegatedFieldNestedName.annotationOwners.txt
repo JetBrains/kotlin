@@ -1,0 +1,48 @@
+@Target(AnnotationTarget#.TYPE#)
+owner -> FirRegularClassSymbol second/Anno
+context -> FirRegularClassSymbol second/Anno
+
+@Anno(IntegerLiteral(2).plus#(outer#))
+owner -> FirRegularClassSymbol second/MyClass
+context -> FirFieldSymbol second/MyClass.$$delegate_0
+context -> FirRegularClassSymbol second/MyClass
+
+@Anno(IntegerLiteral(1).plus#(outer#))
+owner -> FirRegularClassSymbol second/MyClass
+context -> FirFieldSymbol second/MyClass.$$delegate_0
+context -> FirRegularClassSymbol second/MyClass
+
+@Anno(IntegerLiteral(0).plus#(outer#))
+owner -> FirRegularClassSymbol second/MyClass
+context -> FirFieldSymbol second/MyClass.$$delegate_0
+context -> FirRegularClassSymbol second/MyClass
+
+@Anno(IntegerLiteral(5).plus#(outer#))
+owner -> FirRegularClassSymbol second/MyClass
+context -> FirFieldSymbol second/MyClass.$$delegate_1
+context -> FirRegularClassSymbol second/MyClass
+
+@Anno(IntegerLiteral(4).plus#(outer#))
+owner -> FirRegularClassSymbol second/MyClass
+context -> FirFieldSymbol second/MyClass.$$delegate_1
+context -> FirRegularClassSymbol second/MyClass
+
+@Anno(IntegerLiteral(8).plus#(inner#))
+owner -> FirRegularClassSymbol second/MyClass.Companion
+context -> FirRegularClassSymbol second/MyClass.Companion
+
+@Anno(IntegerLiteral(7).plus#(inner#))
+owner -> FirRegularClassSymbol second/MyClass.Companion
+context -> FirRegularClassSymbol second/MyClass.Companion
+
+@Anno(IntegerLiteral(6).plus#(inner#))
+owner -> FirRegularClassSymbol second/MyClass.Companion
+context -> FirRegularClassSymbol second/MyClass.Companion
+
+@Anno(IntegerLiteral(10).plus#(inner#))
+owner -> FirRegularClassSymbol second/MyClass.NestedObject
+context -> FirRegularClassSymbol second/MyClass.NestedObject
+
+@Anno(IntegerLiteral(9).plus#(inner#))
+owner -> FirRegularClassSymbol second/MyClass.NestedObject
+context -> FirRegularClassSymbol second/MyClass.NestedObject

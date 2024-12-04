@@ -1,10 +1,4 @@
 class TestInitValInLambdaCalledOnce {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: Int
     get
 
@@ -15,4 +9,11 @@ class TestInitValInLambdaCalledOnce {
 )
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

@@ -2,4 +2,4 @@
 -Kapt-verbose=blah
 
 # after
-ERROR: Invalid option format, should be -Kapt-verbose=true/false
+error: Invalid option format, should be -Kapt-verbose=true/false

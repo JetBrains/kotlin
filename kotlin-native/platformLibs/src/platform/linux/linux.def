@@ -8,16 +8,16 @@ headers = aio.h aliases.h a.out.h argp.h argz.h byteswap.h cpio.h crypt.h \
 	monetary.h mqueue.h \
 	nl_types.h nss.h obstack.h \
 	printf.h pty.h re_comp.h \
-	spawn.h stab.h stdc-predef.h stdio_ext.h syscall.h \
-	tar.h termio.h thread_db.h ttyent.h uchar.h ulimit.h \
+	spawn.h stab.h stdio_ext.h syscall.h \
+	tar.h termio.h thread_db.h ttyent.h ulimit.h \
 	ustat.h utmpx.h values.h wait.h wordexp.h \
 	arpa/ftp.h arpa/inet.h arpa/nameser_compat.h \
 	arpa/nameser.h arpa/telnet.h arpa/tftp.h \
 	netinet/if_ether.h net/if_packet.h \
 	netinet/ether.h linux/in6.h netpacket/packet.h \
-	sys/acct.h sys/auxv.h sys/bitypes.h sys/cdefs.h \
+	sys/acct.h sys/bitypes.h sys/cdefs.h \
 	sys/dir.h sys/epoll.h sys/errno.h \
-	sys/eventfd.h sys/fanotify.h sys/fcntl.h \
+	sys/eventfd.h sys/fcntl.h \
 	sys/file.h sys/fsuid.h sys/gmon.h sys/gmon_out.h \
 	sys/inotify.h sys/kd.h sys/klog.h sys/mount.h \
 	sys/msg.h sys/mtio.h sys/param.h sys/pci.h \
@@ -33,7 +33,8 @@ headers = aio.h aliases.h a.out.h argp.h argz.h byteswap.h cpio.h crypt.h \
 	sys/ustat.h utime.h sys/utsname.h sys/vfs.h sys/vlimit.h \
 	sys/vt.h sys/vtimes.h sys/xattr.h
 
-headers.x86-64 = sys/debugreg.h sys/reg.h sys/io.h sys/perm.h sys/kdaemon.h
+headers.x64 = stdc-predef.h uchar.h sys/auxv.h sys/fanotify.h
+headers.arm64 = stdc-predef.h uchar.h sys/auxv.h sys/fanotify.h
 
 compilerOpts = -D_ANSI_SOURCE -D_POSIX_C_SOURCE=199309 -D_BSD_SOURCE -D_XOPEN_SOURCE=700
 depends = posix

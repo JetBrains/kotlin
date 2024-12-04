@@ -1,10 +1,15 @@
+import org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.UtilsKt
+
 buildscript {
     ext.rootBuildDirectory = file('../..')
 
     ext {
         def properties = new java.util.Properties()
         properties.load(new java.io.FileReader(project.file("$rootBuildDirectory/../gradle.properties")))
-        properties.each { k, v->
+        properties.each { k, v ->
             def key = k as String
             def value = project.findProperty(key) ?: v
             project.logger.info("${project.name} $key: $value")
@@ -12,31 +17,20 @@ buildscript {
         }
     }
     ext["withoutEmbedabble"] = true
-    MiscKt.kotlinInit(project, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
+    UtilsKt.kotlinInit(project, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
     ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(project)
     ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(project)
     ext["kotlinVersion"] = project.bootstrapKotlinVersion
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
-
-    repositories {
-        jcenter()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
 }
 
-apply plugin: 'kotlin-multiplatform'
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+}
 
 repositories {
-    maven {
-        url project.bootstrapKotlinRepo
-    }
-    jcenter()
     mavenCentral()
 }
 
@@ -44,7 +38,11 @@ def getHostName() {
     def target = System.getProperty("os.name")
     if (target == 'Linux') return 'linux'
     if (target.startsWith('Windows')) return 'windows'
-    if (target.startsWith('Mac')) return 'macos'
+    if (target.startsWith('Mac'))
+        if (System.getProperty("os.arch") == "aarch64")
+            return 'macosArm64'
+        else
+            return 'macosX64'
     return 'unknown'
 }
 
@@ -52,7 +50,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+                implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
             }
             kotlin.srcDir '../benchmarks/shared/src'
             kotlin.srcDir 'src/main/kotlin'
@@ -60,21 +58,13 @@ kotlin {
         }
         commonTest {
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
-                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+                implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
             }
             kotlin.srcDir 'src/tests'
         }
         jvmTest {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-                implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
-            }
         }
         jsTest {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
-            }
         }
         nativeMain {
             dependsOn commonMain
@@ -82,66 +72,77 @@ kotlin {
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-native'
         }
         jvmMain {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-            }
             kotlin.srcDir 'src/main/kotlin-jvm'
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-jvm'
         }
         jsMain {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
-            }
             kotlin.srcDir 'src/main/kotlin-js'
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-js'
         }
         linuxMain { dependsOn nativeMain }
         windowsMain { dependsOn nativeMain }
-        macosMain {dependsOn nativeMain }
+        macosX64Main { dependsOn nativeMain }
+        macosArm64Main { dependsOn nativeMain }
     }
 
     targets {
-        fromPreset(presets.jvm, 'jvm') {
+        jvm('jvm') {
             compilations.all {
-                tasks[compileKotlinTaskName].kotlinOptions {
-                    jvmTarget = '1.8'
-                }
-                tasks[compileKotlinTaskName].kotlinOptions.suppressWarnings = true
-            }
-        }
-
-        fromPreset(presets.mingwX64, 'windows') {
-            binaries.all {
-                linkerOpts = ["-L${getMingwPath()}/lib".toString()]
-            }
-            compilations.main.cinterops {
-                libcurl {
-                    includeDirs.headerFilterOnly "${getMingwPath()}/include"
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        jvmTarget = JvmTarget.JVM_1_8
+                        suppressWarnings = true
+                    }
                 }
             }
         }
 
-        fromPreset(presets.linuxX64, 'linux') {
-            compilations.main.cinterops {
-                libcurl {
-                    includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+        if (HostManager.hostIsMingw) {
+            mingwX64('windows') {
+                binaries.all {
+                    linkerOpts = ["-L${getMingwPath()}/lib".toString()]
                 }
-            }
-        }
-        fromPreset(presets.macosX64, 'macos') {
-            compilations.main.cinterops {
-                libcurl {
-                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                compilations.main.cinterops {
+                    libcurl {
+                        includeDirs.headerFilterOnly "${getMingwPath()}/include"
+                    }
                 }
-            }
-        }
-        fromPreset(presets.js, 'js') {
-            compilations.main.kotlinOptions {
-                main = "noCall"
             }
         }
 
-        configure([windows, linux, macos]) {
+        if (HostManager.hostIsLinux) {
+            linuxX64('linux') {
+                compilations.main.cinterops {
+                    libcurl {
+                        includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+                    }
+                }
+            }
+        }
+
+        if (HostManager.hostIsMac) {
+            macosX64('macosX64') {
+                compilations.main.cinterops {
+                    libcurl {
+                        includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                    }
+                }
+            }
+            macosArm64('macosArm64') {
+                compilations.main.cinterops {
+                    libcurl {
+                        includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                    }
+                }
+            }
+        }
+        js('js') {
+            compilations.main.compileTaskProvider.configure {
+                compilerOptions.main = JsMainFunctionExecutionMode.NO_CALL
+            }
+        }
+
+        configure([findByName('windows'), findByName('linux'), findByName('macosX64'), findByName('macosArm64')].findAll { it != null }) {
             def isCurrentHost = (name == getHostName())
             compilations.all {
                 cinterops.all {
@@ -168,9 +169,6 @@ kotlin {
             distribution {
                 directory = new File("$projectDir/web/")
             }
-            dceTask {
-                keep 'benchmarksAnalyzer.main_kand9s$'
-            }
         }
     }
 }
@@ -182,7 +180,7 @@ def getMingwPath() {
     return directory
 }
 
-task assembleWeb(type: Sync) {
+tasks.register("assembleWeb", Sync) {
     def runtimeDependencies = kotlin.targets.js.compilations.main.runtimeDependencyFiles
     from(files {
         runtimeDependencies.collect { File file ->
@@ -197,6 +195,6 @@ task assembleWeb(type: Sync) {
         }
     }
 
-    from compileKotlinJs.destinationDir
+    from compileKotlinJs.destinationDirectory
     into "${projectDir}/web"
 }

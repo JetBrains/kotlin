@@ -1,13 +1,14 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //FILE:a.kt
 //KT-1080 Don't use previously imported packages while resolving import references
 
 package kt1080
 
-import reflect.Constructor
+import <!UNRESOLVED_IMPORT!>reflect<!>.Constructor
 
 import b.*
-import d
-import d.Test
+import <!UNRESOLVED_IMPORT!>d<!>
+import <!UNRESOLVED_IMPORT!>d<!>.Test
 import b.<!PACKAGE_CANNOT_BE_IMPORTED!>d<!>
 
 class Some: <!UNRESOLVED_REFERENCE!>Test<!>()

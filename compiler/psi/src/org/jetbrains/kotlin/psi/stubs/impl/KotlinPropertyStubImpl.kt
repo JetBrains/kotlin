@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.constant.ConstantValue
 
 class KotlinPropertyStubImpl(
     parent: StubElement<out PsiElement>?,
@@ -34,7 +35,9 @@ class KotlinPropertyStubImpl(
     private val hasInitializer: Boolean,
     private val isExtension: Boolean,
     private val hasReturnTypeRef: Boolean,
-    private val fqName: FqName?
+    private val fqName: FqName?,
+    val constantInitializer: ConstantValue<*>?,
+    val origin: KotlinStubOrigin?
 ) : KotlinStubBaseImpl<KtProperty>(parent, KtStubElementTypes.PROPERTY), KotlinPropertyStub {
 
     init {

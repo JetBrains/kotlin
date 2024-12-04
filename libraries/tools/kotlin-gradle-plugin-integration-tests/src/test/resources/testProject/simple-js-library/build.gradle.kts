@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js") version "<pluginMarkerVersion>"
+    kotlin("js")
 }
 
 group = "com.example"
@@ -14,5 +14,13 @@ kotlin {
     js {
         binaries.library()
         nodejs()
+    }
+    sourceSets {
+        main {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
+                implementation(npm("decamelize", "6.0.0"))
+            }
+        }
     }
 }

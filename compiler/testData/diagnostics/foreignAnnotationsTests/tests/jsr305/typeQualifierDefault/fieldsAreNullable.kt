@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: strict
 
 // FILE: FieldsAreNullable.java
@@ -52,7 +52,7 @@ fun main(a: A) {
     a.field<!UNSAFE_CALL!>.<!>length
     a.field = null
 
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.nonNullField<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    a.nonNullField<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.nonNullField.length
     a.nonNullField = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }

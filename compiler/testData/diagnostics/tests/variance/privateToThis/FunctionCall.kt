@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun <T> getT(): T = null!!
 
 class Test<in I> {
@@ -14,7 +15,7 @@ class Test<in I> {
         apply(foo())
         apply(this.foo())
         with(Test<I>()) {
-            apply(foo()) // resolved to this@Test.foo
+            apply(foo()) // K1: this@Test.foo, K2: this@with.foo, see KT-55446
             apply(this.<!INVISIBLE_MEMBER("foo; private/*private to this*/; 'Test'")!>foo<!>())
             apply(this@with.<!INVISIBLE_MEMBER("foo; private/*private to this*/; 'Test'")!>foo<!>())
             apply(this@Test.foo())

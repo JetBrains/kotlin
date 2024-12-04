@@ -32,7 +32,7 @@ class SourceDeclarationsPreprocessor(private val context: GeneratorContext) {
     private fun processClassOrObject(ktClassOrObject: KtClassOrObject) {
         val classDescriptor = ktClassOrObject.findClassDescriptor(context.bindingContext)
         if (DescriptorUtils.isEnumEntry(classDescriptor)) return
-        context.symbolTable.referenceClass(classDescriptor)
+        context.symbolTable.descriptorExtension.referenceClass(classDescriptor)
         ktClassOrObject.body?.let { ktClassBody ->
             ktClassBody.declarations.forEach { processDeclaration(it) }
         }

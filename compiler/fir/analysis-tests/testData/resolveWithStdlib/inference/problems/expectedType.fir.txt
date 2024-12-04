@@ -1,0 +1,72 @@
+FILE: expectedType.kt
+    public abstract class FirProperty : R|kotlin/Any| {
+        public constructor(): R|FirProperty| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val returnTypeRef: R|FirTypeRef|
+            public get(): R|FirTypeRef|
+
+    }
+    public abstract class FirTypeRef : R|kotlin/Any| {
+        public constructor(): R|FirTypeRef| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class FirResolvedTypeRef : R|FirTypeRef| {
+        public constructor(): R|FirResolvedTypeRef| {
+            super<R|FirTypeRef|>()
+        }
+
+        public abstract val type: R|ConeKotlinType|
+            public get(): R|ConeKotlinType|
+
+    }
+    public abstract class ConeKotlinType : R|kotlin/Any| {
+        public constructor(): R|ConeKotlinType| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final inline fun <reified C : R|ConeKotlinType|> R|FirTypeRef|.coneTypeSafe(): R|C?| {
+        ^coneTypeSafe ((this@R|/coneTypeSafe| as? R|FirResolvedTypeRef|)?.{ $subj$.R|/FirResolvedTypeRef.type| } as? R|C|)
+    }
+    public final fun <L> myLazy(initializer: R|() -> L|): R|MyLazy<L>| {
+        ^myLazy R|/MyLazy.MyLazy|<R|L|>(R|<local>/initializer|)
+    }
+    public final operator fun <V> R|MyLazy<V>|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V| {
+        ^getValue this@R|/getValue|.R|SubstitutionOverride</MyLazy.value: R|V|>|
+    }
+    public final class MyLazy<out M> : R|kotlin/Any| {
+        public constructor<out M>(initializer: R|() -> M|): R|MyLazy<M>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final var _value: R|kotlin/Any?| = Null(null)
+            private get(): R|kotlin/Any?|
+            private set(value: R|kotlin/Any?|): R|kotlin/Unit|
+
+        public final val value: R|M|
+            public get(): R|M| {
+                ^ (this@R|/MyLazy|.R|/MyLazy._value| as R|M|)
+            }
+
+    }
+    public final class Session : R|kotlin/Any| {
+        public constructor(property: R|FirProperty|): R|Session| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val property: R|FirProperty| = R|<local>/property|
+            public get(): R|FirProperty|
+
+        public final val expectedType: R|ConeKotlinType?|by R|/myLazy|<R|ConeKotlinType?|>(<L> = myLazy@fun <anonymous>(): R|ConeKotlinType?| <inline=NoInline>  {
+            ^ this@R|/Session|.R|/Session.property|.R|/FirProperty.returnTypeRef|.R|/coneTypeSafe|<R|ConeKotlinType|>()
+        }
+        )
+            public get(): R|ConeKotlinType?| {
+                ^ this@R|/Session|.D|/Session.expectedType|.R|/getValue|<R|ConeKotlinType?|>(this@R|/Session|, ::R|/Session.expectedType|)
+            }
+
+    }

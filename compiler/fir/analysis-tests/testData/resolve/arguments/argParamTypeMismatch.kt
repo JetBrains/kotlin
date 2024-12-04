@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(first: String) {}
 fun foo2(first: String, second: Int) {}
 

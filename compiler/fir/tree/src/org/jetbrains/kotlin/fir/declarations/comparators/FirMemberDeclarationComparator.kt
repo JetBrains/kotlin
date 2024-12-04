@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.declarations.comparators
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRefComparator
-import org.jetbrains.kotlin.name.Name
 
 object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
     // Comparing different kinds of callable members by assigning distinct priorities to those members.
@@ -28,16 +28,6 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
                 is FirBackingField -> 0
             }
 
-        private val FirMemberDeclaration.name: Name
-            get() = when (this) {
-                is FirCallableDeclaration ->
-                    this.symbol.callableId.callableName
-                is FirClass ->
-                    this.classId.shortClassName
-                is FirTypeAlias ->
-                    this.name
-            }
-
         override fun compare(a: FirMemberDeclaration, b: FirMemberDeclaration): Int {
             val priorityDiff = a.priority - b.priority
             if (priorityDiff != 0) {
@@ -51,7 +41,7 @@ object FirMemberDeclarationComparator : Comparator<FirMemberDeclaration> {
                 return 0
             }
 
-            return a.name.compareTo(b.name)
+            return a.nameOrSpecialName.compareTo(b.nameOrSpecialName)
         }
     }
 

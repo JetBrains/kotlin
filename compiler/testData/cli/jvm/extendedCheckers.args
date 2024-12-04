@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/extendedCheckers.kt
--Xuse-fir
--Xuse-fir-extended-checkers
--d
-$TEMP_DIR$

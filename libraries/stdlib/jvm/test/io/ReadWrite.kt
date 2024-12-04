@@ -47,9 +47,13 @@ class ReadWriteTest {
 
         assertEquals(listOf("Hello", "World"), sample().readLines())
 
-        sample().useLines {
-            assertEquals(listOf("Hello", "World"), it.toList())
+        val lines: List<String>
+        val linesResult = sample().useLines {
+            lines = it.toList()
+            lines
         }
+        assertEquals(listOf("Hello", "World"), lines)
+        assertEquals(lines, linesResult)
 
 
         var reader = StringReader("")
@@ -94,9 +98,13 @@ class ReadWriteTest {
 
         assertEquals(arrayListOf("Hello", "World"), file.readLines())
 
-        file.useLines {
-            assertEquals(arrayListOf("Hello", "World"), it.toList())
+        val lines: List<String>
+        val linesResult = file.useLines {
+            lines = it.toList()
+            lines
         }
+        assertEquals(listOf("Hello", "World"), lines)
+        assertEquals(lines, linesResult)
 
         val text = file.inputStream().reader().readText()
         assertTrue(text.contains("Hello"))

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Any
 
 inline fun <reified T : Any> Any.safeAs(): T? = this as? T

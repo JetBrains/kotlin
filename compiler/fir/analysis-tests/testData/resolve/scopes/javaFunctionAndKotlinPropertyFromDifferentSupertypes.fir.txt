@@ -1,0 +1,13 @@
+FILE: B.kt
+    public abstract interface B : R|kotlin/Any| {
+        public abstract val foo: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+FILE: main.kt
+    public final class D : R|C| {
+        public constructor(): R|D| {
+            super<R|C|>()
+        }
+
+    }

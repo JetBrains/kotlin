@@ -1,0 +1,2 @@
+package com.some
+.name

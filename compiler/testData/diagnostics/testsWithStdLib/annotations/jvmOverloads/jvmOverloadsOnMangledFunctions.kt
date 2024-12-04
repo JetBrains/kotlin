@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER, -INLINE_CLASS_DEPRECATED
+// LANGUAGE: +InlineClasses
 
 inline class Z(val x: Int)
 

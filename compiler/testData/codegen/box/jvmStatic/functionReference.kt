@@ -10,4 +10,4 @@ object O {
 
 // FILE: u2.kt
 
-fun box() = (O::foo)()
+fun box() = (O::foo).let { it() }

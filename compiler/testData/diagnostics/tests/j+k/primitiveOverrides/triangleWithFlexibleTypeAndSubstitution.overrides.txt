@@ -1,0 +1,7 @@
+D:
+  [SubstitutionOverride(DeclarationSite)]: public open override fun foo(x: R|kotlin/Int!|): R|kotlin/String!| from Use site scope of /D [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public open override fun foo(x: R|kotlin/Int!|): R|kotlin/String!| from Use site scope of /C [id: 0]
+      [SubstitutionOverride(DeclarationSite)]: public open override fun foo(x: R|kotlin/Int!|): R|kotlin/String!| from Substitution scope for [Java enhancement scope for /A] for type C [id: 0]
+        [Enhancement]: public open fun foo(x: R|kotlin/Int!|): R|T!| from Java enhancement scope for /A [id: 1]
+  [Source]: public open fun foo(x: R|kotlin/Int|): R|kotlin/String| from Use site scope of /D [id: 0]
+    [Source]: public open fun foo(x: R|kotlin/Int|): R|kotlin/String| from Use site scope of /B [id: 0]

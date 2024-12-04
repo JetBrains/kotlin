@@ -1,5 +1,3 @@
-// !LANGUAGE: +ReleaseCoroutines
-// IGNORE_BACKEND: NATIVE
 // WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
@@ -29,7 +27,7 @@ inline suspend fun K(block: suspend (String) -> String) = block("K")
 suspend fun ok(o: String): String {
     return o + run {
         if (o != "K") {
-            (::ok)("K")
+            (::ok).let { it("K") }
         } else ""
     }
 }

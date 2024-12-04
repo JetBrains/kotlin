@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.descriptors;
 
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -147,8 +148,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
 
         enhanced.initialize(newGetter, newSetter, getBackingField(), getDelegateField());
         enhanced.setSetterProjectedOut(isSetterProjectedOut());
-        if (compileTimeInitializer != null) {
-            enhanced.setCompileTimeInitializer(compileTimeInitializer);
+        if (compileTimeInitializerFactory != null) {
+            enhanced.setCompileTimeInitializer(compileTimeInitializer, compileTimeInitializerFactory);
         }
 
         enhanced.setOverriddenDescriptors(getOverriddenDescriptors());
@@ -162,8 +163,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
                 enhancedReturnType,
                 getTypeParameters(), // TODO
                 getDispatchReceiverParameter(),
-                enhancedReceiver
-        );
+                enhancedReceiver,
+                CollectionsKt.<ReceiverParameterDescriptor>emptyList());
         return enhanced;
     }
 

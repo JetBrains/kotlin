@@ -1,3 +1,11 @@
+## JavaScript parser
+
+This module contains the code for parsing JavaScript code into [JS AST](../js.ast).
+
+We use it for, e.g., validating the JavaScript code in `kotlin.js.js(...)` calls.
+
+### Attribution
+
 The following files were copied from GWT project:
 * src/com/google/gwt/dev/js/JsParser.java
 * src/com/google/gwt/dev/js/JsParserException.java

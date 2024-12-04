@@ -3,15 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
-#if KONAN_OBJC_INTEROP
-
-#import <pthread.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSObject.h>
-
 #import "Memory.h"
 #import "ObjCExport.h"
 #import "ObjCExportErrors.h"
+
+#if KONAN_OBJC_INTEROP
+
+#import <pthread.h>
+#import <Foundation/Foundation.h>
 
 typedef void (^Completion)(id _Nullable, NSError* _Nullable);
 
@@ -37,7 +36,7 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgumentImpl,
     KRef completionHolder, const TypeInfo** exceptionTypes);
 
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgument, id completion, const TypeInfo** exceptionTypes) {
-  if (pthread_main_np() != 1) {
+  if (!kotlin::compiler::suspendFunctionsFromAnyThreadFromObjCEnabled() && pthread_main_np() != 1) {
     [NSException raise:NSGenericException
         format:@"Calling Kotlin suspend functions from Swift/Objective-C is currently supported only on main thread"];
   }
@@ -77,6 +76,20 @@ extern "C" void Kotlin_ObjCExport_resumeContinuation(KRef continuation, KRef res
   } else {
     Kotlin_ObjCExport_resumeContinuationSuccess(continuation, result);
   }
+}
+
+#else
+
+extern "C" void Kotlin_ObjCExport_runCompletionSuccess(KRef completionHolder, KRef result) {
+  RuntimeAssert(false, "Unavailable operation");
+}
+
+extern "C" void Kotlin_ObjCExport_runCompletionFailure(
+  KRef completionHolder,
+  KRef exception,
+  const TypeInfo** exceptionTypes
+) {
+  RuntimeAssert(false, "Unavailable operation");
 }
 
 #endif

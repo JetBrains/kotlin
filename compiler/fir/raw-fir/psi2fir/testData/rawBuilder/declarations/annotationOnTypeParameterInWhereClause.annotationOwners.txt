@@ -1,0 +1,15 @@
+@Repeatable()
+owner -> FirRegularClassSymbol TypeParameterAnn
+context -> FirRegularClassSymbol TypeParameterAnn
+
+@Target(AnnotationTarget#.TYPE_PARAMETER#)
+owner -> FirRegularClassSymbol TypeParameterAnn
+context -> FirRegularClassSymbol TypeParameterAnn
+
+@TypeParameterAnn(String(T))
+owner -> FirRegularClassSymbol Foo
+context -> FirTypeParameterSymbol T from FirRegularClassSymbol Foo
+
+TypeParameterAnnString(Prohibit me!!!)TypeParameterAnn#
+owner -> FirRegularClassSymbol Foo
+context -> FirTypeParameterSymbol T from FirRegularClassSymbol Foo

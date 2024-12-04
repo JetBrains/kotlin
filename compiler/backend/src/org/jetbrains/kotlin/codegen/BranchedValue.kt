@@ -35,7 +35,7 @@ open class BranchedValue(
     }
 
     open fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        if (arg1 is CondJump) arg1.condJump(jumpLabel, v, jumpIfFalse) else arg1.put(operandType, v)
+        arg1.put(operandType, v)
         arg2?.put(operandType, v)
         v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode]!!, v), jumpLabel)
     }
@@ -112,76 +112,12 @@ open class BranchedValue(
 
         fun booleanConstant(value: Boolean): BranchedValue = if (value) TRUE else FALSE
 
-        fun createInvertValue(argument: StackValue): StackValue = Invert(condJump(argument))
-
-        fun condJump(condition: StackValue, label: Label, jumpIfFalse: Boolean, iv: InstructionAdapter) {
-            condJump(condition).condJump(label, iv, jumpIfFalse)
-        }
-
-        fun loopJump(condition: StackValue, label: Label, jumpIfFalse: Boolean, iv: InstructionAdapter) {
-            condJump(condition).loopJump(label, iv, jumpIfFalse)
-        }
-
-        fun condJump(condition: StackValue): CondJump =
-            CondJump(
-                condition as? BranchedValue ?: BranchedValue(condition, null, Type.BOOLEAN_TYPE, IFEQ),
-                IFEQ
-            )
-
         fun cmp(opToken: IElementType, operandType: Type, left: StackValue, right: StackValue): BranchedValue =
             if (operandType.sort == Type.OBJECT)
                 ObjectCompare(opToken, operandType, left, right)
             else
                 NumberCompare(opToken, operandType, left, right)
 
-    }
-}
-
-class And(
-    arg1: StackValue,
-    arg2: StackValue
-) : BranchedValue(BranchedValue.condJump(arg1), BranchedValue.condJump(arg2), Type.BOOLEAN_TYPE, IFEQ) {
-
-    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        val stayLabel = Label()
-        (arg1 as CondJump).condJump(if (jumpIfFalse) jumpLabel else stayLabel, v, true)
-        (arg2 as CondJump).condJump(jumpLabel, v, jumpIfFalse)
-        v.visitLabel(stayLabel)
-    }
-}
-
-class Or(
-    arg1: StackValue,
-    arg2: StackValue
-) : BranchedValue(BranchedValue.condJump(arg1), BranchedValue.condJump(arg2), Type.BOOLEAN_TYPE, IFEQ) {
-
-    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        val stayLabel = Label()
-        (arg1 as CondJump).condJump(if (jumpIfFalse) stayLabel else jumpLabel, v, false)
-        (arg2 as CondJump).condJump(jumpLabel, v, jumpIfFalse)
-        v.visitLabel(stayLabel)
-    }
-}
-
-class Invert(val condition: BranchedValue) : BranchedValue(condition, null, Type.BOOLEAN_TYPE, IFEQ) {
-
-    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        condition.condJump(jumpLabel, v, !jumpIfFalse)
-    }
-}
-
-class CondJump(val condition: BranchedValue, op: Int) : BranchedValue(condition, null, Type.BOOLEAN_TYPE, op) {
-
-    override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
-        throw UnsupportedOperationException("Use condJump instead")
-    }
-
-    override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        condition.condJump(jumpLabel, v, jumpIfFalse)
-    }
-
-    override fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
-        condition.loopJump(jumpLabel, v, jumpIfFalse)
     }
 }
 

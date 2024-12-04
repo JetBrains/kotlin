@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/globalWarningSuppression.kt:7:16: error: [CONFLICTING_PROJECTION] Projection is conflicting with variance of the corresponding type parameter of 'Out<in kotlin.Int>'. Remove the projection or replace it with '*'.
+fun bar(x: Out<in Int>) {}
+               ^^
+COMPILATION_ERROR

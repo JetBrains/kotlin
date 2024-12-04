@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="StructuralSearch">
+    <searchConfiguration name="Deprecated compiler API - class" text="@$Annotation$($AnnotationParam$) class $Name$" recursive="true" caseInsensitive="false" type="Kotlin" pattern_context="default">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Annotation" regexp="DeprecatedCompilerApi" within="" contains="" />
+      <constraint name="Name" within="" contains="" />
+      <constraint name="AnnotationParam" minCount="0" maxCount="2147483647" within="" contains="" />
+    </searchConfiguration>
+    <searchConfiguration name="Deprecated compiler API - function" text="@$Annotation$($AnnotationParam$) fun $Name$($Param$)" recursive="true" caseInsensitive="false" type="Kotlin" pattern_context="default">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Annotation" regexp="DeprecatedCompilerApi" within="" contains="" />
+      <constraint name="Name" within="" contains="" />
+      <constraint name="Param" minCount="0" maxCount="2147483647" within="" contains="" />
+      <constraint name="AnnotationParam" minCount="0" maxCount="2147483647" within="" contains="" />
+    </searchConfiguration>
+    <searchConfiguration name="Deprecated compiler API - property" text="@$Annotation$($AnnotationParam$) val $Name$" recursive="true" caseInsensitive="false" type="Kotlin" pattern_context="default">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Annotation" regexp="DeprecatedCompilerApi" within="" contains="" />
+      <constraint name="Name" within="" contains="" _kotlinAlsoMatchVar="enabled" />
+      <constraint name="AnnotationParam" minCount="0" maxCount="2147483647" within="" contains="" />
+    </searchConfiguration>
+  </component>
+</project>

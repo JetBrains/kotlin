@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <cinttypes>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -21,21 +22,26 @@
 #include <limits>
 #include <type_traits>
 
+#include "Alignment.hpp"
 #include "KAssert.h"
 #include "KString.h"
 #include "StackTrace.hpp"
 #include "Memory.h"
+#include "Porting.h"
 #include "Natives.h"
 #include "Types.h"
+#include "std_support/CStdlib.hpp"
+
+using namespace kotlin;
 
 extern "C" {
 
-// Any.kt
-KBoolean Kotlin_Any_equals(KConstRef thiz, KConstRef other) {
-  return thiz == other;
-}
-
 KInt Kotlin_Any_hashCode(KConstRef thiz) {
+  // NOTE: `Any?.identityHashCode()` is used in Blackhole implementations of both kotlinx-benchmark and
+  //        K/N's own benchmarks. These usages rely on this being an intrinsic property of the object.
+  //        So, calling `obj.identityHashCode()` should be seen by the optimizer as reading the entire
+  //        `obj` memory, and any changes to `obj` beforehand couldn't be optimized away. Additionally,
+  //        it should be very cheap to call in order not to pollute the time measurements.
   // Here we will use different mechanism for stable hashcode, using meta-objects
   // if moving collector will be used.
   return reinterpret_cast<uintptr_t>(thiz);
@@ -83,24 +89,22 @@ void* Kotlin_interop_malloc(KLong size, KInt align) {
   if (size < 0 || static_cast<std::make_unsigned_t<decltype(size)>>(size) > std::numeric_limits<size_t>::max()) {
     return nullptr;
   }
-  RuntimeAssert(align > 0, "Unsupported alignment");
-  RuntimeAssert((align & (align - 1)) == 0, "Alignment must be power of two");
+  RuntimeAssert(align > 0, "Invalid alignment %d", align);
+  size_t actualAlign = static_cast<size_t>(align);
+  size_t actualSize = AlignUp(static_cast<size_t>(size), actualAlign);
 
-  void* result = konan::calloc_aligned(1, size, align);
-  if ((reinterpret_cast<uintptr_t>(result) & (align - 1)) != 0) {
-    // Unaligned!
-    RuntimeAssert(false, "unsupported alignment");
-  }
+  void* result = std::memset(std_support::aligned_malloc(actualAlign, actualSize), 0, actualSize);
+  RuntimeAssert(IsAligned(result, actualAlign), "aligned_malloc result %p is not aligned to %zu", result, actualAlign);
 
   return result;
 }
 
 void Kotlin_interop_free(void* ptr) {
-  konan::free(ptr);
+    std_support::aligned_free(ptr);
 }
 
 void Kotlin_system_exitProcess(KInt status) {
-  konan::exit(status);
+  std::exit(status);
 }
 
 const void* Kotlin_Any_getTypeInfo(KConstRef obj) {
@@ -109,6 +113,24 @@ const void* Kotlin_Any_getTypeInfo(KConstRef obj) {
 
 void Kotlin_CPointer_CopyMemory(KNativePtr to, KNativePtr from, KInt count) {
   memcpy(to, from, count);
+}
+
+RUNTIME_NOTHROW RUNTIME_PURE KRef* Kotlin_arrayGetElementAddress(KRef array, KInt index) {
+    ArrayHeader* arr = array->array();
+    RuntimeAssert(index >= 0 && static_cast<uint32_t>(index) < arr->count_, "Index %" PRId32 " must be in [0, %" PRIu32 ")", index, arr->count_); 
+    return ArrayAddressOfElementAt(arr, index);
+}
+
+RUNTIME_NOTHROW RUNTIME_PURE KInt* Kotlin_intArrayGetElementAddress(KRef array, KInt index) {
+    ArrayHeader* arr = array->array();
+    RuntimeAssert(index >= 0 && static_cast<uint32_t>(index) < arr->count_, "Index %" PRId32 " must be in [0, %" PRIu32 ")", index, arr->count_);
+    return IntArrayAddressOfElementAt(arr, index);
+}
+
+RUNTIME_NOTHROW RUNTIME_PURE KLong* Kotlin_longArrayGetElementAddress(KRef array, KInt index) {
+    ArrayHeader* arr = array->array();
+    RuntimeAssert(index >= 0 && static_cast<uint32_t>(index) < arr->count_, "Index %" PRId32 " must be in [0, %" PRIu32 ")", index, arr->count_);
+    return LongArrayAddressOfElementAt(arr, index);
 }
 
 }  // extern "C"

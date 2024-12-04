@@ -98,6 +98,7 @@ object FunctionsFromAny {
         functionDescriptor.initialize(
             null,
             classDescriptor.thisAsReceiverParameter,
+            emptyList(),
             functionFromAny.typeParameters,
             functionFromAny.valueParameters.map { it.copy(functionDescriptor, it.name, it.index) },
             functionFromAny.returnType,

@@ -1,5 +1,3 @@
-typealias I = Int
-typealias L<T : Any?> = List<T>
 fun test1(x: List<Int>): List<Int> {
   return x
 }
@@ -15,3 +13,6 @@ fun test3(x: List<List<Int>>): List<List<Int>> {
 fun test4(x: List<List<Int>>): List<List<Int>> {
   return x
 }
+
+typealias I = Int
+typealias L<T : Any?> = List<T>

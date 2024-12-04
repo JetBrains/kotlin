@@ -7,31 +7,36 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateFactory
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.same
 
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
-    private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+    private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     fun runCompletion(
@@ -78,6 +83,7 @@ class KotlinCallCompleter(
                 candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
                 candidate.asCallResolutionResult(completionMode, diagnosticHolder)
             }
+            ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL -> error("PCLA might be only run for K2")
             ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException("Should not be here")
 
         }
@@ -127,6 +133,7 @@ class KotlinCallCompleter(
             ConstraintSystemCompletionMode.FULL,
             diagnosticHolderForLambda,
         )
+        propagateLambdaAnalysisDiagnostics(diagnosticHolderForLambda, firstCandidate)
 
         while (iterator.hasNext()) {
             val (candidate, atom) = iterator.next()
@@ -137,6 +144,7 @@ class KotlinCallCompleter(
                 ConstraintSystemCompletionMode.FULL,
                 diagnosticHolderForLambda
             )
+            propagateLambdaAnalysisDiagnostics(diagnosticHolderForLambda, candidate)
         }
 
         val errorCandidates = mutableSetOf<SimpleResolutionCandidate>()
@@ -152,6 +160,24 @@ class KotlinCallCompleter(
         return when {
             successfulCandidates.isNotEmpty() -> successfulCandidates
             else -> errorCandidates
+        }
+    }
+
+    private fun propagateLambdaAnalysisDiagnostics(
+        diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder,
+        candidate: SimpleResolutionCandidate
+    ) {
+        val dontLoseDiagnosticsDuringOverloadResolutionByReturnType =
+            languageVersionSettings.supportsFeature(LanguageFeature.DontLoseDiagnosticsDuringOverloadResolutionByReturnType)
+
+        for (diagnostic in diagnosticHolder.getDiagnostics()) {
+            if (diagnostic is TransformableToWarning<*>) {
+                val transformedDiagnostic =
+                    if (dontLoseDiagnosticsDuringOverloadResolutionByReturnType) diagnostic else diagnostic.transformToWarning()
+                if (transformedDiagnostic != null) {
+                    candidate.addDiagnostic(transformedDiagnostic)
+                }
+            }
         }
     }
 
@@ -206,7 +232,7 @@ class KotlinCallCompleter(
 
             CandidateWithDiagnostics(candidate, diagnosticsHolder.getDiagnostics() + candidate.diagnostics)
         }
-        return AllCandidatesResolutionResult(completedCandidates)
+        return AllCandidatesResolutionResult(completedCandidates, resolutionCallbacks.createEmptyConstraintSystem())
     }
 
     private fun ResolutionCandidate.runCompletion(
@@ -247,6 +273,10 @@ class KotlinCallCompleter(
         }
 
         constraintSystem.errors.forEach(diagnosticsHolder::addError)
+
+        if (returnType is ErrorType && returnType.kind == ErrorTypeKind.RECURSIVE_TYPE) {
+            diagnosticsHolder.addDiagnostic(TypeCheckerHasRanIntoRecursion)
+        }
     }
 
     private fun prepareCandidateForCompletion(
@@ -276,7 +306,10 @@ class KotlinCallCompleter(
 
     private fun ResolutionCandidate.substitutedReturnType(): UnwrappedType? {
         val returnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return null
-        return resolvedCall.freshVariablesSubstitutor.safeSubstitute(returnType)
+        val substitutedReturnTypeWithVariables = resolvedCall.freshVariablesSubstitutor.safeSubstitute(returnType)
+        return (getResultingSubstitutor() as? NewTypeSubstitutorByConstructorMap)
+            ?.safeSubstitute(substitutedReturnTypeWithVariables)
+            ?: substitutedReturnTypeWithVariables
     }
 
     private fun ResolutionCandidate.addExpectedTypeConstraint(
@@ -328,17 +361,17 @@ class KotlinCallCompleter(
         diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
         forwardToInferenceSession: Boolean = false
     ): CallResolutionResult {
-        val systemStorage = getSystem().asReadOnlyStorage()
+        val constraintSystem = getSystem()
         val allDiagnostics = diagnosticsHolder.getDiagnostics() + diagnostics
 
         if (isErrorCandidate()) {
-            return ErrorCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+            return ErrorCallResolutionResult(resolvedCall, allDiagnostics, constraintSystem)
         }
 
         return if (type == ConstraintSystemCompletionMode.FULL) {
-            CompletedCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+            CompletedCallResolutionResult(resolvedCall, allDiagnostics, constraintSystem)
         } else {
-            PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage, forwardToInferenceSession)
+            PartialCallResolutionResult(resolvedCall, allDiagnostics, constraintSystem, forwardToInferenceSession)
         }
     }
 }

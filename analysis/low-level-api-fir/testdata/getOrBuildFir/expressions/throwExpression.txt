@@ -1,5 +1,0 @@
-KT element: KtThrowExpression
-FIR element: FirThrowExpressionImpl
-
-FIR element rendered:
-throw R|java/lang/IllegalStateException.IllegalStateException|()

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -33,8 +34,10 @@ abstract class DataClassMethodGenerator(
 ) : FunctionsFromAnyGenerator(declaration, bindingContext) {
 
     override fun generate() {
-        generateComponentFunctionsForDataClasses()
-        generateCopyFunctionForDataClasses(primaryConstructorParameters)
+        if (declaration !is KtObjectDeclaration) {
+            generateComponentFunctionsForDataClasses()
+            generateCopyFunctionForDataClasses(primaryConstructorParameters)
+        }
 
         super.generate()
     }

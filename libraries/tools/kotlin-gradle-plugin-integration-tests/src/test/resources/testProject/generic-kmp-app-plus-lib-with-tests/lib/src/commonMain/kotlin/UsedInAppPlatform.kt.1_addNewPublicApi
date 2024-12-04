@@ -1,0 +1,6 @@
+open class LibCommonClassForAppPlatform(
+    val length: Int,
+    val builder: String,
+) {
+    val introduceNewPublicApi = "Yes, please"
+}

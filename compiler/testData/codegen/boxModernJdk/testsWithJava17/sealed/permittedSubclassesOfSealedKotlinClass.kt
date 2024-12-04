@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JVM
 // WITH_REFLECT
-// !LANGUAGE: +JvmPermittedSubclassesAttributeForSealed
+// LANGUAGE: +JvmPermittedSubclassesAttributeForSealed
 
 sealed class Base
 class O : Base()

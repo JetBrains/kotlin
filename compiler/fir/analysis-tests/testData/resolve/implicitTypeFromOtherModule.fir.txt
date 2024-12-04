@@ -1,0 +1,30 @@
+Module: lib
+FILE: module_lib_implicitTypeFromOtherModule.kt
+    package dependency
+
+    public final class Other : R|kotlin/Any| {
+        public constructor(): R|dependency/Other| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Lib : R|kotlin/Any| {
+        public constructor(): R|dependency/Lib| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(): R|dependency/Lib| {
+        ^test R|dependency/Lib.Lib|()
+    }
+Module: main
+FILE: module_main_implicitTypeFromOtherModule.kt
+    package main
+
+    public final fun usage(): R|kotlin/Unit| {
+        R|main/take|(R|dependency/test|())
+    }
+    public final fun take(a: R|dependency/Lib|): R|kotlin/Unit| {
+    }
+    public final fun take(a: R|dependency/Other|): R|kotlin/Unit| {
+    }

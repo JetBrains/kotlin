@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val f: Boolean = true
 private fun doUpdateRegularTasks() {
     try {

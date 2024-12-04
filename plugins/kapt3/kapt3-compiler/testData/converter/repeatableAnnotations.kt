@@ -5,7 +5,7 @@ public @interface Anno {
     String value();
 }
 
-//FILE: lib/R.java
+// FILE: lib/R.java
 package lib;
 
 public class R {
@@ -15,7 +15,6 @@ public class R {
 }
 
 // FILE: test.kt
-// WITH_STDLIB
 import lib.Anno
 import kotlin.reflect.KClass
 

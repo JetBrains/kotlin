@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // NI_EXPECTED_FILE
 
 class Controller<T : Number> {
@@ -8,6 +8,6 @@ class Controller<T : Number> {
 
 fun <S : Number> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
-val test = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    yield("foo")
+val test = generate {
+    yield(<!TYPE_MISMATCH!>"foo"<!>)
 }

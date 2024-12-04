@@ -101,6 +101,7 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
 
         assert(!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
         assert(!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
+        // TODO: https://youtrack.jetbrains.com/issue/KT-54198 (two captured types)
         assert(lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }
         assert(KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
             "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
@@ -125,8 +126,8 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
         }.inheritEnhancement(unwrapped)
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType =
-        KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
+    override fun replaceAttributes(newAttributes: TypeAttributes): UnwrappedType =
+        KotlinTypeFactory.flexibleType(lowerBound.replaceAttributes(newAttributes), upperBound.replaceAttributes(newAttributes))
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String {
         if (options.debugMode) {
@@ -153,22 +154,11 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
 }
 
 object FlexibleTypeBoundsChecker {
-    private val fqNames = StandardNames.FqNames
-    private val baseTypesToMutableEquivalent = mapOf(
-        fqNames.iterable to fqNames.mutableIterable,
-        fqNames.iterator to fqNames.mutableIterator,
-        fqNames.listIterator to fqNames.mutableListIterator,
-        fqNames.list to fqNames.mutableList,
-        fqNames.collection to fqNames.mutableCollection,
-        fqNames.set to fqNames.mutableSet,
-        fqNames.map to fqNames.mutableMap,
-        fqNames.mapEntry to fqNames.mutableMapEntry
-    )
-    private val mutableToBaseMap = baseTypesToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
-
     fun areTypesMayBeLowerAndUpperBoundsOfSameFlexibleTypeByMutability(a: KotlinType, b: KotlinType): Boolean {
         val fqName = a.constructor.declarationDescriptor?.fqNameSafe ?: return false
-        val possiblePairBound = (baseTypesToMutableEquivalent[fqName] ?: mutableToBaseMap[fqName]) ?: return false
+        val possiblePairBound = (CommonFlexibleTypeBoundsChecker.baseTypesToMutableEquivalent[fqName]
+            ?: CommonFlexibleTypeBoundsChecker.mutableToBaseMap[fqName])
+            ?: return false
 
         return possiblePairBound == b.constructor.declarationDescriptor?.fqNameSafe
     }
@@ -177,7 +167,7 @@ object FlexibleTypeBoundsChecker {
     fun getBaseBoundFqNameByMutability(type: KotlinType): FqName? =
         type.constructor.declarationDescriptor?.fqNameSafe?.let(::getBaseBoundFqNameByMutability)
 
-    fun getBaseBoundFqNameByMutability(fqName: FqName): FqName? =
-        if (fqName in baseTypesToMutableEquivalent) fqName
-        else mutableToBaseMap[fqName]
+    fun getBaseBoundFqNameByMutability(fqName: FqName): FqName? {
+        return CommonFlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(fqName)
+    }
 }

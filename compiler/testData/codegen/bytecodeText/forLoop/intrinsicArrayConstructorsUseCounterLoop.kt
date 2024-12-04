@@ -31,15 +31,14 @@ fun testDoubleArray(n: Int) =
         DoubleArray(n) { it.toDouble() }
 
 fun testObjectArray(n: Int) =
-        Array(n) { it as Any }
+        Array(n) { it.toString() }
 
 // 0 IF_ICMPGT
 // 0 IF_CMPEQ
 // 8 IF_ICMPGE
 
-// JVM_IR_TEMPLATES
-// 56 ILOAD
-// 24 ISTORE
-// 8 IADD
+// 48 ILOAD
+// 16 ISTORE
+// 0 IADD
 // 0 ISUB
-// 0 IINC
+// 8 IINC

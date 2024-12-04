@@ -99,7 +99,7 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
             return _keys!!
         }
 
-    @kotlin.jvm.Volatile
+    @kotlin.concurrent.Volatile
     private var _keys: Set<K>? = null
 
 
@@ -135,7 +135,7 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
             return _values!!
         }
 
-    @kotlin.jvm.Volatile
+    @kotlin.concurrent.Volatile
     private var _values: Collection<V>? = null
 
     private fun implFindEntry(key: K): Map.Entry<K, V>? = entries.firstOrNull { it.key == key }

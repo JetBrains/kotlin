@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @ObsoleteDescriptorBasedAPI
 fun SymbolTable.declareSimpleFunctionWithOverrides(
@@ -21,20 +22,24 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
     origin: IrDeclarationOrigin,
     descriptor: FunctionDescriptor
 ) =
-    declareSimpleFunction(descriptor) {
+    descriptorExtension.declareSimpleFunction(descriptor) {
         with(descriptor) {
-            irFactory.createFunction(
-                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(this),
-                visibility,
-                modality,
-                IrUninitializedType,
-                isInline,
-                isEffectivelyExternal(),
-                isTailrec,
-                isSuspend,
-                isOperator,
-                isInfix,
-                isExpect,
+            irFactory.createSimpleFunction(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = nameProvider.nameForDeclaration(this),
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = null,
+                modality = modality,
+                symbol = it,
+                isTailrec = isTailrec,
+                isSuspend = isSuspend,
+                isOperator = isOperator,
+                isInfix = isInfix,
+                isExternal = isEffectivelyExternal(),
                 isFakeOverride = descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
             ).also { declaration ->
                 declaration.metadata = DescriptorMetadataSource.Function(this)
@@ -49,7 +54,7 @@ fun generateOverriddenFunctionSymbols(
     declaration: IrSimpleFunction,
     symbolTable: ReferenceSymbolTable
 ) {
-    declaration.overriddenSymbols = declaration.descriptor.overriddenDescriptors.map {
-        symbolTable.referenceSimpleFunction(it.original)
+    declaration.overriddenSymbols = declaration.descriptor.overriddenDescriptors.memoryOptimizedMap {
+        symbolTable.descriptorExtension.referenceSimpleFunction(it.original)
     }
 }

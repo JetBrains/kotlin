@@ -21,11 +21,6 @@ object JsLibraryUtils {
     private val META_INF_RESOURCES = "${LibraryUtils.META_INF}resources/"
 
     // Also used in K2JSCompilerMojo
-    @JvmStatic
-    fun isKotlinJavascriptLibrary(library: File): Boolean =
-        KotlinJavascriptMetadataUtils.loadMetadata(library).isNotEmpty()
-
-    // Also used in K2JSCompilerMojo
     @Suppress("unused")
     @JvmStatic
     fun isKotlinJavascriptIrLibrary(candidate: File): Boolean {
@@ -51,10 +46,6 @@ object JsLibraryUtils {
                 copyJsFilesFromZip(file, outputLibraryJsPath, copySourceMap)
             }
         }
-    }
-
-    @JvmStatic fun traverseJsLibraries(libs: List<File>, action: (JsLibrary) -> Unit) {
-        libs.forEach { traverseJsLibrary(it, action) }
     }
 
     @JvmStatic fun traverseJsLibrary(lib: File, action: (JsLibrary) -> Unit) {

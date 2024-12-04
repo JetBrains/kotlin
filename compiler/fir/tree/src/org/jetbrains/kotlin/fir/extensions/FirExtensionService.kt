@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
-import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
-import org.jetbrains.kotlin.fir.utils.TypeRegistry
+import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
+import org.jetbrains.kotlin.util.ArrayMapAccessor
+import org.jetbrains.kotlin.util.ComponentArrayOwner
+import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.reflect.KClass
 
 @RequiresOptIn
@@ -18,7 +19,7 @@ annotation class PluginServicesInitialization
 
 @NoMutableState
 class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExtension, List<FirExtension>>(), FirSessionComponent {
-    companion object : TypeRegistry<FirExtension, List<FirExtension>>() {
+    companion object : ConeTypeRegistry<FirExtension, List<FirExtension>>() {
         inline fun <reified P : FirExtension, V : List<P>> registeredExtensions(): ArrayMapAccessor<FirExtension, List<FirExtension>, V> {
             @Suppress("UNCHECKED_CAST")
             return generateAccessor(P::class, default = emptyList<P>() as V)
@@ -36,14 +37,10 @@ class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExte
     var registeredExtensionsSize: Int = 0
         private set
 
-    var registeredPredicateBasedExtensionsSize: Int = 0
-        private set
-
     @PluginServicesInitialization
     fun registerExtensions(extensionClass: KClass<out FirExtension>, extensionFactories: List<FirExtension.Factory<*>>) {
         registeredExtensionsSize += extensionFactories.size
         val extensions = extensionFactories.map { it.create(session) }
-        registeredPredicateBasedExtensionsSize += extensions.count { it is FirPredicateBasedExtension }
         registerComponent(
             extensionClass,
             extensions
@@ -57,9 +54,3 @@ class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExte
 }
 
 val FirSession.extensionService: FirExtensionService by FirSession.sessionComponentAccessor()
-
-val FirExtensionService.hasExtensions: Boolean
-    get() = registeredExtensionsSize > 0
-
-val FirExtensionService.hasPredicateBasedExtensions: Boolean
-    get() = registeredPredicateBasedExtensionsSize > 0

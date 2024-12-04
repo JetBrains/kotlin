@@ -1,0 +1,46 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class <#A: kotlin/Any?> /Test1 { // /Test1|null[0]
+    final val x // /Test1.x|{}x[0]
+        final fun <get-x>(): #A // /Test1.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(#A) // /Test1.<init>|<init>(1:0){}[0]
+    final fun component1(): #A // /Test1.component1|component1(){}[0]
+    final fun copy(#A = ...): /Test1<#A> // /Test1.copy|copy(1:0){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Test1.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Test1.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Test1.toString|toString(){}[0]
+}
+final class <#A: kotlin/Number> /Test2 { // /Test2|null[0]
+    final val x // /Test2.x|{}x[0]
+        final fun <get-x>(): #A // /Test2.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(#A) // /Test2.<init>|<init>(1:0){}[0]
+    final fun component1(): #A // /Test2.component1|component1(){}[0]
+    final fun copy(#A = ...): /Test2<#A> // /Test2.copy|copy(1:0){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Test2.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Test2.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Test2.toString|toString(){}[0]
+}
+final class <#A: kotlin/Any?> /Test3 { // /Test3|null[0]
+    final val x // /Test3.x|{}x[0]
+        final fun <get-x>(): kotlin.collections/List<#A> // /Test3.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin.collections/List<#A>) // /Test3.<init>|<init>(kotlin.collections.List<1:0>){}[0]
+    final fun component1(): kotlin.collections/List<#A> // /Test3.component1|component1(){}[0]
+    final fun copy(kotlin.collections/List<#A> = ...): /Test3<#A> // /Test3.copy|copy(kotlin.collections.List<1:0>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Test3.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Test3.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Test3.toString|toString(){}[0]
+}
+final class /Test4 { // /Test4|null[0]
+    final val x // /Test4.x|{}x[0]
+        final fun <get-x>(): kotlin.collections/List<kotlin/String> // /Test4.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(kotlin.collections/List<kotlin/String>) // /Test4.<init>|<init>(kotlin.collections.List<kotlin.String>){}[0]
+    final fun component1(): kotlin.collections/List<kotlin/String> // /Test4.component1|component1(){}[0]
+    final fun copy(kotlin.collections/List<kotlin/String> = ...): /Test4 // /Test4.copy|copy(kotlin.collections.List<kotlin.String>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Test4.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Test4.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Test4.toString|toString(){}[0]
+}

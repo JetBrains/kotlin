@@ -17,34 +17,64 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirJvmFunctionDelegateMemberNameClashChecker,
             FirJvmStaticChecker,
             FirRepeatableAnnotationChecker,
+            FirJvmInvalidAndDangerousCharactersChecker,
+            FirJvmRedundantRepeatableChecker,
+        )
+
+    override val constructorCheckers: Set<FirConstructorChecker>
+        get() = setOf(
+            FirJavaClassInheritsKtPrivateClassDeclarationChecker,
         )
 
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirStrictfpApplicabilityChecker
+            FirStrictfpApplicabilityChecker,
+            FirOverrideJavaNullabilityWarningChecker.Regular,
+            FirOverrideJavaNullabilityWarningChecker.ForExpectClass,
+            FirImplementationByDelegationWithDifferentGenericSignatureChecker,
+            FirPropertyHidesJavaFieldChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
         get() = setOf(
             FirJvmRecordChecker,
-            FirJvmInlineApplicabilityChecker
+            FirJvmInlineApplicabilityChecker,
+            FirInlineBodyRegularClassChecker,
+        )
+
+    override val classLikeCheckers: Set<FirClassLikeChecker>
+        get() = setOf(
+            FirJvmConflictsChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
-            FirVolatileAnnotationChecker,
             FirJvmFieldApplicabilityChecker,
-            FirJvmSyntheticApplicabilityChecker
+            FirJvmSyntheticApplicabilityChecker,
+            FirPropertyJavaNullabilityWarningChecker,
         )
 
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
             FirSynchronizedAnnotationChecker,
             FirOverloadsChecker,
+            FirFunctionJavaNullabilityWarningChecker,
+            FirJvmThrowsChecker,
         )
 
     override val typeParameterCheckers: Set<FirTypeParameterChecker>
         get() = setOf(
             FirUpperBoundsChecker,
+        )
+
+    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+        get() = setOf(
+            FirInlineBodySimpleFunctionChecker,
+            FirAccidentalOverrideClashChecker,
+        )
+
+    override val valueParameterCheckers: Set<FirValueParameterChecker>
+        get() = setOf(
+            FirValueParameterJavaNullabilityWarningChecker
         )
 }

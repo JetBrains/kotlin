@@ -1,4 +1,5 @@
-// See also KT-10869: Accessing lazy properties from init causes IllegalArgumentException
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-10869, KT-56682
 
 import kotlin.reflect.KProperty
 

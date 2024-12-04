@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
-import org.junit.Test
 import org.junit.jupiter.api.DisplayName
 
-
-@SimpleGradlePluginTests
+@JsGradlePluginTests
 class CleanDataTaskIT : KGPBaseTest() {
 
     @DisplayName("nodejs is deleted from Gradle user home")

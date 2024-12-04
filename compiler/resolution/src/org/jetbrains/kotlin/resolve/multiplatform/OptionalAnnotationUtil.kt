@@ -8,20 +8,18 @@ package org.jetbrains.kotlin.resolve.multiplatform
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 object OptionalAnnotationUtil {
-    val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
+    val OPTIONAL_EXPECTATION_FQ_NAME = StandardClassIds.Annotations.OptionalExpectation.asSingleFqName()
 
     @JvmStatic
     fun shouldGenerateExpectClass(descriptor: ClassDescriptor): Boolean {
         assert(descriptor.isExpect) { "Not an expected class: $descriptor" }
 
         if (isOptionalAnnotationClass(descriptor)) {
-            with(ExpectedActualResolver) {
-                return descriptor.findCompatibleActualForExpected(descriptor.module).isEmpty()
-            }
+            return descriptor.findCompatibleActualsForExpected(descriptor.module).isEmpty()
         }
 
         return false

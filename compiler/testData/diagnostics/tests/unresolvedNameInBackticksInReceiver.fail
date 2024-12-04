@@ -1,0 +1,5 @@
+java.lang.IllegalArgumentException: fromIndex(0) > toIndex(-1)
+	at java.util.ArrayList.subListRangeCheck(ArrayList.java:1016)
+	at java.util.ArrayList.subList(ArrayList.java:1006)
+	at org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.quickResolveToPackage(QualifiedExpressionResolver.kt:708)
+	at org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.resolveToPackageOrClassPrefix(QualifiedExpressionResolver.kt:527)

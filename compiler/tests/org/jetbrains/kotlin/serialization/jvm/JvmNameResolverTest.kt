@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolverBase
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -32,13 +33,13 @@ class JvmNameResolverTest : KtUsefulTestCase() {
         val strings = ArrayList<String>()
 
         fun string(
-                string: String?,
-                range: Int? = null,
-                predefinedIndex: Int? = null,
-                internalString: String? = null,
-                operation: Record.Operation? = null,
-                substringIndex: List<Int>? = null,
-                replaceChar: List<Char>? = null
+            string: String?,
+            range: Int? = null,
+            predefinedIndex: Int? = null,
+            internalString: String? = null,
+            operation: Record.Operation? = null,
+            substringIndex: List<Int>? = null,
+            replaceChar: List<Char>? = null
         ) {
             types.addRecord(Record.newBuilder().apply {
                 range?.let { setRange(it) }
@@ -70,8 +71,8 @@ class JvmNameResolverTest : KtUsefulTestCase() {
 
     fun testSimpleClassId() {
         assertEquals(
-                ClassId.topLevel(FqName("foo.bar.Baz")),
-                create { string("Lfoo/bar/Baz;", operation = DESC_TO_CLASS_ID) }.getClassId(0)
+            ClassId.topLevel(FqName("foo.bar.Baz")),
+            create { string("Lfoo/bar/Baz;", operation = DESC_TO_CLASS_ID) }.getClassId(0)
         )
     }
 
@@ -81,7 +82,7 @@ class JvmNameResolverTest : KtUsefulTestCase() {
     }
 
     fun testPredefined() {
-        for ((index, predefined) in JvmNameResolver.PREDEFINED_STRINGS.withIndex()) {
+        for ((index, predefined) in JvmNameResolverBase.PREDEFINED_STRINGS.withIndex()) {
             assertEquals("Predefined string failed: $predefined (index $index)", predefined, str("ignored", predefinedIndex = index))
         }
     }

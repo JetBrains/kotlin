@@ -1,0 +1,65 @@
+sealed class PrivatePrimary {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+sealed class PrivateSecondary {
+  private constructor(i: Int) {
+    this/*PrivateSecondary*/()
+  }
+
+  protected constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+sealed class ProtectedPrimary {
+  protected constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+sealed class ProtectedSecondary {
+  protected constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  protected constructor(i: Int) {
+    this/*ProtectedSecondary*/()
+  }
+
+}
+
+sealed class UnspecifiedPrimary {
+  protected constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+sealed class UnspecifiedSecondary {
+  protected constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  protected constructor(i: Int) {
+    this/*UnspecifiedSecondary*/()
+  }
+
+}

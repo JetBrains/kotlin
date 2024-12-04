@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.idea;
 
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.psi.PsiModifierListOwner;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.application.ApplicationManager;
 
 import javax.swing.*;
 
 public abstract class KotlinIconProviderService {
     public abstract Icon getFileIcon();
-    public abstract Icon getLightVariableIcon(@NotNull PsiModifierListOwner element, int flags);
+    public abstract Icon getBuiltInFileIcon();
 
     public static class CompilerKotlinFileIconProviderService extends KotlinIconProviderService {
         @Override
@@ -22,13 +20,13 @@ public abstract class KotlinIconProviderService {
         }
 
         @Override
-        public Icon getLightVariableIcon(@NotNull PsiModifierListOwner element, int flags) {
+        public Icon getBuiltInFileIcon() {
             return null;
         }
     }
 
     public static KotlinIconProviderService getInstance() {
-        KotlinIconProviderService service = ServiceManager.getService(KotlinIconProviderService.class);
+        KotlinIconProviderService service = ApplicationManager.getApplication().getService(KotlinIconProviderService.class);
         return service != null ? service : new CompilerKotlinFileIconProviderService();
     }
 }

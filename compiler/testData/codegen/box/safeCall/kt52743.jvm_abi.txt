@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Kt52743Kt.class
+		PACKAGE METADATA
+			FUNCTION nullableFun()Ljava/lang/Object;
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* T */>
+					K2
+						<T#0 /* T */ : kotlin/Any?>

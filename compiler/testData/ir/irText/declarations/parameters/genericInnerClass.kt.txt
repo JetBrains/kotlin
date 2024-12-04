@@ -1,10 +1,4 @@
 class Outer<T1 : Any?> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   inner class Inner<T2 : Any?> {
     constructor() /* primary */ {
       super/*Any*/()
@@ -17,4 +11,11 @@ class Outer<T1 : Any?> {
 
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

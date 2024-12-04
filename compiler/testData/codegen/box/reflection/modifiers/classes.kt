@@ -7,9 +7,10 @@ import kotlin.test.assertFalse
 
 sealed class S {
     data class DataClass(val x: Int) : S()
+    data object DataObject
     inner class InnerClass
     companion object
-    object NonCompanionObject
+    object RegularObject
     fun interface FunInterface { fun invoke() }
 }
 
@@ -34,6 +35,13 @@ fun box(): String {
     assertFalse(S.DataClass::class.isFun)
     assertFalse(S.DataClass::class.isValue)
 
+    assertFalse(S.DataObject::class.isSealed)
+    assertTrue(S.DataObject::class.isData)
+    assertFalse(S.DataObject::class.isInner)
+    assertFalse(S.DataObject::class.isCompanion)
+    assertFalse(S.DataObject::class.isFun)
+    assertFalse(S.DataObject::class.isValue)
+
     assertFalse(S.InnerClass::class.isSealed)
     assertFalse(S.InnerClass::class.isData)
     assertTrue(S.InnerClass::class.isInner)
@@ -48,12 +56,12 @@ fun box(): String {
     assertFalse(S.Companion::class.isFun)
     assertFalse(S.Companion::class.isValue)
 
-    assertFalse(S.NonCompanionObject::class.isSealed)
-    assertFalse(S.NonCompanionObject::class.isData)
-    assertFalse(S.NonCompanionObject::class.isInner)
-    assertFalse(S.NonCompanionObject::class.isCompanion)
-    assertFalse(S.NonCompanionObject::class.isFun)
-    assertFalse(S.NonCompanionObject::class.isValue)
+    assertFalse(S.RegularObject::class.isSealed)
+    assertFalse(S.RegularObject::class.isData)
+    assertFalse(S.RegularObject::class.isInner)
+    assertFalse(S.RegularObject::class.isCompanion)
+    assertFalse(S.RegularObject::class.isFun)
+    assertFalse(S.RegularObject::class.isValue)
 
     assertFalse(S.FunInterface::class.isSealed)
     assertFalse(S.FunInterface::class.isData)

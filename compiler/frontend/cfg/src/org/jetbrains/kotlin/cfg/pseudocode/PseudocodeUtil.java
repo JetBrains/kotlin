@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode;
 
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.ControlFlowProcessor;
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessValueInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.KtDeclaration;
@@ -44,6 +47,11 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescripto
 public class PseudocodeUtil {
     @NotNull
     public static Pseudocode generatePseudocode(@NotNull KtDeclaration declaration, @NotNull BindingContext bindingContext) {
+        return generatePseudocode(declaration, bindingContext, LanguageVersionSettingsImpl.DEFAULT);
+    }
+
+    @NotNull
+    public static Pseudocode generatePseudocode(@NotNull KtDeclaration declaration, @NotNull BindingContext bindingContext, @NotNull LanguageVersionSettings languageVersionSettings) {
         BindingTrace mockTrace = new BindingTrace() {
             @NotNull
             @Override
@@ -88,8 +96,14 @@ public class PseudocodeUtil {
             public boolean wantsDiagnostics() {
                 return false;
             }
+
+            @Nullable
+            @Override
+            public Project getProject() {
+                return bindingContext.getProject();
+            }
         };
-        return new ControlFlowProcessor(mockTrace, null).generatePseudocode(declaration);
+        return new ControlFlowProcessor(mockTrace, languageVersionSettings).generatePseudocode(declaration);
     }
 
     @Nullable

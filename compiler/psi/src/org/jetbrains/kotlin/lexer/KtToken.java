@@ -22,7 +22,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 
 public class KtToken extends IElementType {
+    private static final int INVALID_ID = -1;
+
+    public final int tokenId;
+
+    @Deprecated
     public KtToken(@NotNull @NonNls String debugName) {
+        this(debugName, INVALID_ID);
+    }
+
+    public KtToken(@NotNull @NonNls String debugName, int tokenId) {
         super(debugName, KotlinLanguage.INSTANCE);
+        this.tokenId = tokenId;
     }
 }

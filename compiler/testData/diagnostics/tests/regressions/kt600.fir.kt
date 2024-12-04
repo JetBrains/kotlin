@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-600 Problem with 'sure' extension function type inference
 
 fun <T : Any> T?._sure() : T { if (this != null) return this else throw NullPointerException() }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Foo {
     <!UNNECESSARY_LATEINIT!>lateinit<!> var bar: String
 

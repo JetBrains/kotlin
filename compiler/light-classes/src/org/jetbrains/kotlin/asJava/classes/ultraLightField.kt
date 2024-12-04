@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -26,8 +27,8 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
@@ -66,12 +67,7 @@ internal class KtUltraLightFieldForSourceDeclaration(
 ) : KtUltraLightFieldImpl(declaration, name, containingClass, support, modifiers),
     KtLightFieldForSourceDeclarationSupport {
 
-    private val lightIdentifier = KtLightIdentifier(this, declaration)
-
-    override fun getNameIdentifier(): PsiIdentifier = lightIdentifier
-    override fun getText(): String? = kotlinOrigin.text
-    override fun getTextRange(): TextRange = kotlinOrigin.textRange
-    override fun getTextOffset(): Int = kotlinOrigin.textOffset
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, declaration)
     override fun getStartOffsetInParent(): Int = kotlinOrigin.startOffsetInParent
     override fun isWritable(): Boolean = kotlinOrigin.isWritable
     override fun getNavigationElement(): PsiElement = kotlinOrigin.navigationElement ?: this
@@ -89,8 +85,8 @@ internal open class KtUltraLightFieldImpl protected constructor(
     private val containingClass: KtLightClass,
     private val support: KtUltraLightSupport,
     modifiers: Set<String>,
-) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField,
-    KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiField> {
+) : LightFieldBuilder(name, PsiTypes.nullType(), declaration), KtLightField,
+    KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtDeclaration, PsiField> {
 
     private val modifierList by lazyPub {
         KtUltraLightFieldModifierList(support, declaration, this, modifiers)
@@ -106,6 +102,10 @@ internal open class KtUltraLightFieldImpl protected constructor(
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
+    override fun getText(): String? = kotlinOrigin.text
+    override fun getTextRange(): TextRange? = kotlinOrigin.textRange
+    override fun getTextOffset(): Int = kotlinOrigin.textOffset
+
     private val variableDescriptor: VariableDescriptor?
         get() = declaration.resolve()
             ?.let { it as? PropertyDescriptor ?: it as? ValueParameterDescriptor }
@@ -116,11 +116,14 @@ internal open class KtUltraLightFieldImpl protected constructor(
                 declaration.delegateExpression?.let {
                     LightClassGenerationSupport.getInstance(project).analyze(it).getType(it)
                 }
+
             declaration is KtObjectDeclaration ->
                 (declaration.resolve() as? ClassDescriptor)?.defaultType
+
             declaration is KtEnumEntry -> {
                 (containingClass.kotlinOrigin?.resolve() as? ClassDescriptor)?.defaultType
             }
+
             else -> {
                 declaration.getKotlinType()
             }
@@ -138,16 +141,19 @@ internal open class KtUltraLightFieldImpl protected constructor(
         get() = type
 
     private val _type: PsiType by lazyPub {
-        fun nonExistent() = JavaPsiFacade.getElementFactory(project).createTypeFromText("error.NonExistentClass", declaration)
+        fun nonExistent() = JavaPsiFacade.getElementFactory(project).createTypeFromText(
+            StandardNames.NON_EXISTENT_CLASS.asString(), declaration
+        )
 
         when {
             (declaration is KtProperty && declaration.hasDelegate()) || declaration is KtEnumEntry || declaration is KtObjectDeclaration ->
                 kotlinType?.asPsiType(support, TypeMappingMode.DEFAULT, this)
                     ?.let(TypeConversionUtil::erasure)
                     ?: nonExistent()
+
             else -> {
-                val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiType.NULL
-                val descriptor = variableDescriptor ?: return@lazyPub PsiType.NULL
+                val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiTypes.nullType()
+                val descriptor = variableDescriptor ?: return@lazyPub PsiTypes.nullType()
 
                 support.mapType(kotlinType, this) { typeMapper, sw ->
                     typeMapper.writeFieldSignature(kotlinType, descriptor, sw)
@@ -184,12 +190,10 @@ internal open class KtUltraLightFieldImpl protected constructor(
 
     override val kotlinOrigin = declaration
 
-    override val clsDelegate: PsiField get() = invalidAccess()
-
     override val lightMemberOrigin = LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER)
 
     override fun setName(@NonNls name: String): PsiElement {
-        (kotlinOrigin as? KtNamedDeclaration)?.setName(name)
+        kotlinOrigin.setName(name)
         return this
     }
 

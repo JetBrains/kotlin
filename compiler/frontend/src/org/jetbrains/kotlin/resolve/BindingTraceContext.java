@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.ImmutableMap;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.kotlin.descriptors.ValidateableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.diagnostics.BindingContextSuppressCache;
@@ -33,12 +36,16 @@ import org.jetbrains.kotlin.util.slicedMap.*;
 import java.util.Collection;
 
 public class BindingTraceContext implements BindingTrace {
+    private static final boolean VALIDATION = Boolean.parseBoolean(System.getProperty("kotlin.bindingTrace.validation"));
     // These flags are used for debugging of "Rewrite at slice..." exceptions
     /* package */ final static boolean TRACK_REWRITES = false;
     /* package */ final static boolean TRACK_WITH_STACK_TRACES = true;
 
     private final MutableSlicedMap map;
     private final MutableDiagnosticsWithSuppression mutableDiagnostics;
+    private final Project project;
+
+    private final boolean isValidationEnabled;
 
     private final BindingContext bindingContext = new CleanableBindingContext() {
         @NotNull
@@ -80,31 +87,43 @@ public class BindingTraceContext implements BindingTrace {
         public void clear() {
             map.clear();
         }
+
+        @Nullable
+        @Override
+        public Project getProject() {
+            return project;
+        }
     };
 
-    public BindingTraceContext() {
-        this(false);
+    public BindingTraceContext(Project project) {
+        this(false, project);
     }
 
-    public BindingTraceContext(boolean allowSliceRewrite) {
-        this(BindingTraceFilter.Companion.getACCEPT_ALL(), allowSliceRewrite);
+    public BindingTraceContext(boolean allowSliceRewrite, Project project) {
+        this(BindingTraceFilter.Companion.getACCEPT_ALL(), allowSliceRewrite, project);
     }
 
-    public BindingTraceContext(BindingTraceFilter filter, boolean allowSliceRewrite) {
-        this(TRACK_REWRITES && !allowSliceRewrite ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : new SlicedMapImpl(allowSliceRewrite), filter);
+    public BindingTraceContext(BindingTraceFilter filter, boolean allowSliceRewrite, Project project) {
+        this(filter, allowSliceRewrite, VALIDATION, project);
     }
 
-    private BindingTraceContext(@NotNull MutableSlicedMap map, BindingTraceFilter filter) {
+    public BindingTraceContext(BindingTraceFilter filter, boolean allowSliceRewrite, boolean isValidationEnabled, Project project) {
+        this(TRACK_REWRITES && !allowSliceRewrite ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : new SlicedMapImpl(allowSliceRewrite), filter, isValidationEnabled, project);
+    }
+
+    private BindingTraceContext(@NotNull MutableSlicedMap map, BindingTraceFilter filter, boolean isValidationEnabled, Project project) {
         this.map = map;
+        this.project = project;
         this.mutableDiagnostics =
                 filter.getIgnoreDiagnostics()
                 ? null
                 : new MutableDiagnosticsWithSuppression(new BindingContextSuppressCache(bindingContext), Diagnostics.Companion.getEMPTY());
+        this.isValidationEnabled = isValidationEnabled;
     }
 
     @TestOnly
-    public static BindingTraceContext createTraceableBindingTrace() {
-        return new BindingTraceContext(new TrackingSlicedMap(TRACK_WITH_STACK_TRACES), BindingTraceFilter.Companion.getACCEPT_ALL());
+    public static BindingTraceContext createTraceableBindingTrace(Project project) {
+        return new BindingTraceContext(new TrackingSlicedMap(TRACK_WITH_STACK_TRACES), BindingTraceFilter.Companion.getACCEPT_ALL(), VALIDATION, project);
     }
 
     @Override
@@ -113,6 +132,11 @@ public class BindingTraceContext implements BindingTrace {
             return;
         }
         mutableDiagnostics.report(diagnostic);
+    }
+
+    @Override
+    public Project getProject() {
+        return project;
     }
 
     public void clearDiagnostics() {
@@ -134,6 +158,9 @@ public class BindingTraceContext implements BindingTrace {
 
     @Override
     public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
+        if (isValidationEnabled && value instanceof ValidateableDescriptor && !ProgressManager.getInstance().isInNonCancelableSection()) {
+            ((ValidateableDescriptor) value).validate();
+        }
         map.put(slice, key, value);
     }
 

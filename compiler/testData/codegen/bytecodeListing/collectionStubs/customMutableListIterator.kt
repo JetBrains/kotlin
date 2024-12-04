@@ -1,5 +1,6 @@
 // Ensure the proper collection stubs are added, in
 // particular *not* when specialized implementations are provided.
+
 class MyList<E> : MutableList<E> {
     val elements = ArrayList<E>()
 

@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
@@ -67,13 +68,13 @@ open class StubIndexService protected constructor() {
     open fun deserializeFileStub(dataStream: StubInputStream): KotlinFileStub {
         val packageFqNameAsString = dataStream.readName()
         val isScript = dataStream.readBoolean()
-        return KotlinFileStubImpl(null, packageFqNameAsString!!, isScript)
+        return KotlinFileStubImpl(null, packageFqNameAsString!!.string, isScript)
     }
 
     companion object {
         @JvmStatic
         fun getInstance(): StubIndexService {
-            return ServiceManager.getService(StubIndexService::class.java) ?: NO_INDEX
+            return ApplicationManager.getApplication().getService(StubIndexService::class.java) ?: NO_INDEX
         }
 
         private val NO_INDEX = StubIndexService()

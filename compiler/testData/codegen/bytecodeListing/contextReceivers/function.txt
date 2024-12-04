@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'function.kt'
+    private final field c: int
+    public method <init>(): void
+    public final method getC(): int
+}
+
+@kotlin.Metadata
+public final class FunctionKt {
+    // source: 'function.kt'
+    public final static method bar(@org.jetbrains.annotations.NotNull p0: C): void
+    public final static method foo(@org.jetbrains.annotations.NotNull p0: C): void
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // Nothing can be cast to Nothing
 fun foo(x: String) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -9,9 +10,6 @@ public class JavaClass {
 }
 
 // FILE: test.kt
-
-package some
-
 fun test(jc: JavaClass) {
     jc.field
 }

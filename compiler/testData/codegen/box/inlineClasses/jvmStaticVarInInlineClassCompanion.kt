@@ -1,9 +1,10 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// LANGUAGE: +ValueClasses
 
 // FILE: test.kt
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+@JvmInline
 value class R(private val r: Int) {
 
     companion object {

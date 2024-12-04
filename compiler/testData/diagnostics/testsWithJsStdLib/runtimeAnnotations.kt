@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// DIAGNOSTICS: +RUNTIME_ANNOTATION_NOT_SUPPORTED
 @Retention(AnnotationRetention.BINARY)
 annotation class X
 
@@ -27,6 +29,11 @@ external class B {
     <!RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION!>@get:Y<!>
     val r: Int
 }
+
+typealias TY = Y
+
+<!RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION!>@TY<!>
+external class BB
 
 @X
 class C {

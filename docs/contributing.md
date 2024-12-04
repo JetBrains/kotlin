@@ -43,6 +43,8 @@ Some of the code in the standard library is created by generating code from temp
 
 Also the [JavaScript back-end](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) could really use your help. See the [JavaScript contribution section](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) for more details.
 
+You can also [contribute to Kotlin/Native](../kotlin-native/README.md).
+
 If you want to contribute a new language feature, it is important to discuss it through a [KEEP](https://github.com/Kotlin/KEEP) first and get an approval from the language designers. This way you'll make sure your work will be in line with the overall language evolution plan and no other design decisions or considerations will block its acceptance.
 
 ## Submitting patches
@@ -57,6 +59,35 @@ git config --global pull.rebase true
 ```
 This will avoid your local repo having too many merge commits
 which will help keep your pull request simple and easy to apply.
+
+## Rules for commit messages
+
+Most of these rules are originated from the [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/) 
+article, and it's highly recommended to read it.
+
+### Rules on commit messages' content
+
+1. Use the body to explain what and why vs. how
+   * Please make an extra effort to explain why changes are needed for every non-trivial modification.
+2. Significant commits must mention relevant [YouTrack](https://youtrack.jetbrains.com/issues/KT) issues in their messages
+3. Commit changes together with the corresponding tests, unless the resulting commit becomes too unwieldy to grasp
+4. Try to avoid commits like *"Fixes after review"* whenever it's possible and squash them with meaningful ones instead
+5. Keep the subject (first line of the commit message) clean and readable. All additional information and directives for external tools 
+should be moved to the message body.
+6. If you mention “*^[KTIJ-235](https://youtrack.jetbrains.com/issue/KTIJ-235) Fixed*” in the message body - then the VCS integration will 
+add *Fix in Builds* field to the issue in the YouTrack and automatically mark issue as fixed. For details see 
+[YouTrack Integrations](https://www.jetbrains.com/youtrack/features/integrations.html) and 
+[Apply Commands in VCS Commits](https://www.jetbrains.com/help/youtrack/server/Apply-Commands-in-VCS-Commits.html).
+
+### Rules on commit messages' style/formatting
+
+1. Separate subject from body with a blank line
+2. Capitalize the subject line
+3. Do not end the subject line with a period
+4. Use the imperative mood in the subject line
+5. Limit the commit messages lines to 72 characters
+   * Use “Commit Message Inspections” in IntelliJ IDE *Settings -> Version Control -> Commit*
+   * vim: ```autocmd FileType gitcommit setlocal textwidth=72```
 
 ## Checklist
 

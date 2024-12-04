@@ -1,8 +1,8 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+@JvmInline
 value class Str(val s: String)
 
 @JvmOverloads

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun none() {}
 
@@ -7,10 +8,10 @@ fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <!RETURN_TYPE_MISMATCH!>1<!>}
 fun unitUnitReturn() : Unit {return Unit}
-fun test1() : Any = {<!RETURN_NOT_ALLOWED!>return<!>}
+fun test1() : Any = {<!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return<!>}
 fun test2() : Any = a@ {return@a 1}
-fun test3() : Any { return }
-fun test4(): ()-> Unit = { <!RETURN_NOT_ALLOWED!>return@test4<!> }
+fun test3() : Any { <!RETURN_TYPE_MISMATCH!>return<!> }
+fun test4(): ()-> Unit = { <!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return@test4<!> }
 fun test5(): Any = l@{ return@l }
 fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return<!> 1}
 
@@ -72,7 +73,7 @@ fun blockReturnValueTypeMatch2() : Int {
     return <!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) 1
 }
 fun blockReturnValueTypeMatch3() : Int {
-    return <!RETURN_TYPE_MISMATCH!>if (1 > 2) else 1<!>
+    return <!RETURN_TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) else 1<!>
 }
 fun blockReturnValueTypeMatch4() : Int {
     if (1 > 2)
@@ -136,7 +137,7 @@ fun blockNoReturnIfUnitInOneBranch(): Int {
 fun nonBlockReturnIfEmptyIf(): Int = <!RETURN_TYPE_MISMATCH!>if (1 < 2) {} else {}<!>
 fun nonBlockNoReturnIfUnitInOneBranch(): Int = <!RETURN_TYPE_MISMATCH!>if (1 < 2) {} else 2<!>
 
-val a = <!RETURN_NOT_ALLOWED!>return<!> 1
+val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>a<!> = <!RETURN_NOT_ALLOWED!>return<!> 1
 
 class A() {
 }
@@ -152,12 +153,14 @@ fun illegalIfBlock(): Boolean {
     else { return <!RETURN_TYPE_MISMATCH!>1<!> }
 }
 fun illegalReturnIf(): Char {
-    return if (1 < 2) 'a' else { 1 }
+    return <!RETURN_TYPE_MISMATCH!>if (1 < 2) 'a' else { 1 }<!>
 }
 
 fun returnNothing(): Nothing {
-    throw 1
+    throw <!TYPE_MISMATCH!>1<!>
 }
+fun returnNothingEmpty(): Nothing {
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun f(): Int {
     if (1 < 2) { return 1 } else returnNothing()
 }

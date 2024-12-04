@@ -5,385 +5,399 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.incapt.*
-import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Assume
-import org.junit.Test
+import org.gradle.api.JavaVersion
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.incapt.IncrementalAggregatingProcessor
+import org.jetbrains.kotlin.gradle.incapt.IncrementalBinaryIsolatingProcessor
+import org.jetbrains.kotlin.gradle.incapt.IncrementalIsolatingProcessor
+import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
 import java.io.File
-import kotlin.test.assertFalse
+import kotlin.io.path.createDirectories
+import kotlin.io.path.readLines
+import kotlin.io.path.writeText
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
+@DisplayName("Kapt incremental tests with aggregating apt")
+open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
+    override fun TestProject.customizeProject() {
+        forceK1Kapt()
+    }
 
-    override fun getProject() =
-        Project(
-            "kaptIncrementalCompilationProject",
-            GradleVersionRequired.None
-        ).apply {
-            setupIncrementalAptProject("AGGREGATING")
-        }
-
-    override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(
-            incremental = true,
-            kaptOptions = KaptOptions(
-                verbose = true,
-                useWorkers = true,
-                incrementalKapt = true,
-                includeCompileClasspath = false
-            )
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        incremental = true,
+        kaptOptions = super.defaultBuildOptions.kaptOptions!!.copy(
+            verbose = true,
+            incrementalKapt = true,
+            includeCompileClasspath = false
         )
+    )
 
-    private fun jdk9Options(javaHome: File): BuildOptions {
-        Assume.assumeTrue("JDK 9 isn't available", javaHome.isDirectory)
-        return defaultBuildOptions().copy(javaHome = javaHome)
-    }
-
-    @Test
-    fun testIncrementalChanges() {
-        val project = getProject()
-
-        project.build("clean", "build") {
-            assertSuccessful()
+    override fun KGPBaseTest.kaptProject(
+        gradleVersion: GradleVersion,
+        buildOptions: BuildOptions,
+        buildJdk: File?,
+        test: TestProject.() -> Unit
+    ): TestProject =
+        project(
+            PROJECT_NAME,
+            gradleVersion,
+            buildOptions,
+            buildJdk = buildJdk
+        ) {
+            setupIncrementalAptProject("AGGREGATING")
+            test(this)
         }
 
-        project.projectFile("useB.kt").modify { current -> "$current\nfun otherFunction() {}" }
-        project.build("build") {
-            assertSuccessful()
+    @DisplayName("On incremental changes")
+    @GradleTest
+    fun testIncrementalChanges(gradleVersion: GradleVersion) {
+        kaptProject(gradleVersion) {
+            build("clean", "assemble")
 
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ), getProcessedSources(output)
-            )
-        }
+            javaSourcesDir()
+                .resolve("bar/useB.kt")
+                .modify { current -> "$current\nfun otherFunction() {}" }
 
-        project.projectFile("JavaClass.java").modify { current ->
-            val lastBrace = current.lastIndexOf("}")
-            current.substring(0, lastBrace) + "private void anotherFun() {}\n }"
-        }
-        project.build("build") {
-            assertSuccessful()
-            assertEquals(
-                setOf(
-                    project.projectFile("JavaClass.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ),
-                getProcessedSources(output)
-            )
-        }
-    }
+            build("assemble") {
+                assertEquals(
+                    listOf(
+                        "$KAPT3_STUBS_PATH/bar/UseBKt.java",
+                        "$KAPT3_STUBS_PATH/bar/B.java",
+                        "$KAPT3_STUBS_PATH/baz/UtilKt.java",
+                        "$KAPT3_STUBS_PATH/foo/A.java",
+                        "$KAPT3_STUBS_PATH/jvmName/Math.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
+            }
 
-    @Test
-    fun testIncrementalChangesWithJdk9() {
-        val javaHome = File(System.getProperty("jdk9Home")!!)
-        val options = jdk9Options(javaHome)
-        val project = getProject()
-
-        project.build("clean", "build", options = options) {
-            assertSuccessful()
-        }
-
-        project.projectFile("useB.kt").modify { current -> "$current\nfun otherFunction() {}" }
-        project.build("build", options = options) {
-            assertSuccessful()
-
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ), getProcessedSources(output)
-            )
+            javaSourcesDir().resolve("foo/JavaClass.java").modify { current ->
+                val lastBrace = current.lastIndexOf("}")
+                current.substring(0, lastBrace) + "private void anotherFun() {}\n }"
+            }
+            build("assemble") {
+                assertEquals(
+                    setOf(
+                        "src/main/java/foo/JavaClass.java",
+                        "$KAPT3_STUBS_PATH/bar/UseBKt.java",
+                        "$KAPT3_STUBS_PATH/bar/B.java",
+                        "$KAPT3_STUBS_PATH/baz/UtilKt.java",
+                        "$KAPT3_STUBS_PATH/foo/A.java",
+                        "$KAPT3_STUBS_PATH/jvmName/Math.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
+            }
         }
     }
 
-    @Test
-    fun testClasspathChanges() {
-        val project = Project(
-            "incrementalMultiproject",
-            GradleVersionRequired.None
-        ).apply {
-            setupWorkingDir()
+    @DisplayName("Incremental changes in JDK9+")
+    @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @GradleWithJdkTest
+    fun testIncrementalChangesWithJdk9(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
+        kaptProject(gradleVersion, buildJdk = jdk.location) {
+            build("clean", "assemble")
+
+            javaSourcesDir().resolve("bar/useB.kt").modify { current -> "$current\nfun otherFunction() {}" }
+            build("assemble") {
+                assertEquals(
+                    setOf(
+                        "$KAPT3_STUBS_PATH/bar/UseBKt.java",
+                        "$KAPT3_STUBS_PATH/bar/B.java",
+                        "$KAPT3_STUBS_PATH/baz/UtilKt.java",
+                        "$KAPT3_STUBS_PATH/foo/A.java",
+                        "$KAPT3_STUBS_PATH/jvmName/Math.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
+            }
+        }
+    }
+
+    @DisplayName("Changes in classpath triggers incremental compilation")
+    @GradleTest
+    fun testClasspathChanges(gradleVersion: GradleVersion) {
+        project("incrementalMultiproject", gradleVersion) {
             val processorPath = generateProcessor("AGGREGATING" to IncrementalProcessor::class.java)
 
-            projectDir.resolve("app/build.gradle").appendText(
+            subProject("app").buildGradle.modify {
+                it
+                    .replace("// kapt-plugin marker", "id 'org.jetbrains.kotlin.kapt'")
+                    .plus(
+                        """
+                        
+                        dependencies {
+                            implementation "org.jetbrains.kotlin:kotlin-stdlib:${'$'}kotlin_version"
+                            kapt files("${processorPath.invariantSeparatorsPath}")
+                        }
+                        """.trimIndent()
+                    )
+            }
+
+            subProject("lib").buildGradle.append(
                 """
 
-                    apply plugin: "kotlin-kapt"
                 dependencies {
-                  implementation "org.jetbrains.kotlin:kotlin-stdlib:${'$'}kotlin_version"
-                  kapt files("${processorPath.invariantSeparatorsPath}")
+                    implementation "org.jetbrains.kotlin:kotlin-stdlib:${'$'}kotlin_version"
                 }
-            """.trimIndent()
+                """.trimIndent()
             )
 
-            projectDir.resolve("lib/build.gradle").appendText(
-                """
+            build("clean", ":app:assemble")
 
-                dependencies {
-                  implementation "org.jetbrains.kotlin:kotlin-stdlib:${'$'}kotlin_version"
-                }
-            """.trimIndent()
-            )
-        }
+            val aKtSourceFile = subProject("lib").kotlinSourcesDir().resolve("bar/A.kt")
+            aKtSourceFile.modify { current ->
+                val lastBrace = current.lastIndexOf("}")
+                current.substring(0, lastBrace) + "fun anotherFun() {}\n }"
+            }
 
-        project.build("clean", ":app:build") {
-            assertSuccessful()
-        }
+            build("assemble") {
+                assertEquals(
+                    listOf(
+                        "app/$KAPT3_STUBS_PATH/foo/AA.java",
+                        "app/$KAPT3_STUBS_PATH/foo/AAA.java",
+                        "app/$KAPT3_STUBS_PATH/foo/BB.java",
+                        "app/$KAPT3_STUBS_PATH/foo/FooUseAKt.java",
+                        "app/$KAPT3_STUBS_PATH/foo/FooUseBKt.java",
+                        "app/$KAPT3_STUBS_PATH/foo/FooUseAAKt.java",
+                        "app/$KAPT3_STUBS_PATH/foo/FooUseBBKt.java",
+                        "app/$KAPT3_STUBS_PATH/error/NonExistentClass.java"
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
+            }
 
-        project.projectFile("A.kt").modify { current ->
-            val lastBrace = current.lastIndexOf("}")
-            current.substring(0, lastBrace) + "fun anotherFun() {}\n }"
-        }
-        project.build("build") {
-            assertSuccessful()
-
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/AA.java").canonicalPath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/AAA.java").canonicalPath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/BB.java").canonicalPath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAKt.java").canonicalPath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBKt.java").canonicalPath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseAAKt.java").canonicalPath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/foo/FooUseBBKt.java").canonicalPath,
-                    fileInWorkingDir("app/build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-
-                ), getProcessedSources(output)
-            )
-        }
-
-        project.projectFile("A.kt").modify { current ->
-            val lastBrace = current.lastIndexOf("}")
-            current.substring(0, lastBrace) + "private fun privateFunction() {}\n }"
-        }
-        project.build("build") {
-            assertSuccessful()
-            assertTrue(output.contains("Skipping annotation processing as all sources are up-to-date."))
+            aKtSourceFile.modify { current ->
+                val lastBrace = current.lastIndexOf("}")
+                current.substring(0, lastBrace) + "private fun privateFunction() {}\n }"
+            }
+            build("assemble") {
+                assertOutputContains("Skipping annotation processing as all sources are up-to-date.")
+            }
         }
     }
 
-    @Test
-    fun testIncompatibleClasspathChanges() {
-        val project = getProject()
-        project.projectFile("useB.kt").modify { current ->
-            current + """
-                
+    @DisplayName("Should clean previously generated files on incompatible classpath changes")
+    @GradleTest
+    fun testIncompatibleClasspathChanges(gradleVersion: GradleVersion) {
+        kaptProject(gradleVersion) {
+            val useBSourceFile = javaSourcesDir().resolve("bar/useB.kt")
+            useBSourceFile.modify { current ->
+                current + """
+
                 @example.ExampleAnnotation
                 fun addedFunctionB() = ""
-            """.trimIndent()
-        }
-        project.build("clean", "build") {
-            assertSuccessful()
-        }
-
-        project.projectFile("useB.kt").modify { current ->
-            current.replace("fun addedFunctionB", "fun renamedFunctionB")
-        }
-        project.gradleBuildScript().appendText("""
-            
-            dependencies {
-                implementation 'com.google.guava:guava:12.0'
+                """.trimIndent()
             }
-        """.trimIndent())
-        project.build("build") {
-            assertSuccessful()
 
-            assertFalse(
-                fileInWorkingDir("build/generated/source/kapt/main/bar/AddedFunctionBGenerated.java").exists(),
-                "Generated file should be deleted for renamed function when classpath changes."
+            build("clean", "assemble")
+
+            useBSourceFile.modify { current ->
+                current.replace("fun addedFunctionB", "fun renamedFunctionB")
+            }
+
+            buildGradle.append(
+                """
+
+                dependencies {
+                    implementation 'com.google.guava:guava:12.0'
+                }
+                """.trimIndent()
             )
+            build("assemble") {
+                // Generated file should be deleted for renamed function when classpath changes
+                assertFileInProjectNotExists("build/generated/source/kapt/main/bar/AddedFunctionBGenerated.java")
+            }
         }
     }
 
-    @Test
-    fun testIncrementalAggregatingChanges() {
-        doIncrementalAggregatingChanges()
+    @DisplayName("Incremental aggregating changes")
+    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11])
+    @GradleWithJdkTest
+    fun testIncrementalAggregatingChanges(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
+        doIncrementalAggregatingChanges(gradleVersion, jdk)
     }
 
-    @Test
-    fun testIncrementalAggregatingChangesWithJdk9() {
-        val javaHome = File(System.getProperty("jdk9Home")!!)
-        doIncrementalAggregatingChanges(buildOptions = jdk9Options(javaHome))
+    @DisplayName("Incremental binary aggregating changes")
+    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11, JavaVersion.VERSION_17, JavaVersion.VERSION_21])
+    @GradleWithJdkTest
+    fun testIncrementalBinaryAggregatingChanges(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
+        doIncrementalAggregatingChanges(
+            gradleVersion,
+            jdk,
+            true
+        )
     }
 
-    @Test
-    fun testIncrementalBinaryAggregatingChanges() {
-        doIncrementalAggregatingChanges(true)
-    }
-
-    @Test
-    fun testIncrementalBinaryAggregatingChangesWithJdk9() {
-        val javaHome = File(System.getProperty("jdk9Home")!!)
-        val options = jdk9Options(javaHome)
-        doIncrementalAggregatingChanges(true, options)
-    }
-
-    private fun CompiledProject.checkAggregatingResource(check: (List<String>) -> Unit) {
+    private fun TestProject.checkAggregatingResource(check: (List<String>) -> Unit) {
         val aggregatingResource = "build/tmp/kapt3/classes/main/generated.txt"
-        assertFileExists(aggregatingResource)
-        val lines = fileInWorkingDir(aggregatingResource).readLines()
+        assertFileInProjectExists(aggregatingResource)
+        val lines = projectPath.resolve(aggregatingResource).readLines()
         check(lines)
     }
 
-    fun doIncrementalAggregatingChanges(isBinary: Boolean = false, buildOptions: BuildOptions = defaultBuildOptions()) {
-        val project = Project(
+    private fun doIncrementalAggregatingChanges(
+        gradleVersion: GradleVersion,
+        jdk: JdkVersions.ProvidedJdk,
+        isBinary: Boolean = false,
+    ) {
+        project(
             "kaptIncrementalAggregatingProcessorProject",
-            GradleVersionRequired.None
-        ).apply {
+            gradleVersion,
+            buildJdk = jdk.location,
+        ) {
             setupIncrementalAptProject(
                 "ISOLATING" to if (isBinary) IncrementalBinaryIsolatingProcessor::class.java else IncrementalIsolatingProcessor::class.java,
                 "AGGREGATING" to IncrementalAggregatingProcessor::class.java
             )
-        }
 
-        project.build("clean", "build", options = buildOptions) {
-            assertSuccessful()
+            build("assemble") {
+                assertEquals(
+                    listOf(
+                        "$KAPT3_STUBS_PATH/bar/WithAnnotation.java",
+                        "$KAPT3_STUBS_PATH/bar/noAnnotations.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
 
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/WithAnnotation.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/noAnnotations.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ), getProcessedSources(output)
-            )
-
-            checkAggregatingResource { lines ->
-                assertEquals(1, lines.size)
-                assertTrue(lines.contains("WithAnnotationGenerated"))
+                checkAggregatingResource { lines ->
+                    assertEquals(1, lines.size)
+                    assertTrue(lines.contains("WithAnnotationGenerated"))
+                }
             }
-        }
 
-        //change file without annotations
-        project.projectFile("noAnnotations.kt").modify { current -> "$current\nfun otherFunction() {}" }
+            //change file without annotations
+            val noAnnotationsSourceFile = javaSourcesDir().resolve("bar/noAnnotations.kt")
+            noAnnotationsSourceFile.modify { current -> "$current\nfun otherFunction() {}" }
 
-        project.build("build", options = buildOptions) {
-            assertSuccessful()
+            build("assemble") {
+                assertEquals(
+                    listOfNotNull(
+                        "$KAPT3_STUBS_PATH/bar/NoAnnotationsKt.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java",
+                        "build/generated/source/kapt/main/bar/WithAnnotationGenerated.java".takeUnless { isBinary },
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
 
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/NoAnnotationsKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
-                    fileInWorkingDir("build/generated/source/kapt/main/bar/WithAnnotationGenerated.java").canonicalPath.takeUnless { isBinary },
-                ).filterNotNull().toSet(), getProcessedSources(output)
-            )
-
-            checkAggregatingResource { lines ->
-                assertEquals(1, lines.size)
-                assertTrue(lines.contains("WithAnnotationGenerated"))
+                checkAggregatingResource { lines ->
+                    assertEquals(1, lines.size)
+                    assertTrue(lines.contains("WithAnnotationGenerated"))
+                }
             }
-        }
 
-        //add new file with annotations
-        val newFile = File(project.projectDir, "src/main/java/baz/BazClass.kt")
-        newFile.parentFile.mkdirs()
-        newFile.createNewFile()
-        project.projectFile("BazClass.kt").modify {
-            """
+            //add new file with annotations
+            val newBazClass = javaSourcesDir().resolve("baz/BazClass.kt").also {
+                it.parent.createDirectories()
+            }
+            newBazClass.writeText(
+                """
                 package baz
 
                 @example.ExampleAnnotation
                 class BazClass() {}
-            """.trimIndent()
-        }
-        project.build("build", options = buildOptions) {
-            assertSuccessful()
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/BazClass.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
-                    fileInWorkingDir("build/generated/source/kapt/main/bar/WithAnnotationGenerated.java").canonicalPath.takeUnless { isBinary },
-                ).filterNotNull().toSet(), getProcessedSources(output)
+                """.trimIndent()
             )
 
-            checkAggregatingResource { lines ->
-                assertEquals(2, lines.size)
-                assertTrue(lines.contains("WithAnnotationGenerated"))
-                assertTrue(lines.contains("BazClassGenerated"))
-            }
-        }
+            build("assemble") {
+                assertEquals(
+                    listOfNotNull(
+                        "$KAPT3_STUBS_PATH/baz/BazClass.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java",
+                        "build/generated/source/kapt/main/bar/WithAnnotationGenerated.java".takeUnless { isBinary },
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
 
-        //move annotation to nested class
-        project.projectFile("BazClass.kt").modify {
-            """
+                checkAggregatingResource { lines ->
+                    assertEquals(2, lines.size)
+                    assertTrue(lines.contains("WithAnnotationGenerated"))
+                    assertTrue(lines.contains("BazClassGenerated"))
+                }
+            }
+
+            //move annotation to nested class
+            newBazClass.modify {
+                """
                 package baz
 
                 class BazClass() {
                     @example.ExampleAnnotation
-                    class BazNested {}                 
+                    class BazNested {}
                 }
-            """.trimIndent()
-        }
-        project.build("build", options = buildOptions) {
-            assertSuccessful()
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/BazClass.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
-                    fileInWorkingDir("build/generated/source/kapt/main/bar/WithAnnotationGenerated.java").canonicalPath.takeUnless { isBinary },
-                ).filterNotNull().toSet(), getProcessedSources(output)
-            )
-
-            checkAggregatingResource { lines ->
-                assertEquals(2, lines.size)
-                assertTrue(lines.contains("WithAnnotationGenerated"))
-                assertTrue(lines.contains("BazNestedGenerated"))
+                """.trimIndent()
             }
-        }
 
-        //change file without annotations to check that nested class is aggregated
-        project.projectFile("noAnnotations.kt").modify { current -> "$current\nfun otherFunction2() {}" }
+            build("assemble") {
+                assertEquals(
+                    listOfNotNull(
+                        "$KAPT3_STUBS_PATH/baz/BazClass.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java",
+                        "build/generated/source/kapt/main/bar/WithAnnotationGenerated.java".takeUnless { isBinary },
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
 
-        project.build("build", options = buildOptions) {
-            assertSuccessful()
-
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/NoAnnotationsKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
-                    fileInWorkingDir("build/generated/source/kapt/main/bar/WithAnnotationGenerated.java").canonicalPath.takeUnless { isBinary },
-                    fileInWorkingDir("build/generated/source/kapt/main/BazClass/BazNestedGenerated.java").canonicalPath.takeUnless { isBinary },
-                ).filterNotNull().toSet(), getProcessedSources(output)
-            )
-
-            checkAggregatingResource { lines ->
-                assertEquals(2, lines.size)
-                assertTrue(lines.contains("WithAnnotationGenerated"))
-                assertTrue(lines.contains("BazNestedGenerated"))
+                checkAggregatingResource { lines ->
+                    assertEquals(2, lines.size)
+                    assertTrue(lines.contains("WithAnnotationGenerated"))
+                    assertTrue(lines.contains("BazNestedGenerated"))
+                }
             }
-        }
 
-        // make sure that changing the origin of isolating that produced
-        project.projectFile("withAnnotation.kt").modify { current -> current.substringBeforeLast("}") + "\nfun otherFunction() {} }" }
-        project.build("build", options = buildOptions) {
-            assertSuccessful()
+            //change file without annotations to check that nested class is aggregated
+            noAnnotationsSourceFile.modify { current -> "$current\nfun otherFunction2() {}" }
 
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/WithAnnotation.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
-                    fileInWorkingDir("build/generated/source/kapt/main/BazClass/BazNestedGenerated.java").canonicalPath.takeUnless { isBinary },
-                ).filterNotNull().toSet(), getProcessedSources(output)
-            )
+            build("assemble") {
+                assertEquals(
+                    listOfNotNull(
+                        "$KAPT3_STUBS_PATH/bar/NoAnnotationsKt.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java",
+                        "build/generated/source/kapt/main/bar/WithAnnotationGenerated.java".takeUnless { isBinary },
+                        "build/generated/source/kapt/main/BazClass/BazNestedGenerated.java".takeUnless { isBinary },
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
 
-            checkAggregatingResource { lines ->
-                assertEquals(2, lines.size)
-                assertTrue(lines.contains("WithAnnotationGenerated"))
-                assertTrue(lines.contains("BazNestedGenerated"))
+                checkAggregatingResource { lines ->
+                    assertEquals(2, lines.size)
+                    assertTrue(lines.contains("WithAnnotationGenerated"))
+                    assertTrue(lines.contains("BazNestedGenerated"))
+                }
+            }
+
+            // make sure that changing the origin of isolating that produced
+            javaSourcesDir().resolve("bar/withAnnotation.kt")
+                .modify { current -> current.substringBeforeLast("}") + "\nfun otherFunction() {} }" }
+            build("assemble") {
+                assertEquals(
+                    listOfNotNull(
+                        "$KAPT3_STUBS_PATH/bar/WithAnnotation.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java",
+                        "build/generated/source/kapt/main/BazClass/BazNestedGenerated.java".takeUnless { isBinary },
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
+
+                checkAggregatingResource { lines ->
+                    assertEquals(2, lines.size)
+                    assertTrue(lines.contains("WithAnnotationGenerated"))
+                    assertTrue(lines.contains("BazNestedGenerated"))
+                }
             }
         }
     }
+}
 
+
+@DisplayName("Kapt incremental tests with aggregating apt with disabled precise compilation outputs backup")
+class KaptIncrementalWithAggregatingAptAndWithoutPreciseBackup : KaptIncrementalWithAggregatingApt() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }

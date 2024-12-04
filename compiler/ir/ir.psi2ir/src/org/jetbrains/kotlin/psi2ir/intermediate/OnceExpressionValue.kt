@@ -19,16 +19,15 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.types.KotlinType
 
-abstract class ExpressionValue(override val type: IrType) : IntermediateValue
+internal abstract class ExpressionValue(override val type: IrType) : IntermediateValue
 
-inline fun generateExpressionValue(type: IrType, crossinline generate: () -> IrExpression) =
+internal inline fun generateExpressionValue(type: IrType, crossinline generate: () -> IrExpression) =
     object : ExpressionValue(type) {
         override fun load(): IrExpression = generate()
     }
 
-class OnceExpressionValue(val irExpression: IrExpression) : LValue, AssignmentReceiver {
+internal class OnceExpressionValue(val irExpression: IrExpression) : LValue, AssignmentReceiver {
     private var instantiated = false
 
     override fun load(): IrExpression {

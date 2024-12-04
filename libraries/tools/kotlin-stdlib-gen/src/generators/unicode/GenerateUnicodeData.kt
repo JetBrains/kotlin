@@ -14,9 +14,7 @@ import generators.unicode.mappings.string.StringLowercaseGenerator
 import generators.unicode.mappings.string.StringUppercaseGenerator
 import generators.unicode.ranges.OtherLowercaseRangesGenerator
 import generators.unicode.ranges.OtherUppercaseRangesGenerator
-import templates.COPYRIGHT_NOTICE
 import templates.KotlinTarget
-import templates.readCopyrightNoticeFromProfile
 import java.io.File
 import java.net.URL
 import kotlin.system.exitProcess
@@ -100,10 +98,10 @@ fun main(args: Array<String>) {
         oneToManyMappingsGenerators.add(lowercase)
     }
 
-    val categoryTestGenerator: CharCategoryTestGenerator
+    val stringUppercaseGenerators = mutableListOf<StringUppercaseGenerator>()
+    val stringLowercaseGenerators = mutableListOf<StringLowercaseGenerator>()
 
-    val stringUppercaseGenerator: StringUppercaseGenerator
-    val stringLowercaseGenerator: StringLowercaseGenerator
+    val categoryTestGenerator: CharCategoryTestGenerator
 
     val stringCasingTestGenerator: StringCasingTestGenerator
 
@@ -115,24 +113,26 @@ fun main(args: Array<String>) {
             categoryTestGenerator = CharCategoryTestGenerator(categoryTestFile)
 
             val commonGeneratedDir = baseDir.resolve("libraries/stdlib/common/src/generated")
-            oneToManyMappingsGenerators.add(OneToManyMappingsGenerator.forTitlecase(commonGeneratedDir.resolve("_OneToManyTitlecaseMappings.kt"), bmpUnicodeDataLines))
+            oneToManyMappingsGenerators.add(
+                OneToManyMappingsGenerator.forTitlecase(commonGeneratedDir.resolve("_OneToManyTitlecaseMappings.kt"), bmpUnicodeDataLines)
+            )
 
             val jsGeneratedDir = baseDir.resolve("libraries/stdlib/js/src/generated/")
             addRangesGenerators(jsGeneratedDir, KotlinTarget.JS)
             oneToOneMappingsGenerators.add(MappingsGenerator.forTitlecase(jsGeneratedDir.resolve("_TitlecaseMappings.kt")))
 
-            val jsIrGeneratedDir = baseDir.resolve("libraries/stdlib/js-ir/src/generated/")
-            addRangesGenerators(jsIrGeneratedDir, KotlinTarget.JS_IR)
-            oneToOneMappingsGenerators.add(MappingsGenerator.forTitlecase(jsIrGeneratedDir.resolve("_TitlecaseMappings.kt")))
+            val nativeWasmGeneratedDir = baseDir.resolve("libraries/stdlib/native-wasm/src/generated/")
+            addRangesGenerators(nativeWasmGeneratedDir, KotlinTarget.Native)
+            addOneToOneMappingsGenerators(nativeWasmGeneratedDir, KotlinTarget.Native)
+            addOneToManyMappingsGenerators(nativeWasmGeneratedDir, KotlinTarget.Native)
+            stringUppercaseGenerators.add(
+                StringUppercaseGenerator(nativeWasmGeneratedDir.resolve("_StringUppercase.kt"), unicodeDataLines, KotlinTarget.Native)
+            )
+            stringLowercaseGenerators.add(
+                StringLowercaseGenerator(nativeWasmGeneratedDir.resolve("_StringLowercase.kt"), unicodeDataLines, KotlinTarget.Native)
+            )
 
-            val nativeGeneratedDir = baseDir.resolve("kotlin-native/runtime/src/main/kotlin/generated/")
-            addRangesGenerators(nativeGeneratedDir, KotlinTarget.Native)
-            addOneToOneMappingsGenerators(nativeGeneratedDir, KotlinTarget.Native)
-            addOneToManyMappingsGenerators(nativeGeneratedDir, KotlinTarget.Native)
-            stringUppercaseGenerator = StringUppercaseGenerator(nativeGeneratedDir.resolve("_StringUppercase.kt"), unicodeDataLines)
-            stringLowercaseGenerator = StringLowercaseGenerator(nativeGeneratedDir.resolve("_StringLowercase.kt"), unicodeDataLines)
-
-            val nativeTestDir = baseDir.resolve("kotlin-native/backend.native/tests/stdlib_external/text")
+            val nativeTestDir = baseDir.resolve("kotlin-native/runtime/test/text")
             stringCasingTestGenerator = StringCasingTestGenerator(nativeTestDir)
 
             // For debugging. To see the file content
@@ -153,9 +153,6 @@ fun main(args: Array<String>) {
             exitProcess(1)
         }
     }
-
-    COPYRIGHT_NOTICE =
-        readCopyrightNoticeFromProfile { Thread.currentThread().contextClassLoader.getResourceAsStream("apache.xml").reader() }
 
     categoryRangesGenerators.forEach {
         bmpUnicodeDataLines.forEach { line -> it.appendLine(line) }
@@ -186,15 +183,17 @@ fun main(args: Array<String>) {
         it.generate()
     }
 
-    stringUppercaseGenerator.let {
+    stringUppercaseGenerators.forEach {
         specialCasingLines.forEach { line -> it.appendSpecialCasingLine(line) }
         it.generate()
     }
-    stringLowercaseGenerator.let {
+
+    stringLowercaseGenerators.forEach {
         specialCasingLines.forEach { line -> it.appendSpecialCasingLine(line) }
         wordBreakPropertyLines.forEach { line -> it.appendWordBreakPropertyLine(line) }
         it.generate()
     }
+
     stringCasingTestGenerator.let {
         derivedCorePropertiesLines.forEach { line -> it.appendDerivedCorePropertiesLine(line) }
         it.generate()

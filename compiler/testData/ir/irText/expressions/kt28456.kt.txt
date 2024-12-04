@@ -14,26 +14,27 @@ operator fun A.get(vararg xs: Int): Int {
 operator fun A.set(i: Int, j: Int, v: Int) {
 }
 
-fun testSimpleAssignment(a: A) {
-  a.set(i = 1, j = 2, v = 0)
+fun testCompoundAssignment(a: A) {
+  { // BLOCK
+    val tmp_0: A = a
+    val tmp_1: Int = 1
+    val tmp_2: Int = 2
+    tmp_0.set(i = tmp_1, j = tmp_2, v = tmp_0.get(xs = [tmp_1, tmp_2]).plus(other = 10))
+  }
 }
 
 fun testPostfixIncrement(a: A): Int {
   return { // BLOCK
-    val tmp0_array: A = a
-    val tmp1_index0: Int = 1
-    val tmp2_index1: Int = 2
-    val tmp3: Int = tmp0_array.get(xs = [tmp1_index0, tmp2_index1])
-    tmp0_array.set(i = tmp1_index0, j = tmp2_index1, v = tmp3.inc())
-    tmp3
+    val tmp_3: A = a
+    val tmp_4: Int = 1
+    val tmp_5: Int = 2
+    val tmp_6: Int = tmp_3.get(xs = [tmp_4, tmp_5])
+    tmp_3.set(i = tmp_4, j = tmp_5, v = tmp_6.inc())
+    tmp_6
   }
 }
 
-fun testCompoundAssignment(a: A) {
-  { // BLOCK
-    val tmp0_array: A = a
-    val tmp1_index0: Int = 1
-    val tmp2_index1: Int = 2
-    tmp0_array.set(i = tmp1_index0, j = tmp2_index1, v = tmp0_array.get(xs = [tmp1_index0, tmp2_index1]).plus(other = 10))
-  }
+fun testSimpleAssignment(a: A) {
+  a.set(i = 1, j = 2, v = 0)
 }
+

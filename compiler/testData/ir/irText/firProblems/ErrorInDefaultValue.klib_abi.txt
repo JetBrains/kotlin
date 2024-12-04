@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /A { // /A|null[0]
+    abstract fun f(kotlin/String = ...): kotlin/String // /A.f|f(kotlin.String){}[0]
+}
+final class /B : /A { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+    final fun f(kotlin/String): kotlin/String // /B.f|f(kotlin.String){}[0]
+}
+final class /C : /A { // /C|null[0]
+    final val x // /C.x|{}x[0]
+        final fun <get-x>(): /A // /C.x.<get-x>|<get-x>(){}[0]
+    constructor <init>(/A) // /C.<init>|<init>(A){}[0]
+    final fun f(kotlin/String): kotlin/String // /C.f|f(kotlin.String){}[0]
+}

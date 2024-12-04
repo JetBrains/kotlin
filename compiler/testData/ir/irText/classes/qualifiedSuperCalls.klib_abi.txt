@@ -1,0 +1,22 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /CBoth : /ILeft, /IRight { // /CBoth|null[0]
+    final val bar // /CBoth.bar|{}bar[0]
+        final fun <get-bar>(): kotlin/Int // /CBoth.bar.<get-bar>|<get-bar>(){}[0]
+    constructor <init>() // /CBoth.<init>|<init>(){}[0]
+    final fun foo() // /CBoth.foo|foo(){}[0]
+}
+abstract interface /ILeft { // /ILeft|null[0]
+    open val bar // /ILeft.bar|{}bar[0]
+        open fun <get-bar>(): kotlin/Int // /ILeft.bar.<get-bar>|<get-bar>(){}[0]
+    open fun foo() // /ILeft.foo|foo(){}[0]
+}
+abstract interface /IRight { // /IRight|null[0]
+    open val bar // /IRight.bar|{}bar[0]
+        open fun <get-bar>(): kotlin/Int // /IRight.bar.<get-bar>|<get-bar>(){}[0]
+    open fun foo() // /IRight.foo|foo(){}[0]
+}

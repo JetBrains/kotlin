@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
+import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -13,24 +14,17 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 
 class ClassWrapper(
-    private val className: Name,
-    private val modifiers: Modifier,
+    val modifiers: Modifier,
     private val classKind: ClassKind,
     val classBuilder: FirClassBuilder,
-    val hasPrimaryConstructor: Boolean,
     val hasSecondaryConstructor: Boolean,
     val hasDefaultConstructor: Boolean,
     val delegatedSelfTypeRef: FirTypeRef,
     val delegatedSuperTypeRef: FirTypeRef,
-    val superTypeCallEntry: List<FirExpression>,
+    val delegatedSuperCalls: List<DelegatedConstructorWrapper>,
 ) {
-    fun isObjectLiteral(): Boolean {
-        return className == SpecialNames.NO_NAME_PROVIDED && isObject()
-    }
 
     fun isEnumEntry(): Boolean {
         return classKind == ClassKind.ENUM_ENTRY
@@ -69,3 +63,9 @@ class ClassWrapper(
         }
     }
 }
+
+data class DelegatedConstructorWrapper(
+    val delegatedSuperTypeRef: FirTypeRef,
+    val arguments: List<FirExpression>,
+    val source: KtLightSourceElement?,
+)

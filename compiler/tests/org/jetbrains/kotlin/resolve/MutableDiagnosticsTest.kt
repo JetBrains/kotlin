@@ -40,9 +40,10 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
         get() = bindingContext.diagnostics
 
     fun testPropagatingModification() {
-        val base = BindingTraceContext()
-        val middle = DelegatingBindingTrace(base.bindingContext, "middle")
-        val derived = DelegatingBindingTrace(middle.bindingContext, "derived")
+        val project = environment.project
+        val base = BindingTraceContext(project)
+        val middle = DelegatingBindingTrace(base.bindingContext, "middle", project)
+        val derived = DelegatingBindingTrace(middle.bindingContext, "derived", project)
 
         Assert.assertTrue(base.diagnostics.isEmpty())
         Assert.assertTrue(middle.diagnostics.isEmpty())
@@ -83,9 +84,10 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
     }
 
     fun testCaching() {
-        val base = BindingTraceContext()
-        val middle = DelegatingBindingTrace(base.bindingContext, "middle")
-        val derived = DelegatingBindingTrace(middle.bindingContext, "derived")
+        val project = environment.project
+        val base = BindingTraceContext(project)
+        val middle = DelegatingBindingTrace(base.bindingContext, "middle", project)
+        val derived = DelegatingBindingTrace(middle.bindingContext, "derived", project)
 
         base.reportDiagnostic()
         middle.reportDiagnostic()

@@ -1,0 +1,8 @@
+fun consumeVarargs(vararg arr: Int) {
+}
+
+fun test() {
+  consumeVarargs(arr = [1, 2])
+  consumeVarargs(arr = [*intArrayOf(elements = [41, 42])])
+}
+

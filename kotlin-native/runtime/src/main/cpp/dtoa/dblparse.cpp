@@ -18,15 +18,17 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string>
 
 #include "cbigint.h"
 #include "../Exceptions.h"
 #include "../KString.h"
 #include "../Natives.h"
+#include "../Porting.h"
 #include "../utf8.h"
-#include "../KotlinMath.h"
-#include "../ReturnSlot.h"
 #include "../DoubleConversions.h"
+
+using namespace kotlin;
 
 #if defined(LINUX) || defined(FREEBSD) || defined(ZOS) || defined(MACOSX) || defined(AIX)
 #define USE_LL
@@ -42,7 +44,7 @@
 #define DEFAULT_WIDTH MAX_ACCURACY_WIDTH
 
 extern "C" {
-KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e);
+KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KConstRef s, KInt e);
 
 void Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl (KRef results,
                                                          KRef uArray,
@@ -176,8 +178,8 @@ static const KDouble tens[] = {
         }
 #define ERROR_OCCURED(x) (HIGH_I32_FROM_VAR(x) < 0)
 
-#define allocateU64(x, n) if (!((x) = (U_64*) konan::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
-#define release(r) if ((r)) konan::free((r));
+#define allocateU64(x, n) if (!((x) = (U_64*) std::calloc(1, (n) * sizeof(U_64)))) goto OutOfMemory;
+#define release(r) if ((r)) std::free((r));
 
 /*NB the Number converter methods are synchronized so it is possible to
  *have global data for use by bigIntDigitGenerator */
@@ -288,15 +290,6 @@ KDouble createDouble (const char *s, KInt e)
 
 }
 
-#ifdef KONAN_WASM
-double konan_pow(double base, double exponent) {
-    knjs__Math_pow(doubleUpper(base), doubleLower(base), doubleUpper(exponent), doubleLower(exponent));
-    return ReturnSlot_getDouble();
-}
-#else
-#define konan_pow(arg1, arg2) pow(arg1, arg2)
-#endif
-
 KDouble
 createDouble1 (U_64 * f, IDATA length, KInt e)
 {
@@ -319,7 +312,7 @@ createDouble1 (U_64 * f, IDATA length, KInt e)
     }
   else if (e >= 0 && e < APPROX_MAX_MAGNITUDE)
     {
-      result = toDoubleHighPrecision (f, length) * konan_pow (10.0, (double) e);
+      result = toDoubleHighPrecision (f, length) * pow (10.0, (double) e);
     }
   else if (e >= APPROX_MAX_MAGNITUDE)
     {
@@ -339,14 +332,14 @@ createDouble1 (U_64 * f, IDATA length, KInt e)
     }
   else if (e > APPROX_MIN_MAGNITUDE)
     {
-      result = toDoubleHighPrecision (f, length) / konan_pow (10.0, (double) -e);
+      result = toDoubleHighPrecision (f, length) / pow (10.0, (double) -e);
     }
 
   if (e <= APPROX_MIN_MAGNITUDE)
     {
 
-      result = toDoubleHighPrecision (f, length) * konan_pow (10.0, (double) (e + 52));
-      result = result * konan_pow (10.0, (double) -52);
+      result = toDoubleHighPrecision (f, length) * pow (10.0, (double) (e + 52));
+      result = result * pow (10.0, (double) -52);
 
     }
 
@@ -650,14 +643,15 @@ OutOfMemory:
 #pragma optimize("",on)         /*restore optimizations */
 #endif
 
-KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e)
+KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KConstRef s, KInt e)
 {
-  const KChar* utf16 = CharArrayAddressOfElementAt(s, 0);
-  KStdString utf8;
-  utf8.reserve(s->count_);
-  TRY_CATCH(utf8::utf16to8(utf16, utf16 + s->count_, back_inserter(utf8)),
-            utf8::unchecked::utf16to8(utf16, utf16 + s->count_, back_inserter(utf8)),
-            /* Illegal UTF-16 string. */ ThrowNumberFormatException());
+  std::string utf8;
+  try {
+    utf8 = kotlin::to_string<KStringConversionMode::CHECKED>(s);
+  } catch (...) {
+    /* Illegal string. */
+    ThrowNumberFormatException();
+  }
   const char *str = utf8.c_str();
   auto dbl = createDouble (str, e);
 

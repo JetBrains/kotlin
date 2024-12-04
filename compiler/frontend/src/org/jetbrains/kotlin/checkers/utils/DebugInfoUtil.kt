@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import java.util.HashMap
 
@@ -59,7 +59,7 @@ object DebugInfoUtil {
                 markedWithErrorElements[superExpression.instanceReference] = factory
             } else if (factory === Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND) {
                 markedWithErrorElements[diagnostic.psiElement as KtSimpleNameExpression] = factory
-            } else if (factory === Errors.UNSUPPORTED) {
+            } else if (factory === Errors.UNSUPPORTED || factory === Errors.UNSUPPORTED_FEATURE) {
                 for (reference in PsiTreeUtil.findChildrenOfType(
                     diagnostic.psiElement,
                     KtReferenceExpression::class.java

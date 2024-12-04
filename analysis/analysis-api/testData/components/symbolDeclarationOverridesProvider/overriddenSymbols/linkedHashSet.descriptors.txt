@@ -1,0 +1,9 @@
+ALL:
+  java/util/HashSet.add(element: E): Boolean
+  kotlin/collections/MutableSet.add(element: E): Boolean
+  kotlin/collections/MutableCollection.add(element: E): Boolean
+  java/util/AbstractCollection.add(element: E!): Boolean
+DIRECT:
+  java/util/HashSet.add(element: E): Boolean
+  kotlin/collections/MutableSet.add(element: E): Boolean
+INTERSECTION:

@@ -1,8 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC(val x: String)
 
 fun IC?.foo() = toString() // `IC?` unboxed into `String?`

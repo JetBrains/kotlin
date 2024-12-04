@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.ir.interpreter.proxy
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.*
-import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
-import org.jetbrains.kotlin.ir.interpreter.getDispatchReceiver
 import org.jetbrains.kotlin.ir.interpreter.state.Common
 import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
+import org.jetbrains.kotlin.ir.util.isUnsigned
 
 internal class CommonProxy private constructor(override val state: Common, override val callInterceptor: CallInterceptor) : Proxy {
     private fun defaultEquals(other: Any?): Boolean = if (other is Proxy) this.state === other.state else false
@@ -53,6 +53,11 @@ internal class CommonProxy private constructor(override val state: Common, overr
     }
 
     override fun toString(): String {
+        // TODO this check can be dropped after serialization introduction
+        // for now declarations in unsigned class don't have bodies and must be treated separately
+        if (state.irClass.defaultType.isUnsigned()) {
+            return state.unsignedToString()
+        }
         val valueArguments = mutableListOf<State>()
         val toStringFun = state.getToStringFunction()
         if (toStringFun.isFakeOverriddenFromAny() || toStringFun.wasAlreadyCalled()) return defaultToString()
@@ -69,7 +74,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
                 else -> arrayOf(extendFrom, Proxy::class.java)
             }
 
-            return java.lang.reflect.Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), interfaces)
+            return java.lang.reflect.Proxy.newProxyInstance(this::class.java.classLoader, interfaces)
             { /*proxy*/_, method, args ->
                 when {
                     method.declaringClass == Proxy::class.java && method.name == "getState" -> commonProxy.state
@@ -94,7 +99,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
             return when {
                 method.name == "toArray" && method.parameterTypes.isEmpty() -> {
                     val wrapper = this.state.superWrapperClass
-                    if (wrapper == null) arrayOf() else (wrapper as Collection<*>).toTypedArray()
+                    if (wrapper == null) arrayOf() else (wrapper.value as Collection<*>).toTypedArray()
                 }
                 else -> throw AssertionError("Cannot find method $method in ${this.state}")
             }

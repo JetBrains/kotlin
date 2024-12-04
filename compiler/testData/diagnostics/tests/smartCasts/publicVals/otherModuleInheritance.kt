@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitSmartcastsOnPropertyFromAlienBaseClass
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitSmartcastsOnPropertyFromAlienBaseClass
 // MODULE: m1
 // FILE: A.kt
 

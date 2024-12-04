@@ -17,11 +17,24 @@ open class SimpleTestMethodModel(
     val file: File,
     private val filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
-    protected val targetBackend: TargetBackend,
+    internal val targetBackend: TargetBackend,
     private val skipIgnored: Boolean,
     override val tags: List<String>
 ) : MethodModel {
     object Kind : MethodModel.Kind()
+
+    val directives: Map<String, List<String>> by lazy(LazyThreadSafetyMode.NONE) {
+        InTextDirectivesUtils.findLinesByPrefixRemoved(
+            /* fileText = */ InTextDirectivesUtils.textWithDirectives(file),
+            /* trim = */ true,
+            /* strict = */ true,
+            /* separatedValues = */ true,
+            *InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES,
+            InTextDirectivesUtils.TARGET_BACKEND_DIRECTIVE_PREFIX,
+            InTextDirectivesUtils.DORT_TARGET_EXACT_BACKEND_DIRECTIVE_PREFIX,
+            "// WORKS_WHEN_VALUE_CLASS"
+        )
+    }
 
     override val kind: MethodModel.Kind
         get() = Kind
@@ -33,7 +46,7 @@ open class SimpleTestMethodModel(
         }
 
     override fun shouldBeGenerated(): Boolean {
-        return InTextDirectivesUtils.isCompatibleTarget(targetBackend, file)
+        return InTextDirectivesUtils.isCompatibleTarget(targetBackend, directives)
     }
 
     override val name: String
@@ -53,7 +66,7 @@ open class SimpleTestMethodModel(
                 val relativePath = FileUtil.getRelativePath(rootDir, file.parentFile)
                 relativePath + "-" + extractedName.replaceFirstChar(Char::uppercaseChar)
             }
-            val ignored = skipIgnored && InTextDirectivesUtils.isIgnoredTarget(targetBackend, file)
+            val ignored = skipIgnored && InTextDirectivesUtils.isIgnoredTarget(targetBackend, directives, false)
             return (if (ignored) "ignore" else "test") + escapeForJavaIdentifier(unescapedName).replaceFirstChar(Char::uppercaseChar)
         }
 

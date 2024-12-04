@@ -33,6 +33,7 @@ class BinaryJavaField(
 ) : JavaField, BinaryJavaModifierListOwner, MutableJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
     override val annotationsByFqName by buildLazyValueForMap()
+    override val isFromSource: Boolean get() = false
 
     override val hasConstantNotNullInitializer: Boolean
         get() = initializerValue != null
@@ -46,6 +47,8 @@ class BinaryJavaTypeParameter(
 ) : JavaTypeParameter, ListBasedJavaAnnotationOwner, MutableJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
     override val isDeprecatedInJavaDoc = false
+    override val isFromSource: Boolean
+        get() = false
 }
 
 class BinaryJavaValueParameter(
@@ -56,6 +59,9 @@ class BinaryJavaValueParameter(
     override val annotationsByFqName by buildLazyValueForMap()
 
     override var name: Name? = null
+
+    override val isFromSource: Boolean
+        get() = false
 
     internal fun updateName(newName: Name) {
         assert(name == null) { "Parameter can't have two names: $name and $newName" }
@@ -69,6 +75,8 @@ class BinaryJavaRecordComponent(
     override val type: JavaType,
     override val isVararg: Boolean,
 ) : JavaRecordComponent, BinaryJavaModifierListOwner {
+    override val isFromSource: Boolean get() = false
+
     override val annotations: Collection<JavaAnnotation>
         get() = emptyList()
 

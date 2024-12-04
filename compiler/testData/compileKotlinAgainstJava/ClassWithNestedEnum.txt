@@ -13,7 +13,7 @@ public open class ClassWithNestedEnum {
         enum entry THREE
 
         private constructor NestedEnum()
-        public final /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final /*fake_override*/ val name: kotlin.String
         public final /*fake_override*/ val ordinal: kotlin.Int
         protected final /*fake_override*/ fun clone(): kotlin.Any
         public final /*fake_override*/ fun compareTo(/*0*/ test.ClassWithNestedEnum.NestedEnum!): kotlin.Int
@@ -21,6 +21,7 @@ public open class ClassWithNestedEnum {
         public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.ClassWithNestedEnum.NestedEnum!>!
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.ClassWithNestedEnum.NestedEnum>
         public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.ClassWithNestedEnum.NestedEnum
         public final /*synthesized*/ fun values(): kotlin.Array<test.ClassWithNestedEnum.NestedEnum>
     }

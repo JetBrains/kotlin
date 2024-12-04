@@ -1,0 +1,8 @@
+FILE: lambdaForKfunction.kt
+    public final fun foo(arg: R|kotlin/reflect/KFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+    }

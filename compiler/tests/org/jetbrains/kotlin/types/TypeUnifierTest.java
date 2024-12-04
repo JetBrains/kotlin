@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.TypeResolver;
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.DummyTraces;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -197,7 +198,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
     private TypeProjection makeType(String typeStr) {
         LexicalScope withX = new LexicalScopeImpl(
                 builtinsImportingScope, module,
-                false, null, LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
+                false, null, Collections.emptyList(), LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                 handler -> {
                     handler.addClassifierDescriptor(x);
                     handler.addClassifierDescriptor(y);
@@ -205,8 +206,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
                 }
         );
 
-        KtTypeProjection projection = KtPsiFactoryKt
-                .KtPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);
+        KtTypeProjection projection = new KtPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);
 
         KtTypeReference typeReference = projection.getTypeReference();
         assert typeReference != null;

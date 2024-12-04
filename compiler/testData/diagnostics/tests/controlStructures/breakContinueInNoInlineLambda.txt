@@ -1,0 +1,4 @@
+package
+
+public inline fun foo(/*0*/ noinline block: () -> kotlin.Unit): kotlin.Unit
+public fun test1(): kotlin.Unit

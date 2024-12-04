@@ -1,9 +1,10 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class C
 
 class B
 
 class A {
-    val B.foo: C.() -> Unit get() = null
+    val B.foo: C.() -> Unit get() = <!NULL_FOR_NONNULL_TYPE("kotlin.Function1<C, kotlin.Unit>")!>null<!>
 }
 
 fun <T, R> with(arg: T, f: T.() -> R): R = arg.f()

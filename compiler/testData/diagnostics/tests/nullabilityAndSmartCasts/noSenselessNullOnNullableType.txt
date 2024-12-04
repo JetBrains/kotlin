@@ -11,7 +11,7 @@ public/*package*/ open class A {
 
     public/*package*/ final enum class Empty : kotlin.Enum<A.Empty!> {
         public/*package*/ constructor Empty()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: A.Empty!): kotlin.Int
@@ -22,6 +22,7 @@ public/*package*/ open class A {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<A.Empty>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): A.Empty
         public final /*synthesized*/ fun values(): kotlin.Array<A.Empty>
     }

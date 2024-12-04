@@ -7,39 +7,33 @@
 #define RUNTIME_COMPILER_CONSTANTS_H
 
 #include <cstdint>
-#if __has_include(<string_view>)
 #include <string_view>
-#elif __has_include(<experimental/string_view>)
-// TODO: Remove when wasm32 is gone.
-#include <xlocale.h>
-#include <experimental/string_view>
-namespace std {
-using string_view = std::experimental::string_view;
-}
-#else
-#error "No <string_view>"
-#endif
 
 #include "Common.h"
 
 // Prefer to use getter functions below. These constants are exposed to simplify the job of the inliner.
 
-// These are defined by setRuntimeConstGlobals in IrToBitcode.kt
-extern "C" const int32_t KonanNeedDebugInfo;
+/**
+ * There are two ways, how compiler can define variables for runtime usage. This one, and the other one with details in source file.
+ *
+ * This is one is variables defined by generateRuntimeConstantsModule in IrToBitcode.kt. They are eligible for runtime optimizations,
+ * and fixed at the point of compiling caches. So use this way for variables, which are heavily used on performance-critical passes or
+ * will significantly increase code size, if not eliminated.
+ *
+ * Don't forget to adjust cache disabling rules and add value to CompilerGenerated.cpp for tests, when adding a new variable.
+ */
+extern "C" const int32_t Kotlin_needDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
-extern "C" const char* const Kotlin_runtimeLogs;
+extern "C" const int32_t Kotlin_disableMmap;
+extern "C" const int32_t Kotlin_runtimeLogs[];
+extern "C" const int32_t Kotlin_concurrentWeakSweep;
+extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
+extern "C" const int32_t Kotlin_fixedBlockPageSize;
+
 class SourceInfo;
-using Kotlin_getSourceInfo_FunctionType = int(*)(void * /*addr*/, SourceInfo* /*result*/, int /*result_size*/);
-extern "C" const Kotlin_getSourceInfo_FunctionType Kotlin_getSourceInfo_Function;
 
 namespace kotlin {
 namespace compiler {
-
-// Must match DestroyRuntimeMode in DestroyRuntimeMode.kt
-enum class DestroyRuntimeMode : int32_t {
-    kLegacy = 0,
-    kOnShutdown = 1,
-};
 
 // Must match RuntimeAssertsMode in RuntimeAssertsMode.kt
 enum class RuntimeAssertsMode : int32_t {
@@ -48,39 +42,57 @@ enum class RuntimeAssertsMode : int32_t {
     kPanic = 2,
 };
 
-// Must match WorkerExceptionHandling in WorkerExceptionHandling.kt
-enum class WorkerExceptionHandling : int32_t {
-    kLegacy = 0,
-    kUseHook = 1,
+// Must match AppStateTracking in AppStateTracking.kt
+enum class AppStateTracking {
+    kDisabled = 0,
+    kEnabled = 1,
 };
 
-DestroyRuntimeMode destroyRuntimeMode() noexcept;
-
-bool gcAggressive() noexcept;
-
 ALWAYS_INLINE inline bool shouldContainDebugInfo() noexcept {
-    return KonanNeedDebugInfo != 0;
+    return Kotlin_needDebugInfo != 0;
 }
 
 ALWAYS_INLINE inline RuntimeAssertsMode runtimeAssertsMode() noexcept {
     return static_cast<RuntimeAssertsMode>(Kotlin_runtimeAssertsMode);
 }
 
-WorkerExceptionHandling workerExceptionHandling() noexcept;
-
-ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
-    return Kotlin_runtimeLogs == nullptr ? std::string_view() : std::string_view(Kotlin_runtimeLogs);
+ALWAYS_INLINE inline bool runtimeAssertsEnabled() noexcept {
+    return runtimeAssertsMode() != RuntimeAssertsMode::kIgnore;
 }
 
-bool freezingEnabled() noexcept;
-
-ALWAYS_INLINE inline int getSourceInfo(void* addr, SourceInfo *result, int result_size) {
-    if (Kotlin_getSourceInfo_Function == nullptr) {
-        return 0;
-    } else {
-        return Kotlin_getSourceInfo_Function(addr, result, result_size);
-    }
+ALWAYS_INLINE inline bool disableMmap() noexcept {
+    return Kotlin_disableMmap != 0;
 }
+
+ALWAYS_INLINE inline const int32_t* runtimeLogs() noexcept {
+    return Kotlin_runtimeLogs;
+}
+
+ALWAYS_INLINE inline bool concurrentWeakSweep() noexcept {
+    return Kotlin_concurrentWeakSweep != 0;
+}
+
+ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
+    return Kotlin_gcMarkSingleThreaded != 0;
+}
+
+ALWAYS_INLINE inline constexpr int32_t fixedBlockPageSize() noexcept {
+    return Kotlin_fixedBlockPageSize;
+}
+
+bool gcMutatorsCooperate() noexcept;
+uint32_t auxGCThreads() noexcept;
+uint32_t concurrentMarkMaxIterations() noexcept;
+bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
+AppStateTracking appStateTracking() noexcept;
+int getSourceInfo(void* addr, SourceInfo *result, int result_size) noexcept;
+bool mimallocUseDefaultOptions() noexcept;
+bool mimallocUseCompaction() noexcept;
+bool objcDisposeOnMain() noexcept;
+bool objcDisposeWithRunLoop() noexcept;
+bool enableSafepointSignposts() noexcept;
+bool globalDataLazyInit() noexcept;
+bool swiftExport() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

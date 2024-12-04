@@ -1,2 +1,14 @@
 expression: av
-expected type: kotlin/Function1<kotlin/Int, kotlin/String>
+expected type: KaFunctionType:
+  annotations: []
+  typeArguments: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+  ]
+  type: kotlin/Function1<kotlin/Int, kotlin/String>

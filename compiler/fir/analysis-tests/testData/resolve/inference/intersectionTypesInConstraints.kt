@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: MyList.java
 public interface MyList<E> extends java.util.List<E>, I {}
 

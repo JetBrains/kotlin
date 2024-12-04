@@ -1,2 +1,0 @@
-Resolved to:
-0: (in test.E) fun values(): kotlin.Array<test.E>

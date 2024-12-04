@@ -4,6 +4,6 @@ FILE: localDeclarationWithExpression.kt
         localProperty#
     }
     )
-        public? get(): <implicit> {
+        private get(): <implicit> {
             ^ D|/nonLocalProperty|.getValue#(Null(null), ::R|/nonLocalProperty|)
         }

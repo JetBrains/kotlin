@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun stringVararg(vararg args: String) {}
 fun intVararg(vararg args: Int) {}
@@ -21,9 +21,9 @@ fun test() {
     useStringArray(::stringVararg)
     useIntArray(::numberVararg)
     usePrimitiveIntArray(::intVararg)
-    <!INAPPLICABLE_CANDIDATE!>useIntArray<!>(::<!UNRESOLVED_REFERENCE!>intVararg<!>)
-    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs1<!>(::<!UNRESOLVED_REFERENCE!>stringVararg<!>)
-    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs2<!>(::<!UNRESOLVED_REFERENCE!>stringVararg<!>)
-    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs3<!>(::<!UNRESOLVED_REFERENCE!>stringVararg<!>)
-    <!INAPPLICABLE_CANDIDATE!>useTwoStringArrays<!>(::<!UNRESOLVED_REFERENCE!>stringVararg<!>)
+    useIntArray(::<!INAPPLICABLE_CANDIDATE!>intVararg<!>)
+    useMixedStringArgs1(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
+    useMixedStringArgs2(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
+    useMixedStringArgs3(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
+    useTwoStringArrays(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
 }

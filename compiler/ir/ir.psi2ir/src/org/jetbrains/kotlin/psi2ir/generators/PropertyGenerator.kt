@@ -33,9 +33,10 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.pureEndOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.pureStartOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.hasBackingField
 
-class PropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generatePropertyDeclaration(ktProperty: KtProperty): IrProperty {
         val propertyDescriptor = getPropertyDescriptor(ktProperty)
         val ktDelegate = ktProperty.delegate
@@ -47,7 +48,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     fun generateDestructuringDeclarationEntryAsPropertyDeclaration(ktEntry: KtDestructuringDeclarationEntry): IrProperty {
         val propertyDescriptor = getPropertyDescriptor(ktEntry)
-        return context.symbolTable.declareProperty(
+        return context.symbolTable.descriptorExtension.declareProperty(
             ktEntry.startOffsetSkippingComments, ktEntry.endOffset,
             IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
@@ -76,8 +77,11 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrProperty {
         val irPropertyType = propertyDescriptor.type.toIrType()
         return generateSyntheticPropertyWithInitializer(ktDeclarationContainer, propertyDescriptor, generateSyntheticAccessors) {
-            if (irValueParameter == null) null
-            else {
+            if (irValueParameter == null)
+                null
+            else if (context.configuration.skipBodies && !DescriptorUtils.isAnnotationClass(propertyDescriptor.containingDeclaration))
+                null
+            else
                 context.irFactory.createExpressionBody(
                     IrGetValueImpl(
                         ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
@@ -86,7 +90,6 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                         IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
                     )
                 )
-            }
         }
     }
 
@@ -96,7 +99,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         generateSyntheticAccessors: Boolean,
         generateInitializer: (IrField) -> IrExpressionBody?
     ): IrProperty {
-        return context.symbolTable.declareProperty(
+        return context.symbolTable.descriptorExtension.declareProperty(
             ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
             IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
@@ -155,7 +158,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         propertyDescriptor: PropertyDescriptor,
         generateInitializer: (IrField) -> IrExpressionBody?
     ): IrField =
-        context.symbolTable.declareField(
+        context.symbolTable.descriptorExtension.declareField(
             ktPropertyElement.startOffsetSkippingComments, ktPropertyElement.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
             propertyDescriptor, propertyDescriptor.type.toIrType(),
@@ -178,7 +181,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         hasBackingField(bindingContext) || context.extensions.isPropertyWithPlatformField(this)
 
     private fun generateSimpleProperty(ktProperty: KtVariableDeclaration, propertyDescriptor: PropertyDescriptor): IrProperty =
-        context.symbolTable.declareProperty(
+        context.symbolTable.descriptorExtension.declareProperty(
             ktProperty.startOffsetSkippingComments, ktProperty.endOffset,
             IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
@@ -205,7 +208,8 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                                 }
                             }
 
-                            declarationGenerator.generateInitializerBody(irField.symbol, ktInitializer)
+                            if (context.configuration.skipBodies) null
+                            else declarationGenerator.generateInitializerBody(irField.symbol, ktInitializer)
                         }
                     }
                 else
@@ -224,7 +228,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val startOffset = ktElement.pureStartOffsetOrUndefined
         val endOffset = ktElement.pureEndOffsetOrUndefined
 
-        return context.symbolTable.declareProperty(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, propertyDescriptor).apply {
+        return context.symbolTable.descriptorExtension.declareProperty(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, propertyDescriptor, propertyDescriptor.isDelegated).apply {
             this.getter = propertyDescriptor.getter?.let {
                 FunctionGenerator(declarationGenerator).generateFakeOverrideFunction(it, ktElement)
             }
@@ -239,7 +243,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     private fun IrProperty.generateOverrides(propertyDescriptor: PropertyDescriptor) {
         overriddenSymbols =
             propertyDescriptor.overriddenDescriptors.map { overriddenPropertyDescriptor ->
-                context.symbolTable.referenceProperty(overriddenPropertyDescriptor.original)
+                context.symbolTable.descriptorExtension.referenceProperty(overriddenPropertyDescriptor.original)
             }
     }
 
@@ -262,7 +266,6 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     private val PropertyDescriptor.fieldVisibility: DescriptorVisibility
         get() = declarationGenerator.context.extensions.computeFieldVisibility(this)
             ?: when {
-                isLateInit -> setter?.visibility ?: visibility
                 isConst -> visibility
                 else -> DescriptorVisibilities.PRIVATE
             }
@@ -273,5 +276,3 @@ internal fun IrProperty.linkCorrespondingPropertySymbol() {
     getter?.correspondingPropertySymbol = symbol
     setter?.correspondingPropertySymbol = symbol
 }
-
-

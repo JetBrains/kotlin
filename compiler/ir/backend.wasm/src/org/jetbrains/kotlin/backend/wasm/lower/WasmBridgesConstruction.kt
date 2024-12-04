@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmSignature
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.wasmSignature
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.BridgesConstruction
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 
 class WasmBridgesConstruction(context: JsCommonBackendContext) : BridgesConstruction<JsCommonBackendContext>(context) {
     override fun getFunctionSignature(function: IrSimpleFunction): WasmSignature =
@@ -27,40 +22,9 @@ class WasmBridgesConstruction(context: JsCommonBackendContext) : BridgesConstruc
     override val shouldCastDispatchReceiver: Boolean = true
     override fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin =
         IrDeclarationOrigin.BRIDGE
-}
 
-data class WasmSignature(
-    val name: Name,
-    val extensionReceiverType: IrType?,
-    val valueParametersType: List<IrType>,
-    val returnType: IrType,
-    // Needed for bridges to final non-override methods
-    // that indirectly implement interfaces. For example:
-    //    interface I { fun foo() }
-    //    class C1 { fun foo() {} }
-    //    class C2 : C1(), I
-    val isVirtual: Boolean,
-) {
-    override fun toString(): String {
-        val er = extensionReceiverType?.let { "(er: ${it.render()}) " } ?: ""
-        val parameters = valueParametersType.joinToString(", ") { it.render() }
-        val nonVirtual =  if (!isVirtual) "(non-virtual) " else ""
-        return "[$nonVirtual$er$name($parameters) -> ${returnType.render()}]"
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration.isEffectivelyExternal()) return null
+        return super.transformFlat(declaration)
     }
 }
-
-fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
-    WasmSignature(
-        name,
-        extensionReceiverParameter?.type?.eraseGenerics(irBuiltIns),
-        valueParameters.map { it.type.eraseGenerics(irBuiltIns) },
-        returnType.eraseGenerics(irBuiltIns),
-        isOverridableOrOverrides
-    )
-
-private fun IrType.eraseGenerics(irBuiltIns: IrBuiltIns): IrType {
-    val defaultType = this.erasedUpperBound?.defaultType ?: irBuiltIns.anyType
-    if (!this.isNullable()) return defaultType
-    return defaultType.makeNullable()
-}
-

@@ -27,6 +27,9 @@ FILE: exposedPropertyType.kt
             public final static fun valueOf(value: R|kotlin/String|): R|A.AInnerProtectedEnum| {
             }
 
+            public final static val entries: R|kotlin/enums/EnumEntries<A.AInnerProtectedEnum>|
+                public get(): R|kotlin/enums/EnumEntries<A.AInnerProtectedEnum>|
+
         }
 
         public final class AInnerPublic : R|kotlin/Any| {

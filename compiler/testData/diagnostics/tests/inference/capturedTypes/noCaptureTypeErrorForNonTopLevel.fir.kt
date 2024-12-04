@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A<T>
 class B<T>
 
@@ -10,7 +11,7 @@ fun bar(b: B<in A<out Number>>, bOut: B<out A<out Number>>, bOut2: B<out A<Numbe
     foo(b)
     foo<Number>(b)
 
-    baz(<!ARGUMENT_TYPE_MISMATCH!>bOut<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(<!ARGUMENT_TYPE_MISMATCH!>bOut<!>)
     baz<Number>(<!ARGUMENT_TYPE_MISMATCH!>bOut<!>)
 
     baz(bOut2)

@@ -1,5 +1,7 @@
-// !WITH_NEW_INFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_NEW_INFERENCE
 // documents inconsistency between scripts and classes, see DeclarationScopeProviderImpl
+// DUMP_CFG: LEVELS
 
 fun function() = 42
 val property = ""

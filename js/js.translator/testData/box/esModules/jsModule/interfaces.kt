@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JS
+// IGNORE_BACKEND: WASM
 // ES_MODULES
 // FILE: bar.kt
 @file:JsModule("./interfaces.mjs")
@@ -26,8 +26,16 @@ external val bar: Bar
 external val baz: Baz
 
 // FILE: test.kt
+import boo.Baz
+
 fun box(): String {
     if (bar.ping() != "ping" || baz.pong() != 194) return "Fail"
+
+    val local = object : Baz {
+        override fun pong(): Int = 322
+    }
+
+    if (local.asDynamic().pong() != 322) return "Fail"
 
     return "OK"
 }

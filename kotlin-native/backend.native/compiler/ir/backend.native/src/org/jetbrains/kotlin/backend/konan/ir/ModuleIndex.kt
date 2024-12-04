@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+@ObsoleteDescriptorBasedAPI
 class ModuleIndex(val module: IrModuleFragment) {
 
     /**
@@ -31,10 +33,16 @@ class ModuleIndex(val module: IrModuleFragment) {
      */
     val properties: Map<PropertyDescriptor, IrProperty>
 
+    /**
+     * Contains all enum entries declared in [module]
+     */
+    val enumEntries: Map<ClassDescriptor, IrEnumEntry>
+
     init {
         classes = mutableMapOf()
         functions = mutableMapOf()
         properties = mutableMapOf()
+        enumEntries = mutableMapOf()
 
         module.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -55,6 +63,11 @@ class ModuleIndex(val module: IrModuleFragment) {
             override fun visitProperty(declaration: IrProperty) {
                 super.visitProperty(declaration)
                 properties[declaration.descriptor] = declaration
+            }
+
+            override fun visitEnumEntry(declaration: IrEnumEntry) {
+                super.visitEnumEntry(declaration)
+                enumEntries[declaration.descriptor] = declaration
             }
         })
     }

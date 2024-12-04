@@ -1,0 +1,8 @@
+FILE: literalInCompletedGeneric.kt
+    public final fun foo(): R|kotlin/Unit| {
+        R|/foo|<R|kotlin/Int|>(vararg(Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))))
+        lval x: R|kotlin/collections/List<kotlin/Int>| = R|/foo|<R|kotlin/Int|>(vararg(Int(3).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(4))))
+    }
+    public final fun <T : R|kotlin/Comparable<T>|> foo(vararg values: R|kotlin/Array<out kotlin/Pair<T, T>>|): R|kotlin/collections/List<T>| {
+        ^foo R|kotlin/TODO|()
+    }

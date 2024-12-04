@@ -5,96 +5,77 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import org.jetbrains.kotlin.backend.common.diagnostics.IdSignatureClashDetector
+import org.jetbrains.kotlin.backend.common.serialization.signature.FileLocalIdSignatureComputer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 
-
-interface IdSignatureClashTracker {
-    fun commit(declaration: IrDeclaration, signature: IdSignature)
-
-    companion object {
-        val DEFAULT_TRACKER = object : IdSignatureClashTracker {
-            override fun commit(declaration: IrDeclaration, signature: IdSignature) {}
-        }
-    }
-}
-
-abstract class GlobalDeclarationTable(
-    private val mangler: KotlinMangler.IrMangler,
-    private val clashTracker: IdSignatureClashTracker
-) {
+abstract class GlobalDeclarationTable(val mangler: IrMangler) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
+    internal val clashDetector = IdSignatureClashDetector()
 
-    protected val table = mutableMapOf<IrDeclaration, IdSignature>()
-
-    constructor(mangler: KotlinMangler.IrMangler) : this(mangler, IdSignatureClashTracker.DEFAULT_TRACKER)
+    protected val table: MutableMap<IrDeclaration, IdSignature> = Object2ObjectOpenHashMap()
 
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         builtIns.knownBuiltins.forEach {
             val symbol = (it as IrSymbolOwner).symbol
-            table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
+            when (val signature = symbol.signature) {
+                null -> computeSignatureByDeclaration(it, compatibleMode = false, recordInSignatureClashDetector = true)
+                else -> {
+                    table[it] = signature
+                    clashDetector.trackDeclaration(it, signature)
+                }
+            }
         }
     }
 
-    open fun computeSignatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
+    fun computeSignatureByDeclaration(
+        declaration: IrDeclaration,
+        compatibleMode: Boolean,
+        recordInSignatureClashDetector: Boolean,
+    ): IdSignature {
         return table.getOrPut(declaration) {
-            publicIdSignatureComputer.composePublicIdSignature(declaration, compatibleMode).also { clashTracker.commit(declaration, it) }
+            publicIdSignatureComputer.computePublicIdSignature(declaration, compatibleMode)
+        }.also {
+            if (recordInSignatureClashDetector && it.isPubliclyVisible && !it.isLocal) {
+                clashDetector.trackDeclaration(declaration, it)
+            }
         }
     }
-
-    fun isExportedDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): Boolean = with(mangler) { declaration.isExported(compatibleMode) }
 }
 
-open class DeclarationTable(globalTable: GlobalDeclarationTable) {
-    protected val table = mutableMapOf<IrDeclaration, IdSignature>()
-    protected open val globalDeclarationTable: GlobalDeclarationTable = globalTable
-    // TODO: we need to disentangle signature construction with declaration tables.
-    open val signaturer: IdSignatureSerializer = IdSignatureSerializer(globalTable.publicIdSignatureComputer, this)
+abstract class DeclarationTable<GDT : GlobalDeclarationTable>(val globalDeclarationTable: GDT) {
+    class Default(globalTable: GlobalDeclarationTable) : DeclarationTable<GlobalDeclarationTable>(globalTable)
 
-    fun inFile(file: IrFile?, block: () -> Unit) {
-        signaturer.inFile(file?.symbol, block)
+    val mangler = globalDeclarationTable.mangler
+    protected val table: MutableMap<IrDeclaration, IdSignature> = Object2ObjectOpenHashMap()
+
+    private val fileLocalIdSignatureComputer = FileLocalIdSignatureComputer(mangler) { declaration, compatibleMode ->
+        signatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector = false)
     }
 
+    fun <R> inFile(file: IrFile?, block: () -> R): R =
+        globalDeclarationTable.publicIdSignatureComputer.inFile(file?.symbol, block)
 
-    private fun IrDeclaration.isLocalDeclaration(compatibleMode: Boolean): Boolean {
-        return !isExportedDeclaration(this, compatibleMode)
+    private fun IrDeclaration.shouldHaveLocalSignature(compatibleMode: Boolean): Boolean {
+        return with(mangler) { !this@shouldHaveLocalSignature.isExported(compatibleMode) }
     }
-
-    fun isExportedDeclaration(declaration: IrDeclaration, compatibleMode: Boolean) =
-        globalDeclarationTable.isExportedDeclaration(declaration, compatibleMode)
 
     protected open fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? = null
 
-    private fun allocateIndexedSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
-        return table.getOrPut(declaration) { signaturer.composeFileLocalIdSignature(declaration, compatibleMode) }
-    }
-
-    private fun computeSignatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
+    fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean, recordInSignatureClashDetector: Boolean): IdSignature {
         tryComputeBackendSpecificSignature(declaration)?.let { return it }
-        return if (declaration.isLocalDeclaration(compatibleMode)) {
-            allocateIndexedSignature(declaration, compatibleMode)
-        } else globalDeclarationTable.computeSignatureByDeclaration(declaration, compatibleMode)
-    }
-
-    fun privateDeclarationSignature(declaration: IrDeclaration, compatibleMode: Boolean, builder: () -> IdSignature): IdSignature {
-        assert(declaration.isLocalDeclaration(compatibleMode))
-        return table.getOrPut(declaration) { builder() }
-    }
-
-    open fun signatureByDeclaration(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
-        return computeSignatureByDeclaration(declaration, compatibleMode)
-    }
-
-    fun assumeDeclarationSignature(declaration: IrDeclaration, signature: IdSignature) {
-        assert(table[declaration] == null) { "Declaration table already has signature for ${declaration.render()}" }
-        table.put(declaration, signature)
+        return if (declaration.shouldHaveLocalSignature(compatibleMode)) {
+            table.getOrPut(declaration) { fileLocalIdSignatureComputer.computeFileLocalIdSignature(declaration, compatibleMode) }
+        } else {
+            globalDeclarationTable.computeSignatureByDeclaration(declaration, compatibleMode, recordInSignatureClashDetector)
+        }
     }
 }
 

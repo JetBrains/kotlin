@@ -5,51 +5,50 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.ExpectSymbolTransformer
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectsForActual
+import kotlin.collections.set
 
 // `doRemove` means should expect-declaration be removed from IR
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : IrElementVisitorVoid {
+open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : ExpectSymbolTransformer(),
+    FileLoweringPass {
+
     private val typeParameterSubstitutionMap = mutableMapOf<Pair<IrFunction, IrFunction>, Map<IrTypeParameter, IrTypeParameter>>()
 
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
+    override fun lower(irFile: IrFile) {
+        visitFile(irFile)
     }
 
     override fun visitFile(declaration: IrFile) {
-        super.visitFile(declaration)
-        declaration.declarations.removeAll {
-            shouldRemoveTopLevelDeclaration(it)
+        if (doRemove) {
+            declaration.declarations.removeAll { shouldRemoveTopLevelDeclaration(it) }
         }
+        super.visitFile(declaration)
     }
 
     override fun visitValueParameter(declaration: IrValueParameter) {
-        super.visitValueParameter(declaration)
         tryCopyDefaultArguments(declaration)
+        super.visitValueParameter(declaration)
     }
 
     fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-
         if (declaration.isTopLevelDeclaration && shouldRemoveTopLevelDeclaration(declaration)) {
             return emptyList()
         }
@@ -59,6 +58,38 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         }
 
         return null
+    }
+
+    override fun getActualClass(descriptor: ClassDescriptor): IrClassSymbol? {
+        return symbolTable.descriptorExtension.referenceClass(
+            descriptor.findActualForExpect() as? ClassDescriptor ?: return null
+        )
+    }
+
+    override fun getActualProperty(descriptor: PropertyDescriptor): ActualPropertyResult? {
+        val newSymbol = symbolTable.descriptorExtension.referenceProperty(
+            descriptor.findActualForExpect() as? PropertyDescriptor ?: return null
+        )
+        val newGetter = newSymbol.descriptor.getter?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+        val newSetter = newSymbol.descriptor.setter?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+        return ActualPropertyResult(newSymbol, newGetter, newSetter)
+    }
+
+    override fun getActualConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol? {
+        return symbolTable.descriptorExtension.referenceConstructor(
+            descriptor.findActualForExpect() as? ClassConstructorDescriptor ?: return null
+        )
+    }
+
+    override fun getActualFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol? {
+        return symbolTable.descriptorExtension.referenceSimpleFunction(
+            descriptor.findActualForExpect() as? FunctionDescriptor ?: return null
+        )
+    }
+
+    private fun MemberDescriptor.findActualForExpect(): MemberDescriptor? {
+        if (!isExpect) error(this)
+        return findCompatibleActualsForExpected(module).singleOrNull()
     }
 
     private fun shouldRemoveTopLevelDeclaration(declaration: IrDeclaration): Boolean {
@@ -93,7 +124,7 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
 
         if (!function.descriptor.isActual) return
 
-        val index = declaration.index
+        val index = declaration.indexInOldValueParameters
 
         if (index < 0) return
 
@@ -104,7 +135,7 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         // Nothing we can do with those.
         // TODO they may not actually have the defaults though -- may be a frontend bug.
         val expectFunction =
-            function.descriptor.findExpectForActual().safeAs<FunctionDescriptor>()?.let { symbolTable.referenceFunction(it).owner }
+            (function.descriptor.findExpectForActual() as? FunctionDescriptor)?.let { symbolTable.referenceFunction(it).owner }
                 ?: return
 
         val defaultValue = expectFunction.valueParameters[index].defaultValue ?: return
@@ -120,81 +151,32 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         }
 
         defaultValue.let { originalDefault ->
-            declaration.defaultValue = declaration.factory.createExpressionBody(originalDefault.startOffset, originalDefault.endOffset) {
-                expression = originalDefault.expression
-                    .deepCopyWithSymbols(function) { symbolRemapper, _ ->
-                        DeepCopyIrTreeWithSymbols(
-                            symbolRemapper,
-                            IrTypeParameterRemapper(typeParameterSubstitutionMap.getValue(expectToActual))
-                        )
-                    }
-                    .remapExpectValueSymbols()
-            }
+            declaration.defaultValue = originalDefault.copyAndActualizeDefaultValue(
+                function,
+                typeParameterSubstitutionMap.getValue(expectToActual)
+            )
         }
     }
 
-    private fun MemberDescriptor.findActualForExpect(): MemberDescriptor? {
-        if (!isExpect) error(this)
-        return with(ExpectedActualResolver) {
-            findCompatibleActualForExpected(this@findActualForExpect.module).singleOrNull()
-        }
+    private fun IrExpressionBody.copyAndActualizeDefaultValue(
+        actualFunction: IrFunction,
+        expectActualTypeParametersMap: Map<IrTypeParameter, IrTypeParameter>
+    ): IrExpressionBody {
+        return this
+            .deepCopyWithSymbols(actualFunction) { IrTypeParameterRemapper(expectActualTypeParametersMap) }
+            .transform(object : IrElementTransformerVoid() {
+                override fun visitGetValue(expression: IrGetValue): IrExpression {
+                    expression.transformChildrenVoid()
+                    return expression.remapSymbolParent(
+                        classRemapper = { symbolTable.descriptorExtension.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
+                        functionRemapper = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
+                    )
+                }
+            }, data = null)
     }
 
     private fun MemberDescriptor.findExpectForActual(): MemberDescriptor? {
         if (!isActual) error(this)
-        return with(ExpectedActualResolver) {
-            findCompatibleExpectedForActual(this@findExpectForActual.module).singleOrNull()
-        }
-    }
-
-    private fun IrExpression.remapExpectValueSymbols(): IrExpression {
-        return this.transform(object : IrElementTransformerVoid() {
-
-            override fun visitGetValue(expression: IrGetValue): IrExpression {
-                expression.transformChildrenVoid()
-                val newValue = remapExpectValue(expression.symbol)
-                    ?: return expression
-
-                return IrGetValueImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    newValue.type,
-                    newValue.symbol,
-                    expression.origin
-                )
-            }
-        }, data = null)
-    }
-
-    private fun remapExpectValue(symbol: IrValueSymbol): IrValueParameter? {
-        if (symbol !is IrValueParameterSymbol) {
-            return null
-        }
-
-        val parameter = symbol.owner
-
-        return when (val parent = parameter.parent) {
-            is IrClass -> {
-                assert(parameter == parent.thisReceiver)
-                symbolTable.referenceClass(parent.descriptor.findActualForExpect() as ClassDescriptor).owner.thisReceiver!!
-            }
-
-            is IrFunction -> {
-                val actualFunction =
-                    symbolTable.referenceFunction(parent.descriptor.findActualForExpect() as FunctionDescriptor).owner
-                when (parameter) {
-                    parent.dispatchReceiverParameter ->
-                        actualFunction.dispatchReceiverParameter!!
-                    parent.extensionReceiverParameter ->
-                        actualFunction.extensionReceiverParameter!!
-                    else -> {
-                        assert(parent.valueParameters[parameter.index] == parameter)
-                        actualFunction.valueParameters[parameter.index]
-                    }
-                }
-            }
-
-            else -> error(parent)
-        }
+        return findCompatibleExpectsForActual().singleOrNull()
     }
 }

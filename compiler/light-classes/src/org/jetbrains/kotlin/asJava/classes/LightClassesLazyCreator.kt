@@ -1,26 +1,28 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiCachedValueImpl
 import com.intellij.psi.util.CachedValueProvider
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class LightClassesLazyCreator(private val project: Project) : KotlinClassInnerStuffCache.LazyCreator() {
     override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>) = object : Lazy<T> {
         private val lock = ReentrantLock()
         private val holder = lazyPub {
-            PsiCachedValueImpl(PsiManager.getInstance(project),
-                               CachedValueProvider<T> {
-                                   val v = initializer()
-                                   CachedValueProvider.Result.create(v, dependencies)
-                               })
+            PsiCachedValueImpl(PsiManager.getInstance(project)) {
+                val v = initializer()
+                CachedValueProvider.Result.create(v, dependencies)
+            }
         }
 
         private fun computeValue(): T = holder.value.value ?: error("holder has not null in initializer")
@@ -43,20 +45,30 @@ class LightClassesLazyCreator(private val project: Project) : KotlinClassInnerSt
 
                     // TODO: NOTE: acquire lock for a several seconds to avoid dead-lock via resolve is a WORKAROUND
 
-                    if (!initIsRunning.get() && lock.tryLock(5, TimeUnit.SECONDS)) {
-                        try {
-                            initIsRunning.set(true)
+                    val timeout = 5.toDuration(DurationUnit.SECONDS)
+                    val stepTimeout = 500.toDuration(DurationUnit.MILLISECONDS)
+
+                    var calculatedValue: T? = null
+                    for (attempt in 0 until (timeout.inWholeMilliseconds / stepTimeout.inWholeMilliseconds)) {
+                        if (calculatedValue != null || initIsRunning.get()) break
+
+                        ProgressManager.checkCanceled()
+
+                        if (lock.tryLock(stepTimeout.inWholeMilliseconds, TimeUnit.MILLISECONDS)) {
                             try {
-                                computeValue()
+                                initIsRunning.set(true)
+                                try {
+                                    calculatedValue = computeValue()
+                                } finally {
+                                    initIsRunning.set(false)
+                                }
                             } finally {
-                                initIsRunning.set(false)
+                                lock.unlock()
                             }
-                        } finally {
-                            lock.unlock()
                         }
-                    } else {
-                        computeValue()
                     }
+
+                    calculatedValue ?: computeValue()
                 }
             }
 

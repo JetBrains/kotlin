@@ -1,0 +1,13 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:-RangeUntilOperator
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingXx.kt:3:19: error: the feature "range until operator" is disabled
+    for (x in 100 ..< 1) {
+                  ^^^
+COMPILATION_ERROR

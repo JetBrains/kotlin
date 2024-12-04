@@ -1,0 +1,14 @@
+public abstract interface CantMakeImmutableInSubclass : R|kotlin/Any| {
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/collections/MutableCollection<kotlin/String>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/CantMakeImmutableInSubclass.Super| {
+        public abstract fun foo(): R|kotlin/collections/MutableList<kotlin/String>|
+
+    }
+
+}

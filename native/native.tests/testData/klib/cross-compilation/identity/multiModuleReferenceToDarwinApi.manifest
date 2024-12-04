@@ -1,0 +1,18 @@
+// MODULE: lib
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib org.jetbrains.kotlin.native.platform.Foundation
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = macos_arm64
+unique_name = lib
+// MODULE: app
+abi_version = <value sanitized for test data stability>
+builtins_platform = NATIVE
+compiler_version = <value sanitized for test data stability>
+depends = stdlib org.jetbrains.kotlin.native.platform.Foundation
+ir_signature_versions = <value sanitized for test data stability>
+metadata_version = <value sanitized for test data stability>
+native_targets = macos_arm64
+unique_name = app

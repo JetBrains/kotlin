@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun <T> select(x: T, y: T): T = x
 open class Inv<K>
@@ -82,7 +82,7 @@ fun testCapturedVariable() {
 
     c2
 
-    val c3 = select(SubInv<Number>(), createInvIn())
+    val c3 = <!NEW_INFERENCE_ERROR!>select(SubInv<Number>(), createInvIn())<!>
 
     c3
 }

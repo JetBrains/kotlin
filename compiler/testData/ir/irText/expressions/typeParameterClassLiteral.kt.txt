@@ -1,16 +1,3 @@
-inline fun <reified T : Any> classRefFun(): KClass<T> {
-  return T::class
-}
-
-inline fun <reified T : Any> Any.classRefExtFun(): KClass<T> {
-  return T::class
-}
-
-val <reified T : Any> T.classRefExtVal: KClass<T>
-  inline get(): KClass<T> {
-    return T::class
-  }
-
 class Host {
   constructor() /* primary */ {
     super/*Any*/()
@@ -18,11 +5,11 @@ class Host {
 
   }
 
-  inline fun <reified TF : Any> classRefGenericMemberFun(): KClass<TF> {
+  inline fun <reified TF : Any> Any.classRefGenericMemberExtFun(): KClass<TF> {
     return TF::class
   }
 
-  inline fun <reified TF : Any> Any.classRefGenericMemberExtFun(): KClass<TF> {
+  inline fun <reified TF : Any> classRefGenericMemberFun(): KClass<TF> {
     return TF::class
   }
 
@@ -32,3 +19,17 @@ class Host {
     }
 
 }
+
+inline fun <reified T : Any> Any.classRefExtFun(): KClass<T> {
+  return T::class
+}
+
+inline fun <reified T : Any> classRefFun(): KClass<T> {
+  return T::class
+}
+
+val <reified T : Any> T.classRefExtVal: KClass<T>
+  inline get(): KClass<T> {
+    return T::class
+  }
+

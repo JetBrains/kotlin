@@ -8,7 +8,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 @Parcelize
-enum class Color : Parcelable { BLACK, WHITE }
+enum class Color(val rgba8: Long) : Parcelable { BLACK(0x000000FFL), WHITE(0xFFFFFFFFL) }
 
 @Parcelize
 object Obj : Parcelable
@@ -34,5 +34,6 @@ fun box() = parcelTest { parcel ->
     println(obj2)
 
     assert(black2 == black)
+    assert(black2.rgba8 == 0x000000FFL)
     assert(obj2 != null)
 }

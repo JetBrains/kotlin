@@ -1,12 +1,15 @@
-public final enum class AnnotatedEnumEntry : R|kotlin/Enum<ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>>| {
-    @R|test/AnnotatedEnumEntry.Anno|(String(a)) public final static enum entry E1: R|@EnhancedNullability test/AnnotatedEnumEntry|
-    @R|test/AnnotatedEnumEntry.Anno|(String(b)) @R|test/AnnotatedEnumEntry.Anno2|() public final static enum entry E2: R|@EnhancedNullability test/AnnotatedEnumEntry|
-    public final static enum entry E3: R|@EnhancedNullability test/AnnotatedEnumEntry|
+public final enum class AnnotatedEnumEntry : R|kotlin/Enum<test/AnnotatedEnumEntry!>| {
+    @R|test/AnnotatedEnumEntry.Anno|(value = String(a)) public final static enum entry E1: R|test/AnnotatedEnumEntry|
+    @R|test/AnnotatedEnumEntry.Anno|(value = String(b)) @R|test/AnnotatedEnumEntry.Anno2|() public final static enum entry E2: R|test/AnnotatedEnumEntry|
+    public final static enum entry E3: R|test/AnnotatedEnumEntry|
     public final static fun values(): R|kotlin/Array<test/AnnotatedEnumEntry>| {
     }
 
     public final static fun valueOf(value: R|kotlin/String|): R|test/AnnotatedEnumEntry| {
     }
+
+    public final static val entries: R|kotlin/enums/EnumEntries<test/AnnotatedEnumEntry>|
+        public get(): R|kotlin/enums/EnumEntries<test/AnnotatedEnumEntry>|
 
     public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/String|): R|test/AnnotatedEnumEntry.Anno|

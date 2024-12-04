@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !LANGUAGE: +OptInOnOverrideForbidden
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -POTENTIALLY_NON_REPORTED_ANNOTATION
 // FILE: api.kt
 
 package api
@@ -57,7 +58,7 @@ var some: Int
 val another: Int = 42
 
 class My {
-    <!OPT_IN_MARKER_ON_OVERRIDE!>@E6<!>
+    @E6
     override fun hashCode() = 0
 }
 
@@ -73,7 +74,7 @@ interface Base {
 }
 
 class Derived : Base {
-    <!OPT_IN_MARKER_ON_OVERRIDE!>@E6<!>
+    @E6
     override val bar: Int = 42
 
     @set:E6 <!OPT_IN_MARKER_ON_WRONG_TARGET!>@setparam:E6<!>

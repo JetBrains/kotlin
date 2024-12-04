@@ -1,5 +1,0 @@
-KT element: KtConstructorDelegationCall
-FIR element: FirDelegatedConstructorCallImpl
-
-FIR element rendered:
-this<R|A|>(Int(1))

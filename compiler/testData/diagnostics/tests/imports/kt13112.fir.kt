@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: 1.kt
 
 package anotherpackage
@@ -18,7 +19,7 @@ interface IInterfaceOutput<out T> {
 
 package mypackage.nestedpackage
 
-import mypackage.nestedpackage.Bar.Baz
+import mypackage.nestedpackage.Bar.<!UNRESOLVED_IMPORT!>Baz<!>
 import anotherpackage.IInterfaceInput
 import anotherpackage.IInterfaceOutput
 

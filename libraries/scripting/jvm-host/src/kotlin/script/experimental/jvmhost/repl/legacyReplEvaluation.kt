@@ -47,9 +47,7 @@ class JvmReplEvaluator(
         val lastSnippetClass = history.peek()?.item?.first
         val historyBeforeSnippet = history.previousItems(compileResult.lineId).map { it.second }.toList()
         val currentConfiguration = ScriptEvaluationConfiguration(baseScriptEvaluationConfiguration) {
-            if (historyBeforeSnippet.isNotEmpty()) {
-                previousSnippets.put(historyBeforeSnippet)
-            }
+            previousSnippets.put(historyBeforeSnippet)
             if (lastSnippetClass != null) {
                 jvm {
                     baseClassLoader(lastSnippetClass.java.classLoader)

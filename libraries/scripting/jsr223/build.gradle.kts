@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
@@ -13,10 +14,10 @@ dependencies {
     api(project(":kotlin-scripting-jvm-host-unshaded"))
     api(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep())
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    compileOnly(intellijCore())
     publishedRuntime(project(":kotlin-compiler"))
-    publishedRuntime(project(":kotlin-reflect"))
+    publishedRuntime(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 sourceSets {
@@ -24,8 +25,8 @@ sourceSets {
     "test" {}
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
 standardPublicJars()

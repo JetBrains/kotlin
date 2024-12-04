@@ -1,0 +1,205 @@
+// MODULE: lib
+// FILE: lib.kt
+
+external var topLevelVar1: String
+  field = <get-definedExternally>()
+  external get
+  external set
+
+external class ExternalClass {
+  external var externalClassVar1: String
+    field = <get-definedExternally>()
+    external get
+    external set
+
+  external class NestedClass {
+    external var nestedClassVar1: String
+      field = <get-definedExternally>()
+      external get
+      external set
+
+    external constructor() /* primary */
+
+    external fun nestedClassFun(a: Int): String {
+      return <get-definedExternally>()
+    }
+
+    external var nestedClassVar2: String
+      external get(): String {
+        return <get-definedExternally>()
+      }
+      external set(value: String) {
+        return <get-definedExternally>()
+      }
+
+  }
+
+  external interface NestedInterface {
+    abstract external fun nestedInterfaceFun(a: Int): String
+
+    abstract external var nestedInterfaceVar: String
+      abstract external get
+      abstract external set
+
+  }
+
+  external object NestedObject {
+    external var nestedObjectVar1: String
+      field = <get-definedExternally>()
+      external get
+      external set
+
+    private external constructor() /* primary */
+
+    external fun nestedObjectFun(a: Int): String {
+      return <get-definedExternally>()
+    }
+
+    external var nestedObjectVar2: String
+      external get(): String {
+        return <get-definedExternally>()
+      }
+      external set(value: String) {
+        return <get-definedExternally>()
+      }
+
+  }
+
+  external constructor() /* primary */
+
+  external fun externalClassFun(a: Int): String {
+    return <get-definedExternally>()
+  }
+
+  external fun getNestedInterface(): NestedInterface {
+    return <get-definedExternally>()
+  }
+
+  external var externalClassVar2: String
+    external get(): String {
+      return <get-definedExternally>()
+    }
+    external set(value: String) {
+      return <get-definedExternally>()
+    }
+
+}
+
+external interface ExternalInterface {
+  external interface NestedInterface {
+    abstract external fun nestedInterfaceFun(a: Int): String
+
+    abstract external var nestedInterfaceVar: String
+      abstract external get
+      abstract external set
+
+  }
+
+  external companion object Companion {
+    external var companionObjectVar1: String
+      field = <get-definedExternally>()
+      external get
+      external set
+
+    private external constructor() /* primary */
+
+    external fun companionObjectFun(a: Int): String {
+      return <get-definedExternally>()
+    }
+
+    external fun getExternalInterface(): ExternalInterface {
+      return <get-definedExternally>()
+    }
+
+    external var companionObjectVar2: String
+      external get(): String {
+        return <get-definedExternally>()
+      }
+      external set(value: String) {
+        return <get-definedExternally>()
+      }
+
+  }
+
+  abstract external fun externalInterfaceFun(a: Int): String
+
+  abstract external fun getNestedInterface(): NestedInterface
+
+  abstract external var externalInterfaceVar: String
+    abstract external get
+    abstract external set
+
+}
+
+external fun topLevelFun(a: Int): String {
+  return <get-definedExternally>()
+}
+
+external var topLevelVar2: String
+  external get(): String {
+    return <get-definedExternally>()
+  }
+  external set(value: String) {
+    return <get-definedExternally>()
+  }
+
+// MODULE: app
+// FILE: main.kt
+
+fun main() {
+  println(message = topLevelFun(a = 42))
+  <set-topLevelVar1>(value = "a")
+  println(message = <get-topLevelVar1>())
+  <set-topLevelVar2>(value = "a")
+  println(message = <get-topLevelVar2>())
+  with<ExternalInterface, Unit>(receiver = Companion.getExternalInterface(), block = local fun ExternalInterface.<anonymous>() {
+    println(message = $this$with.externalInterfaceFun(a = 42))
+    $this$with.<set-externalInterfaceVar>(<set-?> = "a")
+    println(message = $this$with.<get-externalInterfaceVar>())
+    with<NestedInterface, Unit>(receiver = $this$with.getNestedInterface(), block = local fun NestedInterface.<anonymous>() {
+      println(message = $this$with.nestedInterfaceFun(a = 42))
+      $this$with.<set-nestedInterfaceVar>(<set-?> = "a")
+      println(message = $this$with.<get-nestedInterfaceVar>())
+    }
+)
+  }
+)
+  with<Companion, Unit>(receiver = Companion, block = local fun Companion.<anonymous>() {
+    println(message = $this$with.companionObjectFun(a = 42))
+    $this$with.<set-companionObjectVar1>(<set-?> = "a")
+    println(message = $this$with.<get-companionObjectVar1>())
+    $this$with.<set-companionObjectVar2>(value = "a")
+    println(message = $this$with.<get-companionObjectVar2>())
+  }
+)
+  with<ExternalClass, Unit>(receiver = ExternalClass(), block = local fun ExternalClass.<anonymous>() {
+    println(message = $this$with.externalClassFun(a = 42))
+    $this$with.<set-externalClassVar1>(<set-?> = "a")
+    println(message = $this$with.<get-externalClassVar1>())
+    $this$with.<set-externalClassVar2>(value = "a")
+    println(message = $this$with.<get-externalClassVar2>())
+    with<NestedInterface, Unit>(receiver = $this$with.getNestedInterface(), block = local fun NestedInterface.<anonymous>() {
+      println(message = $this$with.nestedInterfaceFun(a = 42))
+      $this$with.<set-nestedInterfaceVar>(<set-?> = "a")
+      println(message = $this$with.<get-nestedInterfaceVar>())
+    }
+)
+  }
+)
+  with<NestedClass, Unit>(receiver = NestedClass(), block = local fun NestedClass.<anonymous>() {
+    println(message = $this$with.nestedClassFun(a = 42))
+    $this$with.<set-nestedClassVar1>(<set-?> = "a")
+    println(message = $this$with.<get-nestedClassVar1>())
+    $this$with.<set-nestedClassVar2>(value = "a")
+    println(message = $this$with.<get-nestedClassVar2>())
+  }
+)
+  with<NestedObject, Unit>(receiver = NestedObject, block = local fun NestedObject.<anonymous>() {
+    println(message = $this$with.nestedObjectFun(a = 42))
+    $this$with.<set-nestedObjectVar1>(<set-?> = "a")
+    println(message = $this$with.<get-nestedObjectVar1>())
+    $this$with.<set-nestedObjectVar2>(value = "a")
+    println(message = $this$with.<get-nestedObjectVar2>())
+  }
+)
+}

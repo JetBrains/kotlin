@@ -1,0 +1,28 @@
+FILE: Impl.kt
+    public abstract class Impl : R|Base| {
+        public constructor(): R|Impl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun foo(name: R|kotlin/String|): R|Base| {
+            ^foo this@R|/Impl|
+        }
+
+    }
+FILE: test.kt
+    public abstract class ImplDerived : R|Impl|, R|Derived| {
+        public constructor(): R|ImplDerived| {
+            super<R|Impl|>()
+        }
+
+        public abstract override fun foo(name: R|kotlin/String?|): R|Derived|
+
+    }
+    public abstract class DerivedImpl : R|Derived|, R|Impl| {
+        public constructor(): R|DerivedImpl| {
+            super<R|Impl|>()
+        }
+
+        public abstract override fun foo(name: R|kotlin/String?|): R|Derived|
+
+    }

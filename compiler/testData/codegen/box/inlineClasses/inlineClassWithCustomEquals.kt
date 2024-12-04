@@ -1,13 +1,11 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: not supported in JVM
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 @file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(val data: Int) {
     override fun equals(other: Any?): Boolean =
         other is Z &&

@@ -23,22 +23,20 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
+import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 
 class AnalyzerWithCompilerReport(
     private val messageCollector: MessageCollector,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val renderDiagnosticName: Boolean
 ) : AbstractAnalyzerWithCompilerReport {
     override val targetEnvironment: TargetEnvironment
         get() = CompilerEnvironment
@@ -46,8 +44,9 @@ class AnalyzerWithCompilerReport(
     override lateinit var analysisResult: AnalysisResult
 
     constructor(configuration: CompilerConfiguration) : this(
-        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE,
-        configuration.languageVersionSettings
+        configuration.messageCollector,
+        configuration.languageVersionSettings,
+        configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     )
 
     private fun reportIncompleteHierarchies() {
@@ -111,13 +110,15 @@ class AnalyzerWithCompilerReport(
 
     override fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
         analysisResult = analyze()
-        ExperimentalUsageChecker.checkCompilerArguments(
-            analysisResult.moduleDescriptor, languageVersionSettings,
-            reportError = { message -> messageCollector.report(ERROR, message) },
-            reportWarning = { message -> messageCollector.report(WARNING, message) }
-        )
+        if (!analysisResult.isError()) {
+            OptInUsageChecker.checkCompilerArguments(
+                analysisResult.moduleDescriptor, languageVersionSettings,
+                reportError = { message -> messageCollector.report(ERROR, message) },
+                reportWarning = { message -> messageCollector.report(WARNING, message) }
+            )
+        }
         reportSyntaxErrors(files)
-        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector)
+        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, renderDiagnosticName)
         reportIncompleteHierarchies()
         reportAlternativeSignatureErrors()
     }
@@ -135,36 +136,63 @@ class AnalyzerWithCompilerReport(
             Severity.INFO -> INFO
             Severity.ERROR -> ERROR
             Severity.WARNING -> WARNING
-            else -> throw IllegalStateException("Unknown severity: $severity")
         }
 
         private val SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create<PsiErrorElement>(Severity.ERROR)
 
-        private fun reportDiagnostic(diagnostic: Diagnostic, reporter: DiagnosticMessageReporter): Boolean {
+        private fun reportDiagnostic(diagnostic: Diagnostic, reporter: DiagnosticMessageReporter, renderDiagnosticName: Boolean): Boolean {
             if (!diagnostic.isValid) return false
+
+            val message = (diagnostic as? MyDiagnostic<*>)?.message ?: DefaultErrorMessages.render(diagnostic)
+            val textToRender = when (renderDiagnosticName) {
+                true -> "[${diagnostic.factoryName}] $message"
+                false -> message
+            }
 
             reporter.report(
                 diagnostic,
                 diagnostic.psiFile,
-                (diagnostic as? MyDiagnostic<*>)?.message ?: DefaultErrorMessages.render(diagnostic)
+                textToRender
             )
 
             return diagnostic.severity == Severity.ERROR
         }
 
-        fun reportDiagnostics(unsortedDiagnostics: GenericDiagnostics<*>, reporter: DiagnosticMessageReporter): Boolean {
+        fun reportDiagnostics(
+            unsortedDiagnostics: GenericDiagnostics<*>,
+            reporter: DiagnosticMessageReporter,
+            renderDiagnosticName: Boolean
+        ): Boolean {
             var hasErrors = false
             val diagnostics = sortedDiagnostics(unsortedDiagnostics.all().filterIsInstance<Diagnostic>())
             for (diagnostic in diagnostics) {
-                hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter)
+                hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter, renderDiagnosticName)
             }
             return hasErrors
         }
 
-        fun reportDiagnostics(diagnostics: GenericDiagnostics<*>, messageCollector: MessageCollector): Boolean {
-            val hasErrors = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
+        fun reportDiagnostics(
+            diagnostics: GenericDiagnostics<*>,
+            messageCollector: MessageCollector,
+            renderInternalDiagnosticName: Boolean
+        ): Boolean {
+            return reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector), renderInternalDiagnosticName).also {
+                reportSpecialErrors(
+                    diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS },
+                    diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS },
+                    diagnostics.any { it.factory == Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS },
+                    messageCollector,
+                )
+            }
+        }
 
-            if (diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS }) {
+        fun reportSpecialErrors(
+            hasIncompatibleClasses: Boolean,
+            hasPrereleaseClasses: Boolean,
+            hasUnstableClasses: Boolean,
+            messageCollector: MessageCollector,
+        ) {
+            if (hasIncompatibleClasses) {
                 messageCollector.report(
                     ERROR,
                     "Incompatible classes were found in dependencies. " +
@@ -172,32 +200,22 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS }) {
+            if (hasPrereleaseClasses) {
                 messageCollector.report(
                     ERROR,
-                    "Pre-release classes were found in dependencies. " +
-                            "Remove them from the classpath, recompile with a release compiler " +
-                            "or use '-Xskip-prerelease-check' to suppress errors"
+                    "Pre-release declarations were found in dependencies. Please exclude the dependencies with such declarations " +
+                            "and recompile with a release compiler, or use '-Xskip-prerelease-check' to suppress errors. " +
+                            "Note that in the latter case the compiled declarations will also be marked as pre-release."
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS }) {
+            if (hasUnstableClasses) {
                 messageCollector.report(
                     ERROR,
                     "Classes compiled by an unstable version of the Kotlin compiler were found in dependencies. " +
                             "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
                 )
             }
-
-            if (diagnostics.any { it.factory == Errors.FIR_COMPILED_CLASS }) {
-                messageCollector.report(
-                    ERROR,
-                    "Classes compiled by the new Kotlin compiler frontend were found in dependencies. " +
-                            "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
-                )
-            }
-
-            return hasErrors
         }
 
         fun reportSyntaxErrors(file: PsiElement, reporter: DiagnosticMessageReporter): SyntaxErrorReport {
@@ -207,7 +225,7 @@ class AnalyzerWithCompilerReport(
 
                 private fun <E : PsiElement> reportDiagnostic(element: E, factory: DiagnosticFactory0<E>, message: String) {
                     val diagnostic = MyDiagnostic(element, factory, message)
-                    AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, reporter)
+                    AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, reporter, renderDiagnosticName = false)
                     if (allErrorsAtEof && !element.isAtEof()) {
                         allErrorsAtEof = false
                     }

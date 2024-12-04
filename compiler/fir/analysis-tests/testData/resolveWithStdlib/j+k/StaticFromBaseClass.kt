@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 /*
  * See org/jetbrains/kotlin/fir/java/scopes/JavaClassUseSiteMemberScope.kt:93
  */
@@ -6,7 +7,7 @@
 
 public class CommonDataKeys {
     public static final String PROJECT = "project";
-    public final String MEMBER = "member"
+    public final String MEMBER = "member";
 }
 
 // FILE: PlatformDataKeys.java

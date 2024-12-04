@@ -1,0 +1,12 @@
+KT element: KtBlockExpression
+FIR element: FirBlockImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+ {
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] blockExpression.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+    }

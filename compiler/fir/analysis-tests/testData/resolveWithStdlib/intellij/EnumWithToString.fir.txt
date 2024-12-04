@@ -9,7 +9,7 @@ FILE: EnumWithToString.kt
                 super<R|Some|>()
             }
 
-            public final override fun toString(): R|kotlin/String| {
+            public open override fun toString(): R|kotlin/String| {
                 ^toString String(Entry)
             }
 
@@ -24,5 +24,8 @@ FILE: EnumWithToString.kt
 
         public final static fun valueOf(value: R|kotlin/String|): R|Some| {
         }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Some>|
+            public get(): R|kotlin/enums/EnumEntries<Some>|
 
     }

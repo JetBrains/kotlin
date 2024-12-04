@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 
-abstract class JvmPackagePartProviderBase<MappingsKey> : PackagePartProvider, MetadataPartProvider {
+abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartProvider {
 
     protected data class ModuleMappingInfo<MappingsKey>(val key: MappingsKey, val mapping: ModuleMapping, val name: String)
 
@@ -39,6 +38,11 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackagePartProvider, Me
         return result.toList()
     }
 
+    private val allPackageNames: Set<String> by lazy {
+        loadedModules.flatMapTo(mutableSetOf()) { it.mapping.packageFqName2Parts.keys }
+    }
+
+    override fun computePackageSetWithNonClassDeclarations(): Set<String> = allPackageNames
     override fun findMetadataPackageParts(packageFqName: String): List<String> =
         getPackageParts(packageFqName).flatMap(PackageParts::metadataParts).distinct()
 
@@ -61,6 +65,11 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackagePartProvider, Me
         loadedModules.flatMap { module ->
             getAllOptionalAnnotationClasses(module.mapping)
         }
+
+    override fun mayHaveOptionalAnnotationClasses(): Boolean {
+        // `loadedModules` is mutable, so even a package part provider without optional annotation classes may have some in the future.
+        return true
+    }
 
     companion object {
         fun getAllOptionalAnnotationClasses(module: ModuleMapping): List<ClassData> {

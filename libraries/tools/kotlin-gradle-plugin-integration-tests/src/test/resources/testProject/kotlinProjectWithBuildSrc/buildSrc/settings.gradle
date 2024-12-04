@@ -1,0 +1,10 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    plugins {
+        id "org.jetbrains.kotlin.test.fixes.android" version "$test_fixes_version"
+    }
+}

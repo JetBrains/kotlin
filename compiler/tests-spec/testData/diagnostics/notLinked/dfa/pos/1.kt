@@ -1,7 +1,6 @@
-// FIR_IDE_IGNORE
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+// TODO: https://youtrack.jetbrains.com/issue/KT-49862
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
@@ -57,18 +56,18 @@ fun case_2(x: Nothing?) {
 // TESTCASE NUMBER: 3
 fun case_3() {
     if (Object.prop_1 == null)
-        else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.funNullableAny()
-        }
+    else {
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number"), DEBUG_INFO_SMARTCAST!>Object.prop_1<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>Object.prop_1<!>.funNullableAny()
+    }
 }
 
 // TESTCASE NUMBER: 4
@@ -275,15 +274,15 @@ fun case_14() {
                                                             if (<!SENSELESS_COMPARISON!>a.x != null<!>) {
                                                                 if (<!SENSELESS_COMPARISON!>a.x !== null<!>) {
                                                                     <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.propNullableT
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.propNullableAny
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.funNullableT()
-                                                                        <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.funNullableAny()
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.equals(null)
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.propT
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.propAny
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.propNullableT
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.propNullableAny
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.funT()
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */"), DEBUG_INFO_SMARTCAST!>a.x<!>.funAny()
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.funNullableT()
+                                                                    <!DEBUG_INFO_EXPRESSION_TYPE("otherpackage.Case14 /* = kotlin.String */ & otherpackage.Case14? /* = kotlin.String? */")!>a.x<!>.funNullableAny()
                                                                 }
                                                             }
                                                         }
@@ -404,16 +403,16 @@ fun case_20(b: Boolean) {
     }
 
     if (a.B19.C19.D19 !== null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>a.B19.C19.D19<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>a.B19.C19.D19<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>a.B19.C19.D19<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>a.B19.C19.D19<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>a.B19.C19.D19<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>a.B19.C19.D19<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>a.B19.C19.D19<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>a.B19.C19.D19<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>a.B19.C19.D19<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>a.B19.C19.D19<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>a.B19.C19.D19<!>.funNullableAny()
     }
 }
 
@@ -495,19 +494,19 @@ fun case_25(b: Boolean) {
     val y = if (b) x else null
 
     if (y !== null) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided>?")!><!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_25.<anonymous>.<no name provided>?)? & () -> case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>y<!>()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>`?")!><!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_25.`<anonymous>`.`<no name provided>`?)? & () -> case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>y<!>()<!>
 
         if (z != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z<!>.a.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z<!>.a.funNullableAny()
         }
     }
 }

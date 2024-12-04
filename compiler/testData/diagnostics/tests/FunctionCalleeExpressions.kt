@@ -1,5 +1,5 @@
-// COMPARE_WITH_LIGHT_TREE
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 package foo
 
@@ -28,7 +28,7 @@ fun <T> fooT2() : (t : T) -> T {
 
 fun main(args : Array<String>) {
     args.foo()()
-    args.foo1()(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    args.foo1()<!NO_VALUE_FOR_PARAMETER!>()<!>
     <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo1<!>()()
     <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo1<!>()(<!UNRESOLVED_REFERENCE!>a<!>)
 
@@ -76,12 +76,12 @@ fun main1() {
 }
 
 fun test() {
-    {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
-    (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    {x : Int -> 1}<!NO_VALUE_FOR_PARAMETER!>()<!>;
+    (fun Int.() = 1)<!NO_VALUE_FOR_PARAMETER!>()<!>
     "sd".<!FUNCTION_EXPECTED!>(fun Int.() = 1)<!>()
     val i : Int? = null
     i<!UNSAFE_CALL!>.<!>(fun Int.() = 1)();
     {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>1<!UNNECESSARY_SAFE_CALL!>?.<!>(fun Int.() = 1)()<!>
+    1<!UNNECESSARY_SAFE_CALL!>?.<!>(fun Int.() = 1)()
     1.<!NO_RECEIVER_ALLOWED!>{}<!>()
 }

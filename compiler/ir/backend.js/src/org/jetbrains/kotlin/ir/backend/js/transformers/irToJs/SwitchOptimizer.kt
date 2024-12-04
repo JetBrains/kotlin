@@ -11,21 +11,25 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
-class SwitchOptimizer(private val context: JsGenerationContext, private val isExpression: Boolean, private val lastStatementTransformer: (JsStatement) -> JsStatement) {
+class SwitchOptimizer(
+    private val context: JsGenerationContext,
+    private val isExpression: Boolean,
+    private val lastStatementTransformer: (() -> JsStatement) -> JsStatement
+) {
 
     // TODO: reimplement optimization on top of IR
-    constructor(context: JsGenerationContext) : this(context, isExpression = false, { it })
+    constructor(context: JsGenerationContext) : this(context, isExpression = false, { it() })
 
     private val jsEqeqeq = context.staticContext.backendContext.intrinsics.jsEqeqeq
     private val jsEqeq = context.staticContext.backendContext.intrinsics.jsEqeq
 
-    private fun IrConst<*>.isTrueConstant(): Boolean {
+    private fun IrConst.isTrueConstant(): Boolean {
         if (kind !== IrConstKind.Boolean) return false
         return value as Boolean
     }
 
     private sealed class SwitchBranchData(val body: IrExpression) {
-        class SwitchCaseData(val cases: Collection<IrConst<*>>, body: IrExpression) : SwitchBranchData(body)
+        class SwitchCaseData(val cases: Collection<IrConst>, body: IrExpression) : SwitchBranchData(body)
         class SwitchDefaultData(body: IrExpression) : SwitchBranchData(body)
     }
 
@@ -43,14 +47,14 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
 
         val cases = mutableListOf<SwitchBranchData>()
 
-        fun tryToExtractEqeqeqConst(irCall: IrCall): IrConst<*>? {
+        fun tryToExtractEqeqeqConst(irCall: IrCall): IrConst? {
             // check weather the irCall is `s === #CONST`
             if (irCall.symbol !== jsEqeqeq && irCall.symbol !== jsEqeq) return null
 
             val op1 = irCall.getValueArgument(0)!!
             val op2 = irCall.getValueArgument(1)!!
 
-            val constOp = op1 as? IrConst<*> ?: op2 as? IrConst<*> ?: return null
+            val constOp = op1 as? IrConst ?: op2 as? IrConst ?: return null
             val varOp = op1 as? IrGetValue ?: op2 as? IrGetValue ?: return null
 
             if (varSymbol == null) varSymbol = varOp.symbol
@@ -59,14 +63,14 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
             return constOp
         }
 
-        fun checkForPrimitiveOrPattern(irWhen: IrWhen, constants: MutableList<IrConst<*>>): Boolean {
+        fun checkForPrimitiveOrPattern(irWhen: IrWhen, constants: MutableList<IrConst>): Boolean {
             if (irWhen.branches.size != 2) return false
 
             val thenBranch = irWhen.branches[0]
             val elseBranch = irWhen.branches[1]
 
             fun checkBranchIsOrPattern(constExpr: IrExpression, branchExpr: IrExpression): Boolean {
-                if (constExpr !is IrConst<*>) return false
+                if (constExpr !is IrConst) return false
                 if (!constExpr.isTrueConstant()) return false
 
                 return when (branchExpr) {
@@ -100,14 +104,14 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
 
                 // check for a || b ... || z pattern
                 is IrWhen -> {
-                    val orConstants = mutableListOf<IrConst<*>>()
+                    val orConstants = mutableListOf<IrConst>()
                     if (checkForPrimitiveOrPattern(condition, orConstants)) {
                         caseCount += orConstants.size
                         cases += SwitchBranchData.SwitchCaseData(orConstants, branch.result)
                     } else return null
                 }
 
-                is IrConst<*> -> {
+                is IrConst -> {
                     if (condition.isTrueConstant()) {
                         caseCount++
                         cases += SwitchBranchData.SwitchDefaultData(branch.result)
@@ -145,20 +149,19 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
             }
 
             val lastStatement = if (isExpression) {
-                val expression = case.body.accept(exprTransformer, context).makeStmt()
-                val lastStatement = lastStatementTransformer(expression)
+                val lastStatement = lastStatementTransformer { case.body.accept(exprTransformer, context).makeStmt() }
                 jsCase.statements += lastStatement
                 lastStatement
             } else {
                 val jsBody = case.body.accept(stmtTransformer, context).asBlock()
-                var lastStatement = jsBody.statements.lastOrNull()
-
-                if (lastStatement != null) {
-                    lastStatement = lastStatementTransformer(lastStatement)
-                    jsBody.statements[jsBody.statements.lastIndex] = lastStatement
-                }
+                val lastStatement = jsBody.statements.lastOrNull()?.let { lastStatementTransformer { it } }
 
                 jsCase.statements += jsBody.statements
+
+                if (lastStatement != null) {
+                    jsCase.statements[jsCase.statements.lastIndex] = lastStatement
+                }
+
                 lastStatement
             }
 
@@ -179,7 +182,7 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
 
 
     fun tryOptimize(irWhen: IrWhen): JsStatement? {
-        return detectSwitch(irWhen)?.let { buildJsSwitch(it) }
+        return detectSwitch(irWhen)?.let { buildJsSwitch(it).withSource(irWhen, context) }
     }
 
 }

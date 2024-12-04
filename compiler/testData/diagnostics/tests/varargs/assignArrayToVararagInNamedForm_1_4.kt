@@ -1,5 +1,6 @@
-// !LANGUAGE: +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.EXPRESSION)

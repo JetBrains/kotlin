@@ -3,5 +3,5 @@ package
 package f {
     public fun </*0*/ R> h(/*0*/ a: kotlin.Any, /*1*/ i: kotlin.Int, /*2*/ r: R, /*3*/ f: (kotlin.Boolean) -> kotlin.Int): kotlin.Int
     public fun </*0*/ R> h(/*0*/ i: kotlin.Int, /*1*/ a: kotlin.Any, /*2*/ r: R, /*3*/ f: (kotlin.Boolean) -> kotlin.Int): kotlin.Int
-    public fun test(): [ERROR : Error function type]
+    public fun test(): [Error type: Return type for function cannot be resolved]
 }

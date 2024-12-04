@@ -84,8 +84,8 @@ package test {
     }
 
     public final annotation class Ann9 : kotlin.Annotation {
-        public constructor Ann9(/*0*/ error: [ERROR : Unresolved] = ...)
-        public final val error: [ERROR : Unresolved]
+        public constructor Ann9(/*0*/ error: [Error type: Unresolved type for Unresolved] = ...)
+        public final val error: [Error type: Unresolved type for Unresolved]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -196,7 +196,7 @@ package test {
         enum entry A
 
         private constructor MyEnum()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.MyEnum): kotlin.Int
@@ -207,6 +207,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.MyEnum>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.MyEnum
         public final /*synthesized*/ fun values(): kotlin.Array<test.MyEnum>
     }

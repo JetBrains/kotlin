@@ -1,0 +1,4 @@
+KtPropertyDelegate(160,168): 'by Bar()'
+  KtPropertyDelegationMethodsReference:
+    0: (in ROOT) operator fun Bar.provideDelegate(_this: kotlin.Any?, p: kotlin.Any?): Foo
+    1: (in ROOT) operator fun Foo.getValue(_this: kotlin.Any?, p: kotlin.Any?): kotlin.Int

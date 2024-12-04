@@ -17,15 +17,19 @@
 package org.jetbrains.kotlin.js.testOld.utils;
 
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
-import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.junit.runners.model.MultipleFailureException;
 
+import java.io.File;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import static org.jetbrains.kotlin.js.inline.util.CollectUtilsKt.collectInstances;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved;
@@ -91,6 +95,25 @@ public class DirectiveTestUtils {
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             checkPropertyReadCount(ast, arguments.getNamedArgument("name"), arguments.findNamedArgument("scope"),
                                    Integer.parseInt(arguments.getNamedArgument("count")));
+        }
+    };
+
+    private static final DirectiveHandler EXPECT_GENERATED_JS = new DirectiveHandler("EXPECT_GENERATED_JS") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            String functionName = arguments.getNamedArgument("function");
+            String expected = arguments.getNamedArgument("expect");
+            File expectedFile = new File(arguments.sourceFile.getParentFile(), expected);
+            String code = AstSearchUtil.getFunction(ast, functionName).toString();
+            String msg = "Function '" + functionName + "' got different generated JS code";
+            KotlinTestUtils.assertEqualsToFile(msg, expectedFile, code);
+        }
+    };
+
+    private static final DirectiveHandler CLASS_EXISTS = new DirectiveHandler("CHECK_CLASS_EXISTS") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) {
+            AstSearchUtil.getClass(ast, arguments.getFirst());
         }
     };
 
@@ -164,6 +187,45 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static abstract class NodeExistenceDirective extends DirectiveHandler {
+        private boolean isElementExists = false;
+        private boolean shouldCheckForExistence;
+
+        NodeExistenceDirective(@NotNull String directive, boolean shouldCheckForExistence) {
+            super(directive);
+            this.shouldCheckForExistence = shouldCheckForExistence;
+        }
+
+        protected abstract String getTextForError();
+        protected abstract JsVisitor getJsVisitorForElement();
+        protected abstract void loadArguments(@NotNull ArgumentsHelper arguments);
+
+        protected void setElementExists(boolean isElementExists) {
+            this.isElementExists = isElementExists;
+        }
+
+        protected boolean isElementExists() {
+            return isElementExists;
+        }
+
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            loadArguments(arguments);
+            getJsVisitorForElement().accept(ast);
+            assertExistence();
+            setElementExists(false);
+        }
+
+        private void assertExistence() {
+            String message = getTextForError();
+            if (shouldCheckForExistence) {
+                assertTrue(message, isElementExists);
+            } else {
+                assertFalse(message, isElementExists);
+            }
+        }
+    }
+
     private static class CountNodesDirective<T extends JsNode> extends DirectiveHandler {
 
         @NotNull
@@ -177,21 +239,36 @@ public class DirectiveTestUtils {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             String functionName = arguments.getNamedArgument("function");
-            String countStr = arguments.getNamedArgument("count");
-            int expectedCount = Integer.valueOf(countStr);
+            String countStr = arguments.findNamedArgument("count");
+            String maxCountStr = arguments.findNamedArgument("max");
+            String includeNestedDeclarations = arguments.findNamedArgument("includeNestedDeclarations");
 
             JsFunction function = AstSearchUtil.getFunction(ast, functionName);
-            List<T> nodes = collectInstances(klass, function.getBody());
+            List<T> nodes = collectInstances(klass, function.getBody(), includeNestedDeclarations != null && includeNestedDeclarations.equals("true"));
             int actualCount = 0;
 
             for (T node : nodes) {
                 actualCount += getActualCountFor(node, arguments);
             }
 
-            String message = "Function " + functionName + " contains " + actualCount +
-                             " nodes of type " + klass.getName() +
-                             ", but expected count is " + expectedCount;
-            assertEquals(message, expectedCount, actualCount);
+            if (countStr != null) {
+                int expectedCount = Integer.valueOf(countStr);
+
+                String message = "Function " + functionName + " contains " + actualCount +
+                                 " nodes of type " + klass.getName() +
+                                 ", but expected count is " + expectedCount;
+                assertEquals(message, expectedCount, actualCount);
+            } else if (maxCountStr != null) {
+                int expectedCount = Integer.valueOf(maxCountStr);
+
+                String message = "Function " + functionName + " contains " + actualCount +
+                                 " nodes of type " + klass.getName() +
+                                 ", but expected max is " + expectedCount;
+                assertTrue(message, expectedCount >= actualCount);
+
+            } else {
+                throw new IllegalArgumentException("'max' or 'count' argument should be provided");
+            }
         }
 
         protected int getActualCountFor(@NotNull T node, @NotNull ArgumentsHelper arguments) {
@@ -222,6 +299,23 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler COUNT_IF = new CountNodesDirective<>("CHECK_IF_COUNT", JsIf.class);
 
+    private static final DirectiveHandler COUNT_TERNARY_OPERATOR =
+            new CountNodesDirective<>("CHECK_TERNARY_OPERATOR_COUNT", JsConditional.class);
+
+    private static final DirectiveHandler COUNT_BINOPS = new CountNodesDirective<JsBinaryOperation>("CHECK_BINOP_COUNT",
+                                                                                                        JsBinaryOperation.class) {
+        @Override
+        protected int getActualCountFor(@NotNull JsBinaryOperation node, @NotNull ArgumentsHelper arguments) {
+            String symbol = arguments.findNamedArgument("symbol");
+            if (symbol == null) {
+                return 1;
+            }
+            return node.getOperator().getSymbol().equals(symbol) ? 1 : 0;
+        }
+    };
+
+    private static final DirectiveHandler COUNT_SUPER = new CountNodesDirective<>("CHECK_SUPER_COUNT", JsSuperRef.class);
+
     private static final DirectiveHandler COUNT_DEBUGGER = new CountNodesDirective<>("CHECK_DEBUGGER_COUNT", JsDebugger.class);
 
     private static final DirectiveHandler COUNT_STRING_LITERALS = new CountNodesDirective<>("CHECK_STRING_LITERAL_COUNT", JsStringLiteral.class);
@@ -240,6 +334,70 @@ public class DirectiveTestUtils {
 
             visitor.accept(ast);
         }
+    };
+
+    private static final DirectiveHandler CHECK_COMMENT_EXISTS = new NodeExistenceDirective("CHECK_COMMENT_EXISTS", true) {
+        private String text;
+        private boolean isMultiLine;
+
+        @Override
+        protected String getTextForError() {
+            return (isMultiLine ? "Multi line" : "Single line") + " comment with text '" + text + "' doesn't exist";
+        }
+
+        @Override
+        protected JsVisitor getJsVisitorForElement() {
+            return new RecursiveJsVisitor() {
+                @Override
+                protected void visitElement(@NotNull JsNode node) {
+                    checkCommentExistsIn(node.getCommentsBeforeNode());
+                    checkCommentExistsIn(node.getCommentsAfterNode());
+                    super.visitElement(node);
+                }
+
+                @Override
+                public void visitSingleLineComment(JsSingleLineComment comment) {
+                    checkCommentExistsIn(Arrays.asList(comment));
+                }
+
+                @Override
+                public void visitMultiLineComment(JsMultiLineComment comment) {
+                    checkCommentExistsIn(Arrays.asList(comment));
+                }
+                private void checkCommentExistsIn(List<JsComment> comments) {
+                    if (comments == null) return;
+                    for (JsComment comment : comments) {
+                        if (isNeededCommentType(comment) && isTheSameText(comment.getText(), text)) {
+                            setElementExists(true);
+                        }
+                    }
+                }
+
+                private boolean isNeededCommentType(JsComment comment) {
+                    return isMultiLine ? comment instanceof JsMultiLineComment : comment instanceof  JsSingleLineComment;
+                }
+            };
+        }
+
+        @Override
+        protected void loadArguments(@NotNull ArgumentsHelper arguments) {
+            this.text = arguments.findNamedArgument("text").replace("\\n", System.lineSeparator());;
+            this.isMultiLine = Boolean.parseBoolean(arguments.findNamedArgument("multiline"));
+        }
+
+        private boolean isTheSameText(String str1, String str2) {
+            List<String> lines1 = StringsKt.lines(str1);
+            List<String> lines2 = StringsKt.lines(str2);
+
+            if (lines1.size() != lines2.size()) return false;
+
+            for (int i = 0; i < lines1.size(); i++) {
+                if (!lines1.get(i).trim().equals(lines2.get(i).trim())) return false;
+            }
+
+            return true;
+        }
+
     };
 
     private static final DirectiveHandler ONLY_THIS_QUALIFIED_REFERENCES = new DirectiveHandler("ONLY_THIS_QUALIFIED_REFERENCES") {
@@ -277,26 +435,6 @@ public class DirectiveTestUtils {
             }
         }
     }
-
-    private static final DirectiveHandler HAS_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_INLINE_METADATA") {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            String functionName = arguments.getPositionalArgument(0);
-            JsExpression property = AstSearchUtil.getMetadataOrFunction(ast, functionName);
-            String message = "Inline metadata has not been generated for function " + functionName;
-            assertNotNull(message, InlineMetadata.decompose(property));
-        }
-    };
-
-    private static final DirectiveHandler HAS_NO_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_NO_INLINE_METADATA") {
-        @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            String functionName = arguments.getPositionalArgument(0);
-            JsExpression property = AstSearchUtil.getMetadataOrFunction(ast, functionName);
-            String message = "Inline metadata has been generated for not effectively public function " + functionName;
-            assertTrue(message, property instanceof JsFunction);
-        }
-    };
 
     private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler("HAS_NO_CAPTURED_VARS") {
         @Override
@@ -346,6 +484,7 @@ public class DirectiveTestUtils {
     };
 
     private static final List<DirectiveHandler> DIRECTIVE_HANDLERS = Arrays.asList(
+            EXPECT_GENERATED_JS,
             FUNCTION_CONTAINS_NO_CALLS,
             FUNCTION_NOT_CALLED,
             FUNCTION_CALLED_TIMES,
@@ -354,11 +493,13 @@ public class DirectiveTestUtils {
             PROPERTY_NOT_WRITTEN_TO,
             PROPERTY_READ_COUNT,
             PROPERTY_WRITE_COUNT,
+            CLASS_EXISTS,
             FUNCTION_EXISTS,
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
             FUNCTIONS_HAVE_SAME_LINES,
             ONLY_THIS_QUALIFIED_REFERENCES,
+            CHECK_COMMENT_EXISTS,
             COUNT_LABELS,
             COUNT_VARS,
             COUNT_BREAKS,
@@ -366,23 +507,25 @@ public class DirectiveTestUtils {
             COUNT_NEW,
             COUNT_CASES,
             COUNT_IF,
+            COUNT_TERNARY_OPERATOR,
+            COUNT_BINOPS,
+            COUNT_SUPER,
             COUNT_DEBUGGER,
             COUNT_STRING_LITERALS,
             NOT_REFERENCED,
-            HAS_INLINE_METADATA,
-            HAS_NO_INLINE_METADATA,
             HAS_NO_CAPTURED_VARS,
             DECLARES_VARIABLE
     );
 
     public static void processDirectives(
             @NotNull JsNode ast,
+            @NotNull File sourceFile,
             @NotNull String sourceCode,
             @NotNull TargetBackend targetBackend
     ) throws Exception {
         List<Throwable> assertionErrors = new ArrayList<>();
         for (DirectiveHandler handler : DIRECTIVE_HANDLERS) {
-            handler.process(ast, sourceCode, targetBackend, assertionErrors);
+            handler.process(ast, sourceFile, sourceCode, targetBackend, assertionErrors);
         }
         MultipleFailureException.assertEmpty(assertionErrors);
     }
@@ -513,13 +656,15 @@ public class DirectiveTestUtils {
          *
          * @see ArgumentsHelper for arguments format
          */
-        void process(@NotNull JsNode ast, @NotNull String sourceCode,
+        void process(@NotNull JsNode ast,
+                @NotNull File sourceFile,
+                @NotNull String sourceCode,
                 @NotNull TargetBackend targetBackend,
                 List<Throwable> assertionErrors
         ) throws Exception {
             List<String> directiveEntries = findLinesWithPrefixesRemoved(sourceCode, directive);
             for (String directiveEntry : directiveEntries) {
-                ArgumentsHelper arguments = new ArgumentsHelper(directiveEntry);
+                ArgumentsHelper arguments = new ArgumentsHelper(directiveEntry, sourceFile);
                 if (!containsBackend(targetBackend, TARGET_BACKENDS, arguments, true) ||
                     containsBackend(targetBackend, IGNORED_BACKENDS, arguments, false)) {
                     continue;
@@ -548,8 +693,8 @@ public class DirectiveTestUtils {
     /**
      * Arguments format: ((namedArg|positionalArg)\s+)*`
      *
-     * Where: namedArg -- "key=value"
-     *        positionalArg -- "value"
+     * Where: namedArg -- 'key=value' or 'key="spaced value"'
+     *        positionalArg -- 'value'
      *
      * Neither key, nor value should contain spaces.
      */
@@ -557,16 +702,26 @@ public class DirectiveTestUtils {
         private final List<String> positionalArguments = new ArrayList<>();
         private final Map<String, String> namedArguments = new HashMap<>();
         private final String entry;
-
-        ArgumentsHelper(@NotNull String directiveEntry) {
+        private final Pattern argumentsPattern = Pattern.compile("[\\w$_;\\.]+(=((\".*?\")|[\\w$_;\\.]+))?");
+        final File sourceFile;
+        ArgumentsHelper(@NotNull String directiveEntry, @NotNull File directiveSourceFile) {
             entry = directiveEntry;
+            sourceFile = directiveSourceFile;
 
-            for (String argument: directiveEntry.split("\\s+")) {
+            Matcher matcher = argumentsPattern.matcher(directiveEntry);
+
+            while (matcher.find()) {
+                String argument = matcher.group();
                 String[] keyVal = argument.split("=");
-
                 switch (keyVal.length) {
                     case 1: positionalArguments.add(keyVal[0]); break;
-                    case 2: namedArguments.put(keyVal[0], keyVal[1]); break;
+                    case 2:
+                        String value = keyVal[1];
+                        if (value.charAt(0) == '"') {
+                            value = value.substring(1, value.length() - 1);
+                        }
+                        namedArguments.put(keyVal[0], value);
+                        break;
                     default: throw new AssertionError("Wrong argument format: " + argument);
                 }
             }

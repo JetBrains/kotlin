@@ -6,6 +6,7 @@ public final class Foo {
     public final val c: kotlin.Int
     public final val d: kotlin.Int
     public final val e: kotlin.Int
+    public final val map: kotlin.collections.Map<kotlin.String, kotlin.Int>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

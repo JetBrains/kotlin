@@ -1,5 +1,3 @@
-import tasks.WriteCopyrightToFile
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -12,34 +10,23 @@ runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
     implementation(project(":generators"))
+    implementation(project(":generators:tree-generator-common"))
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:cones"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
-    compileOnly(intellijDep()) {
-        includeJars("trove4j", rootProject = rootProject)
-    }
+    compileOnly(intellijCore())
 
-    runtimeOnly(intellijCoreDep()) { includeJars("jdom") }
-}
-
-val writeCopyright by task<WriteCopyrightToFile> {
-    outputFile.set(file("$buildDir/copyright/notice.txt"))
-    commented.set(true)
+    runtimeOnly(intellijJDom())
 }
 
 application {
-    mainClassName = "org.jetbrains.kotlin.fir.tree.generator.MainKt"
+    mainClass.set("org.jetbrains.kotlin.fir.tree.generator.MainKt")
 }
-
-val processResources by tasks
-processResources.dependsOn(writeCopyright)
 
 sourceSets {
     "main" {
         projectDefault()
-        resources.srcDir("$buildDir/copyright")
     }
     "test" {}
 }

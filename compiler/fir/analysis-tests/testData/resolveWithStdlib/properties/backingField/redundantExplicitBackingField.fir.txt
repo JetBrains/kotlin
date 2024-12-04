@@ -1,4 +1,4 @@
 FILE: redundantExplicitBackingField.kt
     public final val it: R|kotlin/Int|
-        private <explicit backing field>: R|kotlin/Int| = Int(42)
+        private final backing field field: R|kotlin/Int| = Int(42)
         public get(): R|kotlin/Int|

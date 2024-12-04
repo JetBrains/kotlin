@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //FILE:a.kt
 //KT-900 Inaccessible class should be unresolved
 

@@ -1,0 +1,3 @@
+KtNameReferenceExpression(50,52): 'aa'
+  KtSimpleNameReference:
+    (in A) val aa: A?

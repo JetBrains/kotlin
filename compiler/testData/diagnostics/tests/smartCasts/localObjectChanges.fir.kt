@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun trans(n: Int, f: () -> Boolean) = if (f()) n else null
 
 fun foo() {

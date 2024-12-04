@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -17,20 +17,17 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isTrivial
+import org.jetbrains.kotlin.ir.util.isConstantLike
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
-
-val jvmSafeCallFoldingPhase = makeIrFilePhase(
-    ::JvmSafeCallChainFoldingLowering,
-    name = "JvmSafeCallChainFoldingLowering",
-    description = "Fold safe call chains to more compact forms"
-)
-
-
-class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLoweringPass {
+/**
+ * Folds safe call chains to more compact forms.
+ */
+@PhaseDescription(name = "JvmSafeCallChainFoldingLowering")
+internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLoweringPass {
     // Overall idea here is to represent (possibly chained) safe calls as an if-expression in the form:
     //      when {
     //          { val tmp = <safe_receiver>; tmp != null } -> <safe_call_result>
@@ -121,7 +118,7 @@ class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLowe
         IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, false)
 
     private fun irValNotNull(startOffset: Int, endOffset: Int, irVariable: IrVariable): IrExpression =
-        if (irVariable.type.isJvmNullable() || irVariable.initializer?.isTrivial() != true)
+        if (irVariable.type.isJvmNullable() || irVariable.initializer?.isConstantLike != true)
             IrGetValueImpl(startOffset, endOffset, irVariable.symbol).irEqEqNull().irNot()
         else
             irTrue(startOffset, endOffset)
@@ -466,9 +463,9 @@ internal fun IrBlock.parseSafeCall(irBuiltIns: IrBuiltIns): SafeCallInfo? {
     val arg0 = ifNullBranchCondition.getValueArgument(0)
     if (arg0 !is IrGetValue || arg0.symbol != tmpVal.symbol) return null
     val arg1 = ifNullBranchCondition.getValueArgument(1)
-    if (arg1 !is IrConst<*> || arg1.value != null) return null
+    if (arg1 !is IrConst || arg1.value != null) return null
     val ifNullBranchResult = ifNullBranch.result
-    if (ifNullBranchResult !is IrConst<*> || ifNullBranchResult.value != null) return null
+    if (ifNullBranchResult !is IrConst || ifNullBranchResult.value != null) return null
 
     val ifNotNullBranch = whenExpr.branches[1]
     return SafeCallInfo(this, tmpVal, ifNullBranch, ifNotNullBranch)
@@ -504,7 +501,7 @@ internal fun IrBlock.parseElvis(irBuiltIns: IrBuiltIns): ElvisInfo? {
     val arg0 = ifNullBranchCondition.getValueArgument(0)
     if (arg0 !is IrGetValue || arg0.symbol != tmpVal.symbol) return null
     val arg1 = ifNullBranchCondition.getValueArgument(1)
-    if (arg1 !is IrConst<*> || arg1.value != null) return null
+    if (arg1 !is IrConst || arg1.value != null) return null
     val elvisRhs = ifNullBranch.result
 
     val ifNonNullBranch = whenExpr.branches[1]

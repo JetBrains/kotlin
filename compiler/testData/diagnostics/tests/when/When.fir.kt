@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -18,16 +19,16 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      is String -> 1
+      <!USELESS_IS_CHECK!>is String<!> -> 1
       <!USELESS_IS_CHECK!>!is Int<!> -> 1
       <!USELESS_IS_CHECK!>is Any?<!> -> 1
       <!USELESS_IS_CHECK!>is Any<!> -> 1
       <!INCOMPATIBLE_TYPES!>s<!> -> 1
       1 -> 1
-      1 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!UNRESOLVED_REFERENCE!>a<!> -> 1
+      1 + <!UNRESOLVED_REFERENCE!>a<!> -> 1
       in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
       !in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
-      else -> 1
+      <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 1
     }
 
     return 0

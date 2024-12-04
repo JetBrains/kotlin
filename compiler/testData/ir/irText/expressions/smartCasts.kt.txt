@@ -1,7 +1,7 @@
-fun expectsString(s: String) {
+fun expectsInt(i: Int) {
 }
 
-fun expectsInt(i: Int) {
+fun expectsString(s: String) {
 }
 
 fun overloaded(s: String): String {
@@ -35,3 +35,4 @@ fun test3(x: Any): String {
   }
   return x /*as String */
 }
+

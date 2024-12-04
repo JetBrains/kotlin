@@ -8,4 +8,4 @@ class A(val a: Int) {
         get() = this.length * a
 }
 
-const val kproperty2Get = A::class.members.toList()[1].call(A(2), "123").<!EVALUATED: `6`!>toString()<!>
+const val kproperty2Get = <!EVALUATED: `6`!>A::class.members.toList()[1].call(A(2), "123").toString()<!>

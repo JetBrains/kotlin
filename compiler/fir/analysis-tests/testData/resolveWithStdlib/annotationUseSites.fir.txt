@@ -10,12 +10,12 @@ FILE: test.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|KotlinMessage|() public final val message: R|kotlin/String| = R|<local>/message|
+        public final val message: R|kotlin/String| = R|<local>/message|
             @PROPERTY_GETTER:R|KotlinMessage|() public get(): R|kotlin/String|
 
         public final operator fun component1(): R|kotlin/String|
 
-        public final fun copy(message: R|kotlin/String| = this@R|/KotlinResult|.R|/KotlinResult.message|): R|KotlinResult|
+        public final fun copy(@R|KotlinMessage|() message: R|kotlin/String| = this@R|/KotlinResult|.R|/KotlinResult.message|): R|KotlinResult|
 
     }
     public open class Some : R|kotlin/Any| {

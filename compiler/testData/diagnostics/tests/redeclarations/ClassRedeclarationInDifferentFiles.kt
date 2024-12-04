@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// FIR_IDE_IGNORE
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: f1.kt
 package test
 

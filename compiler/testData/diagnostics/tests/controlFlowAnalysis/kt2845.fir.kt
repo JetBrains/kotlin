@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2845 Wrong cf-analysys for variable initialization in try..finally
 package h
 

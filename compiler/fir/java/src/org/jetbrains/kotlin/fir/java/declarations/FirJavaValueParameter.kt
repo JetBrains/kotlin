@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,9 +13,12 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.java.enhancement.FirEmptyJavaAnnotationList
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -25,23 +28,33 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.properties.Delegates
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaValueParameter @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    override val origin: FirDeclarationOrigin.Java,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirValueParameterSymbol,
-    annotationBuilder: () -> List<FirAnnotation>,
-    override var defaultValue: FirExpression?,
+    val annotationList: FirJavaAnnotationList,
+    var lazyDefaultValue: Lazy<FirExpression>?,
+    override val containingDeclarationSymbol: FirFunctionSymbol<*>,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
+    override var defaultValue: FirExpression?
+        get() = lazyDefaultValue?.value
+        set(value) {
+            lazyDefaultValue = value?.let(::lazyOf)
+        }
+
     init {
         symbol.bind(this)
+
+        @OptIn(ResolveStateAccess::class)
+        this.resolveState = FirResolvePhase.ANALYZED_DEPENDENCIES.asResolveState()
     }
 
     override val isCrossinline: Boolean
@@ -50,22 +63,22 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val isNoinline: Boolean
         get() = false
 
+    override val valueParameterKind: FirValueParameterKind
+        get() = FirValueParameterKind.Regular
+
     override val isVal: Boolean
         get() = true
 
     override val isVar: Boolean
         get() = false
 
-    override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
+    override val annotations: List<FirAnnotation> get() = annotationList
 
-    override val origin: FirDeclarationOrigin
-        get() = FirDeclarationOrigin.Java
-
-    override val receiverTypeRef: FirTypeRef?
+    override val receiverParameter: FirReceiverParameter?
         get() = null
 
-    override val deprecation: DeprecationsPerUseSite
-        get() = EmptyDeprecationsPerUseSite
+    override val deprecationsProvider: DeprecationsProvider
+        get() = EmptyDeprecationsProvider
 
     override val initializer: FirExpression?
         get() = null
@@ -94,8 +107,11 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val containerSource: DeserializedContainerSource?
         get() = null
 
-    override val dispatchReceiverType: ConeKotlinType?
+    override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = null
+
+    override val contextParameters: List<FirValueParameter>
+        get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
@@ -114,7 +130,11 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirValueParameter {
+        return this
+    }
+
+    override fun <D> transformContextParameters(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }
 
@@ -138,6 +158,10 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        shouldNotBeCalled(::replaceAnnotations, ::annotations)
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
     }
@@ -155,31 +179,40 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
-    }
-
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
-    }
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
 
-    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
+    override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
 
     }
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {}
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+    }
+
+    override fun replaceDefaultValue(newDefaultValue: FirExpression?) {
+        error("Java value parameter cannot has default value")
     }
 
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {
     }
 
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {
+    }
+
+    override fun replaceContextParameters(newContextParameter: List<FirValueParameter>) {
+        error("Body cannot be replaced for FirJavaValueParameter")
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        error("Status cannot be replaced for FirJavaValueParameter")
     }
 }
 
@@ -190,22 +223,25 @@ class FirJavaValueParameterBuilder {
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     lateinit var name: Name
-    lateinit var annotationBuilder: () -> List<FirAnnotation>
-    var defaultValue: FirExpression? = null
-    var isVararg: Boolean by kotlin.properties.Delegates.notNull()
+    var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
+    var defaultValue: Lazy<FirExpression>? = null
+    lateinit var containingDeclarationSymbol: FirFunctionSymbol<*>
+    var isVararg: Boolean by Delegates.notNull()
+    var isFromSource: Boolean by Delegates.notNull()
 
     @OptIn(FirImplementationDetail::class)
     fun build(): FirJavaValueParameter {
         return FirJavaValueParameter(
             source,
             moduleData,
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+            origin = javaOrigin(isFromSource),
             attributes,
             returnTypeRef,
             name,
             symbol = FirValueParameterSymbol(name),
-            annotationBuilder,
+            annotationList,
             defaultValue,
+            containingDeclarationSymbol,
             isVararg,
         )
     }
@@ -216,7 +252,7 @@ inline fun buildJavaValueParameter(init: FirJavaValueParameterBuilder.() -> Unit
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJavaValueParameterBuilder.() -> Unit): FirValueParameter {
+inline fun buildJavaValueParameterCopy(original: FirJavaValueParameter, init: FirJavaValueParameterBuilder.() -> Unit): FirValueParameter {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
@@ -224,11 +260,12 @@ inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJav
     copyBuilder.source = original.source
     copyBuilder.moduleData = original.moduleData
     copyBuilder.attributes = original.attributes.copy()
+    copyBuilder.isFromSource = original.origin.fromSource
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.name = original.name
-    val annotations = original.annotations
-    copyBuilder.annotationBuilder = { annotations }
-    copyBuilder.defaultValue = original.defaultValue
+    copyBuilder.annotationList = original.annotationList
+    copyBuilder.defaultValue = original.lazyDefaultValue
+    copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
     copyBuilder.isVararg = original.isVararg
     return copyBuilder.apply(init).build()
 }

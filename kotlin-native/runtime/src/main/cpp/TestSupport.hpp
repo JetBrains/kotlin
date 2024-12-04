@@ -3,11 +3,13 @@
  * that can be found in the LICENSE file.
  */
 
+#pragma once
+
 #include <functional>
-#include <thread>
 
 #include "Memory.h"
 #include "Runtime.h"
+#include "concurrent/ScopedThread.hpp"
 
 namespace kotlin {
 
@@ -21,19 +23,22 @@ constexpr int kDefaultThreadCount = 10;
 constexpr int kDefaultThreadCount = 100;
 #endif
 
-inline MemoryState* InitMemoryForTests() { return InitMemory(false); }
+inline MemoryState* InitMemoryForTests() { return InitMemory(); }
 void DeinitMemoryForTests(MemoryState* memoryState);
 
 // Scopely initializes the memory subsystem of the current thread for tests.
+// TODO(KT-72132): consider dropping this class.
 class ScopedMemoryInit : private kotlin::Pinned {
 public:
     ScopedMemoryInit() : memoryState_(InitMemoryForTests()) {
         kotlin::SwitchThreadState(memoryState(), ThreadState::kRunnable);
     }
     ~ScopedMemoryInit() {
+        // ClearForTests must not be done concurrently with GC
+        SwitchThreadState(memoryState(), ThreadState::kRunnable, /* reentrant = */ true);
         ClearMemoryForTests(memoryState());
         // Ensure that memory deinit is performed in the native state.
-        SwitchThreadState(memoryState(), ThreadState::kNative, /* reentrant = */ true);
+        SwitchThreadState(memoryState(), ThreadState::kNative);
         DeinitMemoryForTests(memoryState());
     }
 
@@ -44,10 +49,10 @@ private:
 
 // Runs the given function in a separate thread with minimally initialized runtime.
 inline void RunInNewThread(std::function<void(MemoryState*)> f) {
-    std::thread([&f]() {
+    ScopedThread([&f]() {
         ScopedMemoryInit init;
         f(init.memoryState());
-    }).join();
+    });
 }
 
 // Runs the given function in a separate thread with minimally initialized runtime.

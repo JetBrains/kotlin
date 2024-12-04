@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api(commonDep("org.apache.ant", "ant"))
+    api(commonDependency("org.apache.ant", "ant"))
     api(project(":kotlin-preloader"))
     api(kotlinStdlib())
 }

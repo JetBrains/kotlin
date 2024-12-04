@@ -16,19 +16,26 @@
 
 package org.jetbrains.kotlin.psi.psiUtil
 
-import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.lang.ASTNode
+import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LazyParseablePsiElement
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
+import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.util.getChildren
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -216,6 +223,54 @@ fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
         last!!.siblings(forward = false).firstOrNull { it !is PsiWhiteSpace })
 }
 
+/**
+ * See [unwrap()][org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.unwrap]
+ */
+val UNWRAPPABLE_TOKEN_TYPES: Set<IElementType> = setOf(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
+
+/**
+ * This function should only be called for a source element corresponding to
+ * an assignment/assignment operator call/increment or a decrement operator.
+ */
+fun PsiElement.getAssignmentLhsIfUnwrappable(): PsiElement? =
+    when {
+        // In `++(x)` the LHS source `(x)` is the last child
+        elementType == PREFIX_EXPRESSION -> children.lastOrNull()
+        // In `(x)++` or `(x) = ...` the LHS source is the first child
+        else -> children.firstOrNull()
+    }.takeIf {
+        it?.elementType in UNWRAPPABLE_TOKEN_TYPES
+    }
+
+/**
+ * This function should only be called for a source element corresponding to
+ * an assignment/assignment operator call/increment or a decrement operator.
+ */
+fun LighterASTNode.getAssignmentLhsIfUnwrappable(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? =
+    when {
+        // In `++(x)` the LHS source `(x)` is the last child
+        tokenType == PREFIX_EXPRESSION -> getChildren(tree).lastOrNull()
+        // In `(x)++` or `(x) = ...` the LHS source is the first child
+        else -> getChildren(tree).firstOrNull()
+    }.takeIf {
+        it?.tokenType in UNWRAPPABLE_TOKEN_TYPES
+    }
+
+/**
+ * This function should only be called for a source element corresponding to
+ * an assignment/assignment operator call/increment or a decrement operator.
+ */
+fun KtSourceElement?.hasUnwrappableAsAssignmentLhs(): Boolean {
+    if (this == null) {
+        return false
+    }
+
+    val node = psi?.getAssignmentLhsIfUnwrappable()
+        ?: lighterASTNode.getAssignmentLhsIfUnwrappable(treeStructure)
+
+    return node != null
+}
+
 // -------------------- Recursive tree visiting --------------------------------------------------------------------------------------------
 
 inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline action: (T) -> Unit) {
@@ -226,6 +281,7 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
     noinline action: (T) -> Unit
 ) {
+    checkDecompiledText()
     this.accept(object : PsiRecursiveElementVisitor() {
         override fun visitElement(element: PsiElement) {
             if (canGoInside(element)) {
@@ -234,6 +290,28 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
 
             if (element is T) {
                 action(element)
+            }
+        }
+    })
+}
+
+inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfTypeInPreorder(noinline action: (T) -> Unit) {
+    forEachDescendantOfTypeInPreorder({ true }, action)
+}
+
+inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfTypeInPreorder(
+    crossinline canGoInside: (PsiElement) -> Boolean,
+    noinline action: (T) -> Unit,
+) {
+    checkDecompiledText()
+    this.accept(object : PsiRecursiveElementVisitor() {
+        override fun visitElement(element: PsiElement) {
+            if (element is T) {
+                action(element)
+            }
+
+            if (canGoInside(element)) {
+                super.visitElement(element)
             }
         }
     })
@@ -258,6 +336,7 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
     noinline predicate: (T) -> Boolean = { true }
 ): T? {
+    checkDecompiledText()
     var result: T? = null
     this.accept(object : PsiRecursiveElementWalkingVisitor() {
         override fun visitElement(element: PsiElement) {
@@ -273,6 +352,13 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
         }
     })
     return result
+}
+
+fun PsiElement.checkDecompiledText() {
+    val file = containingFile
+    if (file is KtFile && file.isCompiled && file.stub != null) {
+        error("Attempt to load decompiled text, please use stubs instead. Decompile process might be slow and should be avoided")
+    }
 }
 
 inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
@@ -381,29 +467,7 @@ fun PsiElement.startsWithComment(): Boolean = firstChild is PsiComment
 
 // ---------------------------------- Debug/logging ----------------------------------------------------------------------------------------
 
-fun PsiElement.getElementTextWithContext(): String {
-    if (!isValid) return "<invalid element $this>"
-
-    if (this is PsiFile) {
-        return containingFile.text
-    }
-
-    // Find parent for element among file children
-    val topLevelElement = PsiTreeUtil.findFirstParent(this, { it.parent is PsiFile })
-        ?: throw AssertionError("For non-file element we should always be able to find parent in file children")
-
-    val startContextOffset = topLevelElement.startOffset
-    val elementContextOffset = textRange.startOffset
-
-    val inFileParentOffset = elementContextOffset - startContextOffset
-
-
-    val isInjected = containingFile is VirtualFileWindow
-    return StringBuilder(topLevelElement.text)
-        .insert(inFileParentOffset, "<caret>")
-        .insert(0, "File name: ${containingFile.name} Physical: ${containingFile.isPhysical} Injected: $isInjected\n")
-        .toString()
-}
+fun PsiElement.getElementTextWithContext(): String = org.jetbrains.kotlin.utils.getElementTextWithContext(this)
 
 fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${PsiDiagnosticUtils.atLocation(this)}"
 
@@ -434,6 +498,10 @@ fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList
 
 operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
+@Deprecated(
+    "Use only in 'kotlin' repo until the alternative method from 'com.intellij.psi' package becomes available from the IJ platform",
+    ReplaceWith("this.createSmartPointer()", "com.intellij.psi.createSmartPointer"),
+)
 fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
     SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
 
@@ -444,16 +512,18 @@ inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRow() = pare
 inline fun <reified T : PsiElement> PsiElement.getLastParentOfTypeInRowWithSelf() = parentsWithSelf
     .takeWhile { it is T }.lastOrNull() as? T
 
-fun KtModifierListOwner.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD) || hasModifier(KtTokens.EXPECT_KEYWORD)
-fun KtModifierList.hasExpectModifier() = hasModifier(KtTokens.HEADER_KEYWORD) || hasModifier(KtTokens.EXPECT_KEYWORD)
+fun KtModifierListOwner.hasExpectModifier() = hasModifier(KtTokens.EXPECT_KEYWORD)
+fun KtModifierList.hasExpectModifier() = hasModifier(KtTokens.EXPECT_KEYWORD)
 
-fun KtModifierListOwner.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
-fun KtModifierList.hasActualModifier() = hasModifier(KtTokens.IMPL_KEYWORD) || hasModifier(KtTokens.ACTUAL_KEYWORD)
+fun KtModifierListOwner.hasActualModifier() = hasModifier(KtTokens.ACTUAL_KEYWORD)
+fun KtModifierList.hasActualModifier() = hasModifier(KtTokens.ACTUAL_KEYWORD)
 fun KtModifierList.hasSuspendModifier() = hasModifier(KtTokens.SUSPEND_KEYWORD)
 
 fun KtModifierList.hasFunModifier() = hasModifier(KtTokens.FUN_KEYWORD)
 
 fun KtModifierList.hasValueModifier() = hasModifier(KtTokens.VALUE_KEYWORD)
+
+fun KtModifierListOwner.hasInnerModifier() = hasModifier(KtTokens.INNER_KEYWORD)
 
 fun ASTNode.children() = generateSequence(firstChildNode) { node -> node.treeNext }
 fun ASTNode.parents() = generateSequence(treeParent) { node -> node.treeParent }

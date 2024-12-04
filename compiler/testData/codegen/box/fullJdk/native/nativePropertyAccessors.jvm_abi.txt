@@ -1,0 +1,25 @@
+MODULE main
+	CLASS C.class
+		CLASS METADATA
+			PROPERTY getDefaultSetter()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int
+	CLASS C$Companion.class
+		CLASS METADATA
+			PROPERTY getDefaultSetter()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int
+	CLASS NativePropertyAccessorsKt.class
+		PACKAGE METADATA
+			PROPERTY getDefaultSetter()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int

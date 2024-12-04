@@ -12,6 +12,9 @@ FILE: exhaustiveWhenAndDNNType.kt
         public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+
     }
     public final class B : R|kotlin/Any| {
         public constructor(): R|B| {

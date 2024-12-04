@@ -5,42 +5,70 @@
 
 package org.jetbrains.kotlin.gradle.model
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.junit.Test
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class KaptModelIT : BaseGradleIT() {
-    @Test
-    fun testKaptSimple() {
-        val project = Project("simple", directoryPrefix = "kapt2")
-        val kaptModel = project.getModels(Kapt::class.java).getModel(":")!!
+@DisplayName("Kapt plugin models")
+@OtherGradlePluginTests
+class KaptModelIT : KGPBaseTest() {
 
-        kaptModel.assertBasics("simple")
+    @DisplayName("Valid kapt model is available when plugin is applied")
+    @GradleTest
+    fun testKaptSimple(gradleVersion: GradleVersion) {
+        project("kapt2/simple", gradleVersion) {
+            getModels<Kapt> {
+                with(getModel(":")!!) {
+                    assertBasics("simple")
 
-        assertEquals(2, kaptModel.kaptSourceSets.size)
-        val mainSourceSet = kaptModel.kaptSourceSets.find { it.name == "main" }!!
-        val testSourceSet = kaptModel.kaptSourceSets.find { it.name == "test" }!!
+                    assertEquals(2, kaptSourceSets.size)
+                    val mainSourceSet = kaptSourceSets.first { it.name == "main" }
+                    val testSourceSet = kaptSourceSets.first { it.name == "test" }
 
-        assertEquals(KaptSourceSet.KaptSourceSetType.PRODUCTION, mainSourceSet.type)
-        assertEquals(project.projectDir.resolve("build/generated/source/kapt/main"), mainSourceSet.generatedSourcesDirectory)
-        assertEquals(project.projectDir.resolve("build/generated/source/kaptKotlin/main"), mainSourceSet.generatedKotlinSourcesDirectory)
-        assertEquals(project.projectDir.resolve("build/tmp/kapt3/classes/main"), mainSourceSet.generatedClassesDirectory)
+                    assertEquals(KaptSourceSet.KaptSourceSetType.PRODUCTION, mainSourceSet.type)
+                    assertEquals(
+                        projectPath.resolve("build/generated/source/kapt/main").toFile(),
+                        mainSourceSet.generatedSourcesDirectory
+                    )
+                    assertEquals(
+                        projectPath.resolve("build/generated/source/kaptKotlin/main").toFile(),
+                        mainSourceSet.generatedKotlinSourcesDirectory
+                    )
+                    assertEquals(
+                        projectPath.resolve("build/tmp/kapt3/classes/main").toFile(),
+                        mainSourceSet.generatedClassesDirectory
+                    )
 
-        assertEquals(KaptSourceSet.KaptSourceSetType.TEST, testSourceSet.type)
-        assertEquals(project.projectDir.resolve("build/generated/source/kapt/test"), testSourceSet.generatedSourcesDirectory)
-        assertEquals(project.projectDir.resolve("build/generated/source/kaptKotlin/test"), testSourceSet.generatedKotlinSourcesDirectory)
-        assertEquals(project.projectDir.resolve("build/tmp/kapt3/classes/test"), testSourceSet.generatedClassesDirectory)
+                    assertEquals(KaptSourceSet.KaptSourceSetType.TEST, testSourceSet.type)
+                    assertEquals(
+                        projectPath.resolve("build/generated/source/kapt/test").toFile(),
+                        testSourceSet.generatedSourcesDirectory
+                    )
+                    assertEquals(
+                        projectPath.resolve("build/generated/source/kaptKotlin/test").toFile(),
+                        testSourceSet.generatedKotlinSourcesDirectory
+                    )
+                    assertEquals(
+                        projectPath.resolve("build/tmp/kapt3/classes/test").toFile(),
+                        testSourceSet.generatedClassesDirectory
+                    )
+                }
+            }
+        }
     }
 
-    @Test
-    fun testNonJvmProjects() {
-        val project = Project("kotlin2JsProject")
-        val models = project.getModels(Kapt::class.java)
-
-        assertNull(models.getModel(":"))
-        assertNull(models.getModel(":libraryProject"))
-        assertNull(models.getModel(":mainProject"))
+    @DisplayName("Model is not available when plugin is not applied")
+    @GradleTest
+    fun testNonJvmProjects(gradleVersion: GradleVersion) {
+        project("kotlin-js-plugin-project", gradleVersion) {
+            getModels<Kapt> {
+                assertNull(getModel(":"))
+                assertNull(getModel(":libraryProject"))
+                assertNull(getModel(":mainProject"))
+            }
+        }
     }
 
     companion object {

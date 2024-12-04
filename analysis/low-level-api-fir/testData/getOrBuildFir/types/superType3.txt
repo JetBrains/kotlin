@@ -1,0 +1,19 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|A|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] superType3.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /B.$$delegate_0}] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: A = LAZY_EXPRESSION
+
+    }

@@ -24,8 +24,13 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
-class JsTypeSpecificityComparator(val context: TypeSystemInferenceExtensionContextDelegate) : TypeSpecificityComparator {
+// Replacing the TypeSystemInferenceExtensionContextDelegate with
+// TypeSystemInferenceExtensionContext here leads to clashed registrations
+// (for example, when trying to run IrJsTextTestCaseGenerated).
+class JsTypeSpecificityComparator(context: TypeSystemInferenceExtensionContextDelegate) :
+    TypeSpecificityComparator by JsTypeSpecificityComparatorWithoutDelegate(context)
 
+class JsTypeSpecificityComparatorWithoutDelegate(val context: TypeSystemInferenceExtensionContext) : TypeSpecificityComparator {
     private fun TypeSystemInferenceExtensionContext.checkOnlyDynamicFlexibleType(type: KotlinTypeMarker) {
         if (type.asFlexibleType() != null) {
             assert(type.isDynamic()) {

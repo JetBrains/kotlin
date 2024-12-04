@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportOnDeclarationAs
@@ -37,17 +38,15 @@ import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
-import java.util.*
 
 open class LazyClassMemberScope(
     c: LazyClassContext,
@@ -256,6 +255,23 @@ open class LazyClassMemberScope(
                     }
                 }
             })
+        for (descriptor in result) {
+            if (descriptor !is FunctionDescriptorImpl) continue
+            for (overriddenFunction in descriptor.overriddenDescriptors) {
+                if (overriddenFunction !is FunctionDescriptorImpl) continue
+                val conflictedDescriptor = overriddenFunction.getUserData(DeserializedDeclarationsFromSupertypeConflictDataKey) ?: continue
+                reportOnDeclarationAs<KtClassOrObject>(
+                    trace,
+                    thisDescriptor
+                ) { ktClassOrObject ->
+                    Errors.CONFLICTING_INHERITED_MEMBERS_WARNING.on(
+                        ktClassOrObject,
+                        thisDescriptor,
+                        listOf(overriddenFunction, conflictedDescriptor)
+                    )
+                }
+            }
+        }
         OverrideResolver.resolveUnknownVisibilities(result, trace)
     }
 
@@ -280,7 +296,7 @@ open class LazyClassMemberScope(
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
         generateDataClassMethods(result, name, location, fromSupertypes)
-        generateFunctionsFromAnyForInlineClass(result, name, fromSupertypes)
+        generateFunctionsFromAnyForValueClass(result, name, fromSupertypes)
         c.syntheticResolveExtension.generateSyntheticMethods(thisDescriptor, name, trace.bindingContext, fromSupertypes, result)
 
         c.additionalClassPartsProvider.generateAdditionalMethods(thisDescriptor, result, name, location, fromSupertypes)
@@ -288,12 +304,12 @@ open class LazyClassMemberScope(
         generateFakeOverrides(name, fromSupertypes, result, SimpleFunctionDescriptor::class.java)
     }
 
-    private fun generateFunctionsFromAnyForInlineClass(
+    private fun generateFunctionsFromAnyForValueClass(
         result: MutableCollection<SimpleFunctionDescriptor>,
         name: Name,
         fromSupertypes: List<SimpleFunctionDescriptor>
     ) {
-        if (!thisDescriptor.isInlineClass()) return
+        if (!thisDescriptor.isValueClass()) return
         FunctionsFromAny.addFunctionFromAnyIfNeeded(thisDescriptor, result, name, fromSupertypes)
     }
 
@@ -317,9 +333,7 @@ open class LazyClassMemberScope(
                 if (!primaryConstructorParameters.get(parameter.index).hasValOrVar()) continue
 
                 val properties = getContributedVariables(parameter.name, location)
-                if (properties.isEmpty()) continue
-
-                val property = properties.iterator().next()
+                val property = properties.firstOrNull { it.extensionReceiverParameter == null } ?: continue
 
                 ++componentIndex
 
@@ -468,7 +482,7 @@ open class LazyClassMemberScope(
     }
 
     private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
-        if (!thisDescriptor.isData) return
+        if (!thisDescriptor.isData || thisDescriptor.kind != ClassKind.CLASS) return
 
         if (getPrimaryConstructor() == null) return
 

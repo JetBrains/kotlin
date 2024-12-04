@@ -1,7 +1,7 @@
 // -- Module: <m1> --
 package
 
-public fun </*0*/ T> bar(/*0*/ ff: [ERROR : Err].() -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> bar(/*0*/ ff: [Error type: Unresolved type for Err].() -> kotlin.Unit): kotlin.Unit
 
 // -- Module: <m2> --
 package

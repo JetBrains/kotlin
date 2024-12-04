@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun test(x: List<Int>): Int {
     x myMap {
         return@myMap

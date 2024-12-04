@@ -1,0 +1,28 @@
+FILE: tryInGenerated.kt
+    public final data class Ref<D> : R|kotlin/Any| {
+        public constructor<D>(t: R|D|): R|Ref<D>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val t: R|D| = R|<local>/t|
+            public get(): R|D|
+
+        public final operator fun component1(): R|D|
+
+        public final fun copy(t: R|D| = this@R|/Ref|.R|/Ref.t|): R|Ref<D>|
+
+    }
+    public final operator fun <V> R|Ref<V>|.getValue(hisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V| {
+        ^getValue this@R|/getValue|.R|SubstitutionOverride</Ref.t: R|V|>|
+    }
+    public final fun <E> R|kotlin/collections/List<Ref<*>>|.getElement(i: R|kotlin/Int|): R|Ref<E>| {
+        ^getElement (this@R|/getElement|.R|SubstitutionOverride<kotlin/collections/List.get: R|Ref<*>|>|(R|<local>/i|) as R|Ref<E>|)
+    }
+    public final fun test(list: R|kotlin/collections/List<Ref<*>>|): R|kotlin/Unit| {
+        lval data: R|kotlin/String|by try {
+            R|<local>/list|.R|/getElement|<R|kotlin/String|>(Int(0))
+        }
+        finally {
+        }
+
+    }

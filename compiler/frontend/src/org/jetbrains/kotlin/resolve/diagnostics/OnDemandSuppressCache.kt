@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class OnDemandSuppressCache(private val context: BindingContext) : KotlinSuppressCache() {
+class OnDemandSuppressCache(private val context: BindingContext) : KotlinSuppressCache(context.project) {
     private val processedRoots = mutableSetOf<KtFile>()
 
     private val storage = mutableMapOf<PsiElement, List<AnnotationDescriptor>>()

@@ -1,0 +1,24 @@
+//
+// Source
+// ------------------------------------------
+
+internal class SomeFoo(val value: Int)
+internal class ParameterizedFoo<K>(val value: K)
+internal class MultipleFoo<K, T>(val value: K, val param: T)
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+internal class SomeFoo(val value: Int) {
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+internal class ParameterizedFoo<K> (val value: K) {
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 3)
+internal class MultipleFoo<K, T> (val value: K, val param: T) {
+  static val %stable: Int = 0
+}

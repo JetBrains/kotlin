@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNCHECKED_CAST
 interface Trait1
 interface Trait2
 open class OClass1

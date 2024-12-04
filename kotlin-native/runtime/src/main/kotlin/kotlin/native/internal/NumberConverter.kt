@@ -17,7 +17,10 @@
 
 package kotlin.native.internal
 
+import kotlin.native.internal.escapeAnalysis.Escapes
+
 @GCUnsafeCall("Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl")
+@Escapes.Nothing
 private external fun bigIntDigitGeneratorInstImpl(results: IntArray, uArray: IntArray, f: Long, e: Int,
                                                   isDenormalized: Boolean, mantissaIsZero: Boolean, p: Int)
 
@@ -27,7 +30,7 @@ private external fun ceil(x: Double): Double
 /**
  * Converts [Float] or [Double] numbers to the [String] representation
  */
-class NumberConverter {
+internal class NumberConverter {
 
     private var setCount: Int = 0 // Number of times u and k have been gotten.
 

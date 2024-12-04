@@ -1,0 +1,12 @@
+public abstract interface TwoTypeParameters : R|kotlin/Any| {
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun <A : R|kotlin/CharSequence|, B : R|kotlin/Cloneable|> foo(a: R|A|, b: R|B|): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/TwoTypeParameters.Super| {
+        public abstract fun <B : R|kotlin/CharSequence|, A : R|kotlin/Cloneable|> foo(a: R|B|, b: R|A|): R|kotlin/Unit|
+
+    }
+
+}

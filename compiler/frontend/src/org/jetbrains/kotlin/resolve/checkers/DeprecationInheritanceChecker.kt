@@ -7,13 +7,18 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature.StopPropagatingDeprecationThroughOverrides
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 
 object DeprecationInheritanceChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtNamedDeclaration) return
+        if (declaration is KtProperty && descriptor is PropertyAccessorDescriptor && descriptor.isDefault) {
+            return
+        }
         val deprecationResolver = context.deprecationResolver
         if (!deprecationResolver.areDeprecationsInheritedFromOverriden(descriptor)) return
         val (deprecations, message) = if (context.languageVersionSettings.supportsFeature(StopPropagatingDeprecationThroughOverrides)) {

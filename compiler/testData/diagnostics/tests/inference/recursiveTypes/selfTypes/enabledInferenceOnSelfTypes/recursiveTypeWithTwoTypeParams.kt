@@ -1,4 +1,5 @@
-// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
 // FILE: JavaBodySpec.java
 public interface JavaBodySpec<B, S extends JavaBodySpec<B, S>> {

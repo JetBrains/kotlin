@@ -2,22 +2,37 @@ plugins {
     java
 }
 
-val compilerModules: Array<String> by rootProject.extra
+val testModules = listOf(
+    ":compiler:test-infrastructure",
+    ":compiler:test-infrastructure-utils",
+    ":compiler:tests-compiler-utils",
+    ":compiler:tests-common-new",
+    ":generators:test-generator"
+)
+
+val mainModules = listOf(
+    ":generators",
+    ":compiler:tests-mutes",
+    ":compiler:tests-mutes:mutes-junit5",
+)
 
 dependencies {
-    compilerModules.forEach {
+    mainModules.forEach {
         embedded(project(it)) { isTransitive = false }
     }
-    embedded(projectTests(":compiler:tests-common-jvm6")) { isTransitive = false }
-    embedded(projectTests(":compiler:test-infrastructure")) { isTransitive = false }
-    embedded(projectTests(":compiler:test-infrastructure-utils")) { isTransitive = false }
-    embedded(projectTests(":compiler:tests-compiler-utils")) { isTransitive = false }
-    embedded(projectTests(":compiler:tests-common-new")) { isTransitive = false }
-    embedded(protobufFull())
-    embedded(kotlinBuiltins())
+    testModules.forEach {
+        embedded(projectTests(it)) { isTransitive = false }
+    }
 }
 
 publish()
 runtimeJar()
-sourcesJar()
+sourcesJar {
+    from {
+        mainModules.map { project(it).mainSourceSet.allSource } + testModules.map { project(it).testSourceSet.allSource }
+    }
+
+    dependsOn(":compiler:fir:checkers:generateCheckersComponents")
+}
+
 javadocJar()

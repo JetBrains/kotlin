@@ -10,7 +10,7 @@ public abstract class C1 : MHashtable<kotlin.String, kotlin.Int> {
     public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String!): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Int!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String!): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String!): kotlin.Int?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String!, /*1*/ value: kotlin.Int!): kotlin.Int?
@@ -56,7 +56,7 @@ public abstract class MHashtable</*0*/ X : kotlin.Any!, /*1*/ Y : kotlin.Any!> :
     public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: X!): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: Y!): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun get(/*0*/ key: X!): Y?
+    public open override /*2*/ fun get(/*0*/ key: X!): Y?
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: X!, /*1*/ value: Y!): Y?
@@ -64,3 +64,4 @@ public abstract class MHashtable</*0*/ X : kotlin.Any!, /*1*/ Y : kotlin.Any!> :
     public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: X!): Y?
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

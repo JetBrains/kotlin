@@ -1,4 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-45796
 
 // MODULE: m1-common
@@ -9,7 +10,7 @@ expect sealed class SealedClass() {
 }
 
 fun whenForExpectSealed(s: SealedClass): Int {
-    return when (s) { // should be error, because actual sealed class may add more implementations
+    return <!NO_ELSE_IN_WHEN!>when<!> (s) { // should be error, because actual sealed class may add more implementations
         is SealedClass.Nested.NestedDeeper -> 7
         is SealedClass.Nested -> 8
     }

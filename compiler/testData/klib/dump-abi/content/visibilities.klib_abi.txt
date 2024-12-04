@@ -1,0 +1,82 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <visibilities_library>
+final class visibilities.test/InternalPAClass { // visibilities.test/InternalPAClass|null[0]
+    final val property // visibilities.test/InternalPAClass.property|{}property[0]
+        final fun <get-property>(): kotlin/String // visibilities.test/InternalPAClass.property.<get-property>|<get-property>(){}[0]
+    constructor <init>(kotlin/String) // visibilities.test/InternalPAClass.<init>|<init>(kotlin.String){}[0]
+    final fun function(): kotlin/String // visibilities.test/InternalPAClass.function|function(){}[0]
+    final class NestedClass { // visibilities.test/InternalPAClass.NestedClass|null[0]
+        constructor <init>() // visibilities.test/InternalPAClass.NestedClass.<init>|<init>(){}[0]
+    }
+}
+final class visibilities.test/InternalPAClassInternalMembers // visibilities.test/InternalPAClassInternalMembers|null[0]
+final class visibilities.test/InternalPAClassInternalPAMembers { // visibilities.test/InternalPAClassInternalPAMembers|null[0]
+    final val property // visibilities.test/InternalPAClassInternalPAMembers.property|{}property[0]
+        final fun <get-property>(): kotlin/String // visibilities.test/InternalPAClassInternalPAMembers.property.<get-property>|<get-property>(){}[0]
+    constructor <init>(kotlin/String) // visibilities.test/InternalPAClassInternalPAMembers.<init>|<init>(kotlin.String){}[0]
+    final fun function(): kotlin/String // visibilities.test/InternalPAClassInternalPAMembers.function|function(){}[0]
+    final class NestedClass { // visibilities.test/InternalPAClassInternalPAMembers.NestedClass|null[0]
+        constructor <init>() // visibilities.test/InternalPAClassInternalPAMembers.NestedClass.<init>|<init>(){}[0]
+    }
+}
+abstract class visibilities.test/PublicAbstractClassProtectedMembers { // visibilities.test/PublicAbstractClassProtectedMembers|null[0]
+    final val property // visibilities.test/PublicAbstractClassProtectedMembers.property|{}property[0]
+        final fun <get-property>(): kotlin/String // visibilities.test/PublicAbstractClassProtectedMembers.property.<get-property>|<get-property>(){}[0]
+    constructor <init>(kotlin/String) // visibilities.test/PublicAbstractClassProtectedMembers.<init>|<init>(kotlin.String){}[0]
+    final fun function(): kotlin/String // visibilities.test/PublicAbstractClassProtectedMembers.function|function(){}[0]
+    final class NestedClass { // visibilities.test/PublicAbstractClassProtectedMembers.NestedClass|null[0]
+        constructor <init>() // visibilities.test/PublicAbstractClassProtectedMembers.NestedClass.<init>|<init>(){}[0]
+    }
+}
+final class visibilities.test/PublicClass { // visibilities.test/PublicClass|null[0]
+    final val property // visibilities.test/PublicClass.property|{}property[0]
+        final fun <get-property>(): kotlin/String // visibilities.test/PublicClass.property.<get-property>|<get-property>(){}[0]
+    constructor <init>(kotlin/String) // visibilities.test/PublicClass.<init>|<init>(kotlin.String){}[0]
+    final fun function(): kotlin/String // visibilities.test/PublicClass.function|function(){}[0]
+    final class NestedClass { // visibilities.test/PublicClass.NestedClass|null[0]
+        constructor <init>() // visibilities.test/PublicClass.NestedClass.<init>|<init>(){}[0]
+    }
+}
+final class visibilities.test/PublicClassInternalMembers // visibilities.test/PublicClassInternalMembers|null[0]
+final class visibilities.test/PublicClassInternalPAMembers { // visibilities.test/PublicClassInternalPAMembers|null[0]
+    final val property // visibilities.test/PublicClassInternalPAMembers.property|{}property[0]
+        final fun <get-property>(): kotlin/String // visibilities.test/PublicClassInternalPAMembers.property.<get-property>|<get-property>(){}[0]
+    constructor <init>(kotlin/String) // visibilities.test/PublicClassInternalPAMembers.<init>|<init>(kotlin.String){}[0]
+    final fun function(): kotlin/String // visibilities.test/PublicClassInternalPAMembers.function|function(){}[0]
+    final class NestedClass { // visibilities.test/PublicClassInternalPAMembers.NestedClass|null[0]
+        constructor <init>() // visibilities.test/PublicClassInternalPAMembers.NestedClass.<init>|<init>(){}[0]
+    }
+}
+final class visibilities.test/PublicClassPrivateMembers // visibilities.test/PublicClassPrivateMembers|null[0]
+final class visibilities.test/PublicClassProtectedMembers // visibilities.test/PublicClassProtectedMembers|null[0]
+open class visibilities.test/PublicOpenClassProtectedMembers { // visibilities.test/PublicOpenClassProtectedMembers|null[0]
+    final val property // visibilities.test/PublicOpenClassProtectedMembers.property|{}property[0]
+        final fun <get-property>(): kotlin/String // visibilities.test/PublicOpenClassProtectedMembers.property.<get-property>|<get-property>(){}[0]
+    constructor <init>(kotlin/String) // visibilities.test/PublicOpenClassProtectedMembers.<init>|<init>(kotlin.String){}[0]
+    final fun function(): kotlin/String // visibilities.test/PublicOpenClassProtectedMembers.function|function(){}[0]
+    final class NestedClass { // visibilities.test/PublicOpenClassProtectedMembers.NestedClass|null[0]
+        constructor <init>() // visibilities.test/PublicOpenClassProtectedMembers.NestedClass.<init>|<init>(){}[0]
+    }
+}
+final val visibilities.test/internalPAVal // visibilities.test/internalPAVal|{}internalPAVal[0]
+    final fun <get-internalPAVal>(): kotlin/String // visibilities.test/internalPAVal.<get-internalPAVal>|<get-internalPAVal>(){}[0]
+final var visibilities.test/internalPAVarInternalSetter // visibilities.test/internalPAVarInternalSetter|{}internalPAVarInternalSetter[0]
+    final fun <get-internalPAVarInternalSetter>(): kotlin/String // visibilities.test/internalPAVarInternalSetter.<get-internalPAVarInternalSetter>|<get-internalPAVarInternalSetter>(){}[0]
+    final fun <set-internalPAVarInternalSetter>(kotlin/String) // visibilities.test/internalPAVarInternalSetter.<set-internalPAVarInternalSetter>|<set-internalPAVarInternalSetter>(kotlin.String){}[0]
+final var visibilities.test/internalPAVarPrivateSetter // visibilities.test/internalPAVarPrivateSetter|{}internalPAVarPrivateSetter[0]
+    final fun <get-internalPAVarPrivateSetter>(): kotlin/String // visibilities.test/internalPAVarPrivateSetter.<get-internalPAVarPrivateSetter>|<get-internalPAVarPrivateSetter>(){}[0]
+final val visibilities.test/publicVal // visibilities.test/publicVal|{}publicVal[0]
+    final fun <get-publicVal>(): kotlin/String // visibilities.test/publicVal.<get-publicVal>|<get-publicVal>(){}[0]
+final var visibilities.test/publicVarInternalSetter // visibilities.test/publicVarInternalSetter|{}publicVarInternalSetter[0]
+    final fun <get-publicVarInternalSetter>(): kotlin/String // visibilities.test/publicVarInternalSetter.<get-publicVarInternalSetter>|<get-publicVarInternalSetter>(){}[0]
+final var visibilities.test/publicVarPrivateSetter // visibilities.test/publicVarPrivateSetter|{}publicVarPrivateSetter[0]
+    final fun <get-publicVarPrivateSetter>(): kotlin/String // visibilities.test/publicVarPrivateSetter.<get-publicVarPrivateSetter>|<get-publicVarPrivateSetter>(){}[0]
+final var visibilities.test/publicVarPublicSetter // visibilities.test/publicVarPublicSetter|{}publicVarPublicSetter[0]
+    final fun <get-publicVarPublicSetter>(): kotlin/String // visibilities.test/publicVarPublicSetter.<get-publicVarPublicSetter>|<get-publicVarPublicSetter>(){}[0]
+    final fun <set-publicVarPublicSetter>(kotlin/String) // visibilities.test/publicVarPublicSetter.<set-publicVarPublicSetter>|<set-publicVarPublicSetter>(kotlin.String){}[0]
+final fun visibilities.test/internalPAFun(): kotlin/String // visibilities.test/internalPAFun|internalPAFun(){}[0]
+final fun visibilities.test/publicFun(): kotlin/String // visibilities.test/publicFun|publicFun(){}[0]

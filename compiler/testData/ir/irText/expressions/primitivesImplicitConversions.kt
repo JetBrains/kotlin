@@ -1,6 +1,10 @@
-// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
-// IGNORE_BACKEND_FIR: ANY
-// For reasons this test is ignored, go to KT-46419
+// IGNORE_BACKEND_K2: ANY
+// FIR status: KT-46419, ILT conversions to Byte and Short are not supported by design
+
+// IGNORE_BACKEND_K1: JS_IR
+
+// KT-61141: Extra invocations of toLong(), toShort(), etc.. after unaryMinus()
+// IGNORE_BACKEND_K1: NATIVE
 
 val test1: Long = 42
 val test2: Short = 42

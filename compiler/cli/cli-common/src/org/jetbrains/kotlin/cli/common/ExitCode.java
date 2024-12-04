@@ -20,7 +20,9 @@ public enum ExitCode {
     OK(0),
     COMPILATION_ERROR(1),
     INTERNAL_ERROR(2),
-    SCRIPT_EXECUTION_ERROR(3);
+    SCRIPT_EXECUTION_ERROR(3),
+    OOM_ERROR(137), // 137 is commonly used to indicate OOM error
+    ;
 
     private final int code;
 

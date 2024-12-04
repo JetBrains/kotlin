@@ -31,13 +31,13 @@ public interface IrSimpleTypeOrBuilder extends
   long getClassifier();
 
   /**
-   * <code>required bool has_question_mark = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
    */
-  boolean hasHasQuestionMark();
+  boolean hasNullability();
   /**
-   * <code>required bool has_question_mark = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
    */
-  boolean getHasQuestionMark();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability getNullability();
 
   /**
    * <code>repeated int64 argument = 4 [packed = true];</code>

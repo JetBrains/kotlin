@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STRANGE_IMPLICIT_CAST
-
 fun kt49182(x: Boolean): String {
     return if (x) {
         return "O"

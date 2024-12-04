@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import org.jetbrains.kotlin.commonizer.DefaultCommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.junit.Test
 
 class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, CirTypeParameter?>() {
-    override fun createCommonizer() = TypeParameterCommonizer(TypeCommonizer(MOCK_CLASSIFIERS))
+    override fun createCommonizer() = TypeParameterCommonizer(TypeCommonizer(MOCK_CLASSIFIERS, DefaultCommonizerSettings))
 
     @Test
     fun allAreReified() = doTestSuccess(

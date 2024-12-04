@@ -31,6 +31,12 @@ abstract class ScriptWithProvidedProperties
 @KotlinScript(fileExtension = "withreceiver.kts", compilationConfiguration = ImplicitReceiverConfiguration::class)
 abstract class ScriptWithImplicitReceiver
 
+@KotlinScript(
+    fileExtension = "withconflictingparameter.kts",
+    compilationConfiguration = ConflictingPropertiesConfiguration::class,
+)
+abstract class ScriptWithConflictingConstructorParameter(val conflictingVariable1: String, val conflictingVariable2: Int)
+
 object ReceiverAndPropertiesConfiguration : ScriptCompilationConfiguration(
     {
         updateClasspath(classpathFromClass<ScriptWithBoth>())
@@ -54,6 +60,13 @@ object ImplicitReceiverConfiguration : ScriptCompilationConfiguration(
         updateClasspath(classpathFromClass<ScriptWithImplicitReceiver>())
 
         implicitReceivers(ImplicitReceiverClass::class)
+    }
+)
+
+object ConflictingPropertiesConfiguration : ScriptCompilationConfiguration(
+    {
+        updateClasspath(classpathFromClass<ScriptWithConflictingConstructorParameter>())
+        defaultImports("kotlin.script.experimental.jvmhost.test.forScript.conflicts.*")
     }
 )
 

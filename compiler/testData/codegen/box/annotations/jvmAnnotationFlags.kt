@@ -3,6 +3,8 @@
 // WITH_STDLIB
 // FULL_JDK
 
+// JVM_ABI_K1_K2_DIFF: KT-63853, KT-63854
+
 import java.lang.reflect.Modifier
 import kotlin.reflect.KProperty
 
@@ -12,6 +14,7 @@ class CustomDelegate {
 
 class C {
     @Volatile var vol = 1
+    @kotlin.concurrent.Volatile var vol2 = 1
     @Transient val tra = 1
     @delegate:Transient val del: String by CustomDelegate()
 
@@ -38,6 +41,7 @@ fun box(): String {
     val c = C::class.java
 
     if (c.getDeclaredField("vol").getModifiers() and Modifier.VOLATILE == 0) return "Fail: volatile"
+    if (c.getDeclaredField("vol2").getModifiers() and Modifier.VOLATILE == 0) return "Fail: volatile from kotlin.concurrent"
     if (c.getDeclaredField("tra").getModifiers() and Modifier.TRANSIENT == 0) return "Fail: transient"
     if (c.getDeclaredField("del\$delegate").getModifiers() and Modifier.TRANSIENT == 0) return "Fail: delegate transient"
 

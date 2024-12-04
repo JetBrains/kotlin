@@ -1,0 +1,44 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+interface A {
+    fun b() {}
+}
+class C {
+    val foo = 1
+    inner class D : A {
+        override fun b() {
+            print(foo)
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface A {
+  open fun b() { }
+}
+@StabilityInferred(parameters = 1)
+class C {
+  val foo: Int = 1
+  inner class D : A {
+    override fun b() {
+      print(foo)
+    }
+  }
+  static val %stable: Int = 0
+}

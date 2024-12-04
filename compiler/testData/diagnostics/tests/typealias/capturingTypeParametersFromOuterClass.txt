@@ -21,10 +21,10 @@ public final class Outer</*0*/ TO> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
             public typealias LTI /*captured type parameters: /*0*/ TI, /*1*/ TN*/ = kotlin.collections.List<TI>
             public typealias LTN /*captured type parameters: /*0*/ TI, /*1*/ TN*/ = kotlin.collections.List<TN>
-            public typealias LTO = kotlin.collections.List<[ERROR : TO]>
+            public typealias LTO = kotlin.collections.List<[Error type: Unresolved type for TO]>
         }
         public typealias LTN /*captured type parameters: /*0*/ TN*/ = kotlin.collections.List<TN>
-        public typealias LTO = kotlin.collections.List<[ERROR : TO]>
+        public typealias LTO = kotlin.collections.List<[Error type: Unresolved type for TO]>
     }
     public typealias LTO /*captured type parameters: /*0*/ TO*/ = kotlin.collections.List<TO>
 }

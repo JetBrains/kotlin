@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class LexicalWritableScope(
     parent: LexicalScope,
@@ -32,6 +31,8 @@ class LexicalWritableScope(
 
     override val implicitReceiver: ReceiverParameterDescriptor?
         get() = null
+    override val contextReceiversGroup: List<ReceiverParameterDescriptor>
+        get() = emptyList()
 
     private var canWrite: Boolean = true
     private var lastSnapshot: Snapshot? = null
@@ -82,8 +83,7 @@ class LexicalWritableScope(
             name: Name,
             location: LookupLocation
         ): DescriptorWithDeprecation<ClassifierDescriptor>? {
-            return variableOrClassDescriptorByName(name, descriptorLimit)
-                ?.safeAs<ClassifierDescriptor>()
+            return (variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor)
                 ?.let { DescriptorWithDeprecation.createNonDeprecated(it) }
         }
 
@@ -105,8 +105,16 @@ class LexicalWritableScope(
 
     override fun printStructure(p: Printer) {
         p.println(
-            this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
-            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {"
+            this::class.java.simpleName,
+            ": ",
+            kind,
+            "; for descriptor: ",
+            ownerDescriptor.name,
+            " with implicitReceivers: ",
+            implicitReceiver?.value ?: "NONE",
+            " with contextReceiversGroup: ",
+            if (contextReceiversGroup.isEmpty()) "NONE" else contextReceiversGroup.joinToString { it.value.toString() },
+            " {"
         )
         p.pushIndent()
 

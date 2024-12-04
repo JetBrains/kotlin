@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
@@ -30,11 +29,11 @@ import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
 abstract class DelegatingSimpleType : SimpleType() {
     protected abstract val delegate: SimpleType
 
-    override val annotations: Annotations get() = delegate.annotations
     override val constructor: TypeConstructor get() = delegate.constructor
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
+    override val attributes: TypeAttributes get() = delegate.attributes
 
     @TypeRefinement
     abstract fun replaceDelegate(delegate: SimpleType): DelegatingSimpleType
@@ -47,11 +46,11 @@ abstract class DelegatingSimpleType : SimpleType() {
 class AbbreviatedType(override val delegate: SimpleType, val abbreviation: SimpleType) : DelegatingSimpleType() {
     val expandedType: SimpleType get() = delegate
 
-    override fun replaceAnnotations(newAnnotations: Annotations)
-            = AbbreviatedType(delegate.replaceAnnotations(newAnnotations), abbreviation)
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
+        AbbreviatedType(delegate.replaceAttributes(newAttributes), abbreviation)
 
-    override fun makeNullableAsSpecified(newNullability: Boolean)
-            = AbbreviatedType(delegate.makeNullableAsSpecified(newNullability), abbreviation.makeNullableAsSpecified(newNullability))
+    override fun makeNullableAsSpecified(newNullability: Boolean) =
+        AbbreviatedType(delegate.makeNullableAsSpecified(newNullability), abbreviation.makeNullableAsSpecified(newNullability))
 
     @TypeRefinement
     override fun replaceDelegate(delegate: SimpleType) = AbbreviatedType(delegate, abbreviation)
@@ -97,14 +96,22 @@ class DefinitelyNotNullType private constructor(
     DefinitelyNotNullTypeMarker {
 
     companion object {
+        // Having `@JvmOverloads` just to make sure we don't break ABI compatibility
+        @JvmOverloads
         fun makeDefinitelyNotNull(
             type: UnwrappedType,
-            useCorrectedNullabilityForTypeParameters: Boolean = false
+            useCorrectedNullabilityForTypeParameters: Boolean = false,
+            // Should be used when we are sure that original type is nullable, i.e. makesSenseToBeDefinitelyNotNull would return true,
+            // but we can't actually call it because otherwise we would fail with StackOverFlow because supertypes are being computed recursively
+            // and there's no easy way to prevent recursion.
+            // NB: makesSenseToBeDefinitelyNotNull is mostly needed as an optimization because nothing really bad would happen even if we
+            // create DNN for a type parameter with non-nullable bound.
+            avoidCheckingActualTypeNullability: Boolean = false,
         ): DefinitelyNotNullType? {
             return when {
                 type is DefinitelyNotNullType -> type
 
-                makesSenseToBeDefinitelyNotNull(type, useCorrectedNullabilityForTypeParameters) -> {
+                avoidCheckingActualTypeNullability || makesSenseToBeDefinitelyNotNull(type, useCorrectedNullabilityForTypeParameters) -> {
                     if (type is FlexibleType) {
                         assert(type.lowerBound.constructor == type.upperBound.constructor) {
                             "DefinitelyNotNullType for flexible type ($type) can be created only from type variable with the same constructor for bounds"
@@ -112,7 +119,7 @@ class DefinitelyNotNullType private constructor(
                     }
 
 
-                    DefinitelyNotNullType(type.lowerIfFlexible(), useCorrectedNullabilityForTypeParameters)
+                    DefinitelyNotNullType(type.lowerIfFlexible().makeNullableAsSpecified(false), useCorrectedNullabilityForTypeParameters)
                 }
 
                 else -> null
@@ -168,8 +175,8 @@ class DefinitelyNotNullType private constructor(
     override fun substitutionResult(replacement: KotlinType): KotlinType =
         replacement.unwrap().makeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters)
 
-    override fun replaceAnnotations(newAnnotations: Annotations): DefinitelyNotNullType =
-        DefinitelyNotNullType(delegate.replaceAnnotations(newAnnotations), useCorrectedNullabilityForTypeParameters)
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
+        DefinitelyNotNullType(delegate.replaceAttributes(newAttributes), useCorrectedNullabilityForTypeParameters)
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
         if (newNullability) delegate.makeNullableAsSpecified(newNullability) else this
@@ -189,7 +196,7 @@ fun SimpleType.makeSimpleTypeDefinitelyNotNullOrNotNull(useCorrectedNullabilityF
         ?: makeNullableAsSpecified(false)
 
 fun NewCapturedType.withNotNullProjection() =
-    NewCapturedType(captureStatus, constructor, lowerType, annotations, isMarkedNullable, isProjectionNotNull = true)
+    NewCapturedType(captureStatus, constructor, lowerType, attributes, isMarkedNullable, isProjectionNotNull = true)
 
 fun UnwrappedType.makeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters: Boolean = false): UnwrappedType =
     DefinitelyNotNullType.makeDefinitelyNotNull(this, useCorrectedNullabilityForTypeParameters)

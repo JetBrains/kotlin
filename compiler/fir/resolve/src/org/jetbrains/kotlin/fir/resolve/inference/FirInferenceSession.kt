@@ -5,55 +5,81 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 
 abstract class FirInferenceSession {
-    companion object {
-        val DEFAULT: FirInferenceSession = object : FirStubInferenceSession() {}
+    open fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? = null
+
+    open fun customCompletionModeInsteadOfFull(
+        call: FirResolvable,
+    ): ConstraintSystemCompletionMode? = null
+
+    abstract fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ) where T : FirResolvable, T : FirExpression
+
+    open fun runLambdaCompletion(candidate: Candidate, forOverloadByLambdaReturnType: Boolean, block: () -> Unit): ConstraintStorage? {
+        block()
+        return null
     }
 
-    abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
-    abstract val currentConstraintSystem: ConstraintStorage
+    open fun <T> runCallableReferenceResolution(candidate: Candidate, block: () -> T): T = block()
 
-    abstract fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement
-    abstract fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement
-    abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
+    open fun addSubtypeConstraintIfCompatible(lowerType: ConeKotlinType, upperType: ConeKotlinType, element: FirElement) {}
 
-    abstract fun inferPostponedVariables(
-        lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage,
-        completionMode: ConstraintSystemCompletionMode,
-        // TODO: diagnostic holder
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
+    /**
+     * For non-trivial inference session (currently PCLA-only), if the type is a type variable that might be fixed,
+     * fix it and return a fixation result.
+     *
+     * Type variable might be fixed if it doesn't belong to an outer CS and have proper constraints.
+     *
+     * By semi-fixation we mean that only the relevant EQUALITY constraint is added,
+     * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext.fixVariable] is not expected to be called.
+     *
+     * See `getAndSemiFixCurrentResultIfTypeVariable` chapter at [docs/fir/pcla.md]
+     *
+     * NB: The callee must pay attention that exactly current common CS will be modified.
+     */
+    open fun getAndSemiFixCurrentResultIfTypeVariable(type: ConeKotlinType): ConeKotlinType? = null
 
-    abstract fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement
-    abstract fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement
-    abstract fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement
+    // TODO: This function would be hopefully removed once KT-55692 is fixed
+    @TemporaryInferenceSessionHook
+    open fun updateExpressionReturnTypeWithCurrentSubstitutorInPCLA(expression: FirExpression, resolutionMode: ResolutionMode) {
+    }
+
+    companion object {
+        val DEFAULT: FirInferenceSession = object : FirInferenceSession() {
+            override fun <T> processPartiallyResolvedCall(
+                call: T,
+                resolutionMode: ResolutionMode,
+                completionMode: ConstraintSystemCompletionMode,
+            ) where T : FirResolvable, T : FirExpression {
+                // Do nothing
+            }
+        }
+
+        @JvmStatic
+        protected fun prepareSharedBaseSystem(
+            outerSystem: NewConstraintSystemImpl,
+            components: InferenceComponents,
+        ): NewConstraintSystemImpl {
+            return components.createConstraintSystem().apply {
+                addOuterSystem(outerSystem.currentStorage())
+            }
+        }
+    }
 }
 
-abstract class FirStubInferenceSession : FirInferenceSession() {
-    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
-
-    override val currentConstraintSystem: ConstraintStorage
-        get() = ConstraintStorage.Empty
-
-    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
-
-    override fun inferPostponedVariables(
-        lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage,
-        completionMode: ConstraintSystemCompletionMode
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
-
-    override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false
-    override fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement = false
-    override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
-}
+@RequiresOptIn
+annotation class TemporaryInferenceSessionHook

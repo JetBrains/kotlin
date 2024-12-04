@@ -1,0 +1,16 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface <#A: kotlin/Any?> /Controller { // /Controller|null[0]
+    abstract fun yield(#A) // /Controller.yield|yield(1:0){}[0]
+}
+abstract interface /Intf { // /Intf|null[0]
+    abstract fun foo() // /Intf.foo|foo(){}[0]
+}
+final fun /box(kotlin/Boolean) // /box|box(kotlin.Boolean){}[0]
+final fun /expectIntf(/Intf) // /expectIntf|expectIntf(Intf){}[0]
+final fun <#A: kotlin/Any?> /generate(kotlin.coroutines/SuspendFunction1</Controller<#A>, kotlin/Unit>) // /generate|generate(kotlin.coroutines.SuspendFunction1<Controller<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
+final fun /someUnit() // /someUnit|someUnit(){}[0]

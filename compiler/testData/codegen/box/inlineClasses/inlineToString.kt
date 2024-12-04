@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
+// LANGUAGE: +ValueClasses
 
 import kotlin.jvm.JvmInline
 
@@ -7,8 +8,7 @@ open class Expando {
     val expansion: Expansion = Expansion()
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+@JvmInline
 value class Expansion(val map: MutableMap<String, Any?> = mutableMapOf()) {
     override inline fun toString(): String = "OK"
 }

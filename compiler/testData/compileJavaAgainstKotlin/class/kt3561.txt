@@ -4,7 +4,7 @@ public final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     enum entry OK
 
     private constructor MyEnum()
-    public final /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final /*fake_override*/ val name: kotlin.String
     public final /*fake_override*/ val ordinal: kotlin.Int
     protected final /*fake_override*/ fun clone(): kotlin.Any
     public final /*fake_override*/ fun compareTo(/*0*/ test.MyEnum): kotlin.Int
@@ -12,6 +12,7 @@ public final enum class MyEnum : kotlin.Enum<test.MyEnum> {
     public final /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.MyEnum!>!
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.MyEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.MyEnum
     public final /*synthesized*/ fun values(): kotlin.Array<test.MyEnum>
 }

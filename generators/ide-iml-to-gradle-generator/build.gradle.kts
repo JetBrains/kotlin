@@ -5,7 +5,13 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib("jdk8"))
-    implementation(intellijDep())
+    implementation(jpsModel())
+    implementation("com.jetbrains.intellij.platform:util-text-matching:$intellijVersion")
+    implementation(intellijPlatformUtil())
+    implementation(jpsModelImpl())
+    implementation(jpsModelSerialization())
+    implementation(commonDependency("com.google.code.gson:gson"))
+    implementation(intellijJDom())
 }
 
 sourceSets {
@@ -14,5 +20,5 @@ sourceSets {
 }
 
 val generateIdePluginGradleFiles by generator("org.jetbrains.kotlin.generators.imltogradle.MainKt") {
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 }

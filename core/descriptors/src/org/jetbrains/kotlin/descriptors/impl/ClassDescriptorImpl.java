@@ -178,7 +178,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     @Nullable
     @Override
-    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
+    public ValueClassRepresentation<SimpleType> getValueClassRepresentation() {
         return null;
     }
 }

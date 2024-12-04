@@ -1,2 +1,0 @@
-Resolved to:
-0: (in java.lang.annotation.Retention) constructor(value: java.lang.annotation.RetentionPolicy)

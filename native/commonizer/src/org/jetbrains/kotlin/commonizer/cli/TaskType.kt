@@ -20,18 +20,18 @@ internal enum class TaskType(
             NativeTargetsOptionType,
             OutputCommonizerTargetsOptionType,
             BooleanOptionType(
-                "copy-stdlib",
+                COPY_STDLIB_ALIAS,
                 "Boolean (default false);\nwhether to copy Kotlin/Native endorsed libraries to the destination",
                 mandatory = false
             ),
             BooleanOptionType(
-                "copy-endorsed-libs",
+                COPY_ENDORSED_LIBS_ALIAS,
                 "Boolean (default false);\nwhether to copy Kotlin/Native endorsed libraries to the destination",
                 mandatory = false
             ),
             StatsTypeOptionType,
             LogLevelOptionType,
-        ),
+        ) + ADDITIONAL_COMMONIZER_SETTINGS,
         ::NativeDistributionCommonize
     ),
 
@@ -54,7 +54,7 @@ internal enum class TaskType(
             DependencyLibrariesOptionType,
             OutputCommonizerTargetsOptionType,
             LogLevelOptionType
-        ),
+        ) + ADDITIONAL_COMMONIZER_SETTINGS,
         ::NativeKlibCommonize
     )
     ;

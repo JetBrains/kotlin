@@ -9,7 +9,6 @@ fun vectorReductionMax(vA: DoubleArray): Double {
     return x
 }
 
-// JVM_IR_TEMPLATES
 // Make sure there's no intermediate variable created for 'vA[i]' argument of kotlin.math.max.
 // 2 DLOAD
 // 2 DSTORE

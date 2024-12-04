@@ -3,5 +3,5 @@ fun box(): String {
         val result = "OK"
     }
 
-    return (::A)().result
+    return (::A).let { it() }.result
 }

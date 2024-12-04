@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 
 import kotlin.coroutines.*
 

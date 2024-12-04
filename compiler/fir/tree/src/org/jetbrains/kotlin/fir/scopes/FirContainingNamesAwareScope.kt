@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirContainingNamesAwareScope : FirScope() {
     abstract fun getCallableNames(): Set<Name>
 
     abstract fun getClassifierNames(): Set<Name>
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirContainingNamesAwareScope?
 }
 
 fun FirContainingNamesAwareScope.processAllFunctions(processor: (FirNamedFunctionSymbol) -> Unit) {
@@ -27,8 +31,27 @@ fun FirContainingNamesAwareScope.processAllProperties(processor: (FirVariableSym
     }
 }
 
+fun FirContainingNamesAwareScope.processAllCallables(processor: (FirCallableSymbol<*>) -> Unit) {
+    for (name in getCallableNames()) {
+        processFunctionsByName(name, processor)
+        processPropertiesByName(name, processor)
+    }
+}
+
+fun FirContainingNamesAwareScope.processAllClassifiers(processor: (FirClassifierSymbol<*>) -> Unit) {
+    for (name in getClassifierNames()) {
+        processClassifiersByName(name, processor)
+    }
+}
+
 fun FirContainingNamesAwareScope.collectAllProperties(): Collection<FirVariableSymbol<*>> {
     return mutableListOf<FirVariableSymbol<*>>().apply {
         processAllProperties(this::add)
+    }
+}
+
+fun FirContainingNamesAwareScope.collectAllFunctions(): Collection<FirNamedFunctionSymbol> {
+    return mutableListOf<FirNamedFunctionSymbol>().apply {
+        processAllFunctions(this::add)
     }
 }

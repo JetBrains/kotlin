@@ -1,0 +1,16 @@
+KtNameReferenceExpression(125,126): 'A'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.A
+          symbol = <constructor>(): test.A
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

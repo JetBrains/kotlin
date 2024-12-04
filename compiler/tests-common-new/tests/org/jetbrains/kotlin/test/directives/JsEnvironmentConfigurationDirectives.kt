@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -45,22 +44,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val SKIP_MINIFICATION by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
-    val SKIP_SOURCEMAP_REMAPPING by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
-    val EXPECTED_REACHABLE_NODES by valueDirective(
-        description = "",
-        applicability = DirectiveApplicability.Global,
-        parser = { it.toIntOrNull() }
-    )
-
     val RECOMPILE by directive(
         description = "",
         applicability = DirectiveApplicability.File
@@ -81,11 +64,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val EXPECT_ACTUAL_LINKER by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val SPLIT_PER_MODULE by directive(
         description = "",
         applicability = DirectiveApplicability.Global
@@ -101,14 +79,23 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val ERROR_POLICY by enumDirective<ErrorTolerancePolicy>(
-        description = "",
-        applicability = DirectiveApplicability.Global,
-        additionalParser = { ErrorTolerancePolicy.resolvePolicy(it) }
-    )
-
     val PROPERTY_LAZY_INITIALIZATION by directive(
         description = "",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val GENERATE_INLINE_ANONYMOUS_FUNCTIONS by directive(
+        description = "translate lambdas into in-line anonymous functions",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val DISABLE_ES6_ARROWS by directive(
+        description = "Translate lambdas to ordinary anonymous functions instead of ES6 arrows",
+        applicability = DirectiveApplicability.Global
+    )
+
+    val GENERATE_STRICT_IMPLICIT_EXPORT by directive(
+        description = "enable strict implicitly exported entities types inside d.ts files",
         applicability = DirectiveApplicability.Global
     )
 
@@ -158,11 +145,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val TYPED_ARRAYS by directive(
-        description = "Enables typed arrays",
-        applicability = DirectiveApplicability.Global
-    )
-
     val GENERATE_SOURCE_MAP by directive(
         description = "Enables generation of source map",
         applicability = DirectiveApplicability.Global
@@ -170,11 +152,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val GENERATE_NODE_JS_RUNNER by directive(
         description = "Enables generation of `.node.js` file",
-        applicability = DirectiveApplicability.Global
-    )
-
-    val RUN_MINIFIER_BY_DEFAULT by directive(
-        description = "Enables minifier even if `EXPECTED_REACHABLE_NODES` directive is not set",
         applicability = DirectiveApplicability.Global
     )
 
@@ -200,6 +177,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val ONLY_IR_DCE by directive(
+        description = "Disable non DCE build",
+        applicability = DirectiveApplicability.Global
+    )
+
     val RUN_IC by directive(
         description = "",
         applicability = DirectiveApplicability.Global
@@ -210,23 +192,23 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val LOWER_PER_MODULE by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val KLIB_MAIN_MODULE by directive(
         description = "Specify that main module is actually a klib",
         applicability = DirectiveApplicability.Global
     )
 
+    val ES6_MODE by directive(
+        description = "Enables the Kotlin/JS compilation with ES-classes",
+        applicability = DirectiveApplicability.Global
+    )
+
     val ES_MODULES by directive(
-        description = "",
+        description = "Specify that the compiled js-sources will use ESM module system",
         applicability = DirectiveApplicability.Global
     )
 
     val ENTRY_ES_MODULE by directive(
-        description = "",
+        description = "Specify the entry point that imports other ESM modules",
         applicability = DirectiveApplicability.File
     )
 
@@ -235,8 +217,15 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val RUN_NEW_IR_2_JS by directive(
-        description = "",
+    val NO_COMMON_FILES by directive(
+        """
+            Don't added helper files to prevent linking issues.
+        """.trimIndent(),
+        applicability = DirectiveApplicability.Global,
+    )
+
+    val KEEP by stringDirective(
+        description = "Keep declarations",
         applicability = DirectiveApplicability.Global
     )
 }

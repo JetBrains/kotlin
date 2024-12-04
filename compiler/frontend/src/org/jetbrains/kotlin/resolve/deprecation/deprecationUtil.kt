@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.resolve.deprecation
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun DescriptorBasedDeprecationInfo.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedByOverridden)?.additionalMessage()
 
@@ -23,7 +24,7 @@ fun DescriptorBasedDeprecationInfo.deprecatedByAnnotationReplaceWithExpression()
 
 // The function extracts value of warningSince/errorSince/hiddenSince from DeprecatedSinceKotlin annotation
 fun AnnotationDescriptor.getSinceVersion(name: String): ApiVersion? =
-    argumentValue(name)?.safeAs<StringValue>()?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
+    (argumentValue(name) as? StringValue)?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
 
 fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
     val hiddenSince = annotation.getSinceVersion("hiddenSince")
@@ -39,7 +40,10 @@ fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVe
 }
 
 internal fun createDeprecationDiagnostic(
-    element: PsiElement, deprecation: DescriptorBasedDeprecationInfo, languageVersionSettings: LanguageVersionSettings
+    element: PsiElement,
+    deprecation: DescriptorBasedDeprecationInfo,
+    languageVersionSettings: LanguageVersionSettings,
+    forceWarningForSimpleDeprecation: Boolean = false,
 ): Diagnostic {
     val targetOriginal = deprecation.target.original
     return when (deprecation) {
@@ -48,9 +52,14 @@ internal fun createDeprecationDiagnostic(
                 WARNING -> Errors.VERSION_REQUIREMENT_DEPRECATION
                 ERROR, HIDDEN -> Errors.VERSION_REQUIREMENT_DEPRECATION_ERROR
             }
+            val currentVersionString = when (deprecation.versionRequirement.kind) {
+                ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION -> KotlinCompilerVersion.VERSION
+                ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION -> languageVersionSettings.languageVersion.versionString
+                ProtoBuf.VersionRequirement.VersionKind.API_VERSION -> languageVersionSettings.apiVersion.versionString
+            }
             factory.on(
                 element, targetOriginal, deprecation.versionRequirement.version,
-                languageVersionSettings.languageVersion to deprecation.message
+                currentVersionString to deprecation.message
             )
         }
 
@@ -63,7 +72,7 @@ internal fun createDeprecationDiagnostic(
         }
 
         else -> {
-            val factory = when (deprecation.deprecationLevel) {
+            val factory = if (forceWarningForSimpleDeprecation) Errors.DEPRECATION else when (deprecation.deprecationLevel) {
                 WARNING -> Errors.DEPRECATION
                 ERROR, HIDDEN -> Errors.DEPRECATION_ERROR
             }

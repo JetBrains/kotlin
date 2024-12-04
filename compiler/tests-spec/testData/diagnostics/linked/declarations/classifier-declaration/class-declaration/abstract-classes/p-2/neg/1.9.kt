@@ -1,5 +1,6 @@
-// !LANGUAGE: +NewInference +ProhibitInvisibleAbstractMethodsInSuperclasses
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// FIR_IDENTICAL
+// LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 // FULL_JDK
 
@@ -31,7 +32,7 @@ public abstract class BaseKotlin1 {
 }
 
 // MODULE: mainModule(libModule)
-// FILE: JavaClassWithAbstractKotlinClass.java
+// FILE: mainModule/JavaClassWithAbstractKotlinClass.java
 package mainModule
 import libModule.*
 

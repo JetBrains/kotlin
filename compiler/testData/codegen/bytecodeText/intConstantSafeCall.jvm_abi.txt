@@ -1,0 +1,13 @@
+MODULE main
+	CLASS IntConstantSafeCallKt.class
+		METHOD foo()Ljava/lang/String;
+			Annotation: method.invisibleAnnotations
+				K1
+					@Lorg/jetbrains/annotations/NotNull;
+				K2
+					---
+			Annotation: method.invisibleAnnotations
+				K1
+					---
+				K2
+					@Lorg/jetbrains/annotations/Nullable;

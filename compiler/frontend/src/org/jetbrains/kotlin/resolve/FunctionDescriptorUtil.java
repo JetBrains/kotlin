@@ -67,7 +67,7 @@ public class FunctionDescriptorUtil {
     ) {
         return new LexicalScopeImpl(
                 outerScope, descriptor, true, descriptor.getExtensionReceiverParameter(),
-                LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationChecker,
+                descriptor.getContextReceiverParameters(), LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationChecker,
                 handler -> {
                     for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
                         handler.addClassifierDescriptor(typeParameter);

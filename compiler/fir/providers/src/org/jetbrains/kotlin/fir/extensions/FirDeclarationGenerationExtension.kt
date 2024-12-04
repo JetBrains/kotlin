@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirNestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -21,9 +22,15 @@ import kotlin.reflect.KClass
  * TODO:
  *  - check that annotations or meta-annotations is not empty
  */
-abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredicateBasedExtension(session) {
+
+/**
+ * All `generate*` members have the contract that the computation should be side-effect-free.
+ * That means that all `generate*` function implementations should not modify any state or leak the generated `FirElement` or `FirBasedSymbol` (e.g., by putting it to some cache).
+ * This restriction is imposed by the corresponding IDE cache implementation, which might retry the computation several times.
+ */
+abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("ExistingClassModification")
+        val NAME: FirExtensionPointName = FirExtensionPointName("ExistingClassModification")
     }
 
     final override val name: FirExtensionPointName
@@ -36,18 +43,25 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredi
      *
      * If classId has `outerClassId.Companion` format then generated class should be a companion object
      */
-    open fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
+    @ExperimentalTopLevelDeclarationsGenerationApi
+    open fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
+
+    open fun generateNestedClassLikeDeclaration(
+        owner: FirClassSymbol<*>,
+        name: Name,
+        context: NestedClassGenerationContext
+    ): FirClassLikeSymbol<*>? = null
 
     // Can be called on STATUS stage
-    open fun generateFunctions(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirNamedFunctionSymbol> = emptyList()
-    open fun generateProperties(callableId: CallableId, owner: FirClassSymbol<*>?): List<FirPropertySymbol> = emptyList()
-    open fun generateConstructors(owner: FirClassSymbol<*>): List<FirConstructorSymbol> = emptyList()
+    open fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> = emptyList()
+    open fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> = emptyList()
+    open fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> = emptyList()
 
     // Can be called on IMPORTS stage
     open fun hasPackage(packageFqName: FqName): Boolean = false
 
     /*
-     * Can be called after SUPERTYPES stage
+     * Can be called on SUPERTYPES stage
      *
      * `generate...` methods will be called only if `get...Names/ClassIds/CallableIds` returned corresponding
      *   declaration name
@@ -55,29 +69,68 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirPredi
      * If you want to generate constructor for some class, then you need to return `SpecialNames.INIT` in
      *   set of callable names for this class
      */
-    open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
-    open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> = emptySet()
+    open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> = emptySet()
+    open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> = emptySet()
+
+    @ExperimentalTopLevelDeclarationsGenerationApi
     open fun getTopLevelCallableIds(): Set<CallableId> = emptySet()
+
+    @ExperimentalTopLevelDeclarationsGenerationApi
     open fun getTopLevelClassIds(): Set<ClassId> = emptySet()
 
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 
     // ----------------------------------- internal utils -----------------------------------
 
+    @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     @FirExtensionApiInternals
-    val nestedClassifierNamesCache: FirCache<FirClassSymbol<*>, Set<Name>, Nothing?> =
-        session.firCachesFactory.createCache { symbol, _ ->
-            getNestedClassifiersNames(symbol)
-        }
-
-    @FirExtensionApiInternals
-    val topLevelClassIdsCache: FirLazyValue<Set<ClassId>, Nothing?> =
+    val topLevelClassIdsCache: FirLazyValue<Set<ClassId>> =
         session.firCachesFactory.createLazyValue { getTopLevelClassIds() }
 
+    @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     @FirExtensionApiInternals
-    val topLevelCallableIdsCache: FirLazyValue<Set<CallableId>, Nothing?> =
+    val topLevelCallableIdsCache: FirLazyValue<Set<CallableId>> =
         session.firCachesFactory.createLazyValue { getTopLevelCallableIds() }
 
+}
+
+typealias MemberGenerationContext = DeclarationGenerationContext.Member
+typealias NestedClassGenerationContext = DeclarationGenerationContext.Nested
+
+sealed class DeclarationGenerationContext<T : FirContainingNamesAwareScope>(
+    val owner: FirClassSymbol<*>,
+    val declaredScope: T?,
+) {
+    // is needed for `hashCode` implementation
+    protected abstract val kind: Int
+
+    class Member(
+        owner: FirClassSymbol<*>,
+        declaredScope: FirClassDeclaredMemberScope?,
+    ) : DeclarationGenerationContext<FirClassDeclaredMemberScope>(owner, declaredScope) {
+        override val kind: Int
+            get() = 1
+    }
+
+    class Nested(
+        owner: FirClassSymbol<*>,
+        declaredScope: FirNestedClassifierScope?,
+    ) : DeclarationGenerationContext<FirNestedClassifierScope>(owner, declaredScope) {
+        override val kind: Int
+            get() = 2
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this.javaClass !== other?.javaClass) {
+            return false
+        }
+        require(other is DeclarationGenerationContext<*>)
+        return owner == other.owner
+    }
+
+    override fun hashCode(): Int {
+        return owner.hashCode() + kind
+    }
 }
 
 val FirExtensionService.declarationGenerators: List<FirDeclarationGenerationExtension> by FirExtensionService.registeredExtensions()

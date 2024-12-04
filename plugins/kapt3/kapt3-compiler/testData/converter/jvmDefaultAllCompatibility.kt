@@ -1,4 +1,4 @@
-// !JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: all-compatibility
 
 interface Foo {
     fun foo() {
@@ -10,4 +10,8 @@ interface Foo {
     }
 
     fun bar()
+
+    private fun privateMethodWithDefault() {
+        System.out.println("privateMethodWithDefault")
+    }
 }

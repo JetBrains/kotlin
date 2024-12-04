@@ -1,0 +1,22 @@
+//
+// Source
+// ------------------------------------------
+
+val a = compositionLocalOf { 123 }
+@Composable fun Foo() {
+    val b = a.current
+    print(b)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static getA()Landroidx/compose/runtime/ProvidableCompositionLocal;
+  public final static Foo(Landroidx/compose/runtime/Composer;I)V
+  private final static a%lambda%0()I
+  private final static Foo%lambda%1(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  static <clinit>()V
+  private final static Landroidx/compose/runtime/ProvidableCompositionLocal; a
+}

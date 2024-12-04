@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitSmartcastsOnLocalDelegatedProperty
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitSmartcastsOnLocalDelegatedProperty
 
 class AlternatingDelegate {
     var counter: Int = 0

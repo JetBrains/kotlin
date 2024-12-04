@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
 fun Runnable.test(f: Runnable.(Int) -> Unit) {
@@ -12,7 +13,7 @@ fun test(f: Runnable.(Int) -> Unit, runnable: Runnable) {
 
 fun Int.test(f: String.(Int) -> Unit) {
     f("", 0)
-    <!ARGUMENT_TYPE_MISMATCH!>f<!>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
+    f(<!NO_VALUE_FOR_PARAMETER!>"")<!>
     with("") {
         f(0)
         f(<!ARGUMENT_TYPE_MISMATCH!>0.0<!>)

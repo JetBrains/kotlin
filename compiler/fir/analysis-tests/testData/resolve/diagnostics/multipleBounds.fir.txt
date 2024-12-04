@@ -53,16 +53,16 @@ FILE: multipleBounds.kt
         }
 
         public final fun test(t: R|T|): R|kotlin/Unit| {
-            R|?|.<Unresolved name: foo>#()
-            R|?|.<Unresolved name: bar>#()
+            R|?<Type parameter T in qualified access>#|.<Unresolved name: foo>#()
+            R|?<Type parameter T in qualified access>#|.<Unresolved name: bar>#()
             R|<local>/t|.R|Jet87/A.foo|()
             R|<local>/t|.R|Jet87/B.bar|()
         }
 
     }
     public final fun test(): R|kotlin/Unit| {
-        <CS errors: Jet87/Test1.Test1>#<R|Jet87/B|>()
-        <CS errors: Jet87/Test1.Test1>#<R|Jet87/A|>()
+        R|Jet87/Test1.Test1<Inapplicable(INAPPLICABLE): Jet87/Test1.Test1>#|<R|Jet87/B|>()
+        R|Jet87/Test1.Test1<Inapplicable(INAPPLICABLE): Jet87/Test1.Test1>#|<R|Jet87/A|>()
         R|Jet87/Test1.Test1|<R|Jet87/C|>()
     }
     public final class Foo : R|kotlin/Any| {
@@ -96,14 +96,14 @@ FILE: multipleBounds.kt
 
     }
     public final fun <T : R|Jet87/A|, R|Jet87/B|> test2(t: R|T|): R|kotlin/Unit| {
-        R|?|.<Unresolved name: foo>#()
-        R|?|.<Unresolved name: bar>#()
+        R|?<Type parameter T in qualified access>#|.<Unresolved name: foo>#()
+        R|?<Type parameter T in qualified access>#|.<Unresolved name: bar>#()
         R|<local>/t|.R|Jet87/A.foo|()
         R|<local>/t|.R|Jet87/B.bar|()
     }
-    public final val t1: R|kotlin/Unit| = <Inapplicable(INAPPLICABLE): Jet87/test2>#<R|Jet87/A|>(R|Jet87/A.A|())
+    public final val t1: R|kotlin/Unit| = R|Jet87/test2<Inapplicable(INAPPLICABLE): Jet87/test2>#|<R|Jet87/A|>(R|Jet87/A.A|())
         public get(): R|kotlin/Unit|
-    public final val t2: R|kotlin/Unit| = <Inapplicable(INAPPLICABLE): Jet87/test2>#<R|Jet87/B|>(R|Jet87/C.C|())
+    public final val t2: R|kotlin/Unit| = R|Jet87/test2<Inapplicable(INAPPLICABLE): Jet87/test2>#|<R|Jet87/B|>(R|Jet87/C.C|())
         public get(): R|kotlin/Unit|
     public final val t3: R|kotlin/Unit| = R|Jet87/test2|<R|Jet87/C|>(R|Jet87/C.C|())
         public get(): R|kotlin/Unit|

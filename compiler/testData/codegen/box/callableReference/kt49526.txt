@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public final class Kt49526Kt {
+    // source: 'kt49526.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method useRef(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): boolean
+}

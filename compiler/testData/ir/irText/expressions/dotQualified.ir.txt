@@ -15,10 +15,10 @@ FILE fqName:<root> fileName:/dotQualified.kt
           WHEN type=kotlin.Int? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_0: kotlin.String? [val] declared in <root>.lengthN' type=kotlin.String? origin=null
+                arg0: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.lengthN' type=kotlin.String? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
-                $this: GET_VAR 'val tmp_0: kotlin.String? [val] declared in <root>.lengthN' type=kotlin.String? origin=null
+                $this: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.lengthN' type=kotlin.String? origin=null

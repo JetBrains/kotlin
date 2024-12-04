@@ -1,0 +1,48 @@
+public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final Test createFromParcel(android.os.Parcel parcel) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          NEW (Test)
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, createStringArrayList, ()Ljava/util/ArrayList;)
+          CHECKCAST (java/lang/Iterable)
+          INVOKESTATIC (kotlinx/collections/immutable/ExtensionsKt, toPersistentList, (Ljava/lang/Iterable;)Lkotlinx/collections/immutable/PersistentList;)
+          INVOKESPECIAL (Test, <init>, (Lkotlinx/collections/immutable/PersistentList;)V)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (Test$Creator, createFromParcel, (Landroid/os/Parcel;)LTest;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final Test[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class Test : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final kotlinx.collections.immutable.PersistentList names
+
+    static void <clinit>()
+
+    public void <init>(kotlinx.collections.immutable.PersistentList names)
+
+    public int describeContents()
+
+    public final kotlinx.collections.immutable.PersistentList getNames()
+
+    public void writeToParcel(android.os.Parcel out, int flags)
+}

@@ -5,15 +5,24 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsExportDeclarationChecker.isExportable
+import org.jetbrains.kotlin.js.common.RESERVED_KEYWORDS
+import org.jetbrains.kotlin.js.common.SPECIAL_KEYWORDS
+import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
@@ -22,11 +31,15 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.descriptorUtil.isInsideInterface
 import org.jetbrains.kotlin.resolve.inline.isInlineWithReified
 import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.*
 
-object JsExportDeclarationChecker : DeclarationChecker {
+class JsExportDeclarationChecker(
+    private val includeUnsignedNumbers: Boolean,
+    private val allowCompanionInInterface: Boolean
+) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val trace = context.trace
         val bindingContext = trace.bindingContext
@@ -60,6 +73,8 @@ object JsExportDeclarationChecker : DeclarationChecker {
         if (descriptor.isExpect) {
             reportWrongExportedDeclaration("expect")
         }
+
+        validateDeclarationOnConsumableName(declaration, descriptor, trace)
 
         when (descriptor) {
             is FunctionDescriptor -> {
@@ -97,6 +112,7 @@ object JsExportDeclarationChecker : DeclarationChecker {
             }
 
             is PropertyDescriptor -> {
+                if (declaration is KtParameter) return
                 if (descriptor.isExtensionProperty) {
                     reportWrongExportedDeclaration("extension property")
                     return
@@ -118,9 +134,13 @@ object JsExportDeclarationChecker : DeclarationChecker {
                         descriptor.isInlineClass() -> "${if (descriptor.isInline) "inline " else ""}${if (descriptor.isValue) "value " else ""}class"
                         else -> null
                     }
-                    else -> if (descriptor.isInsideInterface) {
+                    else -> if (descriptor.isInsideInterface && (!allowCompanionInInterface || !descriptor.isCompanionObject)) {
                         "${if (descriptor.isCompanionObject) "companion object" else "nested/inner declaration"} inside exported interface"
                     } else null
+                }
+
+                if (allowCompanionInInterface && descriptor.isCompanionObject && descriptor.isInsideInterface && descriptor.name != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
+                    trace.report(ErrorsJs.NAMED_COMPANION_IN_EXPORTED_INTERFACE.on(declaration))
                 }
 
                 if (wrongDeclaration != null) {
@@ -131,15 +151,6 @@ object JsExportDeclarationChecker : DeclarationChecker {
                 if (descriptor.kind == ENUM_ENTRY) {
                     // Covered by ENUM_CLASS
                     return
-                }
-
-                val supertypes = descriptor.defaultType.supertypes()
-                val isEnum = supertypes.any { KotlinBuiltIns.isEnum(it) }
-
-                for (superType in supertypes) {
-                    if (!superType.isExportable(bindingContext) && !(KotlinBuiltIns.isComparable(superType) && isEnum)) {
-                        trace.report(ErrorsJs.NON_EXPORTABLE_TYPE.on(declaration, "super", superType))
-                    }
                 }
             }
         }
@@ -182,14 +193,22 @@ object JsExportDeclarationChecker : DeclarationChecker {
         val nonNullable = makeNotNullable()
 
         val isPrimitiveExportableType = nonNullable.isAnyOrNullableAny() ||
+                nonNullable.isTypeParameter() ||
                 nonNullable.isDynamic() ||
                 nonNullable.isBoolean() ||
                 KotlinBuiltIns.isThrowableOrNullableThrowable(nonNullable) ||
                 KotlinBuiltIns.isString(nonNullable) ||
                 (nonNullable.isPrimitiveNumberOrNullableType() && !nonNullable.isLong()) ||
                 nonNullable.isNothingOrNullableNothing() ||
+                (includeUnsignedNumbers && KotlinBuiltIns.isUnsignedNumber(nonNullable)) ||
                 KotlinBuiltIns.isArray(this) ||
-                KotlinBuiltIns.isPrimitiveArray(this)
+                KotlinBuiltIns.isPrimitiveArray(this) ||
+                KotlinBuiltIns.isConstructedFromGivenClass(this, StandardNames.FqNames.list) ||
+                KotlinBuiltIns.isConstructedFromGivenClass(this, StandardNames.FqNames.mutableList) ||
+                KotlinBuiltIns.isConstructedFromGivenClass(this, StandardNames.FqNames.set) ||
+                KotlinBuiltIns.isConstructedFromGivenClass(this, StandardNames.FqNames.mutableSet) ||
+                KotlinBuiltIns.isConstructedFromGivenClass(this, StandardNames.FqNames.map) ||
+                KotlinBuiltIns.isConstructedFromGivenClass(this, StandardNames.FqNames.mutableMap)
 
         if (isPrimitiveExportableType) return true
 
@@ -200,5 +219,34 @@ object JsExportDeclarationChecker : DeclarationChecker {
         if (KotlinBuiltIns.isEnum(this)) return true
 
         return descriptor.isEffectivelyExternal() || AnnotationsUtils.isExportedObject(descriptor, bindingContext)
+    }
+
+    private fun validateDeclarationOnConsumableName(
+        declaration: KtDeclaration,
+        declarationDescriptor: DeclarationDescriptor,
+        trace: BindingTrace
+    ) {
+        if (!declarationDescriptor.isTopLevelInPackage() || declarationDescriptor.name.isSpecial) return
+
+        val name = declarationDescriptor.getKotlinOrJsName()
+
+        if (name in SPECIAL_KEYWORDS || (name !in RESERVED_KEYWORDS && NameSuggestion.sanitizeName(name) == name)) return
+
+        val reportTarget = declarationDescriptor.getJsNameArgument() ?: declaration.getIdentifier()
+
+        trace.report(ErrorsJs.NON_CONSUMABLE_EXPORTED_IDENTIFIER.on(reportTarget, name))
+    }
+
+    private fun DeclarationDescriptor.getKotlinOrJsName(): String {
+        return AnnotationsUtils.getJsName(this) ?: name.identifier
+    }
+
+    private fun KtDeclaration.getIdentifier(): PsiElement {
+        return (this as KtNamedDeclaration).nameIdentifier!!
+    }
+
+    private fun DeclarationDescriptor.getJsNameArgument(): PsiElement? {
+        val jsNameAnnotation = AnnotationsUtils.getJsNameAnnotation(this) ?: return null
+        return (jsNameAnnotation.source.getPsi() as KtAnnotationEntry).valueArgumentList?.arguments?.first()
     }
 }

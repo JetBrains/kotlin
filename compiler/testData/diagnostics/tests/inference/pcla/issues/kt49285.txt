@@ -1,0 +1,13 @@
+package
+
+public val result1: Foo<kotlin.Nothing?>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ K1> myBuilder1(/*0*/ builder: Foo<K1>.() -> Foo<K1>): Foo<K1>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ K2> myBuilder2(/*0*/ builder: Foo<K2>.() -> kotlin.Unit): Foo<K2>
+
+public final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public final fun add(/*0*/ x: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

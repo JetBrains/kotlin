@@ -1,5 +1,4 @@
-// SKIP_IR_INCREMENTAL_CHECKS
-// EXPECTED_REACHABLE_NODES: 1284
+// NO_COMMON_FILES
 // MODULE: lib
 // FILE: lib.kt
 fun foo(x: String) = "foo($x)"
@@ -10,7 +9,6 @@ inline fun baz(x: String) = "baz(${foo(x)})"
 
 // MODULE: main(lib)
 // FILE: a.kt
-// PROPERTY_READ_COUNT: name=foo_61zpoe$ count=1 TARGET_BACKENDS=JS
 fun test1() = bar("q")
 
 // FILE: b.kt

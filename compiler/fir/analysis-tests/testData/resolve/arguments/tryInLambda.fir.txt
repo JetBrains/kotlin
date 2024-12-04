@@ -9,7 +9,7 @@ FILE: tryInLambda.kt
             try {
                 lval x: R|kotlin/Int| = Int(1)
             }
-            catch (e: R|kotlin/Exception|) {
+            catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
                 R|/foo|()
             }
 

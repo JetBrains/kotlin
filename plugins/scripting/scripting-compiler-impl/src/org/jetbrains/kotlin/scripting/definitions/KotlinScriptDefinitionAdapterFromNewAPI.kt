@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.starProjectedType
+import kotlin.reflect.full.withNullability
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -22,6 +23,7 @@ import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.util.getOrError
 
 // temporary trick with passing Any as a template and overwriting it below, TODO: fix after introducing new script definitions hierarchy
+@Suppress("DEPRECATION")
 abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinition(Any::class) {
 
     abstract val scriptCompilationConfiguration: ScriptCompilationConfiguration
@@ -68,12 +70,12 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     override val implicitReceivers: List<KType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scriptCompilationConfiguration[ScriptCompilationConfiguration.implicitReceivers]
             .orEmpty()
-            .map { getScriptingClass(it).starProjectedType }
+            .map { getScriptingClass(it).starProjectedType.withNullability(it.isNullable) }
     }
 
     override val providedProperties: List<Pair<String, KType>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scriptCompilationConfiguration[ScriptCompilationConfiguration.providedProperties]
-            ?.map { (k, v) -> k to getScriptingClass(v).starProjectedType }.orEmpty()
+            ?.map { (k, v) -> k to getScriptingClass(v).starProjectedType.withNullability(v.isNullable) }.orEmpty()
     }
 
     @Deprecated("temporary workaround for missing functionality, will be replaced by the new API soon")

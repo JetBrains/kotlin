@@ -1,0 +1,48 @@
+FILE fqName:<root> fileName:/test.kt
+  PROPERTY name:key visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:key type:<root>.A.Key<kotlin.Boolean> visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A.Key' type=<root>.A.Key<kotlin.Boolean> origin=null
+          <class: T>: @[FlexibleNullability] kotlin.Boolean?
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-key> visibility:public modality:FINAL <> () returnType:<root>.A.Key<kotlin.Boolean>
+      correspondingProperty: PROPERTY name:key visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-key> (): <root>.A.Key<kotlin.Boolean> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:key type:<root>.A.Key<kotlin.Boolean> visibility:private [final,static]' type=<root>.A.Key<kotlin.Boolean> origin=null
+  PROPERTY name:x visibility:public modality:FINAL [delegated,val]
+    FIELD PROPERTY_DELEGATE name:x$delegate type:kotlin.Lazy<kotlin.Boolean> visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Boolean> origin=null
+          <T>: kotlin.Boolean
+          initializer: FUN_EXPR type=kotlin.Function0<kotlin.Boolean> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Boolean
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Boolean declared in <root>.x$delegate'
+                  BLOCK type=kotlin.Boolean origin=ELVIS
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:@[EnhancedNullability] kotlin.Boolean? [val]
+                      CALL 'public open fun get <T> (key: @[EnhancedNullability] <root>.A.Key<@[FlexibleNullability] T of <root>.A.get?>): @[EnhancedNullability] T of <root>.A.get? declared in <root>.A' type=@[EnhancedNullability] kotlin.Boolean? origin=null
+                        <T>: @[FlexibleNullability] kotlin.Boolean?
+                        $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+                        key: CALL 'public final fun <get-key> (): <root>.A.Key<kotlin.Boolean> declared in <root>' type=<root>.A.Key<kotlin.Boolean> origin=GET_PROPERTY
+                    WHEN type=kotlin.Boolean origin=null
+                      BRANCH
+                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                          arg0: GET_VAR 'val tmp_0: @[EnhancedNullability] kotlin.Boolean? declared in <root>.x$delegate.<anonymous>' type=@[EnhancedNullability] kotlin.Boolean? origin=null
+                          arg1: CONST Null type=kotlin.Nothing? value=null
+                        then: CONST Boolean type=kotlin.Boolean value=false
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: GET_VAR 'val tmp_0: @[EnhancedNullability] kotlin.Boolean? declared in <root>.x$delegate.<anonymous>' type=@[EnhancedNullability] kotlin.Boolean? origin=null
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> () returnType:kotlin.Boolean
+      correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [delegated,val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Boolean declared in <root>'
+          CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin' type=kotlin.Boolean origin=null
+            <T>: kotlin.Boolean
+            $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:x$delegate type:kotlin.Lazy<kotlin.Boolean> visibility:private [final,static] declared in <root>' type=kotlin.Lazy<kotlin.Boolean> origin=null
+            thisRef: CONST Null type=kotlin.Nothing? value=null
+            property: PROPERTY_REFERENCE 'public final x: kotlin.Boolean declared in <root>' field=null getter='public final fun <get-x> (): kotlin.Boolean declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.Boolean> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+  FUN name:main visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun println (message: kotlin.Boolean): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
+        message: CALL 'public final fun <get-x> (): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=GET_PROPERTY

@@ -1,4 +1,5 @@
-// !LANGUAGE: +ProhibitComparisonOfIncompatibleEnums
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ProhibitComparisonOfIncompatibleEnums
 
 enum class E1 {
     A, B

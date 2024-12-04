@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <excluded_packages_library>
+final class excluded_packages.test/Class { // excluded_packages.test/Class|null[0]
+    constructor <init>() // excluded_packages.test/Class.<init>|-5645683436151566731[0]
+}
+final val excluded_packages.test/property // excluded_packages.test/property|4634558160746314112[0]
+    final fun <get-property>(): kotlin/String // excluded_packages.test/property.<get-property>|4838831487146901942[0]
+final fun excluded_packages.test/function(): kotlin/String // excluded_packages.test/function|-3322893411126713785[0]

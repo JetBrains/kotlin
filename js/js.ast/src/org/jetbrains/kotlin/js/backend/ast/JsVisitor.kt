@@ -60,6 +60,9 @@ abstract class JsVisitor {
     open fun visitContinue(x: JsContinue): Unit =
             visitElement(x)
 
+    open fun visitYield(x: JsYield): Unit =
+        visitElement(x)
+
     open fun visitDebugger(x: JsDebugger): Unit =
             visitElement(x)
 
@@ -144,6 +147,9 @@ abstract class JsVisitor {
     open fun visitThis(x: JsThisRef): Unit =
             visitElement(x)
 
+    open fun visitSuper(x: JsSuperRef): Unit =
+            visitElement(x)
+
     open fun visitThrow(x: JsThrow): Unit =
             visitElement(x)
 
@@ -163,6 +169,9 @@ abstract class JsVisitor {
             visitElement(comment)
 
     open fun visitSingleLineComment(comment: JsSingleLineComment): Unit =
+            visitElement(comment)
+
+    open fun visitMultiLineComment(comment: JsMultiLineComment): Unit =
             visitElement(comment)
 
     open fun visitExport(export: JsExport): Unit =

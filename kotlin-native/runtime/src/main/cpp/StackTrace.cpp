@@ -5,11 +5,18 @@
 
 #include "StackTrace.hpp"
 
-#if KONAN_NO_BACKTRACE
-// Nothing to include
-#elif USE_GCC_UNWIND
+#if USE_GCC_UNWIND
 // GCC unwinder for backtrace.
 #include <unwind.h>
+#if __MINGW64__
+#error // GCC unwinder in MinGW64/libgcc has a bugfix only in version 12. With previous libgcc versions, use RTL unwinder instead.
+#endif
+
+#elif USE_WINAPI_UNWIND
+// Use RtlCaptureContext, RtlLookupFunctionEntry, RtlVirtualUnwind
+#include <windows.h>
+#include <winnt.h>
+
 #else
 // Glibc backtrace() function.
 #include <execinfo.h>
@@ -46,11 +53,7 @@ struct Backtrace {
 };
 
 _Unwind_Ptr getUnwindPtr(_Unwind_Context* context) {
-#if (__MINGW32__ || __MINGW64__)
-    return _Unwind_GetRegionStart(context);
-#else
     return _Unwind_GetIP(context);
-#endif
 }
 
 _Unwind_Reason_Code depthCountCallback(struct _Unwind_Context* context, void* arg) {
@@ -76,34 +79,56 @@ _Unwind_Reason_Code unwindCallback(struct _Unwind_Context* context, void* arg) {
 
     return _URC_NO_REASON;
 }
+#elif USE_WINAPI_UNWIND
+// winAPIUnwind() does:
+// - if `result` is not empty -> stores IPs of stacktrace(ignoring first `skipCount` entries) into `result`, and returns amount of stored IPs
+// - if `result` is empty  -> returns depth of stacktrace(ignoring first `skipCount` entries)
+NO_INLINE size_t winAPIUnwind(size_t skipCount, std_support::span<void*> result)
+{
+    size_t resultSize = result.size();
+    bool doStoreIPs = resultSize > 0;
+    size_t currentSize = 0;
+    CONTEXT context = {};
+    context.ContextFlags = CONTEXT_ALL;
+    RtlCaptureContext (&context);
+    do {
+        DWORD64 imageBase = 0;
+        UNWIND_HISTORY_TABLE historyTable = {};
+        PRUNTIME_FUNCTION FunctionEntry = RtlLookupFunctionEntry (context.Rip, &imageBase, &historyTable);
+        if (!FunctionEntry)
+            break;
+        PVOID handlerData = nullptr;
+        ULONG64 establisherFramePointers[2] = { 0, 0 };
+        RtlVirtualUnwind (UNW_FLAG_NHANDLER, imageBase, context.Rip, FunctionEntry, &context, &handlerData, establisherFramePointers, nullptr);
+
+        if (skipCount > 0) {
+            skipCount--;
+        } else {
+            if(doStoreIPs)
+                result[currentSize] = reinterpret_cast<void*>(context.Rip);
+            ++currentSize;
+        }
+    } while (context.Rip != 0 && (currentSize < resultSize || !doStoreIPs));
+
+    return currentSize;
+}
 #endif
 
 THREAD_LOCAL_VARIABLE bool disallowSourceInfo = false;
 
-#if !KONAN_NO_BACKTRACE
 int getSourceInfo(void* symbol, SourceInfo *result, int result_len) {
     return disallowSourceInfo ? 0 : compiler::getSourceInfo(symbol, result, result_len);
 }
-#endif
 
 } // namespace
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
-NO_INLINE KStdVector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
-#if KONAN_NO_BACKTRACE
-    return {};
-#else
-
-#if (__MINGW32__ || __MINGW64__)
-    // Skip GetCurrentStackTrace, _Unwind_Backtrace + anything asked by the caller.
-    const size_t kSkipFrames = 2 + skipFrames;
-#else
+NO_INLINE std::vector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
     // Skip GetCurrentStackTrace + anything asked by the caller.
     const size_t kSkipFrames = 1 + skipFrames;
-#endif
 
-    KStdVector<void*> result;
+    std::vector<void*> result;
 #if USE_GCC_UNWIND
     size_t depth = 0;
     _Unwind_Backtrace(depthCountCallback, static_cast<void*>(&depth));
@@ -114,6 +139,13 @@ NO_INLINE KStdVector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFr
     _Unwind_Backtrace(unwindCallback, static_cast<void*>(&traceHolder));
     RuntimeAssert(result.size() == traceHolder.currentSize, "Expected and collected sizes of the stacktrace differ");
 
+    return result;
+#elif USE_WINAPI_UNWIND
+    size_t depth = winAPIUnwind(kSkipFrames, std_support::span<void*>());
+    if (depth <= 0) return {};
+    result.resize(depth);
+
+    winAPIUnwind(kSkipFrames, std_support::span<void*>(result.data(), result.size()));
     return result;
 #else
     // Take into account this function and StackTrace::current.
@@ -127,28 +159,20 @@ NO_INLINE KStdVector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFr
     result.erase(result.begin(), std::next(result.begin(), kSkipFrames));
     return result;
 #endif // !USE_GCC_UNWIND
-#endif // !KONAN_NO_BACKTRACE
 }
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
 NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_support::span<void*> buffer) noexcept {
-#if KONAN_NO_BACKTRACE
-    return {};
-#else
-
-#if (__MINGW32__ || __MINGW64__)
-    // Skip GetCurrentStackTrace, _Unwind_Backtrace + anything asked by the caller.
-    const size_t kSkipFrames = 2 + skipFrames;
-#else
     // Skip GetCurrentStackTrace + anything asked by the caller.
     const size_t kSkipFrames = 1 + skipFrames;
-#endif
 
 #if USE_GCC_UNWIND
     Backtrace traceHolder(kSkipFrames, buffer);
     _Unwind_Backtrace(unwindCallback, static_cast<void*>(&traceHolder));
     return traceHolder.currentSize;
+#elif USE_WINAPI_UNWIND
+    return winAPIUnwind(kSkipFrames, buffer);
 #else
     // Take into account this function and StackTrace::current.
     constexpr size_t maxSize = GetMaxStackTraceDepth<StackTraceCapacityKind::kFixed>() + 2;
@@ -160,13 +184,11 @@ NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_s
     std::copy_n(std::begin(tmpBuffer) + kSkipFrames, elementsCount, std::begin(buffer));
     return elementsCount;
 #endif // !USE_GCC_UNWIND
-#endif // !KONAN_NO_BACKTRACE
 }
 
-#if ! KONAN_NO_BACKTRACE
 #include <cstdarg>
 #include <cstring>
-#include "cpp_support/Span.hpp"
+#include "std_support/Span.hpp"
 #include "Format.h"
 
 #if __has_include("dlfcn.h")
@@ -208,7 +230,6 @@ static size_t snprintf_with_addr(char* buf, size_t size, size_t frame, const voi
     va_end(args);
     return size - buffer.size();
 }
-#endif // ! KONAN_NO_BACKTRACE
 
 
 /*
@@ -236,14 +257,9 @@ KNativePtr adjustAddressForSourceInfo(KNativePtr address) {
 KNativePtr adjustAddressForSourceInfo(KNativePtr address) { return address; }
 #endif
 
-KStdVector<KStdString> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
-#if KONAN_NO_BACKTRACE
-    KStdVector<KStdString> strings;
-    strings.push_back("<UNIMPLEMENTED>");
-    return strings;
-#else
+std::vector<std::string> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
     size_t size = stackTrace.size();
-    KStdVector<KStdString> strings;
+    std::vector<std::string> strings;
     strings.reserve(size);
     if (size > 0) {
         SourceInfo buffer[10]; // outside of the loop to avoid calling constructors and destructors each time
@@ -254,10 +270,13 @@ KStdVector<KStdString> kotlin::GetStackTraceStrings(std_support::span<void* cons
             int frames_or_overflow = getSourceInfo(address, buffer, std::size(buffer));
             int frames = std::min<int>(frames_or_overflow, std::size(buffer));
             bool isSomethingPrinted = false;
+            bool isSomethingHidden = false;
             char line[1024];
             for (int frame = 0; frame < frames; frame++) {
                 auto &sourceInfo = buffer[frame];
-                if (!sourceInfo.getFileName().empty()) {
+                if (sourceInfo.nodebug) {
+                    isSomethingHidden = true;
+                } else if (!sourceInfo.getFileName().empty()) {
                     bool is_last = frame == frames - 1;
                     if (is_last && frames_or_overflow != frames) {
                         snprintf_with_addr(line, sizeof(line) - 1, strings.size(), address, false, "[some inlined frames skipped]");
@@ -282,14 +301,13 @@ KStdVector<KStdString> kotlin::GetStackTraceStrings(std_support::span<void* cons
                     strings.push_back(line);
                 }
             }
-            if (!isSomethingPrinted) {
+            if (!isSomethingPrinted && !isSomethingHidden) {
                 snprintf_with_addr(line, sizeof(line) - 1,  strings.size(), address, false, "%s", "");
                 strings.push_back(line);
             }
         }
     }
     return strings;
-#endif // !KONAN_NO_BACKTRACE
 }
 
 void kotlin::DisallowSourceInfo() {

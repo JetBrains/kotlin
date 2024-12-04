@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(): String {
     var s: String?
     s = null
@@ -16,7 +17,7 @@ fun String?.gav() {}
 fun bar(s: String?) {
     if (s != null) return
     s.gav()
-    s as? String
+    s <!USELESS_CAST!>as? String<!>
     s as String?
-    s as String
+    s <!CAST_NEVER_SUCCEEDS!>as<!> String
 }

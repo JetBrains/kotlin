@@ -1,0 +1,7 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] localUnitFunction.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Unit| {
+            <Unresolved name: println>#(String(local))
+        }
+
+    }

@@ -5,13 +5,19 @@ apply plugin: 'kotlin-multiplatform'
 apply plugin: 'maven-publish'
 
 kotlin {
+    sourceSets.all {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+    }
+
     js() {
         browser()
         nodejs()
     }
     linuxX64("linux")
     macosX64("macos")
-    ios()
+    iosX64()
     jvm()
 
     sourceSets {

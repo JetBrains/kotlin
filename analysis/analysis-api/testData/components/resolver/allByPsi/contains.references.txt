@@ -1,0 +1,83 @@
+KtNameReferenceExpression(37,40): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtConstructorDelegationReferenceExpression(43,47): 'this'
+  KtConstructorDelegationReference:
+    (in MyClass) constructor()
+
+KtNameReferenceExpression(70,71): 'T'
+  KtSimpleNameReference:
+    (in <local>: contains) T
+
+KtNameReferenceExpression(86,89): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(92,99): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtOperationReferenceExpression(128,130): 'in'
+  KtSimpleNameReference:
+    (in ROOT) operator fun <T> T.contains(int: kotlin.Int): kotlin.Boolean
+
+KtCallExpression(131,140): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(131,138): 'MyClass'
+  KtSimpleNameReference:
+    (in MyClass) constructor()
+
+KtCallExpression(145,154): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(145,152): 'MyClass'
+  KtSimpleNameReference:
+    (in MyClass) constructor()
+
+KtCallExpression(155,166): 'contains(2)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(155,163): 'contains'
+  KtSimpleNameReference:
+    (in ROOT) operator fun <T> T.contains(int: kotlin.Int): kotlin.Boolean
+
+KtOperationReferenceExpression(173,176): '!in'
+  KtSimpleNameReference:
+    (in ROOT) operator fun <T> T.contains(int: kotlin.Int): kotlin.Boolean
+
+KtCallExpression(177,186): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(177,184): 'MyClass'
+  KtSimpleNameReference:
+    (in MyClass) constructor()
+
+KtOperationReferenceExpression(211,213): 'in'
+  KtSimpleNameReference:
+    (in ROOT) operator fun <T> T.contains(int: kotlin.Int): kotlin.Boolean
+
+KtCallExpression(214,223): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(214,221): 'MyClass'
+  KtSimpleNameReference:
+    (in MyClass) constructor()
+
+KtOperationReferenceExpression(270,273): '!in'
+  KtSimpleNameReference:
+    (in ROOT) operator fun <T> T.contains(int: kotlin.Int): kotlin.Boolean
+
+KtCallExpression(274,283): 'MyClass()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(274,281): 'MyClass'
+  KtSimpleNameReference:
+    (in MyClass) constructor()

@@ -1,0 +1,66 @@
+library {
+  // module name: <annotatedEnumEntry.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Anno
+    // class name: test/Bnno
+    // class name: test/Eee
+    // class name: test/Eee.Entry1
+    // class name: test/Eee.Entry2
+    // class name: test/Eee.Entry3
+    // class name: test/Eee.Entry4
+
+    public final annotation class test/Anno : kotlin/Annotation {
+
+      public constructor(value: kotlin/String /* = ... */, x: kotlin/Int /* = ... */)
+
+      public final val value: kotlin/String
+        public final get
+
+      public final val x: kotlin/Int
+        public final get
+    }
+
+    public final annotation class test/Bnno : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final enum class test/Eee : kotlin/Enum<test/Eee> {
+
+      private constructor()
+
+      @test/Anno
+      Entry1,
+
+      Entry2,
+
+      @test/Anno(value = "3")
+      @test/Bnno
+      Entry3,
+
+      @test/Anno(value = "4", x = 4)
+      Entry4,
+
+      // has Enum.entries
+    }
+
+    @test/Anno
+    public final enum entry test/Eee.Entry1 : test/Eee {
+    }
+
+    public final enum entry test/Eee.Entry2 : test/Eee {
+    }
+
+    @test/Anno(value = "3")
+    @test/Bnno
+    public final enum entry test/Eee.Entry3 : test/Eee {
+    }
+
+    @test/Anno(value = "4", x = 4)
+    public final enum entry test/Eee.Entry4 : test/Eee {
+    }
+  }
+}

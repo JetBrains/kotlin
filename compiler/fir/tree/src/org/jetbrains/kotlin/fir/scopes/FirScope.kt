@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
+
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+annotation class DelicateScopeAPI
 
 abstract class FirScope {
     open fun processClassifiersByNameWithSubstitution(
@@ -33,14 +38,30 @@ abstract class FirScope {
     ) {
     }
 
-    open fun mayContainName(name: Name) = true
+    open fun mayContainName(name: Name): Boolean = true
 
     open val scopeOwnerLookupNames: List<String> get() = emptyList()
+
+    /**
+     * This function creates a copy of the scope in case if this scope is session-dependant
+     * It shouldn't be used anywhere except Analysis API, as in the compiler there cannot be
+     *   a situation when session `A` may observe the session-dependent scope from session `B`
+     *
+     * @return null if the scope is session-independent, otherwise the created copy
+     *
+     * Note that this function doesn't check that [newSession] is actually different from the one stored in scope
+     */
+    @DelicateScopeAPI
+    abstract fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirScope?
 }
 
-fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableListOf<FirClassifierSymbol<*>>().apply {
+fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableSetOf<FirClassifierSymbol<*>>().apply {
     processClassifiersByName(name, this::add)
 }.singleOrNull()
+
+fun FirScope.getClassifiers(name: Name): List<FirClassifierSymbol<*>> = mutableListOf<FirClassifierSymbol<*>>().apply {
+    processClassifiersByName(name, this::add)
+}
 
 fun FirScope.getFunctions(name: Name): List<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
     processFunctionsByName(name, this::add)
@@ -60,16 +81,15 @@ fun FirTypeScope.processOverriddenFunctionsAndSelf(
 ): ProcessorAction {
     if (!processor(functionSymbol)) return ProcessorAction.STOP
 
-    return processOverriddenFunctions(functionSymbol, processor)
+    return processOverriddenFunctions(functionSymbol, processor = processor)
 }
 
-fun FirTypeScope.processOverriddenPropertiesAndSelf(
+fun List<FirTypeScope>.processOverriddenPropertiesAndSelf(
     propertySymbol: FirPropertySymbol,
     processor: (FirPropertySymbol) -> ProcessorAction
-): ProcessorAction {
-    if (!processor(propertySymbol)) return ProcessorAction.STOP
-
-    return processOverriddenProperties(propertySymbol, processor)
+) {
+    if (!processor(propertySymbol)) return
+    processOverriddenProperties(propertySymbol, processor)
 }
 
 enum class ProcessorAction {
@@ -85,8 +105,8 @@ enum class ProcessorAction {
         }
     }
 
-    fun stop() = this == STOP
-    fun next() = this != STOP
+    fun stop(): Boolean = this == STOP
+    fun next(): Boolean = this != STOP
 
     operator fun plus(other: ProcessorAction): ProcessorAction {
         if (this == NEXT || other == NEXT) return NEXT

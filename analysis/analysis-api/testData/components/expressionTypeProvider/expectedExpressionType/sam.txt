@@ -1,2 +1,5 @@
 expression: { /* SAM */ }
-expected type: java/lang/Runnable
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: java/lang/Runnable

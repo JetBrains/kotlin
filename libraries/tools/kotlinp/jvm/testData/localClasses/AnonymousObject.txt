@@ -1,0 +1,25 @@
+// AnonymousObjectKt.class
+// ------------------------------------------
+package {
+
+  // signature: test()Ljava/lang/Runnable;
+  public final fun test(): java/lang/Runnable
+
+  // module name: test-module
+}
+// AnonymousObjectKt$test$1.class
+// ------------------------------------------
+local final class .AnonymousObjectKt$test$1 : java/lang/Runnable {
+
+  // signature: run()V
+  public open fun run(): kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    AnonymousObjectKt
+  }
+}

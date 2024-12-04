@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: result.getMethod OK in FE1.0, unresolved in FIR
-// WITH_RUNTIME
 // FULL_JDK
 
 val defaultStringConverter = fun(s: String): Any {

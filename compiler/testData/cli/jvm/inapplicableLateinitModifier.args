@@ -1,4 +1,3 @@
 $TESTDATA_DIR$/inapplicableLateinitModifier.kt
--Xuse-fir
 -d
 $TEMP_DIR$

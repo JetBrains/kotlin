@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 fun f(
         <!VAL_OR_VAR_ON_FUN_PARAMETER!>val<!> a: Int,

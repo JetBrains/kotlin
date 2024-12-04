@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
+import org.jetbrains.kotlin.metadata.builtins.readBuiltinsPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragmentImpl
@@ -33,21 +34,15 @@ class BuiltInsPackageFragmentImpl private constructor(
             inputStream: InputStream,
             isFallback: Boolean
         ): BuiltInsPackageFragmentImpl {
-            lateinit var version: BuiltInsBinaryVersion
+            val (proto, version) = inputStream.readBuiltinsPackageFragment()
 
-            val proto = inputStream.use { stream ->
-                version = BuiltInsBinaryVersion.readFrom(stream)
-
-                if (!version.isCompatible()) {
-                    // TODO: report a proper diagnostic
-                    throw UnsupportedOperationException(
-                        "Kotlin built-in definition format version is not supported: " +
-                                "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                                "Please update Kotlin"
-                    )
-                }
-
-                ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
+            if (proto == null) {
+                // TODO: report a proper diagnostic
+                throw UnsupportedOperationException(
+                    "Kotlin built-in definition format version is not supported: " +
+                            "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
+                            "Please update Kotlin"
+                )
             }
 
             return BuiltInsPackageFragmentImpl(fqName, storageManager, module, proto, version, isFallback)

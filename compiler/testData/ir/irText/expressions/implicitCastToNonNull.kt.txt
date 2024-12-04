@@ -15,7 +15,7 @@ fun <T : CharSequence?> test2(x: T): Int {
 inline fun <reified T : CharSequence?> test3(x: Any): Int {
   return when {
     x !is T -> 0
-    else -> x /*as T */.<get-length>()
+    else -> x /*as (T & Any) */.<get-length>()
   }
 }
 

@@ -18,11 +18,12 @@
 #define RUNTIME_MEMORY_H
 
 #include <utility>
+#include <std_support/Atomic.hpp>
 
+#include "Alignment.hpp"
 #include "KAssert.h"
 #include "Common.h"
 #include "TypeInfo.h"
-#include "Atomic.h"
 #include "PointerBits.h"
 #include "Utils.hpp"
 
@@ -51,52 +52,68 @@ struct ObjHeader {
       }
   }
 
+  TypeInfo* typeInfoOrMetaRelaxed() const { return kotlin::std_support::atomic_ref{typeInfoOrMeta_}.load(std::memory_order_relaxed);}
+  TypeInfo* typeInfoOrMetaAcquire() const { return kotlin::std_support::atomic_ref{typeInfoOrMeta_}.load(std::memory_order_acquire);}
+
+  /**
+   * Formally, this code data races with installing ExtraObject. Even though, we are okey, with reading
+   * both typeInfo and meta-object pointer, llvm memory model doesn't guarantee, that if we are able to
+   * see metaObject, written by other thread, we would be able to see metaObject->typeInfo.
+   *
+   * To make this correct with llvm memory model we need to use [LLVMAtomicOrdering.LLVMAtomicOrderingAcquire] here.
+   * Unfortunately, this is dramatically harmful for performance on arm architecture. So, we are using
+   * [LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic] for both this read and following load of metaObject->typeInfo.
+   * At this point, we have no data race, but llvm memory model allows uninitialized value to be read from metaObject->typeInfo.
+   *
+   * Hardware guaranties on many supported platforms doesn't allow this to happen.
+   */
   const TypeInfo* type_info() const {
-    return clearPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK)->typeInfo_;
+      auto atomicTypeInfoPtr = kotlin::std_support::atomic_ref{clearPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK)->typeInfo_};
+      const TypeInfo* typeInfo = atomicTypeInfoPtr.load(std::memory_order_relaxed);
+      RuntimeAssert(typeInfo != nullptr, "TypeInfo ptr in object %p in null", this);
+      return typeInfo;
   }
 
   bool has_meta_object() const {
-      return AsMetaObject(typeInfoOrMeta_) != nullptr;
+      return meta_object_or_null() != nullptr;
   }
 
   MetaObjHeader* meta_object() {
-      if (auto* metaObject = AsMetaObject(typeInfoOrMeta_)) {
+      if (auto* metaObject = AsMetaObject(typeInfoOrMetaAcquire())) {
           return metaObject;
       }
       return createMetaObject(this);
   }
 
-  MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMeta_); }
-
-  ALWAYS_INLINE ObjHeader* GetWeakCounter();
-  ALWAYS_INLINE ObjHeader* GetOrSetWeakCounter(ObjHeader* counter);
-
+  MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMetaAcquire()); }
 
 #ifdef KONAN_OBJC_INTEROP
-  ALWAYS_INLINE void* GetAssociatedObject();
-  ALWAYS_INLINE void** GetAssociatedObjectLocation();
-  ALWAYS_INLINE void SetAssociatedObject(void* obj);
+  void* GetAssociatedObject() const;
+  void SetAssociatedObject(void* obj);
+  void* CasAssociatedObject(void* expectedObj, void* obj);
 #endif
 
   inline bool local() const {
-    unsigned bits = getPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK);
+    unsigned bits = getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK);
     return (bits & (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER)) ==
         (OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER);
   }
 
   // Unsafe cast to ArrayHeader. Use carefully!
+  // TODO: RuntimeAssert on type_info()->IsArray()?
   ArrayHeader* array() { return reinterpret_cast<ArrayHeader*>(this); }
   const ArrayHeader* array() const { return reinterpret_cast<const ArrayHeader*>(this); }
 
   inline bool permanent() const {
-    return hasPointerBits(typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+    return hasPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_PERMANENT_CONTAINER);
   }
 
-  inline bool heap() const { return getPointerBits(typeInfoOrMeta_, OBJECT_TAG_MASK) == 0; }
+  inline bool heap() const { return getPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK) == 0; }
 
   static MetaObjHeader* createMetaObject(ObjHeader* object);
   static void destroyMetaObject(ObjHeader* object);
 };
+static_assert(alignof(ObjHeader) <= kotlin::kObjectAlignment);
 
 // Header of value type array objects. Keep layout in sync with that of object header.
 struct ArrayHeader {
@@ -112,18 +129,18 @@ struct ArrayHeader {
   // Elements count. Element size is stored in instanceSize_ field of TypeInfo, negated.
   uint32_t count_;
 };
-
-ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj);
-ALWAYS_INLINE bool isShareable(const ObjHeader* obj);
+static_assert(alignof(ArrayHeader) <= kotlin::kObjectAlignment);
 
 static inline ObjHeader* const kInitializingSingleton = reinterpret_cast<ObjHeader*>(1);
 ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
     return reinterpret_cast<uintptr_t>(obj) <= 1;
 }
 
-class ForeignRefManager;
 struct FrameOverlay;
-typedef ForeignRefManager* ForeignRefContext;
+
+namespace kotlin::mm {
+struct RawSpecialRef;
+} // namespace kotlin::mm
 
 #ifdef __cplusplus
 extern "C" {
@@ -146,9 +163,8 @@ extern "C" {
 
 struct MemoryState;
 
-MemoryState* InitMemory(bool firstRuntime);
+MemoryState* InitMemory();
 void DeinitMemory(MemoryState*, bool destroyRuntime);
-void RestoreMemory(MemoryState*);
 void ClearMemoryForTests(MemoryState*);
 
 //
@@ -161,15 +177,12 @@ void ClearMemoryForTests(MemoryState*);
 // Arena containers are not reference counted, and is explicitly freed when leaving
 // its owner frame.
 // Escape analysis algorithm is the provider of information for decision on exact aux slot
-// selection, and comes from upper bound esteemation of object lifetime.
+// selection, and comes from upper bound estimation of object lifetime.
 //
 OBJ_GETTER(AllocInstance, const TypeInfo* type_info) RUNTIME_NOTHROW;
 
 OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, int32_t elements);
 
-OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
-
-OBJ_GETTER(InitSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
 
 // `initialValue` may be `nullptr`, which signifies that the appropriate initial value was already
 // set by static initialization.
@@ -198,20 +211,6 @@ void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) 
 //    in intermediate frames when throwing
 //
 
-// NOTE: Must match `MemoryModel` in `Platform.kt`
-enum class MemoryModel {
-    kStrict = 0,
-    kRelaxed = 1,
-    kExperimental = 2,
-};
-
-// Controls the current memory model, is compile-time constant.
-extern const MemoryModel CurrentMemoryModel;
-
-// Sets stack location.
-void SetStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Sets heap location.
-void SetHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Zeroes heap location.
 void ZeroHeapRef(ObjHeader** location) RUNTIME_NOTHROW;
 // Zeroes an array.
@@ -222,22 +221,15 @@ void ZeroStackRef(ObjHeader** location) RUNTIME_NOTHROW;
 void UpdateStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates heap/static data location.
 void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Updates heap/static data in one array.
-void UpdateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex, int toIndex, int count) RUNTIME_NOTHROW;
+// Updates volatile heap/static data location.
+void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
+bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
+OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) RUNTIME_NOTHROW;
+
 // Updates location if it is null, atomically.
-void UpdateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates reference in return slot.
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
-// Compares and swaps reference with taken lock.
-OBJ_GETTER(SwapHeapRefLocked,
-    ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock,
-    int32_t* cookie) RUNTIME_NOTHROW;
-// Sets reference with taken lock.
-void SetHeapRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlock,
-    int32_t* cookie) RUNTIME_NOTHROW;
-// Reads reference with taken lock.
-OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock, int32_t* cookie) RUNTIME_NOTHROW;
-OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index);
 // Called on frame enter, if it has object slots.
 void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
@@ -245,30 +237,16 @@ void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Set current frame in case if exception caught.
 void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
 FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
-ALWAYS_INLINE void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
+void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
 
-// Clears object subgraph references from memory subsystem, and optionally
-// checks if subgraph referenced by given root is disjoint from the rest of
-// object graph, i.e. no external references exists.
-bool ClearSubgraphReferences(ObjHeader* root, bool checked) RUNTIME_NOTHROW;
 // Creates a stable pointer out of the object.
 void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
 // Disposes a stable pointer to the object.
 void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
-// Disposes a stable pointer to the object.
-// Accepts a MemoryState, thus can be called from deinitiliazation methods, when TLS is already deallocated.
-void DisposeStablePointerFor(MemoryState* memoryState, void* pointer) RUNTIME_NOTHROW;
 // Translate stable pointer to object reference.
 OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
 // Move stable pointer ownership.
 OBJ_GETTER(AdoptStablePointer, void*) RUNTIME_NOTHROW;
-// Check mutability state.
-void MutationCheck(ObjHeader* obj);
-void CheckLifetimesConstraint(ObjHeader* obj, ObjHeader* pointee) RUNTIME_NOTHROW;
-// Freeze object subgraph.
-void FreezeSubgraph(ObjHeader* obj);
-// Ensure this object shall block freezing.
-void EnsureNeverFrozen(ObjHeader* obj);
 // Add TLS object storage, called by the generated code.
 void AddTLSRecord(MemoryState* memory, void** key, int size) RUNTIME_NOTHROW;
 // Allocate storage for TLS. `AddTLSRecord` cannot be called after this.
@@ -278,69 +256,33 @@ void ClearTLS(MemoryState* memory) RUNTIME_NOTHROW;
 // Lookup element in TLS object storage.
 ObjHeader** LookupTLS(void** key, int index) RUNTIME_NOTHROW;
 
-// APIs for the async GC.
-void GC_RegisterWorker(void* worker) RUNTIME_NOTHROW;
-void GC_UnregisterWorker(void* worker) RUNTIME_NOTHROW;
-void GC_CollectorCallback(void* worker) RUNTIME_NOTHROW;
-
 void Kotlin_native_internal_GC_collect(ObjHeader*);
-void Kotlin_native_internal_GC_collectCyclic(ObjHeader*);
-void Kotlin_native_internal_GC_suspend(ObjHeader*);
-void Kotlin_native_internal_GC_resume(ObjHeader*);
-void Kotlin_native_internal_GC_stop(ObjHeader*);
-void Kotlin_native_internal_GC_start(ObjHeader*);
-void Kotlin_native_internal_GC_setThreshold(ObjHeader*, int32_t value);
-int32_t Kotlin_native_internal_GC_getThreshold(ObjHeader*);
-void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value);
-int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader*);
-void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value);
-int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*);
 void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, bool value);
 bool Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*);
-OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, ObjHeader*);
-OBJ_GETTER(Kotlin_native_internal_GC_findCycle, ObjHeader*, ObjHeader* root);
-bool Kotlin_native_internal_GC_getCyclicCollector(ObjHeader* gc);
-void Kotlin_native_internal_GC_setCyclicCollector(ObjHeader* gc, bool value);
+RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd);
 
-bool Kotlin_Any_isShareable(ObjHeader* thiz);
-void Kotlin_Any_share(ObjHeader* thiz);
 void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
 
-// Only for legacy
-bool TryAddHeapRef(const ObjHeader* object);
-void ReleaseHeapRefNoCollect(const ObjHeader* object) RUNTIME_NOTHROW;
-
-// Only for experimental
-OBJ_GETTER(TryRef, ObjHeader* object) RUNTIME_NOTHROW;
-
-ForeignRefContext InitLocalForeignRef(ObjHeader* object);
-
-ForeignRefContext InitForeignRef(ObjHeader* object);
-void DeinitForeignRef(ObjHeader* object, ForeignRefContext context);
-
-bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context);
-
-// Should be used when reference is read from a possibly shared variable,
-// and there's nothing else keeping the object alive.
-void AdoptReferenceFromSharedVariable(ObjHeader* object);
-
-void CheckGlobalsAccessible();
-
 // Sets state of the current thread to NATIVE (used by the new MM).
-ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
+RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
 // Sets state of the current thread to RUNNABLE (used by the new MM).
-ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
+RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
+// No-inline versions of the functions above are used in debug mode to workaround KT-67567 
+// by outlining certain CAS instructions from user code:
+NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debug();
+NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_debug();
 
 // Safe point callbacks from Kotlin code generator.
 void Kotlin_mm_safePointFunctionPrologue() RUNTIME_NOTHROW;
 void Kotlin_mm_safePointWhileLoopBody() RUNTIME_NOTHROW;
+
+RUNTIME_NOTHROW void DisposeRegularWeakReferenceImpl(ObjHeader* counter);
 
 #ifdef __cplusplus
 }
 #endif
 
 struct FrameOverlay {
-  void* arena;
   FrameOverlay* previous;
   // As they go in pair, sizeof(FrameOverlay) % sizeof(void*) == 0 is always held.
   int32_t parameters;
@@ -348,6 +290,7 @@ struct FrameOverlay {
 };
 
 // Class holding reference to an object, holding object during C++ scope.
+// TODO adopt ref accessors
 class ObjHolder {
  public:
    ObjHolder() : obj_(nullptr) {
@@ -356,7 +299,7 @@ class ObjHolder {
 
    explicit ObjHolder(const ObjHeader* obj) {
      EnterFrame(frame(), 0, sizeof(*this)/sizeof(void*));
-     ::SetStackRef(slot(), obj);
+     ::UpdateStackRef(slot(), obj);
    }
 
    ~ObjHolder() {
@@ -382,11 +325,9 @@ class ObjHolder {
 
 class ExceptionObjHolder {
 public:
-#if !KONAN_NO_EXCEPTIONS
     static void Throw(ObjHeader* exception) RUNTIME_NORETURN;
 
     ObjHeader* GetExceptionObject() noexcept;
-#endif
 
     // Exceptions are not on a hot path, so having virtual dispatch is fine.
     virtual ~ExceptionObjHolder() = default;
@@ -396,14 +337,12 @@ namespace kotlin {
 namespace mm {
 
 // Returns the MemoryState for the current thread.
-// For the new MM, the current thread must be attached to the runtime.
-// For the legacy MM, returns nullptr if called on a thread that is not attached to the runtime.
+// The current thread must be attached to the runtime.
 // Try not to use it very often, as (1) thread local access can be slow on some platforms,
 // (2) TLS gets deallocated before our thread destruction hooks run.
 MemoryState* GetMemoryState() noexcept;
 
-
-// TODO: Replace with direct access to ThreadRegistry when the legacy MM is gone.
+// TODO: Replace with direct access to ThreadRegistry.
 // Checks if the current thread is attached to the runtime.
 // This function accesses a TLS variable, so it must not be called from a thread destructor.
 bool IsCurrentThreadRegistered() noexcept;
@@ -421,11 +360,11 @@ inline ThreadState GetThreadState() noexcept {
 }
 
 // Switches the state of the given thread to `newState` and returns the previous thread state.
-ALWAYS_INLINE ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant = false) noexcept;
+ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant = false) noexcept;
 
 // Asserts that the given thread is in the given state.
-ALWAYS_INLINE void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
-ALWAYS_INLINE void AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept;
+void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
+void AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept;
 
 // Asserts that the current thread is in the the given state.
 ALWAYS_INLINE inline void AssertThreadState(ThreadState expected) noexcept {
@@ -487,7 +426,7 @@ private:
 // No-op for old GC.
 class CalledFromNativeGuard final : private Pinned {
 public:
-    ALWAYS_INLINE CalledFromNativeGuard(bool reentrant = false) noexcept;
+    CalledFromNativeGuard(bool reentrant = false) noexcept;
 
     ~CalledFromNativeGuard() noexcept {
         SwitchThreadState(thread_, oldState_, reentrant_);
@@ -496,6 +435,14 @@ private:
     MemoryState* thread_;
     ThreadState oldState_;
     bool reentrant_;
+};
+
+class CurrentFrameGuard : Pinned {
+public:
+    CurrentFrameGuard() : frame_(getCurrentFrame()) {}
+    ~CurrentFrameGuard() { SetCurrentFrame(reinterpret_cast<ObjHeader**>(frame_)); }
+private:
+    FrameOverlay* frame_;
 };
 
 template <ThreadState state, typename R, typename... Args>
@@ -518,8 +465,20 @@ private:
     ThreadStateGuard backingGuard_;
 };
 
-extern const bool kSupportsMultipleMutators;
+void initGlobalMemory() noexcept;
+
+void StartFinalizerThreadIfNeeded() noexcept;
+bool FinalizersThreadIsRunning() noexcept;
+
+void OnMemoryAllocation(size_t totalAllocatedBytes) noexcept;
+
+void initObjectPool() noexcept;
+void compactObjectPoolInCurrentThread() noexcept;
 
 } // namespace kotlin
+
+RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);
+RUNTIME_NOTHROW extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object);
+RUNTIME_NOTHROW extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object);
 
 #endif // RUNTIME_MEMORY_H

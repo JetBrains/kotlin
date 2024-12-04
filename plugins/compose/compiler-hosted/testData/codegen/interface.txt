@@ -1,0 +1,9 @@
+public final class home/MainActivity {
+    // source: 'main.kt'
+    public final static field $stable: int
+    public field userNewsResourceRepository: core.data.UserNewsResourceRepository
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method getUserNewsResourceRepository(): core.data.UserNewsResourceRepository
+    public final method setUserNewsResourceRepository(p0: core.data.UserNewsResourceRepository): void
+}

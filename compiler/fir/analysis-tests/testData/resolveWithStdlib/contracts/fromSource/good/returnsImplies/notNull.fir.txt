@@ -5,7 +5,13 @@ FILE: notNull.kt
             Returns(FALSE) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(false)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^test1 ==(R|<local>/x|, Null(null))
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test2(x: R|kotlin/String?|): R|kotlin/Boolean|
@@ -14,7 +20,13 @@ FILE: notNull.kt
             Returns(TRUE) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^test2 !=(R|<local>/x|, Null(null))
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test3(x: R|kotlin/String?|): R|kotlin/Any?|
@@ -23,7 +35,13 @@ FILE: notNull.kt
             Returns(TRUE) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 ^test3 Boolean(true)
@@ -38,7 +56,13 @@ FILE: notNull.kt
             Returns(TRUE) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         lval y: R|kotlin/String?| = R|<local>/x|
         when () {
             !=(R|<local>/y|, Null(null)) ->  {
@@ -54,6 +78,12 @@ FILE: notNull.kt
             Returns(TRUE) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^test5 R|/test2|(R|<local>/x|)
     }

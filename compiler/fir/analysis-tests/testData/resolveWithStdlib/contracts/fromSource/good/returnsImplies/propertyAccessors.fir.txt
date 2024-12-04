@@ -3,14 +3,20 @@ FILE: propertyAccessors.kt
         public abstract fun foo(): R|kotlin/Unit|
 
     }
-    public final var R|kotlin/Any?|.isNotNull: R|kotlin/Boolean|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final var R|kotlin/Any?|.isNotNull: R|kotlin/Boolean|
         public get(): R|kotlin/Boolean|
             [R|Contract description]
              <
                 Returns(TRUE) -> this != null
             >
          {
-            [StubStatement]
+             {
+                R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                    this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(this@R|/isNotNull|, Null(null)))
+                }
+                )
+            }
+
             ^ !=(this@R|/isNotNull|, Null(null))
         }
         public set(value: R|kotlin/Boolean|): R|kotlin/Unit|
@@ -19,7 +25,14 @@ FILE: propertyAccessors.kt
                 Returns(WILDCARD) -> this != null
             >
          {
-            [StubStatement]
+             {
+                R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                    this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(!=(this@R|/isNotNull|, Null(null)))
+                    R|kotlin/require|(!=(this@R|special/anonymous|, Null(null)))
+                }
+                )
+            }
+
         }
     public final fun test_1(a: R|A?|): R|kotlin/Unit| {
         when () {

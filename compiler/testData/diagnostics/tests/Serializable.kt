@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun use(s: java.io.Serializable) {
 
 }

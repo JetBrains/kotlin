@@ -1,0 +1,20 @@
+package
+
+public fun </*0*/ T> assertEquals(/*0*/ a: T, /*1*/ b: T): kotlin.Unit
+public fun test(): kotlin.Unit
+
+@lombok.Getter @lombok.Setter public open class SetterTest {
+    public constructor SetterTest()
+    private final var age: kotlin.Int
+    private final val finalName: kotlin.String! = "zzz"
+    private final var primitiveBoolean: kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open /*synthesized*/ fun getAge(): kotlin.Int
+    public open /*synthesized*/ fun getFinalName(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open /*synthesized*/ fun isPrimitiveBoolean(): kotlin.Boolean
+    public open /*synthesized*/ fun setAge(/*0*/ age: kotlin.Int): kotlin.Unit
+    public open /*synthesized*/ fun setPrimitiveBoolean(/*0*/ primitiveBoolean: kotlin.Boolean): kotlin.Unit
+    public/*package*/ open fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

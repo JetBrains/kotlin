@@ -1,0 +1,31 @@
+@Target(AnnotationTarget#.EXPRESSION#, AnnotationTarget#.LOCAL_VARIABLE#)
+owner -> FirRegularClassSymbol Ann
+context -> FirRegularClassSymbol Ann
+
+@Retention(AnnotationRetention#.SOURCE#)
+owner -> FirRegularClassSymbol Ann
+context -> FirRegularClassSymbol Ann
+
+@Ann()
+owner -> FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol /foo
+
+@Ann()
+owner -> FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol /foo
+
+@Ann()
+owner -> FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol /foo
+
+@Ann()
+owner -> FirNamedFunctionSymbol /foo
+context -> FirNamedFunctionSymbol /foo
+
+@Ann()
+owner -> FirNamedFunctionSymbol /bar
+context -> FirPropertySymbol <local>/x from FirNamedFunctionSymbol /bar
+
+@Ann()
+owner -> FirNamedFunctionSymbol /bar
+context -> FirPropertySymbol <local>/y from FirNamedFunctionSymbol /bar

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 /**
@@ -57,5 +58,9 @@ class KDocName(node: ASTNode) : KtElementImpl(node) {
         val qualifier = getQualifier()
         val nameAsList = listOf(getNameText())
         return if (qualifier != null) qualifier.getQualifiedName() + nameAsList else nameAsList
+    }
+
+    fun getQualifiedNameAsFqName(): FqName {
+        return FqName.fromSegments(getQualifiedName())
     }
 }

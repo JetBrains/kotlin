@@ -1,6 +1,6 @@
 package
 
-public fun </*0*/ T : [ERROR : Cyclic upper bounds], /*1*/ F : [ERROR : Cyclic upper bounds]> foo1(): kotlin.Unit
-public fun </*0*/ T : F?, /*1*/ F : [ERROR : Cyclic upper bounds], /*2*/ E : [ERROR : Cyclic upper bounds]> foo2(): kotlin.Unit
-public fun </*0*/ T : [ERROR : Cyclic upper bounds], /*1*/ F : [ERROR : Cyclic upper bounds]> foo3(): kotlin.Unit
-public fun </*0*/ T : F?, /*1*/ F : [ERROR : Cyclic upper bounds], /*2*/ E : [ERROR : Cyclic upper bounds]> foo4(): kotlin.Unit
+public fun </*0*/ T : [Error type: Cyclic upper bounds], /*1*/ F : [Error type: Cyclic upper bounds]> foo1(): kotlin.Unit
+public fun </*0*/ T : F?, /*1*/ F : [Error type: Cyclic upper bounds], /*2*/ E : [Error type: Cyclic upper bounds]> foo2(): kotlin.Unit
+public fun </*0*/ T : [Error type: Cyclic upper bounds], /*1*/ F : [Error type: Cyclic upper bounds]> foo3(): kotlin.Unit
+public fun </*0*/ T : F?, /*1*/ F : [Error type: Cyclic upper bounds], /*2*/ E : [Error type: Cyclic upper bounds]> foo4(): kotlin.Unit

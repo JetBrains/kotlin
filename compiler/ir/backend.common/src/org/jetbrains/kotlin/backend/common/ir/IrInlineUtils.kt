@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
@@ -19,10 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 sealed class IrInlinable
@@ -30,12 +29,7 @@ class IrInvokable(val invokable: IrValueDeclaration) : IrInlinable()
 class IrInlinableLambda(val function: IrSimpleFunction, val boundReceiver: IrValueDeclaration?) : IrInlinable()
 
 // Return the underlying function for a lambda argument without bound or default parameters or varargs.
-private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrInlinableLambda? {
-    if (this is IrFunctionExpression) {
-        if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
-            return null
-        return IrInlinableLambda(function, null)
-    }
+fun IrExpression.asInlinableFunctionReference(): IrFunctionReference? {
     // A lambda is represented as a block with a function declaration and a reference to it.
     // Inlinable function references are also a kind of lambda; bound receivers are represented as extension receivers.
     if (this !is IrBlock || statements.size != 2)
@@ -49,7 +43,18 @@ private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrI
         return null
     if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
         return null
-    return IrInlinableLambda(function, reference.extensionReceiver?.let { builder.irTemporary(it) })
+    return reference
+}
+
+private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrInlinableLambda? {
+    if (this is IrFunctionExpression) {
+        if (function.valueParameters.any { it.isVararg || it.defaultValue != null })
+            return null
+        return IrInlinableLambda(function, null)
+    }
+    return asInlinableFunctionReference()?.let { reference ->
+        IrInlinableLambda(reference.symbol.owner as IrSimpleFunction, reference.extensionReceiver?.let { builder.irTemporary(it) })
+    }
 }
 
 fun IrExpression.asInlinable(builder: IrStatementsBuilder<*>): IrInlinable =
@@ -98,8 +103,8 @@ private fun IrBody.move(
 
 // TODO use a generic inliner (e.g. JS/Native's FunctionInlining.Inliner)
 // Inline simple function calls without type parameters, default parameters, or varargs.
-private fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
-    IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null, symbol).apply {
+fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
+    IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null).apply {
         statements += body!!.move(this@inline, target, symbol, explicitParameters.zip(arguments).toMap()).statements
     }
 
@@ -112,7 +117,7 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
             val invoke = invokable.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
             IrCallImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, invoke.returnType, invoke.symbol,
-                typeArgumentsCount = 0, valueArgumentsCount = arguments.size,
+                typeArgumentsCount = 0,
             ).apply {
                 dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, invokable.symbol)
                 for ((index, argument) in arguments.withIndex()) {
@@ -121,3 +126,26 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
             }
         }
     }
+
+fun IrInlinedFunctionBlock.getTmpVariablesForArguments(): List<IrVariable> {
+    return this.statements.filterIsInstance<IrVariable>().filter { it.isTmpForInline }
+}
+
+fun IrInlinedFunctionBlock.getOriginalStatementsFromInlinedBlock(): List<IrStatement> {
+    return this.statements.filterNot { it is IrVariable && it.isTmpForInline }
+}
+
+val IrVariable.isTmpForInline: Boolean
+    get() = this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER ||
+            this.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
+
+fun IrExpression.isInlineLambdaBlock(): Boolean {
+    if (!this.isLambdaBlock()) return false
+
+    val block = this as IrBlock
+    val reference = block.statements.last() as? IrFunctionReference
+    return reference?.origin == LoweredStatementOrigins.INLINE_LAMBDA
+}
+
+fun IrFunction.isReifiable(): Boolean =
+    typeParameters.any { it.isReified }

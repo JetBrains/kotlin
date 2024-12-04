@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 fun test() {
     <!CONFLICTING_OVERLOADS!>fun test1()<!> {}
     <!CONFLICTING_OVERLOADS!>fun test1()<!> {}

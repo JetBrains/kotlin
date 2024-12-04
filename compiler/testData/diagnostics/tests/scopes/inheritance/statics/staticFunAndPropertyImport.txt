@@ -1,0 +1,61 @@
+package
+
+public open class A {
+    public constructor A()
+    public/*package*/ final var foo: kotlin.Int
+    public/*package*/ final var foo2: kotlin.Int
+    public/*package*/ final var quux: kotlin.Int
+    public/*package*/ final var quux2: kotlin.Int
+    public/*package*/ open fun bar(): kotlin.Int
+    public/*package*/ open fun bar2(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun quux(): kotlin.Unit
+    public/*package*/ open fun quux2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public/*package*/ open class quux {
+        public/*package*/ constructor quux()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open class quux2 {
+        public/*package*/ constructor quux2()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public/*package*/ final var bar: kotlin.Int
+    public/*package*/ final var bar2: kotlin.Int
+    public/*package*/ open fun baz(): kotlin.Unit
+    public/*package*/ open fun foo(): kotlin.Unit
+    public/*package*/ open fun foo2(): kotlin.Unit
+}
+
+public open class B : A {
+    public constructor B()
+    public/*package*/ final override /*1*/ /*fake_override*/ var foo: kotlin.Int
+    public/*package*/ final override /*1*/ /*fake_override*/ var foo2: kotlin.Int
+    public/*package*/ final override /*1*/ /*fake_override*/ var quux: kotlin.Int
+    public/*package*/ final override /*1*/ /*fake_override*/ var quux2: kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun bar(): kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun bar2(): kotlin.Int
+    public/*package*/ open fun baz(/*0*/ i: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun quux(): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun quux2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ final override /*1*/ /*fake_override*/ var bar: kotlin.Int
+    public/*package*/ final override /*1*/ /*fake_override*/ var bar2: kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun baz(): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun foo2(): kotlin.Unit
+}
+

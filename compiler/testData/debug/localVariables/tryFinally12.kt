@@ -1,5 +1,5 @@
-// The local variables `z` and `y` are visible in the finally block with old backend.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -23,7 +23,7 @@ fun box(): String {
     return "FAIL"
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM_IR
 // test.kt:7 box:
 // test.kt:8 box:
 // test.kt:9 box: i:int=0:int
@@ -34,5 +34,19 @@ fun box(): String {
 // test.kt:14 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException, y:java.lang.String="y":java.lang.String
 // test.kt:15 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException, y:java.lang.String="y":java.lang.String, z:java.lang.String="z":java.lang.String
 // test.kt:17 box: i:int=0:int
-// test.kt:20 box:
 // test.kt:21 box:
+
+// EXPECTATIONS JS_IR
+// test.kt:8 box:
+// test.kt:8 box:
+// test.kt:8 box:
+// test.kt:8 box: i=0:number
+// test.kt:10 box: i=0:number
+// test.kt:11 box: i=0:number, x="x":kotlin.String
+// test.kt:12 box: i=0:number, x="x":kotlin.String
+// test.kt:12 box: i=0:number, x="x":kotlin.String
+// test.kt:13 box: i=0:number, x="x":kotlin.String, e=kotlin.RuntimeException
+// test.kt:14 box: i=0:number, x="x":kotlin.String, e=kotlin.RuntimeException, y="y":kotlin.String
+// test.kt:15 box: i=0:number, x="x":kotlin.String, e=kotlin.RuntimeException, y="y":kotlin.String, z="z":kotlin.String
+// test.kt:17 box: i=0:number, x="x":kotlin.String, e=kotlin.RuntimeException, y="y":kotlin.String, z="z":kotlin.String
+// test.kt:21 box: i=0:number, x="x":kotlin.String, e=kotlin.RuntimeException, y="y":kotlin.String, z="z":kotlin.String

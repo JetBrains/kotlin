@@ -16,7 +16,7 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
     val symbols = context.ir.symbols
 
     private fun buildBinaryOperator(name: Name, l: IrExpression, r: IrExpression): IrExpression {
-        val symbol = context.getOperatorByName(name, l.type as IrSimpleType)
+        val symbol = context.getOperatorByName(name, l.type as IrSimpleType, r.type as IrSimpleType)
         return JsIrBuilder.buildCall(symbol!!).apply {
             dispatchReceiver = l
             putValueArgument(0, r)
@@ -24,7 +24,7 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
     }
 
     private fun buildUnaryOperator(name: Name, v: IrExpression): IrExpression {
-        val symbol = context.getOperatorByName(name, v.type as IrSimpleType)!!
+        val symbol = context.getOperatorByName(name, v.type as IrSimpleType, null)!!
         return JsIrBuilder.buildCall(symbol).apply { dispatchReceiver = v }
     }
 
@@ -32,7 +32,7 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
     fun sub(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.SUB, l, r)
     fun mul(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.MUL, l, r)
     fun div(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.DIV, l, r)
-    fun mod(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.MOD, l, r)
+    fun rem(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.REM, l, r)
     fun and(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.AND, l, r)
     fun or(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.OR, l, r)
     fun shl(l: IrExpression, r: IrExpression) = buildBinaryOperator(OperatorNames.SHL, l, r)

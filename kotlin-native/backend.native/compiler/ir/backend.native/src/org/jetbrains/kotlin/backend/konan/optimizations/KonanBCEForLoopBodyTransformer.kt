@@ -8,23 +8,37 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanNameConventions
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+// Base class describing value of expression.
+sealed class ValueDescription
+
+// Contains information about base variable symbol.
+data class LocalValueDescription(val variableSymbol: IrValueSymbol) : ValueDescription()
+
+// Contains information about property symbol and receiver's value description.
+data class PropertyValueDescription(val receiver: ValueDescription?, val propertySymbol: IrPropertySymbol) : ValueDescription()
+
+data class ObjectValueDescription(val classSymbol: IrClassSymbol) : ValueDescription()
+
 // Class contains information about analyzed loop.
-internal data class BoundsCheckAnalysisResult(val boundsAreSafe: Boolean, val arrayInLoop: IrValueSymbol?)
+internal class BoundsCheckAnalysisResult(val boundsAreSafe: Boolean, val arrayInLoop: ValueDescription?)
+
 // TODO: support `forEachIndexed`. Function is inlined and index is separate variable which isn't connected with loop induction variable.
 /**
- * Transformer for for loops bodies replacing get/set operators on analogs without bounds check where it's possible.
+ * Transformer for loops bodies replacing get/set operators on analogs without bounds check where it's possible.
  */
 class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
     lateinit var mainLoopVariable: IrVariable
@@ -55,7 +69,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
     private fun IrExpression.compareIntegerNumericConst(compare: (Long) -> Boolean): Boolean {
         @Suppress("UNCHECKED_CAST")
         return when (this) {
-            is IrConst<*> -> value is Number && compare((value as Number).toLong())
+            is IrConst -> value is Number && compare((value as Number).toLong())
             is IrGetValue -> compareConstValue { it.compareIntegerNumericConst(compare) }
             else -> false
         }
@@ -64,7 +78,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
     private fun IrExpression.compareFloatNumericConst(compare: (Double) -> Boolean): Boolean {
         @Suppress("UNCHECKED_CAST")
         return when (this) {
-            is IrConst<*> -> value is Number && compare((value as Number).toDouble())
+            is IrConst -> value is Number && compare((value as Number).toDouble())
             is IrGetValue -> compareConstValue { it.compareFloatNumericConst(compare) }
             else -> false
         }
@@ -93,8 +107,11 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
             }
             else -> false
         }
-        val array = ((functionCall.dispatchReceiver as? IrCall)?.dispatchReceiver as? IrGetValue)?.symbol
-        return BoundsCheckAnalysisResult(boundsAreSafe, array)
+        return BoundsCheckAnalysisResult(boundsAreSafe,
+                (functionCall.dispatchReceiver as? IrCall)?.dispatchReceiver?.takeIf{ boundsAreSafe }?.let {
+                    findExpressionValueDescription(it)
+                }
+        )
     }
 
     private inline fun checkIrGetValue(value: IrGetValue, condition: (IrExpression) -> BoundsCheckAnalysisResult): BoundsCheckAnalysisResult {
@@ -113,10 +130,60 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                 else -> BoundsCheckAnalysisResult(false, null)
             }
 
+    private val IrProperty.canChangeValue: Boolean
+        get() {
+            if (isVar || isDelegated)
+                return true
+
+            val overrideBackingField = backingField?.let {
+                getter != null && getter?.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+            } ?:
+                // Analyze inheritance.
+                if (isFakeOverride)
+                    resolveFakeOverride()?.canChangeValue
+                else true
+
+
+            return overrideBackingField ?: true
+        }
+
+    // Find base symbol with value or property and the main(first) dispatch receiver in the chain.
+    // Top-level properties accessors and local variables/parameters have null receivers.
+    private fun findExpressionValueDescription(expression: IrExpression): ValueDescription? {
+        return when (expression) {
+            is IrGetValue -> {
+                when (val declaration = expression.symbol.owner) {
+                    is IrVariable -> {
+                        if (declaration.isVar) return null
+                        val initializerDescription = declaration.initializer?.let { findExpressionValueDescription(it) }
+                        initializerDescription ?: LocalValueDescription(expression.symbol)
+                    }
+                    is IrValueParameter -> LocalValueDescription(expression.symbol)
+                    else -> null
+                }
+            }
+            is IrCall -> {
+                val propertySymbol = expression.symbol.owner.correspondingPropertySymbol
+
+                if (propertySymbol == null || propertySymbol.owner.canChangeValue)
+                    return null
+
+                // Get all list of dispatch receivers used in expression.
+                val valueDescriptionFromDispatchReceiver = expression.dispatchReceiver?.let { findExpressionValueDescription(it) ?: return null }
+
+                PropertyValueDescription(valueDescriptionFromDispatchReceiver, propertySymbol)
+            }
+            is IrGetObjectValue -> {
+                ObjectValueDescription(expression.symbol)
+            }
+            else -> null
+        }
+    }
+
     private fun checkLastElement(last: IrExpression, loopHeader: ProgressionLoopHeader): BoundsCheckAnalysisResult =
             checkIrCallCondition(last) { call ->
                 if (call.isGetSizeCall() && !loopHeader.headerInfo.isLastInclusive) {
-                    BoundsCheckAnalysisResult(true, (call.dispatchReceiver as? IrGetValue)?.symbol)
+                    BoundsCheckAnalysisResult(true, call.dispatchReceiver?.let { findExpressionValueDescription(it) })
                 } else {
                     lessThanSize(call)
                 }
@@ -126,6 +193,8 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
             this is IrCall && symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR &&
                     (symbol.signature as? IdSignature.AccessorSignature)?.propertySignature?.asPublic()?.shortName == propertyName &&
                     dispatchReceiver?.type?.getClass()?.symbol in context.ir.symbols.progressionClasses
+
+    private val untilFqName = FqName("kotlin.ranges.until")
 
     private fun analyzeLoopHeader(loopHeader: ForLoopHeader): BoundsCheckAnalysisResult {
         var analysisResult = BoundsCheckAnalysisResult(false, null)
@@ -180,21 +249,27 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                         analysisResult = checkIrCallCondition(loopHeader.headerInfo.first, ::lessThanSize)
                     }
                     ProgressionDirection.UNKNOWN ->
-                        // Case of progression - for (i in 0 until array.size step n)
+                        // Case of progression - for (i in 0 until array.size step n) or for (i in 0..<array.size step n)
                         if (loopHeader.headerInfo.first.isProgressionPropertyGetter("first") &&
                                 loopHeader.headerInfo.last.isProgressionPropertyGetter("last")) {
-                            val firstReceiver = (loopHeader.headerInfo.first as IrCall).dispatchReceiver as? IrGetValue
-                            val lastReceiver = (loopHeader.headerInfo.last as IrCall).dispatchReceiver as? IrGetValue
-                            if (firstReceiver?.symbol?.owner == lastReceiver?.symbol?.owner) {
-                                val untilFunction =
-                                        ((firstReceiver?.symbol?.owner as? IrVariable)?.initializer as? IrCall)?.extensionReceiver as? IrCall
-                                if (untilFunction?.symbol?.owner?.name?.asString() == "until" && untilFunction.extensionReceiver?.compareIntegerNumericConst { it >= 0 } == true) {
-                                    val last = untilFunction.getValueArgument(0)!!
+                            val firstReceiver = ((loopHeader.headerInfo.first as IrCall).dispatchReceiver as? IrGetValue)?.symbol?.owner
+                            val lastReceiver = ((loopHeader.headerInfo.last as IrCall).dispatchReceiver as? IrGetValue)?.symbol?.owner
+                            if (firstReceiver == lastReceiver) {
+                                val createRange = ((firstReceiver as? IrVariable)?.initializer as? IrCall)?.extensionReceiver as? IrCall
+                                val first = createRange?.symbol?.owner?.let {
+                                    when {
+                                        it.fqNameWhenAvailable == untilFqName -> createRange.extensionReceiver
+                                        createRange.origin == IrStatementOrigin.RANGE_UNTIL -> createRange.dispatchReceiver
+                                        else -> null
+                                    }
+                                }
+                                if (first?.compareIntegerNumericConst { it >= 0 } == true) {
+                                    val last = createRange.getValueArgument(0)!!
                                     analysisResult = checkIrCallCondition(last) { call ->
                                         // `isLastInclusive` for current case is set to true.
                                         // This case isn't fully optimized in ForLoopsLowering.
                                         if (call.isGetSizeCall())
-                                            BoundsCheckAnalysisResult(true, (call.dispatchReceiver as? IrGetValue)?.symbol)
+                                            BoundsCheckAnalysisResult(true, call.dispatchReceiver?.let { findExpressionValueDescription(it) })
                                         else
                                             lessThanSize(call)
                                     }
@@ -207,7 +282,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                 when (loopHeader.nestedLoopHeader) {
                     is IndexedGetLoopHeader -> {
                         analysisResult = BoundsCheckAnalysisResult(true,
-                                ((loopHeader.loopInitStatements[0] as? IrVariable)?.initializer as? IrGetValue)?.symbol)
+                                (loopHeader.loopInitStatements[0] as? IrVariable)?.initializer?.let { findExpressionValueDescription(it) })
                     }
                     is ProgressionLoopHeader -> analysisResult = analyzeLoopHeader(loopHeader.nestedLoopHeader)
                 }
@@ -225,8 +300,8 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
             } ?: return expression
             return IrCallImpl(
                     expression.startOffset, expression.endOffset, expression.type, operatorWithoutBoundCheck.symbol,
-                    typeArgumentsCount = expression.typeArgumentsCount,
-                    valueArgumentsCount = expression.valueArgumentsCount).apply {
+                    typeArgumentsCount = expression.typeArgumentsCount
+            ).apply {
                 dispatchReceiver = expression.dispatchReceiver
                 for (argIndex in 0 until expression.valueArgumentsCount) {
                     putValueArgument(argIndex, expression.getValueArgument(argIndex))
@@ -241,8 +316,8 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         require(newExpression is IrCall)
         if (expression.symbol.owner.name != OperatorNameConventions.SET && expression.symbol.owner.name != OperatorNameConventions.GET)
             return newExpression
-        if (expression.dispatchReceiver?.type?.isBasicArray() != true ||
-                (expression.dispatchReceiver as? IrGetValue)?.symbol != analysisResult.arrayInLoop)
+        if (expression.dispatchReceiver == null || expression.dispatchReceiver?.type?.isBasicArray() != true ||
+                findExpressionValueDescription(expression.dispatchReceiver!!)?.equals(analysisResult.arrayInLoop!!) != true)
             return newExpression
         // Analyze arguments of set/get operator.
         val index = newExpression.getValueArgument(0)!!
@@ -270,4 +345,8 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
             else -> newExpression
         }
     }
+}
+
+class NativeForLoopsLowering(context: CommonBackendContext) : ForLoopsLowering(context) {
+    override val loopBodyTransformer: ForLoopBodyTransformer = KonanBCEForLoopBodyTransformer()
 }

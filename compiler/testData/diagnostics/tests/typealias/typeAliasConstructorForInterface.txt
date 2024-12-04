@@ -1,7 +1,7 @@
 package
 
-public val testAsFunction: [ERROR : Type for Test()]
-public val testAsValue: [ERROR : Type for Test]
+public val testAsFunction: [Error type: Not found recorded type for Test()]
+public val testAsValue: [Error type: Not found recorded type for Test]
 
 public interface IFoo {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

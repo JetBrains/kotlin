@@ -1,11 +1,12 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.experimental.ExperimentalTypeInference
 
 @OptIn(ExperimentalTypeInference::class)
-fun <E> myBuildList(@BuilderInference builderAction: MutableList<E>.() -> Unit) {
+fun <E> myBuildList(builderAction: MutableList<E>.() -> Unit) {
     ArrayList<E>().builderAction()
 }
 

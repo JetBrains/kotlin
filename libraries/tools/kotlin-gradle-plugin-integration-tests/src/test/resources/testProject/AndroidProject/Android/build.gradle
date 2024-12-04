@@ -1,13 +1,17 @@
-import org.gradle.util.VersionNumber
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
 android {
-    compileSdkVersion 22
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 34
+    namespace 'org.jetbrains.kotlin.gradle.test.androidalfa'
 
     sourceSets {
         main.java.srcDirs += 'src/main/java2'
@@ -16,8 +20,14 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 7
-        targetSdkVersion 22
+        minSdkVersion 22
+        targetSdkVersion 34
+    }
+
+    // Needed for older AGP. It can be removed when the lowest supported AGP version is 4.2.0 or newer.
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 
     flavorDimensions "myFlavor"
@@ -29,42 +39,23 @@ android {
         }
         flavor2 {
             applicationId "com.example.flavor2"
-            minSdkVersion 14
+            minSdkVersion 27
             dimension "myFlavor"
         }
     }
 
-    publishNonDefault true
-
-    kotlinOptions {
-        noJdk = true
+    if (GradleVersion.current() < GradleVersion.version("8.5")) {
+        publishNonDefault true
     }
-
     lintOptions.abortOnError = false
 }
 
-if (VersionNumber.parse(android_tools_version) < VersionNumber.parse("3.0.0-alpha1")) {
-    configurations {
-        flavor1DebugCompile
-        flavor1ReleaseCompile
-        flavor2DebugCompile
-        flavor2ReleaseCompile
-    }
-
-    dependencies {
-        flavor1DebugCompile project(path: ':Lib', configuration: 'flavor1Debug')
-        flavor1ReleaseCompile project(path: ':Lib', configuration: 'flavor1Release')
-        flavor2DebugCompile project(path: ':Lib', configuration: 'flavor2Debug')
-        flavor2ReleaseCompile project(path: ':Lib', configuration: 'flavor2Release')
-    }
-}
-else {
-    dependencies {
-        implementation project(":Lib")
-    }
-}
-
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    testImplementation'junit:junit:4.13.2'
+    implementation project(":Lib")
+    testImplementation 'junit:junit:4.13.2'
+
+    androidTestImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
+
+kotlin.compilerOptions.jvmTarget = JvmTarget.JVM_1_8

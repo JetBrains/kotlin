@@ -11,7 +11,7 @@ import kotlin.test.*
 /**
  * Provides [JUnit5Asserter] if `org.junit.jupiter.api.Assertions` class is found in the classpath.
  */
-class JUnit5Contributor : AsserterContributor {
+public class JUnit5Contributor : AsserterContributor {
     override fun contribute(): Asserter? {
         return if (hasJUnitInClassPath) JUnit5Asserter else null
     }
@@ -27,7 +27,7 @@ class JUnit5Contributor : AsserterContributor {
 /**
  * Implements `kotlin.test` assertions by delegating them to `org.junit.jupiter.api.Assertions` class.
  */
-object JUnit5Asserter : Asserter {
+public object JUnit5Asserter : Asserter {
     override fun assertEquals(message: String?, expected: Any?, actual: Any?) {
         Assertions.assertEquals(expected, actual, message)
     }

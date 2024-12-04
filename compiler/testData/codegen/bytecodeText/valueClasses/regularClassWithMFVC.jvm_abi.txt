@@ -1,0 +1,9 @@
+MODULE main
+	CLASS DSegment.class
+		CLASS METADATA
+			PROPERTY getNotImplemented()LDPoint;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<anonymous parameter 0>: DPoint
+					K2
+						_: DPoint

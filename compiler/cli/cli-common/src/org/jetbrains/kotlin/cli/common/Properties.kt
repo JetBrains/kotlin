@@ -33,17 +33,23 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
     DAEMON_RMI_SOCKET_BACKLOG_SIZE_PROPERTY("kotlin.daemon.socket.backlog.size"),
     DAEMON_RMI_SOCKET_CONNECT_ATTEMPTS_PROPERTY("kotlin.daemon.socket.connect.attempts"),
     DAEMON_RMI_SOCKET_CONNECT_INTERVAL_PROPERTY("kotlin.daemon.socket.connect.interval"),
+
+    /**
+     * Only specify that property if you want to avoid multiple initializations/disposals of KotlinCoreApplicationEnvironment
+     *
+     * **If not specified**, KotlinCoreApplicationEnvironment **WILL dispose** after all concurrent compilations finish,
+     * and will be re-initialized when starting new compilation
+     *
+     * If specified, KotlinCoreApplicationEnvironment will **NOT dispose** after all concurrent compilations finished
+     * and will be pinned with hard-reference
+     * **THIS LEAKS MEMORY**
+     * */
     KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
     COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS("kotlin.daemon.custom.run.files.path.for.tests"),
-    COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS("kotlin.incremental.classpath.snapshot.enabled"),
-    COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM("kotlin.incremental.useClasspathSnapshot"),
+    COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS("kotlin.daemon.environment.variables.for.tests"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
-
-    KOTLIN_STAT_ENABLED_PROPERTY("kotlin.plugin.stat.enabled"),
-    KOTLIN_STAT_ENDPOINT_PROPERTY("kotlin.plugin.stat.endpoint"),
-    KOTLIN_STAT_USER_PROPERTY("kotlin.plugin.stat.user"),
-    KOTLIN_STAT_PASSWORD_PROPERTY("kotlin.plugin.stat.password"),
-    KOTLIN_STAT_LABEl_PROPERTY("kotlin.plugin.stat.label"),
+    LANGUAGE_VERSION_SETTINGS("kotlin.language.settings"),
+    COMPILE_DAEMON_INITIATOR_MARKER_FILE("kotlin.daemon.initiator.marker.file"), // TODO: possibly remove this property after KT-72161
 
     OS_NAME("os.name", alwaysDirectAccess = true),
     TMP_DIR("java.io.tmpdir"),

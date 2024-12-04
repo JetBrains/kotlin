@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 //KT-591 Unresolved label in valid code
 
 fun test() {

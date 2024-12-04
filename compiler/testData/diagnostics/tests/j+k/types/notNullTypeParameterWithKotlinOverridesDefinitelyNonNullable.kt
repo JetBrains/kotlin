@@ -1,6 +1,8 @@
-// !SKIP_JAVAC
-// !LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// RUN_PIPELINE_TILL: FRONTEND
+// SKIP_JAVAC
+// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: +DefinitelyNonNullableTypes
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
 
 import org.jetbrains.annotations.NotNull;
@@ -19,11 +21,11 @@ public interface SLRUMap<V> {
 // FILE: main.kt
 
 interface Q1<X> : SLRUMap<X> {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun takeV(x: X)
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun <E1> takeE(e: E1)
+    <!WRONG_TYPE_PARAMETER_NULLABILITY_FOR_JAVA_OVERRIDE("X")!>override<!> fun takeV(x: X)
+    <!WRONG_TYPE_PARAMETER_NULLABILITY_FOR_JAVA_OVERRIDE("E1")!>override<!> fun <E1> takeE(e: E1)
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun takeVList(l: List<X>)
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun <E2> takeEList(l2: List<E2>)
+    <!WRONG_TYPE_PARAMETER_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun takeVList(l: List<X>)
+    <!WRONG_TYPE_PARAMETER_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun <E2> takeEList(l2: List<E2>)
 
     override fun <K2> id(k2: K2): K2
 }

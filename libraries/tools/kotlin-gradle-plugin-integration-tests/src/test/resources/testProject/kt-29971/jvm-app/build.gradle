@@ -4,7 +4,3 @@ plugins {
 
 group = "com.example.jvm"
 version = "1.0"
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-}

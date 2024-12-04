@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !JVM_DEFAULT_MODE: enable
-// !JVM_TARGET: 1.8
+// JVM_DEFAULT_MODE: all
+// JVM_TARGET: 1.8
 // FILE: JavaInterface.java
 
 public interface JavaInterface {
@@ -16,7 +17,6 @@ public interface JavaInterface {
 // FILE: 1.kt
 
 interface KotlinInterface : JavaInterface {
-    @<!DEPRECATION!>JvmDefault<!>
     fun fooo() {
         super.test()
 
@@ -27,7 +27,6 @@ interface KotlinInterface : JavaInterface {
         }
     }
 
-    @<!DEPRECATION!>JvmDefault<!>
     val propertyy: String
         get() {
             super.test()
@@ -40,14 +39,12 @@ interface KotlinInterface : JavaInterface {
             return ""
         }
 
-    @<!DEPRECATION!>JvmDefault<!>
     override fun testOverride(): String {
         return "OK";
     }
 }
 
 interface KotlinInterfaceIndirectInheritance : KotlinInterface {
-    @<!DEPRECATION!>JvmDefault<!>
     fun foooo() {
         super.test()
 
@@ -58,7 +55,6 @@ interface KotlinInterfaceIndirectInheritance : KotlinInterface {
         }
     }
 
-    @<!DEPRECATION!>JvmDefault<!>
     val propertyyy: String
         get() {
             super.test()

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Inv<E>
 
 typealias MyAlias = Inv<out CharSequence>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-37516
 
 class A<T> {
@@ -28,9 +29,9 @@ fun test_2(a: A<C>) {
 }
 
 fun test_3(a: A<D>) {
-    a[0] <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> D() // ambiguity
+    a[0] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> D() // ambiguity
 }
 
 fun test_4(b: B) {
-    b<!NO_GET_METHOD!>[0]<!> <!UNRESOLVED_REFERENCE!>+=<!> B() // unresolved
+    b<!NO_GET_METHOD!>[0]<!> += B() // unresolved
 }

@@ -32,6 +32,7 @@ final class Override5Kt$box$1 {
 public final class Override5Kt$inlineMe$1$generic$1 {
     // source: 'override5.kt'
     enclosing method Override5Kt$inlineMe$1.generic(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+    field L$0: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: Override5Kt$inlineMe$1

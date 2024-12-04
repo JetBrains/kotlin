@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +UseConsistentRulesForPrivateConstructorsOfSealedClasses
 // ISSUE: KT-44866, KT-49729
 

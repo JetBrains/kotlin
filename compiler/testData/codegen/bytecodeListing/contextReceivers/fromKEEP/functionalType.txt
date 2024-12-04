@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public final class FunctionalTypeKt {
+    // source: 'functionalType.kt'
+    public final static method f(@org.jetbrains.annotations.NotNull p0: O, @org.jetbrains.annotations.NotNull p1: K, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function3): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class K {
+    // source: 'functionalType.kt'
+    private final @org.jetbrains.annotations.NotNull field k: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getK(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class O {
+    // source: 'functionalType.kt'
+    private final @org.jetbrains.annotations.NotNull field o: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getO(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Param {
+    // source: 'functionalType.kt'
+    public method <init>(): void
+}

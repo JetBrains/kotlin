@@ -1,0 +1,19 @@
+STEP 0:
+    added file: l1a.kt, l1b.kt, l1c.kt, l1d.kt
+STEP 1:
+STEP 2:
+    updated exports: l1c.kt
+STEP 3:
+STEP 4:
+    updated exports: l1b.kt
+STEP 5:
+    updated exports: l1d.kt, l1c.kt
+    removed inverse depends: l1a.kt
+STEP 6:
+    updated exports: l1b.kt, l1c.kt
+STEP 7:
+    removed inverse depends: l1d.kt, l1c.kt, l1a.kt, l1b.kt
+STEP 8:
+    updated exports: l1c.kt
+STEP 9:
+    updated exports: l1b.kt

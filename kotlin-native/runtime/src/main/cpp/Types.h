@@ -19,22 +19,6 @@
 
 #include <stdlib.h>
 
-#if (KONAN_WASM || KONAN_ZEPHYR) && !defined(assert)
-// assert() is needed by STLport.
-#define assert(cond) if (!(cond)) abort()
-#endif
-
-#include <deque>
-#include <list>
-#include <map>
-#include <memory>
-#include <string>
-#include <set>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-
-#include "Alloc.h"
 #include "Common.h"
 #include "Memory.h"
 #include "TypeInfo.h"
@@ -59,38 +43,6 @@ typedef const void* KConstNativePtr;
 
 typedef ObjHeader* KRef;
 typedef const ObjHeader* KConstRef;
-typedef const ArrayHeader* KString;
-
-// TODO: Consider moving these into `kotlin::std_support` namespace keeping STL names.
-
-// Definitions of STL classes used inside Konan runtime.
-typedef std::basic_string<char, std::char_traits<char>,
-                          KonanAllocator<char>> KStdString;
-template<class Value>
-using KStdDeque = std::deque<Value, KonanAllocator<Value>>;
-template<class Key, class Value>
-using KStdUnorderedMap = std::unordered_map<Key, Value,
-  std::hash<Key>, std::equal_to<Key>,
-  KonanAllocator<std::pair<const Key, Value>>>;
-template<class Value>
-using KStdUnorderedSet = std::unordered_set<Value,
-  std::hash<Value>, std::equal_to<Value>,
-  KonanAllocator<Value>>;
-template<class Value, class Compare = std::less<Value>>
-using KStdOrderedMultiset = std::multiset<Value, Compare, KonanAllocator<Value>>;
-template<class Key, class Value, class Compare = std::less<Key>>
-using KStdOrderedMap = std::map<Key, Value, Compare, KonanAllocator<std::pair<const Key, Value>>>;
-template<class Value>
-using KStdVector = std::vector<Value, KonanAllocator<Value>>;
-template<class Value>
-using KStdList = std::list<Value, KonanAllocator<Value>>;
-template <class Value>
-using KStdUniquePtr = std::unique_ptr<Value, KonanDeleter<Value>>;
-
-template <typename T, typename... Args>
-KStdUniquePtr<T> make_unique(Args&&... args) noexcept {
-    return KStdUniquePtr<T>(konanConstructInstance<T>(std::forward<Args>(args)...));
-}
 
 #ifdef __cplusplus
 extern "C" {
@@ -115,11 +67,13 @@ extern const TypeInfo* theShortArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;
 extern const TypeInfo* theUnitTypeInfo;
-extern const TypeInfo* theWorkerBoundReferenceTypeInfo;
 extern const TypeInfo* theCleanerImplTypeInfo;
+extern const TypeInfo* theRegularWeakReferenceImplTypeInfo;
 
-KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
-KBoolean IsInstanceOfClassFast(const ObjHeader* obj, int32_t lo, int32_t hi) RUNTIME_PURE;
+KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE RUNTIME_EXPORT RUNTIME_WEAK;
+KBoolean IsInstanceInternal(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
+KBoolean IsSubtype(const TypeInfo* obj_type_info, const TypeInfo* type_info) RUNTIME_PURE;
+KBoolean IsSubclassFast(const TypeInfo* obj_type_info, int32_t lo, int32_t hi) RUNTIME_PURE;
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
 KBoolean IsArray(KConstRef obj) RUNTIME_PURE;
 bool IsSubInterface(const TypeInfo* thiz, const TypeInfo* other) RUNTIME_PURE;

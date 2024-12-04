@@ -1,0 +1,10 @@
+Diagnostics from elements:
+  for PSI element of type KtNameReferenceExpression at (4,9-10)
+    ARGUMENT_TYPE_MISMATCH      text ranges: [(54,55)]
+      PSI: KtNameReferenceExpression at (4,9-10)
+  for PSI element of type KtProperty at (1,1-16)
+    INITIALIZER_TYPE_MISMATCH      text ranges: [(13,15)]
+      PSI: KtProperty at (1,1-16)
+  for PSI element of type KtConstantExpression at (5,12-13)
+    RETURN_TYPE_MISMATCH      text ranges: [(68,69)]
+      PSI: KtConstantExpression at (5,12-13)

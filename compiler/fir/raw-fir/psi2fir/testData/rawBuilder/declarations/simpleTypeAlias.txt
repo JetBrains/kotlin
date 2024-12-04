@@ -1,8 +1,8 @@
 FILE: simpleTypeAlias.kt
-    public? final? interface B : R|kotlin/Any| {
+    public final? interface B : R|kotlin/Any| {
     }
-    public? final typealias C = B
-    public? final? class D : C {
+    public final typealias C = B
+    public final? class D : C {
         public? [ContainingClassKey=D] constructor(): R|D| {
             super<<implicit>>()
         }

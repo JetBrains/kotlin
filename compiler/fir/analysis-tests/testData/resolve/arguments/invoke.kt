@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class My(var x: Int) {
     operator fun invoke() = x
 

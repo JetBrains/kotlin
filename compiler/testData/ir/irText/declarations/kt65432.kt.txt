@@ -1,0 +1,17 @@
+class A : Java1 {
+  constructor() /* primary */ {
+    super/*Java1*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class KotlinClass : ArrayList<Int> {
+  constructor() /* primary */ {
+    super/*ArrayList*/<@FlexibleNullability Int?>()
+    /* <init>() */
+
+  }
+
+}

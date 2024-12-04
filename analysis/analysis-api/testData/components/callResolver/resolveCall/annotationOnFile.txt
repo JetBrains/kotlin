@@ -1,3 +1,0 @@
-KtAnnotationCall:
-argumentMapping = { "Foo" -> (name: kotlin.String) }
-targetFunction = <constructor>(name: kotlin.String): kotlin.jvm.JvmName

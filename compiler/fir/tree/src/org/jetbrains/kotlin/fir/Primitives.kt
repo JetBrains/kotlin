@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -25,10 +26,11 @@ object StandardTypes {
     val Double: ConeClassLikeType = StandardClassIds.Double.createType()
 
     val Any: ConeClassLikeType = StandardClassIds.Any.createType()
+    val NullableAny: ConeClassLikeType = StandardClassIds.Any.createType(isNullable = true)
 }
 
-private fun ClassId.createType(): ConeClassLikeType = 
-    ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), emptyArray(), isNullable = false)
+private fun ClassId.createType(isNullable: Boolean = false): ConeClassLikeType =
+    ConeClassLikeTypeImpl(this.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isNullable)
 
 fun ConeClassLikeType.isDouble(): Boolean = lookupTag.classId == StandardClassIds.Double
 fun ConeClassLikeType.isFloat(): Boolean = lookupTag.classId == StandardClassIds.Float
@@ -38,6 +40,8 @@ fun ConeClassLikeType.isShort(): Boolean = lookupTag.classId == StandardClassIds
 fun ConeClassLikeType.isByte(): Boolean = lookupTag.classId == StandardClassIds.Byte
 fun ConeClassLikeType.isBoolean(): Boolean = lookupTag.classId == StandardClassIds.Boolean
 fun ConeClassLikeType.isChar(): Boolean = lookupTag.classId == StandardClassIds.Char
+
+fun ConeClassLikeType.isULong(): Boolean = lookupTag.classId == StandardClassIds.ULong
 
 fun ConeClassLikeType.isPrimitiveType(): Boolean =
     isPrimitiveNumberOrUnsignedNumberType() || isBoolean() || isByte() || isShort() || isChar()

@@ -13,28 +13,23 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
-import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
-import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
+import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.isInsideInterface
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
+import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.compactIfPossible
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckVisibility : ResolutionPart() {
     override fun ResolutionCandidate.process(workIndex: Int) {
@@ -129,7 +124,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             if (candidateDescriptor.typeParameters.isEmpty())
                 FreshVariableNewTypeSubstitutor.Empty
             else
-                createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder)
+                createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, resolvedCall.atom, csBuilder)
 
         val knownTypeParametersSubstitutor = knownTypeParametersResultingSubstitutor?.let {
             createKnownParametersFromFreshVariablesSubstitutor(toFreshVariables, it)
@@ -225,6 +220,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 
     fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         candidateDescriptor: CallableDescriptor,
+        kotlinCall: KotlinCall,
         csBuilder: ConstraintSystemOperation
     ): FreshVariableNewTypeSubstitutor {
         val typeParameters = candidateDescriptor.typeParameters
@@ -247,7 +243,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
             val freshVariable = freshTypeVariables[index]
-            val position = DeclaredUpperBoundConstraintPositionImpl(typeParameter)
+            val position = DeclaredUpperBoundConstraintPositionImpl(typeParameter, kotlinCall)
 
             for (upperBound in typeParameter.upperBounds) {
                 freshVariable.addSubtypeConstraint(upperBound, position)
@@ -268,7 +264,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
                     // there can be null in case we already captured type parameter in outer class (in case of inner classes)
                     // see test innerClassTypeAliasConstructor.kt
                     val originalTypeParameter = originalTypeParameters.getOrNull(originalIndex) ?: continue
-                    val position = DeclaredUpperBoundConstraintPositionImpl(originalTypeParameter)
+                    val position = DeclaredUpperBoundConstraintPositionImpl(originalTypeParameter, kotlinCall)
                     for (upperBound in originalTypeParameter.upperBounds) {
                         freshVariable.addSubtypeConstraint(upperBound, position)
                     }
@@ -304,25 +300,6 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
                 }
             }
         }
-    }
-}
-
-internal object CompatibilityOfTypeVariableAsIntersectionTypePart : ResolutionPart() {
-    override fun ResolutionCandidate.process(workIndex: Int) {
-        val csBuilder = getSystem().getBuilder()
-        for ((_, variableWithConstraints) in csBuilder.currentStorage().notFixedTypeVariables) {
-            val constraints = variableWithConstraints.constraints.filter { csBuilder.isProperType(it.type) }
-
-            if (constraints.size <= 1) continue
-            if (constraints.any { it.kind.isLower() || it.kind.isEqual() }) continue
-
-            // See TypeBoundsImpl.computeValues(). It returns several values for such situation which means an error in OI
-            if (callComponents.statelessCallbacks.isOldIntersectionIsEmpty(constraints.map { it.type }.cast())) {
-                markCandidateForCompatibilityResolve()
-                return
-            }
-        }
-
     }
 }
 
@@ -556,7 +533,8 @@ private fun ResolutionCandidate.resolveKotlinArgument(
             this,
             receiverInfo,
             convertedArgument?.unknownIntegerType?.unwrap(),
-            inferenceSession
+            inferenceSession,
+            selectorCall = receiverInfo.selectorCall
         )
 
         addResolvedKtPrimitive(resolvedAtom)
@@ -655,7 +633,89 @@ private fun ResolutionCandidate.prepareExpectedType(expectedType: UnwrappedType)
     return resolvedCall.knownParametersSubstitutor.safeSubstitute(resultType)
 }
 
+private data class ApplicableContextReceiverArgumentWithConstraint(
+    val argument: SimpleKotlinCallArgument,
+    val argumentType: UnwrappedType,
+    val expectedType: UnwrappedType,
+    val position: ConstraintPosition
+)
+
+private fun ResolutionCandidate.getReceiverArgumentWithConstraintIfCompatible(
+    argument: SimpleKotlinCallArgument,
+    parameter: ParameterDescriptor
+): ApplicableContextReceiverArgumentWithConstraint? {
+    val csBuilder = getSystem().getBuilder()
+    val expectedTypeUnprepared = argument.getExpectedType(parameter, callComponents.languageVersionSettings)
+    val expectedType = prepareExpectedType(expectedTypeUnprepared)
+    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argument.receiver.stableType, expectedType)
+    val position = ReceiverConstraintPositionImpl(argument, resolvedCall.atom)
+    return if (csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType, position))
+        ApplicableContextReceiverArgumentWithConstraint(argument, argumentType, expectedType, position)
+    else null
+}
+
 internal object CheckReceivers : ResolutionPart() {
+    override fun ResolutionCandidate.process(workIndex: Int) {
+        when (workIndex) {
+            0 -> checkReceiver(
+                resolvedCall.dispatchReceiverArgument,
+                candidateDescriptor.dispatchReceiverParameter,
+                shouldCheckImplicitInvoke = true,
+            )
+
+            1 -> {
+                var extensionReceiverArgument = resolvedCall.extensionReceiverArgument
+                if (extensionReceiverArgument == null) {
+                    extensionReceiverArgument = chooseExtensionReceiverCandidate() ?: return
+                    resolvedCall.extensionReceiverArgument = extensionReceiverArgument
+                }
+                val checkBuilderInferenceRestriction =
+                    !callComponents.languageVersionSettings
+                        .supportsFeature(LanguageFeature.NoBuilderInferenceWithoutAnnotationRestriction)
+                if (checkBuilderInferenceRestriction &&
+                    extensionReceiverArgument.receiver.receiverValue.type is StubTypeForBuilderInference
+                ) {
+                    addDiagnostic(
+                        StubBuilderInferenceReceiver(
+                            extensionReceiverArgument,
+                            candidateDescriptor.extensionReceiverParameter!!
+                        )
+                    )
+                }
+                checkReceiver(
+                    resolvedCall.extensionReceiverArgument,
+                    candidateDescriptor.extensionReceiverParameter,
+                    shouldCheckImplicitInvoke = false, // reproduce old inference behaviour
+                )
+            }
+        }
+    }
+
+    override fun ResolutionCandidate.workCount() = 2
+
+    private fun ResolutionCandidate.chooseExtensionReceiverCandidate(): SimpleKotlinCallArgument? {
+        val receiverCandidates = resolvedCall.extensionReceiverArgumentCandidates
+        if (receiverCandidates.isNullOrEmpty()) {
+            return null
+        }
+        if (receiverCandidates.size == 1) {
+            return receiverCandidates.single()
+        }
+        val extensionReceiverParameter = candidateDescriptor.extensionReceiverParameter ?: return null
+        val compatible = receiverCandidates.mapNotNull { getReceiverArgumentWithConstraintIfCompatible(it, extensionReceiverParameter) }
+        return when (compatible.size) {
+            0 -> {
+                addDiagnostic(NoMatchingContextReceiver())
+                null
+            }
+            1 -> compatible.single().argument
+            else -> {
+                addDiagnostic(ContextReceiverAmbiguity())
+                null
+            }
+        }
+    }
+
     private fun ResolutionCandidate.checkReceiver(
         receiverArgument: SimpleKotlinCallArgument?,
         receiverParameter: ReceiverParameterDescriptor?,
@@ -673,29 +733,12 @@ internal object CheckReceivers : ResolutionPart() {
         val receiverInfo = ReceiverInfo(
             isReceiver = true,
             shouldReportUnsafeCall = implicitInvokeState != ImplicitInvokeCheckStatus.UNSAFE_INVOKE_REPORTED,
-            reportUnsafeCallAsUnsafeImplicitInvoke = implicitInvokeState == ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
+            reportUnsafeCallAsUnsafeImplicitInvoke = implicitInvokeState == ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE,
+            selectorCall = resolvedCall.atom
         )
 
         resolveKotlinArgument(receiverArgument, receiverParameter, receiverInfo)
     }
-
-    override fun ResolutionCandidate.process(workIndex: Int) {
-        if (workIndex == 0) {
-            checkReceiver(
-                resolvedCall.dispatchReceiverArgument,
-                candidateDescriptor.dispatchReceiverParameter,
-                shouldCheckImplicitInvoke = true,
-            )
-        } else {
-            checkReceiver(
-                resolvedCall.extensionReceiverArgument,
-                candidateDescriptor.extensionReceiverParameter,
-                shouldCheckImplicitInvoke = false, // reproduce old inference behaviour
-            )
-        }
-    }
-
-    override fun ResolutionCandidate.workCount() = 2
 }
 
 internal object CheckArgumentsInParenthesis : ResolutionPart() {
@@ -764,14 +807,36 @@ internal object CheckSuperExpressionCallPart : ResolutionPart() {
         val candidateDescriptor = resolvedCall.candidateDescriptor
 
         if (callComponents.statelessCallbacks.isSuperExpression(resolvedCall.dispatchReceiverArgument)) {
-            if (candidateDescriptor is MemberDescriptor && candidateDescriptor.modality == Modality.ABSTRACT) {
-                addDiagnostic(AbstractSuperCall)
+            if (candidateDescriptor is CallableMemberDescriptor) {
+                checkSuperCandidateDescriptor(candidateDescriptor)
             }
         }
 
         val extensionReceiver = resolvedCall.extensionReceiverArgument
         if (extensionReceiver != null && callComponents.statelessCallbacks.isSuperExpression(extensionReceiver)) {
             addDiagnostic(SuperAsExtensionReceiver(extensionReceiver))
+        }
+    }
+
+    private fun ResolutionCandidate.checkSuperCandidateDescriptor(candidateDescriptor: CallableMemberDescriptor) {
+        if (candidateDescriptor.modality == Modality.ABSTRACT) {
+            addDiagnostic(AbstractSuperCall(resolvedCall.dispatchReceiverArgument!!))
+        } else if (candidateDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            var intersectionFakeOverrideDescriptor = candidateDescriptor
+            while (intersectionFakeOverrideDescriptor.overriddenDescriptors.size == 1) {
+                intersectionFakeOverrideDescriptor = intersectionFakeOverrideDescriptor.overriddenDescriptors.first()
+                if (intersectionFakeOverrideDescriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                    return
+                }
+            }
+            if (intersectionFakeOverrideDescriptor.overriddenDescriptors.size > 1) {
+                if (intersectionFakeOverrideDescriptor.overriddenDescriptors.firstOrNull {
+                        !it.isInsideInterface
+                    }?.modality == Modality.ABSTRACT
+                ) {
+                    addDiagnostic(AbstractFakeOverrideSuperCall)
+                }
+            }
         }
     }
 }
@@ -787,7 +852,7 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
         resolvedCall.knownParametersSubstitutor = EmptySubstitutor
         resolvedCall.argumentToCandidateParameter = emptyMap()
 
-        kotlinCall.explicitReceiver?.safeAs<SimpleKotlinCallArgument>()?.let {
+        (kotlinCall.explicitReceiver as? SimpleKotlinCallArgument)?.let {
             resolveKotlinArgument(it, null, ReceiverInfo.notReceiver)
         }
         for (argument in kotlinCall.argumentsInParenthesis) {
@@ -796,6 +861,103 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
 
         kotlinCall.externalArgument?.let {
             resolveKotlinArgument(it, null, ReceiverInfo.notReceiver)
+        }
+    }
+}
+
+internal object CheckContextReceiversResolutionPart : ResolutionPart() {
+    override fun ResolutionCandidate.process(workIndex: Int) {
+        if (candidateDescriptor.contextReceiverParameters.isEmpty()) return
+        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+            addDiagnostic(UnsupportedContextualDeclarationCall())
+            return
+        }
+        val parentLexicalScopes = scopeTower.lexicalScope.parentsWithSelf.filterIsInstance<LexicalScope>()
+        val implicitReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
+        for (scope in parentLexicalScopes) {
+            scopeTower.getImplicitReceiver(scope)?.let { implicitReceiversGroups.add(listOf(it)) }
+            val contextReceiversGroup = scopeTower.getContextReceivers(scope)
+            if (contextReceiversGroup.isNotEmpty()) {
+                implicitReceiversGroups.add(contextReceiversGroup)
+            }
+        }
+        val contextReceiversArguments = mutableListOf<SimpleKotlinCallArgument>()
+        for (candidateContextReceiverParameter in candidateDescriptor.contextReceiverParameters) {
+            val contextReceiverArgument = findContextReceiver(implicitReceiversGroups, candidateContextReceiverParameter) ?: return
+            contextReceiversArguments.add(contextReceiverArgument)
+        }
+        resolvedCall.contextReceiversArguments = contextReceiversArguments
+    }
+
+    private fun ResolutionCandidate.findContextReceiver(
+        implicitReceiversGroups: List<List<ReceiverValueWithSmartCastInfo>>,
+        candidateContextReceiverParameter: ReceiverParameterDescriptor
+    ): SimpleKotlinCallArgument? {
+        val csBuilder = getSystem().getBuilder()
+        for (implicitReceiverGroup in implicitReceiversGroups) {
+            val applicableArguments = implicitReceiverGroup.mapNotNull {
+                val argument = ReceiverExpressionKotlinCallArgument(it)
+                getReceiverArgumentWithConstraintIfCompatible(argument, candidateContextReceiverParameter)
+            }.toList()
+            if (applicableArguments.size == 1) {
+                val (argument, argumentType, expectedType, position) = applicableArguments.single()
+                csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
+                return argument
+            }
+            if (applicableArguments.size > 1) {
+                addDiagnostic(MultipleArgumentsApplicableForContextReceiver(candidateContextReceiverParameter))
+                return null
+            }
+        }
+        addDiagnostic(NoContextReceiver(candidateContextReceiverParameter))
+        return null
+    }
+}
+
+internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionPart() {
+    /*
+     * Check if the candidate was already discriminated by `CompatibilityOfTypeVariableAsIntersectionTypePart` resolution part
+     * If it's true we shouldn't mark the candidate with warning, but should mark with error, to repeat the existing proper behaviour
+     */
+    private fun ResolutionCandidate.wasPreviouslyDiscriminated(upperTypes: List<KotlinTypeMarker>): Boolean {
+        @Suppress("UNCHECKED_CAST")
+        return callComponents.statelessCallbacks.isOldIntersectionIsEmpty(upperTypes as List<KotlinType>)
+    }
+
+    override fun ResolutionCandidate.process(workIndex: Int) = with(getSystem().asConstraintSystemCompleterContext()) {
+        val constraintSystem = getSystem()
+        for (variableWithConstraints in constraintSystem.getBuilder().currentStorage().notFixedTypeVariables.values) {
+            val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
+
+            when {
+                // TODO: consider reporting errors on bounded type variables by incompatible types but with other lower constraints
+                upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() } ->
+                    continue
+                wasPreviouslyDiscriminated(upperTypes) -> {
+                    markCandidateForCompatibilityResolve(needToReportWarning = false)
+                    continue
+                }
+                (variableWithConstraints.typeVariable as? TypeVariableFromCallableDescriptor)?.originalTypeParameter?.let { parameter ->
+                    resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(parameter)
+                } is SimpleTypeArgument -> continue
+                else -> {
+                    val emptyIntersectionTypeInfo = constraintSystem.getEmptyIntersectionTypeKind(upperTypes) ?: continue
+                    val isInferredEmptyIntersectionForbidden = callComponents.languageVersionSettings.supportsFeature(
+                        LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+                    )
+                    val errorFactory =
+                        if (isInferredEmptyIntersectionForbidden) ::InferredEmptyIntersectionError else ::InferredEmptyIntersectionWarning
+
+                    addError(
+                        errorFactory(
+                            upperTypes,
+                            emptyIntersectionTypeInfo.casingTypes.toList(),
+                            variableWithConstraints.typeVariable,
+                            emptyIntersectionTypeInfo.kind
+                        )
+                    )
+                }
+            }
         }
     }
 }

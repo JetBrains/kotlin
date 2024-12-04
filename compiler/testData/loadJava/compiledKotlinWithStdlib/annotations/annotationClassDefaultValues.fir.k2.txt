@@ -1,0 +1,73 @@
+public final annotation class A : R|kotlin/Annotation| {
+    public final val i: R|kotlin/Int| = Int(42)
+        public get(): R|kotlin/Int|
+
+    public final val s: R|kotlin/String| = String(foo)
+        public get(): R|kotlin/String|
+
+    public final val kClass: R|kotlin/reflect/KClass<*>| = <getClass>(<getClass>(R|kotlin/Int|))
+        public get(): R|kotlin/reflect/KClass<*>|
+
+    public final val kClassArray: R|kotlin/Array<kotlin/reflect/KClass<*>>| = <implicitArrayOf>(<getClass>(<getClass>(R|test/A|)))
+        public get(): R|kotlin/Array<kotlin/reflect/KClass<*>>|
+
+    public final val e: R|test/E| = test/E.E0
+        public get(): R|test/E|
+
+    public final val anno: R|test/Empty| = @R|test/Empty|()
+        public get(): R|test/Empty|
+
+    public final val aS: R|kotlin/Array<kotlin/String>| = <implicitArrayOf>(String(a), String(b))
+        public get(): R|kotlin/Array<kotlin/String>|
+
+    public final val aI: R|kotlin/IntArray| = <implicitArrayOf>(Int(1), Int(2))
+        public get(): R|kotlin/IntArray|
+
+    public constructor(i: R|kotlin/Int| = STUB, s: R|kotlin/String| = STUB, kClass: R|kotlin/reflect/KClass<*>| = STUB, kClassArray: R|kotlin/Array<kotlin/reflect/KClass<*>>| = STUB, e: R|test/E| = STUB, anno: R|test/Empty| = STUB, aS: R|kotlin/Array<kotlin/String>| = STUB, aI: R|kotlin/IntArray| = STUB): R|test/A|
+
+}
+
+public final enum class E : R|kotlin/Enum<test/E>| {
+    private constructor(): R|test/E|
+
+    public final static enum entry E0: R|test/E|
+    public final static fun values(): R|kotlin/Array<test/E>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/E| {
+    }
+
+    public final static val entries: R|kotlin/enums/EnumEntries<test/E>|
+        public get(): R|kotlin/enums/EnumEntries<test/E>|
+
+}
+
+public final annotation class Empty : R|kotlin/Annotation| {
+    public constructor(): R|test/Empty|
+
+}
+
+public final annotation class OtherArrays : R|kotlin/Annotation| {
+    public final val doublesArray: R|kotlin/DoubleArray| = <implicitArrayOf>(Double(1.5))
+        public get(): R|kotlin/DoubleArray|
+
+    public final val enumArray: R|kotlin/Array<kotlin/text/RegexOption>| = <implicitArrayOf>(kotlin/text/RegexOption.IGNORE_CASE)
+        public get(): R|kotlin/Array<kotlin/text/RegexOption>|
+
+    public final val annotationsArray: R|kotlin/Array<kotlin/jvm/JvmStatic>| = <implicitArrayOf>()
+        public get(): R|kotlin/Array<kotlin/jvm/JvmStatic>|
+
+    public final val namesArray: R|kotlin/Array<kotlin/jvm/JvmName>| = <implicitArrayOf>(@R|kotlin/jvm/JvmName|(name = String(foo)) )
+        public get(): R|kotlin/Array<kotlin/jvm/JvmName>|
+
+    public constructor(doublesArray: R|kotlin/DoubleArray| = STUB, enumArray: R|kotlin/Array<kotlin/text/RegexOption>| = STUB, annotationsArray: R|kotlin/Array<kotlin/jvm/JvmStatic>| = STUB, namesArray: R|kotlin/Array<kotlin/jvm/JvmName>| = STUB): R|test/OtherArrays|
+
+}
+
+public final annotation class UnsignedValue : R|kotlin/Annotation| {
+    public final val uint: R|kotlin/UInt| = UInt(-2147483639)
+        public get(): R|kotlin/UInt|
+
+    public constructor(uint: R|kotlin/UInt| = STUB): R|test/UnsignedValue|
+
+}

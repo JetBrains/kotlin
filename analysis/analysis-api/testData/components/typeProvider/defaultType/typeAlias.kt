@@ -1,0 +1,1 @@
+typealias Fo<caret>o = Int

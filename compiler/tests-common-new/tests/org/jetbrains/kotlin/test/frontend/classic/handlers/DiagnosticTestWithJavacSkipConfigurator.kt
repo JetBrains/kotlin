@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 
 class DiagnosticTestWithJavacSkipConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(DiagnosticsDirectives)
+        get() = listOf(JvmEnvironmentConfigurationDirectives)
 
     override fun shouldSkipTest(): Boolean {
-        return DiagnosticsDirectives.SKIP_JAVAC in testServices.moduleStructure.allDirectives
+        return JvmEnvironmentConfigurationDirectives.SKIP_JAVAC in testServices.moduleStructure.allDirectives
     }
 }

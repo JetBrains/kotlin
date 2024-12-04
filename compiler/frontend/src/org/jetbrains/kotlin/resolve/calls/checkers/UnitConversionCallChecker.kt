@@ -16,7 +16,7 @@ object UnitConversionCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (resolvedCall !is NewResolvedCallImpl<*>) return
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.UnitConversion)) return
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.UnitConversionsOnArbitraryExpressions)) return
 
         // lambdas are working since 1.0, callable references are handled as part of reference adaptation
         // => here we're checking only simple argument
@@ -26,7 +26,7 @@ object UnitConversionCallChecker : CallChecker {
             context.trace.report(
                 Errors.UNSUPPORTED_FEATURE.on(
                     argumentWithUnitConversion.psiCallArgument.valueArgument.asElement(),
-                    LanguageFeature.UnitConversion to context.languageVersionSettings
+                    LanguageFeature.UnitConversionsOnArbitraryExpressions to context.languageVersionSettings
                 )
             )
         }

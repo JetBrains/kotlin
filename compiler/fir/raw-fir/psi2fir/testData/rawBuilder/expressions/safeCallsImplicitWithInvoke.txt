@@ -1,0 +1,48 @@
+FILE: safeCallsImplicitWithInvoke.kt
+    public? final? fun foo(): R|kotlin/Unit| {
+        arg#?.{ $subj$.alias# }
+        arg#?.{ $subj$.alias#++ }
+        arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)) }
+        arg#?.{  {
+            lval <array>: <implicit> = $subj$.alias#
+            lval <index_0>: <implicit> = IntegerLiteral(42)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
+        }
+         }
+        arg#?.{ $subj$.alias#(String()) }
+        arg#?.{ $subj$.alias#(String())++ }
+        arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)).invoke#(String()) }
+        arg#?.{ $subj$.alias#.get#(IntegerLiteral(42)).invoke#(String())++ }
+        arg#?.{ $subj$.bar#() }
+        arg#?.{ $subj$.bar#()++ }
+        arg#?.{ $subj$.bar#().get#(IntegerLiteral(42)) }
+        arg#?.{  {
+            lval <array>: <implicit> = $subj$.bar#()
+            lval <index_0>: <implicit> = IntegerLiteral(42)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
+        }
+         }
+        arg#?.{ $subj$.bar#().invoke#(String()) }
+        arg#?.{ $subj$.bar#().invoke#(String())++ }
+        arg#?.{ $subj$.bar#().get#(IntegerLiteral(42)).invoke#(String()) }
+        arg#?.{ $subj$.bar#().get#(IntegerLiteral(42)).invoke#(String())++ }
+        arg#?.{ $subj$.baz#().invoke#().invoke#() }
+        arg#?.{ $subj$.baz#().invoke#().invoke#()++ }
+        arg#?.{ $subj$.baz#().invoke#().invoke#().get#(IntegerLiteral(42)) }
+        arg#?.{  {
+            lval <array>: <implicit> = $subj$.baz#().invoke#().invoke#()
+            lval <index_0>: <implicit> = IntegerLiteral(42)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
+            R|<local>/<unary>|
+        }
+         }
+        arg#?.{ $subj$.baz#().invoke#().invoke#().invoke#(String()) }
+        arg#?.{ $subj$.baz#().invoke#().invoke#().invoke#(String())++ }
+        arg#?.{ $subj$.baz#().invoke#().invoke#().get#(IntegerLiteral(42)).invoke#(String()) }
+        arg#?.{ $subj$.baz#().invoke#().invoke#().get#(IntegerLiteral(42)).invoke#(String())++ }
+    }

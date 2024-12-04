@@ -1,27 +1,29 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 
 typealias ReportError = (element: IrElement, message: String) -> Unit
 
-class CheckIrElementVisitor(
+internal class CheckIrElementVisitor(
     val irBuiltIns: IrBuiltIns,
     val reportError: ReportError,
     val config: IrValidatorConfig
@@ -29,9 +31,13 @@ class CheckIrElementVisitor(
     private val visitedElements = hashSetOf<IrElement>()
 
     override fun visitElement(element: IrElement) {
-        if (config.ensureAllNodesAreDifferent && !visitedElements.add(element)) {
+        if (config.checkTreeConsistency && !visitedElements.add(element)) {
             val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
             reportError(element, "Duplicate IR node: $renderString")
+
+            // The IR tree is completely messed up if it includes one element twice. It may not be a tree at all, there may be cycles.
+            // Give up early to avoid stack overflow.
+            throw DuplicateIrNodeError(element)
         }
     }
 
@@ -75,7 +81,7 @@ class CheckIrElementVisitor(
         }
     }
 
-    override fun <T> visitConst(expression: IrConst<T>) {
+    override fun visitConst(expression: IrConst) {
         super.visitConst(expression)
 
         @Suppress("UNUSED_VARIABLE")
@@ -164,14 +170,15 @@ class CheckIrElementVisitor(
 
         // TODO: Why don't we check parameters as well?
 
-        val returnType = expression.symbol.owner.returnType
+        val callee = expression.symbol.owner
         // TODO: We don't have the proper type substitution yet, so skip generics for now.
+        val actualCallee = callee.resolveFakeOverrideMaybeAbstract { it.returnType.classifierOrNull !is IrTypeParameterSymbol } ?: callee
+        val returnType = actualCallee.returnType
         if (returnType is IrSimpleType &&
             returnType.classifier is IrClassSymbol &&
             returnType.arguments.isEmpty()
         ) {
-
-            expression.ensureTypeIs(returnType)
+            expression.ensureTypeIs(callee.returnType)
         }
 
         expression.superQualifierSymbol?.ensureBound(expression)
@@ -248,43 +255,46 @@ class CheckIrElementVisitor(
         expression.ensureTypeIs(irBuiltIns.nothingType)
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override fun visitClass(declaration: IrClass) {
-        super.visitClass(declaration)
-
-        if (config.checkDescriptors && !declaration.isAnnotationClass) {
-            // Check that all functions and properties from memberScope are present in IR
-            // (including FAKE_OVERRIDE ones).
-
-            val allDescriptors = declaration.descriptor.unsubstitutedMemberScope
-                .getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
-
-            val presentDescriptors = declaration.declarations.map { it.descriptor }
-
-            val missingDescriptors = allDescriptors - presentDescriptors
-
-            if (missingDescriptors.isNotEmpty()) {
-                reportError(
-                    declaration, "Missing declarations for descriptors:\n" +
-                            missingDescriptors.joinToString("\n: ")
-                )
-            }
-        }
-    }
-
     override fun visitFunction(declaration: IrFunction) {
         super.visitFunction(declaration)
         declaration.checkFunction(declaration)
 
-        for ((i, p) in declaration.valueParameters.withIndex()) {
-            if (p.index != i) {
-                reportError(declaration, "Inconsistent index of value parameter ${p.index} != $i")
+        for ((i, param) in declaration.valueParameters.withIndex()) {
+            if (param.indexInOldValueParameters != i) {
+                reportError(declaration, "Inconsistent index (old API) of value parameter ${param.indexInOldValueParameters} != $i")
             }
         }
 
-        for ((i, p) in declaration.typeParameters.withIndex()) {
-            if (p.index != i) {
-                reportError(declaration, "Inconsistent index of type parameter ${p.index} != $i")
+        var lastKind: IrParameterKind? = null
+        for ((i, param) in declaration.parameters.withIndex()) {
+            if (param.indexInParameters != i) {
+                reportError(declaration, "Inconsistent index (new API) of value parameter ${param.indexInParameters} != $i")
+            }
+
+            val kind = param.kind
+            if (lastKind != null) {
+                if (kind < lastKind) {
+                    reportError(
+                        declaration,
+                        "Invalid order of function parameters: $kind is placed after $lastKind.\n" +
+                                "Parameters must follow a strict order: " +
+                                "[dispatch receiver, context parameters, extension receiver, regular parameters]."
+                    )
+                }
+
+                if (kind == IrParameterKind.DispatchReceiver || kind == IrParameterKind.ExtensionReceiver) {
+                    if (kind == lastKind) {
+                        reportError(declaration, "Function may have only one $kind parameter")
+                    }
+                }
+            }
+
+            lastKind = kind
+        }
+
+        for ((i, param) in declaration.typeParameters.withIndex()) {
+            if (param.index != i) {
+                reportError(declaration, "Inconsistent index of type parameter ${param.index} != $i")
             }
         }
     }
@@ -349,11 +359,9 @@ class CheckIrElementVisitor(
     }
 
     private fun checkType(type: IrType, element: IrElement) {
-        when (type) {
-            is IrSimpleType -> {
-                if (!type.classifier.isBound) {
-                    reportError(element, "Type: ${type.render()} has unbound classifier")
-                }
+        if (type is IrSimpleType) {
+            if (!type.classifier.isBound) {
+                reportError(element, "Type: ${type.render()} has unbound classifier")
             }
         }
     }

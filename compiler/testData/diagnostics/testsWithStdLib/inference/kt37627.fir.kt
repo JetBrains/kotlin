@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -NAME_SHADOWING -UNUSED_VARIABLE -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -NAME_SHADOWING -UNUSED_VARIABLE -UNUSED_EXPRESSION
 
 fun foo1(x: Int) {
     val x = if (true) { // OI: Map<String, () → Int>?, NI: Nothing?, error

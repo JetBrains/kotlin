@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-5943 StackOverflowError from commonSupertype of two enums
 // NI_EXPECTED_FILE

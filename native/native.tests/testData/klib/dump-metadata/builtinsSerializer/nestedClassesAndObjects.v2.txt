@@ -1,0 +1,137 @@
+library {
+  // module name: <nestedClassesAndObjects.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/ClassA
+    // class name: test/ClassA.classB
+    // class name: test/ClassA.classB.BC
+    // class name: test/ClassA.classB.BO
+    // class name: test/ClassA.classC
+    // class name: test/E
+    // class name: test/E.Companion
+    // class name: test/E.Companion.D
+    // class name: test/F
+    // class name: test/F.ObjA
+
+    // signature: test/ClassA|null[0]
+    public final class test/ClassA : kotlin/Any {
+
+      // signature: test/ClassA.<init>|<init>(){}[0]
+      public constructor()
+
+      // nested class: classB
+
+      // nested class: classC
+    }
+
+    // signature: test/ClassA.classB|null[0]
+    public final class test/ClassA.classB : kotlin/Any {
+
+      // signature: test/ClassA.classB.<init>|<init>(){}[0]
+      public constructor()
+
+      // signature: test/ClassA.classB.memberFromB|memberFromB(){}[0]
+      public final fun memberFromB(): kotlin/Int
+
+      // nested class: BC
+
+      // nested class: BO
+    }
+
+    // signature: test/ClassA.classB.BC|null[0]
+    public final class test/ClassA.classB.BC : kotlin/Any {
+
+      // signature: test/ClassA.classB.BC.<init>|<init>(){}[0]
+      public constructor()
+
+      // signature: test/ClassA.classB.BC.memberFromBB|{}memberFromBB[0]
+      public final val memberFromBB: kotlin/Int /* = 150 */
+        // signature: test/ClassA.classB.BC.memberFromBB.<get-memberFromBB>|<get-memberFromBB>(){}[0]
+        public final get
+    }
+
+    // signature: test/ClassA.classB.BO|null[0]
+    public final object test/ClassA.classB.BO : kotlin/Any {
+
+      // signature: test/ClassA.classB.BO.<init>|<init>(){}[0]
+      private constructor()
+
+      // signature: test/ClassA.classB.BO.memberFromBO|{}memberFromBO[0]
+      public final val memberFromBO: kotlin/Int /* = 175 */
+        // signature: test/ClassA.classB.BO.memberFromBO.<get-memberFromBO>|<get-memberFromBO>(){}[0]
+        public final get
+    }
+
+    // signature: test/ClassA.classC|null[0]
+    public final inner class test/ClassA.classC : kotlin/Any {
+
+      // signature: test/ClassA.classC.<init>|<init>(){}[0]
+      public constructor()
+
+      // signature: test/ClassA.classC.memberFromC|{}memberFromC[0]
+      public final val memberFromC: kotlin/Int /* = 200 */
+        // signature: test/ClassA.classC.memberFromC.<get-memberFromC>|<get-memberFromC>(){}[0]
+        public final get
+    }
+
+    // signature: test/E|null[0]
+    public final class test/E : kotlin/Any {
+
+      // signature: test/E.<init>|<init>(){}[0]
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    // signature: test/E.Companion|null[0]
+    public final companion object test/E.Companion : kotlin/Any {
+
+      // signature: test/E.Companion.<init>|<init>(){}[0]
+      private constructor()
+
+      // signature: test/E.Companion.stat|{}stat[0]
+      public final val stat: kotlin/Int /* = 250 */
+        // signature: test/E.Companion.stat.<get-stat>|<get-stat>(){}[0]
+        public final get
+
+      // nested class: D
+    }
+
+    // signature: test/E.Companion.D|null[0]
+    public final class test/E.Companion.D : kotlin/Any {
+
+      // signature: test/E.Companion.D.<init>|<init>(){}[0]
+      public constructor()
+
+      // signature: test/E.Companion.D.memberFromD|{}memberFromD[0]
+      public final val memberFromD: kotlin/Int /* = 275 */
+        // signature: test/E.Companion.D.memberFromD.<get-memberFromD>|<get-memberFromD>(){}[0]
+        public final get
+    }
+
+    // signature: test/F|null[0]
+    public final class test/F : kotlin/Any {
+
+      // signature: test/F.<init>|<init>(){}[0]
+      public constructor()
+
+      // nested class: ObjA
+    }
+
+    // signature: test/F.ObjA|null[0]
+    public final object test/F.ObjA : kotlin/Any {
+
+      // signature: test/F.ObjA.<init>|<init>(){}[0]
+      private constructor()
+
+      // signature: test/F.ObjA.memberFromObjA|{}memberFromObjA[0]
+      public final val memberFromObjA: kotlin/Int /* = 300 */
+        // signature: test/F.ObjA.memberFromObjA.<get-memberFromObjA>|<get-memberFromObjA>(){}[0]
+        public final get
+    }
+  }
+}

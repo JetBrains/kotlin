@@ -14,19 +14,12 @@ fun test(): Int {
 // 0 getLast
 // 0 getStep
 
-// JVM non-IR uses while.
-// JVM IR uses if + do-while.
-
-// JVM_TEMPLATES
+// 0 IF_ICMPGT
 // 1 IF_ICMPGE
+// 0 IF_ICMPEQ
 // 1 IF
-
-// JVM_IR_TEMPLATES
-// 1 IF_ICMPGT
-// 1 IF_ICMPEQ
-// 2 IF
-// 7 ILOAD
+// 5 ILOAD
 // 4 ISTORE
 // 1 IINC
 // 1 IADD
-// 1 ISUB
+// 0 ISUB

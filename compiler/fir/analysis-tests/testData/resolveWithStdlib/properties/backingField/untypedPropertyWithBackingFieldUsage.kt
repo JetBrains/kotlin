@@ -1,4 +1,5 @@
-val simpleNoTypeBlock
+// RUN_PIPELINE_TILL: FRONTEND
+<!PROPERTY_WITH_NO_TYPE_NO_INITIALIZER!>val simpleNoTypeBlock<!>
     get() {
         return <!UNRESOLVED_REFERENCE!>field<!>
     }
@@ -37,11 +38,11 @@ val withFieldTypeExpression: Int
 
 // If * is supported, this is a relevant message
 // since adding a getter _may_ be enough
-<!PROPERTY_MUST_HAVE_GETTER!>val minimalFieldWithInitializer
-    field = 1<!>
+<!PROPERTY_MUST_HAVE_GETTER!>val minimalFieldWithInitializer<!>
+    field = 1
 
-<!PROPERTY_MUST_HAVE_GETTER!>val minimalFieldWithNoInitializer
-    <!PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER!>field: Int<!><!>
+<!PROPERTY_MUST_HAVE_GETTER!>val minimalFieldWithNoInitializer<!>
+    <!PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER!>field: Int<!>
 
 // TODO: redundant backing field?
 // Or we assume someone may still want

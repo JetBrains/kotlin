@@ -1,6 +1,9 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// FIR_DUMP
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// ISSUE: KT-64823 (K2/PCLA difference)
 
 import kotlin.experimental.ExperimentalTypeInference
 
@@ -10,7 +13,7 @@ class TypeDefinition<KotlinType : Any> {
 }
 
 @OptIn(ExperimentalTypeInference::class)
-fun <KotlinType : Any> defineType(@BuilderInference definition: TypeDefinition<KotlinType>.() -> Unit): Unit = TODO()
+fun <KotlinType : Any> defineType(definition: TypeDefinition<KotlinType>.() -> Unit): Unit = TODO()
 
 fun main() {
     defineType {

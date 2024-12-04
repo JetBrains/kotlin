@@ -7,8 +7,6 @@ import org.jetbrains.benchmarksLauncher.*
 import kotlinx.cli.*
 
 class SwiftLauncher: Launcher() {
-    override val benchmarks = BenchmarksCollection(
-            mutableMapOf(
-            )
-    )
+    override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf()
+    override val extendedBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry> = mutableMapOf()
 }

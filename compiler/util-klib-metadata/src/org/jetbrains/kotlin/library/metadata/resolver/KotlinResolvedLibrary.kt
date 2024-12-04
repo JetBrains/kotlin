@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.library.resolver
+package org.jetbrains.kotlin.library.metadata.resolver
 
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 /**
  * A [KotlinLibrary] wrapper that is used for resolving library's dependencies.
  */
-interface KotlinResolvedLibrary: PackageAccessHandler {
+interface KotlinResolvedLibrary : PackageAccessHandler {
 
     // The library itself.
     val library: KotlinLibrary

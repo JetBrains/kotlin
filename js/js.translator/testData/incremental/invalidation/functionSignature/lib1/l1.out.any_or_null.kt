@@ -1,0 +1,1 @@
+fun foo(): Any? = "string"

@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JVM
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // LAMBDAS: INDY
 
 inline class A(val value: String?)
@@ -25,6 +25,6 @@ fun box(): String {
 // 1 public abstract f-ZsE1S_E\(Ljava/lang/String;\)Ljava/lang/String;
 // @MangledSamWrappersKt.class:
 // 3 INVOKEINTERFACE B.f-ZsE1S_E \(Ljava/lang/String;\)Ljava/lang/String;
-// 1 private final static box\$lambda-0\(LA;\)LA;
+// 0 private final static box\$lambda-0\(LA;\)LA;
 // @MangledSamWrappersKt$sam$B$0.class:
 // public final synthetic f-ZsE1S_E\(Ljava/lang/String;\)Ljava/lang/String;

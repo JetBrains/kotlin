@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignature
+import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
-import org.jetbrains.kotlin.asJava.elements.KtLightPsiArrayInitializerMemberValue
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 fun PsiClass.renderClass() = PsiClassRenderer.renderClass(this)
 
@@ -35,53 +37,87 @@ class PsiClassRenderer private constructor(
     }
 
     companion object {
-        var extendedTypeRenderer = false
-
         fun renderClass(
             psiClass: PsiClass,
             renderInner: Boolean = false,
             membersFilter: MembersFilter = MembersFilter.DEFAULT
         ): String =
             PsiClassRenderer(renderInner, membersFilter).renderClass(psiClass)
+
+        fun renderType(psiType: PsiType): String = with(PsiClassRenderer(renderInner = false, membersFilter = MembersFilter.DEFAULT)) {
+            psiType.renderType()
+        }
     }
 
-    private fun renderClass(psiClass: PsiClass): String =
-        buildString {
-            val classWord = when {
-                psiClass.isAnnotationType -> "@interface"
-                psiClass.isInterface -> "interface"
-                psiClass.isEnum -> "enum"
-                else -> "class"
-            }
+    private fun PrettyPrinter.renderClass(psiClass: PsiClass) {
+        val classWord = when {
+            psiClass.isAnnotationType -> "@interface"
+            psiClass.isInterface -> "interface"
+            psiClass.isEnum -> "enum"
+            else -> "class"
+        }
 
-            append(psiClass.renderModifiers())
-            append("$classWord ")
-            append("${psiClass.name} /* ${psiClass.qualifiedName}*/")
-            append(psiClass.typeParameters.renderTypeParams())
-            append(psiClass.extendsList.renderRefList("extends"))
-            append(psiClass.implementsList.renderRefList("implements"))
-            appendLine(" {")
-
+        append(psiClass.renderModifiers())
+        append("$classWord ")
+        append("${psiClass.name} /* ${psiClass.qualifiedName}*/")
+        append(psiClass.typeParameters.renderTypeParams())
+        append(psiClass.extendsList.renderRefList("extends"))
+        append(psiClass.implementsList.renderRefList("implements"))
+        appendLine(" {")
+        withIndent {
             if (psiClass.isEnum) {
-                append(
-                    psiClass.fields
-                        .filterIsInstance<PsiEnumConstant>()
-                        .filter { membersFilter.includeEnumConstant(it) }
-                        .joinToString(",\n") { it.renderEnumConstant() }.prependDefaultIndent()
-                )
+                psiClass.fields
+                    .filterIsInstance<PsiEnumConstant>()
+                    .filter { membersFilter.includeEnumConstant(it) }
+                    .joinTo(this, ",\n") { it.renderEnumConstant() }
+
                 append(";\n\n")
             }
 
-            append(psiClass.renderMembers())
-
-            append("}")
+            renderMembers(psiClass)
         }
+
+        append("}")
+    }
+
+    private fun renderClass(psiClass: PsiClass): String = prettyPrint {
+        renderClass(psiClass)
+    }
 
     private fun PsiType.renderType() = StringBuffer().also { renderType(it) }.toString()
+
     private fun PsiType.renderType(sb: StringBuffer) {
-        if (extendedTypeRenderer && annotations.isNotEmpty()) {
-            sb.append(annotations.joinToString(" ", postfix = " ") { it.renderAnnotation() })
+        fun renderAnnotations(leadingAnnotations: Boolean) {
+            annotations.ifNotEmpty {
+                joinTo(
+                    buffer = sb,
+                    separator = " ",
+                    postfix = " ",
+                    prefix = if (leadingAnnotations) "" else " ",
+                ) { it.renderAnnotation() }
+            }
         }
+
+        when (this) {
+            is PsiEllipsisType -> {
+                componentType.renderType(sb)
+                renderAnnotations(leadingAnnotations = false)
+                sb.append("...")
+
+                return
+            }
+
+            is PsiArrayType -> {
+                componentType.renderType(sb)
+                renderAnnotations(leadingAnnotations = false)
+                sb.append("[]")
+
+                return
+            }
+        }
+
+        renderAnnotations(leadingAnnotations = true)
+
         when (this) {
             is PsiClassType -> {
                 sb.append(PsiNameHelper.getQualifiedClassName(canonicalText, false))
@@ -94,16 +130,24 @@ class PsiClassRenderer private constructor(
                     sb.append(">")
                 }
             }
-            is PsiEllipsisType -> {
-                componentType.renderType(sb)
-                sb.append("...")
+            is PsiWildcardType -> {
+                if (!isBounded) {
+                    sb.append("?")
+                } else {
+                    if (isSuper) {
+                        sb.append(PsiWildcardType.SUPER_PREFIX)
+                    } else {
+                        sb.append(PsiWildcardType.EXTENDS_PREFIX)
+                    }
+
+                    bound?.renderType(sb)
+                }
             }
-            is PsiArrayType -> {
-                componentType.renderType(sb)
-                sb.append("[]")
+            is PsiPrimitiveType -> {
+                sb.append(name)
             }
             else -> {
-                sb.append(canonicalText)
+                sb.append(getCanonicalText(/* annotated = */ true))
             }
         }
     }
@@ -140,11 +184,14 @@ class PsiClassRenderer private constructor(
     private fun Array<PsiTypeParameter>.renderTypeParams() =
         if (isEmpty()) ""
         else "<" + joinToString {
-            val bounds =
-                if (it.extendsListTypes.isNotEmpty())
-                    " extends " + it.extendsListTypes.joinToString(" & ", transform = { it.renderType() })
-                else ""
-            it.name!! + bounds
+            val extendsListTypes = it.extendsListTypes
+            val bounds = if (extendsListTypes.isNotEmpty()) {
+                " extends " + extendsListTypes.joinToString(" & ", transform = { it.renderType() })
+            } else {
+                ""
+            }
+
+            it.renderModifiers() + it.name!! + bounds
         } + "> "
 
     private fun KtLightPsiLiteral.renderKtLightPsiLiteral(): String {
@@ -162,9 +209,10 @@ class PsiClassRenderer private constructor(
     }
 
     private fun PsiAnnotationMemberValue.renderAnnotationMemberValue(): String = when (this) {
-        is KtLightPsiArrayInitializerMemberValue -> "{${initializers.joinToString { it.renderAnnotationMemberValue() }}}"
+        is PsiArrayInitializerMemberValue -> "{${initializers.joinToString { it.renderAnnotationMemberValue() }}}"
         is PsiAnnotation -> renderAnnotation()
         is KtLightPsiLiteral -> renderKtLightPsiLiteral()
+        is PsiClassObjectAccessExpression -> operand.type.canonicalText + ".class"
         else -> text
     }
 
@@ -191,49 +239,55 @@ class PsiClassRenderer private constructor(
     }
 
     private fun PsiEnumConstant.renderEnumConstant(): String {
-        val initializingClass = initializingClass ?: return name
+        val annotations = this@renderEnumConstant.annotations
+            .map { it.renderAnnotation() }
+            .filter { it.isNotBlank() }
+            .joinToString(separator = " ", postfix = " ")
+            .takeIf { it.isNotBlank() }
+            ?: ""
 
-        return buildString {
+        val initializingClass = initializingClass ?: return "$annotations$name"
+        return prettyPrint {
+            append(annotations)
             appendLine("$name {")
-            append(initializingClass.renderMembers())
+            renderMembers(initializingClass)
             append("}")
         }
     }
 
-    private fun PsiClass.renderMembers(): String {
-        return buildString {
-            appendSorted(
-                fields
-                    .filterNot { it is PsiEnumConstant }
-                    .filter { membersFilter.includeField(it) }
-                    .map { it.renderVar().prependDefaultIndent() + ";\n\n" }
-            )
+    private fun PrettyPrinter.renderMembers(psiClass: PsiClass) {
+        var wasRendered = false
+        val fields = psiClass.fields.filterNot { it is PsiEnumConstant }.filter { membersFilter.includeField(it) }
+        appendSorted(fields, wasRendered) {
+            it.renderVar() + ";"
+        }
 
-            appendSorted(
-                methods
-                    .filter { membersFilter.includeMethod(it) }
-                    .map { it.renderMethod().prependDefaultIndent() + "\n\n" }
-            )
+        fields.ifNotEmpty { wasRendered = true }
+        val methods = psiClass.methods.filter { membersFilter.includeMethod(it) }
+        appendSorted(methods, wasRendered) {
+            it.renderMethod()
+        }
 
-            appendSorted(
-                innerClasses
-                    .filter { membersFilter.includeClass(it) }
-                    .map {
-                        appendLine()
-                        if (renderInner)
-                            renderClass(it, renderInner)
-                        else
-                            "class ${it.name} ...\n\n".prependDefaultIndent()
-                    }
-            )
+        methods.ifNotEmpty { wasRendered = true }
+        val classes = psiClass.innerClasses.filter { membersFilter.includeClass(it) }
+        appendSorted(classes, wasRendered) {
+            if (renderInner)
+                renderClass(it, renderInner)
+            else
+                "class ${it.name} ..."
+        }
+
+        classes.ifNotEmpty { wasRendered = true }
+        if (wasRendered) {
+            appendLine()
         }
     }
 
-    private fun StringBuilder.appendSorted(list: List<String>) {
-        append(list.sorted().joinToString(""))
+    private fun <T> PrettyPrinter.appendSorted(list: List<T>, addPrefix: Boolean, render: (T) -> String) {
+        if (list.isEmpty()) return
+        val prefix = if (addPrefix) "\n\n" else ""
+        list.map(render).sorted().joinTo(this, separator = "\n\n", prefix = prefix)
     }
-
-    private fun String.prependDefaultIndent() = prependIndent("  ")
 
     private fun PsiAnnotation.renderAnnotation(): String {
 
@@ -282,7 +336,7 @@ class PsiClassRenderer private constructor(
             val renderedAnnotation = annotation.renderAnnotation()
             if (renderedAnnotation.isNotEmpty()) {
                 annotationsBuffer.add(
-                    renderedAnnotation + (if (this is PsiParameter) " " else "\n")
+                    renderedAnnotation + (if (this is PsiParameter || this is PsiTypeParameter) " " else "\n")
                 )
             }
         }

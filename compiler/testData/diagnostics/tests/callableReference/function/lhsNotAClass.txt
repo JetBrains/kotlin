@@ -1,15 +1,15 @@
 package
 
-public fun </*0*/ U : kotlin.Any> bar(): [ERROR : Error function type]
-public fun </*0*/ T> foo(): [ERROR : Error function type]
+public fun </*0*/ U : kotlin.Any> bar(): [Error type: Return type for function cannot be resolved]
+public fun </*0*/ T> foo(): [Error type: Return type for function cannot be resolved]
 public fun take(/*0*/ arg: kotlin.Any): kotlin.Unit
 
 public final class A</*0*/ T, /*1*/ U : kotlin.Any> {
     public constructor A</*0*/ T, /*1*/ U : kotlin.Any>()
-    public final fun bar(): [ERROR : Error function type]
+    public final fun bar(): [Error type: Return type for function cannot be resolved]
     public final fun baz(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun foo(): [ERROR : Error function type]
+    public final fun foo(): [Error type: Return type for function cannot be resolved]
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

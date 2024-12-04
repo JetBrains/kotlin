@@ -1,11 +1,12 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class Delegate {
     operator fun getValue(t: Any?, p: Any): String = "OK"
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Kla1(val default: Int) {
     fun getValue(): String {
         val prop by Delegate()

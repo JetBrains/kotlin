@@ -1,0 +1,9 @@
+Before shortening: context(test.MyType)
+fun <MyType> test.MyType.test(p: test.MyType) {
+    val a: test.MyType
+}
+with default settings:
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+with SHORTEN_AND_STAR_IMPORT:

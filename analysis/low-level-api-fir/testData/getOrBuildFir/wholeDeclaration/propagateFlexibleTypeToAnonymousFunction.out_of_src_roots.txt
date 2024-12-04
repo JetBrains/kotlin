@@ -1,0 +1,22 @@
+KT element: KtProperty
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+        ^ <Unresolved name: JavaClass>#.<Unresolved name: function>#()?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+            ^ <strcat>(String( (), <Unresolved name: it>#, String()))
+        }
+        ) } ?: String()
+    }
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ <Unresolved name: JavaClass>#.<Unresolved name: function>#()?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ <strcat>(String( (), <Unresolved name: it>#, String()))
+            }
+            ) } ?: String()
+        }

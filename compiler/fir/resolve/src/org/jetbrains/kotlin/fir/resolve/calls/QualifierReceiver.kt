@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -42,7 +41,7 @@ fun createQualifierReceiver(
     }
 }
 
-abstract class QualifierReceiver(final override val explicitReceiver: FirExpression) : AbstractExplicitReceiver<FirResolvedQualifier>() {
+abstract class QualifierReceiver(val explicitReceiver: FirResolvedQualifier) {
     abstract fun classifierScope(): FirScope?
     abstract fun callableScope(): FirScope?
 }
@@ -58,7 +57,7 @@ class ClassQualifierReceiver(
     override fun callableScope(): FirScope? {
         val klass = classSymbol.fir
         val provider = klass.scopeProvider
-        return provider.getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession)
+        return provider.getStaticCallableMemberScope(klass, useSiteSession, scopeSession)
     }
 
     override fun classifierScope(): FirScope? {
@@ -71,10 +70,10 @@ class PackageQualifierReceiver(
     explicitReceiver: FirResolvedQualifier,
     useSiteSession: FirSession
 ) : QualifierReceiver(explicitReceiver) {
-    val scope = FirPackageMemberScope(explicitReceiver.packageFqName, useSiteSession)
+    val scope: FirPackageMemberScope = FirPackageMemberScope(explicitReceiver.packageFqName, useSiteSession)
     override fun classifierScope(): FirScope {
         return FirOnlyClassifiersScope(scope)
     }
 
-    override fun callableScope() = FirOnlyCallablesScope(scope)
+    override fun callableScope(): FirOnlyCallablesScope = FirOnlyCallablesScope(scope)
 }

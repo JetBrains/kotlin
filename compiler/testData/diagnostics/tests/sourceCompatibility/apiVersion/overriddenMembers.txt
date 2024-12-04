@@ -1,7 +1,7 @@
 package
 
 public fun f1(/*0*/ x: I10): kotlin.Unit
-public fun f2(/*0*/ x: I11): [ERROR : Error function type]
+public fun f2(/*0*/ x: I11): [Error type: Return type for function cannot be resolved]
 public fun f3(/*0*/ x: J): kotlin.Unit
 public fun f4(/*0*/ x: BothI1): kotlin.Unit
 public fun f5(/*0*/ x: BothI2): kotlin.Unit

@@ -5,30 +5,40 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import com.intellij.openapi.util.JDOMUtil
+import org.jdom.CDATA
+import org.jdom.Content
 import org.jdom.Element
-import org.jdom.input.SAXBuilder
-import org.jdom.output.Format
-import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
-import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.*
-import kotlin.streams.asSequence
-import kotlin.streams.toList
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.readText
 import kotlin.test.assertEquals
 
-fun GradleProject.assertTestResults(expectedTestReport: Path, vararg testReportNames: String) {
-    val testReportDirs = testReportNames.map { projectPath.resolve("build/test-results/$it") }
+fun GradleProject.assertTestResults(
+    expectedTestReport: Path,
+    vararg testReportNames: String,
+    subprojectName: String? = null,
+    cleanupStdOut: (String) -> String = { it }
+) {
+    val buildDirLocation = if (subprojectName != null) { projectPath.resolve(subprojectName) } else projectPath
+    val testReportDirs = testReportNames.map { buildDirLocation.resolve("build/test-results/$it") }
 
     assertDirectoriesExist(*testReportDirs.toTypedArray())
 
-    val actualTestResults = readAndCleanupTestResults(testReportDirs, projectPath)
+    val actualTestResults = readAndCleanupTestResults(testReportDirs, projectPath, cleanupStdOut)
     val expectedTestResults = prettyPrintXml(expectedTestReport.readText())
 
     assertEquals(expectedTestResults, actualTestResults)
 }
 
-internal fun readAndCleanupTestResults(testReportDirs: List<Path>, projectPath: Path): String {
+internal fun readAndCleanupTestResults(
+    testReportDirs: List<Path>,
+    projectPath: Path,
+    cleanupStdOut: (String) -> String = { it }
+): String {
     val files = testReportDirs
         .flatMap {
             it.allFilesWithExtension("xml")
@@ -53,16 +63,32 @@ internal fun readAndCleanupTestResults(testReportDirs: List<Path>, projectPath: 
         appendLine("</results>")
     }
 
-    val doc = SAXBuilder().build(xmlString.reader())
+    val doc = JDOMUtil.load(xmlString.reader())
     val skipAttrs = setOf("timestamp", "hostname", "time", "message")
     val skipContentsOf = setOf("failure")
 
     fun cleanup(e: Element) {
         if (e.name in skipContentsOf) e.text = "..."
+
+        val browserTestRegex = "\\[(.*(, )?)browser,.*]".toRegex();
         e.attributes.forEach {
             if (it.name in skipAttrs) {
                 it.value = "..."
+            } else if (it.name == "name" &&
+                e.name == "testcase" &&
+                it.value.contains(browserTestRegex)
+            ) {
+                it.value = it.value.replace(browserTestRegex, "[$1browser]")
             }
+        }
+        if (e.name == "system-out") {
+            val content = e.content.map {
+                if (it.cType == Content.CType.CDATA) {
+                    (it as CDATA).text = cleanupStdOut(it.value)
+                }
+                it
+            }
+            e.setContent(content)
         }
 
         e.children.forEach {
@@ -70,9 +96,9 @@ internal fun readAndCleanupTestResults(testReportDirs: List<Path>, projectPath: 
         }
     }
 
-    cleanup(doc.rootElement)
-    return XMLOutputter(Format.getPrettyFormat()).outputString(doc)
+    cleanup(doc)
+    return JDOMUtil.write(doc)
 }
 
 internal fun prettyPrintXml(uglyXml: String): String =
-    XMLOutputter(Format.getPrettyFormat()).outputString(SAXBuilder().build(uglyXml.reader()))
+    JDOMUtil.write(JDOMUtil.load(uglyXml.reader()))

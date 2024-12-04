@@ -1,8 +1,9 @@
-// !JVM_DEFAULT_MODE: disable
+// JVM_DEFAULT_MODE: disable
 // JVM_TARGET: 1.8
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK
+
 // FILE: main.kt
 var result = ""
 

@@ -1,0 +1,4 @@
+Diagnostics from elements:
+  for PSI element of type KtBinaryExpressionWithTypeRHS at (12,5-16)
+    USELESS_CAST      text ranges: [(203,212)]
+      PSI: KtBinaryExpressionWithTypeRHS at (12,5-16)

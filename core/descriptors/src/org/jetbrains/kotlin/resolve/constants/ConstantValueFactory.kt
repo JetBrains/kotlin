@@ -18,13 +18,15 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 object ConstantValueFactory {
-    fun createArrayValue(value: List<ConstantValue<*>>, type: KotlinType) = ArrayValue(value) { type }
+    fun createArrayValue(value: List<ConstantValue<*>>, type: KotlinType): ArrayValue =
+        TypedArrayValue(value, type)
 
-    fun createConstantValue(value: Any?): ConstantValue<*>? {
+    fun createConstantValue(value: Any?, module: ModuleDescriptor? = null): ConstantValue<*>? {
         return when (value) {
             is Byte -> ByteValue(value)
             is Short -> ShortValue(value)
@@ -35,14 +37,14 @@ object ConstantValueFactory {
             is Double -> DoubleValue(value)
             is Boolean -> BooleanValue(value)
             is String -> StringValue(value)
-            is ByteArray -> createArrayValue(value.toList(), PrimitiveType.BYTE)
-            is ShortArray -> createArrayValue(value.toList(), PrimitiveType.SHORT)
-            is IntArray -> createArrayValue(value.toList(), PrimitiveType.INT)
-            is LongArray -> createArrayValue(value.toList(), PrimitiveType.LONG)
-            is CharArray -> createArrayValue(value.toList(), PrimitiveType.CHAR)
-            is FloatArray -> createArrayValue(value.toList(), PrimitiveType.FLOAT)
-            is DoubleArray -> createArrayValue(value.toList(), PrimitiveType.DOUBLE)
-            is BooleanArray -> createArrayValue(value.toList(), PrimitiveType.BOOLEAN)
+            is ByteArray -> createArrayValue(value.toList(), module, PrimitiveType.BYTE)
+            is ShortArray -> createArrayValue(value.toList(), module, PrimitiveType.SHORT)
+            is IntArray -> createArrayValue(value.toList(), module, PrimitiveType.INT)
+            is LongArray -> createArrayValue(value.toList(), module, PrimitiveType.LONG)
+            is CharArray -> createArrayValue(value.toList(), module, PrimitiveType.CHAR)
+            is FloatArray -> createArrayValue(value.toList(), module, PrimitiveType.FLOAT)
+            is DoubleArray -> createArrayValue(value.toList(), module, PrimitiveType.DOUBLE)
+            is BooleanArray -> createArrayValue(value.toList(), module, PrimitiveType.BOOLEAN)
             null -> NullValue()
             else -> null
         }
@@ -58,10 +60,15 @@ object ConstantValueFactory {
         }
     }
 
-    private fun createArrayValue(value: List<*>, componentType: PrimitiveType): ArrayValue =
-        ArrayValue(value.toList().mapNotNull(this::createConstantValue)) { module ->
-            module.builtIns.getPrimitiveArrayKotlinType(componentType)
-        }
+    private fun createArrayValue(value: List<*>, module: ModuleDescriptor?, componentType: PrimitiveType): ArrayValue {
+        val elements = value.toList().mapNotNull(this::createConstantValue)
+        return if (module != null)
+            TypedArrayValue(elements, module.builtIns.getPrimitiveArrayKotlinType(componentType))
+        else
+            ArrayValue(elements) {
+                it.builtIns.getPrimitiveArrayKotlinType(componentType)
+            }
+    }
 
     fun createIntegerConstantValue(
             value: Long,

@@ -1,0 +1,37 @@
+library {
+  // module name: <TopLevelPropertiesWithClassesRootPackage.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Foo
+
+    public final object Bar : kotlin/Any {
+
+      private constructor()
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
+
+      public final val v1: kotlin/Int /* = 1 */
+        public final get
+
+      public final val v2: kotlin/String /* = "hello" */
+        public final get
+
+      public final val v3: kotlin/Function1<kotlin/String, kotlin/Int>
+        public final get
+
+      public final val v4: kotlin/Function1<kotlin/String, kotlin/Int> /* = MyTransformer^ */
+        public final get
+
+      public typealias MyTransformer = kotlin/Function1<kotlin/String, kotlin/Int> /* = kotlin/Function1<kotlin/String, kotlin/Int> */
+    }
+  }
+}

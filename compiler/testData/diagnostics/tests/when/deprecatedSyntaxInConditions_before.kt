@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ProhibitConfusingSyntaxInWhenBranches
 // DIAGNOSTICS: -INCOMPATIBLE_TYPES, -NON_EXHAUSTIVE_WHEN_STATEMENT, -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // ISSUE: KT-48385
@@ -87,12 +88,12 @@ fun testWithSubject_bad_1(x: A) {
 
 fun testWithSubject_bad_2(b: Boolean) {
     // bad
-    when (b) {
+    <!NO_ELSE_IN_WHEN!>when<!> (b) {
         <!CONFUSING_BRANCH_CONDITION_WARNING!>b && b<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>b || b<!> -> {}
     }
     // ok
-    when (b) {
+    <!NO_ELSE_IN_WHEN!>when<!> (b) {
         (b && b) -> {}
         (b || b) -> {}
     }
@@ -191,12 +192,12 @@ fun testWithRange_bad_1(x: A) {
 
 fun testWithRange_bad_2(b: Boolean) {
     // bad
-    when (b) {
+    <!NO_ELSE_IN_WHEN!>when<!> (b) {
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>b && b<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>b || b<!> -> {}
     }
     // ok
-    when (b) {
+    <!NO_ELSE_IN_WHEN!>when<!> (b) {
         in (b && b) -> {}
         in (b || b) -> {}
     }

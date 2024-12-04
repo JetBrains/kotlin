@@ -19,7 +19,7 @@ import test.*
 class C {
     val x: String
     init {
-        val y by myRun { { "OK" }() }
+        val y by myRun { { "OK" }.let { it() } }
         x = y
     }
 

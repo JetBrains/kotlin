@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 import kotlin.contracts.*
 
+@OptIn(ExperimentalContracts::class)
 fun checkIsString(x: Any): Boolean {
     contract {
         returns(true) implies (x is String)

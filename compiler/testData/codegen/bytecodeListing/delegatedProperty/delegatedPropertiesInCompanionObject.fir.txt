@@ -1,0 +1,50 @@
+@kotlin.Metadata
+public final class DP {
+    // source: 'delegatedPropertiesInCompanionObject.kt'
+    public method <init>(): void
+    private final static method provideDelegate$lambda$0(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method provideDelegate(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): kotlin.Lazy
+}
+
+@kotlin.Metadata
+public final class H1$Companion {
+    // source: 'delegatedPropertiesInCompanionObject.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String
+    public final inner class H1$Companion
+}
+
+@kotlin.Metadata
+public final class H1 {
+    // source: 'delegatedPropertiesInCompanionObject.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: H1$Companion
+    private final static @org.jetbrains.annotations.NotNull field property$delegate: kotlin.Lazy
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method access$getProperty$delegate$cp(): kotlin.Lazy
+    public final inner class H1$Companion
+}
+
+@kotlin.Metadata
+public final class H2$Companion {
+    // source: 'delegatedPropertiesInCompanionObject.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String
+    public final inner class H2$Companion
+}
+
+@kotlin.Metadata
+public final class H2 {
+    // source: 'delegatedPropertiesInCompanionObject.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: H2$Companion
+    private final static @org.jetbrains.annotations.NotNull field property$delegate: kotlin.Lazy
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method access$getProperty$delegate$cp(): kotlin.Lazy
+    private final static method property_delegate$lambda$0(): java.lang.String
+    public final inner class H2$Companion
+}

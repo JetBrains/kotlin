@@ -1,5 +1,0 @@
-KT element: KtValueArgumentList
-FIR element: FirResolvedArgumentListImpl
-
-FIR element rendered:
-String(y)

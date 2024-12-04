@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-2741 Compiler can't infer a type of a function literal parameter when its body contains errors
 
 package a

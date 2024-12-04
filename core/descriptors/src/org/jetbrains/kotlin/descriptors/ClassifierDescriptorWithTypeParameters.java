@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.descriptors;
 
 import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.mpp.ClassLikeSymbolMarker;
+import org.jetbrains.kotlin.mpp.ClassifierSymbolMarker;
 
 import java.util.List;
 
 public interface ClassifierDescriptorWithTypeParameters
         extends ClassifierDescriptor, DeclarationDescriptorWithVisibility, MemberDescriptor,
-                Substitutable<ClassifierDescriptorWithTypeParameters> {
+                Substitutable<ClassifierDescriptorWithTypeParameters>, ClassLikeSymbolMarker, ClassifierSymbolMarker {
     /**
      * @return <code>true</code> if this class contains a reference to its outer class (as opposed to static nested class)
      */

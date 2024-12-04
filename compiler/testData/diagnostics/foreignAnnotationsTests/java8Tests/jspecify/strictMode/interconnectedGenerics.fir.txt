@@ -1,0 +1,65 @@
+FILE: Eq.kt
+    package lib.a
+
+    public final data class A<R : R|lib/Ta|, S : R|lib/Se<out R>|> : R|kotlin/Any| {
+        public constructor<R : R|lib/Ta|, S : R|lib/Se<out R>|>(a: R|java/lang/Class<out S>|): R|lib/a/A<R, S>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|java/lang/Class<out S>| = R|<local>/a|
+            public get(): R|java/lang/Class<out S>|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|lib/a/A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/jvm/JvmStatic|() public final fun <R : R|lib/Ta|, S : R|lib/Se<R>|> of(b: R|java/lang/Class<out S>|): R|lib/a/A<R, S>| {
+                ^of R|lib/a/A.A|<R|R|, R|S|>(R|<local>/b|)
+            }
+
+        }
+
+        public final operator fun component1(): R|java/lang/Class<out S>|
+
+        public final fun copy(a: R|java/lang/Class<out S>| = this@R|lib/a/A|.R|lib/a/A.a|): R|lib/a/A<R, S>|
+
+    }
+    public final class Eq<R : R|lib/Ta|, S : R|lib/Se<R>|> : R|lib/a/C.Fr<R, S>| {
+        public constructor<R : R|lib/Ta|, S : R|lib/Se<R>|>(a: R|lib/a/A<R, S>|): R|lib/a/Eq<R, S>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|lib/a/A<R, S>| = R|<local>/a|
+            public get(): R|lib/a/A<R, S>|
+
+        public open override fun withL(l: R|kotlin/Int|): R|lib/a/C.WithL<R, S>| {
+            ^withL Q|lib/a/C|.R|lib/a/C.MyWithL.MyWithL|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=R) R!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=S) S!|>()
+        }
+
+    }
+FILE: Repro.kt
+    package repro
+
+    public abstract class Repro : R|kotlin/Any| {
+        public constructor(): R|repro/Repro| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun <T> f(r: R|lib/R<T>|): R|T|
+
+        public abstract fun <P : R|lib/Pr|, E : R|lib/En<P>|> g(p: R|P|): R|lib/R.FMR<E, E>|
+
+        private final fun isTableValid(c: R|java/lang/Class<lib/En<lib/Pr>>|, key: R|lib/Pr|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+            when () {
+                R|<local>/b| ->  {
+                    this@R|repro/Repro|.R|repro/Repro.f|<R|ft<it(lib/En<lib/Pr> & lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>), it(lib/En<lib/Pr>? & lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>?)>|>(this@R|repro/Repro|.R|repro/Repro.g|<R|lib/Pr|, R|ft<it(lib/En<lib/Pr> & lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>), it(lib/En<lib/Pr>? & lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>?)>|>(R|<local>/key|))
+                }
+                else ->  {
+                    this@R|repro/Repro|.R|repro/Repro.f|<R|ft<lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>, lib/Il<ft<@EnhancedNullability lib/En<lib/Pr>, @EnhancedNullability lib/En<lib/Pr>?>>?>|>(Q|lib/a/C|.R|lib/a/C.from*s|<R|lib/Pr!|, R|ft<lib/En<lib/Pr>, lib/En<lib/Pr>?>|>(R|<local>/c|).R|SubstitutionOverride<lib/a/C.Fr.withL: R|ft<lib/a/C.WithL<lib/Pr!, ft<lib/En<lib/Pr>, lib/En<lib/Pr>?>>, lib/a/C.WithL<lib/Pr!, ft<lib/En<lib/Pr>, lib/En<lib/Pr>?>>?>|>|(Int(1)))
+                }
+            }
+
+        }
+
+    }

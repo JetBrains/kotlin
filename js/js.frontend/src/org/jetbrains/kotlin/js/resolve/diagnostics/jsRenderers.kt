@@ -47,6 +47,7 @@ object JsCallDataTextRenderer : JsCallDataRenderer() {
     }
 }
 
+@Suppress("unused") // Used from the Kotlin IntelliJ plugin
 object JsCallDataHtmlRenderer : JsCallDataRenderer() {
     override fun format(data: JsCallDataWithCode): String {
         val codeRange = data.codeRange

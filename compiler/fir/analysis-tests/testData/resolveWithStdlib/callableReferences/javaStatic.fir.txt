@@ -8,7 +8,7 @@ FILE: main.kt
     public final fun foo3(x: R|(kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/foo1|(Q|JavaClass|::R|/JavaClass.bar|)
+        R|/foo1|(Q|JavaClass|::R|/JavaClass.bar*s|)
         R|/foo2|(Q|JavaClass|::R|/JavaClass.bar|)
-        <Ambiguity: foo3, [/foo3, /foo3]>#(Q|JavaClass|::R|/JavaClass.bar|)
+        <Ambiguity: foo3, [/foo3, /foo3]>#(Q|JavaClass|::R|/JavaClass.bar*s|)
     }

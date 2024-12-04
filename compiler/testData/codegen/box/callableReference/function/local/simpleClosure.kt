@@ -3,5 +3,5 @@ fun box(): String {
 
     fun foo() = result
 
-    return (::foo)()
+    return (::foo).let { it() }
 }

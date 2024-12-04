@@ -101,6 +101,8 @@ val JvmScriptCompilationConfigurationKeys.jdkHome
             getSourceProperties = { get(ScriptCompilationConfiguration.hostConfiguration) }
         )
 
+val JvmScriptCompilationConfigurationKeys.jvmTarget by PropertiesCollection.key<String>()
+
 @Suppress("unused")
 val ScriptCompilationConfigurationKeys.jvm
     get() = JvmScriptCompilationConfigurationBuilder()

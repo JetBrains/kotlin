@@ -19,245 +19,353 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.debug
+import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.compilerRunner.SimpleOutputItem
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
-import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
+import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
+import org.jetbrains.kotlin.incremental.storage.FileLocations
+import org.jetbrains.kotlin.incremental.util.ExceptionLocation
+import org.jetbrains.kotlin.incremental.util.reportException
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.File
-import java.io.IOException
-import java.util.*
-import kotlin.collections.HashMap
+import java.nio.file.Files
 
 abstract class IncrementalCompilerRunner<
         Args : CommonCompilerArguments,
-        CacheManager : IncrementalCachesManager<*>
+        CacheManager : IncrementalCachesManager<*>,
         >(
     private val workingDir: File,
     cacheDirName: String,
-    protected val reporter: BuildReporter,
-    private val buildHistoryFile: File,
-    // there might be some additional output directories (e.g. for generated java in kapt)
-    // to remove them correctly on rebuild, we pass them as additional argument
-    private val outputFiles: Collection<File> = emptyList()
+    protected val reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    protected val buildHistoryFile: File?,
+
+    /**
+     * Output directories of the compilation. These include:
+     *   1. The classes output directory
+     *   2. [workingDir]
+     *   3. Any additional output directories (e.g., classpath snapshot directory or Kapt generated-stubs directory)
+     *
+     * We will clean these directories when compiling non-incrementally.
+     *
+     * If this property is not set, the directories to clean will include the first 2 directories above.
+     */
+    private val outputDirs: Collection<File>?,
+
+    /**
+     * Various options. Boolean flags, both stable and experimental, should be added there.
+     * Non-trivial configuration should NOT be added there.
+     */
+    protected val icFeatures: IncrementalCompilationFeatures,
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
     private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
-    protected val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
-    protected open val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+    private val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
+    protected open val kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 
-    //TODO(valtman) temporal measure to ensure quick disable, should be deleted after successful release
-    protected val withSnapshot: Boolean = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient() ?: false
+    /**
+     * Creates an instance of [IncrementalCompilationContext] that holds common incremental compilation context mostly required for [CacheManager]
+     */
+    private fun createIncrementalCompilationContext(
+        fileLocations: FileLocations?,
+        transaction: CompilationTransaction,
+        fragmentContext: FragmentContext? = null,
+    ) = IncrementalCompilationContext(
+        pathConverterForSourceFiles = fileLocations?.getRelocatablePathConverterForSourceFiles() ?: BasicFileToPathConverter,
+        pathConverterForOutputFiles = fileLocations?.getRelocatablePathConverterForOutputFiles() ?: BasicFileToPathConverter,
+        transaction = transaction,
+        reporter = reporter,
+        trackChangesInLookupCache = shouldTrackChangesInLookupCache,
+        storeFullFqNamesInLookupCache = shouldStoreFullFqNamesInLookupCache,
+        icFeatures = icFeatures,
+        fragmentContext = fragmentContext,
+    )
 
-    protected abstract fun isICEnabled(): Boolean
-    protected abstract fun createCacheManager(args: Args, projectDir: File?): CacheManager
+    protected abstract val shouldTrackChangesInLookupCache: Boolean
+
+    protected abstract val shouldStoreFullFqNamesInLookupCache: Boolean
+
+    protected abstract fun createCacheManager(icContext: IncrementalCompilationContext, args: Args): CacheManager
     protected abstract fun destinationDir(args: Args): File
 
     fun compile(
         allSourceFiles: List<File>,
         args: Args,
         messageCollector: MessageCollector,
-        // when [providedChangedFiles] is not null, changes are provided by external system (e.g. Gradle)
-        // otherwise we track source files changes ourselves.
-        providedChangedFiles: ChangedFiles?,
-        projectDir: File? = null
-    ): ExitCode = reporter.measure(BuildTime.INCREMENTAL_COMPILATION) {
-        compileImpl(allSourceFiles, args, messageCollector, providedChangedFiles, projectDir)
-    }
-
-    private fun compileImpl(
-        allSourceFiles: List<File>,
-        args: Args,
-        messageCollector: MessageCollector,
-        providedChangedFiles: ChangedFiles?,
-        projectDir: File? = null
-    ): ExitCode {
-        assert(isICEnabled()) { "Incremental compilation is not enabled" }
-        var caches = createCacheManager(args, projectDir)
-
-        if (withSnapshot) {
-            reporter.report { "Incremental compilation with ABI snapshot enabled" }
+        changedFiles: ChangedFiles,
+        fileLocations: FileLocations? = null, // Must be not-null if the build system needs to support build cache relocatability
+    ): ExitCode = reporter.measure(GradleBuildTime.INCREMENTAL_COMPILATION_DAEMON) {
+        reporter.debug {
+            "Source changes: $changedFiles"
         }
-        //TODO if abi-snapshot is corrupted unable to rebuild. Should roll back to withSnapshot = false?
-        val classpathAbiSnapshot =
-            if (withSnapshot) {
-                reporter.measure(BuildTime.SET_UP_ABI_SNAPSHOTS) {
-                    setupJarDependencies(args, withSnapshot, reporter)
-                }
-            } else {
-                emptyMap()
+        val trackChangedFiles = changedFiles is DeterminableFiles.ToBeComputed
+        val result = when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector)) {
+            is ICResult.Completed -> {
+                reporter.debug { "Incremental compilation completed" }
+                result.exitCode
             }
+            is ICResult.RequiresRebuild -> {
+                reporter.info { "Non-incremental compilation will be performed: ${result.reason}" }
+                reporter.addAttribute(result.reason)
 
-        fun rebuild(reason: BuildAttribute): ExitCode {
-            reporter.report { "Non-incremental compilation will be performed: $reason" }
-            caches.close(false)
-            // todo: we can recompile all files incrementally (not cleaning caches), so rebuild won't propagate
-            reporter.measure(BuildTime.CLEAR_OUTPUT_ON_REBUILD) {
-                clearLocalStateOnRebuild(args)
-            }
-            caches = createCacheManager(args, projectDir)
-            if (providedChangedFiles == null) {
-                caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-            }
-            val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
-            return compileIncrementally(args, caches, allKotlinFiles, CompilationMode.Rebuild(reason), messageCollector, withSnapshot,
-                                        classpathAbiSnapshot = classpathAbiSnapshot)
-        }
-
-        // If compilation has crashed or we failed to close caches we have to clear them
-        var cachesMayBeCorrupted = true
-        return try {
-            val changedFiles = when (providedChangedFiles) {
-                is ChangedFiles.Dependencies -> {
-                    val changedSources = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-                    ChangedFiles.Known(
-                        providedChangedFiles.modified + changedSources.modified,
-                        providedChangedFiles.removed + changedSources.removed
-                    )
-                }
-                null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-                else -> providedChangedFiles
-            }
-
-
-            val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
-
-            val exitCode = when (compilationMode) {
-                is CompilationMode.Incremental -> {
-                    if (withSnapshot) {
-                        val abiSnapshot = AbiSnapshotImpl.read(abiSnapshotFile, reporter)
-                        if (abiSnapshot != null) {
-                            compileIncrementally(
-                                args,
-                                caches,
-                                allSourceFiles,
-                                compilationMode,
-                                messageCollector,
-                                withSnapshot,
-                                abiSnapshot,
-                                classpathAbiSnapshot
-                            )
-                        } else {
-                            rebuild(BuildAttribute.NO_ABI_SNAPSHOT)
-                        }
-                    } else {
-                        compileIncrementally(
-                            args,
-                            caches,
-                            allSourceFiles,
-                            compilationMode,
-                            messageCollector,
-                            withSnapshot)
-                    }
-                }
-                is CompilationMode.Rebuild -> {
-                    rebuild(compilationMode.reason)
-                }
-            }
-
-            if (!caches.close(flush = true)) throw RuntimeException("Could not flush caches")
-            // Here we should analyze exit code of compiler. E.g. compiler failure should lead to caches rebuild,
-            // but now JsKlib compiler reports invalid exit code.
-            cachesMayBeCorrupted = false
-
-            reporter.measure(BuildTime.CALCULATE_OUTPUT_SIZE) {
-                reporter.addMetric(
-                    BuildPerformanceMetric.SNAPSHOT_SIZE,
-                    buildHistoryFile.length() + lastBuildInfoFile.length() + abiSnapshotFile.length()
+                compileNonIncrementally(
+                    result.reason, allSourceFiles, args, fileLocations, trackChangedFiles = trackChangedFiles, messageCollector
                 )
-                if (cacheDirectory.exists() && cacheDirectory.isDirectory()) {
-                    cacheDirectory.walkTopDown().filter { it.isFile }.map { it.length() }.sum().let {
-                        reporter.addMetric(BuildPerformanceMetric.OUTPUT_SIZE, it)
-                    }
-                }
             }
-            return exitCode
-        } catch (e: Exception) { // todo: catch only cache corruption
-            // todo: warn?
-            reporter.report { "Rebuilding because of possible caches corruption: $e" }
-            rebuild(BuildAttribute.CACHE_CORRUPTION)
-        } finally {
-            if (cachesMayBeCorrupted) {
-                clearLocalStateOnRebuild(args)
+            is ICResult.Failed -> {
+                messageCollector.reportException(result.cause, ExceptionLocation.INCREMENTAL_COMPILATION)
+                reporter.warn {
+                    // The indentation after the first line is intentional (so that this message is distinct from next message)
+                    """
+                    |Incremental compilation was attempted but failed:
+                    |    ${result.reason.readableString}: ${result.cause.stackTraceToString().removeSuffixIfPresent("\n")}
+                    |    Falling back to non-incremental compilation (reason = ${result.reason})
+                    |    To help us fix this issue, please file a bug at https://youtrack.jetbrains.com/issues/KT with the above stack trace.
+                    |    (Be sure to search for the above exception in existing issues first to avoid filing duplicated bugs.)             
+                    """.trimMargin()
+                }
+                // TODO: Collect the stack trace too
+                reporter.addAttribute(result.reason)
+
+                compileNonIncrementally(
+                    result.reason, allSourceFiles, args, fileLocations, trackChangedFiles = trackChangedFiles, messageCollector
+                )
             }
         }
+        collectSizeMetrics()
+        return result
     }
 
-    private fun clearLocalStateOnRebuild(args: Args) {
-        val destinationDir = destinationDir(args)
+    /** The result when attempting to compile incrementally ([tryCompileIncrementally]). */
+    private sealed interface ICResult {
 
-        reporter.reportVerbose { "Clearing output on rebuild" }
-        for (file in sequenceOf(destinationDir, workingDir) + outputFiles.asSequence()) {
-            val deleted: Boolean? = when {
-                file.isDirectory -> {
-                    reporter.reportVerbose { "  Deleting directory $file" }
-                    file.deleteRecursively()
-                }
-                file.isFile -> {
-                    reporter.reportVerbose { "  Deleting $file" }
-                    file.delete()
-                }
-                else -> null
-            }
+        /** Incremental compilation completed with an [ExitCode]. */
+        class Completed(val exitCode: ExitCode) : ICResult
 
-            if (deleted == false) {
-                reporter.reportVerbose { "  Could not delete $file" }
-            }
-        }
+        /** Incremental compilation was not possible for some valid reason (e.g., for a clean build). */
+        class RequiresRebuild(val reason: BuildAttribute) : ICResult
 
-        if (destinationDir.exists()) throw IOException("Could not delete directory $destinationDir.")
-        if (workingDir.exists()) throw IOException("Could not delete internal caches in folder $workingDir")
-        destinationDir.mkdirs()
-        workingDir.mkdirs()
+        /** Incremental compilation failed with an exception. */
+        class Failed(val reason: BuildAttribute, val cause: Throwable) : ICResult
     }
 
-    private fun sourcesToCompile(
-        caches: CacheManager,
+    // Be aware that [tryCompileIncrementally] catches a lot of exceptions internally.
+    // So this transformer should be used for very specific things, like cache closing, that are
+    // related to the transaction as a whole rather than any compilation step.
+    private fun incrementalCompilationExceptionTransformer(t: Throwable): ICResult = when (t) {
+        is CachesManagerCloseException -> ICResult.Failed(IC_FAILED_TO_CLOSE_CACHES, t)
+        else -> throw t
+    }
+
+    /**
+     * Attempts to compile incrementally and returns either [ICResult.Completed], [ICResult.RequiresRebuild], or [ICResult.Failed].
+     *
+     * Note that parts of this function may still throw exceptions that are not caught and wrapped by [ICResult.Failed] because they are not
+     * meant to be caught.
+     */
+    private fun tryCompileIncrementally(
+        allSourceFiles: List<File>,
         changedFiles: ChangedFiles,
         args: Args,
+        fileLocations: FileLocations?,
         messageCollector: MessageCollector,
-        dependenciesAbiSnapshots: Map<String, AbiSnapshot>
-    ): CompilationMode =
-        when (changedFiles) {
-            is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args, messageCollector, dependenciesAbiSnapshots)
-            is ChangedFiles.Unknown -> CompilationMode.Rebuild(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
-            is ChangedFiles.Dependencies -> error("Unexpected ChangedFiles type (ChangedFiles.Dependencies)")
+    ): ICResult {
+        if (changedFiles is ChangedFiles.Unknown) {
+            return ICResult.RequiresRebuild(UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
+        }
+        changedFiles as? DeterminableFiles ?: error("Expected $changedFiles to be an instance of DeterminableFiles")
+
+        val fragmentContext = if (!icFeatures.enableUnsafeIncrementalCompilationForMultiplatform) { //see KT-62686
+            FragmentContext.fromCompilerArguments(args)
+        } else {
+            null
         }
 
-    private fun calculateSourcesToCompile(
-        caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args, messageCollector: MessageCollector,
-        abiSnapshots: Map<String, AbiSnapshot>
-    ): CompilationMode =
-        reporter.measure(BuildTime.IC_CALCULATE_INITIAL_DIRTY_SET) {
-            calculateSourcesToCompileImpl(caches, changedFiles, args, messageCollector, abiSnapshots)
-        }
+        return createTransaction().runWithin(::incrementalCompilationExceptionTransformer) { transaction ->
+            val icContext = createIncrementalCompilationContext(
+                fileLocations,
+                transaction,
+                fragmentContext
+            )
+            val caches = createCacheManager(icContext, args).also {
+                // this way we make the transaction to be responsible for closing the caches manager
+                transaction.cachesManager = it
+            }
 
-    protected abstract fun calculateSourcesToCompileImpl(
+            fun compile(): ICResult {
+                // Step 1: Get changed files
+                val knownChangedFiles: DeterminableFiles.Known = try {
+                    getChangedFiles(changedFiles, allSourceFiles, caches)
+                } catch (e: Throwable) {
+                    return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
+                }
+
+                val classpathAbiSnapshot = if (icFeatures.withAbiSnapshot) getClasspathAbiSnapshot(args) else null
+
+                // Step 2: Compute files to recompile
+                val compilationMode = try {
+                    reporter.measure(GradleBuildTime.IC_CALCULATE_INITIAL_DIRTY_SET) {
+                        calculateSourcesToCompile(caches, knownChangedFiles, args, messageCollector, classpathAbiSnapshot ?: emptyMap())
+                    }
+                } catch (e: Throwable) {
+                    return ICResult.Failed(IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE, e)
+                }
+
+                if (compilationMode is CompilationMode.Rebuild) {
+                    return ICResult.RequiresRebuild(compilationMode.reason)
+                }
+
+                val abiSnapshotData = if (icFeatures.withAbiSnapshot) {
+                    if (!abiSnapshotFile.exists()) {
+                        reporter.debug { "Jar snapshot file does not exist: ${abiSnapshotFile.path}" }
+                        return ICResult.RequiresRebuild(NO_ABI_SNAPSHOT)
+                    }
+                    reporter.info { "Incremental compilation with ABI snapshot enabled" }
+                    AbiSnapshotData(
+                        snapshot = AbiSnapshotImpl.read(abiSnapshotFile),
+                        classpathAbiSnapshot = classpathAbiSnapshot!!
+                    )
+                } else null
+
+                // Step 3: Compile incrementally
+                val exitCode = try {
+                    compileImpl(
+                        icContext,
+                        compilationMode as CompilationMode.Incremental,
+                        allSourceFiles,
+                        args,
+                        caches,
+                        abiSnapshotData,
+                        messageCollector,
+                    )
+                } catch (e: RequireRebuildForCorrectnessInKMPException) {
+                    return ICResult.RequiresRebuild(UNSAFE_INCREMENTAL_CHANGE_KT_62686)
+                } catch (e: Throwable) {
+                    return ICResult.Failed(IC_FAILED_TO_COMPILE_INCREMENTALLY, e)
+                }
+
+                return ICResult.Completed(exitCode)
+            }
+
+            compile().also { icResult ->
+                if (icResult is ICResult.Completed && icResult.exitCode == ExitCode.OK) {
+                    transaction.markAsSuccessful()
+                }
+            }
+        }
+    }
+
+    private fun compileNonIncrementally(
+        rebuildReason: BuildAttribute,
+        allSourceFiles: List<File>,
+        args: Args,
+        fileLocations: FileLocations?,
+        trackChangedFiles: Boolean, // Whether we need to track changes to the source files or the build system already handles it
+        messageCollector: MessageCollector,
+    ): ExitCode {
+        reporter.measure(GradleBuildTime.CLEAR_OUTPUT_ON_REBUILD) {
+            val mainOutputDirs = setOf(destinationDir(args), workingDir)
+            val outputDirsToClean = outputDirs?.also {
+                check(it.containsAll(mainOutputDirs)) { "outputDirs is missing classesDir and workingDir: $it" }
+            } ?: mainOutputDirs
+
+            reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
+            cleanOrCreateDirectories(outputDirsToClean)
+        }
+        val icContext = createIncrementalCompilationContext(fileLocations, NonRecoverableCompilationTransaction())
+        return createCacheManager(icContext, args).use { caches ->
+            if (trackChangedFiles) {
+                caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            }
+            val abiSnapshotData = if (icFeatures.withAbiSnapshot) {
+                AbiSnapshotData(snapshot = AbiSnapshotImpl(mutableMapOf()), classpathAbiSnapshot = getClasspathAbiSnapshot(args))
+            } else null
+
+            compileImpl(icContext, CompilationMode.Rebuild(rebuildReason), allSourceFiles, args, caches, abiSnapshotData, messageCollector)
+        }
+    }
+
+    private class AbiSnapshotData(val snapshot: AbiSnapshot, val classpathAbiSnapshot: Map<String, AbiSnapshot>)
+
+    private fun getClasspathAbiSnapshot(args: Args): Map<String, AbiSnapshot> {
+        return reporter.measure(GradleBuildTime.SET_UP_ABI_SNAPSHOTS) {
+            setupJarDependencies(args, reporter)
+        }
+    }
+
+    /**
+     * Deletes the contents of the given directories (not the directories themselves).
+     *
+     * If the directories do not yet exist, they will be created.
+     */
+    private fun cleanOrCreateDirectories(outputDirs: Collection<File>) {
+        outputDirs.toSet().forEach {
+            when {
+                it.isDirectory -> it.deleteDirectoryContents()
+                it.isFile -> "Expected a directory but found a regular file: ${it.path}"
+                else -> it.createDirectory()
+            }
+        }
+    }
+
+    private fun getChangedFiles(
+        changedFiles: DeterminableFiles,
+        allSourceFiles: List<File>,
         caches: CacheManager,
-        changedFiles: ChangedFiles.Known,
+    ): DeterminableFiles.Known {
+        return when (changedFiles) {
+            is DeterminableFiles.ToBeComputed -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            is DeterminableFiles.Known -> {
+                if (changedFiles.forDependencies) {
+                    val moreChangedFiles = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+                    DeterminableFiles.Known(
+                        modified = changedFiles.modified + moreChangedFiles.modified,
+                        removed = changedFiles.removed + moreChangedFiles.removed
+                    )
+                } else {
+                    changedFiles
+                }
+            }
+        }
+    }
+
+    protected abstract fun calculateSourcesToCompile(
+        caches: CacheManager,
+        changedFiles: DeterminableFiles.Known,
         args: Args,
         messageCollector: MessageCollector,
-        classpathAbiSnapshots: Map<String, AbiSnapshot>
+        classpathAbiSnapshots: Map<String, AbiSnapshot>,
     ): CompilationMode
 
-    protected open fun setupJarDependencies(args: Args, withSnapshot: Boolean, reporter: BuildReporter): Map<String, AbiSnapshot> = mapOf()
+    protected open fun setupJarDependencies(
+        args: Args,
+        reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    ): Map<String, AbiSnapshot> = emptyMap()
 
-    protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: ChangedFiles.Known) {
+    protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: DeterminableFiles.Known) {
         dirtyFiles.add(changedFiles.modified, "was modified since last time")
         dirtyFiles.add(changedFiles.removed, "was removed since last time")
 
@@ -276,10 +384,9 @@ abstract class IncrementalCompilerRunner<
         services: Services,
         caches: CacheManager,
         generatedFiles: List<GeneratedFile>,
-        changesCollector: ChangesCollector
+        changesCollector: ChangesCollector,
     )
 
-    protected open fun preBuildHook(args: Args, compilationMode: CompilationMode) {}
     protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>, services: Services): Iterable<File> =
         emptyList()
 
@@ -292,7 +399,7 @@ abstract class IncrementalCompilerRunner<
         expectActualTracker: ExpectActualTracker,
         caches: CacheManager,
         dirtySources: Set<File>,
-        isIncremental: Boolean
+        isIncremental: Boolean,
     ): Services.Builder =
         Services.Builder().apply {
             register(LookupTracker::class.java, lookupTracker)
@@ -301,44 +408,80 @@ abstract class IncrementalCompilerRunner<
         }
 
     protected abstract fun runCompiler(
-        sourcesToCompile: Set<File>,
+        sourcesToCompile: List<File>,
         args: Args,
         caches: CacheManager,
         services: Services,
-        messageCollector: MessageCollector
-    ): ExitCode
+        messageCollector: MessageCollector,
+        allSources: List<File>,
+        isIncremental: Boolean,
+    ): Pair<ExitCode, Collection<File>>
 
-    private fun compileIncrementally(
+    private fun compileImpl(
+        icContext: IncrementalCompilationContext,
+        compilationMode: CompilationMode,
+        allSourceFiles: List<File>,
         args: Args,
         caches: CacheManager,
-        allKotlinSources: List<File>,
-        compilationMode: CompilationMode,
-        originalMessageCollector: MessageCollector,
-        withSnapshot: Boolean,
-        abiSnapshot: AbiSnapshot = AbiSnapshotImpl(mutableMapOf()),
-        classpathAbiSnapshot: Map<String, AbiSnapshot> = HashMap()
+        abiSnapshotData: AbiSnapshotData?, // Not null iff withAbiSnapshot = true
+        messageCollector: MessageCollector,
     ): ExitCode {
-        preBuildHook(args, compilationMode)
+        performWorkBeforeCompilation(compilationMode, args)
 
-        val buildTimeMode: BuildTime
+        val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
+        val exitCode = doCompile(icContext, caches, compilationMode, allKotlinFiles, args, abiSnapshotData, messageCollector)
+
+        performWorkAfterCompilation(compilationMode, exitCode, caches)
+        return exitCode
+    }
+
+    private fun createTransaction() = if (icFeatures.preciseCompilationResultsBackup) {
+        RecoverableCompilationTransaction(reporter, Files.createTempDirectory("kotlin-backups"))
+    } else {
+        NonRecoverableCompilationTransaction()
+    }
+
+    protected open fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: Args) {}
+
+    protected open fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: CacheManager) {}
+
+    private fun collectSizeMetrics() {
+        reporter.measure(GradleBuildTime.CALCULATE_OUTPUT_SIZE) {
+            reporter.addMetric(
+                GradleBuildPerformanceMetric.SNAPSHOT_SIZE,
+                (buildHistoryFile?.length() ?: 0) + lastBuildInfoFile.length() + abiSnapshotFile.length()
+            )
+            reporter.addMetric(
+                GradleBuildPerformanceMetric.CACHE_DIRECTORY_SIZE,
+                cacheDirectory.walk().filter { it.isFile }.sumOf { it.length() })
+        }
+    }
+
+    private fun doCompile(
+        icContext: IncrementalCompilationContext,
+        caches: CacheManager,
+        compilationMode: CompilationMode,
+        allKotlinSources: List<File>,
+        args: Args,
+        abiSnapshotData: AbiSnapshotData?, // Not null iff withAbiSnapshot = true
+        originalMessageCollector: MessageCollector,
+    ): ExitCode {
         val dirtySources = when (compilationMode) {
-            is CompilationMode.Incremental -> {
-                buildTimeMode = BuildTime.INCREMENTAL_ITERATION
-                compilationMode.dirtyFiles.toMutableList()
-            }
-            is CompilationMode.Rebuild -> {
-                buildTimeMode = BuildTime.NON_INCREMENTAL_ITERATION
-                reporter.addAttribute(compilationMode.reason)
-                allKotlinSources.toMutableList()
-            }
+            is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableLinkedSet()
+            is CompilationMode.Rebuild -> LinkedHashSet(allKotlinSources)
         }
 
-        val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis(), classpathAbiSnapshot)
+        val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis(), abiSnapshotData?.classpathAbiSnapshot ?: emptyMap())
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
         val buildDirtyFqNames = HashSet<FqName>()
         val allDirtySources = HashSet<File>()
+        val transaction = icContext.transaction
 
         var exitCode = ExitCode.OK
+
+        // TODO: ideally we should read arguments not here but at earlier stages
+        val metadataVersionFromLanguageVersion =
+            LanguageVersion.fromVersionString(args.languageVersion)?.toMetadataVersion() ?: MetadataVersion.INSTANCE
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
@@ -346,14 +489,15 @@ abstract class IncrementalCompilerRunner<
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
 
-            val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
+            val lookupTracker = LookupTrackerImpl(getLookupTrackerDelegate())
             val expectActualTracker = ExpectActualTrackerImpl()
-            //TODO(valtman) sourceToCompile calculate based on abiSnapshot
-            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
+            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
 
-            allDirtySources.addAll(dirtySources)
-            val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
-            dirtySourcesSinceLastTimeFile.writeText(text)
+            icContext.fragmentContext?.let {
+                if (it.dirtySetTouchesNonLeafFragments(sourcesToCompile)) {
+                    throw RequireRebuildForCorrectnessInKMPException()
+                }
+            }
 
             val services = makeServices(
                 args, lookupTracker, expectActualTracker, caches,
@@ -362,48 +506,65 @@ abstract class IncrementalCompilerRunner<
 
             args.reportOutputFiles = true
             val outputItemsCollector = OutputItemsCollectorImpl()
-            val bufferingMessageCollector = BufferingMessageCollector()
-            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, outputItemsCollector)
+            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
+            val bufferingMessageCollector = MessageCollectorImpl()
+            val messageCollectorAdapter =
+                MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, transactionOutputsRegistrar)
 
-            exitCode = reporter.measure(buildTimeMode) {
-                runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
+            val compiledSources = reporter.measure(GradleBuildTime.COMPILATION_ROUND) {
+                runCompiler(
+                    sourcesToCompile, args, caches, services, messageCollectorAdapter,
+                    allKotlinSources, compilationMode is CompilationMode.Incremental
+                )
+            }.let { (ec, compiled) ->
+                exitCode = ec
+                compiled
             }
 
-            val generatedFiles = outputItemsCollector.outputs.map(SimpleOutputItem::toGeneratedFile)
+            dirtySources.addAll(compiledSources)
+            allDirtySources.addAll(dirtySources)
+            val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.normalize().absolutePath }
+            transaction.writeText(dirtySourcesSinceLastTimeFile.toPath(), text)
+
+            val generatedFiles = outputItemsCollector.outputs.map {
+                it.toGeneratedFile(metadataVersionFromLanguageVersion)
+            }
             if (compilationMode is CompilationMode.Incremental) {
                 // todo: feels dirty, can this be refactored?
                 val dirtySourcesSet = dirtySources.toHashSet()
                 val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
                     dirtySources.addAll(additionalDirtyFiles)
-                    generatedFiles.forEach { it.outputFile.delete() }
+                    generatedFiles.forEach { transaction.deleteFile(it.outputFile.toPath()) }
                     continue
                 }
             }
 
-            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
-            bufferingMessageCollector.flush(originalMessageCollector)
+            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, compiledSources, exitCode)
+            bufferingMessageCollector.forward(originalMessageCollector)
 
             if (exitCode != ExitCode.OK) break
 
-            dirtySourcesSinceLastTimeFile.delete()
+            transaction.deleteFile(dirtySourcesSinceLastTimeFile.toPath())
 
             val changesCollector = ChangesCollector()
-            reporter.measure(BuildTime.IC_UPDATE_CACHES) {
+            reporter.measure(GradleBuildTime.IC_UPDATE_CACHES) {
                 caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
                 caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
                 caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
-            updateCaches(services, caches, generatedFiles, changesCollector)
-
-}
+                updateCaches(services, caches, generatedFiles, changesCollector)
+            }
             if (compilationMode is CompilationMode.Rebuild) {
-                if (withSnapshot) {
-                    abiSnapshot.protos.putAll(changesCollector.protoDataChanges())
+                if (icFeatures.withAbiSnapshot) {
+                    abiSnapshotData!!.snapshot.protos.putAll(changesCollector.protoDataChanges())
                 }
                 break
             }
 
-            val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
+            val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getChangedAndImpactedSymbols(
+                listOf(caches.platformCache),
+                reporter
+            )
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
             val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
@@ -427,21 +588,21 @@ abstract class IncrementalCompilerRunner<
             buildDirtyFqNames.addAll(dirtyClassFqNames)
 
             //update
-            if (withSnapshot) {
+            if (icFeatures.withAbiSnapshot) {
                 //TODO(valtman) check method/ kts class remove
-                changesCollector.protoDataRemoved().forEach { abiSnapshot.protos.remove(it) }
-                abiSnapshot.protos.putAll(changesCollector.protoDataChanges())
+                changesCollector.protoDataRemoved().forEach { abiSnapshotData!!.snapshot.protos.remove(it) }
+                abiSnapshotData!!.snapshot.protos.putAll(changesCollector.protoDataChanges())
             }
         }
 
         if (exitCode == ExitCode.OK) {
-            reporter.measure(BuildTime.STORE_BUILD_INFO) {
-                BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
+            reporter.measure(GradleBuildTime.STORE_BUILD_INFO) {
+                BuildInfo.write(icContext, currentBuildInfo, lastBuildInfoFile)
 
                 //write abi snapshot
-                if (withSnapshot) {
+                if (icFeatures.withAbiSnapshot) {
                     //TODO(valtman) check method/class remove
-                    AbiSnapshotImpl.write(abiSnapshot, abiSnapshotFile)
+                    AbiSnapshotImpl.write(icContext, abiSnapshotData!!.snapshot, abiSnapshotFile)
                 }
             }
         }
@@ -450,14 +611,16 @@ abstract class IncrementalCompilerRunner<
         }
 
         val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
-        processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData)
+        processChangesAfterBuild(icContext, compilationMode, currentBuildInfo, dirtyData)
 
         return exitCode
     }
 
+    open fun getLookupTrackerDelegate(): LookupTracker = LookupTracker.DO_NOTHING
+
     protected fun getRemovedClassesChanges(
         caches: IncrementalCachesManager<*>,
-        changedFiles: ChangedFiles.Known
+        changedFiles: DeterminableFiles.Known,
     ): DirtyData {
         val removedClasses = HashSet<String>()
         val dirtyFiles = changedFiles.modified.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
@@ -476,26 +639,29 @@ abstract class IncrementalCompilerRunner<
 
         val changesCollector = ChangesCollector()
         removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
-        return changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
+        return changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
     }
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
     private fun processChangesAfterBuild(
+        icContext: IncrementalCompilationContext,
         compilationMode: CompilationMode,
         currentBuildInfo: BuildInfo,
-        dirtyData: DirtyData
-    ) = reporter.measure(BuildTime.IC_WRITE_HISTORY_FILE) {
-        val prevDiffs = BuildDiffsStorage.readFromFile(buildHistoryFile, reporter)?.buildDiffs ?: emptyList()
-        val newDiff = if (compilationMode is CompilationMode.Incremental) {
-            BuildDifference(currentBuildInfo.startTS, true, dirtyData)
-        } else {
-            val emptyDirtyData = DirtyData()
-            BuildDifference(currentBuildInfo.startTS, false, emptyDirtyData)
-        }
+        dirtyData: DirtyData,
+    ) {
+        if (buildHistoryFile == null) return
+        reporter.measure(GradleBuildTime.IC_WRITE_HISTORY_FILE) {
+            val prevDiffs = BuildDiffsStorage.readFromFile(buildHistoryFile, reporter)?.buildDiffs ?: emptyList()
+            val newDiff = if (compilationMode is CompilationMode.Incremental) {
+                BuildDifference(currentBuildInfo.startTS, true, dirtyData)
+            } else {
+                val emptyDirtyData = DirtyData()
+                BuildDifference(currentBuildInfo.startTS, false, emptyDirtyData)
+            }
 
-        //TODO(valtman) old history build should be restored in case of build fail
-        BuildDiffsStorage.writeToFile(buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff), reporter)
+            BuildDiffsStorage.writeToFile(icContext, buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff))
+        }
     }
 
     companion object {
@@ -512,11 +678,60 @@ abstract class IncrementalCompilerRunner<
     protected fun reportPerformanceData(defaultPerformanceManager: CommonCompilerPerformanceManager) {
         defaultPerformanceManager.getMeasurementResults().forEach {
             when (it) {
-                is CompilerInitializationMeasurement -> reporter.addTimeMetric(BuildTime.COMPILER_INITIALIZATION, it.milliseconds)
-                is CodeAnalysisMeasurement -> reporter.addTimeMetric(BuildTime.CODE_ANALYSIS, it.milliseconds)
-                is CodeGenerationMeasurement -> reporter.addTimeMetric(BuildTime.CODE_GENERATION, it.milliseconds)
+                is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(GradleBuildTime.COMPILER_INITIALIZATION, it.milliseconds)
+                is CodeAnalysisMeasurement -> {
+                    reporter.addTimeMetricMs(GradleBuildTime.CODE_ANALYSIS, it.milliseconds)
+                    it.lines?.apply {
+                        reporter.addMetric(GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER, this.toLong())
+                        if (it.milliseconds > 0) {
+                            reporter.addMetric(GradleBuildPerformanceMetric.ANALYSIS_LPS, this * 1000 / it.milliseconds)
+                        }
+                    }
+                }
+                is CodeGenerationMeasurement -> {
+                    reporter.addTimeMetricMs(GradleBuildTime.CODE_GENERATION, it.milliseconds)
+                    it.lines?.apply {
+                        reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATED_LINES_NUMBER, this.toLong())
+                        if (it.milliseconds > 0) {
+                            reporter.addMetric(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
+                        }
+                    }
+                }
+                is IRMeasurement -> {
+                    when (it.kind) {
+                        IRMeasurement.Kind.TRANSLATION -> reportIrMeasurements(it, GradleBuildTime.IR_TRANSLATION, GradleBuildPerformanceMetric.IR_TRANSLATION_LINES_NUMBER)
+                        IRMeasurement.Kind.LOWERING -> reportIrMeasurements(it, GradleBuildTime.IR_LOWERING, GradleBuildPerformanceMetric.IR_LOWERING_LINES_NUMBER)
+                        IRMeasurement.Kind.GENERATION -> reportIrMeasurements(it, GradleBuildTime.IR_GENERATION, GradleBuildPerformanceMetric.IR_GENERATION_LINES_NUMBER)
+                    }
+                }
             }
+        }
+    }
+
+    private fun reportIrMeasurements(it: IRMeasurement, timeMetric: GradleBuildTime, lineMetric: GradleBuildPerformanceMetric) {
+        reporter.addTimeMetricMs(timeMetric, it.milliseconds)
+        it.lines?.also {
+            reporter.addMetric(lineMetric, it.toLong())
         }
     }
 }
 
+@Deprecated("Temporary function to reuse the logic. KT-62759")
+fun extractKotlinSourcesFromFreeCompilerArguments(
+    compilerArguments: CommonCompilerArguments,
+    kotlinFilenameExtensions: Set<String>,
+): List<File> {
+    val dotExtensions = kotlinFilenameExtensions.map { ".$it" }
+    val freeArgs = arrayListOf<String>()
+    val allKotlinFiles = arrayListOf<File>()
+    for (arg in compilerArguments.freeArgs) {
+        val file = File(arg)
+        if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
+            allKotlinFiles.add(file)
+        } else {
+            freeArgs.add(arg)
+        }
+    }
+    compilerArguments.freeArgs = freeArgs
+    return allKotlinFiles
+}

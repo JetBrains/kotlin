@@ -1,4 +1,0 @@
-KtDelegatedConstructorCall:
-argumentMapping = {  }
-targetFunction = ERR<Unresolved reference: Unresolved, []>
-kind = SUPER_CALL

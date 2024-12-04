@@ -1,0 +1,7 @@
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreText CoreVideo EAGL ExtensionFoundation FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security Symbols UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.ExtensionKit
+
+modules = ExtensionKit
+compilerOpts = -framework ExtensionKit
+linkerOpts = -framework ExtensionKit

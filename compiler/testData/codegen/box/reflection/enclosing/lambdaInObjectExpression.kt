@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// LAMBDAS: CLASS
 // WITH_REFLECT
 
 interface C {

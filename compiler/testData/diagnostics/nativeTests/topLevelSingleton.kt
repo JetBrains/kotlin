@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: annotation.kt
 package kotlin.native.concurrent
 
@@ -22,7 +23,7 @@ class Delegate {
 
 class AtomicInt(var value: Int)
 object Foo {
-    <!VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL!>var field1: Int = 10<!>
+    var field1: Int = 10
     val backer2 = AtomicInt(0)
     var field2: Int
         get() = backer2.value
@@ -47,7 +48,7 @@ object Bar {
 
 class Foo2 {
     companion object {
-        <!VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL!>var field1: Int = 10<!>
+        var field1: Int = 10
         val backer2 = AtomicInt(0)
         var field2: Int
             get() = backer2.value
@@ -66,13 +67,13 @@ class Bar2 {
 }
 
 <!INAPPLICABLE_THREAD_LOCAL!>@ThreadLocal<!>
-enum class Color(<!VARIABLE_IN_ENUM!>var rgb: Int<!>) {
+enum class Color(var rgb: Int) {
     RED(0xFF0000),
     GREEN(0x00FF00),
     BLUE(0x0000FF)
 }
 
-enum class Color1(<!VARIABLE_IN_ENUM!>var rgb: Int<!>) {
+enum class Color1(var rgb: Int) {
     RED(0xFF0000),
     GREEN(0x00FF00),
     BLUE(0x0000FF);
@@ -103,7 +104,7 @@ enum class Color3() {
 
 enum class Color4 {
     RED {
-        <!VARIABLE_IN_ENUM!>var a = 2<!>
+        var a = 2
         override fun foo() { a = 42 }
     },
     GREEN,

@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 // WITH_STDLIB
 
 fun box(): String {

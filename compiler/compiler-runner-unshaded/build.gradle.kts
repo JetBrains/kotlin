@@ -3,20 +3,19 @@ description = "Compiler runner + daemon client unshaded"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("gradle-plugin-compiler-dependency-configuration")
 }
 
 dependencies {
-    api(project(":kotlin-build-common"))
-    api(project(":kotlin-daemon-client"))
-    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    implementation(project(":kotlin-daemon-client"))
 
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-preloader"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":daemon-common"))
-    compileOnly(project(":daemon-common-new"))
+    compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(project(":compiler:util"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

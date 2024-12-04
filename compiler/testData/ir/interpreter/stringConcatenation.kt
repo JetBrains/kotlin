@@ -56,7 +56,7 @@ const val concatLambda5 = <!EVALUATED: `(kotlin.Int?) -> kotlin.String?`!>"" + f
 const val concatLambda6 = <!EVALUATED: `(kotlin.Int) -> kotlin.String`!>"" + { i: Int -> "" }<!>
 const val concatLambda7 = <!EVALUATED: `() -> kotlin.Unit`!>"" + {  }<!>
 const val concatLambda8 = <!EVALUATED: `(kotlin.Int, kotlin.Double, kotlin.String) -> kotlin.Unit`!>"" + { i: Int, b: Double, c: String ->  }<!>
-const val concatLambda9 = "".<!EVALUATED: `kotlin.Double.(kotlin.Int) -> kotlin.String`!>let {
+const val concatLambda9 = <!EVALUATED: `kotlin.Double.(kotlin.Int) -> kotlin.String`!>"".let {
     val lambdaWith: Double.(Int) -> String = { "A" }
     lambdaWith.toString()
 }<!>

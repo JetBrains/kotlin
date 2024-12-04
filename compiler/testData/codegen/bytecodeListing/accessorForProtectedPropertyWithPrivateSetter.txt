@@ -6,7 +6,7 @@ final class B$test$1 {
     inner (anonymous) class B$test$1
     method <init>(p0: B): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -14,7 +14,7 @@ public final class B {
     // source: 'accessorForProtectedPropertyWithPrivateSetter.kt'
     inner (anonymous) class B$test$1
     public method <init>(): void
-    public synthetic final static method access$getVo$p(p0: B): java.lang.String
+    public synthetic final static method access$getVo(p0: B): java.lang.String
     public final @org.jetbrains.annotations.NotNull method test(): kotlin.jvm.functions.Function0
 }
 
@@ -26,7 +26,7 @@ final class a/A$fk$1 {
     inner (anonymous) class a/A$fk$1
     method <init>(p0: a.A): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -36,7 +36,6 @@ public class a/A {
     private @org.jetbrains.annotations.NotNull field vo: java.lang.String
     inner (anonymous) class a/A$fk$1
     public method <init>(): void
-    public synthetic final static method access$getVk$p(p0: a.A): java.lang.String
     public synthetic final static method access$setVk$p(p0: a.A, p1: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method fk(): kotlin.jvm.functions.Function0
     protected final @org.jetbrains.annotations.NotNull method getVk(): java.lang.String

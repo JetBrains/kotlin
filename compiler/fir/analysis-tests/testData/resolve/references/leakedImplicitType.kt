@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-46072
 
 // Case 1
@@ -14,5 +15,5 @@ fun IA.extFun(x: IB) {}
 fun IB.extFun(x: IA) {}
 
 fun testWithExpectedType() {
-    val extFun_AA_B: IA.(IA) -> Unit = IB::<!UNRESOLVED_REFERENCE!>extFun<!> // extFun is unresolved, type of IB::extFun is implicit
+    val extFun_AA_B: IA.(IA) -> Unit = IB::<!NONE_APPLICABLE!>extFun<!> // extFun is unresolved, type of IB::extFun is implicit
 }

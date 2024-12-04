@@ -1,24 +1,32 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.model
 
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.codegen.ClassFileFactory
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.incremental.js.TranslationResultValue
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
-import org.jetbrains.kotlin.js.backend.ast.JsProgram
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.ir.backend.js.LoweredIr
-import org.jetbrains.kotlin.js.facade.TranslationResult
 import java.io.File
 
+class SourceFileInfo(
+    val sourceFile: KtSourceFile,
+    val info: JvmFileClassInfo
+)
+
 object BinaryArtifacts {
-    class Jvm(val classFileFactory: ClassFileFactory) : ResultingArtifact.Binary<Jvm>() {
+    class Jvm(val classFileFactory: ClassFileFactory, val fileInfos: Collection<SourceFileInfo>) : ResultingArtifact.Binary<Jvm>() {
         override val kind: BinaryKind<Jvm>
             get() = ArtifactKinds.Jvm
+    }
+
+    class JvmFromK1AndK2(val fromK1: Jvm, val fromK2: Jvm) : ResultingArtifact.Binary<JvmFromK1AndK2>() {
+        override val kind: BinaryKind<JvmFromK1AndK2>
+            get() = ArtifactKinds.JvmFromK1AndK2
     }
 
     sealed class Js : ResultingArtifact.Binary<Js>() {
@@ -28,11 +36,7 @@ object BinaryArtifacts {
 
         open fun unwrap(): Js = this
 
-        class OldJsArtifact(override val outputFile: File, val translationResult: TranslationResult) : Js()
-
         class JsIrArtifact(override val outputFile: File, val compilerResult: CompilerResult, val icCache: Map<String, ByteArray>? = null) : Js()
-
-        class JsEsArtifact(override val outputFile: File, val outputDceFile: File?) : Js()
 
         data class IncrementalJsArtifact(val originalArtifact: Js, val recompiledArtifact: Js) : Js() {
             override val outputFile: File
@@ -49,7 +53,16 @@ object BinaryArtifacts {
             get() = ArtifactKinds.Native
     }
 
-    class KLib(val outputFile: File) : ResultingArtifact.Binary<KLib>() {
+    class Wasm(
+        val compilerResult: WasmCompilerResult,
+        val compilerResultWithDCE: WasmCompilerResult,
+        val compilerResultWithOptimizer: WasmCompilerResult?,
+    ) : ResultingArtifact.Binary<Wasm>() {
+        override val kind: BinaryKind<Wasm>
+            get() = ArtifactKinds.Wasm
+    }
+
+    class KLib(val outputFile: File, val reporter: BaseDiagnosticsCollector) : ResultingArtifact.Binary<KLib>() {
         override val kind: BinaryKind<KLib>
             get() = ArtifactKinds.KLib
     }

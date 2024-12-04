@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 var result = ""
 

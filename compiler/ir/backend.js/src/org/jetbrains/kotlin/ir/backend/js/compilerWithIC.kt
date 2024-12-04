@@ -5,141 +5,120 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.lower
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.PhaserState
-import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.config.phaser.PhaseConfig
+import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleCache
-import org.jetbrains.kotlin.ir.backend.js.ic.PersistentCacheConsumer
+import org.jetbrains.kotlin.ir.backend.js.ic.*
+import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
-import org.jetbrains.kotlin.ir.backend.js.utils.serialization.JsIrAstDeserializer
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.noUnboundLeft
-import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.js.ModuleKind
-import java.io.ByteArrayInputStream
+import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
+import java.io.File
 
-@Suppress("UNUSED_PARAMETER")
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-fun compileWithIC(
-    module: IrModuleFragment,
-    configuration: CompilerConfiguration,
-    deserializer: JsIrLinker,
-    dependencies: Collection<IrModuleFragment>,
-    mainArguments: List<String>? = null,
-    exportedDeclarations: Set<FqName> = emptySet(),
-    generateFullJs: Boolean = true,
-    generateDceJs: Boolean = false,
-    dceDriven: Boolean = false,
-    dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
-    es6mode: Boolean = false,
-    multiModule: Boolean = false,
-    relativeRequirePath: Boolean = false,
-    propertyLazyInitialization: Boolean = false,
-    verifySignatures: Boolean = true,
-    baseClassIntoMetadata: Boolean = false,
-    lowerPerModule: Boolean = false,
-    safeExternalBoolean: Boolean = false,
-    safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
-    filesToLower: Set<String>?,
-    cacheConsumer: PersistentCacheConsumer,
-) {
+class JsICContext(
+    private val mainArguments: List<String>?,
+    private val granularity: JsGenerationGranularity,
+    private val phaseConfig: PhaseConfig,
+    private val exportedDeclarations: Set<FqName> = emptySet(),
+) : PlatformDependentICContext {
 
-    val mainModule = module
-    val allModules = dependencies
-    val moduleDescriptor = module.descriptor
-    val irBuiltIns = module.irBuiltins
-    val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
+    override fun createIrFactory(): IrFactory =
+        IrFactoryImplForJsIC(WholeWorldStageController())
 
-    val context = JsIrBackendContext(
-        moduleDescriptor,
-        irBuiltIns,
-        symbolTable,
-        module,
-        exportedDeclarations,
-        configuration,
-        es6mode = es6mode,
-        dceRuntimeDiagnostic = dceRuntimeDiagnostic,
-        propertyLazyInitialization = propertyLazyInitialization,
-        baseClassIntoMetadata = baseClassIntoMetadata,
-        safeExternalBoolean = safeExternalBoolean,
-        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
-        icCompatibleIr2Js = true,
-    )
+    override fun createCompiler(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration
+    ): IrCompilerICInterface =
+        JsIrCompilerWithIC(mainModule, irBuiltIns, mainArguments, configuration, granularity, phaseConfig, exportedDeclarations)
 
-    // Load declarations referenced during `context` initialization
-    val irProviders = listOf(deserializer)
-    ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+    override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
+        JsSrcFileArtifact(srcFilePath, fragments as? JsIrProgramFragments, astArtifact)
 
-    deserializer.postProcess()
-    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
-
-    allModules.forEach {
-        moveBodilessDeclarationsToSeparatePlace(context, it)
-    }
-
-    generateJsTests(context, mainModule)
-
-    lowerPreservingTags(allModules, context, PhaseConfig(jsPhases), symbolTable.irFactory.stageController as WholeWorldStageController)
-
-    val transformer = IrModuleToJsTransformerTmp(
-        context,
-        mainArguments,
-        fullJs = generateFullJs,
-        dceJs = generateDceJs,
-        multiModule = multiModule,
-        relativeRequirePath = relativeRequirePath,
-    )
-
-    val dirtyFiles = filesToLower?.let { dirties ->
-        module.files.filter { it.fileEntry.name in dirties }
-    } ?: module.files
-
-    val ast = transformer.generateBinaryAst(dirtyFiles)
-
-    ast.entries.forEach { (path, bytes) -> cacheConsumer.commitBinaryAst(path, bytes) }
+    override fun createModuleArtifact(
+        moduleName: String,
+        fileArtifacts: List<SrcFileArtifact>,
+        artifactsDir: File?,
+        forceRebuildJs: Boolean,
+        externalModuleName: String?,
+    ): ModuleArtifact =
+        JsModuleArtifact(moduleName, fileArtifacts.map { it as JsSrcFileArtifact }, artifactsDir, forceRebuildJs, externalModuleName)
 }
 
-fun lowerPreservingTags(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext, phaseConfig: PhaseConfig, controller: WholeWorldStageController) {
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+class JsIrCompilerWithIC(
+    private val mainModule: IrModuleFragment,
+    irBuiltIns: IrBuiltIns,
+    private val mainArguments: List<String>?,
+    configuration: CompilerConfiguration,
+    granularity: JsGenerationGranularity,
+    private val phaseConfig: PhaseConfig,
+    exportedDeclarations: Set<FqName> = emptySet(),
+) : IrCompilerICInterface {
+    private val context: JsIrBackendContext
+
+    init {
+        val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
+
+        context = JsIrBackendContext(
+            mainModule.descriptor,
+            irBuiltIns,
+            symbolTable,
+            exportedDeclarations,
+            keep = emptySet(),
+            configuration = configuration,
+            granularity = granularity,
+            incrementalCacheEnabled = true,
+            mainCallArguments = mainArguments
+        )
+    }
+
+    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+        val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
+
+        allModules.forEach {
+            if (shouldGeneratePolyfills) {
+                collectNativeImplementations(context, it)
+            }
+            moveBodilessDeclarationsToSeparatePlace(context, it)
+        }
+
+        generateJsTests(context, mainModule, groupByPackage = false)
+
+        lowerPreservingTags(allModules, context, phaseConfig, context.irFactory.stageController as WholeWorldStageController)
+
+        val transformer = IrModuleToJsTransformer(context, shouldReferMainFunction = mainArguments != null)
+        return transformer.makeIrFragmentsGenerators(dirtyFiles, allModules)
+    }
+}
+
+fun lowerPreservingTags(
+    modules: Iterable<IrModuleFragment>,
+    context: JsIrBackendContext,
+    phaseConfig: PhaseConfig,
+    controller: WholeWorldStageController
+) {
     // Lower all the things
     controller.currentStage = 0
 
-    val phaserState = PhaserState<Iterable<IrModuleFragment>>()
+    val phaserState = PhaserState<IrModuleFragment>()
+    val jsLowerings = getJsLowerings(context.configuration)
 
-    loweringList.forEachIndexed { i, lowering ->
+    jsLowerings.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1
-        lowering.modulePhase.invoke(phaseConfig, phaserState, context, modules)
+        modules.forEach { module ->
+            lowering.invoke(phaseConfig, phaserState, context, module)
+        }
     }
 
-    controller.currentStage = pirLowerings.size + 1
-}
-
-
-@Suppress("UNUSED_PARAMETER")
-fun generateJsFromAst(
-    mainModuleName: String,
-    moduleKind: ModuleKind,
-    caches: Map<String, ModuleCache>,
-): CompilerResult {
-    val deserializer = JsIrAstDeserializer()
-    val fragments = JsIrProgram(caches.values.map { JsIrModule(it.name, it.name, it.asts.values.sortedBy { it.name }.mapNotNull { it.ast?.let { deserializer.deserialize(ByteArrayInputStream(it))} }) })
-    return CompilerResult(
-        generateSingleWrappedModuleBody(
-            mainModuleName,
-            moduleKind,
-            fragments.modules.flatMap { it.fragments },
-            sourceMapsInfo = null,
-            generateScriptModule = false,
-            generateCallToMain = true,
-        ), null
-    )
+    controller.currentStage = jsLowerings.size + 1
 }

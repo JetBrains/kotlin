@@ -19,15 +19,15 @@ import org.jetbrains.org.objectweb.asm.tree.*
 
 object TypeIntrinsics {
     @JvmStatic
-    fun instanceOf(v: InstructionAdapter, jetType: KotlinType, boxedAsmType: Type) {
-        val functionTypeArity = getFunctionTypeArity(jetType)
+    fun instanceOf(v: InstructionAdapter, kotlinType: KotlinType, boxedAsmType: Type) {
+        val functionTypeArity = getFunctionTypeArity(kotlinType)
         if (functionTypeArity >= 0) {
             v.iconst(functionTypeArity)
             v.typeIntrinsic(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR)
             return
         }
 
-        val suspendFunctionTypeArity = getSuspendFunctionTypeArity(jetType)
+        val suspendFunctionTypeArity = getSuspendFunctionTypeArity(kotlinType)
         if (suspendFunctionTypeArity >= 0) {
             val notSuspendLambda = Label()
             val end = Label()
@@ -49,7 +49,7 @@ object TypeIntrinsics {
             return
         }
 
-        val isMutableCollectionMethodName = getIsMutableCollectionMethodName(jetType)
+        val isMutableCollectionMethodName = getIsMutableCollectionMethodName(kotlinType)
         if (isMutableCollectionMethodName != null) {
             v.typeIntrinsic(isMutableCollectionMethodName, IS_MUTABLE_COLLECTION_METHOD_DESCRIPTOR)
             return
@@ -72,8 +72,8 @@ object TypeIntrinsics {
                 LdcInsnNode(Integer(value))
             }
 
-    @JvmStatic fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type) {
-        val functionTypeArity = getFunctionTypeArity(jetType)
+    @JvmStatic fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, kotlinType: KotlinType, asmType: Type) {
+        val functionTypeArity = getFunctionTypeArity(kotlinType)
         if (functionTypeArity >= 0) {
             instructions.insertBefore(instanceofInsn, iconstNode(functionTypeArity))
             instructions.insertBefore(instanceofInsn,
@@ -82,7 +82,7 @@ object TypeIntrinsics {
             return
         }
 
-        val isMutableCollectionMethodName = getIsMutableCollectionMethodName(jetType)
+        val isMutableCollectionMethodName = getIsMutableCollectionMethodName(kotlinType)
         if (isMutableCollectionMethodName != null) {
             instructions.insertBefore(instanceofInsn,
                                       typeIntrinsicNode(isMutableCollectionMethodName, IS_MUTABLE_COLLECTION_METHOD_DESCRIPTOR))
@@ -141,22 +141,22 @@ object TypeIntrinsics {
         FqNames.mutableMapEntry
     )
 
-    private fun getMutableCollectionMethodName(prefix: String, jetType: KotlinType): String? {
-        val fqName = getClassFqName(jetType)
+    private fun getMutableCollectionMethodName(prefix: String, kotlinType: KotlinType): String? {
+        val fqName = getClassFqName(kotlinType)
         if (fqName == null || fqName !in MUTABLE_COLLECTION_TYPE_FQ_NAMES) return null
         val baseName = if (fqName == FqNames.mutableMapEntry) "MutableMapEntry" else fqName.shortName().asString()
         return prefix + baseName
     }
 
-    private fun getIsMutableCollectionMethodName(jetType: KotlinType): String? = getMutableCollectionMethodName("is", jetType)
+    private fun getIsMutableCollectionMethodName(kotlinType: KotlinType): String? = getMutableCollectionMethodName("is", kotlinType)
 
-    private fun getAsMutableCollectionMethodName(jetType: KotlinType): String? = getMutableCollectionMethodName("as", jetType)
+    private fun getAsMutableCollectionMethodName(kotlinType: KotlinType): String? = getMutableCollectionMethodName("as", kotlinType)
 
     private val IS_MUTABLE_COLLECTION_METHOD_DESCRIPTOR =
             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"))
 
-    private fun getClassFqName(jetType: KotlinType): FqName? {
-        val classDescriptor = TypeUtils.getClassDescriptor(jetType) ?: return null
+    private fun getClassFqName(kotlinType: KotlinType): FqName? {
+        val classDescriptor = TypeUtils.getClassDescriptor(kotlinType) ?: return null
         return DescriptorUtils.getFqName(classDescriptor).toSafe()
     }
 

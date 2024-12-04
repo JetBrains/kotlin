@@ -1,18 +1,16 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.ComponentsXmlResourceTransformer
 import org.gradle.internal.jvm.Jvm
+import org.gradle.kotlin.dsl.support.serviceOf
 
 description = "Shaded Maven dependencies resolver"
 
-val JDK_18: String by rootProject.extra
-val jarBaseName = property("archivesBaseName") as String
+val jarBaseName = the<BasePluginExtension>().archivesName
 
 val embedded by configurations
 
 embedded.apply {
     exclude("org.slf4j", "slf4j-api")
-    exclude("org.eclipse.aether", "aether-api")
-    exclude("org.eclipse.aether", "aether-util")
-    exclude("org.eclipse.aether", "aether-spi")
 }
 
 plugins {
@@ -20,20 +18,36 @@ plugins {
     id("jps-compatible")
 }
 
-dependencies {
-    embedded(project(":kotlin-scripting-dependencies-maven")) { isTransitive = false }
-    embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
+val proguardLibraryJars by configurations.creating {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 
-    embedded("org.eclipse.aether:aether-connector-basic:1.1.0")
-    embedded("org.eclipse.aether:aether-transport-wagon:1.1.0")
-    embedded("org.eclipse.aether:aether-transport-file:1.1.0")
-    embedded("org.apache.maven:maven-core:3.8.1")
-    embedded("org.apache.maven.wagon:wagon-http:3.4.3")
+dependencies {
+    api(project(":kotlin-scripting-dependencies"))
+    proguardLibraryJars(project(":kotlin-scripting-dependencies"))
+
+    embedded(project(":kotlin-scripting-dependencies-maven")) { isTransitive = false }
+
+    embedded("com.google.guava:failureaccess:1.0.2")
+    embedded("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.2")
+    embedded("org.apache.maven.resolver:maven-resolver-transport-file:1.9.2")
+    embedded("org.apache.maven.resolver:maven-resolver-transport-wagon:1.9.2")
+    embedded("org.apache.maven.resolver:maven-resolver-impl:1.9.2")
+    embedded("org.apache.maven:maven-core:3.8.7")
+    embedded("org.apache.maven.wagon:wagon-http:3.5.3")
+    embedded(libs.apache.commons.io)
+
+    testImplementation(libs.junit4)
+    testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
+    testImplementation(project(":kotlin-scripting-dependencies-maven-all"))
 }
 
 sourceSets {
     "main" {}
-    "test" {}
+    "test" { projectDefault() }
 }
 
 publish()
@@ -45,15 +59,20 @@ javadocJar()
 val mavenPackagesToRelocate = listOf(
     "org.eclipse",
     "org.codehaus",
+    "org.jsoup",
+    "afu",
+    "org.aopalliance",
+    "org.checkerframework",
+    "org.sonatype"
 )
 
 val relocatedJar by task<ShadowJar> {
     configurations = listOf(embedded)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    destinationDirectory.set(File(buildDir, "libs"))
-    archiveClassifier.set("before-proguard")
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+    archiveClassifier.set("relocated")
 
-    transform(ComponentsXmlResourceTransformerPatched())
+    transform(ComponentsXmlResourceTransformer())
 
     if (kotlinBuildProperties.relocation) {
         (packagesToRelocate + mavenPackagesToRelocate).forEach {
@@ -62,16 +81,54 @@ val relocatedJar by task<ShadowJar> {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val normalizeComponentsXmlEndings by tasks.registering {
     dependsOn(relocatedJar)
+    val outputFile = layout.buildDirectory.file("$name/${ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH}")
+    val relocatedJarFile = relocatedJar.map { it.singleOutputFile(layout) }
+    val archiveOperations = serviceOf<ArchiveOperations>()
+    outputs.file(outputFile)
+
+    doFirst {
+        val componentsXml = archiveOperations.zipTree(relocatedJarFile.get()).matching {
+            include { it.path == ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH }
+        }.single().readText()
+        val processedComponentsXml = componentsXml.replace("\r\n", "\n")
+        val outputAsFile = outputFile.get().asFile
+        outputAsFile.parentFile.mkdirs()
+        outputAsFile.writeText(processedComponentsXml)
+    }
+}
+
+val normalizedJar by task<Jar> {
+    dependsOn(relocatedJar)
+    dependsOn(normalizeComponentsXmlEndings)
+
+    archiveClassifier.set("normalized")
+
+    from {
+        zipTree(relocatedJar.get().singleOutputFile(layout)).matching {
+            exclude(ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH)
+        }
+    }
+
+    into(ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH.substringBeforeLast("/")) {
+        from {
+            normalizeComponentsXmlEndings.map { it.singleOutputFile(layout) }
+        }
+    }
+}
+
+val proguard by task<CacheableProguardTask> {
+    dependsOn(normalizedJar)
     configuration("dependencies-maven.pro")
 
-    injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), relocatedJar.get().outputs.files)
+    injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), normalizedJar.get().outputs.files)
 
-    outjars(fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar"))
+    outjars(layout.buildDirectory.file(jarBaseName.map { "libs/$it-$version-after-proguard.jar" }))
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
 
+    libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
     libraryjars(
         files(
             javaLauncher.map {
@@ -79,32 +136,30 @@ val proguard by task<CacheableProguardTask> {
                     "jre/lib/rt.jar",
                     "../Classes/classes.jar",
                     jdkHome = it.metadata.installationPath.asFile
-                )
+                )!!
             },
             javaLauncher.map {
                 firstFromJavaHomeThatExists(
                     "jre/lib/jsse.jar",
                     "../Classes/jsse.jar",
                     jdkHome = it.metadata.installationPath.asFile
-                )
+                )!!
             },
             javaLauncher.map {
-                Jvm.forHome(it.metadata.installationPath.asFile).toolsJar
+                Jvm.forHome(it.metadata.installationPath.asFile).toolsJar!!
             }
         )
     )
-
 }
 
 val resultJar by task<Jar> {
-    val pack = if (kotlinBuildProperties.proguard) proguard else relocatedJar
+    val pack = if (kotlinBuildProperties.proguard) proguard else normalizedJar
     dependsOn(pack)
     setupPublicJar(jarBaseName)
     from {
-        zipTree(pack.get().singleOutputFile())
+        zipTree(pack.map { it.singleOutputFile(layout) })
     }
 }
 
-addArtifact("runtime", resultJar)
-addArtifact("runtimeElements", resultJar)
-addArtifact("archives", resultJar)
+
+setPublishableArtifact(resultJar)

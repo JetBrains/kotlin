@@ -1,8 +1,13 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: JavaClass.java
 public class JavaClass<T> {
-    public JavaClass(T t) {}
+    private T it;
 
-    public T foo() {}
+    public JavaClass(T t) {
+        it = t;
+    }
+
+    public T foo() { return it; }
 }
 
 // FILE: main.kt

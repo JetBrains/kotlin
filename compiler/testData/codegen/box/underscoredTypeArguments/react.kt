@@ -1,4 +1,4 @@
-// !LANGUAGE: +PartiallySpecifiedTypeArguments
+// LANGUAGE: +PartiallySpecifiedTypeArguments
 
 interface RProps
 open class RComponent<K, T> : Component<K, T>

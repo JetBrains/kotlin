@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ContractSyntaxV2
 import kotlin.contracts.*
 
 fun printStr(str: String?) contract [

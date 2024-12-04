@@ -1,11 +1,16 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
-
         mavenLocal()
-
         mavenCentral()
+        google()
+        gradlePluginPortal()
+    }
+
+    plugins {
+        id "org.jetbrains.kotlin.js" version "$kotlin_version"
+        id "org.jetbrains.kotlin.test.fixes.android" version "$test_fixes_version"
     }
 }
 
-rootProject.name = "lib2"
+includeBuild("../base")
+include("lib-2")

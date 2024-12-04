@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor {
@@ -142,7 +144,7 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
     public SimpleType getDefaultType() {
         List<TypeProjection> typeProjections = TypeUtils.getDefaultTypeProjections(getTypeConstructor().getParameters());
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                getAnnotations(),
+                DefaultTypeAttributeTranslator.INSTANCE.toAttributes(getAnnotations(), null, null),
                 getTypeConstructor(),
                 typeProjections,
                 false,
@@ -154,6 +156,12 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         throw new UnsupportedOperationException(); // TODO
+    }
+
+    @NotNull
+    @Override
+    public List<ReceiverParameterDescriptor> getContextReceivers() {
+        return Collections.emptyList();
     }
 
     @NotNull
@@ -316,13 +324,17 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
 
     @Nullable
     @Override
-    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
-        InlineClassRepresentation<SimpleType> representation = original.getInlineClassRepresentation();
-        //noinspection ConstantConditions
-        return representation == null ? null : new InlineClassRepresentation<SimpleType>(
-                representation.getUnderlyingPropertyName(),
-                substituteSimpleType(getInlineClassRepresentation().getUnderlyingType())
-        );
+    public ValueClassRepresentation<SimpleType> getValueClassRepresentation() {
+        ValueClassRepresentation<SimpleType> representation = original.getValueClassRepresentation();
+        if (representation == null) {
+            return null;
+        }
+        return representation.mapUnderlyingType(new Function1<SimpleType, SimpleType>() {
+            @Override
+            public SimpleType invoke(SimpleType type) {
+                return substituteSimpleType(type);
+            }
+        });
     }
 
     @Nullable

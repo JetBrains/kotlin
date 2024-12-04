@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = ERR<Unresolved call, [/foo(): kotlin.Unit]>
-substitutor = <empty substitutor>

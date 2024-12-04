@@ -1,13 +1,13 @@
 class Test : J {
+  private val j: J
+    field = j
+    private get
+
   constructor(j: J) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  private val j: J
-    field = j
-    private get
 
   @NotNull
   override fun returnNotNull(): @EnhancedNullability String {
@@ -36,3 +36,4 @@ class Test : J {
   }
 
 }
+

@@ -18,7 +18,7 @@ package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import kotlin.annotation.AnnotationTarget.*
@@ -37,7 +37,7 @@ fun <R> Function<R>.reflect(): KFunction<R>? {
     val annotation = javaClass.getAnnotation(Metadata::class.java) ?: return null
     val data = annotation.data1.takeUnless(Array<String>::isEmpty) ?: return null
     val (nameResolver, proto) = JvmProtoBufUtil.readFunctionDataFrom(data, annotation.data2)
-    val metadataVersion = JvmMetadataVersion(
+    val metadataVersion = MetadataVersion(
         annotation.metadataVersion,
         (annotation.extraInt and JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0
     )

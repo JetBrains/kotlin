@@ -62,6 +62,14 @@ inline const KInt* IntArrayAddressOfElementAt(const ArrayHeader* obj, KInt index
   return AddressOfElementAt<KInt>(obj, index);
 }
 
+inline KLong* LongArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
+  return AddressOfElementAt<KLong>(obj, index);
+}
+
+inline const KLong* LongArrayAddressOfElementAt(const ArrayHeader* obj, KInt index) {
+  return AddressOfElementAt<KLong>(obj, index);
+}
+
 // Consider aligning of base to sizeof(T).
 template <typename T>
 inline T* PrimitiveArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
@@ -87,8 +95,12 @@ extern "C" {
 
 OBJ_GETTER0(TheEmptyString);
 void Kotlin_io_Console_println0();
+void Kotlin_io_Console_println0ToStdErr();
 void Kotlin_NativePtrArray_set(KRef thiz, KInt index, KNativePtr value);
 KNativePtr Kotlin_NativePtrArray_get(KConstRef thiz, KInt index);
+RUNTIME_NOTHROW RUNTIME_PURE KRef* Kotlin_arrayGetElementAddress(KRef array, KInt index);
+RUNTIME_NOTHROW RUNTIME_PURE KInt* Kotlin_intArrayGetElementAddress(KRef array, KInt index);
+RUNTIME_NOTHROW RUNTIME_PURE KLong* Kotlin_longArrayGetElementAddress(KRef array, KInt index);
 
 #ifdef __cplusplus
 }

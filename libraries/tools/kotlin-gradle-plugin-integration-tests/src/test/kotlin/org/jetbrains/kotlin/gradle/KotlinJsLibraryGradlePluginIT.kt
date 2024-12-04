@@ -5,89 +5,79 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.Test
-import java.util.zip.ZipFile
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution.Companion.DIST
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.reader
 import kotlin.test.assertNotNull
 
-class KotlinJsIrLibraryGradlePluginIT : BaseGradleIT() {
-    // TODO: This suite is failing with deprecation error on Gradle <7.0 versions
-    // Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("7.0")
+// TODO: This suite is failing with deprecation error on Gradle <7.0 versions
+// Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
+abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
 
-    override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(
-            jsIrBackend = true,
-            jsCompilerType = KotlinJsCompilerType.IR
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        jsOptions = BuildOptions.JsOptions(
         )
+    )
 
-    @Test
-    fun testSimpleJsBinaryLibrary() {
-        val project = Project("simple-js-library")
-
-        project.setupWorkingDir()
-        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-        project.build("build") {
-            assertSuccessful()
-
-            assertFileExists("build/productionLibrary/js-library.js")
-            assertFileExists("build/productionLibrary/package.json")
-            assertFileExists("build/productionLibrary/main.js")
-        }
-    }
-
-    @Test
-    fun testJsBinaryLibraryAndExecutable() {
-        val project = Project("js-library-with-executable")
-
-        project.setupWorkingDir()
-        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-        project.build("build") {
-            assertSuccessful()
-
-            assertFileExists("build/productionLibrary/js-library.js")
-            assertFileExists("build/productionLibrary/package.json")
-            assertFileExists("build/productionLibrary/main.js")
-        }
-    }
-
-    @Test
-    fun testJsBinaryLibraryAndExecutableForBrowserAndNodejs() {
-        val project = Project("js-library-with-executable-browser-nodejs")
-
-        project.setupWorkingDir()
-        project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
-        project.build("build") {
-            assertSuccessful()
-
-            assertFileExists("build/productionLibrary/js-library.js")
-            assertFileExists("build/productionLibrary/package.json")
-            assertFileExists("build/productionLibrary/main.js")
-
-            assertFileExists("build/distributions/js-library.js")
-        }
-    }
-
-    @Test
-    fun testPublishSourcesJarTaskShouldAlsoIncludeDukatTaskOutputs() {
-        with(
-            Project(
-                "js-library-ir",
-                minLogLevel = LogLevel.INFO
-            )
-        ) {
-            setupWorkingDir()
-            build("sourcesJar") {
-                assertSuccessful()
-                val sourcesJarFilePath = "build/libs/js-library-ir-kotlin-sources.jar"
-                assertFileExists(sourcesJarFilePath)
-                ZipFile(projectDir.resolve(sourcesJarFilePath)).use {
-                    assertNotNull(it.getEntry("jsMain/index.module_decamelize.kt"))
-                }
+    @DisplayName("simple binary library")
+    @GradleTest
+    fun testSimpleJsBinaryLibrary(gradleVersion: GradleVersion) {
+        project("simple-js-library", gradleVersion) {
+            build("build") {
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/js-library.js")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/package.json")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/main.js")
+                projectPath.resolve("build/$DIST/js/productionLibrary/package.json").reader()
+                    .use { Gson().fromJson(it, JsonObject::class.java) }
+                    .getAsJsonObject("dependencies")
+                    ?.entrySet()?.associate { (k, v) -> k to v.asString }
+                    .let { dependencies ->
+                        assertNotNull(dependencies?.get("decamelize")) { "Direct npm dependency missing in package.json" }
+                        assertNotNull(dependencies?.get("@js-joda/core")) { "Transitive npm dependency missing in package.json" }
+                    }
             }
         }
     }
+
+    @DisplayName("binary library and executable")
+    @GradleTest
+    fun testJsBinaryLibraryAndExecutable(gradleVersion: GradleVersion) {
+        project("js-library-with-executable", gradleVersion) {
+            build("build") {
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/js-library.js")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/package.json")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/main.js")
+            }
+        }
+    }
+
+    @DisplayName("binary library and executable both for browser and nodejs")
+    @GradleTest
+    fun testJsBinaryLibraryAndExecutableForBrowserAndNodejs(gradleVersion: GradleVersion) {
+        project("js-library-with-executable-browser-nodejs", gradleVersion) {
+            build("build") {
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/js-library.js")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/package.json")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/main.js")
+
+                assertFileInProjectExists("build/$DIST/js/productionExecutable/js-library.js")
+            }
+        }
+    }
+}
+
+@DisplayName("Kotlin/JS K1 IR library")
+@JsGradlePluginTests
+class KotlinK1JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+@DisplayName("Kotlin/JS K2 IR library")
+@JsGradlePluginTests
+class KotlinK2JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }

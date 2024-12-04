@@ -8,7 +8,7 @@ FILE: intersectionOverrideWithImplicitTypes.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override fun <T, R> foo(value: R|T|, producer: R|(T) -> R|): R|R| {
+        public open override fun <T, R> foo(value: R|T|, producer: R|(T) -> R|): R|R| {
             ^foo Null(null)!!
         }
 

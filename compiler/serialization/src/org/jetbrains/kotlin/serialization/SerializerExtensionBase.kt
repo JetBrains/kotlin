@@ -62,6 +62,11 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
         for (annotation in descriptor.nonSourceAnnotations) {
             proto.addExtensionOrNull(protocol.functionAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
+        protocol.functionExtensionReceiverAnnotation?.let { extension ->
+            for (annotation in descriptor.extensionReceiverParameter?.nonSourceAnnotations.orEmpty()) {
+                proto.addExtensionOrNull(extension, annotationSerializer.serializeAnnotation(annotation))
+            }
+        }
     }
 
     override fun serializeProperty(
@@ -78,6 +83,21 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
         }
         for (annotation in descriptor.setter?.nonSourceAnnotations.orEmpty()) {
             proto.addExtensionOrNull(protocol.propertySetterAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+        protocol.propertyExtensionReceiverAnnotation?.let { extension ->
+            for (annotation in descriptor.extensionReceiverParameter?.nonSourceAnnotations.orEmpty()) {
+                proto.addExtensionOrNull(extension, annotationSerializer.serializeAnnotation(annotation))
+            }
+        }
+        protocol.propertyBackingFieldAnnotation?.let { extension ->
+            for (annotation in descriptor.backingField?.nonSourceAnnotations.orEmpty()) {
+                proto.addExtensionOrNull(extension, annotationSerializer.serializeAnnotation(annotation))
+            }
+        }
+        protocol.propertyDelegatedFieldAnnotation?.let { extension ->
+            for (annotation in descriptor.delegateField?.nonSourceAnnotations.orEmpty()) {
+                proto.addExtensionOrNull(extension, annotationSerializer.serializeAnnotation(annotation))
+            }
         }
         val constantInitializer = descriptor.compileTimeInitializer ?: return
         if (constantInitializer !is NullValue) {

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.dump
@@ -671,12 +671,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(flexibleType: ConeFlexibleType) {
-        if (flexibleType.lowerBound.nullability == ConeNullability.NOT_NULL &&
-            flexibleType.upperBound.nullability == ConeNullability.NULLABLE &&
+        if (!flexibleType.lowerBound.isMarkedNullable &&
+            flexibleType.upperBound.isMarkedNullable &&
             AbstractStrictEqualityTypeChecker.strictEqualTypes(
                 session.typeContext,
                 flexibleType.lowerBound,
-                flexibleType.upperBound.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+                flexibleType.upperBound.withNullability(nullable = false, session.typeContext)
             )
         ) {
             generate(flexibleType.lowerBound)
@@ -727,7 +727,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(variableAssignment: FirVariableAssignment) {
-        generateReceiver(variableAssignment)
         generate(variableAssignment.lValue)
         +" = "
         generate(variableAssignment.rValue)
@@ -760,7 +759,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generate(expression: FirConstExpression<*>) {
+    private fun FlowContent.generate(expression: FirLiteralExpression) {
         val value = expression.value
         if (value == null && expression.kind != ConstantValueKind.Null) {
             return error {
@@ -824,6 +823,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 +value.toString()
                 +">"
             }
+            ConstantValueKind.Error -> {
+                +"ERROR_CONSTANT"
+            }
         }
 
     }
@@ -840,14 +842,14 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(type: ConeKotlinType) {
         when (type) {
-            is ConeClassErrorType -> error { +type.diagnostic.reason }
+            is ConeErrorType -> error { +type.diagnostic.reason }
             is ConeClassLikeType -> return generate(type)
             is ConeTypeParameterType -> resolved {
                 symbolRef(type.lookupTag.symbol) {
                     simpleName(type.lookupTag.name)
                 }
             }
-            is ConeTypeVariableType -> resolved { +type.lookupTag.name.asString() }
+            is ConeTypeVariableType -> resolved { +type.typeConstructor.name.asString() }
             is ConeFlexibleType -> resolved { generate(type) }
             is ConeCapturedType -> inlineUnsupported(type)
             is ConeDefinitelyNotNullType -> resolved {
@@ -896,7 +898,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(typeRef: FirTypeRef) {
         when (typeRef) {
             is FirErrorTypeRef -> error { +typeRef.diagnostic.reason }
-            is FirResolvedTypeRef -> generate(typeRef.type)
+            is FirResolvedTypeRef -> generate(typeRef.coneType)
             is FirImplicitTypeRef -> unresolved {
                 implicits++
                 keyword("<implicit>")
@@ -964,12 +966,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generateReceiver(declaration: FirCallableDeclaration) {
-        generateReceiver(declaration.receiverTypeRef)
+        generateReceiver(declaration.receiverParameter)
     }
 
-    private fun FlowContent.generateReceiver(receiverTypeRef: FirTypeRef?) {
-        receiverTypeRef ?: return
-        generate(receiverTypeRef)
+    private fun FlowContent.generateReceiver(receiverParameter: FirReceiverParameter?) {
+        receiverParameter ?: return
+        generate(receiverParameter.typeRef)
         +"."
     }
 
@@ -1116,7 +1118,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirFunction) {
         describeTypeParameters(fir)
 
-        fir.receiverTypeRef?.let {
+        fir.receiverParameter?.typeRef?.let {
             +"("
             generate(it)
             +")."
@@ -1135,7 +1137,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirVariable) {
         if (fir is FirTypeParametersOwner) describeTypeParameters(fir)
 
-        fir.receiverTypeRef?.let {
+        fir.receiverParameter?.typeRef?.let {
             +"("
             generate(it)
             +")."
@@ -1242,7 +1244,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is ConeInapplicableCandidateError -> {
                 describeVerbose(diagnostic.candidate.symbol)
                 br
-                diagnostic.candidate.system.errors.forEach { callDiagnostic ->
+                diagnostic.candidate.errors.forEach { callDiagnostic ->
                     when (callDiagnostic) {
                         is NewConstraintError -> {
                             ident()
@@ -1299,6 +1301,18 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     simpleName(reference.name)
                 }
             }
+            is FirResolvedErrorReference -> {
+                errorWithDiagnostic {
+                    resolved {
+                        symbolRef(reference.resolvedSymbol) {
+                            simpleName(reference.name)
+                        }
+                    }
+                    diagnosticHover {
+                        generate(reference.diagnostic)
+                    }
+                }
+            }
             is FirResolvedNamedReference -> {
                 resolved {
                     symbolRef(reference.resolvedSymbol) {
@@ -1309,7 +1323,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generateReceiver(access: FirQualifiedAccess) {
+    private fun FlowContent.generateReceiver(access: FirQualifiedAccessExpression) {
         val explicitReceiver = access.explicitReceiver
         if (explicitReceiver != null) {
             generate(explicitReceiver)
@@ -1455,7 +1469,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(unitExpression: FirUnitExpression) {
-        generate(unitExpression.typeRef)
+        generate(unitExpression.resolvedType)
     }
 
     private fun FlowContent.generate(breakExpression: FirBreakExpression) {
@@ -1516,7 +1530,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(expression: FirExpression) {
-        exprType(expression.typeRef) {
+        exprType(expression.resolvedType.toFirResolvedTypeRef()) {
             when (expression) {
                 is FirBlock -> generateBlockIfAny(expression)
                 is FirGetClassCall -> generate(expression)
@@ -1531,7 +1545,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirElseIfTrueCondition -> generate(expression)
                 is FirWhenExpression -> generate(expression, isStatement = false)
                 is FirTryExpression -> generate(expression, isStatement = false)
-                is FirConstExpression<*> -> generate(expression)
+                is FirLiteralExpression -> generate(expression)
                 is FirReturnExpression -> {
                     span("return-label") {
                         symbolRef(expression.target.labeledElement.symbol) {
@@ -1559,14 +1573,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     generate(expression.expression)
 
                 }
-                is FirLambdaArgumentExpression -> {
-                    keyword("lambda")
-                    +" = "
-                    generate(expression.expression)
-                }
                 is FirTypeOperatorCall -> generate(expression)
                 is FirEqualityOperatorCall -> generate(expression)
-                is FirBinaryLogicExpression -> generate(expression)
+                is FirBooleanOperatorExpression -> generate(expression)
                 is FirCheckNotNullCall -> generate(expression)
                 is FirElvisExpression -> generate(expression)
                 is FirVarargArgumentsExpression -> generate(expression)
@@ -1576,6 +1585,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirCheckedSafeCallSubject -> {
                     +"\$subj\$"
                 }
+                is FirSmartCastExpression -> generate(expression)
                 else -> inlineUnsupported(expression)
             }
         }
@@ -1587,26 +1597,28 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generate(comparisonExpression.right)
     }
 
+    private fun FlowContent.generate(smartCastExpression: FirSmartCastExpression) {
+        span(classes = "smart-cast") {
+            generate(smartCastExpression.originalExpression)
+        }
+    }
+
     private fun FlowContent.generate(safeCallExpression: FirSafeCallExpression) {
         generate(safeCallExpression.receiver)
 
         +"?."
 
-        val nestedQualifier = safeCallExpression.regularQualifiedAccess
-        if (nestedQualifier.explicitReceiver == safeCallExpression.checkedSubjectRef.value) {
-            when (nestedQualifier) {
-                is FirFunctionCall -> {
-                    return generate(nestedQualifier, skipReceiver = true)
-                }
-                is FirQualifiedAccessExpression -> {
-                    return generate(nestedQualifier, skipReceiver = true)
-                }
+        val selector = safeCallExpression.selector
+        if (selector is FirQualifiedAccessExpression && selector.explicitReceiver == safeCallExpression.checkedSubjectRef.value) {
+            return when (selector) {
+                is FirFunctionCall -> generate(selector, skipReceiver = true)
+                else -> generate(selector, skipReceiver = true)
             }
         }
 
         +"{ "
 
-        generate(nestedQualifier)
+        generate(selector)
 
         +" }"
     }
@@ -1620,10 +1632,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generateList(varargArgumentExpression.arguments, separator = ",") { generate(it) }
     }
 
-    private fun FlowContent.generate(binaryLogicExpression: FirBinaryLogicExpression) {
-        generate(binaryLogicExpression.leftOperand)
-        +" ${binaryLogicExpression.kind.token} "
-        generate(binaryLogicExpression.rightOperand)
+    private fun FlowContent.generate(booleanOperatorExpression: FirBooleanOperatorExpression) {
+        generate(booleanOperatorExpression.leftOperand)
+        +" ${booleanOperatorExpression.kind.token} "
+        generate(booleanOperatorExpression.rightOperand)
     }
 
     private fun FlowContent.generate(qualifiedAccessExpression: FirQualifiedAccessExpression, skipReceiver: Boolean = false) {
@@ -1763,7 +1775,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             iline {
                 generateLabel(anonymousFunction.label)
                 keyword("fun ")
-                generateReceiver(anonymousFunction.receiverTypeRef)
+                generateReceiver(anonymousFunction.receiverParameter)
 
                 +"("
                 generateList(anonymousFunction.valueParameters) {

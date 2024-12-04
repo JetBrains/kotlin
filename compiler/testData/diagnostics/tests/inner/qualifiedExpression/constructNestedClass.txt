@@ -3,8 +3,8 @@ package
 public fun f1(): Outer
 public fun f2(): Outer.Nested
 public fun f3(): Outer.Nested.NestedNested
-public fun f4(): [ERROR : Error function type]
-public fun f5(): [ERROR : Error function type]
+public fun f4(): [Error type: Return type for function cannot be resolved]
+public fun f5(): [Error type: Return type for function cannot be resolved]
 public fun f6(): Outer.Inner
 public fun f7(): Outer.Inner.InnerInner
 

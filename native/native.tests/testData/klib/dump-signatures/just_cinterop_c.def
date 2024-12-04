@@ -1,0 +1,33 @@
+## FIR_IDENTICAL
+language = C
+package = just_cinterop_c
+---
+typedef struct my_struct {
+    signed char c;
+    int i;
+    short s;
+} my_struct_t;
+
+static signed char do_signed_char(signed char x) {
+   return x;
+}
+
+static short do_short(short x) {
+   return x;
+}
+
+static int do_int(int x) {
+   return x;
+}
+
+static void* do_void_ptr(void* x) {
+   return x;
+}
+
+static my_struct_t do_my_struct_t(my_struct_t x) {
+   return x;
+}
+
+static my_struct_t* do_my_struct_t_ptr(my_struct_t* x) {
+   return x;
+}

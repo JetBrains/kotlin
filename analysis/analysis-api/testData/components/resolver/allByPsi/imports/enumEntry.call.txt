@@ -1,0 +1,95 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(22,34): 'package main'
+  null
+
+KtNameReferenceExpression(30,34): 'main'
+  null
+
+KtImportList(36,133): 'import one.two.Color'
+  null
+
+KtImportDirective(36,56): 'import one.two.Color'
+  null
+
+KtDotQualifiedExpression(43,56): 'one.two.Color'
+  null
+
+KtDotQualifiedExpression(43,50): 'one.two'
+  null
+
+KtNameReferenceExpression(43,46): 'one'
+  null
+
+KtNameReferenceExpression(47,50): 'two'
+  null
+
+KtNameReferenceExpression(51,56): 'Color'
+  null
+
+KtImportDirective(57,83): 'import one.two.Color.Black'
+  null
+
+KtDotQualifiedExpression(64,83): 'one.two.Color.Black'
+  null
+
+KtDotQualifiedExpression(64,77): 'one.two.Color'
+  null
+
+KtDotQualifiedExpression(64,71): 'one.two'
+  null
+
+KtNameReferenceExpression(64,67): 'one'
+  null
+
+KtNameReferenceExpression(68,71): 'two'
+  null
+
+KtNameReferenceExpression(72,77): 'Color'
+  null
+
+KtNameReferenceExpression(78,83): 'Black'
+  null
+
+KtImportDirective(84,110): 'import one.two.Color.Green'
+  null
+
+KtDotQualifiedExpression(91,110): 'one.two.Color.Green'
+  null
+
+KtDotQualifiedExpression(91,104): 'one.two.Color'
+  null
+
+KtDotQualifiedExpression(91,98): 'one.two'
+  null
+
+KtNameReferenceExpression(91,94): 'one'
+  null
+
+KtNameReferenceExpression(95,98): 'two'
+  null
+
+KtNameReferenceExpression(99,104): 'Color'
+  null
+
+KtNameReferenceExpression(105,110): 'Green'
+  null
+
+KtImportDirective(111,133): 'import one.two.Color.*'
+  null
+
+KtDotQualifiedExpression(118,131): 'one.two.Color'
+  null
+
+KtDotQualifiedExpression(118,125): 'one.two'
+  null
+
+KtNameReferenceExpression(118,121): 'one'
+  null
+
+KtNameReferenceExpression(122,125): 'two'
+  null
+
+KtNameReferenceExpression(126,131): 'Color'
+  null

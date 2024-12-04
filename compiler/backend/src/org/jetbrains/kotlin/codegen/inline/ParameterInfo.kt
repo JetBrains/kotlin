@@ -27,8 +27,10 @@ open class ParameterInfo(
     val declarationIndex: Int,
     val typeOnStack: Type = type
 ) {
+    // Parameters of an anonymous object constructor are all represented as locals, but some of them
+    // are also stored in fields.
+    var fieldEquivalent: CapturedParamInfo? = null
 
-    var isCaptured: Boolean = false
     var functionalArgument: FunctionalArgument? = null
 
     val isSkippedOrRemapped: Boolean

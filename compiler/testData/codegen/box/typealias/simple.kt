@@ -1,3 +1,4 @@
+
 typealias S = String
 
 typealias SF<T> = (T) -> S

@@ -1,0 +1,72 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+class Foo {
+ var counter: Int = 0
+ @Composable fun A() {
+    print("hello world")
+ }
+ @Composable fun B() {
+    print(counter)
+ }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 0)
+class Foo {
+  var counter: Int = 0
+  @Composable
+  fun A(%composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(A):Test.kt")
+    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("hello world")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.A(%composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  @Composable
+  fun B(%composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(B):Test.kt")
+    val %dirty = %changed
+    if (%changed and 0b0110 == 0) {
+      %dirty = %dirty or if (%composer.changedInstance(<this>)) 0b0100 else 0b0010
+    }
+    if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %dirty, -1, <>)
+      }
+      print(counter)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.B(%composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  static val %stable: Int = 8
+}

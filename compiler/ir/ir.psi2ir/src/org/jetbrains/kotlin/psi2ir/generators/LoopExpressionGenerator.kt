@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class LoopExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+internal class LoopExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression {
         val irLoop = IrWhileLoopImpl(
             ktWhile.startOffsetSkippingComments, ktWhile.endOffset,
@@ -191,7 +192,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         val irLoopParameter =
             if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null) {
                 val loopParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
-                context.symbolTable.declareVariable(
+                context.symbolTable.descriptorExtension.declareVariable(
                     ktLoopParameter.startOffsetSkippingComments, ktLoopParameter.endOffset, IrDeclarationOrigin.FOR_LOOP_VARIABLE,
                     loopParameter, loopParameter.type.toIrType(),
                     irNextCall
@@ -202,10 +203,16 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         irInnerBody.statements.add(irLoopParameter)
 
         if (ktLoopDestructuringDeclaration != null) {
+            val firstContainerValue = VariableLValue(context, irLoopParameter)
             statementGenerator.declareComponentVariablesInBlock(
                 ktLoopDestructuringDeclaration,
                 irInnerBody,
-                VariableLValue(context, irLoopParameter)
+                firstContainerValue,
+                if (context.extensions.debugInfoOnlyOnVariablesInDestructuringDeclarations) {
+                    VariableLValue(context, irLoopParameter, startOffset = SYNTHETIC_OFFSET, endOffset = SYNTHETIC_OFFSET)
+                } else {
+                    firstContainerValue
+                }
             )
         }
 

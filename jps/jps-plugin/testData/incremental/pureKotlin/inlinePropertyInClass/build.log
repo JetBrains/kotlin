@@ -1,0 +1,51 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/inline/A.class
+End of files
+Compiling files:
+  src/inline.kt
+End of files
+After build round. Marked as dirty by Kotlin:
+  src/useGetter.kt
+  src/useSetter.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/usage/UseSetterKt.class
+  out/production/module/usage2/UseGetterKt.class
+End of files
+Compiling files:
+  src/useGetter.kt
+  src/useSetter.kt
+End of files
+Exit code: OK
+------------------------------------------
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/inline/A.class
+End of files
+Compiling files:
+  src/inline.kt
+End of files
+After build round. Marked as dirty by Kotlin:
+  src/useGetter.kt
+  src/useSetter.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/usage/UseSetterKt.class
+  out/production/module/usage2/UseGetterKt.class
+End of files
+Compiling files:
+  src/useGetter.kt
+  src/useSetter.kt
+End of files
+Exit code: OK
+------------------------------------------

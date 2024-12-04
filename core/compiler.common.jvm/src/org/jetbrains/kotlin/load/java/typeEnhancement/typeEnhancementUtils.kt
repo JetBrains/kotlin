@@ -38,6 +38,8 @@ fun JavaTypeQualifiers.computeQualifiersForOverride(
     isForVarargParameter: Boolean,
     ignoreDeclarationNullabilityAnnotations: Boolean
 ): JavaTypeQualifiers {
+    // TODO(KT-72620) If this is enhanced to DNN for warning but some super qualifier is enhanced to NOT_NULL for error, we basically
+    //  lose the enhancement for warning.
     val newNullabilityForErrors = superQualifiers.mapNotNull { it.nullabilityForErrors }.toSet()
         .select(nullabilityForErrors, isCovariant)
     val newNullability = newNullabilityForErrors ?: superQualifiers.mapNotNull { it.nullability }.toSet()
@@ -49,11 +51,21 @@ fun JavaTypeQualifiers.computeQualifiersForOverride(
     val realNullability = newNullability?.takeUnless {
         ignoreDeclarationNullabilityAnnotations || (isForVarargParameter && it == NullabilityQualifier.NULLABLE)
     }
+    val isForWarning = realNullability != null && newNullabilityForErrors == null
+    val definitelyNotNull =
+        realNullability == NullabilityQualifier.NOT_NULL &&
+                (isDefinitelyNotNullAndSameSeverity(isForWarning) ||
+                        superQualifiers.any { it.isDefinitelyNotNullAndSameSeverity(isForWarning) })
+
     return JavaTypeQualifiers(
         realNullability, newMutability,
-        realNullability == NullabilityQualifier.NOT_NULL && (definitelyNotNull || superQualifiers.any { it.definitelyNotNull }),
-        realNullability != null && newNullabilityForErrors != newNullability
+        definitelyNotNull,
+        isForWarning
     )
+}
+
+private fun JavaTypeQualifiers.isDefinitelyNotNullAndSameSeverity(isForWarning: Boolean): Boolean {
+    return isNullabilityQualifierForWarning == isForWarning && definitelyNotNull
 }
 
 fun TypeSystemCommonBackendContext.hasEnhancedNullability(type: KotlinTypeMarker): Boolean =

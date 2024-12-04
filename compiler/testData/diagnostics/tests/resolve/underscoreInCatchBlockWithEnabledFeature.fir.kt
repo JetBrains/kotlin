@@ -1,5 +1,6 @@
-// !LANGUAGE: +ForbidReferencingToUnderscoreNamedParameterOfCatchBlock
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidReferencingToUnderscoreNamedParameterOfCatchBlock
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION
 // FULL_JDK
 
 fun foo() {
@@ -13,12 +14,12 @@ fun foo() {
     } catch (_: Exception) {
         val x = {
             val x2 = {
-                val x3 = { y: Int ->
-                    val x4 = { _: Int ->
+                val x3 = <!UNRESOLVED_REFERENCE!>{ y: Int ->
+                    val x4 = <!UNRESOLVED_REFERENCE!>{ _: Int ->
                         <!UNRESOLVED_REFERENCE!>`_`<!>
-                    }
+                    }<!>
                     <!UNRESOLVED_REFERENCE!>`_`<!>
-                }
+                }<!>
                 <!UNRESOLVED_REFERENCE!>`_`<!>
                 10
             }
@@ -29,7 +30,7 @@ fun foo() {
         }
     } catch (_: Exception) {
         <!UNRESOLVED_REFERENCE!>`_`<!>.stackTrace
-        val y1 = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>
+        val y1 = <!UNRESOLVED_REFERENCE!>_<!>
         val y2 = (<!UNRESOLVED_REFERENCE!>`_`<!>)
     }
     try {

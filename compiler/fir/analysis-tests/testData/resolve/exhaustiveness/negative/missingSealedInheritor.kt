@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 
 sealed class Base
@@ -44,7 +45,7 @@ fun test_2(base: Base?) {
 }
 
 fun test_3(base: Base) {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (base) {
+    <!NO_ELSE_IN_WHEN!>when<!> (base) {
         is A -> 1
     }
 }

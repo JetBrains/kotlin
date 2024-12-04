@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFr
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasInternalAnnotationForResolve
 import org.jetbrains.kotlin.resolve.descriptorUtil.isInternalAnnotationForResolve
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
@@ -135,10 +137,12 @@ internal class ConstraintSystemImpl(
     }
 
     override val resultingSubstitutor: TypeSubstitutor
-        get() = getSubstitutor(substituteOriginal = true) { ErrorUtils.createUninferredParameterType(it.originalTypeParameter) }
+        get() = getSubstitutor(substituteOriginal = true) {
+            ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_TYPE_VARIABLE, it.originalTypeParameter.name.asString())
+        }
 
     override val currentSubstitutor: TypeSubstitutor
-        get() = getSubstitutor(substituteOriginal = true) { TypeUtils.DONT_CARE }
+        get() = getSubstitutor(substituteOriginal = true) { DONT_CARE }
 
     private fun getSubstitutor(substituteOriginal: Boolean, getDefaultValue: (TypeVariable) -> KotlinType): TypeSubstitutor {
         val parameterToInferredValueMap = getParameterToInferredValueMap(allTypeParameterBounds, getDefaultValue, substituteOriginal)
@@ -152,7 +156,9 @@ internal class ConstraintSystemImpl(
     }
 
     private fun satisfyInitialConstraints(): Boolean {
-        val substitutor = getSubstitutor(substituteOriginal = false) { ErrorUtils.createUninferredParameterType(it.originalTypeParameter) }
+        val substitutor = getSubstitutor(substituteOriginal = false) {
+            ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_TYPE_VARIABLE, it.originalTypeParameter.name.asString())
+        }
         fun KotlinType.substitute(): KotlinType? = substitutor.substitute(this, Variance.INVARIANT)
 
         return initialConstraints.all { (kind, subtype, superType, position) ->

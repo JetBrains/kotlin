@@ -1,4 +1,5 @@
-// !LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +TypeInferenceOnCallsWithSelfTypes
 
 // FILE: JavaWriterAppender.java
 public class JavaWriterAppender {

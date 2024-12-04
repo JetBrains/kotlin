@@ -1,0 +1,23 @@
+KT element: KtObjectDeclaration
+FIR element: FirAnonymousObjectImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+object : R|kotlin/Any| {
+    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+        super<R|kotlin/Any|>()
+    }
+
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] objectLiteral.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        object : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

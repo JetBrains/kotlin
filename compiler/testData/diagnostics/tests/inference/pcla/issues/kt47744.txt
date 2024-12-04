@@ -1,0 +1,39 @@
+package
+
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> flow(/*0*/ block: suspend FlowCollector<T>.() -> kotlin.Unit): Flow<T>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> produce(/*0*/ block: suspend SendChannel<E>.() -> kotlin.Unit): kotlin.Unit
+public inline fun </*0*/ R> select(/*0*/ crossinline builder: SelectBuilder<R>.() -> kotlin.Unit): R
+public fun test(): kotlin.Unit
+
+public final class Flow</*0*/ out T> {
+    public constructor Flow</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FlowCollector</*0*/ in T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SelectBuilder</*0*/ in R> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract operator fun </*0*/ P, /*1*/ Q> SelectClause2<P, Q>.invoke(/*0*/ param: P, /*1*/ block: suspend (Q) -> R): kotlin.Unit
+}
+
+public interface SelectClause2</*0*/ in P, /*1*/ out Q> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface SendChannel</*0*/ in E> {
+    public abstract val onSend: SelectClause2<E, SendChannel<E>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,7 +1,8 @@
-// !LANGUAGE: -JvmStaticInInterface
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -JvmStaticInInterface
+// DIAGNOSTICS: -UNUSED_VARIABLE
 fun main() {
-    @JvmStatic fun a(){
+    <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@JvmStatic<!> fun a(){
 
     }
 }

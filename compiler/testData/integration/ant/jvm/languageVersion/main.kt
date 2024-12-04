@@ -1,1 +1,2 @@
-interface A : suspend () -> Unit
+@JvmInline
+value class Holder<T>(val value: T)

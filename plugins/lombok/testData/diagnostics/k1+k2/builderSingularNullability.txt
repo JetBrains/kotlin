@@ -1,0 +1,55 @@
+package
+
+public fun </*0*/ T> assertEquals(/*0*/ a: T, /*1*/ b: T): kotlin.Unit
+public fun test_1(): kotlin.Unit
+public fun test_2(): kotlin.Unit
+public fun test_3(): kotlin.Unit
+
+@lombok.Builder @lombok.Data public open class User {
+    public constructor User()
+    @lombok.Singular private final var names: kotlin.collections.(Mutable)List<kotlin.String!>!
+    @lombok.Singular private final var pairs: kotlin.collections.(Mutable)Map<kotlin.Int!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open /*synthesized*/ fun getNames(): kotlin.collections.(Mutable)List<kotlin.String!>!
+    public open /*synthesized*/ fun getPairs(): kotlin.collections.(Mutable)Map<kotlin.Int!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open /*synthesized*/ fun setNames(/*0*/ names: kotlin.collections.(Mutable)List<kotlin.String!>!): kotlin.Unit
+    public open /*synthesized*/ fun setPairs(/*0*/ pairs: kotlin.collections.(Mutable)Map<kotlin.Int!, kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun builder(): User.UserBuilder
+}
+
+@lombok.Builder @lombok.Data public open class UserWithNull {
+    public constructor UserWithNull()
+    @lombok.Singular(ignoreNullCollections = true) private final var names: kotlin.collections.(Mutable)List<kotlin.String!>!
+    @lombok.Singular(ignoreNullCollections = true) private final var pairs: kotlin.collections.(Mutable)Map<kotlin.Int!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open /*synthesized*/ fun getNames(): kotlin.collections.(Mutable)List<kotlin.String!>!
+    public open /*synthesized*/ fun getPairs(): kotlin.collections.(Mutable)Map<kotlin.Int!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open /*synthesized*/ fun setNames(/*0*/ names: kotlin.collections.(Mutable)List<kotlin.String!>!): kotlin.Unit
+    public open /*synthesized*/ fun setPairs(/*0*/ pairs: kotlin.collections.(Mutable)Map<kotlin.Int!, kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun builder(): UserWithNull.UserWithNullBuilder
+}
+
+@lombok.Builder @lombok.Data public open class UserWithoutNull {
+    public constructor UserWithoutNull()
+    @lombok.Singular(ignoreNullCollections = false) private final var names: kotlin.collections.(Mutable)List<kotlin.String!>!
+    @lombok.Singular(ignoreNullCollections = false) private final var pairs: kotlin.collections.(Mutable)Map<kotlin.Int!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open /*synthesized*/ fun getNames(): kotlin.collections.(Mutable)List<kotlin.String!>!
+    public open /*synthesized*/ fun getPairs(): kotlin.collections.(Mutable)Map<kotlin.Int!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open /*synthesized*/ fun setNames(/*0*/ names: kotlin.collections.(Mutable)List<kotlin.String!>!): kotlin.Unit
+    public open /*synthesized*/ fun setPairs(/*0*/ pairs: kotlin.collections.(Mutable)Map<kotlin.Int!, kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun builder(): UserWithoutNull.UserWithoutNullBuilder
+}
+

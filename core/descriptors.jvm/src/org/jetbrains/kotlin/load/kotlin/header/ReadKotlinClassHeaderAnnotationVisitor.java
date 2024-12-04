@@ -21,12 +21,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue;
 
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,16 @@ import static org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.*;
 import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
 
 public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
-    private static final boolean IGNORE_OLD_METADATA = "true".equals(System.getProperty("kotlin.ignore.old.metadata"));
+
+    private static boolean IGNORE_OLD_METADATA;
+    static {
+        try {
+            IGNORE_OLD_METADATA = "true".equals(System.getProperty("kotlin.ignore.old.metadata"));
+        } catch (AccessControlException e) {
+            // Use default value if the Security Manager blocks reading system variables
+            IGNORE_OLD_METADATA = false;
+        }
+    }
 
     private static final Map<ClassId, KotlinClassHeader.Kind> HEADER_KINDS = new HashMap<ClassId, KotlinClassHeader.Kind>();
 
@@ -61,15 +71,20 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] serializedIrFields = null;
 
     @Nullable
-    public KotlinClassHeader createHeader() {
+    public KotlinClassHeader createHeaderWithDefaultMetadataVersion() {
+        return createHeader(MetadataVersion.INSTANCE);
+    }
+
+    @Nullable
+    public KotlinClassHeader createHeader(MetadataVersion metadataVersionFromLanguageVersion) {
         if (headerKind == null || metadataVersionArray == null) {
             return null;
         }
 
-        JvmMetadataVersion metadataVersion =
-                new JvmMetadataVersion(metadataVersionArray, (extraInt & JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0);
+        MetadataVersion metadataVersion =
+                new MetadataVersion(metadataVersionArray, (extraInt & JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0);
 
-        if (!metadataVersion.isCompatible()) {
+        if (!metadataVersion.isCompatible(metadataVersionFromLanguageVersion)) {
             incompatibleData = data;
             data = null;
         }
@@ -134,6 +149,15 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     public void visitEnd() {
     }
 
+    /**
+     * JVM bytecode format doesn't allow {@code null} as the annotation argument value, so we use the default value of the argument's type
+     * to signify that the argument is absent. So if we read an empty string, for example, we should interpret it as if there was no
+     * value at all.
+     * <p>
+     * If we didn't, it could lead to problems for arguments like {@link ReadKotlinClassHeaderAnnotationVisitor#packageName}
+     * (corresponding to {@link kotlin.Metadata#pn}): the class could be loaded as if it's JVM package name is the default package,
+     * which makes no sense and leads to problems in IDE like KT-39492, KTIJ-18094.
+     */
     private class KotlinMetadataArgumentVisitor implements AnnotationArgumentVisitor {
         @Override
         public void visit(@Nullable Name name, @Nullable Object value) {
@@ -151,7 +175,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 }
             }
             else if (METADATA_EXTRA_STRING_FIELD_NAME.equals(string)) {
-                if (value instanceof String) {
+                if (value instanceof String && !((String) value).isEmpty()) {
                     extraString = (String) value;
                 }
             }
@@ -161,20 +185,20 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 }
             }
             else if (METADATA_PACKAGE_NAME_FIELD_NAME.equals(string)) {
-                if (value instanceof String) {
+                if (value instanceof String && !((String) value).isEmpty()) {
                     packageName = (String) value;
                 }
             }
         }
 
         @Override
-        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralValue classLiteralValue) {
+        public void visitClassLiteral(@Nullable Name name, @NotNull ClassLiteralValue classLiteralValue) {
         }
 
         @Override
         @Nullable
-        public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
-            String string = name.asString();
+        public AnnotationArrayArgumentVisitor visitArray(@Nullable Name name) {
+            String string = name != null ? name.asString() : null;
             if (METADATA_DATA_FIELD_NAME.equals(string)) {
                 return dataArrayVisitor();
             }
@@ -207,12 +231,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
-        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        public void visitEnum(@Nullable Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
         }
 
         @Nullable
         @Override
-        public AnnotationArgumentVisitor visitAnnotation(@NotNull Name name, @NotNull ClassId classId) {
+        public AnnotationArgumentVisitor visitAnnotation(@Nullable Name name, @NotNull ClassId classId) {
             return null;
         }
 
@@ -238,13 +262,13 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
-        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralValue classLiteralValue) {
+        public void visitClassLiteral(@Nullable Name name, @NotNull ClassLiteralValue classLiteralValue) {
         }
 
         @Override
         @Nullable
-        public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
-            String string = name.asString();
+        public AnnotationArrayArgumentVisitor visitArray(@Nullable Name name) {
+            String string = name != null ? name.asString() : null;
             if ("data".equals(string) || "filePartClassNames".equals(string)) {
                 return dataArrayVisitor();
             }
@@ -277,12 +301,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
-        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        public void visitEnum(@Nullable Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
         }
 
         @Nullable
         @Override
-        public AnnotationArgumentVisitor visitAnnotation(@NotNull Name name, @NotNull ClassId classId) {
+        public AnnotationArgumentVisitor visitAnnotation(@Nullable Name name, @NotNull ClassId classId) {
             return null;
         }
 
@@ -297,13 +321,13 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
-        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralValue classLiteralValue) {
+        public void visitClassLiteral(@Nullable Name name, @NotNull ClassLiteralValue classLiteralValue) {
         }
 
         @Override
         @Nullable
-        public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
-            String string = name.asString();
+        public AnnotationArrayArgumentVisitor visitArray(@Nullable Name name) {
+            String string = name != null ? name.asString() : null;
             if (SERIALIZED_IR_BYTES_FIELD_NAME.equals(string)) {
                 return serializedIrArrayVisitor();
             }
@@ -323,12 +347,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
-        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        public void visitEnum(@Nullable Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
         }
 
         @Nullable
         @Override
-        public AnnotationArgumentVisitor visitAnnotation(@NotNull Name name, @NotNull ClassId classId) {
+        public AnnotationArgumentVisitor visitAnnotation(@Nullable Name name, @NotNull ClassId classId) {
             return null;
         }
 

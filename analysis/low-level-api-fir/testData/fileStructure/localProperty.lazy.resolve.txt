@@ -1,0 +1,31 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] localProperty.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar x: R|kotlin/Int|
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun q(): R|kotlin/Unit| {
+            [ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/Int| = Int(42)
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|B.C| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun u(): R|kotlin/Unit| {
+                [ResolvedTo(BODY_RESOLVE)] lvar z: R|kotlin/Int| = Int(15)
+            }
+
+        }
+
+    }

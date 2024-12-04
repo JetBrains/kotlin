@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val sb = StringBuilder()
 val o = object : Any() {
     val name = "123"
@@ -21,4 +22,4 @@ open class Base<T>(val x: T)
 class Derived : Base<Int>(10)
 val xx = Derived().x + 1
 
-val <!REDECLARATION!>t<!> = throw AssertionError("")
+val <!IMPLICIT_NOTHING_PROPERTY_TYPE, REDECLARATION!>t<!> = throw AssertionError("")

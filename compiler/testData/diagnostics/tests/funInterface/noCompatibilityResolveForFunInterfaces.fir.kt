@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun interface KRunnable {
     fun invoke()
@@ -35,7 +36,7 @@ object Test3 {
 
     fun test(f: () -> Unit) {
         val result = foo(1, f)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
     }
 }
 

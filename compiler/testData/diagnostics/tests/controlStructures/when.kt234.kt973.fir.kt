@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-234 Force when() expressions to have an 'else' branch
 //KT-973 Unreachable code
 
@@ -25,7 +26,7 @@ fun t1(x: Int) = when(x) {
     else -> 1
 }
 
-fun t5(x: Int) = <!NO_ELSE_IN_WHEN!>when<!> (x) {
+fun t5(x: Int) = when (x) {
     <!USELESS_IS_CHECK!>is Int<!> -> 1
     2 -> 2
 }

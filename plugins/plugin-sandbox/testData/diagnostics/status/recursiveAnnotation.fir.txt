@@ -1,0 +1,46 @@
+FILE: recursiveAnnotation.kt
+    public final annotation class Some : R|kotlin/Annotation| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Outer.AllOpen|() public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|Some|() public final annotation class AllOpen : R|kotlin/Annotation| {
+            public constructor(): R|Outer.AllOpen| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|Outer2.AllOpen2|() public final class Outer1 : R|kotlin/Any| {
+        public constructor(): R|Outer1| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|Some|() public final annotation class AllOpen : R|kotlin/Annotation| {
+            public constructor(): R|Outer1.AllOpen| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|Outer1.AllOpen|() public final class Outer2 : R|kotlin/Any| {
+        public constructor(): R|Outer2| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|Some|() public final annotation class AllOpen2 : R|kotlin/Annotation| {
+            public constructor(): R|Outer2.AllOpen2| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

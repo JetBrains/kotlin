@@ -36,10 +36,10 @@ public inline fun CharSequence.isEmpty(): Boolean = length == 0
 
 public inline fun CharSequence.isNotEmpty(): Boolean = length > 0
 
-public operator fun CharSequence.iterator(): CharIterator = object : CharIterator() {
+public operator fun CharSequence.iterator(): Iterator<Char> = object : Iterator<Char> {
     private var index = 0
 
-    public override fun nextChar(): Char = get(index++)
+    public override fun next(): Char = get(index++)
 
     public override fun hasNext(): Boolean = index < length
 }

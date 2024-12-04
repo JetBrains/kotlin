@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-47922
 
 package whencase.castissue
@@ -13,7 +14,7 @@ abstract class NonSealedBase {
 sealed class ToState
 
 val sealedTest: SealedBase.() -> ToState? = {
-    <!TYPE_MISMATCH!><!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!>(this) {}<!>
+    <!TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(this) {}<!>
 }
 
 val nonSealedTest: NonSealedBase.() -> ToState? = {

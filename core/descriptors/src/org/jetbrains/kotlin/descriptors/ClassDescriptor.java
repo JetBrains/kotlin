@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.descriptors;
 import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -16,7 +17,8 @@ import org.jetbrains.kotlin.types.TypeSubstitution;
 import java.util.Collection;
 import java.util.List;
 
-public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters, ClassOrPackageFragmentDescriptor {
+public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters, ClassOrPackageFragmentDescriptor,
+                                         RegularClassSymbolMarker {
     @NotNull
     MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
 
@@ -77,6 +79,10 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
     @NotNull
     ReceiverParameterDescriptor getThisAsReceiverParameter();
 
+    @NotNull
+    @ReadOnly
+    List<ReceiverParameterDescriptor> getContextReceivers();
+
     @Nullable
     ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor();
 
@@ -98,7 +104,7 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
     Collection<ClassDescriptor> getSealedSubclasses();
 
     @Nullable
-    InlineClassRepresentation<SimpleType> getInlineClassRepresentation();
+    ValueClassRepresentation<SimpleType> getValueClassRepresentation();
 
     @NotNull
     @Override

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A0 {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: Int<!>
     constructor() {

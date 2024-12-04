@@ -32,9 +32,11 @@ class ReflectJavaAnnotation(val annotation: Annotation) : ReflectJavaElement(), 
 
     override fun resolve() = ReflectJavaClass(annotation.annotationClass.java)
 
-    override fun equals(other: Any?) = other is ReflectJavaAnnotation && annotation == other.annotation
+    override fun equals(other: Any?): Boolean =
+        other is ReflectJavaAnnotation && annotation === other.annotation
 
-    override fun hashCode() = annotation.hashCode()
+    override fun hashCode(): Int =
+        System.identityHashCode(annotation)
 
     override fun toString() = this::class.java.name + ": " + annotation
 }

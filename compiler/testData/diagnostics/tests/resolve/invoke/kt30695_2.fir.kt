@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -31,7 +32,7 @@ fun testNullableReceiver(nullable: Cls?) {
 
 fun testNotNullableReceiver(notNullable: Cls) {
     notNullable.<!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>notNullable<!UNNECESSARY_SAFE_CALL!>?.<!>extensionProperty()<!>
+    notNullable<!UNNECESSARY_SAFE_CALL!>?.<!>extensionProperty()
 }
 
 fun testFlexibleReceiver() {

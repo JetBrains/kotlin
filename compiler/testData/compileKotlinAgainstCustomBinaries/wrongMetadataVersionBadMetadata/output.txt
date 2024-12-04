@@ -1,14 +1,14 @@
 $TMP_DIR$/library-after.jar!/META-INF/main.kotlin_module: error: module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata/source.kt:12:13: error: unresolved reference: foo
     val x = foo()
-            ^
+            ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata/source.kt:13:13: error: unresolved reference: bar
     val y = bar
-            ^
+            ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata/source.kt:14:5: error: unresolved reference: bar
     bar = 239
-    ^
+    ^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersionBadMetadata/source.kt:15:12: error: unresolved reference: TA
     val z: TA = ""
-           ^
+           ^^
 COMPILATION_ERROR

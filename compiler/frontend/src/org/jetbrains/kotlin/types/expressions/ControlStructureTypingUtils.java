@@ -195,6 +195,19 @@ public class ControlStructureTypingUtils {
             @NotNull List<String> argumentNames,
             @NotNull List<Boolean> isArgumentNullable
     ) {
+        return createFunctionDescriptorForSpecialConstruction(construct, argumentNames, isArgumentNullable, moduleDescriptor,
+                                                              storageManager);
+    }
+
+    // used in Fe10Binding in FIR IDE
+    @SuppressWarnings("WeakerAccess")
+    public static SimpleFunctionDescriptorImpl createFunctionDescriptorForSpecialConstruction(
+            @NotNull ResolveConstruct construct,
+            @NotNull List<String> argumentNames,
+            @NotNull List<Boolean> isArgumentNullable,
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull StorageManager storageManager
+    ) {
         assert argumentNames.size() == isArgumentNullable.size();
 
         SimpleFunctionDescriptorImpl function = SimpleFunctionDescriptorImpl.create(
@@ -226,6 +239,7 @@ public class ControlStructureTypingUtils {
         function.initialize(
                 null,
                 null,
+                Collections.emptyList(),
                 Lists.newArrayList(typeParameter),
                 valueParameters,
                 returnType,
@@ -309,7 +323,8 @@ public class ControlStructureTypingUtils {
         return createIndependentDataFlowInfoForArgumentsForCall(dataFlowInfoBeforeTry, dataFlowInfoForArgumentsMap);
     }
 
-    /*package*/ static Call createCallForSpecialConstruction(
+    // Used in Fe10Binding in FIR IDE
+    public static Call createCallForSpecialConstruction(
             @NotNull KtExpression expression,
             @NotNull KtExpression calleeExpression,
             @NotNull List<? extends KtExpression> arguments
@@ -584,6 +599,11 @@ public class ControlStructureTypingUtils {
         }
 
         @Override
+        public void recursiveType(@NotNull BindingTrace trace, @NotNull LanguageVersionSettings languageVersionSettings, boolean insideAugmentedAssignment) {
+            logError();
+        }
+
+        @Override
         public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(
                 @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates
         ) {
@@ -633,7 +653,7 @@ public class ControlStructureTypingUtils {
 
         @Override
         public <D extends CallableDescriptor> void ambiguity(
-                @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors
+                @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> resolvedCalls
         ) {
             logError();
         }

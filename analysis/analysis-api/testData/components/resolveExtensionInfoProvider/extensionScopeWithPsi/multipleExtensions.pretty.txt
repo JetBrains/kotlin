@@ -1,0 +1,26 @@
+packages: 2
+  rex1
+  rex2
+classifiers: 2
+  interface RexClass1
+    PSI: KtClass RexClass1 [from rex1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtClass RexClass1]
+  interface RexClass2
+    PSI: KtClass RexClass2 [from rex2.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtClass RexClass2]
+callables: 2
+  fun rexCallable1(): kotlin.Any
+    PSI: KtNamedFunction rexCallable1 [from rex1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtNamedFunction rexCallable1]
+  fun rexCallable2(): kotlin.Any
+    PSI: KtNamedFunction rexCallable2 [from rex2.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtNamedFunction rexCallable2]
+constructors: 0

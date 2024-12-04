@@ -288,6 +288,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return dispatchReceiver;
     }
 
+    @NotNull
+    @Override
+    public List<ReceiverValue> getContextReceivers() {
+        return Collections.emptyList();
+    }
+
     @Override
     @NotNull
     public ExplicitReceiverKind getExplicitReceiverKind() {

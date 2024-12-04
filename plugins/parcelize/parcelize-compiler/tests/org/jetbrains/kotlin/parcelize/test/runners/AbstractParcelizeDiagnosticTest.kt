@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.parcelize.test.runners
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
-import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -31,8 +31,8 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
         }
 
         defaultDirectives {
+            +ENABLE_PARCELIZE
             +USE_PSI_CLASS_FILES_READING
-            +REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
             DIAGNOSTICS with "-UNUSED_PARAMETER"
         }
 
@@ -41,7 +41,7 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
-            ::ParcelizeEnvironmentConfigurator.bind(false)
+            ::ParcelizeEnvironmentConfigurator
         )
 
         classicFrontendStep()
@@ -50,6 +50,9 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
             useHandlers(::ClassicDiagnosticsHandler)
         }
 
-        useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
+        useAfterAnalysisCheckers(
+            ::FirTestDataConsistencyHandler,
+            ::ClassicFrontendFailingTestSuppressor
+        )
     }
 }

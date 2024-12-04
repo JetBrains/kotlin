@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.NewConstraintSystemImpl
@@ -13,12 +16,14 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleErrorResolu
 import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.error.ErrorScopeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.isDynamic
 
 class SimpleCandidateFactory(
@@ -32,7 +37,10 @@ class SimpleCandidateFactory(
     val baseSystem: ConstraintStorage
 
     init {
-        val baseSystem = NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns, callComponents.kotlinTypeRefiner)
+        val baseSystem = NewConstraintSystemImpl(
+            callComponents.constraintInjector, callComponents.builtIns,
+            callComponents.kotlinTypeRefiner, callComponents.languageVersionSettings
+        )
         if (!inferenceSession.resolveReceiverIndependently()) {
             baseSystem.addSubsystemFromArgument(kotlinCall.explicitReceiver)
             baseSystem.addSubsystemFromArgument(kotlinCall.dispatchReceiverForInvokeExtension)
@@ -77,7 +85,7 @@ class SimpleCandidateFactory(
             ReceiverExpressionKotlinCallArgument(it, isSafeCall)
         }
         return createCandidate(
-            givenCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver, null,
+            givenCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver, null, null,
             listOf(), givenCandidate.knownTypeParametersResultingSubstitutor
         )
     }
@@ -93,10 +101,34 @@ class SimpleCandidateFactory(
         )
         val extensionArgumentReceiver =
             createReceiverArgument(kotlinCall.getExplicitExtensionReceiver(explicitReceiverKind), extensionReceiver)
+        val descriptor = towerCandidate.descriptor
+        var diagnostics: List<KotlinCallDiagnostic> = towerCandidate.diagnostics
+        if (descriptor is PropertyDescriptor && descriptor.isSyntheticEnumEntries()) {
+            diagnostics = diagnostics + LowerPriorityToPreserveCompatibility(needToReportWarning = false).asDiagnostic()
+        }
+
+        return createCandidate(
+            descriptor, explicitReceiverKind, dispatchArgumentReceiver,
+            extensionArgumentReceiver, extensionArgumentReceiverCandidates = null, diagnostics, knownSubstitutor = null
+        )
+    }
+
+    override fun createCandidate(
+        towerCandidate: CandidateWithBoundDispatchReceiver,
+        explicitReceiverKind: ExplicitReceiverKind,
+        extensionReceiverCandidates: List<ReceiverValueWithSmartCastInfo>
+    ): SimpleResolutionCandidate {
+        val dispatchArgumentReceiver = createReceiverArgument(
+            kotlinCall.getExplicitDispatchReceiver(explicitReceiverKind),
+            towerCandidate.dispatchReceiver
+        )
+        val extensionArgumentReceiverCandidates = extensionReceiverCandidates.mapNotNull {
+            createReceiverArgument(kotlinCall.getExplicitExtensionReceiver(explicitReceiverKind), it)
+        }
 
         return createCandidate(
             towerCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver,
-            extensionArgumentReceiver, towerCandidate.diagnostics, knownSubstitutor = null
+            null, extensionArgumentReceiverCandidates, towerCandidate.diagnostics, knownSubstitutor = null
         )
     }
 
@@ -105,12 +137,13 @@ class SimpleCandidateFactory(
         explicitReceiverKind: ExplicitReceiverKind,
         dispatchArgumentReceiver: SimpleKotlinCallArgument?,
         extensionArgumentReceiver: SimpleKotlinCallArgument?,
+        extensionArgumentReceiverCandidates: List<SimpleKotlinCallArgument>?,
         initialDiagnostics: Collection<KotlinCallDiagnostic>,
         knownSubstitutor: TypeSubstitutor?
     ): SimpleResolutionCandidate {
         val resolvedKtCall = MutableResolvedCallAtom(
             kotlinCall, descriptor, explicitReceiverKind,
-            dispatchArgumentReceiver, extensionArgumentReceiver
+            dispatchArgumentReceiver, extensionArgumentReceiver, extensionArgumentReceiverCandidates
         )
 
         if (ErrorUtils.isError(descriptor)) {
@@ -140,7 +173,7 @@ class SimpleCandidateFactory(
     }
 
     override fun createErrorCandidate(): SimpleResolutionCandidate {
-        val errorScope = ErrorUtils.createErrorScope("Error resolution candidate for call $kotlinCall")
+        val errorScope = ErrorUtils.createErrorScope(ErrorScopeKind.SCOPE_FOR_ERROR_RESOLUTION_CANDIDATE, kotlinCall.toString())
         val errorDescriptor = if (kotlinCall.callKind == KotlinCallKind.VARIABLE) {
             errorScope.getContributedVariables(kotlinCall.name, scopeTower.location)
         } else {
@@ -153,7 +186,12 @@ class SimpleCandidateFactory(
 
         return createCandidate(
             errorDescriptor, explicitReceiverKind, dispatchReceiver, extensionArgumentReceiver = null,
-            initialDiagnostics = listOf(), knownSubstitutor = null
+            extensionArgumentReceiverCandidates = null, initialDiagnostics = listOf(), knownSubstitutor = null
         )
     }
+}
+
+fun PropertyDescriptor.isSyntheticEnumEntries(): Boolean {
+    return isSynthesized && dispatchReceiverParameter == null && extensionReceiverParameter == null &&
+            (containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
 }

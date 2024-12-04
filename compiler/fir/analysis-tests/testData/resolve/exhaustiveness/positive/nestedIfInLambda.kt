@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun run(block: () -> Unit) {}
 
 fun test(b1: Boolean, b2: Boolean) {

@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 package f
 
 fun <R> h(i: Int, a: Any, r: R, f: (Boolean) -> Int) = 1

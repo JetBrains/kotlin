@@ -1,7 +1,3 @@
-interface IFoo {
-
-}
-
 class Derived1 : JFieldOwner, IFoo {
   constructor() /* primary */ {
     super/*JFieldOwner*/()
@@ -12,15 +8,6 @@ class Derived1 : JFieldOwner, IFoo {
 }
 
 class Derived2 : JFieldOwner, IFoo {
-  constructor() /* primary */ {
-    super/*JFieldOwner*/()
-    /* <init>() */
-
-  }
-
-}
-
-open class Mid : JFieldOwner {
   constructor() /* primary */ {
     super/*JFieldOwner*/()
     /* <init>() */
@@ -47,6 +34,18 @@ class DerivedThroughMid2 : Mid, IFoo {
 
 }
 
+open class Mid : JFieldOwner {
+  constructor() /* primary */ {
+    super/*JFieldOwner*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface IFoo {
+}
+
 fun test(b: Boolean) {
   val d1: Derived1 = Derived1()
   val d2: Derived2 = Derived2()
@@ -54,14 +53,15 @@ fun test(b: Boolean) {
     b -> d1
     else -> d2
   }
-  k /*as JFieldOwner */super.#f = 42
-  k /*as JFieldOwner */super.#f /*~> Unit */
+  k /*as JFieldOwner */(super<JFieldOwner>).#f = 42
+  k /*as JFieldOwner */(super<JFieldOwner>).#f /*~> Unit */
   val md1: DerivedThroughMid1 = DerivedThroughMid1()
   val md2: DerivedThroughMid2 = DerivedThroughMid2()
   val mk: Any = when {
     b -> md1
     else -> md2
   }
-  mk /*as Mid */super.#f = 44
-  mk /*as Mid */super.#f /*~> Unit */
+  mk /*as Mid */(super<Mid>).#f = 44
+  mk /*as Mid */(super<Mid>).#f /*~> Unit */
 }
+

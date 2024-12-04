@@ -5,7 +5,6 @@
 
 package test.exceptions
 
-import test.supportsSuppressedExceptions
 import kotlin.test.*
 
 @Suppress("Reformat") // author's formatting
@@ -24,13 +23,13 @@ class ExceptionTest {
     @Test fun nullPointerException() = testCreateException(::NullPointerException, ::NullPointerException)
     @Test fun classCastException() = testCreateException(::ClassCastException, ::ClassCastException)
     @Test fun noSuchElementException() = testCreateException(::NoSuchElementException, ::NoSuchElementException)
-    @Test fun concurrentModificationException() = testCreateException(::ConcurrentModificationException, ::ConcurrentModificationException)
+    @Test fun concurrentModificationException() = testCreateException(::ConcurrentModificationException, ::ConcurrentModificationException, ::ConcurrentModificationException, ::ConcurrentModificationException)
     @Test fun arithmeticException() = testCreateException(::ArithmeticException, ::ArithmeticException)
 
     @Test fun noWhenBranchMatchedException() = @Suppress("DEPRECATION_ERROR") testCreateException(::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException)
     @Test fun uninitializedPropertyAccessException() = @Suppress("DEPRECATION_ERROR") testCreateException(::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException)
 
-    @Test fun assertionError() = testCreateException(::AssertionError, ::AssertionError, ::AssertionError)
+    @Test fun assertionError() = testCreateException(::AssertionError, ::AssertionError, ::AssertionError, ::AssertionError)
 
 
     private fun <T : Throwable> testCreateException(
@@ -81,11 +80,7 @@ class ExceptionTest {
         e1.addSuppressed(c1)
         e1.addSuppressed(c2)
 
-        if (supportsSuppressedExceptions) {
-            assertEquals(listOf(c1, c2), e1.suppressedExceptions)
-        } else {
-            assertTrue(e1.suppressedExceptions.isEmpty())
-        }
+        assertEquals(listOf(c1, c2), e1.suppressedExceptions)
     }
 
     @Test
@@ -122,12 +117,10 @@ class ExceptionTest {
         val cause = assertNotNull(e.cause, "Should have cause")
         assertInTrace(cause)
 
-        if (supportsSuppressedExceptions) {
-            val topLevelSuppressed = e.suppressedExceptions.single()
-            assertInTrace(topLevelSuppressed)
-            cause.suppressedExceptions.forEach {
-                assertInTrace(it)
-            }
+        val topLevelSuppressed = e.suppressedExceptions.single()
+        assertInTrace(topLevelSuppressed)
+        cause.suppressedExceptions.forEach {
+            assertInTrace(it)
         }
 
 //        fail(topLevelTrace) // to dump the entire trace
@@ -135,8 +128,6 @@ class ExceptionTest {
 
     @Test
     fun circularSuppressedDetailedTrace() {
-        if (!supportsSuppressedExceptions) return
-
         // Testing an exception of the following structure
         // e1
         //    -- suppressed: e0 (same stack as e1)

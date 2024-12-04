@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-422 Tune literal typing rules so that varargs overloaded by primitive types work
 

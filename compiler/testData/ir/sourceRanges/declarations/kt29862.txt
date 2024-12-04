@@ -1,11 +1,10 @@
 @0:0..15:0 FILE fqName:<root> fileName:/kt29862.kt
   @0:0..3:1 CLASS CLASS name:Test1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    @0:0..3:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
-    @0:9..3:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test1 [primary]
+    @0:20..2:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test1 [primary]
       @1:4..14 VALUE_PARAMETER name:x index:0 type:kotlin.Int
-      @0:0..3:1 BLOCK_BODY
+      @0:20..2:1 BLOCK_BODY
         @0:0..3:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @0:0..3:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+        @0:0..3:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @1:4..14 PROPERTY name:x visibility:public modality:FINAL [val]
       @1:4..14 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         @1:4..14 EXPRESSION_BODY
@@ -23,13 +22,13 @@
       @0:0..3:1 VALUE_PARAMETER name:<this> type:kotlin.Any
     @0:9..3:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       @0:0..3:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @0:0..3:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
   @5:0..14:1 CLASS CLASS name:Test2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    @5:0..14:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
-    @7:0..14:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test2 [primary]
+    @7:11..9:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test2 [primary]
       @8:4..14 VALUE_PARAMETER name:x index:0 type:kotlin.Int
-      @5:0..14:1 BLOCK_BODY
+      @7:11..9:1 BLOCK_BODY
         @5:0..14:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @5:0..14:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+        @5:0..14:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @8:4..14 PROPERTY name:x visibility:public modality:FINAL [val]
       @8:4..14 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         @8:4..14 EXPRESSION_BODY
@@ -41,13 +40,12 @@
             @8:4..14 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               @8:4..14 GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
     @10:4..13:5 CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
-      @10:4..13:5 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.TestInner
-      @11:4..13:5 CONSTRUCTOR visibility:public <> ($this:<root>.Test2, x:kotlin.Int) returnType:<root>.Test2.TestInner [primary]
+      @11:19..13:5 CONSTRUCTOR visibility:public <> ($this:<root>.Test2, x:kotlin.Int) returnType:<root>.Test2.TestInner [primary]
         @11:19..13:5 VALUE_PARAMETER name:<this> type:<root>.Test2
         @12:8..18 VALUE_PARAMETER name:x index:0 type:kotlin.Int
-        @10:4..13:5 BLOCK_BODY
+        @11:19..13:5 BLOCK_BODY
           @10:4..13:5 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-          @10:4..13:5 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
+          @10:4..13:5 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]' type=kotlin.Unit
       @12:8..18 PROPERTY name:x visibility:public modality:FINAL [val]
         @12:8..18 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
           @12:8..18 EXPRESSION_BODY
@@ -65,6 +63,7 @@
         @10:4..13:5 VALUE_PARAMETER name:<this> type:kotlin.Any
       @11:4..13:5 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
         @10:4..13:5 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @10:4..13:5 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.TestInner
     @7:0..14:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @5:0..14:1 VALUE_PARAMETER name:<this> type:kotlin.Any
       @7:0..14:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
@@ -72,3 +71,4 @@
       @5:0..14:1 VALUE_PARAMETER name:<this> type:kotlin.Any
     @7:0..14:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       @5:0..14:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @5:0..14:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2

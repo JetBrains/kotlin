@@ -1,58 +1,40 @@
 open class L<LL : Any?> {
+  val ll: LL
+    field = ll
+    get
+
   constructor(ll: LL) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val ll: LL
-    field = ll
-    get
-
 }
 
 class Rec<T : Any?> {
+  val rt: T
+    field = rt
+    get
+
   constructor(rt: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val rt: T
-    field = rt
-    get
-
 }
-
-val <PT : Any?> Rec<PT>.p: L<PT>
-  get(): L<PT> {
-    local class PLocal<LT : Any?> : L<LT> {
-      constructor(lt: LT, pt: PT) /* primary */ {
-        super/*L*/<LT>(ll = lt)
-        /* <init>() */
-
-      }
-
-      val pt: PT
-        field = pt
-        get
-
-    }
-
-    return foo2<PT, PT, PLocal<PT>>(t1 = <this>.<get-rt>(), t2 = <this>.<get-rt>(), bb = PLocal::<init>/*<PT>()*/)
-  }
 
 fun <FT : Any?> Rec<FT>.fn(): L<FT> {
   local class FLocal<LT : Any?> : L<LT> {
+    val pt: FT
+      field = pt
+      get
+
     constructor(lt: LT, pt: FT) /* primary */ {
       super/*L*/<LT>(ll = lt)
       /* <init>() */
 
     }
-
-    val pt: FT
-      field = pt
-      get
 
   }
 
@@ -62,3 +44,22 @@ fun <FT : Any?> Rec<FT>.fn(): L<FT> {
 fun <T1 : Any?, T2 : Any?, R : Any?> foo2(t1: T1, t2: T2, bb: Function2<T1, T2, R>): R {
   return bb.invoke(p1 = t1, p2 = t2)
 }
+
+val <PT : Any?> Rec<PT>.p: L<PT>
+  get(): L<PT> {
+    local class PLocal<LT : Any?> : L<LT> {
+      val pt: PT
+        field = pt
+        get
+
+      constructor(lt: LT, pt: PT) /* primary */ {
+        super/*L*/<LT>(ll = lt)
+        /* <init>() */
+
+      }
+
+    }
+
+    return foo2<PT, PT, PLocal<PT>>(t1 = <this>.<get-rt>(), t2 = <this>.<get-rt>(), bb = PLocal::<init>/*<PT>()*/)
+  }
+

@@ -1,9 +1,9 @@
 // FIR_IDENTICAL
-// ALLOW_KOTLIN_PACKAGE
 // JSPECIFY_STATE: strict
+// ALLOW_KOTLIN_PACKAGE
 
-// FILE: sandbox/test/module-info.java
-import org.jspecify.nullness.NullMarked;
+// FILE: sandbox/module-info.java
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 module sandbox {
@@ -14,7 +14,7 @@ module sandbox {
 // FILE: sandbox/test/Test.java
 package test;
 
-import org.jspecify.nullness.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class Test {
     public void foo(@Nullable Integer x) {}

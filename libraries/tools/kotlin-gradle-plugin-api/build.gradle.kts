@@ -1,13 +1,43 @@
-import org.jetbrains.kotlin.pill.PillExtension
+import gradle.GradlePluginVariant
 
 plugins {
-    id("gradle-plugin-common-configuration")
+    id("gradle-plugin-dependency-configuration")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("gradle-plugin-api-reference")
+}
+
+pluginApiReference {
+    enableForGradlePluginVariants(GradlePluginVariant.values().toSet())
+    enableKotlinlangDocumentation()
+
+    failOnWarning = true
+
+    additionalDokkaConfiguration {
+        reportUndocumented.set(true)
+    }
 }
 
 dependencies {
-    api(project(":native:kotlin-native-utils"))
-    api(project(":kotlin-project-model"))
+    commonApi(platform(project(":kotlin-gradle-plugins-bom")))
+    commonApi(project(":kotlin-gradle-plugin-annotations"))
+    commonApi(project(":native:kotlin-native-utils")) { // TODO: consider removing in KT-70247
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-util-klib")
+    }
+    commonApi(project(":kotlin-tooling-core"))
+    commonApi(project(":compiler:build-tools:kotlin-build-tools-api"))
 
-    compileOnly("com.android.tools.build:gradle:3.4.0")
+    commonCompileOnly(project(":kotlin-gradle-compiler-types"))
+
+    embedded(project(":kotlin-gradle-compiler-types")) { isTransitive = false }
+}
+
+apiValidation {
+    nonPublicMarkers += "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi"
+}
+
+tasks {
+    apiBuild {
+        inputJar.value(jar.flatMap { it.archiveFile })
+    }
 }

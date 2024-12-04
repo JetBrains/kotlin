@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !JVM_TARGET: 1.8
+// JVM_TARGET: 1.8
 
 <!JVM_DEFAULT_IN_DECLARATION!>@JvmDefaultWithoutCompatibility<!>
 interface A<T> {

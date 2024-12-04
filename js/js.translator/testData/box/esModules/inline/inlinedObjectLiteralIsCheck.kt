@@ -1,5 +1,7 @@
-// DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
+
+// Generated .mjs name is different in Wasm
+// DONT_TARGET_EXACT_BACKEND: WASM
 
 // FILE: main.kt
 interface I {
@@ -30,6 +32,8 @@ fun testOk(ok: Any): String {
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { convolutedOk, testOk } from "./main/index.js";
+import { convolutedOk, testOk } from "./inlinedObjectLiteralIsCheck_v5.mjs";
 
-console.assert(testOk(convolutedOk()) == "OK");
+export function box() {
+    return testOk(convolutedOk())
+}

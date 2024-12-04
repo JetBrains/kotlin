@@ -1,3 +1,4 @@
+@SuppressWarnings("requires-transitive-automatic") // testng is an auto-module
 module kotlin.test.testng {
     requires transitive kotlin.stdlib;
     requires transitive kotlin.test;

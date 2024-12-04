@@ -1,0 +1,3 @@
+KtNameReferenceExpression(68,76): 'Sequence'
+  KtSimpleNameReference:
+    (in kotlin.sequences) interface Sequence<FAKE>

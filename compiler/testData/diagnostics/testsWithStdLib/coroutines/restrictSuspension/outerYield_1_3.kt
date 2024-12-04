@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ReleaseCoroutines +ExperimentalBuilderInference
-// !OPT_IN: kotlin.RequiresOptIn
+// LANGUAGE: +ExperimentalBuilderInference
+// OPT_IN: kotlin.RequiresOptIn
 // SKIP_TXT
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -28,9 +29,8 @@ class RestrictedController<T> {
     }
 }
 
-fun <T> buildSequence(@BuilderInference c: suspend RestrictedController<T>.() -> Unit) {}
+fun <T> buildSequence(c: suspend RestrictedController<T>.() -> Unit) {}
 
-@BuilderInference
 suspend fun <T> RestrictedController<T>.yield2(x: T) {}
 
 fun test() {

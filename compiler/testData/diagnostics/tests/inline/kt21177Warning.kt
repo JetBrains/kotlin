@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: -ProhibitProtectedConstructorCallFromPublicInline
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ProhibitProtectedConstructorCallFromPublicInline
 
 class SomeContainer {
     protected class Limit

@@ -1,5 +1,2 @@
 warning: flag is not supported by this version of the compiler: -XX:+SoundSmartCastAfterTry
-compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:9: error: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type String?
-    some.length
-        ^
-COMPILATION_ERROR
+OK

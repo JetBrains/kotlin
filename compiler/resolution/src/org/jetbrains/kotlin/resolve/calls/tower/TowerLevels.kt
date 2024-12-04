@@ -36,6 +36,9 @@ import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
 import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorScope
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ThrowingScope
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -92,8 +95,9 @@ internal class MemberScopeTowerLevel(
         getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>
     ): Collection<CandidateWithBoundDispatchReceiver> {
         val receiverValue = dispatchReceiver.receiverValue
+        val memberScope = receiverValue.type.memberScope
 
-        if (receiverValue.type is AbstractStubType && receiverValue.type.memberScope is ErrorUtils.ErrorScope) {
+        if (receiverValue.type is AbstractStubType && memberScope is ErrorScope && memberScope !is ThrowingScope) {
             return arrayListOf()
         }
 
@@ -196,6 +200,81 @@ internal class MemberScopeTowerLevel(
 
     override fun recordLookup(name: Name) {
         for (type in dispatchReceiver.allOriginalTypes) {
+            type.memberScope.recordLookup(name, location)
+        }
+    }
+}
+
+internal class ContextReceiversGroupScopeTowerLevel(
+    scopeTower: ImplicitScopeTower,
+    val contextReceiversGroup: List<ReceiverValueWithSmartCastInfo>
+) : AbstractScopeTowerLevel(scopeTower) {
+
+    private val syntheticScopes = scopeTower.syntheticScopes
+
+    private fun collectMembers(
+        getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>
+    ): Collection<CandidateWithBoundDispatchReceiver> {
+        val result = ArrayList<CandidateWithBoundDispatchReceiver>(0)
+
+        for (contextReceiver in contextReceiversGroup) {
+            val receiverValue = contextReceiver.receiverValue
+            val memberScope = receiverValue.type.memberScope
+            if (receiverValue.type is AbstractStubType && memberScope is ErrorScope && memberScope !is ThrowingScope) {
+                return arrayListOf()
+            }
+            receiverValue.type.memberScope.getMembers(receiverValue.type).mapTo(result) {
+                createCandidateDescriptor(it, contextReceiver)
+            }
+            if (receiverValue.type.isDynamic()) {
+                scopeTower.dynamicScope.getMembers(null).mapTo(result) {
+                    createCandidateDescriptor(it, contextReceiver, DynamicDescriptorDiagnostic)
+                }
+            }
+        }
+
+        return result
+    }
+
+    override fun getVariables(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> {
+        return contextReceiversGroup.map { contextReceiver ->
+            collectMembers { getContributedVariablesAndIntercept(name, location, contextReceiver, extensionReceiver, scopeTower) }
+        }.flatten()
+    }
+
+    override fun getObjects(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> {
+        return emptyList()
+    }
+
+    override fun getFunctions(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> {
+        val collectMembers = { contextReceiver: ReceiverValueWithSmartCastInfo ->
+            collectMembers {
+                getContributedFunctionsAndIntercept(
+                    name,
+                    location,
+                    contextReceiver,
+                    extensionReceiver,
+                    scopeTower
+                ) + it.getInnerConstructors(
+                    name,
+                    location
+                ) + syntheticScopes.collectSyntheticMemberFunctions(listOfNotNull(it), name, location)
+            }
+        }
+        return contextReceiversGroup.map(collectMembers).flatten()
+    }
+
+    override fun recordLookup(name: Name) {
+        for (type in contextReceiversGroup.map { it.allOriginalTypes }.flatten()) {
             type.memberScope.recordLookup(name, location)
         }
     }

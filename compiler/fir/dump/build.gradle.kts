@@ -19,11 +19,10 @@ dependencies {
     implementation(project(":compiler:fir:java"))
     implementation(project(":compiler:cli"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.12")
+    implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("commons-lang-2.4") }
-
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("commons-lang:commons-lang"))
 }
 
 sourceSets {

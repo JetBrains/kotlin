@@ -1,6 +1,6 @@
 class A
 
-fun A.foo() = (A::bar)(this, "OK")
+fun A.foo() = (A::bar).let { it(this, "OK") }
 
 fun A.bar(x: String) = x
 

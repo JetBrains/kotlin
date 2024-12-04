@@ -1,5 +1,5 @@
-// SKIP_KT_DUMP
-
+// FIR_IDENTICAL
+// TARGET_BACKEND: JVM
 interface X
 interface Z
 

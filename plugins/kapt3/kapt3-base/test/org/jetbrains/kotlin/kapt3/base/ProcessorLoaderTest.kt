@@ -5,81 +5,82 @@
 
 package org.jetbrains.kotlin.kapt3.base
 
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
-import org.junit.Assert
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class ProcessorLoaderTest {
-
-    @Rule
     @JvmField
-    val tmp = TemporaryFolder()
+    @TempDir
+    var _rootTempDirectory: File? = null
+
+    val rootTempDirectory: File
+        get() = _rootTempDirectory!!
 
     @Test
     fun testProcessorClasspath() {
         val kaptOptions = with(KaptOptions.Builder()) {
-            val jar = tmp.newFile("empty.jar").also {
+            val jar = rootTempDirectory.newFile("empty.jar").also {
                 ZipOutputStream(it.outputStream()).use {
                     it.putNextEntry(ZipEntry("fake_entry"))
                     it.closeEntry()
                 }
             }
             processingClasspath.add(jar)
-            sourcesOutputDir = tmp.newFolder()
-            classesOutputDir = tmp.newFolder()
-            stubsOutputDir = tmp.newFolder()
+            sourcesOutputDir = rootTempDirectory.newSourcesFolder()
+            classesOutputDir = rootTempDirectory.newClassesFolder()
+            stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
         val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
-        Assert.assertTrue(loadedProcessors.processors.isEmpty())
+        assertTrue(loadedProcessors.processors.isEmpty())
     }
 
     @Test
     fun testProcessorUpperCaseExtensionClasspath() {
         val kaptOptions = with(KaptOptions.Builder()) {
-            val jar = tmp.newFile("empty.JAR").also {
+            val jar = rootTempDirectory.newFile("empty.JAR").also {
                 ZipOutputStream(it.outputStream()).use {
                     it.putNextEntry(ZipEntry("fake_entry"))
                     it.closeEntry()
                 }
             }
             processingClasspath.add(jar)
-            sourcesOutputDir = tmp.newFolder()
-            classesOutputDir = tmp.newFolder()
-            stubsOutputDir = tmp.newFolder()
+            sourcesOutputDir = rootTempDirectory.newSourcesFolder()
+            classesOutputDir = rootTempDirectory.newClassesFolder()
+            stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
         val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
-        Assert.assertTrue(loadedProcessors.processors.isEmpty())
+        assertTrue(loadedProcessors.processors.isEmpty())
     }
 
     @Test
     fun testEmptyClasspath() {
         val kaptOptions = with(KaptOptions.Builder()) {
-            sourcesOutputDir = tmp.newFolder()
-            classesOutputDir = tmp.newFolder()
-            stubsOutputDir = tmp.newFolder()
+            sourcesOutputDir = rootTempDirectory.newSourcesFolder()
+            classesOutputDir = rootTempDirectory.newClassesFolder()
+            stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
         val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
-        Assert.assertTrue(loadedProcessors.processors.isEmpty())
+        assertTrue(loadedProcessors.processors.isEmpty())
     }
 
     @Test
     fun testClasspathWithNonJars() {
         val kaptOptions = with(KaptOptions.Builder()) {
-            processingClasspath.add(tmp.newFile("do-not-load.gz"))
-            sourcesOutputDir = tmp.newFolder()
-            classesOutputDir = tmp.newFolder()
-            stubsOutputDir = tmp.newFolder()
+            processingClasspath.add(rootTempDirectory.newFile("do-not-load.gz"))
+            sourcesOutputDir = rootTempDirectory.newSourcesFolder()
+            classesOutputDir = rootTempDirectory.newClassesFolder()
+            stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
         val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
-        Assert.assertTrue(loadedProcessors.processors.isEmpty())
+        assertTrue(loadedProcessors.processors.isEmpty())
     }
 }

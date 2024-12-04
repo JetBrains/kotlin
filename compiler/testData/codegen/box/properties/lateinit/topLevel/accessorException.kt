@@ -1,5 +1,8 @@
 // WITH_STDLIB
 
+// DISABLE_IR_VISIBILITY_CHECKS: NATIVE, WASM
+// ^ UninitializedPropertyAccessException is internal on Native and Wasm
+
 // FILE: lateinit.kt
 
 private lateinit var s: String
@@ -10,6 +13,8 @@ object C {
 }
 
 // FILE: test.kt
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 import kotlin.UninitializedPropertyAccessException
 
 fun box(): String {

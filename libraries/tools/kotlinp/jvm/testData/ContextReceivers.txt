@@ -1,0 +1,48 @@
+// A.class
+// ------------------------------------------
+public abstract interface A : kotlin/Any {
+
+  // module name: test-module
+}
+// B.class
+// ------------------------------------------
+public abstract interface B : kotlin/Any {
+
+  // module name: test-module
+}
+// C.class
+// ------------------------------------------
+context(A)
+public final class C : kotlin/Any {
+
+  // signature: <init>(LA;)V
+  public constructor()
+
+  // signature: f(LB;)V
+  context(B)
+  public final fun f(): kotlin/Unit
+
+  // module name: test-module
+}
+// ContextReceiversKt.class
+// ------------------------------------------
+package {
+
+  // signature: g(LA;)V
+  context(A)
+  public final fun g(): kotlin/Unit
+
+  // getter: getH(LB;)I
+  context(B)
+  public final val h: kotlin/Int
+    public final /* non-default */ get
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    ContextReceiversKt
+  }
+}

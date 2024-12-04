@@ -31,10 +31,10 @@ public class ClassPreloadingUtils {
     /**
      * Creates a class loader that loads all classes from {@code jarFiles} into memory to make loading faster (avoid skipping through zip archives).
      *
-     * @param jarFiles jars to load all classes from
-     * @param classCountEstimation an estimated number of classes in a the jars
-     * @param parentClassLoader parent class loader
-     * @param handler handler to be notified on class definitions done by this class loader, or null
+     * @param jarFiles              jars to load all classes from
+     * @param classCountEstimation  an estimated number of classes in a the jars
+     * @param parentClassLoader     parent class loader
+     * @param handler               handler to be notified on class definitions done by this class loader, or null
      * @param classesToLoadByParent condition to load some classes via parent class loader
      * @return a class loader that reads classes from memory
      * @throws IOException on from reading the jar
@@ -49,6 +49,7 @@ public class ClassPreloadingUtils {
         Map<String, Object> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
 
         Collection<File> classpath = mergeClasspathFromManifests(entries);
+        classpath.removeAll(jarFiles);
         if (!classpath.isEmpty()) {
             parentClassLoader = preloadClasses(classpath, classCountEstimation, parentClassLoader, null, handler);
         }
@@ -57,7 +58,7 @@ public class ClassPreloadingUtils {
     }
 
     private static URLClassLoader createFallbackClassLoader(Collection<File> files) throws IOException {
-        List<URL> urls = new ArrayList<URL>(files.size());
+        List<URL> urls = new ArrayList<>(files.size());
         for (File file : files) {
             urls.add(file.toURI().toURL());
         }
@@ -76,7 +77,7 @@ public class ClassPreloadingUtils {
             return extractManifestClasspath((ResourceData) manifest);
         }
         else if (manifest instanceof ArrayList) {
-            List<File> result = new ArrayList<File>();
+            List<File> result = new ArrayList<>();
             for (ResourceData data : (ArrayList<ResourceData>) manifest) {
                 result.addAll(extractManifestClasspath(data));
             }
@@ -93,7 +94,7 @@ public class ClassPreloadingUtils {
         String classpathSpaceSeparated = (String) manifest.getMainAttributes().get(Attributes.Name.CLASS_PATH);
         if (classpathSpaceSeparated == null) return Collections.emptyList();
 
-        Collection<File> classpath = new ArrayList<File>(1);
+        Collection<File> classpath = new ArrayList<>(1);
         for (String jar : classpathSpaceSeparated.split(" ")) {
             if (".".equals(jar)) continue;
 
@@ -117,7 +118,7 @@ public class ClassPreloadingUtils {
             ClassHandler handler
     ) throws IOException {
         // 0.75 is HashMap.DEFAULT_LOAD_FACTOR
-        Map<String, Object> resources = new HashMap<String, Object>((int) (classNumberEstimate / 0.75));
+        Map<String, Object> resources = new HashMap<>((int) (classNumberEstimate / 0.75));
 
         for (File jarFile : jarFiles) {
             if (handler != null) {
@@ -154,7 +155,7 @@ public class ClassPreloadingUtils {
                         resources.put(name, resourceData);
                     }
                     else if (previous instanceof ResourceData) {
-                        List<ResourceData> list = new ArrayList<ResourceData>();
+                        List<ResourceData> list = new ArrayList<>();
                         list.add((ResourceData) previous);
                         list.add(resourceData);
                         resources.put(name, list);

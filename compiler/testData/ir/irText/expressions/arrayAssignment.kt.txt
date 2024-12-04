@@ -1,12 +1,13 @@
+fun foo(): Int {
+  return 1
+}
+
 fun test() {
   val x: IntArray = intArrayOf(elements = [1, 2, 3])
   x.set(index = 1, value = 0)
 }
 
-fun foo(): Int {
-  return 1
-}
-
 fun test2() {
   intArrayOf(elements = [1, 2, 3]).set(index = foo(), value = 1)
 }
+

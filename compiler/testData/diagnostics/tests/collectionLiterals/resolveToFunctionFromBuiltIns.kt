@@ -1,6 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +ArrayLiteralsInAnnotations
-// !DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
+// DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
 
 annotation class Anno(val a: Array<String> = [""], val b: IntArray = [])
 

@@ -28,16 +28,10 @@ fun box(): String {
 // 0 getLast
 // 0 getStep
 
-// JVM_TEMPLATES
-// 1 IFLT
-// 1 IF
-
-// JVM_IR_TEMPLATES
 // 1 IF_ICMPGT
 // 1 IF_ICMPLE
 // 2 IF
 
-// JVM_IR_TEMPLATES
 // 7 ILOAD
 // 4 ISTORE
 // 3 IADD

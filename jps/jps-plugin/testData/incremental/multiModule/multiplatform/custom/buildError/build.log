@@ -1,0 +1,30 @@
+================ Step #1 make compilation fail =================
+
+Building c
+Building pJvm
+Cleaning output files:
+  out/production/pJvm/META-INF/pJvm.kotlin_module
+End of files
+Complementary files. Marked as dirty by Kotlin:
+  pJvm/src/fJvm.kt
+Cleaning output files:
+  out/production/pJvm/FJvmKt.class
+End of files
+Compiling files:
+  c/src/f.kt
+  pJvm/src/fJvm.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+
+================ Step #2 fix error =================
+
+Building c
+Building pJvm
+Compiling files:
+  c/src/f.kt
+  pJvm/src/fJvm.kt
+End of files
+Exit code: OK
+------------------------------------------

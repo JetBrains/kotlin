@@ -1,26 +1,28 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class C {
-    @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+    OPTIONAL_JVM_INLINE_ANNOTATION
     value class IC1(val s: String)
 
     companion object {
-        @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+        OPTIONAL_JVM_INLINE_ANNOTATION
         value class IC2(val s: String)
     }
 }
 
 object O {
-    @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+    OPTIONAL_JVM_INLINE_ANNOTATION
     value class IC3(val s: String)
 }
 
 interface I {
-    @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+    OPTIONAL_JVM_INLINE_ANNOTATION
     value class IC4(val s: String)
 }
 

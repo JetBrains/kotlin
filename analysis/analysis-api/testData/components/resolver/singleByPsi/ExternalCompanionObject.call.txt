@@ -1,0 +1,2 @@
+KtNameReferenceExpression(48,57): 'Companion'
+  null

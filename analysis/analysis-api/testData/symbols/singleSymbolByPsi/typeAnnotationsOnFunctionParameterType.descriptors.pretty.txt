@@ -1,0 +1,1 @@
+fun foo(para: @Anno3 @Anno2 @Anno1 BaseInterface)

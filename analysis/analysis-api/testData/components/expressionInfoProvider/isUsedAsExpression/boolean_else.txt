@@ -1,0 +1,5 @@
+expression: WHEN
+text: when(b) {
+        else -> {}
+    }
+isUsedAsExpression: false

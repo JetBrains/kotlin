@@ -1,102 +1,15 @@
 @kotlin.Metadata
-final class C$1$1 {
-    // source: 'inInitBlock.kt'
-    enclosing method C$1.invoke()V
-    public final static field INSTANCE: C$1$1
-    inner (anonymous) class C$1
-    inner (anonymous) class C$1$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class C$1 {
-    // source: 'inInitBlock.kt'
-    enclosing method C.<init>(I)V
-    public final static field INSTANCE: C$1
-    inner (anonymous) class C$1
-    inner (anonymous) class C$1$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class C$2$1 {
-    // source: 'inInitBlock.kt'
-    enclosing method C$2.invoke()V
-    public final static field INSTANCE: C$2$1
-    inner (anonymous) class C$2
-    inner (anonymous) class C$2$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class C$2 {
-    // source: 'inInitBlock.kt'
-    enclosing method C.<init>(Ljava/lang/String;)V
-    public final static field INSTANCE: C$2
-    inner (anonymous) class C$2
-    inner (anonymous) class C$2$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class C$3$1 {
-    // source: 'inInitBlock.kt'
-    enclosing method C$3.invoke()V
-    public final static field INSTANCE: C$3$1
-    inner (anonymous) class C$3
-    inner (anonymous) class C$3$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class C$3 {
-    // source: 'inInitBlock.kt'
-    enclosing method C.<init>()V
-    public final static field INSTANCE: C$3
-    inner (anonymous) class C$3
-    inner (anonymous) class C$3$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class C$test$1 {
-    // source: 'inInitBlock.kt'
-    enclosing method C.test()V
-    public final static field INSTANCE: C$test$1
-    inner (anonymous) class C$test$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
 public final class C {
     // source: 'inInitBlock.kt'
-    inner (anonymous) class C$1
-    inner (anonymous) class C$2
-    inner (anonymous) class C$3
-    inner (anonymous) class C$test$1
     public method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public method <init>(p0: int): void
+    private final static method _init_$test$0$test(): void
+    private final static method _init_$test$0(): void
+    private final static method _init_$test$2$test$1(): void
+    private final static method _init_$test$2(): void
+    private final static method _init_$test$5(): void
+    private final static method test$5$test$4(): void
+    private final static method test$test$3(): void
     public final method test(): void
 }

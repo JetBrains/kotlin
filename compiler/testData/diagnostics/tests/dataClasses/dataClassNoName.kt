@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // See EA-73584
 data class<!SYNTAX!><!> {
 

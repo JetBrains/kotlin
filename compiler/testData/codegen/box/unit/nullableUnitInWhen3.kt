@@ -10,3 +10,7 @@ fun box(): String {
     
     return if (x == null) "OK" else "Fail"
 }
+
+// CHECK_BYTECODE_TEXT
+// 0 Intrinsics.areEqual
+// 1 TABLESWITCH

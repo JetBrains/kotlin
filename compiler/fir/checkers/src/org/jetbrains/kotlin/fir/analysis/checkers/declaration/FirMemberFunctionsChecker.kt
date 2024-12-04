@@ -7,26 +7,25 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 // See old FE's [DeclarationsChecker]
-object FirMemberFunctionsChecker : FirClassChecker() {
-    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        for (member in declaration.declarations) {
-            if (member is FirSimpleFunction) {
-                checkFunction(declaration, member, context, reporter)
-            }
-        }
+object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        val containingDeclaration = context.containingDeclarations.lastIsInstanceOrNull<FirClass>() ?: return
+        checkFunction(containingDeclaration, declaration, context, reporter)
     }
 
     private fun checkFunction(
@@ -58,6 +57,7 @@ object FirMemberFunctionsChecker : FirClassChecker() {
             }
         }
         val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
+        val isInsideExternal = isInsideExternalClass(containingDeclaration, context)
         val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
@@ -67,11 +67,9 @@ object FirMemberFunctionsChecker : FirClassChecker() {
                 if (!isInsideExpectClass && !hasAbstractModifier && hasOpenModifier) {
                     reporter.reportOn(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
                 }
-            } else if (!isInsideExpectClass && !hasAbstractModifier && !function.isExternal) {
+            } else if (!isInsideExpectClass && !hasAbstractModifier && !function.isExternal && !isInsideExternal) {
                 reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, functionSymbol, context)
             }
         }
-
-        checkExpectDeclarationVisibilityAndBody(function, source, reporter, context)
     }
 }

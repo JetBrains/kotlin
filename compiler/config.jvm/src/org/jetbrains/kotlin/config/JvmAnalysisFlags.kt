@@ -19,9 +19,6 @@ object JvmAnalysisFlags {
     val jvmDefaultMode by Delegates.JvmDefaultModeDisabledByDefault
 
     @JvmStatic
-    val jvmDefaultAllowNonDefaultInheritance by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val inheritMultifileParts by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
@@ -31,13 +28,19 @@ object JvmAnalysisFlags {
     val suppressMissingBuiltinsError by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val disableUltraLightClasses by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val enableJvmPreview by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
     val useIR by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val generatePropertyAnnotationsMethods by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val outputBuiltinsMetadata by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val expectBuiltinsAsPartOfStdlib by AnalysisFlag.Delegates.Boolean
 
     private object Delegates {
         object JavaTypeEnhancementStateWarnByDefault {

@@ -4,9 +4,11 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:deserialization"))
     api(project(":compiler:config"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
+
+    compileOnly(project(":core:metadata"))
+    embedded(project(":core:metadata")) { isTransitive = false }
 }
 
 sourceSets {

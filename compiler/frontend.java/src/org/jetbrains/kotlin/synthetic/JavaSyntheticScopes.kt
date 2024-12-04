@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.synthetic.FunInterfaceConstructorsSyntheticScope
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 class JavaSyntheticScopes(
     private val project: Project,
@@ -38,7 +39,8 @@ class JavaSyntheticScopes(
     languageVersionSettings: LanguageVersionSettings,
     samConventionResolver: SamConversionResolver,
     samConversionOracle: SamConversionOracle,
-    deprecationResolver: DeprecationResolver
+    deprecationResolver: DeprecationResolver,
+    kotlinTypeRefiner: KotlinTypeRefiner,
 ) : SyntheticScopes {
     override val scopes: Collection<SyntheticScope>
 
@@ -54,7 +56,7 @@ class JavaSyntheticScopes(
 
         val javaSyntheticPropertiesScope =
             JavaSyntheticPropertiesScope(
-                storageManager, lookupTracker,
+                storageManager, lookupTracker, kotlinTypeRefiner,
                 supportJavaRecords = languageVersionSettings.supportsFeature(LanguageFeature.JvmRecordSupport)
             )
         val scopesFromExtensions = SyntheticScopeProviderExtension

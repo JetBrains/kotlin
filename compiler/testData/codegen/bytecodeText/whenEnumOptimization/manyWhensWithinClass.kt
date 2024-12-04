@@ -13,9 +13,8 @@ class A {
             Season.WINTER, Season.SPRING -> return "winter_spring"
             Season.SPRING -> return "spring"
             Season.SUMMER -> return "summer"
+            else -> return "autumn"
         }
-
-        return "autumn";
     }
 
     public fun bar2(y : Season) : String {

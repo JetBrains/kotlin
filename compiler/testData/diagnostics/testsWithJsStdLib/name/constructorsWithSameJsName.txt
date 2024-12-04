@@ -1,0 +1,29 @@
+package
+
+@kotlin.js.JsExport public final class ClassA {
+    @kotlin.js.JsName(name = "constructorOther") public constructor ClassA(/*0*/ y: kotlin.Int)
+    @kotlin.js.JsName(name = "constructorA") public constructor ClassA(/*0*/ y: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public final class ClassB {
+    @kotlin.js.JsName(name = "constructorOther") public constructor ClassB(/*0*/ y: kotlin.Int)
+    @kotlin.js.JsName(name = "constructorB") public constructor ClassB(/*0*/ y: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.js.JsExport public final class ClassC {
+    @kotlin.js.JsName(name = "constructorC") public constructor ClassC(/*0*/ y: kotlin.Int)
+    @kotlin.js.JsName(name = "constructorC") public constructor ClassC(/*0*/ y: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

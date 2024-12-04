@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Out<out R>
 interface Inv<E>
 typealias A1<E> = Out<Out<E>>

@@ -7,7 +7,7 @@ package test {
     public val a3: java.lang.Class<test.A>
     public val a4: java.lang.Class<test.A>
     public val a5: java.lang.Class<test.A.Companion>
-    public val e0: [ERROR : Type for E.javaClass]
+    public val e0: [Error type: Not found recorded type for E.javaClass]
     public val e1: java.lang.Class<test.E>
     public val e2: java.lang.Class<test.E>
     public val int0: java.lang.Class<kotlin.Int.Companion>
@@ -35,7 +35,7 @@ package test {
         enum entry ENTRY
 
         private constructor E()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
@@ -46,6 +46,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.E>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.E
         public final /*synthesized*/ fun values(): kotlin.Array<test.E>
     }

@@ -4,11 +4,11 @@ plugins {
 }
 
 dependencies {
+    compileOnly(project(":core:util.runtime"))
     compileOnly(project(":js:js.ast"))
     compileOnly(project(":js:js.parser")) // TODO remove, required for JSON AST
-    compileOnly(project(":js:js.frontend")) // TODO remove
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("trove4j") }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
 
 sourceSets {

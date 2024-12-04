@@ -10,36 +10,28 @@ import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.StepRequest
 import com.sun.tools.jdi.SocketAttachingConnector
+import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultDirectives
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.BOX_MAIN_FILE_NAME
+import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 import java.net.URL
 
-open class LoggedData(val line: Int, val isSynthetic: Boolean, val expectation: String)
-
 abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServices) {
-
     companion object {
-        const val EXPECTATIONS_MARKER = "// EXPECTATIONS"
-        const val FORCE_STEP_INTO_MARKER = "// FORCE_STEP_INTO"
-        const val JVM_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM"
-        const val JVM_IR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER JVM_IR"
-        const val CLASSIC_FRONTEND_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER CLASSIC_FRONTEND"
-        const val FIR_EXPECTATIONS_MARKER = "$EXPECTATIONS_MARKER FIR"
-
         val BOX_MAIN_FILE_CLASS_NAME = BOX_MAIN_FILE_NAME.replace(".kt", "Kt")
     }
 
-    private var wholeFile = File("")
-    private var backend = TargetBackend.JVM
-    private var frontend: FrontendKind<*> = FrontendKinds.ClassicFrontend
+    private lateinit var wholeFile: File
+    private lateinit var backend: TargetBackend
+    private lateinit var frontend: FrontendKind<*>
 
-    abstract fun storeStep(loggedItems: ArrayList<LoggedData>, event: Event)
+    abstract fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event)
 
     override fun launchSeparateJvmProcess(
         javaExe: File,
@@ -81,7 +73,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
     // Debug event loop to step through a test program.
     private fun runDebugEventLoop(virtualMachine: VirtualMachine) {
         val manager = virtualMachine.eventRequestManager()
-        val loggedItems = ArrayList<LoggedData>()
+        val loggedItems = ArrayList<SteppingTestLoggedData>()
         var inBoxMethod = false
         vmLoop@
         while (true) {
@@ -104,6 +96,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                                 stepReq.addClassExclusionFilter("java.*")
                                 stepReq.addClassExclusionFilter("sun.*")
                                 stepReq.addClassExclusionFilter("kotlin.*")
+                                stepReq.addClassExclusionFilter("jdk.internal.*")
                                 // Create class prepare request to be able to set breakpoints on class initializer lines.
                                 // There are no line stepping events for class initializers, so we depend on breakpoints.
                                 val prepareReq = manager.createClassPrepareRequest()
@@ -111,6 +104,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
                                 prepareReq.addClassExclusionFilter("java.*")
                                 prepareReq.addClassExclusionFilter("sun.*")
                                 prepareReq.addClassExclusionFilter("kotlin.*")
+                                prepareReq.addClassExclusionFilter("jdk.internal.*")
                             }
                             manager.stepRequests().map { it.enable() }
                             manager.classPrepareRequests().map { it.enable() }
@@ -164,98 +158,25 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
             }
             eventSet.resume()
         }
-        checkResult(wholeFile, loggedItems)
+        checkSteppingTestResult(frontend, backend, wholeFile, loggedItems, testServices.defaultDirectives)
         virtualMachine.resume()
     }
 
-    fun Location.formatAsExpectation(): String {
-        val synthetic = if (method().isSynthetic) " (synthetic)" else ""
-        return "${sourceName()}:${lineNumber()} ${method().name()}$synthetic"
+    protected fun Location.formatAsExpectation(visibleVars: List<LocalVariableRecord>?): String {
+        val fileNames =
+            testServices.moduleStructure.modules.flatMap { it.files }.map { it.name } +
+                    SourceMapper.FAKE_FILE_NAME
+        return formatAsSteppingTestExpectation(
+            sourceName(),
+            // Do not render line numbers outside of test sources (i.e. from stdlib): they can change and it's not a part of this test.
+            lineNumber().takeIf { sourceName() in fileNames },
+            method().name(),
+            method().isSynthetic,
+            visibleVars
+        )
     }
 
-    fun checkResult(wholeFile: File, loggedItems: List<LoggedData>) {
-        val actual = mutableListOf<String>()
-        val lines = wholeFile.readLines()
-        val forceStepInto = lines.any { it.startsWith(FORCE_STEP_INTO_MARKER) }
-
-        val actualLineNumbers = compressSequencesWithoutLinenumber(loggedItems)
-            .filter {
-                // Ignore synthetic code with no line number information unless force step into behavior is requested.
-                forceStepInto || !it.isSynthetic
-            }
-            .map { "// ${it.expectation}" }
-        val actualLineNumbersIterator = actualLineNumbers.iterator()
-
-        val lineIterator = lines.iterator()
-        for (line in lineIterator) {
-            actual.add(line)
-            if (line.startsWith(EXPECTATIONS_MARKER) || line.startsWith(FORCE_STEP_INTO_MARKER)) break
-        }
-
-        var currentBackend = TargetBackend.ANY
-        var currentFrontend = frontend
-        for (line in lineIterator) {
-            if (line.isEmpty()) {
-                actual.add(line)
-                continue
-            }
-            if (line.startsWith(EXPECTATIONS_MARKER)) {
-                actual.add(line)
-                currentBackend = when (line) {
-                    EXPECTATIONS_MARKER -> TargetBackend.ANY
-                    JVM_EXPECTATIONS_MARKER -> TargetBackend.JVM
-                    JVM_IR_EXPECTATIONS_MARKER -> TargetBackend.JVM_IR
-                    CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> currentBackend
-                    FIR_EXPECTATIONS_MARKER -> currentBackend
-                    else -> error("Expected JVM backend: $line")
-                }
-                currentFrontend = when (line) {
-                    EXPECTATIONS_MARKER -> frontend
-                    JVM_EXPECTATIONS_MARKER -> currentFrontend
-                    JVM_IR_EXPECTATIONS_MARKER -> currentFrontend
-                    CLASSIC_FRONTEND_EXPECTATIONS_MARKER -> FrontendKinds.ClassicFrontend
-                    FIR_EXPECTATIONS_MARKER -> FrontendKinds.FIR
-                    else -> error("Expected JVM backend: $line")
-                }
-                continue
-            }
-            if ((currentBackend == TargetBackend.ANY || currentBackend == backend) &&
-                currentFrontend == frontend) {
-                if (actualLineNumbersIterator.hasNext()) {
-                    actual.add(actualLineNumbersIterator.next())
-                }
-            } else {
-                actual.add(line)
-            }
-        }
-
-        actualLineNumbersIterator.forEach { actual.add(it) }
-
-        assertEqualsToFile(wholeFile, actual.joinToString("\n"))
-    }
-
-    // Compresses sequences of the same location without line number in the log:
-    // specifically removes locations without linenumber, that would otherwise
-    // print as byte offsets. This avoids overspecifying code generation
-    // strategy in debug tests.
-    fun compressSequencesWithoutLinenumber(loggedItems: List<LoggedData>): List<LoggedData> {
-        if (loggedItems.isEmpty()) return listOf()
-
-        val logIterator = loggedItems.iterator()
-        var currentItem = logIterator.next()
-        val result = mutableListOf(currentItem)
-
-        for (logItem in logIterator) {
-            if (currentItem.line != -1 || currentItem.expectation != logItem.expectation) {
-                result.add(logItem)
-                currentItem = logItem
-            }
-        }
-
-        return result
-    }
-
-    fun setupMethodEntryAndExitRequests(virtualMachine: VirtualMachine) {
+    private fun setupMethodEntryAndExitRequests(virtualMachine: VirtualMachine) {
         val manager = virtualMachine.eventRequestManager()
 
         val methodEntryReq = manager.createMethodEntryRequest()
@@ -281,54 +202,28 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
 }
 
 class SteppingDebugRunner(testServices: TestServices) : DebugRunner(testServices) {
-    override fun storeStep(loggedItems: ArrayList<LoggedData>, event: Event) {
+    override fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event) {
         assert(event is LocatableEvent)
         val location = (event as LocatableEvent).location()
-        loggedItems.add(
-            LoggedData(
+        val data =
+            if (isIndyLambda(location)) {
+                // Invokedynamic lambdas are not synthetic in JDI, and they don't have source information.
+                SteppingTestLoggedData(-1, true, "<lambda>")
+            } else SteppingTestLoggedData(
                 location.lineNumber(),
                 location.method().isSynthetic,
-                location.formatAsExpectation()
+                location.formatAsExpectation(null)
             )
-        )
+        loggedItems.add(data)
     }
 }
 
 class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testServices) {
-    interface LocalValue
-
-    class LocalPrimitive(val value: String, val valueType: String) : LocalValue {
-        override fun toString(): String {
-            return "$value:$valueType"
-        }
-    }
-
-    class LocalReference(val id: String, val referenceType: String) : LocalValue {
-        override fun toString(): String {
-            return referenceType
-        }
-    }
-
-    class LocalNullValue : LocalValue {
-        override fun toString(): String {
-            return "null"
-        }
-    }
-
-    class LocalVariableRecord(
-        val variable: String,
-        val variableType: String,
-        val value: LocalValue
-    ) {
-        override fun toString(): String {
-            return "$variable:$variableType=$value"
-        }
-    }
 
     private fun toRecord(frame: StackFrame, variable: LocalVariable): LocalVariableRecord {
         val value = frame.getValue(variable)
         val valueRecord = if (value == null) {
-            LocalNullValue()
+            LocalNullValue
         } else if (value is ObjectReference && value.referenceType().name() != "java.lang.String") {
             LocalReference(value.uniqueID().toString(), value.referenceType().name())
         } else {
@@ -343,7 +238,7 @@ class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testSer
         }
     }
 
-    override fun storeStep(loggedItems: ArrayList<LoggedData>, event: Event) {
+    override fun storeStep(loggedItems: ArrayList<SteppingTestLoggedData>, event: Event) {
         val locatableEvent = event as LocatableEvent
         waitUntil { locatableEvent.thread().isSuspended }
         val location = locatableEvent.location()
@@ -356,12 +251,18 @@ class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testSer
             // Local variable table completely absent - not distinguished from an empty table.
             listOf()
         }
-        loggedItems.add(
-            LoggedData(
+        val data =
+            if (isIndyLambda(location)) {
+                // Invokedynamic lambdas are not synthetic in JDI, and they don't have source information.
+                SteppingTestLoggedData(-1, true, "<lambda>")
+            } else SteppingTestLoggedData(
                 location.lineNumber(),
                 false,
-                "${location.formatAsExpectation()}: ${visibleVars.joinToString(", ")}".trim()
+                location.formatAsExpectation(visibleVars)
             )
-        )
+        loggedItems.add(data)
     }
 }
+
+private fun isIndyLambda(location: Location): Boolean =
+    "$\$Lambda$" in location.declaringType().name()

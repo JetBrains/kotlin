@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.refineTypes
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 abstract class AbstractTypeConstructor(storageManager: StorageManager) : ClassifierBasedTypeConstructor() {
     override fun getSupertypes() = supertypes().supertypesWithoutCycles
@@ -70,12 +71,12 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : Classif
     // The first one is used for computation of neighbours in supertypes graph (see Companion.computeNeighbours)
     private class Supertypes(val allSupertypes: Collection<KotlinType>) {
         // initializer is only needed as a stub for case when 'getSupertypes' is called while 'supertypes' are being calculated
-        var supertypesWithoutCycles: List<KotlinType> = listOf(ErrorUtils.ERROR_TYPE_FOR_LOOP_IN_SUPERTYPES)
+        var supertypesWithoutCycles: List<KotlinType> = listOf(ErrorUtils.errorTypeForLoopInSupertypes)
     }
 
     private val supertypes = storageManager.createLazyValueWithPostCompute(
         { Supertypes(computeSupertypes()) },
-        { Supertypes(listOf(ErrorUtils.ERROR_TYPE_FOR_LOOP_IN_SUPERTYPES)) },
+        { Supertypes(listOf(ErrorUtils.errorTypeForLoopInSupertypes)) },
         { supertypes ->
             // It's important that loops disconnection begins in post-compute phase, because it guarantees that
             // when we start calculation supertypes of supertypes (for computing neighbours), they start their disconnection loop process

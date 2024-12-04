@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package override.normal
 
 interface MyTrait {
@@ -21,7 +22,7 @@ open class MyClass() : MyTrait, MyAbstractClass() {
 
 class MyChildClass() : MyClass() {}
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass<!> : MyTrait, MyAbstractClass() {}
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass<!> : MyTrait, MyAbstractClass() {}
 
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass2<!>() : MyTrait, MyAbstractClass() {
     override fun foo() {}
@@ -43,8 +44,8 @@ class MyChildClass() : MyClass() {}
 }
 
 class MyChildClass1() : MyClass() {
-    fun foo() {}
-    val pr : Unit = Unit
+    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>() {}
+    val <!VIRTUAL_MEMBER_HIDDEN!>pr<!> : Unit = Unit
     override fun bar() {}
     override val prr : Unit = Unit
 }

@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.java
 public class A<T extends A> {}
 
 // FILE: 1.kt
-class B<S: A<*>>
+<!FINITE_BOUNDS_VIOLATION_IN_JAVA!>class B<!><S: A<*>>

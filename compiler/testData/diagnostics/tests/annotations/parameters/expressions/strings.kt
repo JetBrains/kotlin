@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 package test
 
 annotation class Ann(val s1: String, val s2: String)

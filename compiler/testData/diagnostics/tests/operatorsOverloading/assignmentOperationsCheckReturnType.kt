@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun intBinEq() {
     var x = 0
     x <!NONE_APPLICABLE!>+=<!> 'a'

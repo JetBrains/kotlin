@@ -10,8 +10,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
@@ -35,10 +37,12 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.maven.Util.joinArrays;
 
@@ -51,6 +55,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     @Component
     protected RepositorySystem system;
+
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
 
     /**
      * The source directories containing the sources to be compiled.
@@ -74,8 +81,12 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     private boolean multiPlatform = false;
 
     protected List<String> getSourceFilePaths() {
-        if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
-        return project.getCompileSourceRoots();
+        List<String> sourceFilePaths = new ArrayList<>();
+        if (sourceDirs != null && !sourceDirs.isEmpty()) sourceFilePaths.addAll(sourceDirs);
+        sourceFilePaths.addAll(project.getCompileSourceRoots());
+
+        return sourceFilePaths.stream().map(path -> new File(path).toPath().normalize().toString())
+                .distinct().collect(Collectors.toList());
     }
 
     @NotNull
@@ -192,7 +203,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 " (JRE " + System.getProperty("java.runtime.version") + ")");
 
         if (!hasKotlinFilesInSources()) {
-            getLog().warn("No sources found skipping Kotlin compile");
+            getLog().info("No sources to compile");
             return;
         }
 
@@ -251,19 +262,16 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                     String valueString;
                     if (value instanceof Object[]) {
                         valueString = Arrays.deepToString((Object[]) value);
-                    }
-                    else if (value != null) {
+                    } else if (value != null) {
                         valueString = String.valueOf(value);
-                    }
-                    else {
+                    } else {
                         valueString = "(null)";
                     }
 
                     getLog().debug(f.getName() + "=" + valueString);
                 }
                 getLog().debug("End of arguments");
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 getLog().warn("Failed to print compiler arguments: " + e, e);
             }
         }
@@ -277,14 +285,24 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException;
 
+    @NotNull
     private List<String> getCompilerPluginClassPaths() {
         ArrayList<String> result = new ArrayList<>();
 
         List<File> files = new ArrayList<>();
 
+        ArtifactRepository localRepo = session == null ? null : session.getLocalRepository();
+        List<ArtifactRepository> remoteRepos = session == null ? null : session.getCurrentProject().getPluginArtifactRepositories();
+
         for (Dependency dependency : mojoExecution.getPlugin().getDependencies()) {
             Artifact artifact = system.createDependencyArtifact(dependency);
-            ArtifactResolutionResult resolved = system.resolve(new ArtifactResolutionRequest().setArtifact(artifact));
+
+            ArtifactResolutionRequest request = new ArtifactResolutionRequest().setArtifact(artifact);
+            if (localRepo != null) request.setLocalRepository(localRepo);
+            if (remoteRepos != null) request.setRemoteRepositories(remoteRepos);
+            if (localRepo != null || remoteRepos != null) request.setResolveTransitively(true);
+
+            ArtifactResolutionResult resolved = system.resolve(request);
 
             for (Artifact resolvedArtifact : resolved.getArtifacts()) {
                 File file = resolvedArtifact.getFile();
@@ -443,10 +461,13 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         configureSpecificCompilerArguments(arguments, sourceRoots);
 
+        if (args != null && args.contains(null)) {
+            throw new MojoExecutionException("Empty compiler argument passed in the <configuration> section");
+        }
+
         try {
             compiler.parseArguments(ArrayUtil.toStringArray(args), arguments);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new MojoExecutionException(e.getMessage());
         }
 
@@ -455,7 +476,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         }
 
         List<String> pluginClassPaths = getCompilerPluginClassPaths();
-        if (pluginClassPaths != null && !pluginClassPaths.isEmpty()) {
+        if (!pluginClassPaths.isEmpty()) {
             if (arguments.getPluginClasspaths() == null || arguments.getPluginClasspaths().length == 0) {
                 arguments.setPluginClasspaths(pluginClassPaths.toArray(new String[pluginClassPaths.size()]));
             } else {

@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
+#include <cstdint>
 #ifdef KONAN_ANDROID
 #include <android/log.h>
 #endif
+#include <cstdio>
+#include <cstdlib>
 #include <stdarg.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#if !KONAN_NO_THREADS
 #include <pthread.h>
-#endif
 #include <unistd.h>
 #if KONAN_WINDOWS
 #include <windows.h>
@@ -32,19 +31,13 @@
 
 #include <chrono>
 
+#include "CallsChecker.hpp"
 #include "Common.h"
 #include "CompilerConstants.hpp"
 #include "Porting.h"
 #include "KAssert.h"
 
-#if KONAN_WASM || KONAN_ZEPHYR
-extern "C" RUNTIME_NORETURN void Konan_abort(const char*);
-extern "C" RUNTIME_NORETURN void Konan_exit(int32_t status);
-#endif
-#ifdef KONAN_ZEPHYR
-// In Zephyr's Newlib strnlen(3) is not included from string.h by default.
-extern "C" size_t strnlen(const char* buffer, size_t maxSize);
-#endif
+using namespace kotlin;
 
 namespace konan {
 
@@ -73,7 +66,7 @@ void consoleWriteUtf8(const char* utf8, uint32_t sizeBytes) {
 #endif
 }
 
-NO_EXTERNAL_CALLS_CHECK void consoleErrorUtf8(const char* utf8, uint32_t sizeBytes) {
+void consoleErrorUtf8(const char* utf8, uint32_t sizeBytes) {
 #ifdef KONAN_ANDROID
   if (kotlin::compiler::printToAndroidLogcat()) {
     // TODO: use sizeBytes!
@@ -101,9 +94,7 @@ int getLastErrorMessage(char* message, uint32_t size) {
 #endif
 
 int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
-#ifdef KONAN_ZEPHYR
-  return 0;
-#elif KONAN_WINDOWS
+#if KONAN_WINDOWS
   auto length = 0;
   void *stdInHandle = ::GetStdHandle(STD_INPUT_HANDLE);
   if (::GetFileType(stdInHandle) == FILE_TYPE_CHAR) {
@@ -150,18 +141,11 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
   return length;
 }
 
-#if KONAN_INTERNAL_SNPRINTF
-extern "C" int rpl_vsnprintf(char *, size_t, const char *, va_list);
-#define vsnprintf_impl rpl_vsnprintf
-#else
-#define vsnprintf_impl ::vsnprintf
-#endif
-
 NO_EXTERNAL_CALLS_CHECK void consolePrintf(const char* format, ...) {
   char buffer[1024];
   va_list args;
   va_start(args, format);
-  int rv = vsnprintf_impl(buffer, sizeof(buffer), format, args);
+  int rv = std::vsnprintf(buffer, sizeof(buffer), format, args);
   if (rv < 0) return; // TODO: this may be too much exotic, but should i try to print itoa(error) and terminate?
   if (static_cast<size_t>(rv) >= sizeof(buffer)) rv = sizeof(buffer) - 1;  // TODO: Consider realloc or report truncating.
   va_end(args);
@@ -173,7 +157,7 @@ NO_EXTERNAL_CALLS_CHECK void consoleErrorf(const char* format, ...) {
   char buffer[1024];
   va_list args;
   va_start(args, format);
-  int rv = vsnprintf_impl(buffer, sizeof(buffer), format, args);
+  int rv = std::vsnprintf(buffer, sizeof(buffer), format, args);
   if (rv < 0) return; // TODO: this may be too much exotic, but should i try to print itoa(error) and terminate?
   if (static_cast<size_t>(rv) >= sizeof(buffer)) rv = sizeof(buffer) - 1;  // TODO: Consider realloc or report truncating.
   va_end(args);
@@ -184,9 +168,6 @@ void consoleFlush() {
   ::fflush(stdout);
   ::fflush(stderr);
 }
-
-// Thread execution.
-#if !KONAN_NO_THREADS
 
 pthread_key_t terminationKey;
 pthread_once_t terminationKeyOnceControl = PTHREAD_ONCE_INIT;
@@ -205,7 +186,7 @@ static void onThreadExitCallback(void* value) {
   while (record != nullptr) {
     record->destructor(record->destructorParameter);
     auto next = record->next;
-    free(record);
+    std::free(record);
     record = next;
   }
 }
@@ -230,163 +211,50 @@ static void onThreadExitInit() {
   pthread_key_create(&terminationKey, onThreadExitCallback);
 }
 
-#endif  // !KONAN_NO_THREADS
-
 void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
-#if KONAN_NO_THREADS
-#if KONAN_WASM || KONAN_ZEPHYR
-  // No way to do that.
-#else
-#error "How to do onThreadExit()?"
-#endif
-#else  // !KONAN_NO_THREADS
   // We cannot use pthread_cleanup_push() as it is lexical scope bound.
   pthread_once(&terminationKeyOnceControl, onThreadExitInit);
-  DestructorRecord* destructorRecord = (DestructorRecord*)calloc(1, sizeof(DestructorRecord));
+  DestructorRecord* destructorRecord = (DestructorRecord*)std::calloc(1, sizeof(DestructorRecord));
   destructorRecord->destructor = destructor;
   destructorRecord->destructorParameter = destructorParameter;
   destructorRecord->next =
       reinterpret_cast<DestructorRecord*>(pthread_getspecific(terminationKey));
   pthread_setspecific(terminationKey, destructorRecord);
-#endif  // !KONAN_NO_THREADS
 }
 
 #if KONAN_LINUX
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
+
+/**
+ * We can't use gettid from glibc 2.30 because it is too new for us.
+ */
+NO_EXTERNAL_CALLS_CHECK NO_INLINE int gettid() {
+    return static_cast<int>(syscall(__NR_gettid));
+}
 #endif
 
-NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
-#if KONAN_NO_THREADS
-#if KONAN_WASM || KONAN_ZEPHYR
-    // No way to do that.
-    return 0;
-#else
-#error "How to find currentThreadId()?"
-#endif
-#else  // !KONAN_NO_THREADS
+NO_EXTERNAL_CALLS_CHECK uintptr_t currentThreadId() {
 #if defined(KONAN_OSX) or defined(KONAN_IOS) or defined(KONAN_TVOS) or defined(KONAN_WATCHOS)
     uint64_t tid;
     pthread_t self = pthread_self();
     RuntimeCheck(!pthread_threadid_np(self, &tid), "Error getting thread id");
-    RuntimeCheck((*(reinterpret_cast<int32_t*>(&tid) + 1)) == 0, "Thread id is not a uint32");
+    if constexpr (sizeof(uintptr_t) < sizeof(uint64_t)) {
+        RuntimeCheck(*(reinterpret_cast<int32_t*>(&tid) + 1) == 0, "Thread id does not fit in a pointer");
+    }
     return tid;
 #elif KONAN_ANDROID
     return gettid();
 #elif KONAN_LINUX
-    return syscall(__NR_gettid);
+    return gettid();
 #elif KONAN_WINDOWS
   return GetCurrentThreadId();
 #else
 #error "How to find currentThreadId()?"
 #endif
-#endif  // !KONAN_NO_THREADS
 }
 
-// Process execution.
-void abort(void) {
-  ::abort();
-}
-
-#if KONAN_WASM || KONAN_ZEPHYR
-void exit(int32_t status) {
-  Konan_exit(status);
-}
-#else
-void exit(int32_t status) {
-  ::exit(status);
-}
-#endif
-
-// String/byte operations.
-// memcpy/memmove are not here intentionally, as frequently implemented/optimized
-// by C compiler.
-void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLen) {
-#if KONAN_NO_MEMMEM
-  for (size_t i = 0; i + littleLen <= bigLen; ++i) {
-    void* pos = ((char*)big) + i;
-    if (::memcmp(little, pos, littleLen) == 0) return pos;
-  }
-  return nullptr;
-#else
-  return ::memmem(big, bigLen, little, littleLen);
-#endif
-
-}
-
-// The sprintf family.
-int snprintf(char* buffer, size_t size, const char* format, ...) {
-  va_list args;
-  va_start(args, format);
-  int rv = vsnprintf(buffer, size, format, args);
-  va_end(args);
-  return rv;
-}
-
-int vsnprintf(char* buffer, size_t size, const char* format, va_list args) {
-  return vsnprintf_impl(buffer, size, format, args);
-}
-
-size_t strnlen(const char* buffer, size_t maxSize) {
-  return ::strnlen(buffer, maxSize);
-}
-
-// Memory operations.
-#if KONAN_INTERNAL_DLMALLOC
-extern "C" void* dlcalloc(size_t, size_t);
-extern "C" void dlfree(void*);
-#define calloc_impl dlcalloc
-#define free_impl dlfree
-#define calloc_aligned_impl(count, size, alignment) dlcalloc(count, size)
-
-#else
-extern "C" void* konan_calloc_impl(size_t, size_t);
-extern "C" void konan_free_impl(void*);
-extern "C" void* konan_calloc_aligned_impl(size_t count, size_t size, size_t alignment);
-#define calloc_impl konan_calloc_impl
-#define free_impl konan_free_impl
-#define calloc_aligned_impl konan_calloc_aligned_impl
-#endif
-
-void* calloc(size_t count, size_t size) {
-  return calloc_impl(count, size);
-}
-
-void* calloc_aligned(size_t count, size_t size, size_t alignment) {
-  return calloc_aligned_impl(count, size, alignment);
-}
-
-void free(void* pointer) {
-  free_impl(pointer);
-}
-
-#if KONAN_INTERNAL_NOW
-
-#ifdef KONAN_ZEPHYR
-void Konan_date_now(uint64_t* arg) {
-    // TODO: so how will we support time for embedded?
-    *arg = 0LL;
-}
-#else
-extern "C" void Konan_date_now(uint64_t*);
-#endif
-
-uint64_t getTimeMillis() {
-    uint64_t now;
-    Konan_date_now(&now);
-    return now;
-}
-
-uint64_t getTimeMicros() {
-    return getTimeMillis() * 1000ULL;
-}
-
-uint64_t getTimeNanos() {
-    return getTimeMillis() * 1000000ULL;
-}
-
-#else
 // Time operations.
 using namespace std::chrono;
 
@@ -404,192 +272,9 @@ uint64_t getTimeNanos() {
 uint64_t getTimeMicros() {
   return duration_cast<microseconds>(steady_time_clock::now().time_since_epoch()).count();
 }
-#endif
 
-#if KONAN_INTERNAL_DLMALLOC
-// This function is being called when memory allocator needs more RAM.
-
-#if KONAN_WASM
-
-namespace {
-
-constexpr uint32_t MFAIL = ~(uint32_t)0;
-constexpr uint32_t WASM_PAGESIZE_EXPONENT = 16;
-constexpr uint32_t WASM_PAGESIZE = 1u << WASM_PAGESIZE_EXPONENT;
-constexpr uint32_t WASM_PAGEMASK = WASM_PAGESIZE-1;
-
-uint32_t pageAlign(int32_t value) {
-  return (value + WASM_PAGEMASK) & ~ (WASM_PAGEMASK);
+bool isLittleEndian() {
+  return __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__;
 }
-
-uint32_t inBytes(uint32_t pageCount) {
-  return pageCount << WASM_PAGESIZE_EXPONENT;
-}
-
-uint32_t inPages(uint32_t value) {
-  return value >> WASM_PAGESIZE_EXPONENT;
-}
-
-extern "C" void Konan_notify_memory_grow();
-
-uint32_t memorySize() {
-  return __builtin_wasm_memory_size(0);
-}
-
-int32_t growMemory(uint32_t delta) {
-  int32_t oldLength =  __builtin_wasm_memory_grow(0, delta);
-  Konan_notify_memory_grow();
-  return oldLength;
-}
-
-}
-
-void* moreCore(int32_t delta) {
-  uint32_t top = inBytes(memorySize());
-  if (delta > 0) {
-    if (growMemory(inPages(pageAlign(delta))) == 0) {
-      return (void *) MFAIL;
-    }
-  } else if (delta < 0) {
-    return (void *) MFAIL;
-  }
-  return (void *) top;
-}
-
-// dlmalloc() wants to know the page size.
-long getpagesize() {
-    return WASM_PAGESIZE;
-}
-
-#else
-void* moreCore(int size) {
-    return sbrk(size);
-}
-
-long getpagesize() {
-    return sysconf(_SC_PAGESIZE);
-}
-#endif
-#endif
 
 }  // namespace konan
-
-extern "C" {
-// TODO: get rid of these.
-#if (KONAN_WASM || KONAN_ZEPHYR)
-    void _ZNKSt3__120__vector_base_commonILb1EE20__throw_length_errorEv(void) {
-        Konan_abort("TODO: throw_length_error not implemented.");
-    }
-    void _ZNKSt3__220__vector_base_commonILb1EE20__throw_length_errorEv(void) {
-        Konan_abort("TODO: throw_length_error not implemented.");
-    }
-    void _ZNKSt3__121__basic_string_commonILb1EE20__throw_length_errorEv(void) {
-        Konan_abort("TODO: throw_length_error not implemented.");
-    }
-    void _ZNKSt3__221__basic_string_commonILb1EE20__throw_length_errorEv(void) {
-        Konan_abort("TODO: throw_length_error not implemented.");
-    }
-    int _ZNSt3__212__next_primeEj(unsigned long n) {
-        static unsigned long primes[] = {
-                11UL,
-                101UL,
-                1009UL,
-                10007UL,
-                100003UL,
-                1000003UL,
-                10000019UL,
-                100000007UL,
-                1000000007UL
-        };
-        size_t table_length = sizeof(primes)/sizeof(unsigned long);
-
-        if (n > primes[table_length - 1]) konan::abort();
-
-        unsigned long prime = primes[0];
-        for (unsigned long i=0; i< table_length; i++) {
-            prime = primes[i];
-            if (prime >= n) break;
-        }
-        return prime;
-    }
-
-    int _ZNSt3__212__next_primeEm(int n) {
-       return _ZNSt3__212__next_primeEj(n);
-    }
-
-    int _ZNSt3__112__next_primeEj(unsigned long n) {
-        return _ZNSt3__212__next_primeEj(n);
-    }
-    void __assert_fail(const char* assertion, const char* file, int line, const char* function) {
-        char buf[1024];
-        konan::snprintf(buf, sizeof(buf), "%s:%d in %s: runtime assert: %s\n", file, line, function, assertion);
-        Konan_abort(buf);
-    }
-    int* __errno_location() {
-        static int theErrno = 0;
-        return &theErrno;
-    }
-
-    // Some math.h functions.
-
-    double pow(double x, double y) {
-        return __builtin_pow(x, y);
-    }
-#endif
-
-#ifdef KONAN_WASM
-    // Some string.h functions.
-    void *memcpy(void *dst, const void *src, size_t n) {
-        for (size_t i = 0; i != n; ++i)
-            *((char*)dst + i) = *((char*)src + i);
-        return dst;
-    }
-
-    void *memmove(void *dst, const void *src, size_t len)  {
-        if (src < dst) {
-            for (long i = len; i != 0; --i) {
-                *((char*)dst + i - 1) = *((char*)src + i - 1);
-            }
-        } else {
-            memcpy(dst, src, len);
-        }
-        return dst;
-    }
-
-    int memcmp(const void *s1, const void *s2, size_t n) {
-        for (size_t i = 0; i != n; ++i) {
-            if (*((char*)s1 + i) != *((char*)s2 + i)) {
-                return *((char*)s1 + i) - *((char*)s2 + i);
-            }
-        }
-        return 0;
-    }
-
-    void *memset(void *b, int c, size_t len) {
-        for (size_t i = 0; i != len; ++i) {
-            *((char*)b + i) = c;
-        }
-        return b;
-    }
-
-    size_t strlen(const char *s) {
-        for (long i = 0;; ++i) {
-            if (s[i] == 0) return i;
-        }
-    }
-
-    size_t strnlen(const char *s, size_t maxlen) {
-        for (size_t i = 0; i<=maxlen; ++i) {
-            if (s[i] == 0) return i;
-        }
-        return maxlen;
-    }
-#endif
-
-#ifdef KONAN_ZEPHYR
-    RUNTIME_USED void Konan_abort(const char*) {
-        while(1) {}
-    }
-#endif // KONAN_ZEPHYR
-
-}  // extern "C"

@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 class A<T> {
     fun foo() {}
     val bar = 42

@@ -2,6 +2,7 @@
 // FULL_JDK
 // WITH_STDLIB
 
+
 val xsl = arrayListOf("a", "b", "c", "d")
 val xs = xsl.asSequence()
 

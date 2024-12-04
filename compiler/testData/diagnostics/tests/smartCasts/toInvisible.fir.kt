@@ -1,4 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
+
 // FILE: a/A.java
 package a;
 public interface A {
@@ -21,6 +23,9 @@ public class AImpl implements A {
     }
 }
 
+// FILE: a/BImpl.java
+package a;
+
 class BImpl implements B {
     @Override
     public void bar() {}
@@ -33,7 +38,7 @@ import a.AImpl
 fun test1(a: A) {
     if (a is AImpl) {
         (a as A).b().bar() // OK
-        a.b().<!UNRESOLVED_REFERENCE!>bar<!>()
+        a.b().<!INVISIBLE_REFERENCE!>bar<!>()
     }
 }
 

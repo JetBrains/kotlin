@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //no nested class access via instance reference error
 fun test() {
     A.Companion.f(<!ARGUMENT_TYPE_MISMATCH!>""<!>)

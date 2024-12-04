@@ -1,0 +1,32 @@
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class AllOpen {
+    // source: 'nestedInner.kt'
+}
+
+@kotlin.Metadata
+public final class Test$Inner {
+    // source: 'nestedInner.kt'
+    synthetic final field this$0: Test
+    public method <init>(p0: Test): void
+    public final method innerMethod(): void
+    public final inner class Test$Inner
+}
+
+@kotlin.Metadata
+public final class Test$Nested {
+    // source: 'nestedInner.kt'
+    public method <init>(): void
+    public final method nestedMethod(): void
+    public final inner class Test$Nested
+}
+
+@AllOpen
+@kotlin.Metadata
+public class Test {
+    // source: 'nestedInner.kt'
+    public method <init>(): void
+    public method testMethod(): void
+    public final inner class Test$Inner
+    public final inner class Test$Nested
+}

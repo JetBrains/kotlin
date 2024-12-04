@@ -5,7 +5,7 @@ operator fun Long.component2() = this + 2
 fun doTest(l : ArrayList<Long>): String {
     var s = ""
     for ((a, b) in l) {
-      s += {"$a:$b;"}()
+      s += {"$a:$b;"}.let { it() }
     }
     return s
 }

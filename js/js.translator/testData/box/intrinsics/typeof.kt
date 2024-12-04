@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1303
 external val definedVariableX: Int
 external val undefinedVariableX: Int
 

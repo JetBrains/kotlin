@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun testBinary1() {
     operator fun Int.times(s: String) {}
 

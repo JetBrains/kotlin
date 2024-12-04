@@ -1,0 +1,50 @@
+// FILE: Common.kt
+
+expect object A
+
+expect class Bexpect constructor(s: kotlin.String)
+
+    expect constructor(s: kotlin.String)
+
+    expect constructor(n: kotlin.Int)
+
+    expect class Nested
+
+    expect fun bar()
+
+    expect val n: kotlin.Int
+
+expect class C
+
+    expect class Nested
+
+expect fun baz()
+
+expect var m: kotlin.Int
+
+// FILE: JvmAndroid.kt
+
+actual object A
+
+actual class Bactual constructor(s: kotlin.String)
+
+    actual constructor(s: kotlin.String)
+
+    actual constructor(n: kotlin.Int)
+
+    actual class Nested
+
+    actual fun bar()
+
+    actual val n: kotlin.Int
+
+actual typealias C = sample.D
+
+class D
+
+    class Nested
+
+actual fun baz()
+
+actual var m: kotlin.Int
+

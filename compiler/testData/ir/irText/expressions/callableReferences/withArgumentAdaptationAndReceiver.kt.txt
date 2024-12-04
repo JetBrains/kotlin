@@ -1,7 +1,3 @@
-fun use(fn: Function1<Int, Unit>) {
-  fn.invoke(p1 = 1)
-}
-
 class Host {
   constructor() /* primary */ {
     super/*Any*/()
@@ -9,17 +5,13 @@ class Host {
 
   }
 
-  fun withVararg(vararg xs: Int): String {
-    return ""
-  }
-
-  fun testImplicitThis() {
+  fun testBoundReceiverExpression() {
     use(fn = { // BLOCK
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      <this>::withVararg
+      Host()::withVararg
     })
   }
 
@@ -55,14 +47,23 @@ class Host {
     })
   }
 
-  fun testBoundReceiverExpression() {
+  fun testImplicitThis() {
     use(fn = { // BLOCK
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      Host()::withVararg
+      <this>::withVararg
     })
   }
 
+  fun withVararg(vararg xs: Int): String {
+    return ""
+  }
+
 }
+
+fun use(fn: Function1<Int, Unit>) {
+  fn.invoke(p1 = 1)
+}
+

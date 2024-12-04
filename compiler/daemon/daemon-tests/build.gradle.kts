@@ -1,4 +1,3 @@
-
 description = "Kotlin Daemon Tests"
 
 plugins {
@@ -6,26 +5,17 @@ plugins {
     id("jps-compatible")
 }
 
-val ktorExcludesForDaemon: List<Pair<String, String>> by rootProject.extra
-
 dependencies {
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(kotlinStdlib())
-    testApi(commonDep("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testApi(project(":kotlin-daemon-client"))
-    testApi(project(":kotlin-daemon-client-new"))
-    testCompileOnly(project(":kotlin-daemon"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    testApi(commonDep("io.ktor", "ktor-network")) {
-        ktorExcludesForDaemon.forEach { (group, module) ->
-            exclude(group = group, module = module)
-        }
-    }
+    testImplementation(kotlinStdlib())
+    testImplementation(kotlinTest("junit"))
     testImplementation(project(":kotlin-daemon"))
-    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(project(":kotlin-daemon-client"))
+    testImplementation(libs.junit4)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(projectTests(":compiler:tests-integration"))
+    testImplementation(intellijCore())
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 sourceSets {
@@ -33,8 +23,14 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+
+    useJUnitPlatform()
+
+    val testClassesDirs = testSourceSet.output.classesDirs
+    doFirst {
+        systemProperty("kotlin.test.script.classpath", testClassesDirs.joinToString(File.pathSeparator))
+    }
 }

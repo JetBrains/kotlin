@@ -1,0 +1,27 @@
+@Target(AnnotationTarget#.TYPE#)
+owner -> FirRegularClassSymbol util/Anno
+context -> FirRegularClassSymbol util/Anno
+
+@Anno(<strcat>(String(MyClassWithoutConstructor nested nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithoutConstructor
+context -> FirRegularClassSymbol util/MyClassWithoutConstructor
+
+@Anno(<strcat>(String(MyClassWithoutConstructor nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithoutConstructor
+context -> FirRegularClassSymbol util/MyClassWithoutConstructor
+
+@Anno(<strcat>(String(MyClassWithoutConstructor super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithoutConstructor
+context -> FirRegularClassSymbol util/MyClassWithoutConstructor
+
+@Anno(<strcat>(String(MyClassWithConstructor nested nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithConstructor
+context -> FirRegularClassSymbol util/MyClassWithConstructor
+
+@Anno(<strcat>(String(MyClassWithConstructor nested super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithConstructor
+context -> FirRegularClassSymbol util/MyClassWithConstructor
+
+@Anno(<strcat>(String(MyClassWithConstructor super type ref ), prop#))
+owner -> FirRegularClassSymbol util/MyClassWithConstructor
+context -> FirRegularClassSymbol util/MyClassWithConstructor

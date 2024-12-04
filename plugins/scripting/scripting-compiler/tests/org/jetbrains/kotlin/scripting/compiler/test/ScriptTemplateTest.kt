@@ -2,22 +2,22 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("unused")
+@file:Suppress("unused", "DEPRECATION")
 
 package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.util.Disposer
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.compiler.plugin.TestMessageCollector
-import org.jetbrains.kotlin.scripting.compiler.plugin.assertHasMessage
-import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.compiler.plugin.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -51,7 +51,7 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ScriptTemplateTest : TestCase() {
     fun testScriptWithParam() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
@@ -61,7 +61,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithClassParameter() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass =
             compileScript("fib_cp.kts", ScriptWithClassParam::class, null, runIsolated = false, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
@@ -72,7 +72,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithBaseClassWithParam() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass =
             compileScript("fib_dsl.kts", ScriptWithBaseClass::class, null, runIsolated = false, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
@@ -85,7 +85,7 @@ class ScriptTemplateTest : TestCase() {
     fun testScriptWithDependsAnn() {
         Assert.assertNull(compileScript("fib_ext_ann.kts", ScriptWithIntParamAndDummyResolver::class, null, includeKotlinRuntime = false))
 
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib_ext_ann.kts", ScriptWithIntParam::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
@@ -110,7 +110,7 @@ class ScriptTemplateTest : TestCase() {
             System.setErr(savedErr)
         }
 
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib_ext_ann2.kts", ScriptWithIntParam::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
@@ -120,7 +120,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithoutParams() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("without_params.kts", ScriptWithoutParams::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
@@ -130,7 +130,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithOverriddenParam() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript(
             "overridden_parameter.kts",
             ScriptBaseClassWithOverriddenProperty::class,
@@ -145,7 +145,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithArrayParam() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("array_parameter.kts", ScriptWithArrayParam::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
@@ -156,7 +156,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithNullableParam() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("nullable_parameter.kts", ScriptWithNullableParam::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
@@ -167,7 +167,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptVarianceParams() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("variance_parameters.kts", ScriptVarianceParams::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
@@ -178,7 +178,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithNullableProjection() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass =
             compileScript("nullable_projection.kts", ScriptWithNullableProjection::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
@@ -190,7 +190,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithArray2DParam() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("array2d_param.kts", ScriptWithArray2DParam::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
@@ -201,7 +201,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithStandardTemplate() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib_std.kts", ScriptTemplateWithArgs::class, runIsolated = false, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
@@ -212,7 +212,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithPackage() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib.pkg.kts", ScriptWithIntParam::class, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
@@ -223,7 +223,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithScriptDefinition() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
@@ -233,8 +233,9 @@ class ScriptTemplateTest : TestCase() {
         }
     }
 
-    fun testScriptWithParamConversion() {
-        val messageCollector = TestMessageCollector()
+    // Fails on K2, see KT-62413
+    fun testScriptWithParamConversion() = expectTestToFailOnK2 {
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         captureOut {
@@ -246,7 +247,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptErrorReporting() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         compileScript("fib.kts", ScriptReportingErrors::class, messageCollector = messageCollector)
 
         messageCollector.assertHasMessage("error", desiredSeverity = CompilerMessageSeverity.ERROR)
@@ -256,7 +257,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testAsyncResolver() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib.kts", ScriptWithAsyncResolver::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         val out = captureOut {
@@ -266,7 +267,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testAcceptedAnnotationsSync() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript(
             "acceptedAnnotations.kts",
             ScriptWithAcceptedAnnotationsSyncResolver::class,
@@ -277,7 +278,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testAcceptedAnnotationsAsync() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript(
             "acceptedAnnotations.kts",
             ScriptWithAcceptedAnnotationsAsyncResolver::class,
@@ -288,7 +289,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testAcceptedAnnotationsLegacy() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript(
             "acceptedAnnotations.kts",
             ScriptWithAcceptedAnnotationsLegacyResolver::class,
@@ -299,26 +300,26 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testSeveralConstructors() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib.kts", ScriptWithSeveralConstructorsResolver::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
     fun testConstructorWithDefaultArgs() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("fib.kts", ScriptWithDefaultArgsResolver::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
     }
 
     fun testThrowing() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         compileScript("fib.kts", ScriptWithThrowingResolver::class, null, messageCollector = messageCollector)
 
         messageCollector.assertHasMessage("Exception from resolver", desiredSeverity = CompilerMessageSeverity.ERROR)
     }
 
     fun testSmokeScriptException() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("smoke_exception.kts", ScriptWithArrayParam::class, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
         var exceptionThrown = false
@@ -332,7 +333,7 @@ class ScriptTemplateTest : TestCase() {
     }
 
     fun testScriptWithNoMatchingTemplate() {
-        val messageCollector = TestMessageCollector()
+        val messageCollector = MessageCollectorImpl()
         val aClass =
             compileScript("without_params.kts", ScriptWithDifferentFileNamePattern::class, null, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
@@ -360,17 +361,17 @@ class ScriptTemplateTest : TestCase() {
         messageCollector: MessageCollector,
         includeKotlinRuntime: Boolean
     ): Class<*>? {
-        val rootDisposable = Disposer.newDisposable()
+        val rootDisposable = Disposer.newDisposable("Disposable for ${ScriptTemplateTest::class.simpleName}")
         try {
             val additionalClasspath = System.getProperty("kotlin.test.script.classpath")?.split(File.pathSeparator)
-                ?.map { File(it) }.orEmpty().toTypedArray()
+                ?.mapNotNull { File(it).takeIf { file -> file.exists() } }.orEmpty().toTypedArray()
             val configuration = KotlinTestUtils.newConfiguration(
                 if (includeKotlinRuntime) ConfigurationKind.ALL else ConfigurationKind.JDK_ONLY,
                 TestJdkKind.FULL_JDK,
                 *additionalClasspath
             )
             configuration.updateWithBaseCompilerArguments()
-            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+            configuration.messageCollector = messageCollector
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 ScriptDefinition.FromLegacy(
@@ -380,6 +381,13 @@ class ScriptTemplateTest : TestCase() {
             )
             configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, true)
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+
+            val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
+                    System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+
+            if (isK2) {
+                configuration.put(CommonConfigurationKeys.USE_FIR, true)
+            }
 
             loadScriptingPlugin(configuration)
 
@@ -513,7 +521,7 @@ interface AcceptedAnnotationsCheck {
         val actualAnnotations = scriptContents.annotations
         Assert.assertTrue(
             "Loaded annotation: $actualAnnotations",
-            actualAnnotations.single().annotationClass.qualifiedName == TestAnno1::class.qualifiedName
+            actualAnnotations.singleOrNull()?.annotationClass?.qualifiedName == TestAnno1::class.qualifiedName
         )
 
         return ScriptDependencies(

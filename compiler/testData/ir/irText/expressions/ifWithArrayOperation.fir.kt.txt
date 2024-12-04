@@ -1,0 +1,111 @@
+fun topLevelMethod() {
+  val array: IntArray = intArrayOf(elements = [1])
+  when {
+    true -> { // BLOCK
+      array.set(index = 0, value = 2)
+    }
+    else -> { // BLOCK
+      array.set(index = 0, value = 3)
+    }
+  }
+  when {
+    true -> { // BLOCK
+      array.set(index = 0, value = 4)
+    }
+    else -> { // BLOCK
+      array.set(index = 0, value = 5)
+    }
+  }
+  when {
+    true -> { // BLOCK
+      { // BLOCK
+        val tmp_0: IntArray = array
+        val tmp_1: Int = 0
+        tmp_0.set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 6))
+      }
+    }
+    else -> { // BLOCK
+      { // BLOCK
+        val tmp_2: IntArray = array
+        val tmp_3: Int = 0
+        tmp_2.set(index = tmp_3, value = tmp_2.get(index = tmp_3).plus(other = 7))
+      }
+    }
+  }
+  when {
+    true -> { // BLOCK
+      { // BLOCK
+        val tmp_4: IntArray = array
+        val tmp_5: Int = 0
+        tmp_4.set(index = tmp_5, value = tmp_4.get(index = tmp_5).plus(other = 8))
+      }
+    }
+    else -> { // BLOCK
+      { // BLOCK
+        val tmp_6: IntArray = array
+        val tmp_7: Int = 0
+        tmp_6.set(index = tmp_7, value = tmp_6.get(index = tmp_7).plus(other = 9))
+      }
+    }
+  }
+  { // BLOCK
+    val tmp_8: Int = array.get(index = 0)
+    when {
+      EQEQ(arg0 = tmp_8, arg1 = 1) -> { // BLOCK
+        array.set(index = 0, value = 10)
+      }
+      else -> { // BLOCK
+        array.set(index = 0, value = 11)
+      }
+    }
+  }
+  { // BLOCK
+    val tmp_9: Int = array.get(index = 0)
+    when {
+      EQEQ(arg0 = tmp_9, arg1 = 1) -> { // BLOCK
+        array.set(index = 0, value = 12)
+      }
+      else -> { // BLOCK
+        array.set(index = 0, value = 13)
+      }
+    }
+  }
+  { // BLOCK
+    val tmp_10: Int = array.get(index = 0)
+    when {
+      EQEQ(arg0 = tmp_10, arg1 = 1) -> { // BLOCK
+        { // BLOCK
+          val tmp_11: IntArray = array
+          val tmp_12: Int = 0
+          tmp_11.set(index = tmp_12, value = tmp_11.get(index = tmp_12).plus(other = 14))
+        }
+      }
+      else -> { // BLOCK
+        { // BLOCK
+          val tmp_13: IntArray = array
+          val tmp_14: Int = 0
+          tmp_13.set(index = tmp_14, value = tmp_13.get(index = tmp_14).plus(other = 15))
+        }
+      }
+    }
+  }
+  { // BLOCK
+    val tmp_15: Int = array.get(index = 0)
+    when {
+      EQEQ(arg0 = tmp_15, arg1 = 1) -> { // BLOCK
+        { // BLOCK
+          val tmp_16: IntArray = array
+          val tmp_17: Int = 0
+          tmp_16.set(index = tmp_17, value = tmp_16.get(index = tmp_17).plus(other = 16))
+        }
+      }
+      else -> { // BLOCK
+        { // BLOCK
+          val tmp_18: IntArray = array
+          val tmp_19: Int = 0
+          tmp_18.set(index = tmp_19, value = tmp_18.get(index = tmp_19).plus(other = 17))
+        }
+      }
+    }
+  }
+}

@@ -21,6 +21,7 @@ repositories {
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
 kotlin {
+    jvmToolchain(8)
     jvm("jvm18") {
         withJava()
         attributes { attribute(complexLibAttribute, 'jvmWithJava') }
@@ -39,7 +40,7 @@ kotlin {
             // Creating static library with a custom name.
             staticLib('customNameForLinuxLib') {
                 outputDirectory = file("customNameForLinuxLib") // outputDir is a `val` property.
-                linkTask.destinationDir = file("customNameForLinuxLib")
+                linkTask.destinationDirectory = file("customNameForLinuxLib")
             }
         }
     }
@@ -50,7 +51,7 @@ kotlin {
             // Creating static library with a custom name.
             staticLib('customNameForMacosLib') {
                 outputDirectory = file("customNameForMacosLib") // outputDir is a `val` property.
-                linkTask.destinationDir = file("customNameForMacosLib")
+                linkTask.destinationDirectory = file("customNameForMacosLib")
             }
         }
     }
@@ -60,7 +61,7 @@ kotlin {
             // KT-29395 fix
             framework {
                 outputDirectory = file("fooDummyiOS") // outputDir is a `val` property.
-                linkTask.destinationDir = file("fooDummyiOS")
+                linkTask.destinationDirectory = file("fooDummyiOS")
             }
         }
     }
@@ -69,7 +70,7 @@ kotlin {
     targets.all {
         compilations.all {
             kotlinOptions {
-                freeCompilerArgs += ["-progressive", "-XXLanguage:+NewInference", "-XXLanguage:+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform"]
+                freeCompilerArgs += ["-progressive", "-XXLanguage:+SamConversionForKotlinFunctions", "-opt-in=kotlin.ExperimentalMultiplatform"]
             }
         }
     }

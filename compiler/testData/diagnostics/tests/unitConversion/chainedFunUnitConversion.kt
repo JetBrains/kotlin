@@ -1,5 +1,6 @@
-// !LANGUAGE: +UnitConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +UnitConversionsOnArbitraryExpressions
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun interface KRunnable {
     fun run()

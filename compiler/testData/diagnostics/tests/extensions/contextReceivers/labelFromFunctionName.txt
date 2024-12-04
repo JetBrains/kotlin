@@ -1,0 +1,3 @@
+package
+
+public fun testLabels(/*0*/ source: kotlin.collections.Collection<kotlin.String>): kotlin.Unit

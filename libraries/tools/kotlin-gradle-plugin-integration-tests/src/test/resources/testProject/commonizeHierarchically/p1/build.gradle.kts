@@ -1,20 +1,29 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-
-operator fun KotlinSourceSet.invoke(builder: SourceSetHierarchyBuilder.() -> Unit): KotlinSourceSet {
-    SourceSetHierarchyBuilder(this).builder()
-    return this
-}
-
-class SourceSetHierarchyBuilder(private val node: KotlinSourceSet) {
-    operator fun KotlinSourceSet.unaryMinus() = this.dependsOn(node)
-}
+import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 
 plugins {
     kotlin("multiplatform")
 }
 
 kotlin {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    applyHierarchyTemplate(KotlinHierarchyTemplate.default) {
+        common {
+            group("concurrent") {
+                withJvm()
+
+                group("native") {
+                    group("appleAndLinux") {
+                        withApple()
+                        withLinux()
+                    }
+                }
+            }
+        }
+    }
+
     js()
     jvm()
 
@@ -24,58 +33,15 @@ kotlin {
     macosX64()
     macosArm64()
 
-    ios()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
-    mingwX64("windowsX64")
-    mingwX86("windowsX86")
-
-    val commonMain by sourceSets.getting
-    val concurrentMain by sourceSets.creating
-    val jvmMain by sourceSets.getting
-    val jsMain by sourceSets.getting
-    val nativeMain by sourceSets.creating
-    val appleAndLinuxMain by sourceSets.creating
-    val linuxMain by sourceSets.creating
-    val linuxX64Main by sourceSets.getting
-    val linuxArm64Main by sourceSets.getting
-    val appleMain by sourceSets.creating
-    val macosMain by sourceSets.creating
-    val macosX64Main by sourceSets.getting
-    val macosArm64Main by sourceSets.getting
-    val iosMain by sourceSets.getting
-    val windowsMain by sourceSets.creating
-    val windowsX64Main by sourceSets.getting
-    val windowsX86Main by sourceSets.getting
-
-    commonMain {
-        -jsMain
-        -concurrentMain {
-            -jvmMain
-            -nativeMain {
-                -appleAndLinuxMain {
-                    -appleMain {
-                        -iosMain
-                        -macosMain {
-                            -macosX64Main
-                            -macosArm64Main
-                        }
-                    }
-                    -linuxMain {
-                        -linuxArm64Main
-                        -linuxX64Main
-                    }
-                }
-                -windowsMain {
-                    -windowsX64Main
-                    -windowsX86Main
-                }
-            }
-        }
-    }
-
+    mingwX64()
 
     sourceSets.all {
         languageSettings.optIn("kotlin.RequiresOptIn")
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
     }
 
     targets.withType<KotlinNativeTarget>().forEach { target ->

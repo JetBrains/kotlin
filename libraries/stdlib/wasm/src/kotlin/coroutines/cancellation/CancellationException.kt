@@ -5,11 +5,28 @@
 
 package kotlin.coroutines.cancellation
 
-@ExperimentalStdlibApi
 @SinceKotlin("1.4")
 public actual open class CancellationException : IllegalStateException {
-    actual constructor() : super()
-    actual constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }
+
+/**
+ * Creates an instance of [CancellationException] with the given [message] and [cause].
+ */
+@SinceKotlin("1.4")
+@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.InlineOnly
+public actual inline fun CancellationException(message: String?, cause: Throwable?): CancellationException =
+    CancellationException(message, cause)
+
+/**
+ * Creates an instance of [CancellationException] with the given [cause].
+ */
+@SinceKotlin("1.4")
+@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.InlineOnly
+public actual inline fun CancellationException(cause: Throwable?): CancellationException =
+    CancellationException(cause)

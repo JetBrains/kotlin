@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.name.FqName
 
 class PackagePartRegistry {
     val parts = mutableMapOf<FqName, PackageParts>()
+
+    // Drop after old BE removal
     val optionalAnnotations = mutableListOf<ClassDescriptor>()
 
     fun addPart(packageFqName: FqName, partInternalName: String, facadeInternalName: String?) {

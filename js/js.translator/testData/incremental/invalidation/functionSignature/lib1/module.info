@@ -1,0 +1,68 @@
+STEP 0:
+    modifications:
+        U : l1.out.int.kt -> l1.kt
+    added file: l1.kt
+STEP 1:
+    modifications:
+        U : l1.out.bool.kt -> l1.kt
+    modified ir: l1.kt
+STEP 2:
+    modifications:
+        U : l1.out.double.kt -> l1.kt
+    modified ir: l1.kt
+STEP 3:
+    modifications:
+        U : l1.out.string.kt -> l1.kt
+    modified ir: l1.kt
+STEP 4:
+    modifications:
+        U : l1.out.string_or_null.kt -> l1.kt
+    modified ir: l1.kt
+STEP 5:
+    modifications:
+        U : l1.out.any.kt -> l1.kt
+    modified ir: l1.kt
+STEP 6:
+    modifications:
+        U : l1.out.any_or_null.kt -> l1.kt
+    modified ir: l1.kt
+STEP 7:
+    modifications:
+        U : l1.out.unit.kt -> l1.kt
+    modified ir: l1.kt
+STEP 8:
+    modifications:
+        U : l1.out.int.kt -> l1.kt
+    modified ir: l1.kt
+STEP 9:
+    modifications:
+        U : l1.in.int.out.int.kt -> l1.kt
+    modified ir: l1.kt
+STEP 10:
+    modifications:
+        U : l1.in.int.string.out.int.kt -> l1.kt
+    modified ir: l1.kt
+STEP 11:
+    modifications:
+        U : l1.in.int.string_or_null.out.int.kt -> l1.kt
+    modified ir: l1.kt
+STEP 12:
+    modifications:
+        U : l1.out.any.kt -> l1.kt
+    modified ir: l1.kt
+STEP 13:
+    modifications:
+        U : l1.in.any.out.any.kt -> l1.kt
+    modified ir: l1.kt
+STEP 14:
+    modifications:
+        U : l1.in.any_or_null.out.any.kt -> l1.kt
+    modified ir: l1.kt
+STEP 15:
+    modifications:
+        U : l1.out.int.kt -> l1.kt
+    modified ir: l1.kt
+STEP 16:
+    modifications:
+        U : l1.in.vararg_int.out.int.kt -> l1.kt
+    modified ir: l1.kt

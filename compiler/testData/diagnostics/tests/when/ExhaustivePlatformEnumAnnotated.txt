@@ -8,7 +8,7 @@ public final enum class J : kotlin.Enum<J!> {
     enum entry B
 
     public constructor J()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: J!): kotlin.Int
@@ -19,6 +19,7 @@ public final enum class J : kotlin.Enum<J!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<J>
     @org.jetbrains.annotations.NotNull public open fun create(): J
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): J
     public final /*synthesized*/ fun values(): kotlin.Array<J>

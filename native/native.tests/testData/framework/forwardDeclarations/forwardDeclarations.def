@@ -1,0 +1,17 @@
+language=Objective-C
+---
+struct ForwardDeclaredStruct;
+@class ForwardDeclaredClass;
+@protocol ForwardDeclaredProtocol;
+
+struct ForwardDeclaredStruct* sameStruct(struct ForwardDeclaredStruct* ptr) {
+    return ptr;
+}
+
+ForwardDeclaredClass* sameClass(ForwardDeclaredClass* obj) {
+    return obj;
+}
+
+id<ForwardDeclaredProtocol> sameProtocol(id<ForwardDeclaredProtocol> obj) {
+    return obj;
+}

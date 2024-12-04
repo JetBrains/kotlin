@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.util.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -25,10 +26,10 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SimpleTypeArgumentImpl(
     val typeProjection: KtTypeProjection,
@@ -58,8 +59,8 @@ val KotlinCallArgument.psiCallArgument: PSIKotlinCallArgument
 val KotlinCallArgument.psiExpression: KtExpression?
     get() {
         return when (this) {
-            is ReceiverExpressionKotlinCallArgument -> receiver.receiverValue.safeAs<ExpressionReceiver>()?.expression
-            is QualifierReceiverKotlinCallArgument -> receiver.safeAs<Qualifier>()?.expression
+            is ReceiverExpressionKotlinCallArgument -> (receiver.receiverValue as? ExpressionReceiver)?.expression
+            is QualifierReceiverKotlinCallArgument -> (receiver as? Qualifier)?.expression
             is EmptyLabeledReturn -> returnExpression
             else -> psiCallArgument.valueArgument.getArgumentExpression()
         }
@@ -70,7 +71,7 @@ class ParseErrorKotlinCallArgument(
     override val dataFlowInfoAfterThisArgument: DataFlowInfo,
 ) : ExpressionKotlinCallArgument, SimplePSIKotlinCallArgument() {
     override val receiver = ReceiverValueWithSmartCastInfo(
-        TransientReceiver(ErrorUtils.createErrorType("Error type for ParseError-argument $valueArgument")),
+        TransientReceiver(ErrorUtils.createErrorType(ErrorTypeKind.PARSE_ERROR_ARGUMENT, valueArgument.toString())),
         typesFromSmartCasts = emptySet(),
         isStable = true
     )
@@ -115,6 +116,12 @@ class LambdaKotlinCallArgumentImpl(
             assert(!field)
             field = value
         }
+
+    override var builderInferenceSession: InferenceSession? = null
+        set(value) {
+            assert(field == null)
+            field = value
+        }
 }
 
 class FunctionExpressionImpl(
@@ -125,6 +132,7 @@ class FunctionExpressionImpl(
     val containingBlockForFunction: KtExpression,
     override val ktFunction: KtNamedFunction,
     override val receiverType: UnwrappedType?,
+    override val contextReceiversTypes: Array<UnwrappedType?>,
     override val parametersTypes: Array<UnwrappedType?>,
     override val returnType: UnwrappedType?
 ) : FunctionExpression, PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
@@ -250,13 +258,14 @@ fun processFunctionalExpression(
             // if function is a not anonymous function, resolve it as simple expression
             if (!postponedExpression.isFunctionalExpression()) return null
             val receiverType = resolveType(outerCallContext, postponedExpression.receiverTypeReference, typeResolver)
+            val contextReceiversTypes = resolveContextReceiversTypes(outerCallContext, postponedExpression, typeResolver)
             val parametersTypes = resolveParametersTypes(outerCallContext, postponedExpression, typeResolver) ?: emptyArray()
             val returnType = resolveType(outerCallContext, postponedExpression.typeReference, typeResolver)
                 ?: if (postponedExpression.hasBlockBody()) builtIns.unitType else null
 
             FunctionExpressionImpl(
                 outerCallContext, valueArgument, startDataFlowInfo, argumentName,
-                argumentExpression, postponedExpression, receiverType, parametersTypes, returnType
+                argumentExpression, postponedExpression, receiverType, contextReceiversTypes, parametersTypes, returnType
             )
         }
 
@@ -283,6 +292,18 @@ private fun resolveParametersTypes(
 
     return Array(parameterList.parameters.size) {
         parameterList.parameters[it]?.typeReference?.let { resolveType(context, it, typeResolver) }
+    }
+}
+
+private fun resolveContextReceiversTypes(
+    context: BasicCallResolutionContext,
+    ktFunction: KtFunction,
+    typeResolver: TypeResolver
+): Array<UnwrappedType?> {
+    val contextReceivers = ktFunction.contextReceivers
+
+    return Array(contextReceivers.size) {
+        contextReceivers[it]?.typeReference()?.let { typeRef -> resolveType(context, typeRef, typeResolver) }
     }
 }
 

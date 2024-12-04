@@ -1,4 +1,6 @@
-// DO_NOT_CHECK_SYMBOL_RESTORE
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
+// IGNORE_FE10
+
 package test
 
 class SomeClass

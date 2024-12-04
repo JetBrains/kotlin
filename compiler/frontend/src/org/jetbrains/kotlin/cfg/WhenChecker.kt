@@ -18,15 +18,17 @@ package org.jetbrains.kotlin.cfg
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST
 import org.jetbrains.kotlin.resolve.BindingContext.VARIABLE
@@ -42,7 +44,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import java.util.*
 
 
 val List<WhenMissingCase>.hasUnknown: Boolean
@@ -216,7 +217,8 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
         return if (classDescriptor.kind != ClassKind.ENUM_ENTRY) {
             WhenMissingCase.IsTypeCheckIsMissing(
                 classId = DescriptorUtils.getClassIdForNonLocalClass(classDescriptor),
-                isSingleton = classDescriptor.kind.isSingleton
+                isSingleton = classDescriptor.kind.isSingleton,
+                ownTypeParametersCount = classDescriptor.declaredTypeParameters.size,
             )
         } else {
             val enumClassId = classId.outerClassId ?: error("Enum should have class id")
@@ -226,7 +228,6 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
 }
 
 private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,
@@ -247,7 +248,6 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
 }
 
 internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,
@@ -281,10 +281,6 @@ object WhenChecker {
     )
 
     @JvmStatic
-    fun getClassIdForEnumSubject(expression: KtWhenExpression, context: BindingContext) =
-        getClassIdForTypeIfEnum(whenSubjectType(expression, context))
-
-    @JvmStatic
     fun getClassIdForTypeIfEnum(type: KotlinType?) =
         getClassDescriptorOfTypeIfEnum(type)?.classId
 
@@ -309,16 +305,6 @@ object WhenChecker {
         return when {
             subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
             subjectExpression != null -> context.get(SMARTCAST, subjectExpression)?.defaultType ?: context.getType(subjectExpression)
-            else -> null
-        }
-    }
-
-    fun whenSubjectTypeWithoutSmartCasts(expression: KtWhenExpression, context: BindingContext): KotlinType? {
-        val subjectVariable = expression.subjectVariable
-        val subjectExpression = expression.subjectExpression
-        return when {
-            subjectVariable != null -> context.get(VARIABLE, subjectVariable)?.type
-            subjectExpression != null -> context.getType(subjectExpression)
             else -> null
         }
     }
@@ -357,11 +343,38 @@ object WhenChecker {
     fun containsNullCase(expression: KtWhenExpression, context: BindingContext) =
         WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, true).isEmpty()
 
-    fun checkDuplicatedLabels(expression: KtWhenExpression, trace: BindingTrace) {
+    fun checkDuplicatedLabels(
+        expression: KtWhenExpression,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings,
+    ) {
         if (expression.subjectExpression == null) return
 
         val checkedTypes = HashSet<Pair<KotlinType, Boolean>>()
-        val checkedConstants = HashSet<CompileTimeConstant<*>>()
+        /*
+         * `true` in map means that constant can be removed and nothing breaks
+         * `false` means opposite
+         *
+         * Example:
+         *   const val myF = false
+         *   const val myT = true
+         *
+         *   fun test_1(someBoolean: Boolean) {
+         *       val s = when (someBoolean) {
+         *           myT -> 1
+         *           myF -> 2
+         *           true -> 3    // DUPLICATE_LABEL_IN_WHEN
+         *           false -> 4   // DUPLICATE_LABEL_IN_WHEN
+         *       }
+         *   }
+         *
+         * In this case myT and myF actually are `true` and `false` correspondingly, but
+         *   const vals are not treated by exhaustive checkers, so removal `true` or `false`
+         *   branches will break code, so we need to report DUPLICATE_LABEL_IN_WHEN on `myT` and
+         *   `myF`, not on `true` and `false`
+         */
+        val checkedConstants = mutableMapOf<CompileTimeConstant<*>, Boolean>()
+        val notTrivialBranches = mutableMapOf<CompileTimeConstant<*>, KtExpression>()
         for (entry in expression.entries) {
             if (entry.isElse) continue
 
@@ -372,10 +385,37 @@ object WhenChecker {
                         val constant = ConstantExpressionEvaluator.getConstant(
                             constantExpression, trace.bindingContext
                         ) ?: continue@conditions
-                        if (checkedConstants.contains(constant)) {
-                            trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(constantExpression))
-                        } else {
-                            checkedConstants.add(constant)
+
+                        fun report(reportOn: KtExpression) {
+                            trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(reportOn))
+                        }
+
+                        when (checkedConstants[constant]) {
+                            true -> {
+                                // already found trivial constant in previous branches
+                                report(constantExpression)
+                            }
+                            false -> {
+                                // already found bad constant in previous branches
+                                val isTrivial = constant.isTrivial(constantExpression, languageVersionSettings)
+                                if (isTrivial) {
+                                    // this constant is trivial -> report on first non trivial constant
+                                    val reportOn = notTrivialBranches.remove(constant)!!
+                                    report(reportOn)
+                                    checkedConstants[constant] = true
+                                } else {
+                                    // this constant is also not trivial -> report on it
+                                    report(constantExpression)
+                                }
+                            }
+                            null -> {
+                                // met constant for a first time
+                                val isTrivial = constant.isTrivial(constantExpression, languageVersionSettings)
+                                checkedConstants[constant] = isTrivial
+                                if (!isTrivial) {
+                                    notTrivialBranches[constant] = constantExpression
+                                }
+                            }
                         }
 
                     }
@@ -394,7 +434,17 @@ object WhenChecker {
                 }
             }
         }
+    }
 
+    private fun CompileTimeConstant<*>.isTrivial(
+        expression: KtExpression,
+        languageVersionSettings: LanguageVersionSettings
+    ): Boolean {
+        if (usesVariableAsConstant) return false
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSimplificationOfNonTrivialConstBooleanExpressions)) {
+            return !ConstantExpressionEvaluator.isComplexBooleanConstant(expression, this)
+        }
+        return true
     }
 
     fun checkDeprecatedWhenSyntax(trace: BindingTrace, expression: KtWhenExpression) {
@@ -413,7 +463,9 @@ object WhenChecker {
         }
     }
 
-    fun checkReservedPrefix(trace: BindingTrace, expression: KtWhenExpression) {
-        checkReservedPrefixWord(trace, expression.whenKeyword, "sealed", "sealed when")
+    fun checkSealedWhenIsReserved(sink: DiagnosticSink, element: PsiElement) {
+        KtPsiUtil.getPreviousWord(element, "sealed")?.let {
+            sink.report(Errors.UNSUPPORTED_SEALED_WHEN.on(it))
+        }
     }
 }

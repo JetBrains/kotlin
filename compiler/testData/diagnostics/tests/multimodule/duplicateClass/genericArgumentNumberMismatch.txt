@@ -12,7 +12,7 @@ package p {
 
     public final class M1 {
         public constructor M1()
-        public final val a: [ERROR : A]<kotlin.Int>
+        public final val a: [Error type: Type for error type constructor (A)]<kotlin.Int>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -23,7 +23,7 @@ package p {
 package
 
 package p {
-    public fun foo(/*0*/ a: [ERROR : A]<kotlin.Int>): kotlin.Unit
+    public fun foo(/*0*/ a: [Error type: Type for error type constructor (A)]<kotlin.Int>): kotlin.Unit
 
     public final class A</*0*/ X, /*1*/ Y> {
         public constructor A</*0*/ X, /*1*/ Y>()

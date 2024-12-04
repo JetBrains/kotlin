@@ -1,0 +1,13 @@
+FILE: contextLambda.kt
+    context(<unused var>: R|kotlin/String|)
+    public final fun foo(): R|kotlin/Unit| {
+    }
+    public final fun acceptLambda(f: R|@ContextFunctionTypeParams (kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/acceptLambda|(<L> = acceptLambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/foo|()
+            <Unresolved name: length>#
+        }
+        )
+    }

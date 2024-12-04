@@ -20,9 +20,8 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.checker.createClassicTypeCheckerState
+import org.jetbrains.kotlin.types.checker.intersectTypes
 
 class SlowTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() {
 
@@ -43,10 +42,10 @@ class SlowTypeAssertionsEnabledTest : KotlinTestWithEnvironmentManagement() {
         val builtIns = DefaultBuiltIns.Instance
 
         try {
-            val superType = TypeIntersector.intersectTypes(listOf(builtIns.charSequence.defaultType, builtIns.comparable.defaultType))
+            val superType = intersectTypes(listOf(builtIns.charSequence.defaultType, builtIns.comparable.defaultType))
             AbstractNullabilityChecker.isPossibleSubtype(
                 createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true), builtIns.annotationType,
-                superType as SimpleType
+                superType
             )
         } catch (e: AssertionError) {
             assertEquals("Not singleClassifierType superType: {CharSequence & Comparable<T>}", e.message)

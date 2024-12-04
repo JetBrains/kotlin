@@ -5,96 +5,113 @@
 
 package kotlin
 
-
-public actual open class Exception actual constructor(message: String?, cause: Throwable?) : Throwable(message, cause) {
-    actual constructor() : this(null, null)
-    actual constructor(message: String?) : this(message, null)
-    actual constructor(cause: Throwable?) : this(null, cause)
+public actual open class Error : Throwable {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public actual open class Error actual constructor(message: String?, cause: Throwable?) : Throwable(message, cause) {
-    actual constructor() : this(null, null)
-    actual constructor(message: String?) : this(message, null)
-    actual constructor(cause: Throwable?) : this(null, cause)
+public actual open class Exception : Throwable {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public actual open class RuntimeException actual constructor(message: String?, cause: Throwable?) : Exception(message, cause) {
-    actual constructor() : this(null, null)
-    actual constructor(message: String?) : this(message, null)
-    actual constructor(cause: Throwable?) : this(null, cause)
+public actual open class RuntimeException : Exception {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public actual open class IllegalArgumentException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    actual constructor() : this(null, null)
-    actual constructor(message: String?) : this(message, null)
-    actual constructor(cause: Throwable?) : this(null, cause)
+public actual open class IllegalArgumentException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public actual open class IllegalStateException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    actual constructor() : this(null, null)
-    actual constructor(message: String?) : this(message, null)
-    actual constructor(cause: Throwable?) : this(null, cause)
+public actual open class IllegalStateException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public actual open class IndexOutOfBoundsException actual constructor(message: String?) : RuntimeException(message) {
-    actual constructor() : this(null)
+public actual open class IndexOutOfBoundsException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
 }
 
-public actual open class ConcurrentModificationException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    actual constructor() : this(null, null)
-    actual constructor(message: String?) : this(message, null)
-    actual constructor(cause: Throwable?) : this(null, cause)
+public actual open class ConcurrentModificationException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public actual open class UnsupportedOperationException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    actual constructor() : this(null, null)
-    actual constructor(message: String?) : this(message, null)
-    actual constructor(cause: Throwable?) : this(null, cause)
-}
-
-
-public actual open class NumberFormatException actual constructor(message: String?) : IllegalArgumentException(message) {
-    actual constructor() : this(null)
+public actual open class UnsupportedOperationException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }
 
 
-public actual open class NullPointerException actual constructor(message: String?) : RuntimeException(message) {
-    actual constructor() : this(null)
+public actual open class NumberFormatException : IllegalArgumentException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
 }
 
-public actual open class ClassCastException actual constructor(message: String?) : RuntimeException(message) {
-    actual constructor() : this(null)
+
+public actual open class NullPointerException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
 }
 
-public actual open class AssertionError constructor(message: String?, cause: Throwable?) : Error(message, cause) {
-    actual constructor() : this(null)
-    constructor(message: String?) : this(message, null)
-    actual constructor(message: Any?) : this(message.toString(), message as? Throwable)
+public actual open class ClassCastException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
 }
 
-public actual open class NoSuchElementException actual constructor(message: String?) : RuntimeException(message) {
-    actual constructor() : this(null)
+public actual open class AssertionError : Error {
+    public actual constructor() : super()
+    public constructor(message: String?) : super(message)
+    public actual constructor(message: Any?) : super(message?.toString(), message as? Throwable)
+    @SinceKotlin("1.4")
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+}
+
+public actual open class NoSuchElementException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
 }
 
 @SinceKotlin("1.3")
-public actual open class ArithmeticException actual constructor(message: String?) : RuntimeException(message) {
-    actual constructor() : this(null)
+public actual open class ArithmeticException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
 }
 
-public actual open class NoWhenBranchMatchedException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    actual constructor() : this(null, null)
-    actual constructor(message: String?) : this(message, null)
-    actual constructor(cause: Throwable?) : this(null, cause)
+@Suppress("ACTUAL_WITHOUT_EXPECT")
+internal actual open class NoWhenBranchMatchedException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public actual open class UninitializedPropertyAccessException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    actual constructor() : this(null, null)
-    actual constructor(message: String?) : this(message, null)
-    actual constructor(cause: Throwable?) : this(null, cause)
+@Suppress("ACTUAL_WITHOUT_EXPECT")
+internal actual open class UninitializedPropertyAccessException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public open class OutOfMemoryError : Error {
-    constructor() : super()
-    constructor(message: String?) : super(message)
+public actual open class OutOfMemoryError : Error {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
 }
-

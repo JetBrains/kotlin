@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.transformer
 
+import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.CirHasTypeParameters
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
@@ -15,7 +16,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 internal class ReApproximationCirNodeTransformer(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
-    private val signatureBuildingContextProvider: SignatureBuildingContextProvider
+    private val settings: CommonizerSettings,
+    private val signatureBuildingContextProvider: SignatureBuildingContextProvider,
 ) : CirNodeTransformer {
 
     internal class SignatureBuildingContextProvider(
@@ -65,7 +67,7 @@ internal class ReApproximationCirNodeTransformer(
 
         val approximationKey = FunctionApproximationKey.create(functionAtIndex, signatureBuildingContextProvider(context, functionAtIndex))
         val newNode = parent.functions.getOrPut(approximationKey) {
-            buildFunctionNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
+            buildFunctionNode(storageManager, parent.targetDeclarations.size, classifiers, settings, ParentNode(parent))
         }
 
         // Move declaration
@@ -82,7 +84,7 @@ internal class ReApproximationCirNodeTransformer(
 
         val approximationKey = PropertyApproximationKey.create(propertyAtIndex, signatureBuildingContextProvider(context, propertyAtIndex))
         val newNode = parent.properties.getOrPut(approximationKey) {
-            buildPropertyNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
+            buildPropertyNode(storageManager, parent.targetDeclarations.size, classifiers, settings, ParentNode(parent))
         }
 
         // Move declaration
@@ -103,7 +105,7 @@ internal class ReApproximationCirNodeTransformer(
             ConstructorApproximationKey.create(constructorAtIndex, signatureBuildingContextProvider(context, constructorAtIndex))
 
         val newNode = parent.constructors.getOrPut(approximationKey) {
-            buildClassConstructorNode(storageManager, parent.targetDeclarations.size, classifiers, ParentNode(parent))
+            buildClassConstructorNode(storageManager, parent.targetDeclarations.size, classifiers, settings, ParentNode(parent))
         }
 
         // Move declaration

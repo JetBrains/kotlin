@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,249 +7,183 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
-import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeCandidate
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
+import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.whileAnalysing
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
-private operator fun <T> Pair<T, *>?.component1() = this?.first
-private operator fun <T> Pair<*, T>?.component2() = this?.second
+internal enum class ConstructorFilter {
+    OnlyInner,
+    OnlyNested,
+    Both;
 
-internal fun FirScope.processConstructorsByName(
-    name: Name,
-    session: FirSession,
-    bodyResolveComponents: BodyResolveComponents,
-    includeInnerConstructors: Boolean,
-    processor: (FirCallableSymbol<*>) -> Unit
-) {
-    // TODO: Handle case with two or more accessible classifiers
-    val classifierInfo = getFirstClassifierOrNull(name)
-    if (classifierInfo != null) {
-        val (matchedClassifierSymbol, substitutor) = classifierInfo
-        val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*>
-
-        processConstructors(
-            matchedClassSymbol,
-            substitutor,
-            processor,
-            session,
-            bodyResolveComponents,
-            includeInnerConstructors
-        )
-
-        processSyntheticConstructors(
-            matchedClassSymbol,
-            processor,
-            bodyResolveComponents
-        )
-    }
-}
-
-internal fun FirScope.processFunctionsAndConstructorsByName(
-    name: Name,
-    session: FirSession,
-    bodyResolveComponents: BodyResolveComponents,
-    includeInnerConstructors: Boolean,
-    processor: (FirCallableSymbol<*>) -> Unit
-) {
-    processConstructorsByName(
-        name, session, bodyResolveComponents,
-        includeInnerConstructors = includeInnerConstructors,
-        processor
-    )
-
-    processFunctionsByName(name, processor)
-}
-
-private fun FirScope.getFirstClassifierOrNull(name: Name): Pair<FirClassifierSymbol<*>, ConeSubstitutor>? {
-    var result: Pair<FirClassifierSymbol<*>, ConeSubstitutor>? = null
-    processClassifiersByNameWithSubstitution(name) { symbol, substitution ->
-        if (result == null) {
-            result = symbol to substitution
+    fun accepts(memberDeclaration: FirMemberDeclaration, session: FirSession): Boolean {
+        return when (this) {
+            Both -> true
+            OnlyInner -> memberDeclaration.isInner(session)
+            OnlyNested -> !memberDeclaration.isInner(session)
         }
     }
 
-    return result
+    private fun FirMemberDeclaration.isInner(session: FirSession): Boolean {
+        return if (isInner) {
+            true
+        } else {
+            if (this !is FirTypeAlias) return false
+            lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+            fullyExpandedClass(session)?.isInner == true
+        }
+    }
+}
+
+private fun FirScope.processConstructorsByName(
+    callInfo: CallInfo,
+    session: FirSession,
+    bodyResolveComponents: BodyResolveComponents,
+    constructorFilter: ConstructorFilter,
+    processor: (FirCallableSymbol<*>) -> Unit,
+) {
+    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, constructorFilter, session, bodyResolveComponents)
+        ?: return
+    val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
+
+    processConstructors(
+        matchedClassSymbol,
+        substitutor!!,
+        processor,
+        session,
+        bodyResolveComponents,
+    )
+
+    processSyntheticConstructors(
+        matchedClassSymbol,
+        processor,
+        bodyResolveComponents
+    )
+}
+
+internal fun FirScope.processFunctionsAndConstructorsByName(
+    callInfo: CallInfo,
+    session: FirSession,
+    bodyResolveComponents: BodyResolveComponents,
+    constructorFilter: ConstructorFilter,
+    processor: (FirCallableSymbol<*>) -> Unit
+) {
+    processConstructorsByName(
+        callInfo, session, bodyResolveComponents,
+        constructorFilter,
+        processor
+    )
+
+    processFunctionsByName(callInfo.name, processor)
+}
+
+private fun FirScope.getFirstClassifierOrNull(
+    callInfo: CallInfo,
+    constructorFilter: ConstructorFilter,
+    session: FirSession,
+    bodyResolveComponents: BodyResolveComponents
+): TypeCandidate? {
+    val collector = FirTypeCandidateCollector(session, bodyResolveComponents.file, bodyResolveComponents.containingDeclarations)
+
+    fun process(symbol: FirClassifierSymbol<*>, substitutor: ConeSubstitutor) {
+        val classifierDeclaration = symbol.fir
+        if (classifierDeclaration is FirClassLikeDeclaration) {
+            if (constructorFilter.accepts(classifierDeclaration, session)) {
+                collector.processCandidate(symbol, substitutor)
+            }
+        }
+    }
+
+    if (this is FirDefaultStarImportingScope) {
+        processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(callInfo.name) { symbol, substitutor ->
+            process(symbol, substitutor)
+            collector.applicability == CandidateApplicability.RESOLVED
+        }
+    } else {
+        processClassifiersByNameWithSubstitution(callInfo.name, ::process)
+    }
+
+    return collector.getResult().resolvedCandidateOrNull()
 }
 
 private fun processSyntheticConstructors(
-    matchedSymbol: FirClassLikeSymbol<*>?,
+    matchedSymbol: FirClassLikeSymbol<*>,
     processor: (FirFunctionSymbol<*>) -> Unit,
     bodyResolveComponents: BodyResolveComponents
 ) {
-    val samConstructor = matchedSymbol.findSAMConstructor(bodyResolveComponents)
+    val samConstructor = bodyResolveComponents.samResolver.getSamConstructor(matchedSymbol.fir)
     if (samConstructor != null) {
         processor(samConstructor.symbol)
     }
 }
 
-private fun FirClassLikeSymbol<*>?.findSAMConstructor(
-    bodyResolveComponents: BodyResolveComponents
-): FirSimpleFunction? {
-    return when (this) {
-        is FirRegularClassSymbol -> bodyResolveComponents.samResolver.getSamConstructor(fir)
-        is FirTypeAliasSymbol -> findSAMConstructorForTypeAlias(bodyResolveComponents)
-        is FirAnonymousObjectSymbol, null -> null
-    }
-}
-
-private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
-    bodyResolveComponents: BodyResolveComponents
-): FirSimpleFunction? {
-    val session = bodyResolveComponents.session
-    val type =
-        fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-
-    val expansionRegularClass = type.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return null
-    val samConstructorForClass = bodyResolveComponents.samResolver.getSamConstructor(expansionRegularClass) ?: return null
-
-    if (type.typeArguments.isEmpty()) return samConstructorForClass
-
-    val namedSymbol = samConstructorForClass.symbol
-
-    val substitutor = prepareSubstitutorForTypeAliasConstructors(
-        type,
-        session
-    ) ?: return null
-
-    val typeParameters = this@findSAMConstructorForTypeAlias.fir.typeParameters
-    val newReturnType = samConstructorForClass.returnTypeRef.coneType.let(substitutor::substituteOrNull)
-
-    val newParameterTypes = samConstructorForClass.valueParameters.map { valueParameter ->
-        valueParameter.returnTypeRef.coneType.let(substitutor::substituteOrNull)
-    }
-
-    if (newReturnType == null && newParameterTypes.all { it == null }) return samConstructorForClass
-
-    return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
-        session, samConstructorForClass, namedSymbol,
-        newDispatchReceiverType = null,
-        newReceiverType = null,
-        newReturnType, newParameterTypes, typeParameters,
-        expansionRegularClass.classId,
-    ).fir
-}
-
-private fun prepareSubstitutorForTypeAliasConstructors(
-    expandedType: ConeClassLikeType,
-    session: FirSession
-): ConeSubstitutor? {
-    val expandedClass = expandedType.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return null
-
-    val resultingTypeArguments = expandedType.typeArguments.map {
-        // We don't know how to handle cases like yet
-        // typealias A = ArrayList<*>()
-        it as? ConeKotlinType ?: return null
-    }
-    return substitutorByMap(
-        expandedClass.typeParameters.map { it.symbol }.zip(resultingTypeArguments).toMap(), session
-    )
-}
-
 private fun processConstructors(
-    matchedSymbol: FirClassLikeSymbol<*>?,
+    matchedSymbol: FirClassLikeSymbol<*>,
     substitutor: ConeSubstitutor,
     processor: (FirFunctionSymbol<*>) -> Unit,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    includeInnerConstructors: Boolean
 ) {
-    try {
-        if (matchedSymbol != null) {
-            val scope = when (matchedSymbol) {
-                is FirTypeAliasSymbol -> {
-                    matchedSymbol.ensureResolved(FirResolvePhase.TYPES)
-                    val type = matchedSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
-                    val basicScope = type.scope(session, bodyResolveComponents.scopeSession, FakeOverrideTypeCalculator.DoNothing)
+    whileAnalysing(session, matchedSymbol.fir) {
+        val scope = when (matchedSymbol) {
+            is FirTypeAliasSymbol -> {
+                val type = matchedSymbol.resolvedExpandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
+                val basicScope = type.scope(
+                    session,
+                    bodyResolveComponents.scopeSession,
+                    CallableCopyTypeCalculator.DoNothing,
+                    requiredMembersPhase = FirResolvePhase.STATUS,
+                )
 
-                    val outerType = bodyResolveComponents.outerClassManager.outerType(type)
+                val outerType = bodyResolveComponents.outerClassManager.outerType(type)
 
-                    if (basicScope != null &&
-                        (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null || type.typeArguments.isNotEmpty())
-                    ) {
-                        TypeAliasConstructorsSubstitutingScope(
-                            matchedSymbol,
-                            basicScope,
-                            outerType
-                        )
-                    } else basicScope
+                if (basicScope != null) {
+                    TypeAliasConstructorsSubstitutingScope(
+                        matchedSymbol,
+                        basicScope,
+                        outerType,
+                    )
+                } else {
+                    null
                 }
-                is FirClassSymbol -> {
-                    val firClass = matchedSymbol.fir as FirClass
-                    if (firClass.classKind == ClassKind.INTERFACE) null
-                    else firClass.scopeForClass(
-                        substitutor, session, bodyResolveComponents.scopeSession
+            }
+            is FirClassSymbol -> {
+                val firClass = matchedSymbol.fir
+                when (firClass.classKind) {
+                    ClassKind.INTERFACE -> null
+                    else -> firClass.scopeForClass(
+                        substitutor,
+                        session,
+                        bodyResolveComponents.scopeSession,
+                        firClass.symbol.toLookupTag(),
+                        memberRequiredPhase = FirResolvePhase.STATUS,
                     )
                 }
             }
-
-            //TODO: why don't we use declared member scope at this point?
-            scope?.processDeclaredConstructors {
-                if (includeInnerConstructors || !it.fir.isInner) {
-                    processor(it)
-                }
-            }
         }
-    } catch (e: Throwable) {
-        throw RuntimeException("While processing constructors", e)
-    }
-}
 
-private class TypeAliasConstructorsSubstitutingScope(
-    private val typeAliasSymbol: FirTypeAliasSymbol,
-    private val delegatingScope: FirScope,
-    private val outerType: ConeClassLikeType?,
-) : FirScope() {
-
-    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
-            val typeParameters = typeAliasSymbol.fir.typeParameters
-
-            processor(
-                buildConstructorCopy(originalConstructorSymbol.fir) {
-                    symbol = FirConstructorSymbol(originalConstructorSymbol.callableId)
-                    origin = FirDeclarationOrigin.Synthetic
-
-                    this.typeParameters.clear()
-                    this.typeParameters += typeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
-
-                    if (outerType != null) {
-                        // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
-                        //
-                        //   class Outer {
-                        //     inner class Inner
-                        //   }
-                        //   typealias OI = Outer.Inner
-                        //   fun foo() { Outer().OI() }
-                        //
-                        // the chances are that `processor` belongs to [ScopeTowerLevel] (to resolve type aliases at top-level), which treats
-                        // the explicit receiver (`Outer()`) as an extension receiver, whereas the constructor of the nested class may regard
-                        // the same explicit receiver as a dispatch receiver (hence inconsistent receiver).
-                        // Here, we add a copy of the nested class constructor, along with the outer type as an extension receiver, so that it
-                        // can be seen as if resolving:
-                        //
-                        //   fun Outer.OI(): OI = ...
-                        //
-                        //
-                        receiverTypeRef = originalConstructorSymbol.fir.returnTypeRef.withReplacedConeType(outerType)
-                    }
-
-                }.apply {
-                    originalConstructorIfTypeAlias = originalConstructorSymbol.fir
-                }.symbol
-            )
+        scope?.processDeclaredConstructors {
+            processor(it)
         }
     }
 }

@@ -6,6 +6,8 @@ import android.os.Parcelable
 @Parcelize
 open class Open(val foo: String) : Parcelable
 
+data class Derived(val bar: String) : Open(bar)
+
 @Parcelize
 class Final(val foo: String) : Parcelable
 
@@ -15,6 +17,9 @@ class Final(val foo: String) : Parcelable
 @Parcelize
 sealed class Sealed(val foo: String) : Parcelable {
     class X : Sealed("")
+    sealed class Inner : Sealed("") {
+        <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Y<!> : Inner()
+    }
 }
 
 class Outer {
@@ -25,6 +30,8 @@ class Outer {
 fun foo() {
     @Parcelize
     <!PARCELABLE_CANT_BE_LOCAL_CLASS!>object<!> : Parcelable {}
+
+    object : Open("") {}
 
     @Parcelize
     class <!NO_PARCELABLE_SUPERTYPE, PARCELABLE_CANT_BE_LOCAL_CLASS!>Local<!> {}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 open class X(val s: String)
 
 fun f(a: String?) {

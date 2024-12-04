@@ -42,7 +42,7 @@ sealed class LocalVariableAccessorDescriptor(
         val returnType =
             if (isGetter) correspondingVariable.type else correspondingVariable.builtIns.unitType
         @Suppress("LeakingThis")
-        initialize(null, null, emptyList(), valueParameters, returnType, Modality.FINAL, DescriptorVisibilities.LOCAL)
+        initialize(null, null, emptyList(), emptyList(), valueParameters, returnType, Modality.FINAL, DescriptorVisibilities.LOCAL)
     }
 
     private fun createValueParameter(name: Name, type: KotlinType): ValueParameterDescriptorImpl {

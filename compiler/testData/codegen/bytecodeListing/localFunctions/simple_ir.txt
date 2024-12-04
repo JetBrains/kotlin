@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class SimpleKt {
-    // source: 'simple.kt'
-    private final static method foo$bar(): void
-    public final static method foo(): void
-}

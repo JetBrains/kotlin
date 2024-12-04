@@ -2,16 +2,16 @@ fun f() {
 }
 
 fun J.test1() {
-  <this>.get(k = ::f /*-> @FlexibleNullability Runnable? */)
-  <this>.get(k = ::f /*-> @FlexibleNullability Runnable? */, m = ::f /*-> @FlexibleNullability Runnable? */)
+  <this>.get(k = ::f /*-> Runnable */)
+  <this>.get(k = ::f /*-> Runnable */, m = ::f /*-> Runnable */)
 }
 
 fun J.test2() {
-  <this>.set(k = ::f /*-> @FlexibleNullability Runnable? */, v = ::f /*-> @FlexibleNullability Runnable? */)
-  <this>.set(k = ::f /*-> @FlexibleNullability Runnable? */, m = ::f /*-> @FlexibleNullability Runnable? */, v = ::f /*-> @FlexibleNullability Runnable? */)
+  <this>.set(k = ::f /*-> Runnable */, v = ::f /*-> Runnable */)
+  <this>.set(k = ::f /*-> Runnable */, m = ::f /*-> Runnable */, v = ::f /*-> Runnable */)
 }
 
 fun J.test3() {
-  <this>.plusAssign(i = ::f /*-> @FlexibleNullability Runnable? */)
-  <this>.minusAssign(i = ::f /*-> @FlexibleNullability Runnable? */)
+  <this>.plusAssign(i = ::f /*-> Runnable */)
+  <this>.minusAssign(i = ::f /*-> Runnable */)
 }

@@ -1,0 +1,9 @@
+MODULE main
+	CLASS TestIt.class
+		CLASS METADATA
+			PROPERTY getIsFries()Z
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Boolean
+					K2
+						value: kotlin/Boolean

@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
@@ -44,7 +45,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         configuration: CompilerConfiguration,
         projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment
     ): ExitCode {
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(projectEnvironment.project)
         if (scriptDefinitionProvider == null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Unable to process the script, scripting plugin is not configured")
@@ -133,8 +134,21 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         @Suppress("DEPRECATION_ERROR")
         return internalScriptingRunSuspend {
             val compiledScript = scriptCompiler.compile(script, scriptCompilationConfiguration).valueOr {
+                val lines = if (it.reports.isEmpty()) null else script.text.lines()
                 for (report in it.reports) {
-                    messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
+                    val location = report.location
+                    val sourcePath = report.sourcePath
+                    messageCollector.report(
+                        report.severity.toCompilerMessageSeverity(),
+                        report.render(withSeverity = false, withLocation = location == null || sourcePath == null),
+                        if (location != null && sourcePath != null) {
+                            CompilerMessageLocation.create(
+                                sourcePath,
+                                location.start.line, location.start.col,
+                                lines?.getOrNull(location.start.line - 1)
+                            )
+                        } else null
+                    )
                 }
                 return@internalScriptingRunSuspend ExitCode.COMPILATION_ERROR
             }

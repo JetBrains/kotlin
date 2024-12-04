@@ -25,13 +25,13 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                 WHEN type=kotlin.Double? origin=null
                   BRANCH
                     if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      arg0: GET_VAR 'val tmp_0: kotlin.Float? [val] declared in <root>.testDF' type=kotlin.Float? origin=null
+                      arg0: GET_VAR 'val tmp_0: kotlin.Float? declared in <root>.testDF' type=kotlin.Float? origin=null
                       arg1: CONST Null type=kotlin.Nothing? value=null
                     then: CONST Null type=kotlin.Nothing? value=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Float' type=kotlin.Double origin=null
-                      $this: GET_VAR 'val tmp_0: kotlin.Float? [val] declared in <root>.testDF' type=kotlin.Float? origin=null
+                      $this: GET_VAR 'val tmp_0: kotlin.Float? declared in <root>.testDF' type=kotlin.Float? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -53,13 +53,13 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                 WHEN type=kotlin.Double? origin=null
                   BRANCH
                     if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      arg0: GET_VAR 'val tmp_1: kotlin.Int? [val] declared in <root>.testDI' type=kotlin.Int? origin=null
+                      arg0: GET_VAR 'val tmp_1: kotlin.Int? declared in <root>.testDI' type=kotlin.Int? origin=null
                       arg1: CONST Null type=kotlin.Nothing? value=null
                     then: CONST Null type=kotlin.Nothing? value=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
-                      $this: GET_VAR 'val tmp_1: kotlin.Int? [val] declared in <root>.testDI' type=kotlin.Int? origin=null
+                      $this: GET_VAR 'val tmp_1: kotlin.Int? declared in <root>.testDI' type=kotlin.Int? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -87,13 +87,13 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                 WHEN type=kotlin.Double? origin=null
                   BRANCH
                     if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      arg0: GET_VAR 'val tmp_2: kotlin.Int? [val] declared in <root>.testDI2' type=kotlin.Int? origin=null
+                      arg0: GET_VAR 'val tmp_2: kotlin.Int? declared in <root>.testDI2' type=kotlin.Int? origin=null
                       arg1: CONST Null type=kotlin.Nothing? value=null
                     then: CONST Null type=kotlin.Nothing? value=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
-                      $this: GET_VAR 'val tmp_2: kotlin.Int? [val] declared in <root>.testDI2' type=kotlin.Int? origin=null
+                      $this: GET_VAR 'val tmp_2: kotlin.Int? declared in <root>.testDI2' type=kotlin.Int? origin=null
               arg1: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
                 GET_VAR 'y: kotlin.Any? declared in <root>.testDI2' type=kotlin.Any? origin=null
           BRANCH

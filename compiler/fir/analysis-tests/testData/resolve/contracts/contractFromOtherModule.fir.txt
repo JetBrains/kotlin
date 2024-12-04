@@ -1,0 +1,25 @@
+Module: lib
+FILE: module_lib_contractFromOtherModule.kt
+    package lib
+
+    public final fun requireIsTrue(value: R|kotlin/Boolean|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> value
+        >
+     {
+        when () {
+            R|<local>/value|.R|kotlin/Boolean.not|() ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+    }
+Module: main
+FILE: module_main_contractFromOtherModule.kt
+    package main
+
+    public final fun test(s: R|kotlin/Any|): R|kotlin/Unit| {
+        R|lib/requireIsTrue|((R|<local>/s| is R|kotlin/String|))
+        R|<local>/s|.R|kotlin/String.length|
+    }

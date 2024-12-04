@@ -1,3 +1,0 @@
-KtAnnotationCall:
-argumentMapping = { "s" -> (vararg names: kotlin.String) }
-targetFunction = <constructor>(vararg names: kotlin.String): kotlin.Suppress

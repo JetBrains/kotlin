@@ -42,7 +42,7 @@ public abstract class ExtensibleResolveTestCase extends KotlinTestWithEnvironmen
 
     protected abstract ExpectedResolveData getExpectedResolveData();
 
-    protected void doTest(@NonNls String filePath) throws Exception {
+    protected void doTest(@NonNls String filePath) {
         File file = new File(filePath);
         String text = KtTestUtil.doLoadFile(file);
         List<KtFile> files = TestFiles.createTestFiles("file.kt", text, new TestFiles.TestFileFactoryNoModules<KtFile>() {

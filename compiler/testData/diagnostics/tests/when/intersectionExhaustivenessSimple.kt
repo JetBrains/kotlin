@@ -1,6 +1,7 @@
-// SKIP_TXT
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// SKIP_TXT
+// CHECK_TYPE
 
 sealed class KtClassifierSymbol
 

@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 interface ICell<T> {
     val x: T
@@ -7,7 +9,7 @@ interface ICell<T> {
 class Cell<T>(override val x: T): ICell<T>
 
 open class Base<T> {
-    typealias CT = Cell<T>
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias CT = Cell<T>
     inner class InnerCell(override val x: T): ICell<T>
 }
 

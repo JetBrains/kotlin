@@ -5,7 +5,6 @@
 
 package test.text
 
-import test.testOnNonJvm6And7
 import kotlin.test.*
 
 class CharTest {
@@ -18,6 +17,8 @@ class CharTest {
             "Κκϰ", "Ππϖ", "Ρρϱ", "Σςσ", "Φφϕ", "ΩωΩ", "Ṡṡẛ",
             "Θθϑϴ", "Iiİı",
         )
+
+       val allCharsByCategory = (Char.MIN_VALUE..Char.MAX_VALUE).groupBy { it.category }
     }
 
     @Test
@@ -328,6 +329,17 @@ class CharTest {
     }
 
     @Test
+    fun whitespace() {
+        val allWhitespace = (Char.MIN_VALUE..Char.MAX_VALUE).filter { it.isWhitespace() }
+        val expected =
+            listOf(CharCategory.SPACE_SEPARATOR, CharCategory.LINE_SEPARATOR, CharCategory.PARAGRAPH_SEPARATOR)
+                .flatMap { allCharsByCategory[it]!! } +
+                    ('\u0009'..'\u000D') +
+                    ('\u001C'..'\u001F')
+        assertEquals(expected.sorted(), allWhitespace)
+    }
+
+    @Test
     fun lowercaseChar() {
         assertEquals('\u0000', '\u0000'.lowercaseChar())
 
@@ -525,32 +537,28 @@ class CharTest {
 
     @Test
     fun otherLowercaseProperty() {
-        testOnNonJvm6And7 {
-            val feminineOrdinalIndicator = '\u00AA'
-            assertTrue(feminineOrdinalIndicator.isLowerCase())
-            assertTrue(feminineOrdinalIndicator.isLetter())
-            assertFalse(feminineOrdinalIndicator.isUpperCase())
+        val feminineOrdinalIndicator = '\u00AA'
+        assertTrue(feminineOrdinalIndicator.isLowerCase())
+        assertTrue(feminineOrdinalIndicator.isLetter())
+        assertFalse(feminineOrdinalIndicator.isUpperCase())
 
-            val circledLatinSmallLetterA = '\u24D0'
-            assertTrue(circledLatinSmallLetterA.isLowerCase())
-            assertFalse(circledLatinSmallLetterA.isLetter())
-            assertFalse(circledLatinSmallLetterA.isUpperCase())
-        }
+        val circledLatinSmallLetterA = '\u24D0'
+        assertTrue(circledLatinSmallLetterA.isLowerCase())
+        assertFalse(circledLatinSmallLetterA.isLetter())
+        assertFalse(circledLatinSmallLetterA.isUpperCase())
     }
 
     @Test
     fun otherUppercaseProperty() {
-        testOnNonJvm6And7 {
-            val romanNumberOne = '\u2160'
-            assertTrue(romanNumberOne.isUpperCase())
-            assertFalse(romanNumberOne.isLetter())
-            assertFalse(romanNumberOne.isLowerCase())
+        val romanNumberOne = '\u2160'
+        assertTrue(romanNumberOne.isUpperCase())
+        assertFalse(romanNumberOne.isLetter())
+        assertFalse(romanNumberOne.isLowerCase())
 
-            val circledLatinCapitalLetterZ = '\u24CF'
-            assertTrue(circledLatinCapitalLetterZ.isUpperCase())
-            assertFalse(circledLatinCapitalLetterZ.isLetter())
-            assertFalse(circledLatinCapitalLetterZ.isLowerCase())
-        }
+        val circledLatinCapitalLetterZ = '\u24CF'
+        assertTrue(circledLatinCapitalLetterZ.isUpperCase())
+        assertFalse(circledLatinCapitalLetterZ.isLetter())
+        assertFalse(circledLatinCapitalLetterZ.isLowerCase())
     }
 
     @Test

@@ -1,0 +1,3 @@
+ExtensionReceiver[name: boo; isMutated: false; displayText: this@boo]
+    <explicit receiver parameter>: R|Aaa|
+    R|Aaa|

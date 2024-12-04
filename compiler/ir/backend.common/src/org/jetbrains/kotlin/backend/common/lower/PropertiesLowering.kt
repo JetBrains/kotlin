@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -15,6 +14,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.*
 
+/**
+ * Moves fields and accessors out from its property.
+ */
 class PropertiesLowering : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
@@ -42,20 +44,6 @@ class PropertiesLowering : DeclarationTransformer {
         }
 
         return null
-    }
-
-    companion object {
-        fun checkNoProperties(irFile: IrFile) {
-            irFile.acceptVoid(object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitProperty(declaration: IrProperty) {
-                    error("No properties should remain at this stage")
-                }
-            })
-        }
     }
 }
 

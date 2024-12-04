@@ -1,0 +1,15 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A : /I { // /A|null[0]
+    final val id // /A.id|@0:0{0§<kotlin.Any?>}id[0]
+        final fun <#A2: kotlin/Any?> (#A2).<get-id>(): #A2 // /A.id.<get-id>|<get-id>@0:0(){0§<kotlin.Any?>}[0]
+    constructor <init>(/I) // /A.<init>|<init>(I){}[0]
+}
+abstract interface /I { // /I|null[0]
+    open val id // /I.id|@0:0{0§<kotlin.Any?>}id[0]
+        open fun <#A2: kotlin/Any?> (#A2).<get-id>(): #A2 // /I.id.<get-id>|<get-id>@0:0(){0§<kotlin.Any?>}[0]
+}

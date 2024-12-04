@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tasks;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -70,7 +71,7 @@ public interface TracingStrategy {
         public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount, @NotNull CallableDescriptor descriptor) {}
 
         @Override
-        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors) {}
+        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> resolvedCalls) {}
 
         @Override
         public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors) {}
@@ -80,6 +81,9 @@ public interface TracingStrategy {
                 @NotNull BindingTrace trace,
                 @NotNull Collection<? extends ResolvedCall<D>> descriptors
         ) {}
+
+        @Override
+        public void recursiveType(@NotNull BindingTrace trace, @NotNull LanguageVersionSettings languageVersionSettings, boolean insideAugmentedAssignment) {}
 
         @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
@@ -135,7 +139,7 @@ public interface TracingStrategy {
             @NotNull CallableDescriptor descriptor
     );
 
-    <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors);
+    <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> resolvedCalls);
 
     <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors);
 
@@ -144,9 +148,15 @@ public interface TracingStrategy {
             @NotNull Collection<? extends ResolvedCall<D>> descriptors
     );
 
+    void recursiveType(@NotNull BindingTrace trace, @NotNull LanguageVersionSettings languageVersionSettings, boolean insideAugmentedAssignment);
+
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
 
     void abstractSuperCall(@NotNull BindingTrace trace);
+
+    default void abstractSuperCallWarning(@NotNull BindingTrace trace) {
+        abstractSuperCall(trace);
+    }
 
     void nestedClassAccessViaInstanceReference(
             @NotNull BindingTrace trace,

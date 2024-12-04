@@ -1,0 +1,4 @@
+native/native.tests/cli-tests/testData/cli/experimentalCheckers.kt:2:12: warning: redundant explicit type.
+    val i: String = "i"
+           ^^^^^^
+OK

@@ -19,42 +19,24 @@ val nativePlatformVariants = listOf(
 )
 
 dependencies {
-    compileOnly(project(":compiler:util"))
-    compileOnly(project(":compiler:cli-common"))
+    api(kotlinStdlib())
     compileOnly(project(":daemon-common"))
-    compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(project(":js:js.frontend"))
-    compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
-    compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
     embedded(project(":daemon-common")) { isTransitive = false }
-    embedded(commonDep("net.rubygrapefruit", "native-platform"))
-    nativePlatformVariants.forEach {
-        embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
-    }
-    runtimeOnly(project(":kotlin-reflect"))
-    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
-        isTransitive = false
-    }
+    testCompileOnly(project(":daemon-common"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        // This module is being run from within Gradle, older versions of which only have older kotlin-stdlib in the runtime classpath.
-        apiVersion = "1.4"
-        freeCompilerArgs += "-Xsuppress-version-warnings"
-    }
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" {}
-}
+configureKotlinCompileTasksGradleCompatibility()
 
 publish()
 
 runtimeJar()
-
 sourcesJar()
-
 javadocJar()

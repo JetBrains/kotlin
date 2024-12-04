@@ -1,3 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
+// SKIP_TXT
+
 fun foo(x: String?) = x
 
 class Test
@@ -20,6 +23,6 @@ fun bar(i: TestWithEquals?) {
 
 fun gav(i: TestWithEquals?, j: TestWithEquals?) {
     if (j == null) {
-        if (i == j) foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
+        if (i == j) foo(i)
     }
 }

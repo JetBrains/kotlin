@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services.jvm
 
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.test.services.TestServices
  *
  */
 abstract class JvmBoxMainClassProvider(val testServices: TestServices) : TestService {
-    abstract fun getMainClassNameAndAdditionalArguments(): List<String>
+    abstract fun getMainClassNameAndAdditionalArguments(module: TestModule): List<String>
 }
 
 val TestServices.jvmBoxMainClassProvider: JvmBoxMainClassProvider? by TestServices.nullableTestServiceAccessor()

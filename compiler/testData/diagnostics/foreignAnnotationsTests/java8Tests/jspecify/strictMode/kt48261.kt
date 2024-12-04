@@ -7,7 +7,7 @@
 // FILE: MyCollection.java
 import java.util.AbstractCollection;
 import javax.annotation.CheckForNull;
-import org.jspecify.nullness.NullMarked;
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public abstract class MyCollection<E> extends AbstractCollection<E> {
@@ -21,7 +21,7 @@ public abstract class MyCollection<E> extends AbstractCollection<E> {
 import java.util.AbstractCollection;
 import java.util.List;
 import javax.annotation.CheckForNull;
-import org.jspecify.nullness.NullMarked;
+import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public abstract class MyList<E> extends MyCollection<E> implements List<E> {

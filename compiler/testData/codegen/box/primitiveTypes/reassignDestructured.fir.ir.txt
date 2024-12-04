@@ -1,0 +1,66 @@
+FILE fqName:<root> fileName:/reassignDestructured.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun test1 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun test2 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:getInt visibility:public modality:FINAL <> () returnType:kotlin.Int?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun getInt (): kotlin.Int? declared in <root>'
+        CONST Int type=kotlin.Int value=1
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:i1 type:kotlin.Int? [val]
+        CALL 'public final fun getInt (): kotlin.Int? declared in <root>' type=kotlin.Int? origin=null
+      VAR name:i2 type:kotlin.Int? [val]
+        CALL 'public final fun getInt (): kotlin.Int? declared in <root>' type=kotlin.Int? origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Pair<kotlin.Int?, kotlin.Int?> [val]
+        CALL 'public final fun to <A, B> (that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> declared in kotlin' type=kotlin.Pair<kotlin.Int?, kotlin.Int?> origin=null
+          <A>: kotlin.Int?
+          <B>: kotlin.Int?
+          $receiver: GET_VAR 'val i1: kotlin.Int? declared in <root>.test1' type=kotlin.Int? origin=null
+          that: GET_VAR 'val i2: kotlin.Int? declared in <root>.test1' type=kotlin.Int? origin=null
+      VAR name:int1 type:kotlin.Int? [var]
+        CALL 'public final fun component1 (): A of kotlin.Pair declared in kotlin.Pair' type=kotlin.Int? origin=COMPONENT_N(index=1)
+          $this: GET_VAR 'val tmp_0: kotlin.Pair<kotlin.Int?, kotlin.Int?> declared in <root>.test1' type=kotlin.Pair<kotlin.Int?, kotlin.Int?> origin=null
+      VAR name:int2 type:kotlin.Int? [var]
+        CALL 'public final fun component2 (): B of kotlin.Pair declared in kotlin.Pair' type=kotlin.Int? origin=COMPONENT_N(index=2)
+          $this: GET_VAR 'val tmp_0: kotlin.Pair<kotlin.Int?, kotlin.Int?> declared in <root>.test1' type=kotlin.Pair<kotlin.Int?, kotlin.Int?> origin=null
+      SET_VAR 'var int1: kotlin.Int? declared in <root>.test1' type=kotlin.Unit origin=EQ
+        CONST Null type=kotlin.Nothing? value=null
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:i1 type:kotlin.Int? [val]
+        CALL 'public final fun getInt (): kotlin.Int? declared in <root>' type=kotlin.Int? origin=null
+      VAR name:i2 type:kotlin.Int? [val]
+        CALL 'public final fun getInt (): kotlin.Int? declared in <root>' type=kotlin.Int? origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: WHEN type=kotlin.Boolean origin=OROR
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val i1: kotlin.Int? declared in <root>.test2' type=kotlin.Int? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Boolean type=kotlin.Boolean value=true
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val i2: kotlin.Int? declared in <root>.test2' type=kotlin.Int? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+          then: RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Unit declared in <root>'
+            GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Pair<kotlin.Int, kotlin.Int> [val]
+        CALL 'public final fun to <A, B> (that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> declared in kotlin' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
+          <A>: kotlin.Int
+          <B>: kotlin.Int
+          $receiver: GET_VAR 'val i1: kotlin.Int? declared in <root>.test2' type=kotlin.Int? origin=null
+          that: GET_VAR 'val i2: kotlin.Int? declared in <root>.test2' type=kotlin.Int? origin=null
+      VAR name:int1 type:kotlin.Int? [var]
+        CALL 'public final fun component1 (): A of kotlin.Pair declared in kotlin.Pair' type=kotlin.Int origin=COMPONENT_N(index=1)
+          $this: GET_VAR 'val tmp_1: kotlin.Pair<kotlin.Int, kotlin.Int> declared in <root>.test2' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
+      VAR name:int2 type:kotlin.Int? [var]
+        CALL 'public final fun component2 (): B of kotlin.Pair declared in kotlin.Pair' type=kotlin.Int origin=COMPONENT_N(index=2)
+          $this: GET_VAR 'val tmp_1: kotlin.Pair<kotlin.Int, kotlin.Int> declared in <root>.test2' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
+      SET_VAR 'var int1: kotlin.Int? declared in <root>.test2' type=kotlin.Unit origin=EQ
+        CONST Null type=kotlin.Nothing? value=null

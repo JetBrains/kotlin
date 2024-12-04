@@ -1,0 +1,349 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](LAZY_EXPRESSION) disabled: Boolean): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @MyAnno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: Boolean = R|<local>/disabled|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Boolean
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Boolean
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] @MyAnno[Unresolved](LAZY_EXPRESSION) disabled: Boolean = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](LAZY_EXPRESSION) disabled: Boolean): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @MyAnno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: Boolean = R|<local>/disabled|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Boolean
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Boolean
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] @MyAnno[Unresolved](LAZY_EXPRESSION) disabled: Boolean = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : R|kotlin/Any| {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](IntegerLiteral(1)) disabled: Boolean): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @MyAnno[Unresolved](IntegerLiteral(1)) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: Boolean = R|<local>/disabled|
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] get(): Boolean
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Boolean
+
+        public? final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun copy([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @MyAnno[Unresolved](IntegerLiteral(1)) disabled: Boolean = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final? data [ResolvedTo(COMPANION_GENERATION)] class MyClass : R|kotlin/Any| {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](IntegerLiteral(1)) disabled: Boolean): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @MyAnno[Unresolved](IntegerLiteral(1)) public? final? [ResolvedTo(COMPANION_GENERATION)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: Boolean = R|<local>/disabled|
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] get(): Boolean
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Boolean
+
+        public? final [ResolvedTo(COMPANION_GENERATION)] fun copy([ResolvedTo(COMPANION_GENERATION)] @MyAnno[Unresolved](IntegerLiteral(1)) disabled: Boolean = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final? data [ResolvedTo(SUPER_TYPES)] class MyClass : R|kotlin/Any| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](IntegerLiteral(1)) disabled: Boolean): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @MyAnno[Unresolved](IntegerLiteral(1)) public? final? [ResolvedTo(SUPER_TYPES)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: Boolean = R|<local>/disabled|
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] get(): Boolean
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Boolean
+
+        public? final [ResolvedTo(SUPER_TYPES)] fun copy([ResolvedTo(SUPER_TYPES)] @MyAnno[Unresolved](IntegerLiteral(1)) disabled: Boolean = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final? data [ResolvedTo(TYPES)] class MyClass : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Boolean
+
+        public? final [ResolvedTo(TYPES)] fun copy([ResolvedTo(TYPES)] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final data [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun copy([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final data [ResolvedTo(CONTRACTS)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(CONTRACTS)] fun copy([ResolvedTo(CONTRACTS)] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun copy([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
+
+    }
+    public final data [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun copy([ResolvedTo(CONSTANT_EVALUATION)] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(STATUS)] annotation class MyAnno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyAnno.value] value: R|kotlin/Int|): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyAnno] get(): R|kotlin/Int|
+
+    }
+    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun copy([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(STATUS)] annotation class MyAnno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyAnno.value] value: R|kotlin/Int|): R|pack/MyAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyAnno] get(): R|kotlin/Int|
+
+    }
+    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyAnno.value] value: R|kotlin/Int|): R|pack/MyAnno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnno] get(): R|kotlin/Int|
+
+    }
+    public final data [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyClass.component1, IsFromPrimaryConstructor=true] val disabled: R|kotlin/Boolean| = R|<local>/disabled|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean| = this@R|pack/MyClass|.R|pack/MyClass.disabled|): R|pack/MyClass|
+
+    }

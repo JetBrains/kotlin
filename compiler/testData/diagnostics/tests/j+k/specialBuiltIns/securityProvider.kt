@@ -1,5 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // FULL_JDK
+// SKIP_TXT
 
 import java.security.Provider
 

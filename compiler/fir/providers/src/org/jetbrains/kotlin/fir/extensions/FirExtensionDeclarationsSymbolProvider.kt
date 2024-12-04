@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.validate
+import org.jetbrains.kotlin.fir.ownerGenerator
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.impl.groupExtensionsByName
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -21,14 +24,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 
-@OptIn(FirExtensionApiInternals::class)
+@OptIn(FirExtensionApiInternals::class, ExperimentalTopLevelDeclarationsGenerationApi::class)
 class FirExtensionDeclarationsSymbolProvider private constructor(
     session: FirSession,
     cachesFactory: FirCachesFactory,
     private val extensions: List<FirDeclarationGenerationExtension>
 ) : FirSymbolProvider(session), FirSessionComponent {
     companion object {
-        fun create(session: FirSession): FirExtensionDeclarationsSymbolProvider? {
+        fun createIfNeeded(session: FirSession): FirExtensionDeclarationsSymbolProvider? {
             val extensions = session.extensionService.declarationGenerators
             if (extensions.isEmpty()) return null
             return FirExtensionDeclarationsSymbolProvider(session, session.firCachesFactory, extensions)
@@ -50,26 +53,45 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     }
 
     private val packageCache: FirCache<FqName, Boolean, Nothing?> = cachesFactory.createCache { packageFqName, _ ->
-        hasPackage(packageFqName)
+        extensions.any { it.hasPackage(packageFqName) }
     }
 
-    private val extensionsByTopLevelClassId: FirLazyValue<Map<ClassId, List<FirDeclarationGenerationExtension>>, Nothing?> =
+    private val callableNamesInPackageCache: FirLazyValue<Map<FqName, Set<Name>>> =
+        cachesFactory.createLazyValue {
+            computeNamesGroupedByPackage(
+                FirDeclarationGenerationExtension::getTopLevelCallableIds,
+                CallableId::packageName, CallableId::callableName
+            )
+        }
+
+    private val classNamesInPackageCache: FirLazyValue<Map<FqName, Set<Name>>> =
+        cachesFactory.createLazyValue {
+            computeNamesGroupedByPackage(
+                FirDeclarationGenerationExtension::getTopLevelClassIds,
+                ClassId::packageFqName,
+                ClassId::shortClassName,
+            )
+        }
+
+    private fun <I, N> computeNamesGroupedByPackage(
+        ids: FirDeclarationGenerationExtension.() -> Collection<I>,
+        packageFqName: (I) -> FqName,
+        shortName: (I) -> N,
+    ): Map<FqName, Set<N>> =
+        buildMap<FqName, MutableSet<N>> {
+            for (extension in extensions) {
+                for (id in extension.ids()) {
+                    getOrPut(packageFqName(id)) { mutableSetOf() }.add(shortName(id))
+                }
+            }
+        }
+
+    private val extensionsByTopLevelClassId: FirLazyValue<Map<ClassId, List<FirDeclarationGenerationExtension>>> =
         session.firCachesFactory.createLazyValue {
             extensions.flatGroupBy { it.topLevelClassIdsCache.getValue() }
         }
 
-    private val extensionsByNestedClassifierClassId: FirCache<ClassId, Map<ClassId, List<FirDeclarationGenerationExtension>>, Nothing?> =
-        session.firCachesFactory.createCache cache@{ outerClassId, _ ->
-            val outerClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(outerClassId) as? FirClassSymbol<*>
-                ?: return@cache emptyMap()
-            session.groupExtensionsByName(
-                outerClassSymbol.fir,
-                nameExtractor = { nestedClassifierNamesCache.getValue(outerClassSymbol) },
-                nameTransformer = { outerClassId.createNestedClassId(it) }
-            )
-        }
-
-    private val extensionsByTopLevelCallableId: FirLazyValue<Map<CallableId, List<FirDeclarationGenerationExtension>>, Nothing?> =
+    private val extensionsByTopLevelCallableId: FirLazyValue<Map<CallableId, List<FirDeclarationGenerationExtension>>> =
         session.firCachesFactory.createLazyValue {
             extensions.flatGroupBy { it.topLevelCallableIdsCache.getValue() }
         }
@@ -77,37 +99,80 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     // ------------------------------------------ generators ------------------------------------------
 
     private fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        val matchedExtensions = when {
-            classId.isNestedClass -> extensionsByNestedClassifierClassId.getValue(classId.outerClassId!!)[classId]
-            else -> extensionsByTopLevelClassId.getValue()[classId]
-        } ?: return null
-        val generatedClasses = matchedExtensions
-            .mapNotNull { it.generateClassLikeDeclaration(classId) }
-            .onEach { it.fir.validate() }
-        return when (generatedClasses.size) {
-            0 -> null
-            1 -> generatedClasses.first()
-            else -> error("Multiple plugins generated classes with same classId $classId\n${generatedClasses.joinToString("\n") { it.fir.render() }}")
+        return when {
+            classId.isLocal -> null
+            classId.isNestedClass -> {
+                // Note: session.symbolProvider is important here, as we need a full composite provider and not only this extension provider
+                val owner = session.symbolProvider.getClassLikeSymbolByClassId(classId.outerClassId!!) as? FirClassSymbol<*> ?: return null
+                val nestedClassifierScope = session.nestedClassifierScope(owner.fir) ?: return null
+                var result: FirClassLikeSymbol<*>? = null
+                nestedClassifierScope.processClassifiersByName(classId.shortClassName) {
+                    if (it is FirClassLikeSymbol<*>) {
+                        result = it
+                    }
+                }
+                result
+            }
+            else -> {
+                val matchedExtensions = extensionsByTopLevelClassId.getValue()[classId] ?: return null
+                val generatedClasses = matchedExtensions
+                    .mapNotNull { generatorExtension ->
+                        generatorExtension.generateTopLevelClassLikeDeclaration(classId)?.also { symbol ->
+                            symbol.fir.ownerGenerator = generatorExtension
+                        }
+                    }
+                    .onEach { it.fir.validate() }
+                when (generatedClasses.size) {
+                    0 -> null
+                    1 -> generatedClasses.first()
+                    else -> error("Multiple plugins generated classes with same classId $classId\n${generatedClasses.joinToString("\n") { it.fir.render() }}")
+                }
+            }
         }
     }
 
     private fun generateTopLevelFunctions(callableId: CallableId): List<FirNamedFunctionSymbol> {
         return extensionsByTopLevelCallableId.getValue()[callableId].orEmpty()
-            .flatMap { it.generateFunctions(callableId, owner = null) }
+            .flatMap { it.generateFunctions(callableId, context = null) }
             .onEach { it.fir.validate() }
     }
 
     private fun generateTopLevelProperties(callableId: CallableId): List<FirPropertySymbol> {
         return extensionsByTopLevelCallableId.getValue()[callableId].orEmpty()
-            .flatMap { it.generateProperties(callableId, owner = null) }
+            .flatMap { it.generateProperties(callableId, context = null) }
             .onEach { it.fir.validate() }
     }
 
-    private fun hasPackage(packageFqName: FqName): Boolean {
-        return extensions.any { it.hasPackage(packageFqName) }
-    }
-
     // ------------------------------------------ provider methods ------------------------------------------
+
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
+
+        override fun getPackageNames(): Set<String> =
+            getPackageNamesWithTopLevelClassifiers() + getPackageNamesWithTopLevelCallables()
+
+        override fun getPackageNamesWithTopLevelClassifiers(): Set<String> =
+            buildSet {
+                extensions.forEach { extension ->
+                    extension.topLevelClassIdsCache.getValue().mapTo(this) { it.packageFqName.asString() }
+                }
+            }
+
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
+            classNamesInPackageCache.getValue()[packageFqName] ?: emptySet()
+
+        override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
+
+        override fun getPackageNamesWithTopLevelCallables(): Set<String> =
+            buildSet {
+                extensions.forEach { extension ->
+                    extension.topLevelCallableIdsCache.getValue().mapTo(this) { it.packageName.asString() }
+                }
+            }
+
+        override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> =
+            callableNamesInPackageCache.getValue()[packageFqName].orEmpty()
+    }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return classCache.getValue(classId)
@@ -130,7 +195,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         destination += propertyCache.getValue(CallableId(packageFqName, name))
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
-        return fqName.takeIf { packageCache.getValue(fqName, null) }
+    override fun hasPackage(fqName: FqName): Boolean {
+        return packageCache.getValue(fqName, null)
     }
 }

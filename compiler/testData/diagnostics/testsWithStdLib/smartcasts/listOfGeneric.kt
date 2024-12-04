@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // See KT-9529 Smart cast causes code to be incompilable
 

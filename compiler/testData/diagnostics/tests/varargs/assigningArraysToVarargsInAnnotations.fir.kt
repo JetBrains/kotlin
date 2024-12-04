@@ -1,4 +1,5 @@
-// !LANGUAGE: +ArrayLiteralsInAnnotations, +AssigningArraysToVarargsInNamedFormInAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +AssigningArraysToVarargsInNamedFormInAnnotations
 
 // FILE: JavaAnn.java
 

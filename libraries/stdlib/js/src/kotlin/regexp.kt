@@ -49,10 +49,12 @@ public external interface RegExpMatch {
  * Returns the entire text matched by [RegExp.exec] if the [index] parameter is 0, or the text matched by the capturing parenthesis
  * at the given index.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline operator fun RegExpMatch.get(index: Int): String? = asDynamic()[index]
 
 /**
  * Converts the result of [RegExp.exec] to an array where the first element contains the entire matched text and each subsequent
  * element is the text matched by each capturing parenthesis.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun RegExpMatch.asArray(): Array<out String?> = unsafeCast<Array<out String?>>()

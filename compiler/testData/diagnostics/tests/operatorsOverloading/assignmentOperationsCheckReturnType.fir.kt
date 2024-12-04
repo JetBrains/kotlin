@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun intBinEq() {
     var x = 0
     x <!NONE_APPLICABLE!>+=<!> 'a'
@@ -17,15 +18,15 @@ fun intBinEq() {
 fun shortBinEq() {
     var x = 0.toShort()
     x <!NONE_APPLICABLE!>+=<!> 'a'
-    x += 1.toByte()
-    x += 1.toShort()
+    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.toByte()<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.toShort()<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1L<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1f<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1.0<!>
 
     x <!NONE_APPLICABLE!>*=<!> 'a'
-    x *= 1.toByte()
-    x *= 1.toShort()
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toByte()<!>
+    <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.toShort()<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1L<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1f<!>
     <!ASSIGNMENT_TYPE_MISMATCH!>x *= 1.0<!>

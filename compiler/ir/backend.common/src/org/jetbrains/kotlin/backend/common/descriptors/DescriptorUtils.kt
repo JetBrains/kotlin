@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.backend.common.descriptors
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.explicitParameters as _explicitParameters
 
 val String.synthesizedName: Name get() = Name.identifier(this.synthesizedString)
 
@@ -36,27 +34,14 @@ val CallableDescriptor.isSuspend: Boolean
 @Suppress("unused")
 val CallableDescriptor.allParameters: List<ParameterDescriptor>
     get() = if (this is ConstructorDescriptor) {
-        listOf(this.constructedClass.thisAsReceiverParameter) + explicitParameters
+        listOf(this.constructedClass.thisAsReceiverParameter) + _explicitParameters
     } else {
-        explicitParameters
+        _explicitParameters
     }
 
-/**
- * @return naturally-ordered list of the parameters that can have values specified at call site.
- */
+@Deprecated(
+    message = "Please use org.jetbrains.kotlin.descriptors.explicitParameters",
+    ReplaceWith("explicitParameters", "org.jetbrains.kotlin.descriptors.explicitParameters")
+)
 val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
-    get() {
-        val result = ArrayList<ParameterDescriptor>(valueParameters.size + 2)
-
-        this.dispatchReceiverParameter?.let {
-            result.add(it)
-        }
-
-        this.extensionReceiverParameter?.let {
-            result.add(it)
-        }
-
-        result.addAll(valueParameters)
-
-        return result
-    }
+    get() = _explicitParameters

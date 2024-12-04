@@ -1,14 +1,4 @@
-fun a(): String {
-  return "string"
-}
-
 class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val b: String
     get
 
@@ -19,4 +9,15 @@ class A {
 ) /*~> Unit */
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+
+fun a(): String {
+  return "string"
+}
+

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // Based on KT-9100
 fun test(x: Any?, y: Any?): Any {

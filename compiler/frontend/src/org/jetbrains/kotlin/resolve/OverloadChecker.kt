@@ -22,13 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-
-object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
-    override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean =
-        false
-}
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
     /**
@@ -60,12 +54,12 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
         val aSignature = FlatSignature.createFromCallableDescriptor(a)
         val bSignature = FlatSignature.createFromCallableDescriptor(b)
 
-        val aIsNotLessSpecificThanB = ConstraintSystemBuilderImpl.forSpecificity()
-            .isSignatureNotLessSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
-        val bIsNotLessSpecificThanA = ConstraintSystemBuilderImpl.forSpecificity()
-            .isSignatureNotLessSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
+        val aIsEquallyOrMoreSpecificThanB = ConstraintSystemBuilderImpl.forSpecificity()
+            .isSignatureEquallyOrMoreSpecific(aSignature, bSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
+        val bIsEquallyOrMoreSpecificThanA = ConstraintSystemBuilderImpl.forSpecificity()
+            .isSignatureEquallyOrMoreSpecific(bSignature, aSignature, OverloadabilitySpecificityCallbacks, specificityComparator)
 
-        return !(aIsNotLessSpecificThanB && bIsNotLessSpecificThanA)
+        return !(aIsEquallyOrMoreSpecificThanB && bIsEquallyOrMoreSpecificThanA)
     }
 
     private enum class DeclarationCategory {

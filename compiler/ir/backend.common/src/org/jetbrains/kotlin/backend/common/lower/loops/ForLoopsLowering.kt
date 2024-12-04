@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -18,25 +18,22 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
-
-val forLoopsPhase = makeIrFilePhase(
-    ::ForLoopsLowering,
-    name = "ForLoopsLowering",
-    description = "For loops lowering"
-)
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * This lowering pass optimizes for-loops.
  *
- * Replace iteration over progressions (e.g., X.indices, a..b) and arrays with
+ * Replace iteration over progressions (e.g., `X.indices`, `a..b`) and arrays with
  * a simple while loop over primitive induction variable.
  *
  * For example, this loop:
  * ```
- *   for (loopVar in A..B) { // Loop body }
+ *   for (loopVar in A..B) { /* Loop body */ }
  * ```
  * is represented in IR in such a manner:
  * ```
@@ -74,7 +71,7 @@ val forLoopsPhase = makeIrFilePhase(
  *       } while (loopVar != last)
  *   }
  * ```
- * If loop is an until loop (e.g., `for (i in A until B)`), it is transformed into:
+ * If loop is an until loop (e.g., `for (i in A until B)` or `for (i in A..<B)`, it is transformed into:
  * ```
  *   var inductionVar = A
  *   val last = B - 1
@@ -97,10 +94,10 @@ val forLoopsPhase = makeIrFilePhase(
  *   }
  * ```
  */
-class ForLoopsLowering(
-    val context: CommonBackendContext,
-    private val loopBodyTransformer: ForLoopBodyTransformer? = null
-) : BodyLoweringPass {
+@PhaseDescription(name = "ForLoopsLowering")
+open class ForLoopsLowering(val context: CommonBackendContext) : BodyLoweringPass {
+    open val loopBodyTransformer: ForLoopBodyTransformer?
+        get() = null
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val oldLoopToNewLoop = mutableMapOf<IrLoop, IrLoop>()
@@ -175,7 +172,12 @@ private class RangeLoopTransformer(
         }
 
         val loopHeader = headerProcessor.extractHeader(iteratorVariable)
-            ?: return super.visitBlock(expression)  // The iterable in the header is not supported.
+            ?: return super.visitBlock(expression.apply { specializeIteratorIfPossible(this) }) // The iterable in the header is not supported.
+
+        if (loopHeader.loopInitStatements.any { (it as? IrVariable)?.type?.isNothing() == true }) {
+            return super.visitBlock(expression)
+        }
+
         val loweredHeader = lowerHeader(iteratorVariable, loopHeader)
 
         val (newLoop, loopReplacementExpression) = lowerWhileLoop(oldLoop, loopHeader)
@@ -286,6 +288,58 @@ private class RangeLoopTransformer(
         }
 
         return loopHeader.buildLoop(context.createIrBuilder(getScopeOwnerSymbol(), loop.startOffset, loop.endOffset), loop, newBody)
+    }
+
+    /**
+     * This optimization is for the stdlib extension function in package `kotlin.collections`:
+     * ```
+     *      @kotlin.internal.InlineOnly
+     *      public inline operator fun <T> Iterator<T>.iterator(): Iterator<T> = this
+     * ```
+     * Let's say we have an instance of `MyIterator`, which directly implements [kotlin.collections.Iterator],
+     * when it is used in a for-loop like:
+     *
+     * ```
+     *      val iterator = MyIterator()
+     *      for (x in iterator)
+     *          println(x)
+     * ```
+     * Without this optimization, receiver type of call of `next` would be Iterator<T> instead of MyIterator, which means that
+     * a less specific method would be called, which could lead to unnecessary boxing of primitives or inline classes.
+     */
+    private fun specializeIteratorIfPossible(irForLoopBlock: IrContainerExpression) {
+        val statements = irForLoopBlock.statements
+        val iterator = statements[0] as IrVariable
+
+        val initializer = iterator.initializer as? IrCall ?: return
+        if (!initializer.symbol.owner.hasEqualFqName(STDLIB_ITERATOR_FUNCTION_FQ_NAME)) return
+
+        val receiverType = initializer.extensionReceiver?.type ?: return
+        if (!receiverType.isStrictSubtypeOfClass(context.irBuiltIns.iteratorClass)) return
+
+        val receiverClass = receiverType.getClass() ?: return
+        val next = receiverClass.functions.singleOrNull {
+            it.name == OperatorNameConventions.NEXT &&
+                    it.dispatchReceiverParameter != null &&
+                    it.extensionReceiverParameter == null &&
+                    it.valueParameters.isEmpty()
+        } ?: return
+
+        iterator.apply {
+            this.type = receiverType
+            this.initializer = initializer.extensionReceiver
+        }
+
+        val loop = statements[1] as IrWhileLoop
+        val loopVariable = (loop.body as? IrBlock)?.statements?.firstOrNull() as? IrVariable ?: return
+        val loopCondition = loop.condition as? IrCall ?: return
+        loopCondition.dispatchReceiver?.type = receiverType
+
+        val nextCall = loopVariable.initializer
+        if (nextCall is IrCall) {
+            nextCall.symbol = next.symbol
+            nextCall.dispatchReceiver?.type = receiverType
+        }
     }
 
     private data class LoopVariableInfo(
@@ -403,5 +457,9 @@ private class RangeLoopTransformer(
         assert(mainLoopVariableIndex >= 0)
 
         return LoopVariableInfo(mainLoopVariable, mainLoopVariableIndex, loopVariableComponents, loopVariableComponentIndices)
+    }
+
+    companion object {
+        val STDLIB_ITERATOR_FUNCTION_FQ_NAME = FqName("kotlin.collections.CollectionsKt.iterator")
     }
 }

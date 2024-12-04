@@ -1,10 +1,10 @@
 package
 
 public fun </*0*/ T> a(): kotlin.Unit
-public fun ex1(/*0*/ a: [ERROR : Bar]<kotlin.String, kotlin.String>): [ERROR : Bar]<kotlin.String, kotlin.String>
+public fun ex1(/*0*/ a: [Error type: Type for error type constructor (Bar)]<kotlin.String, kotlin.String>): [Error type: Type for error type constructor (Bar)]<kotlin.String, kotlin.String>
 public fun test(): kotlin.Unit
-public fun </*0*/ T : Foo<[ERROR : String.Bar]>> x(): kotlin.Unit
-public fun [ERROR : Bar]<kotlin.String>.ext(): kotlin.Unit
+public fun </*0*/ T : Foo<[Error type: Unresolved type for String.Bar]>> x(): kotlin.Unit
+public fun [Error type: Type for error type constructor (Bar)]<kotlin.String>.ext(): kotlin.Unit
 
 public final class Foo</*0*/ T> {
     public constructor Foo</*0*/ T>()

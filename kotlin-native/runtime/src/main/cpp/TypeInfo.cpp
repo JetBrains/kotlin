@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
+#include <string>
+
 #include "KAssert.h"
 #include "TypeInfo.h"
+#include "Memory.h"
+#include "Types.h"
+#include "KString.h"
+#include "WritableTypeInfo.hpp"
 
 extern "C" {
 
@@ -39,4 +45,37 @@ InterfaceTableRecord const* LookupInterfaceTableRecord(InterfaceTableRecord cons
   return interfaceTable + l;
 }
 
+RUNTIME_NOTHROW int Kotlin_internal_reflect_getObjectReferenceFieldsCount(ObjHeader* object) {
+    auto *info = object->type_info();
+    if (info->IsArray()) return 0;
+    return info->objOffsetsCount_;
+}
+
+RUNTIME_NOTHROW OBJ_GETTER(Kotlin_internal_reflect_getObjectReferenceFieldByIndex, ObjHeader* object, int index) {
+    RETURN_OBJ(*reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + object->type_info()->objOffsets_[index]));
+}
+
+RUNTIME_NOTHROW OBJ_GETTER(Kotlin_native_internal_reflect_objCNameOrNull, const TypeInfo* typeInfo) {
+#if KONAN_OBJC_INTEROP
+    if (auto* typeAdapter = kotlin::objCExport(typeInfo).typeAdapter) {
+        RETURN_RESULT_OF(CreateStringFromCString, typeAdapter->objCName);
+    }
+#endif
+    RETURN_OBJ(nullptr);
+}
+
+}
+
+std::string TypeInfo::fqName() const {
+    std::string fqName = "";
+    if (packageName_) {
+        fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(packageName_);
+        fqName += ".";
+    }
+    if (relativeName_) {
+        fqName += kotlin::to_string<KStringConversionMode::UNCHECKED>(relativeName_);
+    } else {
+        fqName += "<anonymous>";
+    }
+    return fqName;
 }

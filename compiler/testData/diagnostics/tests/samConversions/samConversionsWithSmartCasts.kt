@@ -1,5 +1,4 @@
-// !LANGUAGE: +NewInference
-
+// RUN_PIPELINE_TILL: BACKEND
 // NB new inference doesn't really work with old JVM back-end.
 
 // WITH_JDK

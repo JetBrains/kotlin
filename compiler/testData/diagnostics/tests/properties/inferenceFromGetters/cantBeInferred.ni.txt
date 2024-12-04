@@ -1,6 +1,6 @@
 package
 
-public val x: [ERROR : Error function type]
-public val y: [ERROR : Error function type]
+public val x: [Error type: Return type for function cannot be resolved]
+public val y: [Error type: Return type for function cannot be resolved]
 public fun </*0*/ E> bar(): kotlin.collections.List<E>
 public fun </*0*/ E> foo(): E

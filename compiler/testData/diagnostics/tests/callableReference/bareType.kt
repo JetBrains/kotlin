@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -9,6 +11,9 @@ fun f2() = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map.Entry<!>::hashCode
 
 class Outer<T> {
     inner class Inner
+    class NotInner
 }
 
 fun f3() = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer.Inner<!>::hashCode
+
+fun f4() = Outer.NotInner::hashCode

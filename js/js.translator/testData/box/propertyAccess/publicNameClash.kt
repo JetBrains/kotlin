@@ -1,5 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1284
-
 // KT-33327
 
 class C {

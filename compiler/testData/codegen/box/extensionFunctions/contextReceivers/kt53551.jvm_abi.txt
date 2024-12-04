@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Kt53551Kt.class
+		PACKAGE METADATA
+			FUNCTION withFooBar(Lkotlin/jvm/functions/Function4;)V
+				Property: class.metadata.function.valueParameters
+					K1
+						(block: @kotlin/ExtensionFunctionType @kotlin/ContextFunctionTypeParams(count = 2) suspend kotlin/Function4<Foo, Bar, Baz, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
+					K2
+						(block: @kotlin/ContextFunctionTypeParams(count = 2) @kotlin/ExtensionFunctionType suspend kotlin/Function4<Foo, Bar, Baz, kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)

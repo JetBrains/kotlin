@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 fun Outer.Inner.foo() = 42
 
 class Outer {

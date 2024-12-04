@@ -1,10 +1,11 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_PARAMETER -RETURN_NOT_ALLOWED
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_PARAMETER -RETURN_NOT_ALLOWED
 
-fun test1() = run {
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>test1<!>() = run {
     return <!RETURN_TYPE_MISMATCH!>"OK"<!>
 }
 
-fun test2() = run {
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>test2<!>() = run {
     fun local(): String {
         return ""
     }
@@ -37,9 +38,9 @@ fun test4() = run {
 
 val foo: Int
     get() = run {
-        if (true) return ""
+        if (true) return <!RETURN_TYPE_MISMATCH!>""<!>
 
-        return
+        <!RETURN_TYPE_MISMATCH!>return<!>
     }
 
 fun test(): Int = run {

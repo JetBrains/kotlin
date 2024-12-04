@@ -1,0 +1,11 @@
+FILE: kotlinAny.kt
+    public open class Any {
+        public? constructor(): R|kotlin/Any|
+
+        public open operator fun equals(other: Any?): Boolean
+
+        public open fun hashCode(): Int
+
+        public open fun toString(): String
+
+    }

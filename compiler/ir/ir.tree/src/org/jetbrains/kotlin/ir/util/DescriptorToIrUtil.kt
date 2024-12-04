@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.isValueClass
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
 val ParameterDescriptor.indexOrMinusOne: Int
@@ -37,7 +38,21 @@ fun IrFactory.createIrClassFromDescriptor(
         visibility: DescriptorVisibility = descriptor.visibility,
         modality: Modality = descriptor.modality
 ): IrClass = createClass(
-    startOffset, endOffset, origin, symbol, name, descriptor.kind, visibility, modality,
-    descriptor.isCompanionObject, descriptor.isInner, descriptor.isData, descriptor.isEffectivelyExternal(),
-    descriptor.isInlineClass(), descriptor.isExpect, descriptor.isFun, descriptor.source
+    startOffset = startOffset,
+    endOffset = endOffset,
+    origin = origin,
+    name = name,
+    visibility = visibility,
+    symbol = symbol,
+    kind = descriptor.kind,
+    modality = modality,
+    isExternal = descriptor.isEffectivelyExternal(),
+    isCompanion = descriptor.isCompanionObject,
+    isInner = descriptor.isInner,
+    isData = descriptor.isData,
+    isValue = descriptor.isValueClass(),
+    isExpect = descriptor.isExpect,
+    isFun = descriptor.isFun,
+    hasEnumEntries = descriptor is DeserializedClassDescriptor && descriptor.hasEnumEntriesMetadataFlag,
+    source = descriptor.source,
 )

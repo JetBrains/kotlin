@@ -1,0 +1,77 @@
+Module: lib
+FILE: module_lib_metaAnnotationFromLibrary.kt
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllOpen|() public open annotation class Open1 : R|kotlin/Annotation| {
+        public constructor(): R|Open1| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Open1|() public open annotation class Open2 : R|kotlin/Annotation| {
+        public constructor(): R|Open2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Open2|() public open annotation class Open3 : R|kotlin/Annotation| {
+        public constructor(): R|Open3| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+Module: main
+FILE: module_main_metaAnnotationFromLibrary.kt
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllOpen|() public open class Zero : R|kotlin/Any| {
+        public constructor(): R|Zero| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Open1|() public open class First : R|kotlin/Any| {
+        public constructor(): R|First| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Open2|() public open class Second : R|kotlin/Any| {
+        public constructor(): R|Second| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Open3|() public open class Third : R|kotlin/Any| {
+        public constructor(): R|Third| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval a: R|<anonymous>| = object : R|Zero| {
+            private constructor(): R|<anonymous>| {
+                super<R|Zero|>()
+            }
+
+        }
+
+        lval b: R|<anonymous>| = object : R|First| {
+            private constructor(): R|<anonymous>| {
+                super<R|First|>()
+            }
+
+        }
+
+        lval c: R|<anonymous>| = object : R|Second| {
+            private constructor(): R|<anonymous>| {
+                super<R|Second|>()
+            }
+
+        }
+
+        lval d: R|<anonymous>| = object : R|Third| {
+            private constructor(): R|<anonymous>| {
+                super<R|Third|>()
+            }
+
+        }
+
+        ^box String(OK)
+    }

@@ -1,55 +1,77 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.time
 
-
-/**
- * The list of possible time measurement units, in which a duration can be expressed.
- *
- * The smallest time unit is [NANOSECONDS] and the largest is [DAYS], which corresponds to exactly 24 [HOURS].
- */
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalTime::class)
-public actual enum class DurationUnit {
+public actual enum class DurationUnit(internal val scale: Double) {
     /**
      * Time unit representing one nanosecond, which is 1/1000 of a microsecond.
      */
-    NANOSECONDS,
+    NANOSECONDS(1e0),
     /**
      * Time unit representing one microsecond, which is 1/1000 of a millisecond.
      */
-    MICROSECONDS,
+    MICROSECONDS(1e3),
     /**
      * Time unit representing one millisecond, which is 1/1000 of a second.
      */
-    MILLISECONDS,
+    MILLISECONDS(1e6),
     /**
      * Time unit representing one second.
      */
-    SECONDS,
+    SECONDS(1e9),
     /**
      * Time unit representing one minute.
      */
-    MINUTES,
+    MINUTES(60e9),
     /**
      * Time unit representing one hour.
      */
-    HOURS,
+    HOURS(3600e9),
     /**
      * Time unit representing one day, which is always equal to 24 hours.
      */
-    DAYS;
+    DAYS(86400e9);
 }
 
-/** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
 @SinceKotlin("1.3")
-internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double = TODO("Wasm stdlib: convertDurationUnit Double")
+internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double {
+    val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
+    return when {
+        sourceCompareTarget > 0 -> value * (sourceUnit.scale / targetUnit.scale)
+        sourceCompareTarget < 0 -> value / (targetUnit.scale / sourceUnit.scale)
+        else -> value
+    }
+}
 
 @SinceKotlin("1.5")
-internal actual fun convertDurationUnitOverflow(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnitOverflow Long")
+internal actual fun convertDurationUnitOverflow(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+    val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
+    return when {
+        sourceCompareTarget > 0 -> value * (sourceUnit.scale / targetUnit.scale).toLong()
+        sourceCompareTarget < 0 -> value / (targetUnit.scale / sourceUnit.scale).toLong()
+        else -> value
+    }
+}
 
 @SinceKotlin("1.5")
-internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnit Long")
+internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+    val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
+    return when {
+        sourceCompareTarget > 0 -> {
+            val scale = (sourceUnit.scale / targetUnit.scale).toLong()
+            val result = value * scale
+            when {
+                result / scale == value -> result
+                value > 0 -> Long.MAX_VALUE
+                else -> Long.MIN_VALUE
+            }
+        }
+        sourceCompareTarget < 0 -> value / (targetUnit.scale / sourceUnit.scale).toLong()
+        else -> value
+    }
+}

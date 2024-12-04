@@ -3,6 +3,6 @@ package test
 public open class NoFieldTypeRef {
     /*primary*/ public constructor NoFieldTypeRef()
     public final var foo: kotlin.String?
-        public final fun <get-foo>(): kotlin.String?
-        public final fun <set-foo>(/*0*/ <set-?>: kotlin.String?): kotlin.Unit
+        public final fun `<get-foo>`(): kotlin.String?
+        public final fun `<set-foo>`(/*0*/ `<set-?>`: kotlin.String?): kotlin.Unit
 }

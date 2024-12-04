@@ -1,0 +1,1 @@
+inline fun foo(inlineParameter: () -> kotlin.Int, crossinline crossinlineParameter: () -> kotlin.Int, noinline noinlineParameter: () -> kotlin.Int)

@@ -1,5 +1,6 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +VariableDeclarationInWhenSubject
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun foo(): Any = 42
 fun String.bar(): Any = 42
@@ -12,7 +13,7 @@ fun testSimpleValInWhenSubject() {
 
 fun testValWithoutInitializerWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y: Any<!>) {
-        <!EXPECTED_CONDITION!>is String<!> -> <!UNINITIALIZED_VARIABLE!>y<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        <!EXPECTED_CONDITION, USELESS_IS_CHECK!>is String<!> -> <!UNINITIALIZED_VARIABLE!>y<!>.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
@@ -24,5 +25,11 @@ fun testVarInWhenSubject() {
 
 fun testDelegatedValInWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>y<!> by lazy { 42 }<!>) {
+    }
+}
+
+fun testExtensionPropertyInWhenSubject() {
+    when (val <!LOCAL_EXTENSION_PROPERTY!>Int<!>.a: String = "") {
+        "" -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 }

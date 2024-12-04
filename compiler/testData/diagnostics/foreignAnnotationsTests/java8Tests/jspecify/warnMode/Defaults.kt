@@ -1,7 +1,8 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: warn
 
 // FILE: Defaults.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class Defaults {

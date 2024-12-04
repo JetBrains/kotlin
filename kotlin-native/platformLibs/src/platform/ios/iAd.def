@@ -1,7 +1,9 @@
-depends = AVFoundation AVKit AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit UniformTypeIdentifiers UserNotifications darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
 language = Objective-C
 package = platform.iAd
 modules = iAd
 
 compilerOpts = -framework iAd
 linkerOpts = -framework iAd
+
+excludedFunctions = ADClientErrorDomain

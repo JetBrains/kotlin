@@ -28,7 +28,7 @@ abstract class KotlinTypePreparator : AbstractTypePreparator() {
                 }
                 return NewCapturedType(
                     CaptureStatus.FOR_SUBTYPING, constructor.newTypeConstructor!!,
-                    lowerType, type.annotations, type.isMarkedNullable
+                    lowerType, type.attributes, type.isMarkedNullable
                 )
             }
 
@@ -36,7 +36,7 @@ abstract class KotlinTypePreparator : AbstractTypePreparator() {
                 val newConstructor =
                     IntersectionTypeConstructor(constructor.supertypes.map { TypeUtils.makeNullableAsSpecified(it, type.isMarkedNullable) })
                 return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                    type.annotations,
+                    type.attributes,
                     newConstructor,
                     listOf(),
                     false,

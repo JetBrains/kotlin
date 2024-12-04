@@ -18,13 +18,12 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-class ExtensionInvokeCallReceiver(
+internal class ExtensionInvokeCallReceiver(
     private val callBuilder: CallBuilder,
     private val functionReceiver: IntermediateValue,
     private val extensionInvokeReceiver: IntermediateValue
 ) : CallReceiver {
-
-    override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
+    override fun call(builder: CallExpressionBuilder): IrExpression {
         // extensionInvokeReceiver is actually a first argument:
         //      receiver.extFun(p1, ..., pN)
         //      =>
@@ -34,6 +33,6 @@ class ExtensionInvokeCallReceiver(
             "Extension 'invoke' call should have null as its 1st value argument, got: ${callBuilder.irValueArgumentsByIndex[0]}"
         }
         callBuilder.irValueArgumentsByIndex[0] = extensionInvokeReceiver.load()
-        return withDispatchAndExtensionReceivers(functionReceiver, null)
+        return builder.withReceivers(functionReceiver, null, emptyList())
     }
 }

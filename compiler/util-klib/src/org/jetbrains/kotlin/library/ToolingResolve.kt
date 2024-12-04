@@ -27,6 +27,10 @@ import java.io.IOException
  */
 object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
     override fun resolve(libraryFile: File, logger: Logger): KotlinLibrary =
+        tryResolve(libraryFile, logger)
+            ?: fakeLibrary(libraryFile)
+
+    fun tryResolve(libraryFile: File, logger: Logger): KotlinLibrary? =
         withSafeAccess(libraryFile) { localRoot ->
             if (localRoot.looksLikeKlibComponent) {
                 // old style library
@@ -41,15 +45,16 @@ object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
                     }
                     else -> { // TODO: choose the best fit among all available candidates
                         // mimic as old style library and warn
-                        logger.warning("Library $libraryFile can not be read. Multiple components found: ${components.map {
-                            it.path.substringAfter(localRoot.path)
-                        }}")
+                        logger.strongWarning(
+                            "KLIB resolver: Library '$libraryFile' can not be read." +
+                                    " Multiple components found: ${components.map { it.path.substringAfter(localRoot.path) }}"
+                        )
 
                         null
                     }
                 }
             }
-        } ?: fakeLibrary(libraryFile)
+        }
 
     private const val NONEXISTENT_COMPONENT_NAME = "__nonexistent_component_name__"
 

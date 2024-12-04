@@ -7,7 +7,8 @@ dependencies {
     api(project(":compiler:util"))
     api(project(":core:descriptors"))
     api(project(":compiler:resolution.common"))
-    compileOnly(intellijDep()) { includeJars("trove4j") }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
 
 sourceSets {

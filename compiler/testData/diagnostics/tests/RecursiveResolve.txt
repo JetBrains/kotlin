@@ -37,12 +37,12 @@ public final class Test2</*0*/ A, /*1*/ B, /*2*/ C> {
 public final class Test3</*0*/ in A, /*1*/ B, /*2*/ C> {
     public constructor Test3</*0*/ in A, /*1*/ B, /*2*/ C>(/*0*/ foo: kotlin.Any?, /*1*/ bar: kotlin.Any?)
     private final val bar: kotlin.Any
-    private final val bas: [ERROR : Type for bas()]
+    private final val bas: [Error type: Not found recorded type for bas()]
     public final val bas2: kotlin.Int
     public final val foo: kotlin.Any
     public final fun bar(): kotlin.Int
     public final fun bar(/*0*/ i: kotlin.Int): kotlin.Int
-    private final fun bar2(): [ERROR : Error function type]
+    private final fun bar2(): [Error type: Return type for function cannot be resolved]
     private final fun bar2(/*0*/ i: kotlin.Int): kotlin.Int
     private final fun bas(): kotlin.Int
     private final fun bas2(): kotlin.Int
@@ -54,12 +54,12 @@ public final class Test3</*0*/ in A, /*1*/ B, /*2*/ C> {
 public final class Test4</*0*/ A, /*1*/ out B, /*2*/ C> {
     public constructor Test4</*0*/ A, /*1*/ out B, /*2*/ C>(/*0*/ foo: kotlin.Any?, /*1*/ bar: kotlin.Any?)
     private final val bar: kotlin.Any
-    private final val bas: [ERROR : Type for bas()]
+    private final val bas: [Error type: Not found recorded type for bas()]
     public final val bas2: kotlin.Int
     public final val foo: kotlin.Any
     public final fun bar(): kotlin.Int
     public final fun bar(/*0*/ i: kotlin.Int): kotlin.Int
-    private final fun bar2(): [ERROR : Error function type]
+    private final fun bar2(): [Error type: Return type for function cannot be resolved]
     private final fun bar2(/*0*/ i: kotlin.Int): kotlin.Int
     private final fun bas(): kotlin.Int
     private final fun bas2(): kotlin.Int

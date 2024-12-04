@@ -1,5 +1,6 @@
-// !LANGUAGE: -PartiallySpecifiedTypeArguments
-// !DIAGNOSTICS: -UNCHECKED_CAST
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -PartiallySpecifiedTypeArguments
+// DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB
 
 fun <K, T> foo(x: (K) -> T): Pair<K, T> = (1 as K) to (1f as T)

@@ -9,18 +9,23 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import com.sun.jna.Library
-import com.sun.jna.Native
 import com.sun.management.HotSpotDiagnosticMXBean
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.common.collectSources
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -31,12 +36,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import sun.management.ManagementFactoryHelper
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
-import java.text.DecimalFormat
 
 
 private const val FAIL_FAST = true
@@ -51,94 +54,54 @@ internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
 internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false").toBooleanLenient()!!
 private val APPEND_ERROR_REPORTS = System.getProperty("fir.bench.report.errors.append", "false").toBooleanLenient()!!
 private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false").toBooleanLenient()!!
-private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "false").toBooleanLenient()!!
+private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "true").toBooleanLenient()!!
 private val DUMP_MEMORY = System.getProperty("fir.bench.dump.memory", "false").toBooleanLenient()!!
 
-private val REPORT_PASS_EVENTS = System.getProperty("fir.bench.report.pass.events", "false").toBooleanLenient()!!
 
-private interface CLibrary : Library {
-    fun getpid(): Int
-    fun gettid(): Int
 
-    companion object {
-        val INSTANCE = Native.load("c", CLibrary::class.java) as CLibrary
-    }
-}
-
-internal fun isolate() {
-    val isolatedList = System.getenv("DOCKER_ISOLATED_CPUSET")
-    val othersList = System.getenv("DOCKER_CPUSET")
-    println("Trying to set affinity, other: '$othersList', isolated: '$isolatedList'")
-    if (othersList != null) {
-        println("Will move others affinity to '$othersList'")
-        ProcessBuilder().command("bash", "-c", "ps -ae -o pid= | xargs -n 1 taskset -cap $othersList ").inheritIO().start().waitFor()
-    }
-    if (isolatedList != null) {
-        val selfPid = CLibrary.INSTANCE.getpid()
-        val selfTid = CLibrary.INSTANCE.gettid()
-        println("Will pin self affinity, my pid: $selfPid, my tid: $selfTid")
-        ProcessBuilder().command("taskset", "-cp", isolatedList, "$selfTid").inheritIO().start().waitFor()
-    }
-    if (othersList == null && isolatedList == null) {
-        println("No affinity specified")
-    }
-}
-
-class PassEventReporter(private val stream: PrintStream) : AutoCloseable {
-
-    private val decimalFormat = DecimalFormat().apply {
-        this.maximumFractionDigits = 3
-    }
-
-    private fun formatStamp(): String {
-        val uptime = ManagementFactoryHelper.getRuntimeMXBean().uptime
-        return decimalFormat.format(uptime.toDouble() / 1000)
-    }
-
-    fun reportPassStart(num: Int) {
-        stream.println("<pass_start num='$num' stamp='${formatStamp()}'/>")
-    }
-
-    fun reportPassEnd(num: Int) {
-        stream.println("<pass_end num='$num' stamp='${formatStamp()}'/>")
-        stream.flush()
-    }
-
-    override fun close() {
-        stream.close()
-    }
-}
-
-class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
+class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 
     private lateinit var dump: MultiModuleHtmlFirDump
     private lateinit var bench: FirResolveBench
     private var bestStatistics: FirResolveBench.TotalStatistics? = null
     private var bestPass: Int = 0
 
-    private var passEventReporter: PassEventReporter? = null
-
     private val asyncProfilerControl = AsyncProfilerControl()
 
     @OptIn(ObsoleteTestInfrastructure::class)
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
-        val project = environment.project
-        val ktFiles = environment.getSourceFiles()
 
-        val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
-            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+        val projectEnvironment = environment.toVfsBasedProjectEnvironment() as VfsBasedProjectEnvironment
+        val project = environment.project
+
+        val (sourceFiles: Collection<KtSourceFile>, scope) =
+            if (USE_LIGHT_TREE) {
+                val (platformSources, _) = collectSources(environment.configuration, projectEnvironment, environment.messageCollector)
+                platformSources to projectEnvironment.getSearchScopeForProjectJavaSources()
+            } else {
+                val ktFiles = environment.getSourceFiles()
+                ktFiles.map { KtPsiSourceFile(it) } to
+                        GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+                            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+                            .toAbstractProjectFileSearchScope()
+            }
         val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = createSessionForTests(
-            environment.toAbstractProjectEnvironment(),
-            scope.toAbstractProjectFileSearchScope(),
-            librariesScope.toAbstractProjectFileSearchScope(),
-            moduleData.qualifiedName,
-            moduleData.friendDirs.map { it.toPath() }
-        )
+
+        val session =
+            FirTestSessionFactoryHelper.createSessionForTests(
+                projectEnvironment,
+                scope,
+                librariesScope.toAbstractProjectFileSearchScope(),
+                moduleData.qualifiedName,
+                moduleData.friendDirs.map { it.toPath() },
+                environment.configuration.languageVersionSettings
+            )
+
         val scopeSession = ScopeSession()
+        val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
             if (RUN_CHECKERS) {
-                it + FirCheckersResolveProcessor(session, scopeSession)
+                it + FirCheckersResolveProcessor(session, scopeSession, MppCheckerKind.Common, messageCollector)
             } else {
                 it
             }
@@ -147,21 +110,11 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val firProvider = session.firProvider as FirProviderImpl
 
         val firFiles = if (USE_LIGHT_TREE) {
-            val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider)
-
-            val allSourceFiles = moduleData.sources.flatMap {
-                if (it.isDirectory) {
-                    it.walkTopDown().toList()
-                } else {
-                    listOf(it)
-                }
-            }.filter {
-                it.extension == "kt"
-            }
-            bench.buildFiles(lightTree2Fir, allSourceFiles)
+            val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticsReporter = null)
+            bench.buildFiles(lightTree2Fir, sourceFiles)
         } else {
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, PsiHandlingMode.COMPILER)
-            bench.buildFiles(builder, ktFiles)
+            val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
+            bench.buildFiles(builder, sourceFiles.map { it as KtPsiSourceFile })
         }
 
 
@@ -204,16 +157,21 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val disposable = Disposer.newDisposable()
-        val configuration = createDefaultConfiguration(moduleData)
-        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val disposable = Disposer.newDisposable("Disposable for ${FirResolveModularizedTotalKotlinTest::class.simpleName}.processModule")
 
-        PsiElementFinder.EP.getPoint(environment.project)
-            .unregisterExtension(JavaElementFinder::class.java)
+        try {
+            val configuration = createDefaultConfiguration(moduleData)
+            configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
+            val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        runAnalysis(moduleData, environment)
+            PsiElementFinder.EP.getPoint(environment.project)
+                .unregisterExtension(JavaElementFinder::class.java)
 
-        Disposer.dispose(disposable)
+            runAnalysis(moduleData, environment)
+        } finally {
+            Disposer.dispose(disposable)
+        }
+
         if (bench.hasFiles && FAIL_FAST) return ProcessorAction.STOP
         return ProcessorAction.NEXT
     }
@@ -221,7 +179,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun beforePass(pass: Int) {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
         System.gc()
-        passEventReporter?.reportPassStart(pass)
         asyncProfilerControl.beforePass(pass, reportDateStr)
     }
 
@@ -243,8 +200,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         if (FAIL_FAST) {
             bench.throwFailure()
         }
-
-        passEventReporter?.reportPassEnd(pass)
     }
 
     override fun afterAllPasses() {
@@ -281,12 +236,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
     private fun beforeAllPasses() {
-        isolate()
-
-        if (REPORT_PASS_EVENTS) {
-            passEventReporter =
-                PassEventReporter(PrintStream(FileOutputStream(reportDir().resolve("pass-events-$reportDateStr.log"), true)))
-        }
+        pinCurrentThreadToIsolatedCpu()
     }
 
     fun testTotalKotlin() {
@@ -322,21 +272,27 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
 class FirCheckersResolveProcessor(
     session: FirSession,
-    scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession) {
-    val diagnosticCollector: AbstractDiagnosticCollector = FirDiagnosticsCollector.create(session, scopeSession)
+    scopeSession: ScopeSession,
+    mppCheckerKind: MppCheckerKind,
+    messageCollector: MessageCollector
+) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
+    val diagnosticCollector: AbstractDiagnosticCollector = DiagnosticComponentsFactory.create(session, scopeSession, mppCheckerKind)
 
-    override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)
+    override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector, messageCollector)
 }
 
-class FirCheckersRunnerTransformer(private val diagnosticCollector: AbstractDiagnosticCollector) : FirTransformer<Nothing?>() {
+class FirCheckersRunnerTransformer(
+    private val diagnosticCollector: AbstractDiagnosticCollector,
+    private val messageCollector: MessageCollector,
+) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
-        val reporter = DiagnosticReporterFactory.createReporter()
-        diagnosticCollector.collectDiagnostics(file, reporter)
-        return file
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile = file.also {
+        withFileAnalysisExceptionWrapping(file) {
+            val reporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+            diagnosticCollector.collectDiagnostics(file, reporter)
+        }
     }
 }

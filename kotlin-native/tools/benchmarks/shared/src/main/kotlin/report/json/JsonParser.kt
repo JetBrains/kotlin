@@ -84,17 +84,17 @@ internal object EscapeCharMappings {
     }
     private fun CharArray.initC2ESC(c: Int, esc: Char) {
         this[c] = esc
-        if (esc != UNICODE_ESC) ESC2C[esc.toInt()] = c.toChar()
+        if (esc != UNICODE_ESC) ESC2C[esc.code] = c.toChar()
     }
-    private fun CharArray.initC2ESC(c: Char, esc: Char) = initC2ESC(c.toInt(), esc)
+    private fun CharArray.initC2ESC(c: Char, esc: Char) = initC2ESC(c.code, esc)
 }
 private fun ByteArray.initC2TC(c: Int, cl: Byte) {
     this[c] = cl
 }
 private fun ByteArray.initC2TC(c: Char, cl: Byte) {
-    initC2TC(c.toInt(), cl)
+    initC2TC(c.code, cl)
 }
-internal fun charToTokenClass(c: Char) = if (c.toInt() < CTC_MAX) C2TC[c.toInt()] else TC_OTHER
+internal fun charToTokenClass(c: Char) = if (c.code < CTC_MAX) C2TC[c.code] else TC_OTHER
 internal fun escapeToChar(c: Int): Char = if (c < ESC2C_MAX) ESC2C[c] else INVALID
 // JSON low level parser
 internal class Parser(val source: String) {
@@ -226,7 +226,7 @@ internal class Parser(val source: String) {
         if (curChar == UNICODE_ESC) {
             curPos = appendHex(source, curPos)
         } else {
-            val c = escapeToChar(curChar.toInt())
+            val c = escapeToChar(curChar.code)
             require(c != INVALID, curPos) { "Invalid escaped char '$curChar'" }
             append(c)
         }
@@ -269,9 +269,9 @@ private fun fromHexChar(source: String, curPos: Int): Int {
     require(curPos < source.length, curPos) { "Unexpected end in unicode escape" }
     val curChar = source[curPos]
     return when (curChar) {
-        in '0'..'9' -> curChar.toInt() - '0'.toInt()
-        in 'a'..'f' -> curChar.toInt() - 'a'.toInt() + 10
-        in 'A'..'F' -> curChar.toInt() - 'A'.toInt() + 10
+        in '0'..'9' -> curChar.code - '0'.code
+        in 'a'..'f' -> curChar.code - 'a'.code + 10
+        in 'A'..'F' -> curChar.code - 'A'.code + 10
         else -> fail(curPos, "Invalid toHexChar char '$curChar' in unicode escape")
     }
 }

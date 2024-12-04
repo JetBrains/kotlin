@@ -82,13 +82,14 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
     private val isInSpecialMethod = methodNode.name == "<init>" || methodNode.name == "<clinit>"
 
     fun run() {
-        val interpreter = UninitializedNewValueMarkerInterpreter(methodNode.instructions)
-
-        if (methodNode.instructions.toArray().none { it.opcode == Opcodes.NEW })
+        if (methodNode.instructions.none { it.opcode == Opcodes.NEW })
             return
 
-        val frames = CustomFramesMethodAnalyzer("fake", methodNode, interpreter, this::UninitializedNewValueFrame).analyze()
-
+        val interpreter = UninitializedNewValueMarkerInterpreter(methodNode.instructions)
+        val analyzer = FastMethodAnalyzer<BasicValue>(
+            "fake", methodNode, interpreter, pruneExceptionEdges = true
+        ) { nLocals, nStack -> UninitializedNewValueFrame(nLocals, nStack) }
+        val frames = analyzer.analyze()
         interpreter.analyzePopInstructions(frames)
 
         for ((index, insn) in methodNode.instructions.toArray().withIndex()) {
@@ -225,10 +226,8 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
             get() = "${instructions.indexOf(this)}: $insnText"
 
         fun analyzePopInstructions(frames: Array<Frame<BasicValue>?>) {
-            val insns = instructions.toArray()
-            for (i in frames.indices) {
+            for ((i, insn) in instructions.withIndex()) {
                 val frame = frames[i] ?: continue
-                val insn = insns[i]
                 when (insn.opcode) {
                     Opcodes.POP -> analyzePop(insn, frame)
                     Opcodes.POP2 -> analyzePop2(insn, frame)

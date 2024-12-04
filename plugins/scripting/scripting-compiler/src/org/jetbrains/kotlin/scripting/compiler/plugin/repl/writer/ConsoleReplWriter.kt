@@ -17,4 +17,5 @@ class ConsoleReplWriter : ReplWriter {
     override fun notifyIncomplete() {}
     override fun notifyCommandSuccess() {}
     override fun sendInternalErrorReport(x: String) {}
+    override fun notifyErrorsReported() {}
 }

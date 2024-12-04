@@ -10,20 +10,18 @@ dependencies {
     api(project(":kotlin-util-klib-metadata"))
     api(project(":compiler:util"))
     implementation(project(":compiler:psi"))
-    compileOnly(project(":kotlin-reflect-api"))
+    implementation(project(":compiler:frontend.common-psi"))
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
+    compileOnly(project(":compiler:cli-common"))
 }
+
+optInToUnsafeDuringIrConstructionAPI()
+optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {
     "main" { projectDefault() }
     "test" {}
-}
-
-tasks {
-    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
-        }
-    }
 }

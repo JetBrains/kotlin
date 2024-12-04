@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * A JavaScript program.
  */
 public final class JsProgram extends SourceInfoAwareJsNode {
-    private final JsGlobalBlock globalBlock = new JsGlobalBlock();
+    private final JsCompositeBlock globalBlock = new JsCompositeBlock();
 
     private final JsRootScope rootScope;
     private final JsObjectScope topScope;
@@ -20,7 +20,7 @@ public final class JsProgram extends SourceInfoAwareJsNode {
         topScope = new JsObjectScope(rootScope, "Global");
     }
 
-    public JsGlobalBlock getGlobalBlock() {
+    public JsCompositeBlock getGlobalBlock() {
         return globalBlock;
     }
 

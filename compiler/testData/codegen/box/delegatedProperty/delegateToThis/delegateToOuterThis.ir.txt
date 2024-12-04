@@ -1,0 +1,26 @@
+@kotlin.Metadata
+public final class DelegateToOuterThisKt {
+    // source: 'delegateToOuterThis.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class O$I
+}
+
+@kotlin.Metadata
+public final class O$I {
+    // source: 'delegateToOuterThis.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final field this$0: O
+    static method <clinit>(): void
+    public method <init>(p0: O): void
+    private static method getS$delegate(p0: O$I): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    public final inner class O$I
+}
+
+@kotlin.Metadata
+public final class O {
+    // source: 'delegateToOuterThis.kt'
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object): java.lang.String
+    public final inner class O$I
+}

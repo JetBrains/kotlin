@@ -21,9 +21,10 @@ import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.util.PropertiesCollection
 
+@Suppress("DEPRECATION")
 class ScriptCompilationConfigurationFromDefinition(
-    val hostConfiguration: ScriptingHostConfiguration,
-    val scriptDefinition: KotlinScriptDefinition
+    hostConfiguration: ScriptingHostConfiguration,
+    scriptDefinition: KotlinScriptDefinition
 ) : ScriptCompilationConfiguration(
     {
         hostConfiguration(hostConfiguration)
@@ -36,6 +37,11 @@ class ScriptCompilationConfigurationFromDefinition(
         platform(scriptDefinition.platform)
         @Suppress("DEPRECATION")
         compilerOptions.putIfAny(scriptDefinition.additionalCompilerArguments)
+        // TODO: remove this exception when gradle switches to the new definitions and sets the property accordingly
+        // possible gradle script extensions - see PrecompiledScriptTemplates.kt in the gradle repository
+        if (get(fileExtension) in arrayOf("gradle.kts", "init.gradle.kts", "settings.gradle.kts")) {
+            isStandalone(false)
+        }
         ide {
             acceptedLocations.put(scriptDefinition.scriptExpectedLocations.mapLegacyExpectedLocations())
         }

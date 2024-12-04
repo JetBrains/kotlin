@@ -1,0 +1,28 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'withSideEffects.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    static method <clinit>(): void
+    public method <init>(): void
+    private static method getS$delegate(p0: C): java.lang.Object
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class O {
+    // source: 'withSideEffects.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: O
+    static method <clinit>(): void
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object): java.lang.String
+}
+
+@kotlin.Metadata
+public final class WithSideEffectsKt {
+    // source: 'withSideEffects.kt'
+    private static field initialized: boolean
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method getInitialized(): boolean
+    public final static method setInitialized(p0: boolean): void
+}

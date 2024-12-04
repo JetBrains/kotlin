@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -32,11 +33,12 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
         analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
         fqNamesWithRequirements: List<String>,
         fqNamesWithoutRequirement: List<String> = emptyList(),
-        shouldBeSingleRequirement: Boolean = true
+        shouldBeSingleRequirement: Boolean = true,
+        specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
     ) {
         compileFiles(
             listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")),
-            tmpdir, customLanguageVersion, analysisFlags
+            tmpdir, customLanguageVersion, analysisFlags, specificFeatures
         )
         val module = loadModule(tmpdir)
 
@@ -116,27 +118,11 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
         files: List<File>,
         outputDirectory: File,
         languageVersion: LanguageVersion,
-        analysisFlags: Map<AnalysisFlag<*>, Any?>
+        analysisFlags: Map<AnalysisFlag<*>, Any?>,
+        specificFeatures: Map<LanguageFeature, LanguageFeature.State>
     )
 
     protected abstract fun loadModule(directory: File): ModuleDescriptor
-
-    fun testSuspendFun() {
-        doTest(
-            VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
-            customLanguageVersion = LanguageVersion.KOTLIN_1_3,
-            fqNamesWithRequirements = listOf(
-                "test.topLevel",
-                "test.Foo.member",
-                "test.Foo.<init>",
-                "test.async1",
-                "test.async2",
-                "test.async3",
-                "test.async4",
-                "test.asyncVal"
-            )
-        )
-    }
 
     fun testDefinitelyNotNull() {
         doTest(
@@ -218,27 +204,9 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
                 "test.Outer.Inner.Deep.<init>",
                 "test.Outer.Inner.Deep.f",
                 "test.Outer.Inner.Deep.x",
-                "test.Outer.Inner.Deep.s",
                 "test.Outer.Nested.g",
                 "test.Outer.Companion"
             )
-        )
-    }
-
-    fun testInlineClassesAndRelevantDeclarations13() {
-        doTest(
-            VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
-            fqNamesWithRequirements = listOf(
-                "test.IC",
-                "test.Ctor.<init>",
-                "test.simpleFun",
-                "test.aliasedFun",
-                "test.simpleProp",
-                "test.result",
-                "test.Foo",
-                "test.Bar"
-            ),
-            shouldBeSingleRequirement = false
         )
     }
 }

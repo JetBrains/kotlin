@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.incremental.storage
 import java.io.File
 
 open class RelativeFileToPathConverter(baseDirFile: File?) : FileToPathConverter {
-    private val baseDirPath = baseDirFile?.canonicalFile?.invariantSeparatorsPath
+    private val baseDirPath = baseDirFile?.normalize()?.invariantSeparatorsPath
 
     override fun toPath(file: File): String {
-        val path = file.canonicalFile.invariantSeparatorsPath
+        val path = file.normalize().invariantSeparatorsPath
         return when {
             baseDirPath != null && path.startsWith(baseDirPath) ->
                 PROJECT_DIR_PLACEHOLDER + path.substring(baseDirPath.length)

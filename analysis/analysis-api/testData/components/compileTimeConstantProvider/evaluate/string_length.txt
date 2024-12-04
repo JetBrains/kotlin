@@ -1,0 +1,3 @@
+expression: "Hello, world".length
+constant: 12
+constantValueKind: IntValue

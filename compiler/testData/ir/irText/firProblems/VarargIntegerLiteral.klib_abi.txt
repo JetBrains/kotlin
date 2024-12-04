@@ -1,0 +1,13 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun <#A: kotlin/Comparable<#A>> /arrayData(kotlin/Array<out #A>..., kotlin/Function1<kotlin/Array<#A>, kotlin/Unit>) // /arrayData|arrayData(kotlin.Array<out|0:0>...;kotlin.Function1<kotlin.Array<0:0>,kotlin.Unit>){0§<kotlin.Comparable<0:0>>}[0]
+final fun <#A: kotlin/Long> /arrayLongInheritedData(kotlin/Array<out #A>..., kotlin/Function1<kotlin/Array<#A>, kotlin/Unit>) // /arrayLongInheritedData|arrayLongInheritedData(kotlin.Array<out|0:0>...;kotlin.Function1<kotlin.Array<0:0>,kotlin.Unit>){0§<kotlin.Long>}[0]
+final fun /arrayOfLongData(kotlin/LongArray..., kotlin/Function1<kotlin/Array<kotlin/Long>, kotlin/Unit>) // /arrayOfLongData|arrayOfLongData(kotlin.LongArray...;kotlin.Function1<kotlin.Array<kotlin.Long>,kotlin.Unit>){}[0]
+final fun /arrayOfShortData(kotlin/ShortArray..., kotlin/Function1<kotlin/Array<kotlin/Short>, kotlin/Unit>) // /arrayOfShortData|arrayOfShortData(kotlin.ShortArray...;kotlin.Function1<kotlin.Array<kotlin.Short>,kotlin.Unit>){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun /longArrayData(kotlin/LongArray..., kotlin/Function1<kotlin/LongArray, kotlin/Unit>) // /longArrayData|longArrayData(kotlin.LongArray...;kotlin.Function1<kotlin.LongArray,kotlin.Unit>){}[0]
+final fun /shortArrayData(kotlin/ShortArray..., kotlin/Function1<kotlin/ShortArray, kotlin/Unit>) // /shortArrayData|shortArrayData(kotlin.ShortArray...;kotlin.Function1<kotlin.ShortArray,kotlin.Unit>){}[0]

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
+import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private val HASH_CODE_NAME = Name.identifier("hashCode")
 
@@ -41,7 +43,8 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         irBuiltIns.intType.let {
             add(it, OperatorNames.SHL, intrinsics.jsBitShiftL)
             add(it, OperatorNames.SHR, intrinsics.jsBitShiftR)
-            add(it, OperatorNames.SHRU, intrinsics.jsBitShiftRU)
+            // shifting of a negative int to 0 bytes returns the unsigned int, therefore we have to cast it back to the signed int
+            add(it, OperatorNames.SHRU) { call -> irBinaryOp(call, intrinsics.jsBitShiftRU, toInt32 = true) }
             add(it, OperatorNames.AND, intrinsics.jsBitAnd)
             add(it, OperatorNames.OR, intrinsics.jsBitOr)
             add(it, OperatorNames.XOR, intrinsics.jsBitXor)
@@ -56,11 +59,12 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
             add(it, OperatorNames.NOT, intrinsics.jsNot)
 
-            add(it, HASH_CODE_NAME) { call -> toInt32(call.dispatchReceiver!!) }
+            add(it, HASH_CODE_NAME, intrinsics.jsGetBooleanHashCode)
         }
 
         for (type in primitiveNumbers) {
-            add(type, Name.identifier("rangeTo"), ::transformRangeTo)
+            add(type, OperatorNameConventions.RANGE_TO, ::transformRangeTo)
+            add(type, OperatorNameConventions.RANGE_UNTIL, ::transformRangeUntil)
             add(type, HASH_CODE_NAME, ::transformHashCode)
         }
 
@@ -74,7 +78,6 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             add(type, OperatorNames.SUB, withLongCoercion(::transformSub))
             add(type, OperatorNames.MUL, withLongCoercion(::transformMul))
             add(type, OperatorNames.DIV, withLongCoercion(::transformDiv))
-            add(type, OperatorNames.MOD, withLongCoercion(::transformRem))
             add(type, OperatorNames.REM, withLongCoercion(::transformRem))
         }
     }
@@ -99,6 +102,30 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                 isLong() ->
                     irCall(call, intrinsics.jsNumberRangeToLong, receiversAsArguments = true)
                 else -> call
+            }
+        }
+    }
+
+    private fun transformRangeUntil(call: IrFunctionAccessExpression): IrExpression {
+        if (call.valueArgumentsCount != 1) return call
+        with(call.symbol.owner) {
+            val function = intrinsics.rangeUntilFunctions[dispatchReceiverParameter!!.type to valueParameters[0].type]
+                ?: irError("No 'until' function found for descriptor") {
+                    withIrEntry("call.symbol.owner", call.symbol.owner)
+                }
+            return IrCallImpl(
+                call.startOffset,
+                call.endOffset,
+                call.type,
+                function,
+                call.typeArgumentsCount,
+                call.origin,
+            ).apply {
+                copyTypeArgumentsFrom(call)
+                extensionReceiver = call.dispatchReceiver
+                for (i in 0..<call.valueArgumentsCount) {
+                    putValueArgument(i, call.getValueArgument(i))
+                }
             }
         }
     }
@@ -163,7 +190,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         irBinaryOp(call, intrinsics.jsDiv, toInt32 = BinaryOp(call).result.isInt())
 
     private fun transformRem(call: IrFunctionAccessExpression) =
-        irBinaryOp(call, intrinsics.jsMod)
+        irBinaryOp(call, intrinsics.jsMod, toInt32 = BinaryOp(call).result.isInt())
 
     private fun transformIncrement(call: IrFunctionAccessExpression) =
         transformCrement(call, intrinsics.jsPlus)
@@ -210,8 +237,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                             call.endOffset,
                             intrinsics.longToDouble.owner.returnType,
                             intrinsics.longToDouble,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 0
+                            typeArgumentsCount = 0
                         ).apply {
                             dispatchReceiver = arg
                         })
@@ -223,8 +249,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                             call.endOffset,
                             intrinsics.longToFloat.owner.returnType,
                             intrinsics.longToFloat,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 0
+                            typeArgumentsCount = 0
                         ).apply {
                             dispatchReceiver = arg
                         })
@@ -236,8 +261,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                             call.endOffset,
                             intrinsics.jsNumberToLong.owner.returnType,
                             intrinsics.jsNumberToLong,
-                            typeArgumentsCount = 0,
-                            valueArgumentsCount = 1
+                            typeArgumentsCount = 0
                         ).apply {
                             putValueArgument(0, call.dispatchReceiver)
                         }

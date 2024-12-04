@@ -1,0 +1,25 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			PROPERTY getP()I
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						value: kotlin/Int
+			PROPERTY getY()I
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final
+					K2
+						public final /* non-default */
+				Property: class.metadata.property.setterModifiers
+					K1
+						public final
+					K2
+						public final /* non-default */
+				Property: class.metadata.property.setterValueParameter
+					K1
+						---
+					K2
+						value: kotlin/Int

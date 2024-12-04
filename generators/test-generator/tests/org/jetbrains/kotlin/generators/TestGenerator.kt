@@ -13,7 +13,7 @@ abstract class TestGenerator(
     protected val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>> =
         methodGenerators.associateBy { it.kind }.withDefault { error("Generator for method with kind $it not found") }
 
-    abstract fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean): GenerationResult
+    abstract fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean, mainClassName: String?): GenerationResult
 
     data class GenerationResult(val newFileGenerated: Boolean, val testSourceFilePath: String)
 }

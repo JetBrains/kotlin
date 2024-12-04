@@ -1,0 +1,473 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationConflict.kt
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final? [ResolvedTo(SUPER_TYPES)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final? [ResolvedTo(TYPES)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final? [ResolvedTo(TYPES)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final [ResolvedTo(CONTRACTS)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|Some.AnnotationTarget|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
+        >#)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|Some.AnnotationTarget|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
+        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                LAZY_super<R|kotlin/Enum<Some.AnnotationTarget>|>
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationConflict.kt
+    public final [ResolvedTo(BODY_RESOLVE)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|Some.AnnotationTarget|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
+              - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
+        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] enum class AnnotationTarget : R|kotlin/Enum<Some.AnnotationTarget>| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationTarget] constructor(): R|Some.AnnotationTarget| {
+                super<R|kotlin/Enum<Some.AnnotationTarget>|>()
+            }
+
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationTarget] enum entry CLASS: R|Some.AnnotationTarget|
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationTarget] fun values(): R|kotlin/Array<Some.AnnotationTarget>| {
+            }
+
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationTarget] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|Some.AnnotationTarget| {
+            }
+
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationTarget] val entries: R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Some.AnnotationTarget>|
+
+        }
+
+    }

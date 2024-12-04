@@ -1,7 +1,7 @@
-[WARNING] No sources found skipping Kotlin compile
+[INFO] No sources to compile
 [INFO] Applicability test for project use-test-extension
 [INFO] Applied plugin: 'test-me'
 [INFO] Configuring test plugin with arguments
 [INFO] Plugin applied
 [INFO] Option value: my-special-value
-[WARNING] No sources found skipping Kotlin compile
+[INFO] No sources to compile

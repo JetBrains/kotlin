@@ -28,6 +28,8 @@ import java.lang.reflect.Type
 abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaMember {
     abstract val member: Member
 
+    final override val isFromSource: Boolean get() = false
+
     override val element: AnnotatedElement get() = member as AnnotatedElement
 
     override val modifiers: Int get() = member.modifiers

@@ -4,7 +4,6 @@
 // FULL_JDK
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 2 java/lang/invoke/LambdaMetafactory
 // 2 A\.plus\(Ljava/lang/String;\)Ljava/lang/String;\,
 //  ^ check that we generate a reference to A::plus (same as javac)

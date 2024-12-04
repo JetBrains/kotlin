@@ -1,6 +1,6 @@
 package
 
 package a {
-    public fun bar(): [ERROR : Error function type]
+    public fun bar(): [Error type: Return type for function cannot be resolved]
     public fun foo(): kotlin.Unit
 }

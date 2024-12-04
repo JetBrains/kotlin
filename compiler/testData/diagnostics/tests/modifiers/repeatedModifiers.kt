@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 abstract <!REPEATED_MODIFIER!>abstract<!> class Foo
 public <!REPEATED_MODIFIER!>public<!> class Bar
 <!INCOMPATIBLE_MODIFIERS!>open<!> <!REPEATED_MODIFIER!>open<!> <!INCOMPATIBLE_MODIFIERS!>final<!> class Baz {

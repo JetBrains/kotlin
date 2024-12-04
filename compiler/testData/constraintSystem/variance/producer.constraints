@@ -1,3 +1,0 @@
-VARIABLES T
-
-Producer<A> <: Producer<T>

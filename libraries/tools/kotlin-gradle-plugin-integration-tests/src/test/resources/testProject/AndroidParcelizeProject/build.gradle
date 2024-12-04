@@ -5,7 +5,6 @@ buildscript {
         mavenLocal()
         maven { url 'https://maven.google.com' }
         mavenCentral()
-        maven { url = uri("https://jcenter.bintray.com/") }
     }
 
     dependencies {
@@ -19,6 +18,5 @@ allprojects {
         mavenLocal()
         maven { url 'https://maven.google.com' }
         mavenCentral()
-        maven { url = uri("https://jcenter.bintray.com/") }
     }
 }

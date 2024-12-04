@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import org.jetbrains.kotlin.commonizer.DefaultCommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.commonizer.core.TypeCommonizerTest.Companion.areEqual
@@ -137,7 +138,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
         mockValueParam("kotlin/String", declaresDefaultValue = true)
     )
 
-    override fun createCommonizer() = ValueParameterCommonizer(TypeCommonizer(MOCK_CLASSIFIERS))
+    override fun createCommonizer() = ValueParameterCommonizer(TypeCommonizer(MOCK_CLASSIFIERS, DefaultCommonizerSettings))
 
     override fun areEqual(a: CirValueParameter?, b: CirValueParameter?) =
         (a === b) || (a != null && b != null && areEqual(MOCK_CLASSIFIERS, a, b))

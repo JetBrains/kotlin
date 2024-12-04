@@ -7,10 +7,25 @@ package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.test.directives.model.*
 
-class RegisteredDirectivesBuilder {
-    private val simpleDirectives: MutableList<SimpleDirective> = mutableListOf()
-    private val stringDirectives: MutableMap<StringDirective, List<String>> = mutableMapOf()
-    private val valueDirectives: MutableMap<ValueDirective<*>, List<Any>> = mutableMapOf()
+class RegisteredDirectivesBuilder private constructor(
+    private val simpleDirectives: MutableList<SimpleDirective>,
+    private val stringDirectives: MutableMap<StringDirective, List<String>>,
+    private val valueDirectives: MutableMap<ValueDirective<*>, List<Any>>
+) {
+    constructor() : this(mutableListOf(), mutableMapOf(), mutableMapOf())
+
+    constructor(old: RegisteredDirectives) : this() {
+        for (directive in old) {
+            when (directive) {
+                is SimpleDirective -> +directive
+                is StringDirective -> directive with old[directive]
+                is ValueDirective<*> -> {
+                    // no way to call with
+                    valueDirectives[directive] = old[directive]
+                }
+            }
+        }
+    }
 
     operator fun SimpleDirective.unaryPlus() {
         simpleDirectives += this
@@ -26,6 +41,11 @@ class RegisteredDirectivesBuilder {
 
     infix fun StringDirective.with(values: List<String>) {
         stringDirectives.putWithExistsCheck(this, values)
+    }
+
+    operator fun StringDirective.plus(value: String) {
+        val previous = stringDirectives[this] ?: listOf()
+        stringDirectives[this] = previous + value
     }
 
     operator fun StringDirective.unaryMinus() {
@@ -45,8 +65,13 @@ class RegisteredDirectivesBuilder {
     }
 
     private fun <K : Directive, V> MutableMap<K, V>.putWithExistsCheck(key: K, value: V) {
-        val alreadyRegistered = put(key, value)
-        if (alreadyRegistered != null) {
+        val alreadyRegistered = get(key)
+        if (alreadyRegistered == null) {
+            put(key, value)
+        } else if (alreadyRegistered is List<Any?> && value is List<Any?>) {
+            @Suppress("UNCHECKED_CAST")
+            put(key, (alreadyRegistered + value) as V)
+        } else {
             error("Default values for $key directive already registered")
         }
     }

@@ -1,3 +1,5 @@
+// IGNORE_INLINER: IR
+
 // FILE: test.kt
 
 public val MASSERTIONS_ENABLED: Boolean = true
@@ -29,18 +31,34 @@ fun box(): String {
     return "OK"
 }
 
-// EXPECTATIONS
-// test.kt:24 box
-// test.kt:15 box
-// test.kt:16 box
-// test.kt:3 getMASSERTIONS_ENABLED
-// test.kt:16 box
+// EXPECTATIONS JVM_IR
+// test.kt:26 box
 // test.kt:17 box
-// test.kt:21 box
-// test.kt:25 box
-// test.kt:6 box
-// test.kt:3 getMASSERTIONS_ENABLED
-// test.kt:6 box
-// test.kt:7 box
-// test.kt:12 box
-// test.kt:29 box
+// test.kt:18 box
+// test.kt:5 getMASSERTIONS_ENABLED
+// test.kt:18 box
+// test.kt:19 box
+// test.kt:23 box
+// test.kt:27 box
+// test.kt:8 box
+// test.kt:5 getMASSERTIONS_ENABLED
+// test.kt:8 box
+// test.kt:9 box
+// test.kt:14 box
+// test.kt:31 box
+
+// EXPECTATIONS JS_IR
+// test.kt:17 box
+// test.kt:18 box
+// test.kt:8 box
+// test.kt:31 box
+
+// EXPECTATIONS WASM
+// test.kt:26 $box (12, 4)
+// test.kt:17 $box (57, 57)
+// test.kt:18 $box
+// test.kt:19 $box (13, 12)
+// test.kt:27 $box (12, 4)
+// test.kt:8 $box
+// test.kt:9 $box (13, 12)
+// test.kt:31 $box (11, 11, 11, 11, 4)

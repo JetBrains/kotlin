@@ -5,8 +5,6 @@
 
 package kotlin.collections
 
-import kotlin.internal.PureReifiable
-
 /**
  * Returns the array if it's not `null`, or an empty array otherwise.
  * @sample samples.collections.Arrays.Usage.arrayOrEmpty
@@ -20,21 +18,23 @@ internal fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) 
         throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex).")
 }
 
-
-// TODO: internal
+@kotlin.internal.InlineOnly
+@PublishedApi
 /**
  * Returns a string representation of the contents of the subarray of the specified array as if it is [List].
  */
-@kotlin.internal.InlineOnly
-@Deprecated("This function will become internal soon.")
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
-public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int): String {
+internal inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int, thisCollection: Collection<T>): String {
     val sb = StringBuilder(2 + length * 3)
     sb.append("[")
     var i = 0
     while (i < length) {
         if (i > 0) sb.append(", ")
-        sb.append(this[offset + i])
+        val nextElement = this[offset + i]
+        if (nextElement === thisCollection) {
+            sb.append("(this Collection)")
+        } else {
+            sb.append(nextElement)
+        }
         i++
     }
     sb.append("]")
@@ -84,42 +84,29 @@ internal fun <T> Array<out T>?.contentDeepHashCodeImpl(): Int {
 @Suppress("UNCHECKED_CAST")
 internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> = arrayOfNulls<Any>(size) as Array<T>
 
-internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
-    val array = arrayOfUninitializedElements<Any?>(collection.size)
-    val iterator = collection.iterator()
-    var index = 0
-    while (iterator.hasNext())
-        array[index++] = iterator.next()
-    return array
-}
+internal actual fun collectionToArray(collection: Collection<*>): Array<Any?> = collectionToArrayCommonImpl(collection)
 
-@Suppress("UNCHECKED_CAST")
-internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> {
-    if (array.size < collection.size)
-        return copyToArrayImpl(collection) as Array<T>
+internal actual fun <T> collectionToArray(collection: Collection<*>, array: Array<T>): Array<T> = collectionToArrayCommonImpl(collection, array)
 
-    val iterator = collection.iterator()
-    var index = 0
-    while (iterator.hasNext()) {
-        array[index++] = iterator.next() as T
-    }
-    if (index < array.size) {
-        return array.copyOf(index) as Array<T>
-    }
-    return array
-}
+internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T> = array
 
 /**
- * Returns a *typed* array containing all of the elements of this collection.
- *
- * Allocates an array of runtime type `T` having its size equal to the size of this collection
- * and populates the array with the elements of this collection.
- * @sample samples.collections.Collections.Collections.collectionToTypedArray
+ * Returns a new array which is a copy of the original array with new elements filled with null values.
  */
-public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
-    val result = arrayOfNulls<T>(size)
-    var index = 0
-    for (element in this) result[index++] = element
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<T>
+internal fun <E> Array<E>.copyOfNulls(newSize: Int): Array<E?>  = copyOfNulls(0, newSize)
+
+internal fun <E> Array<E>.copyOfNulls(fromIndex: Int, toIndex: Int): Array<E?> {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") arrayOfNulls<E>(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
 }
+
+@PublishedApi
+internal expect inline fun <E> arrayOfUninitializedElements(size: Int): Array<E>
+internal expect fun <T> Array<T>.copyOfUninitializedElements(newSize: Int): Array<T>
+internal expect fun <E> Array<E>.resetAt(index: Int)
+internal expect fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int)

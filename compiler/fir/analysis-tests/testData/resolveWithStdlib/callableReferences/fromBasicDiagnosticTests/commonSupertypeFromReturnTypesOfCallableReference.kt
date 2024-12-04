@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 interface Parent
 interface Child1 : Parent
 interface Child2 : Parent

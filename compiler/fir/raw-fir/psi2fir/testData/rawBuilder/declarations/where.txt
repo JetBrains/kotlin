@@ -1,9 +1,9 @@
 FILE: where.kt
-    public? final? interface A : R|kotlin/Any| {
+    public final? interface A : R|kotlin/Any| {
     }
-    public? final? interface B : R|kotlin/Any| {
+    public final? interface B : R|kotlin/Any| {
     }
-    public? final? class C<T : A, B> : R|kotlin/Any| {
+    public final? class C<T : A, B> : R|kotlin/Any| {
         public? [ContainingClassKey=C] constructor<T : A, B>(): R|C<T>| {
             super<R|kotlin/Any|>()
         }

@@ -1,7 +1,7 @@
 package
 
 package kt770_351_735 {
-    public val w: [ERROR : Type for while (true) {}]
+    public val w: [Error type: Not found recorded type for while (true) {}]
     public fun bar(/*0*/ a: kotlin.Unit): kotlin.Unit
     public fun box(): kotlin.Int
     public fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit

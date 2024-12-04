@@ -1,0 +1,38 @@
+@kotlin.Metadata
+public final class Foo {
+    // source: 'intNGeneric2.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: Foo
+    static method <clinit>(): void
+    private method <init>(): void
+    public final method bar-vRV1vHs(@org.jetbrains.annotations.Nullable p0: Value): void
+    public final method foo-YR_CVCc(@org.jetbrains.annotations.NotNull p0: java.lang.Integer): void
+}
+
+@kotlin.Metadata
+public final class IntNGeneric2Kt {
+    // source: 'intNGeneric2.kt'
+    private static @org.jetbrains.annotations.Nullable field res: java.lang.Integer
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method getRes(): java.lang.Integer
+    public final static method setRes(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): void
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Value {
+    // source: 'intNGeneric2.kt'
+    private final @org.jetbrains.annotations.Nullable field value: java.lang.Integer
+    private synthetic method <init>(p0: java.lang.Integer): void
+    public synthetic final static method box-impl(p0: java.lang.Integer): Value
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): java.lang.Integer
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Integer, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Integer, p1: java.lang.Integer): boolean
+    public final @org.jetbrains.annotations.Nullable method getValue(): java.lang.Integer
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Integer): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.Integer): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.Integer
+}

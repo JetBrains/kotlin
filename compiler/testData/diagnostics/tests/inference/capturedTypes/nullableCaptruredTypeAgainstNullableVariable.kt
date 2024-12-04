@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -REDUNDANT_PROJECTION
-// !LANGUAGE: +InferenceCompatibility
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -REDUNDANT_PROJECTION
+// LANGUAGE: +InferenceCompatibility
 
 // FILE: Foo.java
 public class Foo<L> extends Bar<L> {

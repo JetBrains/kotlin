@@ -1,12 +1,6 @@
 plugins {
-    kotlin("multiplatform").version("<pluginMarkerVersion>")
+    kotlin("multiplatform")
     `maven-publish`
-}
-
-repositories {
-    mavenLocal()
-    maven("../repo")
-    mavenCentral()
 }
 
 group = "com.example.bar"
@@ -22,7 +16,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("com.example.foo:my-lib-foo:1.0")
-                implementation(kotlin("stdlib-common"))
             }
         }
 
@@ -91,6 +84,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven("../repo")
+        maven("<localRepo>")
     }
 }

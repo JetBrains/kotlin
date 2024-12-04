@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data class C(val x: Int, val y: String)
 
 fun foo1(block: (C) -> Unit) = block(C(0, ""))

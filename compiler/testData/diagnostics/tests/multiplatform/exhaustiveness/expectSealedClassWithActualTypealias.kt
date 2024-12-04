@@ -1,5 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-45796
 // SKIP_TXT
 

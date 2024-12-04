@@ -4,10 +4,10 @@
 package test
 
 inline fun bar(crossinline y: () -> String) = {
-    { { call(y) }() }()
+    { { call(y) }.let { it() } }.let { it() }
 }
 
-public inline fun <T> call(crossinline f: () -> T): T = {{ f() }()}()
+public inline fun <T> call(crossinline f: () -> T): T = {{ f() }.let { it() }}.let { it() }
 
 // FILE: 2.kt
 
@@ -20,5 +20,5 @@ fun box(): String {
 }
 
 inline fun bar2(crossinline y: () -> String) = {
-    { { call(y) }() }()
+    { { call(y) }.let { it() } }.let { it() }
 }

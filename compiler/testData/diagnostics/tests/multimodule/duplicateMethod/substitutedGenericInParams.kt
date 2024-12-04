@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // MODULE: m1
 // FILE: a.kt
@@ -30,6 +31,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>b<!UNNECESSARY_SAFE_CALL!>?.<!>foo("")<!>
+        b<!UNNECESSARY_SAFE_CALL!>?.<!>foo("")
     }
 }

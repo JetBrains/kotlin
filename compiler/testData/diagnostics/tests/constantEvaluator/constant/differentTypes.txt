@@ -3,8 +3,8 @@ package
 package test {
     public val prop1: kotlin.Int = 1
     public val prop10: kotlin.Any = "a"
-    public val prop11: [ERROR : aaa]
-    public val prop14: [ERROR : aaa]?
+    public val prop11: [Error type: Unresolved type for aaa]
+    public val prop14: [Error type: Unresolved type for aaa]?
     public val prop15: test.A
     public val prop16: test.A? = 1
     public val prop2: kotlin.Int? = 1

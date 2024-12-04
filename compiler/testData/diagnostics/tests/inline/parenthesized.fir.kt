@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
 
 inline fun inlineFunWithInvoke(s: (p: Int) -> Unit) {
     (s)(11)
@@ -23,5 +24,5 @@ inline fun inlineFunWithInvoke2(s: (p: Int) -> Unit) {
 
 inline fun propagation(s: (p: Int) -> Unit) {
     inlineFunWithInvoke((label@ s))
-    inlineFunWithInvoke((label2@ label@ s))
+    inlineFunWithInvoke((<!MULTIPLE_LABELS_ARE_FORBIDDEN!>label2@<!> label@ s))
 }

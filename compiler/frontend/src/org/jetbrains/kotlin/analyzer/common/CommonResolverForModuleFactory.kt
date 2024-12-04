@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.analyzer.common
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -42,14 +41,18 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
+import org.jetbrains.kotlin.storage.StorageManager
 
 class CommonAnalysisParameters(
-    val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider
+    val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider,
+    val klibMetadataPackageFragmentProviderFactory: KlibMetadataPackageFragmentProviderFactory? = null,
 ) : PlatformAnalysisParameters
 
 /**
@@ -88,7 +91,9 @@ class CommonResolverForModuleFactory(
         moduleContent: ModuleContent<M>,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings,
-        sealedInheritorsProvider: SealedClassInheritorsProvider
+        sealedInheritorsProvider: SealedClassInheritorsProvider,
+        resolveOptimizingOptions: OptimizingOptions?,
+        absentDescriptorHandlerClass: Class<out AbsentDescriptorHandler>?
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -101,16 +106,31 @@ class CommonResolverForModuleFactory(
         val metadataPartProvider = platformParameters.metadataPartProviderFactory(moduleContent)
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
-            moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
-            languageVersionSettings, targetPlatform, CommonPlatformAnalyzerServices, shouldCheckExpectActual
+            moduleContext,
+            trace,
+            declarationProviderFactory,
+            moduleContentScope,
+            targetEnvironment,
+            metadataPartProvider,
+            languageVersionSettings,
+            targetPlatform,
+            CommonPlatformAnalyzerServices,
+            shouldCheckExpectActual,
+            absentDescriptorHandlerClass
         )
+
+        val klibMetadataPackageFragmentProvider =
+            platformParameters.klibMetadataPackageFragmentProviderFactory?.createPackageFragmentProvider(
+                PackageFragmentProviderCreationContext(moduleInfo, moduleContext.storageManager, languageVersionSettings, moduleDescriptor)
+            )
 
         val packageFragmentProviders =
             /** If this is a dependency module that [commonDependenciesContainer] knows about, get the package fragments from there */
             commonDependenciesContainer?.packageFragmentProviderForModuleInfo(moduleInfo)?.let(::listOf)
-                ?: listOf(
+                ?: listOfNotNull(
                     container.get<ResolveSession>().packageFragmentProvider,
-                    container.get<MetadataPackageFragmentProvider>()
+                    container.get<MetadataPackageFragmentProvider>(),
+                    klibMetadataPackageFragmentProvider,
                 )
 
         return ResolverForModule(
@@ -126,6 +146,7 @@ class CommonResolverForModuleFactory(
             targetEnvironment: TargetEnvironment,
             capabilities: Map<ModuleCapability<*>, Any?> = emptyMap(),
             dependenciesContainer: CommonDependenciesContainer? = null,
+            explicitProjectContext: ProjectContext? = null,
             metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
         ): AnalysisResult {
             val moduleInfo = SourceModuleInfo(
@@ -153,8 +174,8 @@ class CommonResolverForModuleFactory(
                 dependenciesContainer
             )
 
-            val projectContext = ProjectContext(project, "metadata serializer")
-            @Suppress("NAME_SHADOWING")
+            val projectContext = explicitProjectContext ?: ProjectContext(project, "metadata serializer")
+
             val resolver = ResolverForSingleModuleProject<ModuleInfo>(
                 "sources for metadata serializer",
                 projectContext,
@@ -210,6 +231,19 @@ interface CommonDependenciesContainer {
     val refinesModuleInfos: List<ModuleInfo>
 }
 
+fun interface KlibMetadataPackageFragmentProviderFactory {
+    fun createPackageFragmentProvider(
+        context: PackageFragmentProviderCreationContext
+    ): PackageFragmentProvider?
+}
+
+class PackageFragmentProviderCreationContext(
+    val moduleInfo: ModuleInfo,
+    val storageManager: StorageManager,
+    val languageVersionSettings: LanguageVersionSettings,
+    val moduleDescriptor: ModuleDescriptor,
+)
+
 private fun createContainerToResolveCommonCode(
     moduleContext: ModuleContext,
     bindingTrace: BindingTrace,
@@ -220,10 +254,19 @@ private fun createContainerToResolveCommonCode(
     languageVersionSettings: LanguageVersionSettings,
     platform: TargetPlatform,
     analyzerServices: PlatformDependentAnalyzerServices,
-    shouldCheckExpectActual: Boolean
+    shouldCheckExpectActual: Boolean,
+    absentDescriptorHandlerClass: Class<out AbsentDescriptorHandler>?
 ): StorageComponentContainer =
     createContainer("ResolveCommonCode", analyzerServices) {
-        configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings)
+        configureModule(
+            moduleContext,
+            platform,
+            analyzerServices,
+            bindingTrace,
+            languageVersionSettings,
+            optimizingOptions = null,
+            absentDescriptorHandlerClass = absentDescriptorHandlerClass
+        )
 
         useInstance(moduleContentScope)
         useInstance(declarationProviderFactory)
@@ -233,8 +276,7 @@ private fun createContainerToResolveCommonCode(
         configureCommonSpecificComponents()
         useInstance(metadataPartProvider)
 
-        val metadataFinderFactory = ServiceManager.getService(
-            moduleContext.project,
+        val metadataFinderFactory = moduleContext.project.getService(
             MetadataFinderFactory::class.java
         )
             ?: error("No MetadataFinderFactory in project")

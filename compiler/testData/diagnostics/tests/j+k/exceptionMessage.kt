@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // JAVAC_EXPECTED_FILE
 // FILE: VcsException.java
 import org.jetbrains.annotations.NotNull;

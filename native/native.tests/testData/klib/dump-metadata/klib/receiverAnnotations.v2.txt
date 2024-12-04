@@ -1,0 +1,47 @@
+library {
+  // module name: <receiverAnnotations.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/Ann
+
+    // signature: test/A|null[0]
+    public final class test/A : kotlin/Any {
+
+      // signature: test/A.<init>|<init>(){}[0]
+      public constructor()
+
+      // signature: test/A.foo|foo@kotlin.Int(kotlin.Int){}[0]
+      @test/Ann
+      public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
+
+      // signature: test/A.bar|@kotlin.Int{}bar[0]
+      @test/Ann
+      public final val kotlin/Int.bar: kotlin/Int
+        // signature: test/A.bar.<get-bar>|<get-bar>@kotlin.Int(){}[0]
+        public final /* non-default */ get
+    }
+
+    // signature: test/Ann|null[0]
+    public final annotation class test/Ann : kotlin/Annotation {
+
+      // signature: test/Ann.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    package {
+
+      // signature: test/foo|foo@kotlin.Int(kotlin.Int){}[0]
+      @test/Ann
+      public final fun kotlin/Int.foo(@test/Ann arg: kotlin/Int): kotlin/Int
+
+      // signature: test/bar|@kotlin.Int{}bar[0]
+      @test/Ann
+      public final val kotlin/Int.bar: kotlin/Int
+        // signature: test/bar.<get-bar>|<get-bar>@kotlin.Int(){}[0]
+        public final /* non-default */ get
+    }
+  }
+}

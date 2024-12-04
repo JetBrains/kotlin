@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 
 internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
     return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClass && klass.isExpect }
@@ -35,14 +38,35 @@ private inline fun isInsideSpecificClass(
             context.containingDeclarations.asReversed().any { it is FirRegularClass && predicate.invoke(it) }
 }
 
-internal fun FirMemberDeclaration.isEffectivelyFinal(context: CheckerContext): Boolean {
-    if (this.isFinal) return true
-    val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClass ?: return true
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
+internal fun FirMemberDeclaration.isEffectivelyFinal(): Boolean =
+    this.symbol.isEffectivelyFinal()
+
+/**
+ * The containing symbol is resolved using the declaration-site session.
+ */
+internal fun FirBasedSymbol<*>.isEffectivelyFinal(): Boolean {
+    if (this.isFinal()) return true
+
+    val containingClass = this.getContainingClassSymbol() as? FirClassSymbol<*> ?: return true
+
     if (containingClass.isEnumClass) {
-        // Enum class has enum entries and hence is not considered final.
+        // Enum class has enum entries and hence is not considered final
         return false
     }
     return containingClass.isFinal
+}
+
+private fun FirBasedSymbol<*>.isFinal(): Boolean {
+    when (this) {
+        is FirCallableSymbol<*> -> if (this.isFinal) return true
+        is FirClassLikeSymbol<*> -> if (this.isFinal) return true
+        else -> return true
+    }
+
+    return false
 }
 
 internal fun FirMemberDeclaration.isEffectivelyExpect(
@@ -78,26 +102,8 @@ internal fun FirMemberDeclaration.isEffectivelyExternal(
 
 internal val FirClass.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
 
-internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
-    if (this.classKind != ClassKind.CLASS) return false
-
-    return isInline || hasModifier(KtTokens.VALUE_KEYWORD)
-}
-
-internal fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
-    if (this.classKind != ClassKind.CLASS) return false
-
-    return isInline
-}
-
-internal val FirDeclaration.isEnumEntryInitializer: Boolean
-    get() {
-        if (this !is FirConstructor || !this.isPrimary) return false
-        return (containingClassForStaticMemberAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol?.classKind == ClassKind.ENUM_ENTRY
-    }
-
 // contract: returns(true) implies (this is FirMemberDeclaration<*>)
-internal val FirDeclaration.isLocalMember: Boolean
+val FirDeclaration.isLocalMember: Boolean
     get() = symbol.isLocalMember
 
 internal val FirBasedSymbol<*>.isLocalMember: Boolean
@@ -108,8 +114,22 @@ internal val FirBasedSymbol<*>.isLocalMember: Boolean
         else -> false
     }
 
-internal val FirCallableDeclaration.isExtensionMember: Boolean
-    get() = symbol.isExtensionMember
-
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
+
+@OptIn(SymbolInternals::class)
+fun FirClassSymbol<*>.primaryConstructorSymbol(session: FirSession): FirConstructorSymbol? {
+    return fir.primaryConstructorIfAny(session)
+}
+
+fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsMultiFieldValueClassFlattening(session)
+
+fun ConeKotlinType.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
+    typeConstructor().isMultiFieldValueClass() && !fullyExpandedType(session).isMarkedNullable
+}
+
+val FirCallableSymbol<*>.hasExplicitReturnType: Boolean
+    get() {
+        val returnTypeRef = resolvedReturnTypeRef
+        return returnTypeRef.delegatedTypeRef != null || returnTypeRef is FirImplicitUnitTypeRef
+    }

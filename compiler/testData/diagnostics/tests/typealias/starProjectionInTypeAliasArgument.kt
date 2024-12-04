@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 class NumCharSeq<N : Number, M : CharSequence>(val n: N, val m: M)
 

@@ -8,7 +8,7 @@ package kotlin.native.internal
 import kotlin.reflect.*
 
 internal object KVarianceMapper {
-    // this constants are copypasted to ReflectionSupport.kt
+    // this constants are copypasted to NativeReflectionIrBuilder.kt
     const val VARIANCE_STAR = -1
     const val VARIANCE_INVARIANT = 0
     const val VARIANCE_IN = 1
@@ -49,19 +49,14 @@ internal class KTypeProjectionList(val variance: IntArray, val type: Array<KType
 
 }
 
-internal class KTypeImpl<T>(
+internal class KTypeImpl(
         override val classifier: KClassifier?,
         override val arguments: List<KTypeProjection>,
         override val isMarkedNullable: Boolean
 ) : KType {
 
-    @ExportForCompiler
-    @ConstantConstructorIntrinsic("KTYPE_IMPL")
-    @Suppress("UNREACHABLE_CODE")
-    constructor() : this(null, TODO("This is intrinsic constructor and it shouldn't be used directly"), false)
-
     override fun equals(other: Any?) =
-            other is KTypeImpl<*> &&
+            other is KTypeImpl &&
                     this.classifier == other.classifier &&
                     this.arguments == other.arguments &&
                     this.isMarkedNullable == other.isMarkedNullable

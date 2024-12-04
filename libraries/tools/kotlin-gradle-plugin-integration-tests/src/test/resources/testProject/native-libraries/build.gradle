@@ -13,21 +13,17 @@ buildscript {
 
 apply plugin: 'kotlin-multiplatform'
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
 
 kotlin {
     targets {
-        fromPreset(presets.macosX64, 'macos64') {
+        macosX64('macos64') {
             binaries.framework("main", [DEBUG])
         }
 
-        fromPreset(presets.linuxX64, 'linux64')
-        fromPreset(presets.mingwX64, 'mingw64')
+        linuxX64('linux64')
+        mingwX64('mingw64')
 
-        configure([linux64, mingw64, macos64]) {
+        configure([findByName('linux64'), findByName('mingw64'), findByName('macos64')]) {
             binaries {
                 sharedLib("main", [DEBUG])
                 staticLib("main", [DEBUG])

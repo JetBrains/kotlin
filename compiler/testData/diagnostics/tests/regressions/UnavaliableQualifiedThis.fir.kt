@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 interface Iterator<out T> {
  fun next() : T
  val hasNext : Boolean

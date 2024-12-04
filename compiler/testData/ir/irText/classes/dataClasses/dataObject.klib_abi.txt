@@ -1,0 +1,11 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final object /DataObject { // /DataObject|null[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /DataObject.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /DataObject.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /DataObject.toString|toString(){}[0]
+}

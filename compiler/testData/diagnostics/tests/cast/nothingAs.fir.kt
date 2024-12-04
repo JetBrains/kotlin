@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun TODO(): Nothing = throw java.lang.IllegalStateException()
 

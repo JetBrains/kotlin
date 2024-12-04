@@ -1,3 +1,4 @@
+
 // CORRECT_ERROR_TYPES
 
 // FILE: kapt/StaticMethod.java

@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
+import org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
-import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 
 interface FunctionalArgument
 
@@ -75,7 +74,8 @@ abstract class ExpressionLambda : LambdaInfo() {
     }
 }
 
-class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompilerForInline) : LambdaInfo() {
+class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompilerForInline, private val functionName: String) :
+    LambdaInfo() {
     val isBoundCallableReference: Boolean
 
     override val lambdaClassType: Type = info.type
@@ -132,7 +132,29 @@ class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompiler
                     capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc), isSuspend = false)
                 }?.toList() ?: emptyList()
         isBoundCallableReference = isReference && capturedVars.isNotEmpty()
-        node = loadDefaultLambdaBody(classBytes, lambdaClassType, isPropertyReference)
+        val (originNode, classSmap) = loadDefaultLambdaBody(classBytes, lambdaClassType, isPropertyReference)
+        node = SMAPAndMethodNode(createNodeWithFakeVariables(originNode), classSmap)
+    }
+
+    private fun createNodeWithFakeVariables(originNode: MethodNode): MethodNode {
+        val withFakeVariable =
+            MethodNode(originNode.access, originNode.name, originNode.desc, originNode.signature, originNode.exceptions?.toTypedArray())
+        val fakeVarIndex = originNode.maxLocals
+        withFakeVariable.instructions.add(LdcInsnNode(0))
+        withFakeVariable.instructions.add(VarInsnNode(Opcodes.ISTORE, fakeVarIndex))
+        val startLabel = LabelNode().also { withFakeVariable.instructions.add(it) }
+        originNode.accept(withFakeVariable)
+        val endLabel = withFakeVariable.instructions.last as? LabelNode ?: LabelNode().apply { withFakeVariable.instructions.add(this) }
+
+        withFakeVariable.localVariables.add(
+            LocalVariableNode(
+                "$LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT-$functionName-" + lambdaClassType.internalName.substringAfterLast(
+                    '/'
+                ), Type.INT_TYPE.descriptor, null, startLabel, endLabel, fakeVarIndex
+            )
+        )
+        withFakeVariable.maxLocals = withFakeVariable.maxLocals + 1
+        return withFakeVariable
     }
 
     private companion object {

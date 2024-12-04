@@ -1,0 +1,8 @@
+{
+  "properties": {
+    "newProperty1": "someValue",
+    "newProperty2": "someOtherValue",
+    "alreadySetProperty": "newValue"
+  },
+  "consent_details_link": "https://example.org"
+}

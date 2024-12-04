@@ -1,248 +1,731 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
-import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFE10AnnotationsOnFilesTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFe10AnnotationsOnDeclarationsTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.annotations.AbstractAnalysisApiFe10AnnotationsOnTypesTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.callResolver.AbstractKtFe10ResolveCallTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.compileTimeConstantProvider.AbstractKtFe10CompileTimeConstantEvaluatorTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionInfoProvider.AbstractKtFe10ReturnTargetSymbolTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionInfoProvider.AbstractKtFe10WhenMissingCasesTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionTypeProvider.AbstractKtFe10ExpectedExpressionTypeTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.expressionTypeProvider.AbstractKtFe10HLExpressionTypeTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.smartCastProvider.AbstractKtFe10HLSmartCastInfoTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDeclarationOverridesProvider.AbstractKtFe10OverriddenDeclarationProviderTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.symbolDeclarationRenderer.AbstractKtFe10RendererTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeCreator.AbstractKtFe10TypeParameterTypeTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.components.typeProvider.AbstractKtFe10HasCommonSubtypeTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByFqNameTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByPsiTest
-import org.jetbrains.kotlin.analysis.api.descriptors.test.symbols.AbstractKtFe10SymbolByReferenceTest
-import org.jetbrains.kotlin.analysis.api.fir.AbstractFirReferenceResolveTest
-import org.jetbrains.kotlin.analysis.api.fir.annotations.AbstractAnalysisApiFirAnnotationsOnDeclarationsTest
-import org.jetbrains.kotlin.analysis.api.fir.annotations.AbstractAnalysisApiFirAnnotationsOnFilesTest
-import org.jetbrains.kotlin.analysis.api.fir.annotations.AbstractAnalysisApiFirAnnotationsOnTypesTest
-import org.jetbrains.kotlin.analysis.api.fir.components.callResolver.AbstractFirResolveCallTest
-import org.jetbrains.kotlin.analysis.api.fir.components.compileTimeConstantProvider.AbstractFirCompileTimeConstantEvaluatorTest
-import org.jetbrains.kotlin.analysis.api.fir.components.expressionInfoProvider.AbstractFirReturnTargetSymbolTest
-import org.jetbrains.kotlin.analysis.api.fir.components.expressionInfoProvider.AbstractFirWhenMissingCasesTest
-import org.jetbrains.kotlin.analysis.api.fir.components.expressionTypeProvider.AbstractFirExpectedExpressionTypeTest
-import org.jetbrains.kotlin.analysis.api.fir.components.expressionTypeProvider.AbstractFirHLExpressionTypeTest
-import org.jetbrains.kotlin.analysis.api.fir.components.importOptimizer.AbstractHLImportOptimizerTest
-import org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider.AbstractExpressionPsiTypeProviderTest
-import org.jetbrains.kotlin.analysis.api.fir.components.psiTypeProvider.AbstractPsiTypeProviderTest
-import org.jetbrains.kotlin.analysis.api.fir.components.smartCastProvider.AbstractFirHLSmartCastInfoTest
-import org.jetbrains.kotlin.analysis.api.fir.components.symbolDeclarationOverridesProvider.AbstractFirOverriddenDeclarationProviderTest
-import org.jetbrains.kotlin.analysis.api.fir.components.symbolDeclarationRenderer.AbstractFirRendererTest
-import org.jetbrains.kotlin.analysis.api.fir.components.typeCreator.AbstractFirTypeParameterTypeTest
-import org.jetbrains.kotlin.analysis.api.fir.components.typeInfoProvider.AbstractFirFunctionClassKindTest
-import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirGetSuperTypesTest
-import org.jetbrains.kotlin.analysis.api.fir.components.typeProvider.AbstractFirHasCommonSubtypeTest
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirDelegateMemberScopeTest
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirFileScopeTest
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirSubstitutionOverridesUnwrappingTest
-import org.jetbrains.kotlin.analysis.api.fir.scopes.AbstractFirMemberScopeByFqNameTest
-import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByFqNameTest
-import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByPsiTest
-import org.jetbrains.kotlin.analysis.api.fir.symbols.AbstractFirSymbolByReferenceTest
-import org.jetbrains.kotlin.generators.TestGroupSuite
+import org.jetbrains.kotlin.analysis.api.fir.test.cases.imports.AbstractKaDefaultImportsProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerPluginGeneratedDeclarationsProvider.AbstractCompilerPluginGeneratedDeclarationsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.dataFlowInfoProvider.AbstractExitPointSnapshotTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCodeFragmentCollectDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractDanglingFileCollectDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractElementDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractIsUsedAsExpressionTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractWhenMissingCasesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.importOptimizer.AbstractAnalysisApiImportOptimizerTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractDanglingFileSealedInheritorsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider.AbstractExpectForActualTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiExpressionPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiKtTypeByPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractOriginalConstructorIfTypeAliasedTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider.AbstractResolveExtensionInfoProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolSubstitutionTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.smartCastProvider.AbstractHLSmartCastInfoTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateInheritanceTypeSubstitutorTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractSymbolRenderingByReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractAnnotationApplicableTargetsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractSamClassBySamConstructor
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractBuildClassTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractTypeParameterTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractDoubleColonReceiverTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractFunctionClassKindTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractIsDenotableTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractDefaultTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractIsReferenceToTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.session.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.*
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
+import org.jetbrains.kotlin.generators.TestGroup
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
-fun TestGroupSuite.generateAnalysisApiTests() {
-    generateAnalysisApiComponentsTests()
+internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
+    component(
+        directory = "resolver",
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibrarySource) and
+                analysisSessionModeIs(AnalysisSessionMode.Normal),
+    ) {
+        val singleByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+            val excludeDirs = buildList {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone ||
+                    data.frontend == FrontendKind.Fe10 ||
+                    data.moduleKind == TestModuleKind.LibrarySource
+                ) {
+                    add("withTestCompilerPluginEnabled")
+                }
+
+                when (data.moduleKind) {
+                    TestModuleKind.LibrarySource -> {
+                        // Sources with errors cannot be compiled to a library.
+                        add("withErrors")
+
+                        // Tests which rely on missing dependencies (e.g. the main module missing a dependency to a library module) will not
+                        // work as expected with library source modules, because they use "rest symbol providers" which provide symbols from
+                        // all other libraries (as dependencies between libraries are not usually known). So the "missing" dependencies
+                        // would effectively not be missing.
+                        add("missingDependency")
+
+                        // Tests which rely on a particular project structure where independent modules depend on globally duplicate
+                        // libraries will not work as expected with library source modules because of "rest symbol providers." For example,
+                        // we could have two libraries `L1` and `L2` which both contain a class `X` of the same name. We have two
+                        // independent modules `A` and `B`, where `A` depends on `L1`, and `B` depends on `L2`. From `A`, we should see `X`
+                        // from `L1`, and from `B`, we should see `X` from `L2`.
+                        //
+                        // "Rest symbol providers" break such tests. Let's say `A` is a `LibrarySource` module. Then its rest library
+                        // provider will find both versions of `X` from `L1` and `L2`. It will return a symbol for one version, which may
+                        // not be the one expected by `A`.
+                        add("globallyDuplicateLibraries")
+                    }
+
+                    else -> {}
+                }
+            }
+
+            model(data, "singleByPsi", excludeDirsRecursively = excludeDirs)
+        }
+
+        test<AbstractResolveCallTest>(init = singleByPsiInit)
+        test<AbstractResolveCandidatesTest>(init = singleByPsiInit)
+        test<AbstractResolveReferenceTest>(init = singleByPsiInit)
+
+        group(filter = testModuleKindIs(TestModuleKind.Source)) {
+            val allByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
+                model(data, "allByPsi")
+            }
+
+            test<AbstractResolveCallByFileTest>(init = allByPsiInit)
+            test<AbstractResolveCandidatesByFileTest>(init = allByPsiInit)
+            test<AbstractResolveReferenceByFileTest>(init = allByPsiInit)
+        }
+    }
+
+    test<AbstractResolveDanglingFileReferenceTest>(
+        filter = frontendIs(FrontendKind.Fir)
+                and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)
+    ) {
+        model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+    }
+
+    component(
+        "compilerFacility",
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource, TestModuleKind.LibraryBinary)
+                and frontendIs(FrontendKind.Fir)
+                and analysisSessionModeIs(AnalysisSessionMode.Normal)
+                and analysisApiModeIs(AnalysisApiMode.Ide)
+    ) {
+        test<AbstractCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)) {
+            model("compilation", pattern = TestGeneratorUtil.KT)
+        }
+
+        test<AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.Source)) {
+            model("firPluginPrototypeMultiModule", pattern = TestGeneratorUtil.KT)
+        }
+
+        test<AbstractFirPluginPrototypeCompilerFacilityTestWithAnalysis>(filter = testModuleKindIs(TestModuleKind.Source)) {
+            model("bugsFromRealComposeApps", pattern = TestGeneratorUtil.KT)
+        }
+    }
+
+    group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
+        generateAnalysisApiComponentsTests()
+        generateResolveExtensionsTests()
+    }
+
+    component(
+        "compilerPluginGeneratedDeclarationsProvider",
+        filter = frontendIs(FrontendKind.Fir) and
+                testModuleKindIs(TestModuleKind.Source) and
+                analysisSessionModeIs(AnalysisSessionMode.Normal) and
+                analysisApiModeIs(AnalysisApiMode.Ide)
+    ) {
+        test<AbstractCompilerPluginGeneratedDeclarationsTest> {
+            model(it, "compilerPluginGeneratedDeclarations")
+        }
+    }
+
+
     generateAnalysisApiNonComponentsTests()
 }
 
-private fun TestGroupSuite.generateAnalysisApiNonComponentsTests() {
-    test(
-        fir = AbstractFirReferenceResolveTest::class, fe10 = null,
+private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
+    group(
+        "resolveExtensions",
+        filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and
+                frontendIs(FrontendKind.Fir) and
+                testModuleKindIs(TestModuleKind.Source)
     ) {
-        model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-    }
-
-    group("scopes") {
-        test(
-            fir = AbstractFirSubstitutionOverridesUnwrappingTest::class,
-            fe10 = null,
-        ) {
-            model("substitutionOverridesUnwrapping")
-        }
-
-        test(
-            fir = AbstractFirMemberScopeByFqNameTest::class,
-            fe10 = null,
-        ) {
-            model("memberScopeByFqName")
-        }
-
-        test(
-            fir = AbstractFirFileScopeTest::class,
-            fe10 = null,
-        ) {
-            model("fileScopeTest", extension = "kt")
-        }
-
-        test(
-            fir = AbstractFirDelegateMemberScopeTest::class,
-            fe10 = null,
-        ) {
-            model("delegatedMemberScope")
-        }
-    }
-
-    group("symbols") {
-        test(
-            fir = AbstractFirSymbolByPsiTest::class,
-            fe10 = AbstractKtFe10SymbolByPsiTest::class,
-        ) {
-            model("symbolByPsi")
-        }
-
-        test(
-            fir = AbstractFirSymbolByFqNameTest::class,
-            fe10 = AbstractKtFe10SymbolByFqNameTest::class,
-        ) {
-            model("symbolByFqName")
-        }
-
-        test(
-            fir = AbstractFirSymbolByReferenceTest::class,
-            fe10 = AbstractKtFe10SymbolByReferenceTest::class,
-        ) {
-            model("symbolByReference")
-        }
-    }
-
-    group("annotations") {
-        test(
-            fir = AbstractAnalysisApiFirAnnotationsOnTypesTest::class,
-            fe10 = AbstractAnalysisApiFe10AnnotationsOnTypesTest::class
-        ) {
-            model("annotationsOnTypes")
-        }
-
-        test(
-            fir = AbstractAnalysisApiFirAnnotationsOnDeclarationsTest::class,
-            fe10 = AbstractAnalysisApiFe10AnnotationsOnDeclarationsTest::class,
-        ) {
-            model("annotationsOnDeclaration")
-        }
-
-        test(
-            fir = AbstractAnalysisApiFirAnnotationsOnFilesTest::class,
-            fe10 = null // TODO "fails with Rewrite at slice ANNOTATION key"
-            /*AbstractAnalysisApiFE10AnnotationsOnFilesTest*/
-        ) {
-            model("annotationsOnFiles")
+        test<AbstractResolveReferenceWithResolveExtensionTest> {
+            model(it, "referenceResolve")
         }
     }
 }
 
+private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
+    group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
+        group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            fun TestGroup.TestClass.symbolsModel(data: AnalysisApiTestConfiguratorFactoryData, path: String) {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone || data.frontend == FrontendKind.Fe10) {
+                    model(data, path, excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                } else {
+                    model(data, path)
+                }
+            }
 
-private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
-    component("callResolver") {
-        test(
-            fir = AbstractFirResolveCallTest::class, fe10 = AbstractKtFe10ResolveCallTest::class,
-        ) {
-            model("resolveCall")
+            test<AbstractSymbolByPsiTest> {
+                symbolsModel(it, "symbolByPsi")
+            }
+
+            test<AbstractSymbolByJavaPsiTest>(filter = frontendIs(FrontendKind.Fir)) {
+                symbolsModel(it, "symbolByJavaPsi")
+            }
+
+            test<AbstractSingleSymbolByPsiTest> {
+                symbolsModel(it, "singleSymbolByPsi")
+            }
+
+            test<AbstractSymbolRestoreFromDifferentModuleTest> {
+                symbolsModel(it, "symbolRestoreFromDifferentModule")
+            }
+
+            test<AbstractMultiModuleSymbolByPsiTest> {
+                symbolsModel(it, "multiModuleSymbolByPsi")
+            }
+
+            test<AbstractSymbolByFqNameTest> {
+                symbolsModel(it, "symbolByFqName")
+            }
+
+            test<AbstractSymbolByReferenceTest> {
+                symbolsModel(it, "symbolByReference")
+            }
+        }
+
+        group("annotations") {
+            test<AbstractAnalysisApiAnnotationsOnTypesTest> {
+                model(it, "annotationsOnTypes")
+            }
+
+            test<AbstractAnalysisApiAnnotationsOnDeclarationsTest> {
+                model(it, "annotationsOnDeclaration")
+            }
+
+            test<AbstractAnalysisApiSpecificAnnotationOnDeclarationTest> {
+                model(it, "specificAnnotations")
+            }
+
+            test<AbstractAnalysisApiAnnotationsOnFilesTest>(
+                filter = analysisSessionModeIs(AnalysisSessionMode.Normal),
+            ) {
+                model(it, "annotationsOnFiles")
+            }
+
+            test<AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest> {
+                model(it, "metaAnnotations")
+            }
+
+        }
+
+        group("imports", filter = frontendIs(FrontendKind.Fir)) {
+            test<AbstractReferenceImportAliasTest>(
+                filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
+            ) {
+                model(it, "importAliases")
+            }
+        }
+
+        group("references") {
+            test<AbstractIsReferenceToTest>(filter = frontendIs(FrontendKind.Fir)) {
+                model(it, "isReferenceTo")
+            }
+        }
+
+        group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
+            test<AbstractAnalysisApiSubstitutorsTest> {
+                model(it, "typeSubstitution")
+            }
         }
     }
 
-    component("compileTimeConstantProvider") {
-        test(
-            fir = AbstractFirCompileTimeConstantEvaluatorTest::class, fe10 = AbstractKtFe10CompileTimeConstantEvaluatorTest::class,
+    group("types", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
+            test<AbstractTypeByDeclarationReturnTypeTest> {
+                model(it, "byDeclarationReturnType")
+            }
+
+            test<AbstractBuiltInTypeTest> {
+                model(it, "builtins")
+            }
+
+            group("typePointers", filter = frontendIs(FrontendKind.Fir)) {
+                test<AbstractTypePointerConsistencyTest> {
+                    model(it, "consistency")
+                }
+            }
+        }
+
+        group(filter = frontendIs(FrontendKind.Fir) and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibraryBinary)) {
+            test<AbstractAbbreviatedTypeTest> {
+                model(it, "abbreviatedType")
+            }
+        }
+    }
+
+    // We don't test Standalone API analysis session invalidation because it doesn't support modification (yet). The test infrastructure
+    // registers an "always accessible" lifetime token, which is at odds with checking the validity of an analysis session after
+    // invalidation.
+    group(
+        "sessions",
+        filter = frontendIs(FrontendKind.Fir)
+                and testModuleKindIs(TestModuleKind.Source)
+                and analysisSessionModeIs(AnalysisSessionMode.Normal)
+                and analysisApiModeIs(AnalysisApiMode.Ide)
+    ) {
+        test<AbstractModuleStateModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        test<AbstractModuleOutOfBlockModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        test<AbstractGlobalModuleStateModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        test<AbstractGlobalSourceModuleStateModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        test<AbstractGlobalSourceOutOfBlockModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+
+        test<AbstractCodeFragmentContextModificationAnalysisSessionInvalidationTest> {
+            model("sessionInvalidation")
+        }
+    }
+    group("imports") {
+        test<AbstractKaDefaultImportsProviderTest>(
+            filter = analysisSessionModeIs(AnalysisSessionMode.Normal)
+                    and testModuleKindIs(TestModuleKind.Source)
+                    and frontendIs(FrontendKind.Fir),
         ) {
-            model("evaluate")
+            model("defaultImportProvider")
+        }
+    }
+
+}
+
+private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
+    component("compileTimeConstantProvider") {
+        test<AbstractCompileTimeConstantEvaluatorTest> {
+            model(it, "evaluate")
         }
     }
 
     component("expressionInfoProvider") {
-        test(
-            fir = AbstractFirWhenMissingCasesTest::class, fe10 = AbstractKtFe10WhenMissingCasesTest::class
-        ) {
-            model("whenMissingCases")
+        test<AbstractWhenMissingCasesTest> {
+            model(it, "whenMissingCases")
         }
 
-        test(
-            fir = AbstractFirReturnTargetSymbolTest::class, fe10 = AbstractKtFe10ReturnTargetSymbolTest::class
-        ) {
-            model("returnExpressionTargetSymbol")
+        test<AbstractReturnTargetSymbolTest> {
+            model(it, "returnExpressionTargetSymbol")
+        }
+
+        test<AbstractIsUsedAsExpressionTest> {
+            model(it, "isUsedAsExpression")
+        }
+
+        test<AbstractReadWriteAccessTest> {
+            model(it, "readWriteAccess")
+        }
+    }
+
+    component("referenceShortener", filter = frontendIs(FrontendKind.Fir) and analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test<AbstractReferenceShortenerTest> {
+            model(it, "shortenRange")
+        }
+
+        test<AbstractReferenceShortenerForWholeFileTest> {
+            model(it, "shortenWholeFile")
         }
     }
 
     component("expressionTypeProvider") {
-        test(
-            fir = AbstractFirExpectedExpressionTypeTest::class, fe10 = AbstractKtFe10ExpectedExpressionTypeTest::class
-        ) {
-            model("expectedExpressionType")
+        test<AbstractExpectedExpressionTypeTest> {
+            model(it, "expectedExpressionType")
         }
 
-        test(
-            fir = AbstractFirHLExpressionTypeTest::class, fe10 = AbstractKtFe10HLExpressionTypeTest::class
+        test<AbstractHLExpressionTypeTest> {
+            model(it, "expressionType")
+        }
+
+        test<AbstractDeclarationReturnTypeTest> {
+            model(it, "declarationReturnType")
+        }
+    }
+
+    component("diagnosticsProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test<AbstractCollectDiagnosticsTest> {
+            model(it, "diagnostics")
+        }
+
+        test<AbstractDanglingFileCollectDiagnosticsTest>(filter = frontendIs(FrontendKind.Fir)) {
+            model(it, "diagnostics")
+        }
+
+        test<AbstractElementDiagnosticsTest> {
+            model(it, "elementDiagnostics")
+        }
+
+        test<AbstractCodeFragmentCollectDiagnosticsTest>(
+            filter = testModuleKindIs(TestModuleKind.Source) and frontendIs(FrontendKind.Fir),
         ) {
-            model("expressionType")
+            model("codeFragmentDiagnostics", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+    }
+
+    // for K1, symbols do not have a proper equality implementation, so the tests are failing
+    component("containingDeclarationProvider", filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractContainingDeclarationProviderByPsiTest> {
+            model(it, "containingDeclarationByPsi")
+        }
+
+        test<AbstractContainingDeclarationProviderByReferenceTest> {
+            model(it, "containingDeclarationByReference")
+        }
+
+        test<AbstractContainingDeclarationProviderByMemberScopeTest> {
+            model(it, "containingDeclarationFromMemberScope")
+        }
+
+        test<AbstractContainingDeclarationProviderForSetterParameterTest> {
+            model(it, "containingDeclarationForSetterParameter")
+        }
+
+        test<AbstractContainingDeclarationProviderByDelegatedMemberScopeTest> {
+            model(it, "containingDeclarationByDelegatedMemberScope")
+        }
+
+        test<AbstractContainingModuleByFileTest> {
+            model(it, "containingModuleByFile")
         }
     }
 
     component("importOptimizer") {
-        test(
-            fir = AbstractHLImportOptimizerTest::class,
-            fe10 = null,
+        test<AbstractAnalysisApiImportOptimizerTest>(
+            filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir),
         ) {
-            model("analyseImports", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            model(it, "analyseImports")
+        }
+    }
+
+    component("inheritorsProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir)) {
+        test<AbstractSealedInheritorsTest> {
+            model(it, "sealedInheritors")
+        }
+
+        test<AbstractDanglingFileSealedInheritorsTest> {
+            model(it, "sealedInheritors")
+        }
+    }
+
+    component("multiplatformInfoProvider") {
+        test<AbstractExpectForActualTest> {
+            model(it, "expectForActual")
         }
     }
 
     component("psiTypeProvider") {
-        test(fir = AbstractPsiTypeProviderTest::class, fe10 = null) {
-            model("psiType/forDeclaration")
+        test<AbstractAnalysisApiPsiTypeProviderTest> {
+            model(it, "psiType/forDeclaration")
         }
 
-        test(fir = AbstractExpressionPsiTypeProviderTest::class, fe10 = null) {
-            model("psiType/forExpression")
+        test<AbstractAnalysisApiExpressionPsiTypeProviderTest> {
+            model(it, "psiType/forExpression")
+        }
+
+        test<AbstractAnalysisApiKtTypeByPsiTypeProviderTest>(filter = frontendIs(FrontendKind.Fir)) {
+            model(it, "psiType/asKtType")
+        }
+    }
+
+    component("resolveExtensionInfoProvider", filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractResolveExtensionInfoProviderTest> {
+            model(it, "extensionScopeWithPsi")
         }
     }
 
     component("smartCastProvider") {
-        test(fir = AbstractFirHLSmartCastInfoTest::class, fe10 = AbstractKtFe10HLSmartCastInfoTest::class) {
-            model("smartCastInfo")
+        test<AbstractHLSmartCastInfoTest> {
+            model(it, "smartCastInfo")
         }
     }
 
     component("symbolDeclarationOverridesProvider") {
-        test(fir = AbstractFirOverriddenDeclarationProviderTest::class, fe10 = AbstractKtFe10OverriddenDeclarationProviderTest::class) {
-            model("overriddenSymbols")
+        test<AbstractOverriddenDeclarationProviderTest> {
+            model(it, "overriddenSymbols")
+        }
+
+        test<AbstractIsSubclassOfTest> {
+            model(it, "isSubclassOf")
         }
     }
 
     component("symbolDeclarationRenderer") {
-        test(fir = AbstractFirRendererTest::class, fe10 = AbstractKtFe10RendererTest::class) {
-            model("renderDeclaration")
+        test<AbstractRendererTest> {
+            model(it, "renderDeclaration")
+        }
+
+        test<AbstractSymbolRenderingByReferenceTest>(analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone)) {
+            model(it, "symbolRenderingByReference")
+        }
+    }
+
+    component("symbolInfoProvider") {
+        test<AbstractAnnotationApplicableTargetsTest> {
+            model(it, "annotationApplicableTargets")
+        }
+
+        test<AbstractSamClassBySamConstructor> {
+            model(it, "samClassBySamConstructor")
         }
     }
 
     component("typeCreator") {
-        test(fir = AbstractFirTypeParameterTypeTest::class, fe10 = AbstractKtFe10TypeParameterTypeTest::class) {
-            model("typeParameter")
+        test<AbstractTypeParameterTypeTest> {
+            model(it, "typeParameter")
+        }
+
+        test<AbstractBuildClassTypeTest>(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)/*no non-file context element*/) {
+            model(it, "classType")
         }
     }
 
     component("typeInfoProvider") {
-        test(fir = AbstractFirFunctionClassKindTest::class, fe10 = null) {
-            model("functionClassKind")
+        test<AbstractFunctionClassKindTest> {
+            model(it, "functionClassKind")
         }
-        test(fir = AbstractFirGetSuperTypesTest::class, fe10 = null) {
-            model("superTypes")
+        test<AbstractAnalysisApiGetSuperTypesTest>(filter = frontendIs(FrontendKind.Fir)) {
+            model(it, "superTypes")
+        }
+        test<AbstractDoubleColonReceiverTypeTest> {
+            model(it, "doubleColonReceiverType")
+        }
+        test<AbstractIsDenotableTest> {
+            model(it, "isDenotable", excludedPattern = ".*\\.descriptors\\.kt$")
         }
     }
 
     component("typeProvider") {
-        test(fir = AbstractFirHasCommonSubtypeTest::class, fe10 = AbstractKtFe10HasCommonSubtypeTest::class) {
-            model("haveCommonSubtype")
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test<AbstractHasCommonSubtypeTest> {
+                model(it, "haveCommonSubtype")
+            }
+        }
+
+        test<AbstractTypeReferenceTest> {
+            model(it, "typeReference")
+        }
+
+        test<AbstractDefaultTypeTest> {
+            model(it, "defaultType")
+        }
+    }
+
+    component("signatureSubstitution") {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir)) {
+            test<AbstractAnalysisApiSymbolAsSignatureTest> {
+                model(it, "symbolAsSignature")
+            }
+
+            test<AbstractAnalysisApiSymbolSubstitutionTest> {
+                model(it, "symbolSubstitution")
+            }
+
+            test<AbstractAnalysisApiSignatureSubstitutionTest> {
+                model(it, "signatureSubstitution")
+            }
+
+            test<AbstractAnalysisApiSignatureContractsTest> {
+                model(it, "signatureContracts")
+            }
+        }
+    }
+
+    component("substitutorFactory") {
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir)) {
+            test<AbstractSubstitutorBuilderTest> {
+                model(it, "substitutorBuilder")
+            }
+        }
+    }
+
+    component("substitutorProvider", filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractCreateInheritanceTypeSubstitutorTest> {
+            model(it, "createInheritanceTypeSubstitutor")
+        }
+    }
+
+    component("typeRelationChecker") {
+        test<AbstractTypeEqualityTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientTypeEqualityTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractSubtypingTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientSubtypingTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractNonLenientClassIdSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientClassIdSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractNonLenientClassSymbolSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+
+        test<AbstractLenientClassSymbolSubtypingTypeRelationTest> {
+            model(it, "subtypingAndEquality")
+        }
+    }
+
+    component("referenceResolveProvider") {
+        test<AbstractIsImplicitCompanionReferenceTest> {
+            model(it, "isImplicitReferenceToCompanion")
+        }
+    }
+
+    component("relationProvider") {
+        test<AbstractOriginalConstructorIfTypeAliasedTest>(
+            filter = frontendIs(FrontendKind.Fir),
+        ) {
+            model(it, "originalConstructorIfTypeAliased")
+        }
+    }
+
+    component("scopeProvider") {
+        group(filter = frontendIs(FrontendKind.Fir)) {
+            test<AbstractTypeScopeTest> {
+                model(it, "typeScope")
+            }
+
+            test<AbstractScopeContextForPositionTest> {
+                model(it, "scopeContextForPosition")
+            }
+
+            test<AbstractFileImportingScopeContextTest> {
+                model(it, "importingScopeContext")
+            }
+        }
+
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test<AbstractFileScopeTest> {
+                model(it, "fileScopeTest")
+            }
+
+            test<AbstractDelegateMemberScopeTest> {
+                model(it, "delegatedMemberScope")
+            }
+
+            test<AbstractPackageScopeTest> {
+                model(it, "packageScope")
+            }
+
+            test<AbstractSubstitutionOverridesUnwrappingTest> {
+                model(it, "substitutionOverridesUnwrapping")
+            }
+
+            group(filter = frontendIs(FrontendKind.Fir)) {
+                test<AbstractMemberScopeTest> {
+                    when (it.analysisApiMode) {
+                        AnalysisApiMode.Ide ->
+                            model(it, "memberScope")
+                        AnalysisApiMode.Standalone ->
+                            model(it, "memberScope", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                    }
+                }
+
+                test<AbstractStaticMemberScopeTest> {
+                    model(it, "staticMemberScope")
+                }
+
+                test<AbstractDeclaredMemberScopeTest> {
+                    model(it, "declaredMemberScope")
+                }
+
+                test<AbstractStaticDeclaredMemberScopeTest> {
+                    model(it, "staticDeclaredMemberScope")
+                }
+
+                test<AbstractCombinedDeclaredMemberScopeTest> {
+                    model(it, "combinedDeclaredMemberScope")
+                }
+            }
+        }
+    }
+
+    component("dataFlowInfoProvider") {
+        test<AbstractExitPointSnapshotTest>(filter = frontendIs(FrontendKind.Fir)) {
+            model(it, "exitPointSnapshot")
+        }
+    }
+
+    component("klibSourceFileNameProvider", filter = frontendIs(FrontendKind.Fir) and analysisApiModeIs(AnalysisApiMode.Standalone)) {
+        test<AbstractGetKlibSourceFileNameTest> {
+            model(it, "getKlibSourceFileName")
+        }
+    }
+
+    component("visibilityChecker", filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractVisibilityCheckerTest> {
+            model(it, "visibility")
         }
     }
 }

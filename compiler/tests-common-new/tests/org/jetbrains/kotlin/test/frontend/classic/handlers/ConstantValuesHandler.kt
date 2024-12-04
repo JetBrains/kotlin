@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
-import com.intellij.openapi.project.Project
 import junit.framework.TestCase
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -66,7 +65,6 @@ class ConstantValuesHandler(testServices: TestServices) : ClassicFrontendAnalysi
         val fileText = ktFile.text
         val packageFragmentDescriptor = info.analysisResult.moduleDescriptor.findPackageFragmentForFile(ktFile) ?: return
         val bindingContext = info.analysisResult.bindingContext
-        val project = info.project
 
         val actualMetaInfos = mutableListOf<ParsedCodeMetaInfo>()
         for (expectedMetaInfo in expectedMetaInfos) {
@@ -79,8 +77,8 @@ class ConstantValuesHandler(testServices: TestServices) : ClassicFrontendAnalysi
                 ?: getLocalVarDescriptor(bindingContext, propertyName) ?: continue
             val actualValue = when (mode) {
                 Mode.Constant -> checkConstant(propertyDescriptor)
-                Mode.IsPure -> checkIsPure(bindingContext, propertyDescriptor, project)
-                Mode.UsesVariableAsConstant -> checkVariableAsConstant(bindingContext, propertyDescriptor, project)
+                Mode.IsPure -> checkIsPure(bindingContext, propertyDescriptor)
+                Mode.UsesVariableAsConstant -> checkVariableAsConstant(bindingContext, propertyDescriptor)
             }
 
             actualMetaInfos += ParsedCodeMetaInfo(
@@ -106,17 +104,17 @@ class ConstantValuesHandler(testServices: TestServices) : ClassicFrontendAnalysi
         }
     }
 
-    private fun checkIsPure(bindingContext: BindingContext, variableDescriptor: VariableDescriptor, project: Project): String {
-        return evaluateInitializer(bindingContext, variableDescriptor, project)?.isPure.toString()
+    private fun checkIsPure(bindingContext: BindingContext, variableDescriptor: VariableDescriptor): String {
+        return evaluateInitializer(bindingContext, variableDescriptor)?.isPure.toString()
     }
 
-    private fun checkVariableAsConstant(bindingContext: BindingContext, variableDescriptor: VariableDescriptor, project: Project): String {
-        return evaluateInitializer(bindingContext, variableDescriptor, project)?.usesVariableAsConstant.toString()
+    private fun checkVariableAsConstant(bindingContext: BindingContext, variableDescriptor: VariableDescriptor): String {
+        return evaluateInitializer(bindingContext, variableDescriptor)?.usesVariableAsConstant.toString()
     }
 
-    private fun evaluateInitializer(context: BindingContext, property: VariableDescriptor, project: Project): CompileTimeConstant<*>? {
+    private fun evaluateInitializer(context: BindingContext, property: VariableDescriptor): CompileTimeConstant<*>? {
         val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) as KtProperty
-        return ConstantExpressionEvaluator(property.module, LanguageVersionSettingsImpl.DEFAULT, project).evaluateExpression(
+        return ConstantExpressionEvaluator(property.module, LanguageVersionSettingsImpl.DEFAULT).evaluateExpression(
             propertyDeclaration.initializer!!,
             DelegatingBindingTrace(context, "trace for evaluating compile time constant"),
             property.type

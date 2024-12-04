@@ -1,4 +1,6 @@
-// !CHECK_TYPE
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// CHECK_TYPE
 
 import kotlin.reflect.KFunction1
 

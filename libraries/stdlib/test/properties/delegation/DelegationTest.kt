@@ -16,30 +16,36 @@ class NotNullVarTest() {
 
 private class NotNullVarTestGeneric<T : Any>(val a1: String, val b1: T) {
     var a: String by Delegates.notNull()
-    var b by Delegates.notNull<T>()
+    val bDelegate = Delegates.notNull<T>()
+    var b by bDelegate
 
     public fun doTest() {
+        assertEquals("NotNullProperty(value not initialized yet)", bDelegate.toString())
         a = a1
         b = b1
         assertTrue(a == "a", "fail: a should be a, but was $a")
         assertTrue(b == "b", "fail: b should be b, but was $b")
+        assertEquals("NotNullProperty(value=$b)", bDelegate.toString())
     }
 }
 
 class ObservablePropertyTest {
     var result = false
 
-    var b: Int by Delegates.observable(1, { property, old, new ->
+    val bDelegate = Delegates.observable(1) { property, old, new ->
         assertEquals("b", property.name)
         if (!result) assertEquals(1, old)
         result = true
         assertEquals(new, b, "New value has already been set")
-    })
+    }
+
+    var b: Int by bDelegate
 
     @Test fun doTest() {
         b = 4
         assertTrue(b == 4, "fail: b != 4")
         assertTrue(result, "fail: result should be true")
+        assertEquals("ObservableProperty(value=$b)", bDelegate.toString())
     }
 }
 

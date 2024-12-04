@@ -112,54 +112,6 @@ class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifi
         mockFunctionModifiers()
     )
 
-    @Test
-    fun allTailrec() = doTestSuccess(
-        expected = mockFunctionModifiers(isTailrec = true),
-        mockFunctionModifiers(isTailrec = true),
-        mockFunctionModifiers(isTailrec = true),
-        mockFunctionModifiers(isTailrec = true)
-    )
-
-    @Test
-    fun notTailrecAndTailrec() = doTestSuccess(
-        expected = mockFunctionModifiers(),
-        mockFunctionModifiers(),
-        mockFunctionModifiers(isTailrec = true),
-        mockFunctionModifiers(isTailrec = true)
-    )
-
-    @Test
-    fun tailrecAndNotTailrec() = doTestSuccess(
-        expected = mockFunctionModifiers(),
-        mockFunctionModifiers(isTailrec = true),
-        mockFunctionModifiers(isTailrec = true),
-        mockFunctionModifiers()
-    )
-
-    @Test
-    fun allExternal() = doTestSuccess(
-        expected = mockFunctionModifiers(isExternal = true),
-        mockFunctionModifiers(isExternal = true),
-        mockFunctionModifiers(isExternal = true),
-        mockFunctionModifiers(isExternal = true)
-    )
-
-    @Test
-    fun notExternalAndExternal() = doTestSuccess(
-        expected = mockFunctionModifiers(),
-        mockFunctionModifiers(),
-        mockFunctionModifiers(isExternal = true),
-        mockFunctionModifiers(isExternal = true)
-    )
-
-    @Test
-    fun externalAndNotExternal() = doTestSuccess(
-        expected = mockFunctionModifiers(),
-        mockFunctionModifiers(isExternal = true),
-        mockFunctionModifiers(isExternal = true),
-        mockFunctionModifiers()
-    )
-
     override fun createCommonizer() = FunctionModifiersCommonizer()
 }
 
@@ -167,14 +119,10 @@ private fun mockFunctionModifiers(
     isOperator: Boolean = false,
     isInfix: Boolean = false,
     isInline: Boolean = false,
-    isTailrec: Boolean = false,
     isSuspend: Boolean = false,
-    isExternal: Boolean = false
 ) = CirFunctionModifiers.createInterned(
     isOperator = isOperator,
     isInfix = isInfix,
     isInline = isInline,
-    isTailrec = isTailrec,
     isSuspend = isSuspend,
-    isExternal = isExternal
 )

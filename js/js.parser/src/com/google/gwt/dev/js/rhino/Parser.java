@@ -18,7 +18,7 @@
  * Copyright (C) 1997-1999 Netscape Communications Corporation. All
  * Rights Reserved.
  *
- * Contributor(s): 
+ * Contributor(s):
  * Mike Ang
  * Mike McCabe
  *
@@ -186,6 +186,10 @@ public class Parser {
 
         Node nameNode;
         Node memberExprNode = null;
+
+        // For generators
+        boolean isGenerator = ts.matchToken(TokenStream.MUL);
+
         if (ts.matchToken(TokenStream.NAME)) {
             nameNode = nf.createName(ts.getString(), basePosition);
             if (!ts.matchToken(TokenStream.LP)) {
@@ -228,10 +232,9 @@ public class Parser {
 
             if (!ts.matchToken(TokenStream.GWT)) {
                 do {
-                    CodePosition namePosition = ts.tokenPosition;
                     mustMatchToken(ts, TokenStream.NAME, "msg.no.parm");
                     String s = ts.getString();
-                    args.addChildToBack(nf.createName(s, namePosition));
+                    args.addChildToBack(nf.createName(s, ts.tokenPosition));
                 }
                 while (ts.matchToken(TokenStream.COMMA));
 
@@ -249,7 +252,7 @@ public class Parser {
             functionNumber = savedFunctionNumber;
         }
 
-        Node pn = nf.createFunction(nameNode, args, body, basePosition);
+        Node pn = nf.createFunction(nameNode, args, body, isGenerator, basePosition);
         if (memberExprNode != null) {
             pn = nf.createBinary(TokenStream.ASSIGN, TokenStream.NOP, memberExprNode, pn, basePosition);
         }
@@ -334,7 +337,13 @@ public class Parser {
     private Node statement(TokenStream ts) throws IOException {
         CodePosition position = ts.lastPosition;
         try {
-            return statementHelper(ts);
+            Comment commentsBefore = getComments(ts);
+            ts.collectCommentsAfter();
+            Node result = statementHelper(ts);
+            result.setCommentsBeforeNode(commentsBefore);
+            ts.collectCommentsAfter();
+            result.setCommentsAfterNode(getComments(ts));
+            return result;
         }
         catch (JavaScriptException e) {
             // skip to end of statement
@@ -593,6 +602,7 @@ public class Parser {
                 }
                 break;
             }
+
             case TokenStream.RETURN: {
                 Node retExpr = null;
                 int lineno;
@@ -693,6 +703,7 @@ public class Parser {
                 break;
             }
         }
+
         ts.matchToken(TokenStream.SEMI);
 
         return pn;
@@ -728,21 +739,31 @@ public class Parser {
 
     public Node expr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
         Node pn = assignExpr(ts, inForInit);
+
+
         while (ts.matchToken(TokenStream.COMMA)) {
             CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.COMMA, pn, assignExpr(ts, inForInit), position);
         }
+
         return pn;
     }
 
     private Node assignExpr(TokenStream ts, boolean inForInit) throws IOException, JavaScriptException {
+        Comment commentBeforeNode = getComments(ts);
+
         Node pn = condExpr(ts, inForInit);
+
+        pn.setCommentsBeforeNode(commentBeforeNode);
 
         if (ts.matchToken(TokenStream.ASSIGN)) {
             // omitted: "invalid assignment left-hand side" check.
             CodePosition position = ts.tokenPosition;
             pn = nf.createBinary(TokenStream.ASSIGN, ts.getOp(), pn, assignExpr(ts, inForInit), position);
         }
+
+        ts.collectCommentsAfter();
+        pn.setCommentsAfterNode(getComments(ts));
 
         return pn;
     }
@@ -880,6 +901,9 @@ public class Parser {
         CodePosition position = ts.tokenPosition;
 
         switch (tt) {
+            case TokenStream.YIELD:
+                return nf.createUnary(TokenStream.YIELD, ts.getOp(), unaryExpr(ts), position);
+
             case TokenStream.UNARYOP:
                 return nf.createUnary(TokenStream.UNARYOP, ts.getOp(), unaryExpr(ts), position);
 
@@ -940,8 +964,7 @@ public class Parser {
         if (!matched) {
             do {
                 listNode.addChildToBack(assignExpr(ts, false));
-            }
-            while (ts.matchToken(TokenStream.COMMA));
+            } while (ts.matchToken(TokenStream.COMMA));
 
             mustMatchToken(ts, TokenStream.GWT, "msg.no.paren.arg");
         }
@@ -1038,6 +1061,15 @@ public class Parser {
     }
 
     public Node primaryExpr(TokenStream ts) throws IOException, JavaScriptException {
+        Comment commentsBeforeNode = getComments(ts);
+        Node node = primaryExprHelper(ts);
+        node.setCommentsBeforeNode(commentsBeforeNode);
+        ts.collectCommentsAfter();
+        node.setCommentsAfterNode(getComments(ts));
+        return node;
+    }
+
+    private Node primaryExprHelper(TokenStream ts) throws IOException, JavaScriptException {
         int tt;
 
         Node pn;
@@ -1140,6 +1172,13 @@ public class Parser {
                 mustMatchToken(ts, TokenStream.GWT, "msg.no.paren");
                 return pn;
 
+            case TokenStream.IMPORT:
+                // for import() and import.meta syntax
+                if (ts.peekToken() != TokenStream.LP && ts.peekToken() != TokenStream.DOT) {
+                    reportError(ts, "msg.syntax");
+                }
+                return nf.createName(TokenStream.tokenToName(TokenStream.IMPORT), position);
+
             case TokenStream.NAME:
                 String name = ts.getString();
                 return nf.createName(name, position);
@@ -1174,6 +1213,14 @@ public class Parser {
                 break;
         }
         return null; // should never reach here
+    }
+
+    private Comment getComments(TokenStream ts) {
+        Comment comment = ts.getHeadComment();
+        if (comment != null) {
+            ts.releaseComments();
+        }
+        return comment;
     }
 
     private int lastExprEndLine; // Hack to handle function expr termination.

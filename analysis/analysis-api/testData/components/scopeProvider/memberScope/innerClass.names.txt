@@ -1,0 +1,11 @@
+Classifier names:
+  ClassInA
+  ClassInB
+  InnerClassInA
+  InnerClassInB
+
+Callable names:
+  <init>
+  equals
+  hashCode
+  toString

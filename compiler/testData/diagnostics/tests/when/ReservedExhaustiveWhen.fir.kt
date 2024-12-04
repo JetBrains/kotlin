@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -7,7 +8,7 @@
  * expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
  */
 
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 infix fun Any.sealed(a: Any?) {}
 

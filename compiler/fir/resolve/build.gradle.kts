@@ -8,8 +8,7 @@ dependencies {
     api(project(":compiler:fir:semantics"))
     implementation(project(":core:util.runtime"))
 
-    compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("guava", rootProject = rootProject) }
+    compileOnly(libs.guava)
 }
 
 sourceSets {

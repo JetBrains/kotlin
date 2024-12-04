@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1310
 package foo
 
 fun testSize(expectedSize: Int, vararg i: Int): Boolean {

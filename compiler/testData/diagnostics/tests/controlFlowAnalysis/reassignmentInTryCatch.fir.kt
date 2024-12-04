@@ -1,9 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_EXTRA_CHECKERS
 // KT-13612 related tests (reassignment in try-catch-finally)
 
 fun f1() {
     val n: Int
     try {
-        n = 1
+        <!ASSIGNED_VALUE_IS_NEVER_READ!>n<!> = 1
         throw Exception()
     }
     catch (e: Exception) {
@@ -16,13 +18,13 @@ fun f1() {
 fun f2() {
     val n: Int
     try {
-        n = 1
+        <!ASSIGNED_VALUE_IS_NEVER_READ!>n<!> = 1
         throw Exception()
     }
     finally {
-        <!VAL_REASSIGNMENT!>n<!> = 2
+        <!ASSIGNED_VALUE_IS_NEVER_READ, VAL_REASSIGNMENT!>n<!> = 2
     }
-    <!UNINITIALIZED_VARIABLE!>n<!>.hashCode()
+    <!UNREACHABLE_CODE!>n.hashCode()<!>
 }
 
 fun g1(flag: Boolean) {
@@ -42,7 +44,7 @@ fun g2(flag: Boolean) {
     val n: Int
     try {
         if (flag) throw Exception()
-        n = 1
+        <!ASSIGNED_VALUE_IS_NEVER_READ!>n<!> = 1
     }
     finally {
         <!VAL_REASSIGNMENT!>n<!> = 2
@@ -67,7 +69,7 @@ fun h2(flag: Boolean) {
         1
     }
     finally {
-        2
+        <!UNUSED_EXPRESSION!>2<!>
     }
     n.hashCode()
 }
@@ -92,7 +94,7 @@ fun k1(flag: Boolean) {
 fun k2(flag: Boolean) {
     val n: Int
     try {
-        n = 1
+        <!ASSIGNED_VALUE_IS_NEVER_READ!>n<!> = 1
         j(flag)
     }
     finally {

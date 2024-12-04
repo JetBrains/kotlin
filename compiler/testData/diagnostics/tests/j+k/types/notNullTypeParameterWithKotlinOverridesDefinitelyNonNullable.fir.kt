@@ -1,6 +1,8 @@
-// !SKIP_JAVAC
-// !LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// !LANGUAGE: +DefinitelyNonNullableTypes
+// RUN_PIPELINE_TILL: FRONTEND
+// SKIP_JAVAC
+// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: +DefinitelyNonNullableTypes
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
 
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +31,8 @@ interface Q1<X> : SLRUMap<X> {
 }
 
 interface Q2<X> : SLRUMap<X> {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun takeV(x: X & Any)
-    <!NOTHING_TO_OVERRIDE!>override<!> fun <E1> takeE(e: E1 & Any)
+    override fun takeV(x: X & Any)
+    override fun <E1> takeE(e: E1 & Any)
 
     override fun takeVList(l: List<X & Any>)
     override fun <E2> takeEList(l2: List<E2 & Any>)

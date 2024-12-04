@@ -1,12 +1,9 @@
 FILE fqName:<root> fileName:/samConversionInVarargs.kt
   CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IFoo
-    FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo, i:kotlin.Int) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.IFoo
-      VALUE_PARAMETER name:i index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -17,9 +14,23 @@ FILE fqName:<root> fileName:/samConversionInVarargs.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:useVararg visibility:public modality:FINAL <> (foos:kotlin.Array<out <root>.IFoo>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:foos index:0 type:kotlin.Array<out <root>.IFoo> varargElementType:<root>.IFoo [vararg]
+    FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo, i:kotlin.Int) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.IFoo
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int
+  FUN name:testAdaptedCR visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
+      CALL 'public final fun useVararg (vararg foos: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        foos: VARARG type=kotlin.Array<out <root>.IFoo> varargElementType=<root>.IFoo
+          BLOCK type=<root>.IFoo origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVarargOfInt visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
+              BLOCK_BODY
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun withVarargOfInt (vararg xs: kotlin.Int): kotlin.String declared in <root>' type=kotlin.String origin=null
+                    xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                      GET_VAR 'p0: kotlin.Int declared in <root>.testAdaptedCR.withVarargOfInt' type=kotlin.Int origin=null
+            TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
+              FUNCTION_REFERENCE 'local final fun withVarargOfInt (p0: kotlin.Int): kotlin.Unit declared in <root>.testAdaptedCR' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVarargOfInt (vararg xs: kotlin.Int): kotlin.String declared in <root>
   FUN name:testLambda visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useVararg (vararg foos: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -30,7 +41,7 @@ FILE fqName:<root> fileName:/samConversionInVarargs.kt
                 VALUE_PARAMETER name:it index:0 type:kotlin.Int
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLambda'
-                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                    GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:testSeveralLambdas visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useVararg (vararg foos: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -41,35 +52,26 @@ FILE fqName:<root> fileName:/samConversionInVarargs.kt
                 VALUE_PARAMETER name:it index:0 type:kotlin.Int
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testSeveralLambdas'
-                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                    GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
             FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
                 VALUE_PARAMETER name:it index:0 type:kotlin.Int
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testSeveralLambdas'
-                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                    GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
             FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit
                 VALUE_PARAMETER name:it index:0 type:kotlin.Int
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testSeveralLambdas'
-                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                    GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  FUN name:useVararg visibility:public modality:FINAL <> (foos:kotlin.Array<out <root>.IFoo>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:foos index:0 type:kotlin.Array<out <root>.IFoo> varargElementType:<root>.IFoo [vararg]
+    BLOCK_BODY
   FUN name:withVarargOfInt visibility:public modality:FINAL <> (xs:kotlin.IntArray) returnType:kotlin.String
     VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun withVarargOfInt (vararg xs: kotlin.Int): kotlin.String declared in <root>'
         CONST String type=kotlin.String value=""
-  FUN name:testAdaptedCR visibility:public modality:FINAL <> () returnType:kotlin.Unit
-    BLOCK_BODY
-      CALL 'public final fun useVararg (vararg foos: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        foos: VARARG type=kotlin.Array<out <root>.IFoo> varargElementType=<root>.IFoo
-          TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
-            FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-              FUN ADAPTER_FOR_CALLABLE_REFERENCE name:withVarargOfInt visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit
-                VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
-                BLOCK_BODY
-                  CALL 'public final fun withVarargOfInt (vararg xs: kotlin.Int): kotlin.String declared in <root>' type=kotlin.String origin=null
-                    xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
-                      GET_VAR 'p0: kotlin.Int declared in <root>.testAdaptedCR.withVarargOfInt' type=kotlin.Int origin=null

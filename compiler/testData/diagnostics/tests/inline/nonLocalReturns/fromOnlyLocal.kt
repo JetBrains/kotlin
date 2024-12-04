@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 
 inline fun <R> onlyLocal(crossinline p: () -> R) {

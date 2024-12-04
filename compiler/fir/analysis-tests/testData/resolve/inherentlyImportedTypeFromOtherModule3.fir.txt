@@ -1,0 +1,50 @@
+Module: lib1
+FILE: module_lib1_inherentlyImportedTypeFromOtherModule3.kt
+    package lib1
+
+    public abstract class FirstBase : R|kotlin/Any| {
+        public constructor(): R|lib1/FirstBase| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract interface Result : R|kotlin/Any| {
+        }
+
+    }
+    public abstract class SecondBase : R|lib1/FirstBase| {
+        public constructor(): R|lib1/SecondBase| {
+            super<R|lib1/FirstBase|>()
+        }
+
+    }
+Module: lib2
+FILE: module_lib2_inherentlyImportedTypeFromOtherModule3.kt
+    package lib2
+
+    public abstract class Test : R|lib1/SecondBase| {
+        public constructor(): R|lib2/Test| {
+            super<R|lib1/SecondBase|>()
+        }
+
+        public final class Success : R|lib1/FirstBase.Result| {
+            public constructor(): R|lib2/Test.Success| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+Module: main
+FILE: module_main_inherentlyImportedTypeFromOtherModule3.kt
+    package main
+
+    public final class Main : R|lib2/Test| {
+        public constructor(): R|main/Main| {
+            super<R|lib2/Test|>()
+        }
+
+        public final fun usage(): R|lib1/FirstBase.Result| {
+            ^usage R|lib2/Test.Success.Success|()
+        }
+
+    }

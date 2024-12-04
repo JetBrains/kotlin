@@ -1,0 +1,24 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class /A { // /A|null[0]
+    final var x // /A.x|{}x[0]
+        final fun <get-x>(): /X // /A.x.<get-x>|<get-x>(){}[0]
+    final var y // /A.y|{}y[0]
+        final fun <get-y>(): /X // /A.y.<get-y>|<get-y>(){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}
+final class /B : /A { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+}
+final class /X { // /X|null[0]
+    final var value // /X.value|{}value[0]
+        final fun <get-value>(): kotlin/String // /X.value.<get-value>|<get-value>(){}[0]
+        final fun <set-value>(kotlin/String) // /X.value.<set-value>|<set-value>(kotlin.String){}[0]
+    constructor <init>() // /X.<init>|<init>(){}[0]
+    final fun plusAssign(kotlin/String) // /X.plusAssign|plusAssign(kotlin.String){}[0]
+}
+final fun /test(/B) // /test|test(B){}[0]

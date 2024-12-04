@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 class Outer<out E> {
     inner class Inner {
@@ -8,9 +8,8 @@ class Outer<out E> {
         fun baz(): Inner = this
     }
 
-    fun bar() = Inner()
+    fun bar(): Inner = Inner()
 
-    // Should be unsafe variance error here
     fun set(inner: Inner) {}
 }
 

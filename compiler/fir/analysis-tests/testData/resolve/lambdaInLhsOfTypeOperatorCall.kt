@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-39046
 
 fun foo(b: B<Int, Int>) {}
@@ -9,7 +10,7 @@ fun test_1(b: B<String, Number>) {
 }
 
 fun test_2(s: String) {
-    val func = { s.length } <!UNCHECKED_CAST!>as B<Int, Int><!>
+    val func = { s.length } <!CAST_NEVER_SUCCEEDS!>as<!> B<Int, Int>
 }
 
 class B<out K, V>(val k: K, val v: V)

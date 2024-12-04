@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun foo(x: String): String? = x
 
 fun calc(x: String?, y: String?): Int {
@@ -8,7 +9,7 @@ fun calc(x: String?, y: String?): Int {
         // x is not null in condition but we do not see it yet
     } while (x.length > 0)
     // y is nullable because of break
-    y.length
+    y<!UNSAFE_CALL!>.<!>length
     // x is not null, at least in theory
     return x.length
 }

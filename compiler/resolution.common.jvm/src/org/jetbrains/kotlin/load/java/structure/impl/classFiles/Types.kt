@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal abstract class JavaPlainType : ListBasedJavaAnnotationOwner, MutableJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
@@ -40,9 +39,17 @@ internal class PlainJavaClassifierType(
     private val classifierResolverResult by lazy(LazyThreadSafetyMode.NONE, classifierComputation)
 
     override val classifier get() = classifierResolverResult.classifier
-    override val isRaw
-        get() = typeArguments.isEmpty() &&
-                classifierResolverResult.classifier?.safeAs<JavaClass>()?.typeParameters?.isNotEmpty() == true
+    override val isRaw: Boolean
+        get() {
+            if (typeArguments.isNotEmpty()) return false
+            var javaClass = classifierResolverResult.classifier as? JavaClass
+            while (javaClass != null) {
+                if (javaClass.typeParameters.isNotEmpty()) return true
+                if (javaClass.isStatic) return false
+                javaClass = javaClass.outerClass
+            }
+            return false
+        }
 
     override val classifierQualifiedName: String
         get() = classifierResolverResult.qualifiedName

@@ -1,0 +1,32 @@
+package
+
+public fun box(): kotlin.String
+
+public open class C : base.B {
+    public constructor C()
+    invisible_fake final override /*1*/ /*fake_override*/ val f: kotlin.String
+    public final override /*1*/ /*fake_override*/ var f: kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package base {
+
+    public/*package*/ open class A {
+        public/*package*/ constructor A()
+        public final var f: kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class B : base.A {
+        public constructor B()
+        private final val f: kotlin.String = "FAIL"
+        public final override /*1*/ /*fake_override*/ var f: kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

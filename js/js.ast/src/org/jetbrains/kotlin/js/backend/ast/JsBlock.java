@@ -4,11 +4,11 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.util.SmartList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,8 +18,11 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     @NotNull
     private final List<JsStatement> statements;
 
+    @Nullable
+    private JsLocationWithSource closingBraceSource;
+
     public JsBlock() {
-        this(new ArrayList<JsStatement>());
+        this(new SmartList<JsStatement>());
     }
 
     public JsBlock(JsStatement statement) {
@@ -39,11 +42,20 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
         return statements;
     }
 
+    @Nullable
+    public JsLocationWithSource getClosingBraceSource() {
+        return closingBraceSource;
+    }
+
+    public void setClosingBraceSource(@Nullable JsLocationWithSource closingBraceLocation) {
+        this.closingBraceSource = closingBraceLocation;
+    }
+
     public boolean isEmpty() {
         return statements.isEmpty();
     }
 
-    public boolean isGlobalBlock() {
+    public boolean isTransparent() {
         return false;
     }
 
@@ -68,6 +80,8 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     @NotNull
     @Override
     public JsBlock deepCopy() {
-        return new JsBlock(AstUtil.deepCopy(statements)).withMetadataFrom(this);
+        JsBlock block = new JsBlock(AstUtil.deepCopy(statements)).withMetadataFrom(this);
+        block.setClosingBraceSource(getClosingBraceSource());
+        return block;
     }
 }

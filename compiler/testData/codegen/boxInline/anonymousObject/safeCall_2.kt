@@ -7,7 +7,7 @@ class W(val value: Any)
 inline fun W.safe(crossinline body : Any.() -> Unit) {
     {
         this.value?.body()
-    }()
+    }.let { it() }
 }
 
 // FILE: 2.kt
@@ -19,7 +19,7 @@ fun box(): String {
     W("OK").safe {
         {
             result = this as String
-        }()
+        }.let { it() }
     }
 
     return result

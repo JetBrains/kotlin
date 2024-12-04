@@ -6,11 +6,10 @@
 import org.jetbrains.benchmarksLauncher.*
 
 actual class NumericalLauncher : Launcher() {
-    override val benchmarks = BenchmarksCollection(
-            mutableMapOf(
-                    "BellardPi" to BenchmarkEntry(::jvmBellardPi)
-            )
+    actual override val baseBenchmarksSet = mutableMapOf(
+            "BellardPi" to BenchmarkEntry(::jvmBellardPi)
     )
+
 }
 
 fun jvmBellardPi() {

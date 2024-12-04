@@ -1,0 +1,1225 @@
+@kotlin.Metadata
+public interface AbstractPoint {
+    // source: 'overrides.kt'
+    public abstract method getX(): java.lang.Object
+    public abstract method getY(): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface AbstractSegment {
+    // source: 'overrides.kt'
+    public abstract method getP1(): java.lang.Object
+    public abstract method getP2(): java.lang.Object
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class DPoint {
+    // source: 'overrides.kt'
+    private final field x: double
+    private final field y: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): DPoint
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public @org.jetbrains.annotations.NotNull method getX(): java.lang.Double
+    public synthetic bridge method getX(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getY(): java.lang.Double
+    public synthetic bridge method getY(): java.lang.Object
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-x(): double
+    public synthetic final method unbox-impl-y(): double
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class DPointWithInterface {
+    // source: 'overrides.kt'
+    private final field x: double
+    private final field y: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): DPointWithInterface
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public @org.jetbrains.annotations.NotNull method getSomethingGeneric(): DPoint
+    public synthetic bridge method getSomethingGeneric(): java.lang.Object
+    public static @org.jetbrains.annotations.NotNull method getSomethingGeneric-impl(p0: double, p1: double): DPoint
+    public @org.jetbrains.annotations.NotNull method getSomethingMFVC(): DPoint
+    public static @org.jetbrains.annotations.NotNull method getSomethingMFVC-impl(p0: double, p1: double): DPoint
+    public method getSomethingRegular(): int
+    public static method getSomethingRegular-impl(p0: double, p1: double): int
+    public final method getX(): double
+    public final method getY(): double
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public synthetic bridge method setSomethingGeneric(p0: java.lang.Object): void
+    public method setSomethingGeneric-nuuzChU(p0: double, p1: double): void
+    public static method setSomethingGeneric-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setSomethingMFVC-nuuzChU(p0: double, p1: double): void
+    public static method setSomethingMFVC-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setSomethingRegular(p0: int): void
+    public static method setSomethingRegular-impl(p0: double, p1: double, p2: int): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-x(): double
+    public synthetic final method unbox-impl-y(): double
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class DSegment {
+    // source: 'overrides.kt'
+    private final field p1-x: double
+    private final field p1-y: double
+    private final field p2-x: double
+    private final field p2-y: double
+    private synthetic method <init>(p0: double, p1: double, p2: double, p3: double): void
+    public synthetic final static method box-impl(p0: double, p1: double, p2: double, p3: double): DSegment
+    public final static method constructor-impl(p0: double, p1: double, p2: double, p3: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: double, p3: double, p4: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: double, p7: double): boolean
+    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic bridge method getP1(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getP2(): DPoint
+    public synthetic bridge method getP2(): java.lang.Object
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double, p2: double, p3: double): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double, p2: double, p3: double): java.lang.String
+    public synthetic final method unbox-impl-p1(): DPoint
+    public synthetic final method unbox-impl-p1-x(): double
+    public synthetic final method unbox-impl-p1-y(): double
+    public synthetic final method unbox-impl-p2(): DPoint
+    public synthetic final method unbox-impl-p2-x(): double
+    public synthetic final method unbox-impl-p2-y(): double
+}
+
+@kotlin.Metadata
+public final class DataClassException {
+    // source: 'overrides.kt'
+    private final @org.jetbrains.annotations.Nullable field value: java.lang.Object
+    public method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public final @org.jetbrains.annotations.Nullable method component1(): java.lang.Object
+    public synthetic static method copy$default(p0: DataClassException, p1: java.lang.Object, p2: int, p3: java.lang.Object): DataClassException
+    public final @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.Nullable p0: java.lang.Object): DataClassException
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.Nullable method getValue(): java.lang.Object
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class GenericFakeOverride {
+    // source: 'overrides.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic bridge method getP(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic bridge method getP1(): java.lang.Object
+    public method setP(@org.jetbrains.annotations.NotNull p0: DPoint): void
+    public synthetic bridge method setP(p0: java.lang.Object): void
+    public method setP1(@org.jetbrains.annotations.NotNull p0: DPoint): void
+    public synthetic bridge method setP1(p0: java.lang.Object): void
+    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class GenericFakeOverrideMFVC {
+    // source: 'overrides.kt'
+    private final field field1: double
+    private final field field2: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): GenericFakeOverrideMFVC
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public final method getField1(): double
+    public final method getField2(): double
+    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic bridge method getP(): java.lang.Object
+    public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
+    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic bridge method getP1(): java.lang.Object
+    public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: double, p1: double): DPoint
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public synthetic bridge method setP(p0: java.lang.Object): void
+    public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setP-nuuzChU(p0: java.lang.Object): void
+    public synthetic bridge method setP1(p0: java.lang.Object): void
+    public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setP1-nuuzChU(p0: java.lang.Object): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-field1(): double
+    public synthetic final method unbox-impl-field2(): double
+    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
+    // source: 'overrides.kt'
+    private final field field1: double
+    private final field field2: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): GenericFakeOverrideMFVCWithMFVCUpperBound
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public final method getField1(): double
+    public final method getField2(): double
+    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
+    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: double, p1: double): DPoint
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public method setP-nuuzChU(p0: double, p1: double): void
+    public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
+    public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-field1(): double
+    public synthetic final method unbox-impl-field2(): double
+    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class GenericFakeOverrideWithMFVCUpperBound {
+    // source: 'overrides.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public method setP-nuuzChU(p0: double, p1: double): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
+    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface GenericMFVCHolder {
+    // source: 'overrides.kt'
+    public abstract method getP(): java.lang.Object
+    public abstract method getP1(): java.lang.Object
+    public abstract method setP(p0: java.lang.Object): void
+    public abstract method setP1(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class GenericMFVCHolderWithImpls$DefaultImpls {
+    // source: 'overrides.kt'
+    public static method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public static method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public static method setP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public static method setP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface GenericMFVCHolderWithImpls {
+    // source: 'overrides.kt'
+    public abstract method getP(): java.lang.Object
+    public abstract method getP1(): java.lang.Object
+    public abstract method setP(p0: java.lang.Object): void
+    public abstract method setP1(p0: java.lang.Object): void
+    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface GenericMFVCHolderWithMFVCUpperBound {
+    // source: 'overrides.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic abstract method getP-x(): double
+    public synthetic abstract method getP-y(): double
+    public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic abstract method getP1-x(): double
+    public synthetic abstract method getP1-y(): double
+    public abstract method setP-nuuzChU(p0: double, p1: double): void
+    public abstract method setP1-nuuzChU(p0: double, p1: double): void
+}
+
+@kotlin.Metadata
+public final class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls {
+    // source: 'overrides.kt'
+    public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): DPoint
+    public synthetic static method getP-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public synthetic static method getP-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): DPoint
+    public synthetic static method getP1-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public synthetic static method getP1-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
+    public static method setP-nuuzChU(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
+    public static method setP1-nuuzChU(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
+    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface GenericMFVCHolderWithMFVCUpperBoundWithImpls {
+    // source: 'overrides.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic abstract method getP-x(): double
+    public synthetic abstract method getP-y(): double
+    public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic abstract method getP1-x(): double
+    public synthetic abstract method getP1-y(): double
+    public abstract method setP-nuuzChU(p0: double, p1: double): void
+    public abstract method setP1-nuuzChU(p0: double, p1: double): void
+    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$100 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
+    inner (anonymous) class OverridesKt$box$100
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$101 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
+    inner (anonymous) class OverridesKt$box$101
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$102 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
+    inner (anonymous) class OverridesKt$box$102
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$104 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
+    inner (anonymous) class OverridesKt$box$104
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$114 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
+    inner (anonymous) class OverridesKt$box$114
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$115 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
+    inner (anonymous) class OverridesKt$box$115
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$132 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
+    inner (anonymous) class OverridesKt$box$132
+    method <init>(p0: double, p1: double, p2: double, p3: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$133 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dSegment-p1-x: double
+    synthetic final field $dSegment-p1-y: double
+    synthetic final field $dSegment-p2-x: double
+    synthetic final field $dSegment-p2-y: double
+    inner (anonymous) class OverridesKt$box$133
+    method <init>(p0: double, p1: double, p2: double, p3: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$31 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $realOverride: RealOverride
+    inner (anonymous) class OverridesKt$box$31
+    method <init>(p0: RealOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$32 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $realOverride: RealOverride
+    inner (anonymous) class OverridesKt$box$32
+    method <init>(p0: RealOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$33 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $realOverride: RealOverride
+    inner (anonymous) class OverridesKt$box$33
+    method <init>(p0: RealOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$34 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $realOverride: RealOverride
+    inner (anonymous) class OverridesKt$box$34
+    method <init>(p0: RealOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$35 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $realOverride: RealOverride
+    inner (anonymous) class OverridesKt$box$35
+    method <init>(p0: RealOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$36 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $realOverride: RealOverride
+    inner (anonymous) class OverridesKt$box$36
+    method <init>(p0: RealOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$37 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $realOverride: RealOverride
+    inner (anonymous) class OverridesKt$box$37
+    method <init>(p0: RealOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$38 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $realOverride: RealOverride
+    inner (anonymous) class OverridesKt$box$38
+    method <init>(p0: RealOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$39 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $realOverride: RealOverride
+    inner (anonymous) class OverridesKt$box$39
+    method <init>(p0: RealOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$48 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverride: GenericFakeOverride
+    inner (anonymous) class OverridesKt$box$48
+    method <init>(p0: GenericFakeOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$49 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverride: GenericFakeOverride
+    inner (anonymous) class OverridesKt$box$49
+    method <init>(p0: GenericFakeOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$50 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverride: GenericFakeOverride
+    inner (anonymous) class OverridesKt$box$50
+    method <init>(p0: GenericFakeOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$51 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverride: GenericFakeOverride
+    inner (anonymous) class OverridesKt$box$51
+    method <init>(p0: GenericFakeOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$52 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
+    inner (anonymous) class OverridesKt$box$52
+    method <init>(p0: ReifiedFakeOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$53 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
+    inner (anonymous) class OverridesKt$box$53
+    method <init>(p0: ReifiedFakeOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$54 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
+    inner (anonymous) class OverridesKt$box$54
+    method <init>(p0: ReifiedFakeOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$55 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
+    inner (anonymous) class OverridesKt$box$55
+    method <init>(p0: ReifiedFakeOverride): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$56 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
+    inner (anonymous) class OverridesKt$box$56
+    method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$57 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
+    inner (anonymous) class OverridesKt$box$57
+    method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$58 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
+    inner (anonymous) class OverridesKt$box$58
+    method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$59 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
+    inner (anonymous) class OverridesKt$box$59
+    method <init>(p0: GenericFakeOverrideWithMFVCUpperBound): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$72 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
+    inner (anonymous) class OverridesKt$box$72
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$73 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
+    inner (anonymous) class OverridesKt$box$73
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$74 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
+    inner (anonymous) class OverridesKt$box$74
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$75 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideMFVC-field1: double
+    synthetic final field $genericFakeOverrideMFVC-field2: double
+    inner (anonymous) class OverridesKt$box$75
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$76 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
+    inner (anonymous) class OverridesKt$box$76
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$77 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
+    inner (anonymous) class OverridesKt$box$77
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$78 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
+    inner (anonymous) class OverridesKt$box$78
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$79 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $reifiedFakeOverrideMFVC-field1: double
+    synthetic final field $reifiedFakeOverrideMFVC-field2: double
+    inner (anonymous) class OverridesKt$box$79
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$80 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
+    inner (anonymous) class OverridesKt$box$80
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$81 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
+    inner (anonymous) class OverridesKt$box$81
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$82 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
+    inner (anonymous) class OverridesKt$box$82
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$83 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: double
+    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: double
+    inner (anonymous) class OverridesKt$box$83
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$96 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
+    inner (anonymous) class OverridesKt$box$96
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$97 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dPointWithInterface-x: double
+    synthetic final field $dPointWithInterface-y: double
+    inner (anonymous) class OverridesKt$box$97
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$dPointLam$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $dPoint-x: double
+    synthetic final field $dPoint-y: double
+    inner (anonymous) class OverridesKt$box$dPointLam$1
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam1$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam1$1
+    inner (anonymous) class OverridesKt$box$lam1$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam11$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam11$1
+    inner (anonymous) class OverridesKt$box$lam11$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam13$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam13$1
+    inner (anonymous) class OverridesKt$box$lam13$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam15$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam15$1
+    inner (anonymous) class OverridesKt$box$lam15$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam17$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam17$1
+    inner (anonymous) class OverridesKt$box$lam17$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam19$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam19$1
+    inner (anonymous) class OverridesKt$box$lam19$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam3$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam3$1
+    inner (anonymous) class OverridesKt$box$lam3$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam5$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam5$1
+    inner (anonymous) class OverridesKt$box$lam5$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam7$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam7$1
+    inner (anonymous) class OverridesKt$box$lam7$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$lam9$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    public final static field INSTANCE: OverridesKt$box$lam9$1
+    inner (anonymous) class OverridesKt$box$lam9$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): java.lang.Void
+}
+
+@kotlin.Metadata
+final class OverridesKt$box$otherDPointLam$1 {
+    // source: 'overrides.kt'
+    enclosing method OverridesKt.box()Ljava/lang/String;
+    synthetic final field $otherDPoint-x: double
+    synthetic final field $otherDPoint-y: double
+    inner (anonymous) class OverridesKt$box$otherDPointLam$1
+    method <init>(p0: double, p1: double): void
+    public final method invoke(): DPoint
+    public synthetic bridge method invoke(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class OverridesKt {
+    // source: 'overrides.kt'
+    inner (anonymous) class OverridesKt$box$100
+    inner (anonymous) class OverridesKt$box$101
+    inner (anonymous) class OverridesKt$box$102
+    inner (anonymous) class OverridesKt$box$104
+    inner (anonymous) class OverridesKt$box$114
+    inner (anonymous) class OverridesKt$box$115
+    inner (anonymous) class OverridesKt$box$132
+    inner (anonymous) class OverridesKt$box$133
+    inner (anonymous) class OverridesKt$box$31
+    inner (anonymous) class OverridesKt$box$32
+    inner (anonymous) class OverridesKt$box$33
+    inner (anonymous) class OverridesKt$box$34
+    inner (anonymous) class OverridesKt$box$35
+    inner (anonymous) class OverridesKt$box$36
+    inner (anonymous) class OverridesKt$box$37
+    inner (anonymous) class OverridesKt$box$38
+    inner (anonymous) class OverridesKt$box$39
+    inner (anonymous) class OverridesKt$box$48
+    inner (anonymous) class OverridesKt$box$49
+    inner (anonymous) class OverridesKt$box$50
+    inner (anonymous) class OverridesKt$box$51
+    inner (anonymous) class OverridesKt$box$52
+    inner (anonymous) class OverridesKt$box$53
+    inner (anonymous) class OverridesKt$box$54
+    inner (anonymous) class OverridesKt$box$55
+    inner (anonymous) class OverridesKt$box$56
+    inner (anonymous) class OverridesKt$box$57
+    inner (anonymous) class OverridesKt$box$58
+    inner (anonymous) class OverridesKt$box$59
+    inner (anonymous) class OverridesKt$box$72
+    inner (anonymous) class OverridesKt$box$73
+    inner (anonymous) class OverridesKt$box$74
+    inner (anonymous) class OverridesKt$box$75
+    inner (anonymous) class OverridesKt$box$76
+    inner (anonymous) class OverridesKt$box$77
+    inner (anonymous) class OverridesKt$box$78
+    inner (anonymous) class OverridesKt$box$79
+    inner (anonymous) class OverridesKt$box$80
+    inner (anonymous) class OverridesKt$box$81
+    inner (anonymous) class OverridesKt$box$82
+    inner (anonymous) class OverridesKt$box$83
+    inner (anonymous) class OverridesKt$box$96
+    inner (anonymous) class OverridesKt$box$97
+    inner (anonymous) class OverridesKt$box$dPointLam$1
+    inner (anonymous) class OverridesKt$box$lam1$1
+    inner (anonymous) class OverridesKt$box$lam11$1
+    inner (anonymous) class OverridesKt$box$lam13$1
+    inner (anonymous) class OverridesKt$box$lam15$1
+    inner (anonymous) class OverridesKt$box$lam17$1
+    inner (anonymous) class OverridesKt$box$lam19$1
+    inner (anonymous) class OverridesKt$box$lam3$1
+    inner (anonymous) class OverridesKt$box$lam5$1
+    inner (anonymous) class OverridesKt$box$lam7$1
+    inner (anonymous) class OverridesKt$box$lam9$1
+    inner (anonymous) class OverridesKt$box$otherDPointLam$1
+    private final static method box$lambda$10(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$100(): double
+    private final static method box$lambda$101(p0: double): double
+    private final static method box$lambda$102(): double
+    private final static method box$lambda$103(p0: double): double
+    private final static method box$lambda$104(): double
+    private final static method box$lambda$105(p0: double, p1: double, p2: double, p3: double): double
+    private final static method box$lambda$106(): double
+    private final static method box$lambda$107(p0: double, p1: double, p2: double, p3: double): double
+    private final static method box$lambda$108(): double
+    private final static method box$lambda$109(p0: double, p1: double, p2: double, p3: double): double
+    private final static method box$lambda$11(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$110(): double
+    private final static method box$lambda$111(p0: double, p1: double, p2: double, p3: double): double
+    private final static method box$lambda$12(): kotlin.Unit
+    private final static method box$lambda$13(): kotlin.Unit
+    private final static method box$lambda$14(): java.lang.String
+    private final static method box$lambda$15(p0: double, p1: double): java.lang.String
+    private final static method box$lambda$16(): java.lang.String
+    private final static method box$lambda$17(p0: double, p1: double): java.lang.String
+    private final static method box$lambda$18(): boolean
+    private final static method box$lambda$19(p0: double, p1: double): boolean
+    private final static method box$lambda$20(): boolean
+    private final static method box$lambda$21(p0: double, p1: double): boolean
+    private final static method box$lambda$22(): boolean
+    private final static method box$lambda$23(p0: double, p1: double): boolean
+    private final static method box$lambda$24(): boolean
+    private final static method box$lambda$25(p0: double, p1: double): boolean
+    private final static method box$lambda$26(): boolean
+    private final static method box$lambda$27(p0: double, p1: double, p2: double, p3: double): boolean
+    private final static method box$lambda$28(): boolean
+    private final static method box$lambda$29(p0: double, p1: double, p2: double, p3: double): boolean
+    private final static method box$lambda$3(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$30(): boolean
+    private final static method box$lambda$31(p0: double, p1: double, p2: double, p3: double): boolean
+    private final static method box$lambda$32(): boolean
+    private final static method box$lambda$33(p0: double, p1: double, p2: double, p3: double): boolean
+    private final static method box$lambda$34(p0: double, p1: double): int
+    private final static method box$lambda$35(p0: double, p1: double): int
+    private final static method box$lambda$36(): double
+    private final static method box$lambda$37(p0: double): double
+    private final static method box$lambda$38(): double
+    private final static method box$lambda$39(p0: double, p1: double): double
+    private final static method box$lambda$4(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$40(): double
+    private final static method box$lambda$41(p0: double): double
+    private final static method box$lambda$42(): double
+    private final static method box$lambda$43(p0: double, p1: double): double
+    private final static method box$lambda$44(p0: RealOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$45(p0: RealOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$46(p0: RealOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$47(p0: RealOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$48(p0: RealOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$49(p0: RealOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$5(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$50(p0: RealOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$51(p0: RealOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$52(p0: GenericFakeOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$53(p0: GenericFakeOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$54(p0: GenericFakeOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$55(p0: GenericFakeOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$56(p0: ReifiedFakeOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$57(p0: ReifiedFakeOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$58(p0: ReifiedFakeOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$59(p0: ReifiedFakeOverride, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$6(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$60(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$61(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$62(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$63(p0: GenericFakeOverrideWithMFVCUpperBound, p1: double, p2: double): kotlin.Unit
+    private final static method box$lambda$64(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$65(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$66(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$67(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$68(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$69(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$7(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$70(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$71(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$72(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$73(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$74(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$75(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$76(p0: double, p1: double): int
+    private final static method box$lambda$77(p0: double, p1: double): int
+    private final static method box$lambda$78(p0: double, p1: double): int
+    private final static method box$lambda$79(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$8(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$80(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$81(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$82(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$83(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$84(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$85(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$86(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$87(p0: double, p1: double, p2: double, p3: double): kotlin.Unit
+    private final static method box$lambda$88(): double
+    private final static method box$lambda$89(p0: double): double
+    private final static method box$lambda$9(p0: double, p1: double): kotlin.Unit
+    private final static method box$lambda$90(): double
+    private final static method box$lambda$91(p0: double): double
+    private final static method box$lambda$92(): double
+    private final static method box$lambda$93(p0: double): double
+    private final static method box$lambda$94(): double
+    private final static method box$lambda$95(p0: double): double
+    private final static method box$lambda$96(): double
+    private final static method box$lambda$97(p0: double): double
+    private final static method box$lambda$98(): double
+    private final static method box$lambda$99(p0: double): double
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method equal(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): void
+}
+
+@kotlin.Metadata
+public final class RealOverride {
+    // source: 'overrides.kt'
+    private field p-x: double
+    private field p-y: double
+    private method <init>(p0: double, p1: double): void
+    public synthetic method <init>(p0: double, p1: double, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic bridge method getP(): java.lang.Object
+    public synthetic method getP-x(): double
+    public synthetic method getP-y(): double
+    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic bridge method getP1(): java.lang.Object
+    public synthetic method getP1-x(): double
+    public synthetic method getP1-y(): double
+    public synthetic bridge method setP(p0: java.lang.Object): void
+    public method setP-nuuzChU(p0: double, p1: double): void
+    public synthetic bridge method setP1(p0: java.lang.Object): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
+}
+
+@kotlin.Metadata
+public final class ReifiedFakeOverride {
+    // source: 'overrides.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public method setP-nuuzChU(p0: double, p1: double): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
+    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class ReifiedFakeOverrideMFVC {
+    // source: 'overrides.kt'
+    private final field field1: double
+    private final field field2: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): ReifiedFakeOverrideMFVC
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public final method getField1(): double
+    public final method getField2(): double
+    public @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public static @org.jetbrains.annotations.NotNull method getP-impl(p0: double, p1: double): DPoint
+    public @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: double, p1: double): DPoint
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public method setP-nuuzChU(p0: double, p1: double): void
+    public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
+    public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-field1(): double
+    public synthetic final method unbox-impl-field2(): double
+    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface ReifiedMFVCHolder {
+    // source: 'overrides.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic abstract method getP-x(): double
+    public synthetic abstract method getP-y(): double
+    public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic abstract method getP1-x(): double
+    public synthetic abstract method getP1-y(): double
+    public abstract method setP-nuuzChU(p0: double, p1: double): void
+    public abstract method setP1-nuuzChU(p0: double, p1: double): void
+}
+
+@kotlin.Metadata
+public final class ReifiedMFVCHolderWithImpls$DefaultImpls {
+    // source: 'overrides.kt'
+    public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): DPoint
+    public synthetic static method getP-x(p0: ReifiedMFVCHolderWithImpls): double
+    public synthetic static method getP-y(p0: ReifiedMFVCHolderWithImpls): double
+    public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): DPoint
+    public synthetic static method getP1-x(p0: ReifiedMFVCHolderWithImpls): double
+    public synthetic static method getP1-y(p0: ReifiedMFVCHolderWithImpls): double
+    public static method setP-nuuzChU(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
+    public static method setP1-nuuzChU(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
+    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface ReifiedMFVCHolderWithImpls {
+    // source: 'overrides.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getP(): DPoint
+    public synthetic abstract method getP-x(): double
+    public synthetic abstract method getP-y(): double
+    public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
+    public synthetic abstract method getP1-x(): double
+    public synthetic abstract method getP1-y(): double
+    public abstract method setP-nuuzChU(p0: double, p1: double): void
+    public abstract method setP1-nuuzChU(p0: double, p1: double): void
+    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface SomePointInterface {
+    // source: 'overrides.kt'
+    public abstract method getSomethingGeneric(): java.lang.Object
+    public abstract @org.jetbrains.annotations.NotNull method getSomethingMFVC(): DPoint
+    public synthetic abstract method getSomethingMFVC-x(): double
+    public synthetic abstract method getSomethingMFVC-y(): double
+    public abstract method getSomethingRegular(): int
+    public abstract method setSomethingGeneric(p0: java.lang.Object): void
+    public abstract method setSomethingMFVC-nuuzChU(p0: double, p1: double): void
+    public abstract method setSomethingRegular(p0: int): void
+}
+
+@kotlin.Metadata
+public interface SomePointInterfaceWithMFVCBound {
+    // source: 'overrides.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getSomethingGeneric(): DPoint
+    public synthetic abstract method getSomethingGeneric-x(): double
+    public synthetic abstract method getSomethingGeneric-y(): double
+    public abstract @org.jetbrains.annotations.NotNull method getSomethingMFVC(): DPoint
+    public synthetic abstract method getSomethingMFVC-x(): double
+    public synthetic abstract method getSomethingMFVC-y(): double
+    public abstract method getSomethingRegular(): int
+    public abstract method setSomethingGeneric-nuuzChU(p0: double, p1: double): void
+    public abstract method setSomethingMFVC-nuuzChU(p0: double, p1: double): void
+    public abstract method setSomethingRegular(p0: int): void
+}

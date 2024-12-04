@@ -5,25 +5,22 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 
 class JsIrModuleSerializer(
-    messageLogger: IrMessageLogger,
+    settings: IrSerializationSettings,
+    diagnosticReporter: IrDiagnosticReporter,
     irBuiltIns: IrBuiltIns,
-    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-    compatibilityMode: CompatibilityMode,
-    val skipExpects: Boolean
-) : IrModuleSerializer<JsIrFileSerializer>(messageLogger, compatibilityMode) {
+    private val jsIrFileMetadataFactory: JsIrFileMetadataFactory = JsIrFileEmptyMetadataFactory,
+) : IrModuleSerializer<JsIrFileSerializer>(settings, diagnosticReporter) {
 
-    private val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
+    override val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
 
     override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
-        JsIrFileSerializer(messageLogger, DeclarationTable(globalDeclarationTable), expectDescriptorToSymbol, skipExpects = skipExpects, compatibilityMode = compatibilityMode)
+        JsIrFileSerializer(settings, DeclarationTable.Default(globalDeclarationTable), jsIrFileMetadataFactory)
 }

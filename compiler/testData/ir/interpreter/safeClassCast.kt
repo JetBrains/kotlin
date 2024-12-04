@@ -34,6 +34,6 @@ const val c6 = <!EVALUATED: `false`!>arrayOf<List<Int>>(listOf(1, 2), listOf(2, 
 const val c7 = <!EVALUATED: `false`!>Array<List<Int>>(3) { listOf(it, it + 1) } as? Array<List<String>?> == null<!>
 const val c8 = <!EVALUATED: `true`!>Array<List<Int>>(3) { listOf(it, it + 1) } as? Array<Set<Int>> == null<!>
 
-const val d1 = arrayCast(arrayOf<Int>(1, 2, 3)).<!EVALUATED: `1`!>size<!>
-const val d2 = arrayCast(*arrayOf<Int>(1, 2, 3)).<!EVALUATED: `3`!>size<!>
-const val d3 = arrayCast<Int>(1, 2, 3).<!EVALUATED: `3`!>size<!>
+const val d1 = <!EVALUATED: `1`!>arrayCast(arrayOf<Int>(1, 2, 3)).size<!>
+const val d2 = <!EVALUATED: `3`!>arrayCast(*arrayOf<Int>(1, 2, 3)).size<!>
+const val d3 = <!EVALUATED: `3`!>arrayCast<Int>(1, 2, 3).size<!>

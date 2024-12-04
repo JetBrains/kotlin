@@ -1,0 +1,28 @@
+package
+
+public fun `should not work with assignment when there is no annotation on a type`(): kotlin.Unit
+public fun StringProperty.assign(/*0*/ v: kotlin.Int): kotlin.Unit
+
+public final data class StringProperty {
+    public constructor StringProperty(/*0*/ v: kotlin.String)
+    public final var v: kotlin.String
+    public final fun assign(/*0*/ v: StringProperty): kotlin.Unit
+    public final fun assign(/*0*/ v: kotlin.String): kotlin.Unit
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ v: kotlin.String = ...): StringProperty
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(): kotlin.String
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Task {
+    public constructor Task(/*0*/ input: StringProperty)
+    public final val input: StringProperty
+    public final operator /*synthesized*/ fun component1(): StringProperty
+    public final /*synthesized*/ fun copy(/*0*/ input: StringProperty = ...): Task
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+

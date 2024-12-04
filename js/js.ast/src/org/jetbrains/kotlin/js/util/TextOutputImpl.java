@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.util;
 import java.util.Arrays;
 
 public class TextOutputImpl implements TextOutput {
-    private final boolean compact;
     private int identLevel = 0;
     private final static int indentGranularity = 2;
     private char[][] indents = new char[][] {new char[0]};
@@ -18,15 +17,6 @@ public class TextOutputImpl implements TextOutput {
     private int column = 0;
 
     public TextOutputImpl() {
-        this(false);
-    }
-
-    public boolean isCompact() {
-        return compact;
-    }
-
-    public TextOutputImpl(boolean compact) {
-        this.compact = compact;
         out = new StringBuilder();
     }
 
@@ -119,15 +109,8 @@ public class TextOutputImpl implements TextOutput {
     }
 
     @Override
-    public void printOpt(char c) {
-        if (!compact) {
-            print(c);
-        }
-    }
-
-    @Override
     public void maybeIndent() {
-        if (justNewlined && !compact) {
+        if (justNewlined) {
             printAndCount(indents[identLevel]);
             justNewlined = false;
         }

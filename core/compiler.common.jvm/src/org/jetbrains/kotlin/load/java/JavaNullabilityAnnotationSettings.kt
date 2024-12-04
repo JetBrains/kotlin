@@ -9,8 +9,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.findValueForMostSpecificFqname
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-val JSPECIFY_ANNOTATIONS_PACKAGE = FqName("org.jspecify.nullness")
+val JSPECIFY_OLD_ANNOTATIONS_PACKAGE = FqName("org.jspecify.nullness")
+val JSPECIFY_ANNOTATIONS_PACKAGE = FqName("org.jspecify.annotations")
+val RXJAVA3_ANNOTATIONS_PACKAGE = FqName("io.reactivex.rxjava3.annotations")
 val CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE = FqName("org.checkerframework.checker.nullness.compatqual")
+
+private val RXJAVA3_ANNOTATIONS_PACKAGE_NAME = RXJAVA3_ANNOTATIONS_PACKAGE.asString()
+
+val RXJAVA3_ANNOTATIONS = arrayOf(
+    FqName("$RXJAVA3_ANNOTATIONS_PACKAGE_NAME.Nullable"),
+    FqName("$RXJAVA3_ANNOTATIONS_PACKAGE_NAME.NonNull")
+)
 
 val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullabilityAnnotationsStatus> = NullabilityAnnotationStatesImpl(
     mapOf(
@@ -34,14 +43,19 @@ val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullability
             sinceVersion = null
         ),
         FqName("lombok") to JavaNullabilityAnnotationsStatus.DEFAULT,
-        JSPECIFY_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
+        JSPECIFY_OLD_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
             reportLevelBefore = ReportLevel.WARN,
-            sinceVersion = KotlinVersion(1, 7),
+            sinceVersion = KotlinVersion(2, 1),
             reportLevelAfter = ReportLevel.STRICT
         ),
-        FqName("io.reactivex.rxjava3.annotations") to JavaNullabilityAnnotationsStatus(
+        JSPECIFY_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
             reportLevelBefore = ReportLevel.WARN,
-            sinceVersion = KotlinVersion(1, 7),
+            sinceVersion = KotlinVersion(2, 1),
+            reportLevelAfter = ReportLevel.STRICT
+        ),
+        RXJAVA3_ANNOTATIONS_PACKAGE to JavaNullabilityAnnotationsStatus(
+            reportLevelBefore = ReportLevel.WARN,
+            sinceVersion = KotlinVersion(1, 8),
             reportLevelAfter = ReportLevel.STRICT
         ),
     )
@@ -72,7 +86,7 @@ fun getDefaultReportLevelForAnnotation(annotationFqName: FqName) =
 fun getReportLevelForAnnotation(
     annotation: FqName,
     configuredReportLevels: NullabilityAnnotationStates<ReportLevel>,
-    configuredKotlinVersion: KotlinVersion = KotlinVersion.CURRENT
+    configuredKotlinVersion: KotlinVersion = KotlinVersion(1, 7, 20)
 ): ReportLevel {
     configuredReportLevels[annotation]?.let { return it }
 

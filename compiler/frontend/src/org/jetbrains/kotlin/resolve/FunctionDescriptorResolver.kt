@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.google.common.collect.HashMultimap
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiElement
 import com.intellij.util.AstLoadingFilter
@@ -57,10 +58,11 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
@@ -165,7 +167,7 @@ class FunctionDescriptorResolver(
                     trace, scope, dataFlowInfo, function, functionDescriptor, inferenceSession
                 )
             else ->
-                ErrorUtils.createErrorType("No type, no body")
+                ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE, functionDescriptor.name.asString())
         }
         functionDescriptor.setReturnType(inferredReturnType)
     }
@@ -197,6 +199,16 @@ class FunctionDescriptorResolver(
                 if (function is KtFunctionLiteral) expectedFunctionType.getReceiverType() else null
             }
 
+        val contextReceivers = function.contextReceivers
+        val contextReceiverTypes =
+            if (function is KtFunctionLiteral) expectedFunctionType.getContextReceiversTypes()
+            else contextReceivers
+                .mapNotNull {
+                    val typeReference = it.typeReference() ?: return@mapNotNull null
+                    val type = typeResolver.resolveType(headerScope, typeReference, trace, true)
+                    ContextReceiverTypeWithLabel(type, it.labelNameAsName())
+                }
+
 
         val valueParameterDescriptors =
             createValueParameterDescriptors(function, functionDescriptor, headerScope, trace, expectedFunctionType, inferenceSession)
@@ -223,15 +235,43 @@ class FunctionDescriptorResolver(
         }
 
         val extensionReceiver = receiverType?.let {
-            val splitter = AnnotationSplitter(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            val splitter = AnnotationSplitter(storageManager, it.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
             DescriptorFactory.createExtensionReceiverParameterForCallable(
                 functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
             )
+        }
+        val contextReceiverDescriptors = contextReceiverTypes.mapIndexedNotNull { index, contextReceiver ->
+            val splitter = AnnotationSplitter(storageManager, contextReceiver.type.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            DescriptorFactory.createContextReceiverParameterForCallable(
+                functionDescriptor,
+                contextReceiver.type,
+                contextReceiver.label,
+                splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER),
+                index
+            )
+        }
+
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+            val labelNameToReceiverMap = HashMultimap.create<String, ReceiverParameterDescriptor>()
+            if (receiverTypeRef != null && extensionReceiver != null) {
+                receiverTypeRef.nameForReceiverLabel()?.let {
+                    labelNameToReceiverMap.put(it, extensionReceiver)
+                }
+            }
+            contextReceiverDescriptors.zip(0 until contextReceivers.size).reversed()
+                .forEach { (contextReceiverDescriptor, i) ->
+                    contextReceivers[i].name()?.let {
+                        labelNameToReceiverMap.put(it, contextReceiverDescriptor)
+                    }
+                }
+
+            trace.record(BindingContext.DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, functionDescriptor, labelNameToReceiverMap)
         }
 
         functionDescriptor.initialize(
             extensionReceiver,
             getDispatchReceiverParameterIfNeeded(container),
+            contextReceiverDescriptors,
             typeParameterDescriptors,
             valueParameterDescriptors,
             returnType,
@@ -293,7 +333,7 @@ class FunctionDescriptorResolver(
                 // it parameter for lambda
                 val valueParameterDescriptor = expectedValueParameters.single()
                 val it = ValueParameterDescriptorImpl(
-                    functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
+                    functionDescriptor, null, 0, Annotations.EMPTY, StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME,
                     expectedParameterTypes!!.single(), valueParameterDescriptor.declaresDefaultValue(),
                     valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
                     valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE
@@ -327,6 +367,13 @@ class FunctionDescriptorResolver(
     private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isBuiltinFunctionalType
     private fun KotlinType.getReceiverType(): KotlinType? =
         if (functionTypeExpected()) this.getReceiverTypeFromFunctionType() else null
+
+    private fun KotlinType.getContextReceiversTypes(): List<ContextReceiverTypeWithLabel> =
+        if (functionTypeExpected()) {
+            this.getContextReceiverTypesFromFunctionType().map { ContextReceiverTypeWithLabel(it, label = null)}
+        } else {
+            emptyList()
+        }
 
     private fun KotlinType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
         if (functionTypeExpected()) {
@@ -397,8 +444,6 @@ class FunctionDescriptorResolver(
         constructorDescriptor.isActual = modifierList?.hasActualModifier() == true ||
                 // We don't require 'actual' for constructors of actual annotations
                 classDescriptor.kind == ClassKind.ANNOTATION_CLASS && classDescriptor.isActual
-        if (declarationToTrace is PsiElement)
-            trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         val parameterScope = LexicalWritableScope(
             scope,
             constructorDescriptor,
@@ -419,6 +464,8 @@ class FunctionDescriptorResolver(
         if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
             CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace)
         }
+        if (declarationToTrace is PsiElement)
+            trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         return constructor
     }
 
@@ -452,10 +499,10 @@ class FunctionDescriptorResolver(
                         trace.report(CANNOT_INFER_PARAMETER_TYPE.on(valueParameter))
                     }
 
-                    expectedType ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
+                    expectedType ?: TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE
                 } else {
                     trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter))
-                    ErrorUtils.createErrorType("Type annotation was missing for parameter ${valueParameter.nameAsSafeName}")
+                    ErrorUtils.createErrorType(ErrorTypeKind.MISSED_TYPE_FOR_PARAMETER, valueParameter.nameAsSafeName.toString())
                 }
             }
 
@@ -481,4 +528,6 @@ class FunctionDescriptorResolver(
         }
         return result
     }
+
+    private data class ContextReceiverTypeWithLabel(val type: KotlinType, val label: Name?)
 }

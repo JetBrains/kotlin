@@ -16,6 +16,6 @@ FILE: castToBareType.kt
     public final fun foo(firAdaptee: R|FirFunction<*>|): R|kotlin/Unit| {
     }
     public final fun test(symbol: R|AbstractFirBasedSymbol<*>|): R|kotlin/Unit| {
-        lval firAdaptee: R|FirFunction<FirSymbolOwner<out it(FirSymbolOwner<out it(FirSymbolOwner<out it(FirSymbolOwner<out kotlin/Any?> & FirDeclaration)> & FirDeclaration)> & FirDeclaration)>>| = (R|<local>/symbol|.R|SubstitutionOverride</AbstractFirBasedSymbol.fir: R|CapturedType(*)|>| as R|FirFunction<FirSymbolOwner<out it(FirSymbolOwner<out it(FirSymbolOwner<out it(FirSymbolOwner<out kotlin/Any?> & FirDeclaration)> & FirDeclaration)> & FirDeclaration)>>|)
+        lval firAdaptee: R|FirFunction<*>| = (R|<local>/symbol|.R|SubstitutionOverride</AbstractFirBasedSymbol.fir: R|CapturedType(*)|>| as R|FirFunction<*>|)
         R|/foo|(R|<local>/firAdaptee|)
     }

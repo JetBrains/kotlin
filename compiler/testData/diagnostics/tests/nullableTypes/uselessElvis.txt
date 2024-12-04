@@ -1,6 +1,6 @@
 package
 
-public fun bar(): [ERROR : Error function type]
+public fun bar(): [Error type: Return type for function cannot be resolved]
 public fun </*0*/ T> dependOn(/*0*/ x: T): T
 public fun </*0*/ T> notNull(): T
 public fun </*0*/ T> nullable(): T?

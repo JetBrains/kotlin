@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +RepeatableAnnotations +RepeatableAnnotationContainerConstraints
+// LANGUAGE: +RepeatableAnnotations +RepeatableAnnotationContainerConstraints
 // FULL_JDK
 
 import java.lang.annotation.Repeatable as R

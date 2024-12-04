@@ -181,7 +181,7 @@ fun Iterable<String>.filterExtractProps(vararg groups: OptionsGroup, prefix: Str
 data class DaemonJVMOptions(
         var maxMemory: String = "",
         var maxMetaspaceSize: String = "",
-        var reservedCodeCacheSize: String = "",
+        var reservedCodeCacheSize: String = "320m",
         var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
     override val mappers: List<PropMapper<*, *, *>>
@@ -253,6 +253,17 @@ data class CompilerId(
     }
 }
 
+/**
+ * Contains optional information about the client initiated daemon startup
+ * The information is used as a shortcut for registering the client as soon as possible, avoiding issues like KT-69929
+ */
+data class InitialClientInformation(
+    var aliveFlagFile: File? = null,
+) : OptionsGroup {
+
+    override val mappers: List<PropMapper<*, *, *>>
+        get() = listOf(PropMapper(this, InitialClientInformation::aliveFlagFile, toString = { it?.absolutePath }, fromString = { File(it) }))
+}
 
 fun isDaemonEnabled(): Boolean = CompilerSystemProperties.COMPILE_DAEMON_ENABLED_PROPERTY.value != null
 
@@ -312,8 +323,6 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
     if (inheritAdditionalProperties) {
         CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.value?.let { opts.jvmParams.add("D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"$it\"") }
         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value?.let { opts.jvmParams.add("D${CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.property}") }
-        //Temporary solution to test abi snapshot
-        CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value?.let { opts.jvmParams.add("D${CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.property}") }
     }
 
     if (opts.jvmParams.none { it.matches(jvmAssertArgsRegex) }) {

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 
 // FILE: Util.java
@@ -21,7 +22,7 @@ fun testWithUtil(map: ConcurrentHashMap<Int, String>): Int {
     if (string == null) {
         string = Util.getString()
     }
-    return string<!UNSAFE_CALL!>.<!>length
+    return string.length
 }
 
 fun test(list: java.util.ArrayList<String?>) {

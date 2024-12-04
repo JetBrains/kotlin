@@ -42,10 +42,10 @@ fun getClassCAsC(num: Int): C {
     return C(num)
 }
 
-const val num1 = getAClassImplementation(1).<!EVALUATED: `1`!>getIntNum()<!>
-const val num2 = getBClassImplementation(2).<!EVALUATED: `2`!>getIntNum()<!>
+const val num1 = <!EVALUATED: `1`!>getAClassImplementation(1).getIntNum()<!>
+const val num2 = <!EVALUATED: `2`!>getBClassImplementation(2).getIntNum()<!>
 
 // all `getIntNum` methods are from class C
-const val num3 = getClassCAsA(3).<!EVALUATED: `3`!>getIntNum()<!>
-const val num4 = getClassCAsB(4).<!EVALUATED: `4`!>getIntNum()<!>
-const val num5 = getClassCAsC(5).<!EVALUATED: `5`!>getIntNum()<!>
+const val num3 = <!EVALUATED: `3`!>getClassCAsA(3).getIntNum()<!>
+const val num4 = <!EVALUATED: `4`!>getClassCAsB(4).getIntNum()<!>
+const val num5 = <!EVALUATED: `5`!>getClassCAsC(5).getIntNum()<!>

@@ -1,0 +1,69 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(items: Iterator<Int>) {
+    while (items.hasNext()) {
+        val i = items.next()
+        val j = i
+        val k = i
+        val l = i
+        P(i)
+        if (i == 0) {
+            P(j)
+            return
+        } else {
+            P(k)
+        }
+        P(l)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "C(Example)*<P(i)>,<P(l)>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  while (items.hasNext()) {
+    val i = items.next()
+    val j = i
+    val k = i
+    val l = i
+    P(i, %composer, 0)
+    if (i == 0) {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<P(j)>")
+      P(j, %composer, 0)
+      %composer.endReplaceGroup()
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      %composer.endReplaceGroup()
+      return
+    } else {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<P(k)>")
+      P(k, %composer, 0)
+      %composer.endReplaceGroup()
+    }
+    P(l, %composer, 0)
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceGroup()
+}

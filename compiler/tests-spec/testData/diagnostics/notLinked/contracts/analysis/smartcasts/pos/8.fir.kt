@@ -1,5 +1,14 @@
-// FIR_IDE_IGNORE
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 8
+ * DESCRIPTION: Smartcasts using some Returns effects.
+ * HELPERS: contractFunctions
+ */
 
 // FILE: contracts.kt
 
@@ -31,23 +40,23 @@ fun case_4(value_1: Number, block: (() -> Unit)?): Boolean? {
 
 // TESTCASE NUMBER: 5
 fun String?.case_5(value_1: Number?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returns(true) implies (value_1 != null)
         returns(false) implies (value_1 is Int)
         returnsNotNull() implies (this@case_5 != null)
-    }<!>
+    }
 
     return value_1 == null
 }
 
 // TESTCASE NUMBER: 6
 fun <T> T?.case_6(value_1: Number, value_2: String?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION, WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returns(true) implies (this@case_6 != null)
         returns(false) implies (this@case_6 is String)
         returns(null) implies (value_1 is Int)
         returnsNotNull() implies (value_2 != null)
-    }<!>
+    }
 
     return <!SENSELESS_COMPARISON!>value_1 == null<!>
 }
@@ -105,15 +114,16 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
  * ISSUES: KT-26612
  */
 fun case_5(value_1: Number?, value_2: String?) {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_2.case_5(value_1)) {
+    when (value_2.case_5(value_1)) {
         true -> {
             println(value_2.length)
             println(value_1.toByte())
         }
         false -> {
-            println(value_2<!UNSAFE_CALL!>.<!>length)
+            println(value_2.length)
             println(value_1.inv())
         }
+        else -> {}
     }
 }
 
@@ -130,10 +140,10 @@ fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
         }
         false -> {
             println(value_3.length)
-            println(value_2<!UNSAFE_CALL!>.<!>length)
+            println(value_2.length)
         }
         null -> {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+            println(value_1.inv())
         }
     }
 }

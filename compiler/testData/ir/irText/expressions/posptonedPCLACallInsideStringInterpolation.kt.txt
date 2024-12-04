@@ -1,0 +1,30 @@
+class Controller<K : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun yield(k: K) {
+  }
+
+}
+
+fun bar(s: String) {
+}
+
+fun foo() {
+  generate<String>(lambda = local fun Controller<String>.<anonymous>() {
+    bar(s = id<Controller<String>>(e = $this$generate))
+    $this$generate.yield(k = "")
+  }
+)
+}
+
+fun <T : Any?> generate(lambda: @ExtensionFunctionType Function1<Controller<T>, Unit>) {
+}
+
+fun <E : Any?> id(e: E): E {
+  return e
+}
+

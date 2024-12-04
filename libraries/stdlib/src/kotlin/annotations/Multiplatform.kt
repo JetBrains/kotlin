@@ -32,7 +32,6 @@ import kotlin.internal.RequireKotlinVersionKind
     TYPEALIAS
 )
 @Retention(AnnotationRetention.BINARY)
-@RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 public annotation class ExperimentalMultiplatform
 
 /**
@@ -48,5 +47,4 @@ public annotation class ExperimentalMultiplatform
 @Target(ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
 @ExperimentalMultiplatform
-@RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 public annotation class OptionalExpectation

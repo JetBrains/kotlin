@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // Tests for KT-13597 (val assignment inside local object in constructor)
 
 class Test {
@@ -7,7 +8,7 @@ class Test {
         val t = object {
             fun some() {
                 // See KT-13597
-                a = "12"
+                <!VAL_REASSIGNMENT!>a<!> = "12"
             }
         }
 
@@ -20,7 +21,7 @@ class Test2 {
     init {
         val t = object {
             fun some() {
-                a = "12"
+                <!VAL_REASSIGNMENT!>a<!> = "12"
             }
         }
 
@@ -41,7 +42,7 @@ class Test4 {
     init {
         exec {
             // See KT-14381
-            a = "12"
+            <!CAPTURED_MEMBER_VAL_INITIALIZATION!>a<!> = "12"
         }
         a = "34"
     }

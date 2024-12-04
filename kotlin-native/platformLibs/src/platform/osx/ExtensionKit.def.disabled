@@ -1,0 +1,9 @@
+depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration ExtensionFoundation Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security cups darwin libkern osx posix
+language = Objective-C
+package = platform.ExtensionKit
+
+modules = ExtensionKit
+compilerOpts = -framework ExtensionKit
+linkerOpts = -framework ExtensionKit
+
+# Not available in Xcode 14 RC.

@@ -5,6 +5,9 @@
 
 package kotlin.native.internal.test
 
+import kotlin.experimental.ExperimentalNativeApi
+
+@ExperimentalNativeApi
 internal class GTestLogger : TestLoggerWithStatistics() {
 
     private val Collection<TestSuite>.totalTestsNotIgnored: Int
@@ -13,11 +16,11 @@ internal class GTestLogger : TestLoggerWithStatistics() {
     private val Collection<TestSuite>.totalNotIgnored: Int
         get() = filter { !it.ignored }.size
 
-    override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) {
-        if (runner.iterations != 1) {
+    override fun startIteration(settings: TestSettings, iteration: Int, suites: Collection<TestSuite>) {
+        if (settings.iterations != 1) {
             println("\nRepeating all tests (iteration $iteration) . . .\n")
         }
-        super.startIteration(runner, iteration, suites)
+        super.startIteration(settings, iteration, suites)
         println("[==========] Running ${suites.totalTestsNotIgnored} tests from ${suites.totalNotIgnored} test cases.")
         // Just hack to deal with GTest output parsers.
         println("[----------] Global test environment set-up.")
@@ -27,19 +30,24 @@ internal class GTestLogger : TestLoggerWithStatistics() {
         println("[----------] Global test environment tear-down") // Just hack to deal with GTest output parsers.
         println("[==========] $total tests from $totalSuites test cases ran. ($timeMillis ms total)")
         println("[  PASSED  ] $passed tests.")
+        if (ignored != 0) {
+            val testsAmount = if (ignored == 1) "1 test" else "$ignored tests"
+            println("[  SKIPPED ] $testsAmount, listed below:")
+            ignoredTests.forEach {
+                println("[  SKIPPED ] ${it.prettyName}")
+            }
+        }
         if (hasFailedTests) {
-            println("[  FAILED  ] $failed tests, listed below:")
+            val testsForm = if (failed == 1) "test" else "tests"
+            println("[  FAILED  ] $failed $testsForm, listed below:")
             failedTests.forEach {
                 println("[  FAILED  ] ${it.prettyName}")
             }
-            println("\n$failed FAILED TESTS")
-        }
-        if (ignored != 0) {
-            println("YOU HAVE $ignored DISABLED TEST(S)")
+            println("\n$failed FAILED ${testsForm.uppercase()}")
         }
     }
 
-    override fun finishIteration(runner: TestRunner, iteration: Int, timeMillis: Long) = printResults(timeMillis)
+    override fun finishIteration(settings: TestSettings, iteration: Int, timeMillis: Long) = printResults(timeMillis)
 
     override fun startSuite(suite: TestSuite) = println("[----------] ${suite.size} tests from ${suite.name}")
 

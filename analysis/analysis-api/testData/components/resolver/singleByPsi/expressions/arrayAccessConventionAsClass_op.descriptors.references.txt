@@ -1,0 +1,3 @@
+KtOperationReferenceExpression(250,252): '+='
+  KtSimpleNameReference:
+    (in MyClass) operator fun plus(v: MyClass): MyClass

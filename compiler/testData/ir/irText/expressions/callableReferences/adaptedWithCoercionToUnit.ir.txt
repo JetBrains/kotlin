@@ -1,10 +1,4 @@
 FILE fqName:<root> fileName:/adaptedWithCoercionToUnit.kt
-  FUN name:useUnit0 visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Unit>
-    BLOCK_BODY
-  FUN name:useUnit1 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
-    BLOCK_BODY
   FUN name:fn0 visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun fn0 (): kotlin.Int declared in <root>'
@@ -64,3 +58,9 @@ FILE fqName:<root> fileName:/adaptedWithCoercionToUnit.kt
                     xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.testV1.fnv' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun fnv (p0: kotlin.Int): kotlin.Unit declared in <root>.testV1' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun fnv (vararg xs: kotlin.Int): kotlin.Int declared in <root>
+  FUN name:useUnit0 visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
+  FUN name:useUnit1 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
+    BLOCK_BODY

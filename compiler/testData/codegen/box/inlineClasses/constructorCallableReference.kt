@@ -1,7 +1,8 @@
 // WITH_STDLIB
 // KJS_FULL_RUNTIME
 // SKIP_MANGLE_VERIFICATION
-// IGNORE_BACKEND: WASM
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface I {
     companion object {
@@ -9,8 +10,7 @@ interface I {
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC(val ok: String = "OK") : I
 
 fun box(): String {

@@ -1,0 +1,5 @@
+MyRecord:
+  [Enhancement]: public final fun x(): R|kotlin/CharSequence!| from Java enhancement scope for /MyRecord [id: 0]
+  [Enhancement]: public final fun y(): R|kotlin/Int| from Java enhancement scope for /MyRecord [id: 0]
+  [Enhancement]: public final fun z(): R|ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>| from Java enhancement scope for /MyRecord [id: 0]
+

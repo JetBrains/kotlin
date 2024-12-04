@@ -20,4 +20,4 @@ class D : A(), B, C {
     }
 }
 
-const val a = D().<!EVALUATED: `6`!>get()<!>
+const val a = <!EVALUATED: `6`!>D().get()<!>

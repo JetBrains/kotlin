@@ -14,6 +14,6 @@ public final class OuterClass</*0*/ T1> {
     }
     public typealias NestedType</*0*/ T> = OuterClass.NestedClass<T>
 }
-public typealias ON1</*0*/ T1, /*1*/ T2> = [ERROR : NestedClass]<T1, T2>
-public typealias ON2</*0*/ T1, /*1*/ T2> = [ERROR : NestedType]<T1, T2>
+public typealias ON1</*0*/ T1, /*1*/ T2> = [Error type: Type for error type constructor (NestedClass)]<T1, T2>
+public typealias ON2</*0*/ T1, /*1*/ T2> = [Error type: Type for error type constructor (NestedType)]<T1, T2>
 public typealias ON3</*0*/ T2> = OuterClass.NestedType<T2>

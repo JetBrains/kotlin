@@ -9,7 +9,7 @@ package
 public fun takeIntWithoutAnnotation(/*0*/ i: kotlin.Int): kotlin.Unit
 public fun takeLong(/*0*/ @kotlin.internal.ImplicitIntegerCoercion l: kotlin.Long): kotlin.Unit
 public fun takeUByte(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.UByte): kotlin.Unit
-public fun takeUBytes(/*0*/ @kotlin.internal.ImplicitIntegerCoercion vararg u: kotlin.UByte /*kotlin.UByteArray*/): kotlin.Unit
+@kotlin.ExperimentalUnsignedTypes public fun takeUBytes(/*0*/ @kotlin.internal.ImplicitIntegerCoercion vararg u: kotlin.UByte /*kotlin.UByteArray*/): kotlin.Unit
 public fun takeUInt(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.UInt): kotlin.Unit
 public fun takeUIntWithoutAnnotaion(/*0*/ u: kotlin.UInt): kotlin.Unit
 public fun takeULong(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.ULong): kotlin.Unit

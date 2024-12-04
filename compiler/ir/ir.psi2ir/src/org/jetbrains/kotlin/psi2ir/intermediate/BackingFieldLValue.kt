@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.types.KotlinType
 
-class BackingFieldLValue(
+internal class BackingFieldLValue(
     private val context: IrGeneratorContext,
     private val startOffset: Int,
     private val endOffset: Int,

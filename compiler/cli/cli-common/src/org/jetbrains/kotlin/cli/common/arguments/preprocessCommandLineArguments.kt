@@ -12,7 +12,6 @@ import java.io.IOException
 import java.io.Reader
 
 const val ARGFILE_ARGUMENT = "@"
-private const val EXPERIMENTAL_ARGFILE_ARGUMENT = "-Xargfile="
 
 private const val SINGLE_QUOTE = '\''
 private const val DOUBLE_QUOTE = '"'
@@ -23,14 +22,10 @@ private const val BACKSLASH = '\\'
  * This is done prior to *any* arguments parsing, and result of preprocessing
  * will be used instead of actual passed arguments.
  */
-fun preprocessCommandLineArguments(args: List<String>, errors: ArgumentParseErrors): List<String> =
+fun preprocessCommandLineArguments(args: List<String>, errors: Lazy<ArgumentParseErrors>): List<String> =
     args.flatMap { arg ->
         if (arg.isArgfileArgument) {
-            File(arg.argfilePath).expand(errors)
-        } else if (arg.isDeprecatedArgfileArgument) {
-            errors.deprecatedArguments[EXPERIMENTAL_ARGFILE_ARGUMENT] = ARGFILE_ARGUMENT
-
-            File(arg.deprecatedArgfilePath).expand(errors)
+            File(arg.argfilePath).expand(errors.value)
         } else {
             listOf(arg)
         }
@@ -96,9 +91,3 @@ private val String.argfilePath: String
 
 private val String.isArgfileArgument: Boolean
     get() = startsWith(ARGFILE_ARGUMENT)
-
-private val String.deprecatedArgfilePath: String
-    get() = removePrefix(EXPERIMENTAL_ARGFILE_ARGUMENT)
-
-private val String.isDeprecatedArgfileArgument: Boolean
-    get() = startsWith(EXPERIMENTAL_ARGFILE_ARGUMENT)

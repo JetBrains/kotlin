@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: Expected <class B>, actual <class A>
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 

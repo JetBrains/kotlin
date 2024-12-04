@@ -1,0 +1,34 @@
+FILE: annotationOnDelegatedInterface.kt
+    public final? interface Base : R|kotlin/Any| {
+        public? final? fun print(): R|kotlin/Unit|
+
+    }
+    public final? class BaseImpl : Base {
+        public? [ContainingClassKey=BaseImpl] constructor([CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
+            super<<implicit>>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ContainingClassKey=BaseImpl] get(): Int
+
+        public? open? override fun print(): R|kotlin/Unit| {
+        }
+
+    }
+    @Target(AnnotationTarget#.EXPRESSION#) public final? annotation class Some : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.s] s: String): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ContainingClassKey=Some] get(): String
+
+    }
+    public final? [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+        public? [ContainingClassKey=Derived] constructor(b: Base): R|Derived| {
+            super<<implicit>>()
+        }
+
+        private final field $$delegate_0: Base = @Some(String(Anything)) b#
+
+    }

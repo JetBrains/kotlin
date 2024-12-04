@@ -10,7 +10,7 @@ public final class Activity {
 
     public final class Fragment {
         public constructor Fragment()
-        public final fun call(): [ERROR : Error function type]
+        public final fun call(): [Error type: Return type for function cannot be resolved]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -44,7 +44,7 @@ public final class Outer {
     public final class Nested {
         public constructor Nested()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun foo(/*0*/ s: kotlin.String): [ERROR : Error function type]
+        public final fun foo(/*0*/ s: kotlin.String): [Error type: Return type for function cannot be resolved]
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

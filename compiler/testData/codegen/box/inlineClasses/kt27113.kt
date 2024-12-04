@@ -1,23 +1,22 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// IGNORE_BACKEND: JS, JS_IR, NATIVE
-// IGNORE_BACKEND: JS_IR_ES6
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class CharacterLiteral(private val prefix: NamelessString, private val s: NamelessString) {
     override fun toString(): String = "$prefix'$s'"
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
-value class NamelessString(val b: ByteArray) {
-    override fun toString(): String = String(b)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class NamelessString(val b: CharArray) {
+    override fun toString(): String = b.concatToString()
 }
 
 fun box(): String {
-    val ns1 = NamelessString("abc".toByteArray())
-    val ns2 = NamelessString("def".toByteArray())
+    val abcCharArray = "abc".toCharArray()
+    if (abcCharArray.toString() == "abc") return "Prerequisite failed: value of abcCharArray.toString() is intended to be not equal to 'abc'"
+    val ns1 = NamelessString(abcCharArray)
+    val ns2 = NamelessString("def".toCharArray())
     val cl = CharacterLiteral(ns1, ns2)
-    if (cl.toString() != "abc'def'") return throw AssertionError(cl.toString())
+    if (cl.toString() != "abc'def'") return cl.toString()
     return "OK"
 }

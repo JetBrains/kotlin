@@ -1,7 +1,22 @@
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoArray : kotlin/Annotation {
+ *
+ *   // signature: <init>(ILkotlin/Array;)V
+ *   public constructor(x: kotlin/Int, a: kotlin/Array<kotlin/String>)
+ *
+ *   // getter: a()[Ljava/lang/String;
+ *   public final val a: kotlin/Array<kotlin/String>
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoArray {
 
     public abstract int x();
@@ -12,10 +27,25 @@ public abstract @interface AnnoArray {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoBoolean : kotlin/Annotation {
+ *
+ *   // signature: <init>(IZ)V
+ *   public constructor(x: kotlin/Int, bool: kotlin/Boolean)
+ *
+ *   // getter: bool()Z
+ *   public final val bool: kotlin/Boolean
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoBoolean {
 
     public abstract int x();
@@ -26,10 +56,25 @@ public abstract @interface AnnoBoolean {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoChar : kotlin/Annotation {
+ *
+ *   // signature: <init>(IC)V
+ *   public constructor(x: kotlin/Int, chr: kotlin/Char)
+ *
+ *   // getter: chr()C
+ *   public final val chr: kotlin/Char
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoChar {
 
     public abstract int x();
@@ -40,10 +85,25 @@ public abstract @interface AnnoChar {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoClass : kotlin/Annotation {
+ *
+ *   // signature: <init>(ILkotlin/reflect/KClass;)V
+ *   public constructor(x: kotlin/Int, c: kotlin/reflect/KClass<Color>)
+ *
+ *   // getter: c()Ljava/lang/Class;
+ *   public final val c: kotlin/reflect/KClass<Color>
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoClass {
 
     public abstract int x();
@@ -54,10 +114,25 @@ public abstract @interface AnnoClass {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoDouble : kotlin/Annotation {
+ *
+ *   // signature: <init>(ID)V
+ *   public constructor(x: kotlin/Int, dbl: kotlin/Double)
+ *
+ *   // getter: dbl()D
+ *   public final val dbl: kotlin/Double
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoDouble {
 
     public abstract int x();
@@ -68,10 +143,25 @@ public abstract @interface AnnoDouble {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoEnum : kotlin/Annotation {
+ *
+ *   // signature: <init>(ILColor;)V
+ *   public constructor(x: kotlin/Int, c: Color)
+ *
+ *   // getter: c()LColor;
+ *   public final val c: Color
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoEnum {
 
     public abstract int x();
@@ -82,10 +172,25 @@ public abstract @interface AnnoEnum {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoFloat : kotlin/Annotation {
+ *
+ *   // signature: <init>(IF)V
+ *   public constructor(x: kotlin/Int, flt: kotlin/Float)
+ *
+ *   // getter: flt()F
+ *   public final val flt: kotlin/Float
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoFloat {
 
     public abstract int x();
@@ -96,10 +201,25 @@ public abstract @interface AnnoFloat {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoInt : kotlin/Annotation {
+ *
+ *   // signature: <init>(II)V
+ *   public constructor(x: kotlin/Int, i: kotlin/Int)
+ *
+ *   // getter: i()I
+ *   public final val i: kotlin/Int
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoInt {
 
     public abstract int x();
@@ -110,10 +230,25 @@ public abstract @interface AnnoInt {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoIntArray : kotlin/Annotation {
+ *
+ *   // signature: <init>(I[I)V
+ *   public constructor(x: kotlin/Int, b: kotlin/IntArray)
+ *
+ *   // getter: b()[I
+ *   public final val b: kotlin/IntArray
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoIntArray {
 
     public abstract int x();
@@ -124,10 +259,25 @@ public abstract @interface AnnoIntArray {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoLong : kotlin/Annotation {
+ *
+ *   // signature: <init>(IJ)V
+ *   public constructor(x: kotlin/Int, l: kotlin/Long)
+ *
+ *   // getter: l()J
+ *   public final val l: kotlin/Long
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoLong {
 
     public abstract int x();
@@ -138,10 +288,25 @@ public abstract @interface AnnoLong {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoLongArray : kotlin/Annotation {
+ *
+ *   // signature: <init>(I[J)V
+ *   public constructor(x: kotlin/Int, b: kotlin/LongArray)
+ *
+ *   // getter: b()[J
+ *   public final val b: kotlin/LongArray
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoLongArray {
 
     public abstract int x();
@@ -152,10 +317,25 @@ public abstract @interface AnnoLongArray {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class AnnoString : kotlin/Annotation {
+ *
+ *   // signature: <init>(ILjava/lang/String;)V
+ *   public constructor(x: kotlin/Int, s: kotlin/String)
+ *
+ *   // getter: s()Ljava/lang/String;
+ *   public final val s: kotlin/String
+ *     public final get
+ *
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public abstract @interface AnnoString {
 
     public abstract int x();
@@ -166,21 +346,50 @@ public abstract @interface AnnoString {
 ////////////////////
 
 
-import java.lang.System;
-
+/**
+ * public final enum class Color : kotlin/Enum<Color> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   BLACK,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum Color {
     /*public static final*/ BLACK /* = new Color() */;
 
     Color() {
     }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Color> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////
 
 
-import java.lang.System;
-
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: value:Ljava/lang/String;
+ *   // getter: getValue()Ljava/lang/String;
+ *   // synthetic method for annotations: getValue$annotations()V
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
@@ -195,9 +404,9 @@ public final class Test {
         return null;
     }
 
-    @lib.Anno(value = "3", construct = {"C"})
-    @lib.Anno(value = "2", construct = {"A", "B"})
     @lib.Anno(value = "1")
+    @lib.Anno(value = "2", construct = {"A", "B"})
+    @lib.Anno(value = "3", construct = {"C"})
     @java.lang.Deprecated()
     public static void getValue$annotations() {
     }
@@ -206,19 +415,26 @@ public final class Test {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
-@AnnoClass(x = lib.R.id.textView, c = Color.class)
-@AnnoArray(x = lib.R.id.textView, a = {"A", "B"})
-@AnnoLongArray(x = lib.R.id.textView, b = {1L, 3L})
-@AnnoIntArray(x = lib.R.id.textView, b = {1, 2, 3})
-@AnnoString(x = lib.R.id.textView, s = "AAA")
-@AnnoDouble(x = lib.R.id.textView, dbl = 4.0)
-@AnnoFloat(x = lib.R.id.textView, flt = 1.0F)
-@AnnoInt(x = lib.R.id.textView, i = 5)
-@AnnoBoolean(x = lib.R.id.textView, bool = false)
 @AnnoChar(x = lib.R.id.textView, chr = 'c')
+@AnnoBoolean(x = lib.R.id.textView, bool = false)
+@AnnoInt(x = lib.R.id.textView, i = 5)
+@AnnoFloat(x = lib.R.id.textView, flt = 1.0F)
+@AnnoDouble(x = lib.R.id.textView, dbl = 4.0)
+@AnnoString(x = lib.R.id.textView, s = "AAA")
+@AnnoIntArray(x = lib.R.id.textView, b = {1, 2, 3})
+@AnnoLongArray(x = lib.R.id.textView, b = {1L, 3L})
+@AnnoArray(x = lib.R.id.textView, a = {"A", "B"})
+@AnnoClass(x = lib.R.id.textView, c = Color.class)
+/**
+ * public final class Test2 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
 public final class Test2 {
 
     public Test2() {
@@ -243,15 +459,7 @@ package lib;
 
 public class R {
 
-    public R() {
-        super();
-    }
-
     public static class id {
-
-        public id() {
-            super();
-        }
         public static final int textView = 100;
     }
 }

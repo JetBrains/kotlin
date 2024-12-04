@@ -1,0 +1,44 @@
+<caret_1>:
+  KDocName(130,140): 'Any.anyExt'
+    KDocReference:
+      (in test) fun kotlin.Any.anyExt()
+
+<caret_2>:
+  KDocName(146,157): 'Base.anyExt'
+    KDocReference:
+      (in test) fun kotlin.Any.anyExt()
+
+<caret_3>:
+  KDocName(163,175): 'Child.anyExt'
+    KDocReference:
+      (in test) fun kotlin.Any.anyExt()
+
+<caret_4>:
+  KDocName(184,195): 'Any.baseExt'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_5>:
+  KDocName(201,213): 'Base.baseExt'
+    KDocReference:
+      (in test) fun test.Base.baseExt()
+
+<caret_6>:
+  KDocName(219,232): 'Child.baseExt'
+    KDocReference:
+      (in test) fun test.Base.baseExt()
+
+<caret_7>:
+  KDocName(241,253): 'Any.childExt'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_8>:
+  KDocName(259,272): 'Base.childExt'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_9>:
+  KDocName(278,292): 'Child.childExt'
+    KDocReference:
+      (in test) fun test.Child.childExt()

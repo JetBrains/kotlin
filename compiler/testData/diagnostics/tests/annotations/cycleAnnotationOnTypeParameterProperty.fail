@@ -1,0 +1,8 @@
+java.lang.AssertionError: Recursion detected on input: prop under LockBasedStorageManager@6e6cdd1d (TopDownAnalyzer for JVM)
+	at org.jetbrains.kotlin.resolve.lazy.descriptors.AbstractLazyMemberScope.getContributedVariables(AbstractLazyMemberScope.kt:144)
+	at org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope.getContributedVariables(ChainedMemberScope.kt:38)
+	at org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter.getContributedVariables(AbstractScopeAdapter.kt:48)
+	at org.jetbrains.kotlin.resolve.lazy.FileScopeFactory$currentPackageScope$1.getContributedVariables(FileScopeFactory.kt:283)
+	at org.jetbrains.kotlin.resolve.calls.tower.TowerLevelsKt.getContributedVariablesAndIntercept(TowerLevels.kt:498)
+	at org.jetbrains.kotlin.resolve.calls.tower.TowerLevelsKt.access$getContributedVariablesAndIntercept(TowerLevels.kt:1)
+	at org.jetbrains.kotlin.resolve.calls.tower.ScopeBasedTowerLevel.getVariables(TowerLevels.kt:329)

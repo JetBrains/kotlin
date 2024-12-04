@@ -103,7 +103,7 @@ const val rem4 = <!EVALUATED: `2`!>rem(2u, uLong)<!>
 const val inc = <!EVALUATED: `4`!>inc(3u)<!>
 const val dec = <!EVALUATED: `2`!>dec(3u)<!>
 
-const val rangeTo = rangeTo(0u, 10u).<!EVALUATED: `10`!>last<!>
+const val rangeTo = <!EVALUATED: `10`!>rangeTo(0u, 10u).last<!>
 
 const val shiftLeft = <!EVALUATED: `16`!>shl(8u, 1)<!>
 const val shiftRight = <!EVALUATED: `2`!>shr(8u, 2)<!>

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi2ir.generators
@@ -22,9 +11,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
-import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
-class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+internal class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     private val ignoreErrors: Boolean get() = context.configuration.ignoreErrors
 
     private inline fun generateErrorExpression(ktElement: KtElement, e: Throwable? = null, body: () -> IrExpression): IrExpression =
@@ -39,7 +29,7 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
                 if (ktElement is KtExpression)
                     getErrorExpressionType(ktElement)
                 else
-                    ErrorUtils.createErrorType("")
+                    ErrorUtils.createErrorType(ErrorTypeKind.TYPE_FOR_GENERATED_ERROR_EXPRESSION)
             IrErrorExpressionImpl(
                 ktElement.startOffsetSkippingComments, ktElement.endOffset,
                 errorExpressionType.toIrType(),
@@ -58,7 +48,7 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
         (ktCall.valueArguments + ktCall.lambdaArguments).forEach {
             val ktArgument = it.getArgumentExpression()
             if (ktArgument != null) {
-                irErrorCall.addArgument(ktArgument.genExpr())
+                irErrorCall.arguments.add(ktArgument.genExpr())
             }
         }
 
@@ -66,7 +56,7 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
     }
 
     private fun getErrorExpressionType(ktExpression: KtExpression) =
-        getTypeInferredByFrontend(ktExpression) ?: ErrorUtils.createErrorType("")
+        getTypeInferredByFrontend(ktExpression) ?: ErrorUtils.createErrorType(ErrorTypeKind.ERROR_EXPRESSION_TYPE)
 
     fun generateErrorSimpleName(ktName: KtSimpleNameExpression): IrExpression = generateErrorExpression(ktName) {
         val type = getErrorExpressionType(ktName).toIrType()

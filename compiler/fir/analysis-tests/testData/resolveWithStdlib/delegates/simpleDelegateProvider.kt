@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Delegate(val value: String) {
     operator fun getValue(thisRef: Any?, property: Any?) = value
 }

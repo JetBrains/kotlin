@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Annotation$Companion.class
+		CLASS METADATA
+			PROPERTY getTEST_FIELD2()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String

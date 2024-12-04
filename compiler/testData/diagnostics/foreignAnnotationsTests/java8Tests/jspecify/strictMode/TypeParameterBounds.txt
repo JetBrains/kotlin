@@ -2,16 +2,16 @@ package
 
 public fun </*0*/ T : Test> main(/*0*/ a1: A<kotlin.Any?>, /*1*/ a2: A<Test>, /*2*/ b1: B<kotlin.Any?>, /*3*/ b2: B<Test>, /*4*/ x: T): kotlin.Unit
 
-@org.jspecify.nullness.NullMarked public open class A</*0*/ T : kotlin.Any> {
+@org.jspecify.annotations.NullMarked public open class A</*0*/ T : kotlin.Any> {
     public constructor A</*0*/ T : kotlin.Any>()
     public open fun </*0*/ E : kotlin.Any> bar(/*0*/ e: E): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open fun foo(/*0*/ @org.jspecify.nullness.NullnessUnspecified t: @org.jspecify.nullness.NullnessUnspecified T!): kotlin.Unit
+    public open fun foo(/*0*/ @org.jspecify.annotations.NullnessUnspecified t: @org.jspecify.annotations.NullnessUnspecified T!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@org.jspecify.nullness.NullMarked public open class B</*0*/ T : kotlin.Any> {
+@org.jspecify.annotations.NullMarked public open class B</*0*/ T : kotlin.Any> {
     public constructor B</*0*/ T : kotlin.Any>()
     public open fun </*0*/ E : kotlin.Any> bar(/*0*/ e: E): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

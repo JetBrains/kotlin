@@ -8,7 +8,7 @@ public final enum class AnnotatedEnumEntry : kotlin.Enum<test.AnnotatedEnumEntry
     enum entry E3
 
     private constructor AnnotatedEnumEntry()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.AnnotatedEnumEntry!): kotlin.Int
@@ -25,6 +25,7 @@ public final enum class AnnotatedEnumEntry : kotlin.Enum<test.AnnotatedEnumEntry
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.AnnotatedEnumEntry>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.AnnotatedEnumEntry
     public final /*synthesized*/ fun values(): kotlin.Array<test.AnnotatedEnumEntry>
 }

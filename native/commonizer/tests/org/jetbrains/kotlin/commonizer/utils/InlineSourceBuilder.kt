@@ -103,7 +103,7 @@ fun InlineSourceBuilder.createCirTreeRootFromSourceCode(@Language("kotlin") sour
 fun InlineSourceBuilder.createCirProvidedClassifiers(module: InlineSourceBuilder.Module): CirProvidedClassifiers {
     val modulesProvider = object : ModulesProvider {
         override val moduleInfos: Collection<ModulesProvider.ModuleInfo> = listOf(
-            ModulesProvider.ModuleInfo(name = "CirProvidedForTest", originalLocation = File("."), cInteropAttributes = null)
+            ModulesProvider.ModuleInfo(name = "CirProvidedForTest", cInteropAttributes = null)
         )
 
         override fun loadModuleMetadata(name: String): SerializedMetadata {

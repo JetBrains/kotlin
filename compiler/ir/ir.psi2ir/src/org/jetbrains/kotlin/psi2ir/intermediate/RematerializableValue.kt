@@ -18,22 +18,32 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.shallowCopy
 
-class RematerializableValue(override val type: IrType, val irExpression: IrExpression) : IntermediateValue {
-    override fun load(): IrExpression = irExpression.shallowCopy()
-}
-
-fun Scope.createTemporaryVariableInBlock(
+internal fun Scope.createTemporaryVariableInBlock(
     context: IrGeneratorContext,
     irExpression: IrExpression,
     block: IrStatementContainer,
-    nameHint: String? = null
+    nameHint: String? = null,
+    startOffset: Int = irExpression.startOffset,
+    endOffset: Int = irExpression.endOffset
 ): IntermediateValue {
-    val temporaryVariable = createTemporaryVariable(irExpression, nameHint)
+    return VariableLValue(
+        context,
+        declareTemporaryVariableInBlock(irExpression, block, nameHint, startOffset, endOffset)
+    )
+}
+
+internal fun Scope.declareTemporaryVariableInBlock(
+    irExpression: IrExpression,
+    block: IrStatementContainer,
+    nameHint: String? = null,
+    startOffset: Int = irExpression.startOffset,
+    endOffset: Int = irExpression.endOffset
+): IrVariable {
+    val temporaryVariable = createTemporaryVariable(irExpression, nameHint, startOffset = startOffset, endOffset = endOffset)
     block.statements.add(temporaryVariable)
-    return VariableLValue(context, temporaryVariable)
+    return temporaryVariable
 }

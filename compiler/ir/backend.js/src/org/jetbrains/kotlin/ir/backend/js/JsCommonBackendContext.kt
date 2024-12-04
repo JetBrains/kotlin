@@ -5,36 +5,43 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
+import org.jetbrains.kotlin.backend.common.InlineClassesUtils
+import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
+import org.jetbrains.kotlin.ir.SymbolFinder
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
-import org.jetbrains.kotlin.ir.util.getPropertySetter
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 interface JsCommonBackendContext : CommonBackendContext {
+    val internalPackageFqn: FqName
+
     override val mapping: JsMapping
 
     val reflectionSymbols: ReflectionSymbols
+    val propertyLazyInitialization: PropertyLazyInitialization
 
-    val inlineClassesUtils: InlineClassesUtils
+    override val inlineClassesUtils: JsCommonInlineClassesUtils
 
-    val coroutineSymbols: JsCommonCoroutineSymbols
+    val symbols: JsCommonSymbols
+
+    val jsPromiseSymbol: IrClassSymbol?
 
     val catchAllThrowableType: IrType
         get() = irBuiltIns.throwableType
@@ -45,45 +52,48 @@ interface JsCommonBackendContext : CommonBackendContext {
     val suiteFun: IrSimpleFunctionSymbol?
     val testFun: IrSimpleFunctionSymbol?
 
-    fun createTestContainerFun(irFile: IrFile): IrSimpleFunction
+    val enumEntries: IrClassSymbol
+    val createEnumEntries: IrSimpleFunctionSymbol
+
+    val testFunsPerFile: HashMap<IrFile, IrSimpleFunction>
+
+    fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction {
+        val irFile = container.file
+        return testFunsPerFile.getOrPut(irFile) {
+            irFactory.addFunction(irFile) {
+                name = Name.identifier("test fun")
+                returnType = irBuiltIns.unitType
+                origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            }.apply {
+                body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
+            }
+        }
+    }
+
+    val externalPackageFragment: MutableMap<IrFileSymbol, IrFile>
+    val additionalExportedDeclarations: Set<IrDeclaration>
+    val bodilessBuiltInsPackageFragment: IrPackageFragment
 }
 
-// TODO: investigate if it could be removed
-internal fun <T> BackendContext.lazy2(fn: () -> T) = lazy { irFactory.stageController.withInitialIr(fn) }
-
+@OptIn(ObsoleteDescriptorBasedAPI::class, InternalSymbolFinderAPI::class)
 class JsCommonCoroutineSymbols(
-    symbolTable: SymbolTable,
-    val module: ModuleDescriptor,
-    val context: JsCommonBackendContext
+    symbolFinder: SymbolFinder,
 ) {
-    val coroutinePackage = module.getPackage(COROUTINE_PACKAGE_FQNAME)
-    val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
+    val coroutineImpl: IrClassSymbol = symbolFinder.topLevelClass(COROUTINE_PACKAGE_FQNAME, COROUTINE_IMPL_NAME.asString())
 
-    val coroutineImpl =
-        symbolTable.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME))
+    val coroutineImplLabelPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("state")!!.owner }
+    val coroutineImplLabelPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("state")!!.owner }
+    val coroutineImplResultSymbolGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("result")!!.owner }
+    val coroutineImplResultSymbolSetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("result")!!.owner }
+    val coroutineImplExceptionPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exception")!!.owner }
+    val coroutineImplExceptionPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exception")!!.owner }
+    val coroutineImplExceptionStatePropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
+    val coroutineImplExceptionStatePropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
 
-    val coroutineImplLabelPropertyGetter by lazy { coroutineImpl.getPropertyGetter("state")!!.owner }
-    val coroutineImplLabelPropertySetter by lazy { coroutineImpl.getPropertySetter("state")!!.owner }
-    val coroutineImplResultSymbolGetter by lazy { coroutineImpl.getPropertyGetter("result")!!.owner }
-    val coroutineImplResultSymbolSetter by lazy { coroutineImpl.getPropertySetter("result")!!.owner }
-    val coroutineImplExceptionPropertyGetter by lazy { coroutineImpl.getPropertyGetter("exception")!!.owner }
-    val coroutineImplExceptionPropertySetter by lazy { coroutineImpl.getPropertySetter("exception")!!.owner }
-    val coroutineImplExceptionStatePropertyGetter by lazy { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
-    val coroutineImplExceptionStatePropertySetter by lazy { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
+    val continuationClass = symbolFinder.topLevelClass(COROUTINE_PACKAGE_FQNAME, CONTINUATION_NAME.asString())
 
-    val continuationClass = symbolTable.referenceClass(
-        coroutinePackage.memberScope.getContributedClassifier(
-            CONTINUATION_NAME,
-            NoLookupLocation.FROM_BACKEND
-        ) as ClassDescriptor
-    )
-
-    val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
-        coroutineIntrinsicsPackage.memberScope.getContributedVariables(
-            COROUTINE_SUSPENDED_NAME,
-            NoLookupLocation.FROM_BACKEND
-        ).filterNot { it.isExpect }.single().getter!!
-    )
+    val coroutineSuspendedGetter =
+        symbolFinder.findTopLevelPropertyGetter(COROUTINE_INTRINSICS_PACKAGE_FQNAME, COROUTINE_SUSPENDED_NAME.asString())
 
     val coroutineGetContext: IrSimpleFunctionSymbol
         get() {
@@ -95,14 +105,8 @@ class JsCommonCoroutineSymbols(
             return contextGetter.symbol
         }
 
-    val coroutineContextProperty: PropertyDescriptor
-        get() {
-            val vars = coroutinePackage.memberScope.getContributedVariables(
-                COROUTINE_CONTEXT_NAME,
-                NoLookupLocation.FROM_BACKEND
-            )
-            return vars.single()
-        }
+    val coroutineContextGetter =
+        symbolFinder.findTopLevelPropertyGetter(COROUTINE_PACKAGE_FQNAME, COROUTINE_CONTEXT_NAME.asString())
 
     companion object {
         private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
@@ -123,8 +127,16 @@ fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
 fun findFunctions(memberScope: MemberScope, name: Name): List<SimpleFunctionDescriptor> =
     memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
 
-interface InlineClassesUtils {
-    fun isTypeInlined(type: IrType): Boolean
+interface JsCommonInlineClassesUtils : InlineClassesUtils {
+
+    /**
+     * Returns the inlined class for the given type, or `null` if the type is not inlined.
+     */
+    fun getInlinedClass(type: IrType): IrClass?
+
+    fun isTypeInlined(type: IrType): Boolean {
+        return getInlinedClass(type) != null
+    }
 
     fun shouldValueParameterBeBoxed(parameter: IrValueParameter): Boolean {
         val function = parameter.parent as? IrSimpleFunction ?: return false
@@ -133,10 +145,13 @@ interface InlineClassesUtils {
         return parameter.isDispatchReceiver && function.isOverridableOrOverrides
     }
 
-    fun getInlinedClass(type: IrType): IrClass?
-
-    fun isClassInlineLike(klass: IrClass): Boolean
-
+    /**
+     * An intrinsic for creating an instance of an inline class from its underlying value.
+     */
     val boxIntrinsic: IrSimpleFunctionSymbol
+
+    /**
+     * An intrinsic for obtaining the underlying value from an instance of an inline class.
+     */
     val unboxIntrinsic: IrSimpleFunctionSymbol
 }

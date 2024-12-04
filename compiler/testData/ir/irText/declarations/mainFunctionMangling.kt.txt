@@ -1,0 +1,95 @@
+// FILE: a.kt
+
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun main() {
+    println(message = "C.main()")
+  }
+
+  fun <T : Any?> main(t: T): T {
+    println(message = "C.main(T): T")
+    return t
+  }
+
+}
+
+object O {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun main() {
+    println(message = "O.main()")
+  }
+
+  fun <T : Any?> main(t: T): T {
+    println(message = "O.main(T): T")
+    return t
+  }
+
+}
+
+fun main() {
+  println(message = "main()")
+}
+
+fun <T : Any?> main(t: T): T {
+  println(message = "main(T): T")
+  return t
+}
+
+// FILE: b.kt
+package foo
+
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun main() {
+    println(message = "foo.C.main()")
+  }
+
+  fun <T : Any?> main(t: T): T {
+    println(message = "foo.C.main(T): T")
+    return t
+  }
+
+}
+
+object O {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun main() {
+    println(message = "foo.O.main()")
+  }
+
+  fun <T : Any?> main(t: T): T {
+    println(message = "foo.O.main(T): T")
+    return t
+  }
+
+}
+
+fun main() {
+  println(message = "foo.main()")
+}
+
+fun <T : Any?> main(t: T): T {
+  println(message = "foo.main(T): T")
+  return t
+}
+

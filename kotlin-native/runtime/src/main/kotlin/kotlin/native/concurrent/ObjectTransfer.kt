@@ -1,14 +1,17 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
+@file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.concurrent
 
 import kotlinx.cinterop.*
-import kotlin.native.internal.Frozen
+import kotlin.concurrent.AtomicNativePtr
 
 /**
+ * Note: modern Kotlin/Native memory manager allows to share objects between threads without additional ceremonies,
+ * so TransferMode has effect only in legacy memory manager.
+ *
  *  ## Object Transfer Basics.
  *
  *  Objects can be passed between threads in one of two possible modes.
@@ -30,15 +33,16 @@ import kotlin.native.internal.Frozen
  *   Note, that for some cases cycle collection need to be done to ensure that dead cycles do not affect
  *  reachability of passed object graph.
  *
- *  @see [kotlin.native.internal.GC.collect].
+ *  @see [kotlin.native.runtime.GC.collect].
  */
-public enum class TransferMode(val value: Int) {
+@ObsoleteWorkersApi
+public enum class TransferMode(public val value: Int) {
     /**
-     * Reachibility check is performed.
+     * Reachability check is performed.
      */
     SAFE(0),
     /**
-     * Skip reachibility check, can lead to mysterious crashes in an application.
+     * Skip reachability check, can lead to mysterious crashes in an application.
      * USE UNSAFE MODE ONLY IF ABSOLUTELY SURE WHAT YOU'RE DOING!!!
      */
     UNSAFE(1)
@@ -48,10 +52,12 @@ public enum class TransferMode(val value: Int) {
  * Detached object graph encapsulates transferrable detached subgraph which cannot be accessed
  * externally, until it is attached with the [attach] extension function.
  */
-@Frozen
+@ObsoleteWorkersApi
+@Deprecated("Support for the legacy memory manager has been completely removed. Use the pointed value directly. To pass the value through the C interop, use the StableRef class.")
+@DeprecatedSinceKotlin(errorSince = "2.1")
 public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
     @PublishedApi
-    internal val stable = AtomicNativePtr(pointer)
+    internal val stable: AtomicNativePtr = AtomicNativePtr(pointer)
 
     /**
      * Creates stable pointer to object, ensuring associated object subgraph is disjoint in specified mode
@@ -69,7 +75,8 @@ public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
     /**
      * Returns raw C pointer value, usable for interoperability with C scenarious.
      */
-    public fun asCPointer(): COpaquePointer? = interpretCPointer<COpaque>(stable.value)
+    @ExperimentalForeignApi
+    public fun asCPointer(): COpaquePointer? = interpretCPointer<COpaque>(stable.load())
 }
 
 /**
@@ -78,10 +85,14 @@ public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
  * make sense anymore, and shall be discarded, so attach of one DetachedObjectGraph object can only
  * happen once.
  */
+@ObsoleteWorkersApi
+@Deprecated("Support for the legacy memory manager has been completely removed.")
+@DeprecatedSinceKotlin(errorSince = "2.1")
+@Suppress("DEPRECATION_ERROR")
 public inline fun <reified T> DetachedObjectGraph<T>.attach(): T {
     var rawStable: NativePtr
     do {
-        rawStable = stable.value
+        rawStable = stable.load()
     } while (!stable.compareAndSet(rawStable, NativePtr.NULL))
     val result = attachObjectGraphInternal(rawStable) as T
     return result

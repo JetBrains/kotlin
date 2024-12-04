@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class NewResolvedCallImpl<D : CallableDescriptor>(
     override val resolvedCallAtom: ResolvedCallAtom,
     substitutor: NewTypeSubstitutor?,
-    private var diagnostics: Collection<KotlinCallDiagnostic>,
+    diagnostics: Collection<KotlinCallDiagnostic>,
     override val typeApproximator: TypeApproximator,
     override val languageVersionSettings: LanguageVersionSettings,
 ) : NewAbstractResolvedCall<D>() {
@@ -39,6 +38,9 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     override val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
         get() = resolvedCallAtom.argumentMappingByOriginal
 
+    override var diagnostics: Collection<KotlinCallDiagnostic> = diagnostics
+        private set
+
     private lateinit var resultingDescriptor: D
     private lateinit var typeArguments: List<UnwrappedType>
     private var smartCastDispatchReceiverType: KotlinType? = null
@@ -48,9 +50,11 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private var argumentTypeForConstantConvertedMap: Map<KtExpression, IntegerValueTypeConstant>? = null
     private var extensionReceiver = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
     private var dispatchReceiver = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
+    private var contextReceivers = resolvedCallAtom.contextReceiversArguments.map { it.receiver.receiverValue }
 
     override fun getExtensionReceiver(): ReceiverValue? = extensionReceiver
     override fun getDispatchReceiver(): ReceiverValue? = dispatchReceiver
+    override fun getContextReceivers(): List<ReceiverValue> = contextReceivers
 
     @Suppress("UNCHECKED_CAST")
     override fun getCandidateDescriptor(): D = resolvedCallAtom.candidateDescriptor as D
@@ -65,6 +69,11 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     override fun updateExtensionReceiverType(newType: KotlinType) {
         if (extensionReceiver?.type == newType) return
         extensionReceiver = extensionReceiver?.replaceType(newType)
+    }
+
+    override fun updateContextReceiverTypes(newTypes: List<KotlinType>) {
+        if (contextReceivers.size != newTypes.size) return
+        contextReceivers = contextReceivers.zip(newTypes).map { (receiver, type) -> receiver.replaceType(type) }
     }
 
     override fun getStatus(): ResolutionStatus = getResultApplicability(diagnostics).toResolutionStatus()
@@ -218,7 +227,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
                 else -> null
             } as? ArgumentConstraintPositionImpl ?: return@forEach
 
-            val argument = position.argument.safeAs<PSIKotlinCallArgument>()?.valueArgument ?: return@forEach
+            val argument = (position.argument as? PSIKotlinCallArgument)?.valueArgument ?: return@forEach
             result += argument to it
         }
 

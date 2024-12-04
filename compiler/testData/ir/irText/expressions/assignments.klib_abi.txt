@@ -1,0 +1,14 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Ref { // /Ref|null[0]
+    final var x // /Ref.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /Ref.x.<get-x>|<get-x>(){}[0]
+        final fun <set-x>(kotlin/Int) // /Ref.x.<set-x>|<set-x>(kotlin.Int){}[0]
+    constructor <init>(kotlin/Int) // /Ref.<init>|<init>(kotlin.Int){}[0]
+}
+final fun /test1() // /test1|test1(){}[0]
+final fun /test2(/Ref) // /test2|test2(Ref){}[0]

@@ -1,0 +1,27 @@
+FILE: objectAccessInLambdaWithDynamicReceiver.kt
+    public final fun jso(block: R|dynamic.() -> kotlin/Unit|): R|dynamic| {
+        ^jso R|kotlin/js/js|(String(({}))).R|<dynamic>/apply|(vararg(R|<local>/block|))
+    }
+    public final class G : R|kotlin/Any| {
+        public constructor(): R|G| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|G.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val foo: R|kotlin/String| = String(string)
+                public get(): R|kotlin/String|
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/jso|(<L> = jso@fun R|dynamic|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/G.G|()
+            Q|G|.R|/G.Companion.foo|
+        }
+        )
+    }

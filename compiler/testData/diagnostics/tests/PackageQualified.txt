@@ -1,7 +1,7 @@
 package
 
 package foobar {
-    public val x1: [ERROR : <ERROR PROPERTY TYPE>]
+    public val x1: [Error type: Error property type]
     public val x2: java.util.List<kotlin.Int>? = null
     public val y1: kotlin.collections.List<kotlin.Int>? = null
     public fun </*0*/ O> done(/*0*/ result: O): foobar.Iteratee<kotlin.Any?, O>
@@ -59,9 +59,9 @@ package foobar {
 
     package foobar.a {
         public val a: java.util.List<kotlin.Int>? = null
-        public val a2: [ERROR : util.List<Int>]<kotlin.Int>?
-        public val a3: [ERROR : LinkedList<Int>]<kotlin.Int>?
+        public val a2: [Error type: Unresolved type for util.List<Int>]<kotlin.Int>?
+        public val a3: [Error type: Unresolved type for LinkedList<Int>]<kotlin.Int>?
         public val b: kotlin.collections.List<kotlin.Int>? = null
-        public val b1: [ERROR : util.List<Int>]<kotlin.Int>?
+        public val b1: [Error type: Unresolved type for util.List<Int>]<kotlin.Int>?
     }
 }

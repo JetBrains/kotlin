@@ -1,0 +1,3 @@
+package
+
+public fun main(/*0*/ n: kotlin.Int): kotlin.Unit

@@ -1,4 +1,6 @@
-interface List<out T : Any> {
+@Target(AnnotationTarget.TYPE_PARAMETER) annotation class A
+
+interface List<@A out T : Any> {
     operator fun get(index: Int): T
 
     infix fun concat(other: List<T>): List<T>

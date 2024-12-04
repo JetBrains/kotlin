@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.test.generators
 
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import java.util.stream.Stream
+
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
+    // Determine main class name while still on main thread.
+    val mainClassName = TestGeneratorUtil.getMainClassName()
 
-    generateJUnit3CompilerTests(args)
-    generateJUnit5CompilerTests(args)
+    Stream.of(::generateJUnit3CompilerTests, ::generateJUnit5CompilerTests)
+        .parallel()
+        .forEach { it.invoke(args, mainClassName) }
 }

@@ -1,12 +1,6 @@
 plugins {
-    kotlin("multiplatform").version("<pluginMarkerVersion>")
+    kotlin("multiplatform")
     `maven-publish`
-}
-
-repositories {
-    mavenLocal()
-    maven("../repo")
-    mavenCentral()
 }
 
 group = "com.example.foo"
@@ -20,11 +14,7 @@ kotlin {
     linuxX64()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-            }
-        }
+        val commonMain by getting
 
         val commonTest by getting {
             dependencies {
@@ -103,6 +93,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven("../repo")
+        maven("<localRepo>")
     }
 }

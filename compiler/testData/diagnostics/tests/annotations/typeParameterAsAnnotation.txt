@@ -3,7 +3,7 @@ package
 public final class Bar</*0*/ T : kotlin.Annotation> {
     public constructor Bar</*0*/ T : kotlin.Annotation>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @[ERROR : Not an annotation: T] /* annotation class not found */ public final fun foo(): kotlin.Int
+    @[Error type: Not an annotation type T in the annotation context] /* annotation class not found */ public final fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -11,7 +11,7 @@ public final class Bar</*0*/ T : kotlin.Annotation> {
 public final class Foo</*0*/ T> {
     public constructor Foo</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @[ERROR : Not an annotation: T] /* annotation class not found */ public final fun foo(): kotlin.Int
+    @[Error type: Not an annotation type T in the annotation context] /* annotation class not found */ public final fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -1,3 +1,6 @@
+fun println() {
+}
+
 fun test1() {
   try { // BLOCK
     println()
@@ -13,14 +16,17 @@ fun test1() {
 fun test2(): Int {
   return try { // BLOCK
     println()
+    100 /*~> Unit */
     42
   }
   catch (e: Throwable){ // BLOCK
     println()
+    101 /*~> Unit */
     24
   }
   finally { // BLOCK
     println()
+    102 /*~> Unit */
     555 /*~> Unit */
   }
 }

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // Function parameter CAN be recursively annotated
 annotation class ann(val x: Int)

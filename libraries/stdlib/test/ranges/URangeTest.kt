@@ -40,9 +40,14 @@ public class URangeTest {
         assertTrue(12u as UInt? in range)
         assertFalse((-3).toUInt() as UInt? in range)
 
+        val closedRange = 1u..9u
         val openRange = 1u until 10u
         assertTrue(9u in openRange)
         assertFalse(10u in openRange)
+        assertEquals(closedRange, openRange)
+
+        val openRange2 = 1u..<10u
+        assertEquals(closedRange, openRange2)
 
         assertTrue((1u until UInt.MIN_VALUE).isEmpty())
     }
@@ -77,6 +82,8 @@ public class URangeTest {
         val openRange = 1.toUByte() until 10.toUByte()
         assertTrue(9.toUByte() in openRange)
         assertFalse(10.toUByte() in openRange)
+        val openRange2 = 1.toUByte()..<10.toUByte()
+        assertEquals(openRange, openRange2)
 
         assertTrue((UByte.MAX_VALUE until UByte.MIN_VALUE).isEmpty())
     }
@@ -111,6 +118,8 @@ public class URangeTest {
         val openRange = 1.toUShort() until 10.toUShort()
         assertTrue(9.toUShort() in openRange)
         assertFalse(10.toUShort() in openRange)
+        val openRange2 = 1.toUShort()..<10.toUShort()
+        assertEquals(openRange, openRange2)
 
         assertTrue((0.toUShort() until UShort.MIN_VALUE).isEmpty())
     }
@@ -144,11 +153,33 @@ public class URangeTest {
         assertTrue(12uL as ULong? in range)
         assertFalse((-3).toULong() as ULong? in range)
 
+        val closedRange = 1uL..9uL
         val openRange = 1uL until 10uL
         assertTrue(9uL in openRange)
         assertFalse(10uL in openRange)
+        assertEquals(closedRange, openRange)
+
+        val openRange2 = 1uL..<10uL
+        assertEquals(closedRange, openRange2)
 
         assertTrue((0uL until ULong.MIN_VALUE).isEmpty())
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun openRangeEndExclusive() {
+        assertEquals((1u..5u).endInclusive, (1u..<4u).endExclusive + 1u)
+        assertEquals((1uL..5uL).endInclusive, (1uL..<4uL).endExclusive + 1u)
+
+        assertNotEquals(UInt.MIN_VALUE, (1u..<UInt.MIN_VALUE).endExclusive)
+        assertNotEquals(ULong.MIN_VALUE, (1uL..<ULong.MIN_VALUE).endExclusive)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun openRangeEndExclusiveThrows() {
+        assertFailsWith<IllegalStateException> { (1u..UInt.MAX_VALUE).endExclusive }
+        assertFailsWith<IllegalStateException> { (1uL..ULong.MAX_VALUE).endExclusive }
     }
 
     @Suppress("EmptyRange")
@@ -183,6 +214,7 @@ public class URangeTest {
         assertTrue(0uL downTo (-1).toULong() == (-2).toULong() downTo (-1).toULong())
 
         assertFalse(0u..1u == UIntRange.EMPTY)
+        assertTrue(0u..<0u == UIntRange.EMPTY)
     }
 
     @Suppress("EmptyRange")
@@ -240,5 +272,29 @@ public class URangeTest {
     fun randomInEmptyRange() {
         assertFailsWith<NoSuchElementException> { UIntRange.EMPTY.random() }
         assertFailsWith<NoSuchElementException> { ULongRange.EMPTY.random() }
+    }
+
+    @Test fun firstInEmptyRange() {
+        assertFailsWith<NoSuchElementException> { UIntRange.EMPTY.first() }
+        assertFailsWith<NoSuchElementException> { ULongRange.EMPTY.first() }
+        assertFailsWith<NoSuchElementException> { UIntProgression.fromClosedRange(0u, 3u, -2).first() }
+    }
+
+    @Test fun firstOrNullInEmptyRange() {
+        assertNull(UIntRange.EMPTY.firstOrNull())
+        assertNull(ULongRange.EMPTY.firstOrNull())
+        assertNull(UIntProgression.fromClosedRange(0u, 3u, -2).firstOrNull())
+    }
+
+    @Test fun lastInEmptyRange() {
+        assertFailsWith<NoSuchElementException> { UIntRange.EMPTY.last() }
+        assertFailsWith<NoSuchElementException> { ULongRange.EMPTY.last() }
+        assertFailsWith<NoSuchElementException> { UIntProgression.fromClosedRange(0u, 3u, -2).last() }
+    }
+
+    @Test fun lastOrNullInEmptyRange() {
+        assertNull(UIntRange.EMPTY.lastOrNull())
+        assertNull(ULongRange.EMPTY.lastOrNull())
+        assertNull(UIntProgression.fromClosedRange(0u, 3u, -2).lastOrNull())
     }
 }

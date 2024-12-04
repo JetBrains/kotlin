@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt3.base.incremental
 
 import java.io.*
+import java.util.ArrayDeque
 
 // TODO(gavra): switch away from Java serialization
 class JavaClassCacheManager(val file: File) : Closeable {
@@ -26,10 +27,8 @@ class JavaClassCacheManager(val file: File) : Closeable {
         // Compilation is fully incremental, record types defined in generated .class files
         processors.forEach { processor ->
             processor.getGeneratedClassFilesToTypes().forEach { (classFile, type) ->
-                val typeInformation = SourceFileStructure(classFile.toURI()).also {
-                    it.addDeclaredType(type)
-                }
-                javaCache.addSourceStructure(typeInformation)
+                val classFileStructure = ClassFileStructure(classFile.toURI(), type)
+                javaCache.addSourceStructure(classFileStructure)
             }
         }
     }
@@ -38,8 +37,32 @@ class JavaClassCacheManager(val file: File) : Closeable {
      * From set of changed sources, get list of files to recompile using structural information and dependency information from
      * annotation processing.
      */
-    fun invalidateAndGetDirtyFiles(changedSources: Collection<File>, dirtyClasspathJvmNames: Collection<String>): SourcesToReprocess {
+    fun invalidateAndGetDirtyFiles(
+        changedSources: Collection<File>,
+        dirtyClasspathJvmNames: Collection<String>,
+        compiledSources: List<File>
+    ): SourcesToReprocess {
         if (!aptCache.isIncremental) {
+            return SourcesToReprocess.FullRebuild
+        }
+
+        /**
+         * Incremental annotation processing tries to limit the number of .java files that are passes to annotation processors, and it
+         * uses already existing .class files to resolve types. This relies on outputs of kotlinc and javac being present.
+         *
+         * The check below verifies that the number of types defined in the processed .java files matches the number of .class files
+         * in the compiled sources. This check does not guarantee that .class file will indeed exist for every defined type, but
+         * even if such check is introduced, there is no guarantee that the actual content of the source file matches the .class file. E.g:
+         * - clean build i.e non-incremental KAPT
+         * - modify B.java with error in the method body: KAPT runs successfully, but java compilation will fail (assume old B.class is kept)
+         * - add C.java that references B as method parameter type: KAPT wil only process C.java, and it will use old version of B
+         * To properly fix this, KAPT needs to keep track of kotlinc and javac compilation outcome, and there is no clean API to do that.
+         *
+         * However, comparing total numbers is probably good enough, and it should eliminate most of the issues. See KT-41456 for details.
+         */
+        val totalDeclaredTypes = javaCache.getSourceFileDefinedTypesCount()
+        val compileOutputHasEnoughClassFiles = checkMinNumberOfClassFiles(compiledSources, totalDeclaredTypes)
+        if (!compileOutputHasEnoughClassFiles) {
             return SourcesToReprocess.FullRebuild
         }
 
@@ -175,4 +198,32 @@ sealed class SourcesToReprocess {
     ) : SourcesToReprocess()
 
     object FullRebuild : SourcesToReprocess()
+}
+
+/** Returns if specified root dirs have at least [required] number of class files. */
+private fun checkMinNumberOfClassFiles(roots: List<File>, required: Int): Boolean {
+    var currentlyMissing = required
+    roots.filter { it.isDirectory }.forEach {
+        val inThisRoot = countClassFilesUpToLimit(it, currentlyMissing)
+        currentlyMissing -= inThisRoot
+    }
+    return currentlyMissing <= 0
+}
+
+private fun countClassFilesUpToLimit(root: File, limit: Int): Int {
+    var cnt = 0;
+    val toVisit = ArrayDeque<File>()
+    toVisit.add(root)
+    while (cnt < limit && toVisit.isNotEmpty()) {
+        val curr = toVisit.removeFirst()
+        if (curr.isFile && curr.toString().endsWith(".class")) {
+            cnt++
+        } else if (curr.isDirectory) {
+            curr.listFiles()?.forEach {
+                toVisit.addLast(it)
+            }
+        }
+    }
+
+    return cnt
 }

@@ -16,17 +16,11 @@ interface DiagnosticContext {
     val languageVersionSettings: LanguageVersionSettings
 }
 
-abstract class MutableDiagnosticContext : DiagnosticContext {
-    abstract fun addSuppressedDiagnostics(
-        diagnosticNames: Collection<String>,
-        allInfosSuppressed: Boolean,
-        allWarningsSuppressed: Boolean,
-        allErrorsSuppressed: Boolean
-    ): DiagnosticContext
-}
-
 abstract class DiagnosticReporter {
     abstract fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext)
+
+    open fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
+    }
 }
 
 open class KtDiagnosticReporterWithContext(
@@ -34,6 +28,10 @@ open class KtDiagnosticReporterWithContext(
     val languageVersionSettings: LanguageVersionSettings
 ) : DiagnosticReporter() {
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) = diagnosticReporter.report(diagnostic, context)
+
+    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
+        diagnosticReporter.checkAndCommitReportsOn(element, context)
+    }
 
     open fun at(sourceElement: AbstractKtSourceElement?, containingFilePath: String): DiagnosticContextImpl =
         DiagnosticContextImpl(sourceElement, containingFilePath)
@@ -51,21 +49,36 @@ open class KtDiagnosticReporterWithContext(
         override val languageVersionSettings: LanguageVersionSettings
             get() = this@KtDiagnosticReporterWithContext.languageVersionSettings
 
-        @OptIn(InternalDiagnosticFactoryMethod::class)
-        fun report(
-            factory: KtDiagnosticFactory0,
-            positioningStrategy: AbstractSourceElementPositioningStrategy? = null
-        ) {
-            sourceElement?.let { report(factory.on(it, positioningStrategy), this) }
+        fun report(factory: KtDiagnosticFactory0) {
+            sourceElement?.let {
+                reportOn(it, factory, this)
+                checkAndCommitReportsOn(it, this)
+            }
         }
 
-        @OptIn(InternalDiagnosticFactoryMethod::class)
-        fun <A : Any> report(
-            factory: KtDiagnosticFactory1<A>,
-            a: A,
-            positioningStrategy: AbstractSourceElementPositioningStrategy? = null
-        ) {
-            sourceElement?.let { report(factory.on(it, a, positioningStrategy), this) }
+        fun <A : Any> report(factory: KtDiagnosticFactory1<A>, a: A) {
+            sourceElement?.let {
+                reportOn(it, factory, a, this)
+                checkAndCommitReportsOn(it, this)
+            }
+        }
+
+        fun <A : Any, B : Any> report(factory: KtDiagnosticFactory2<A, B>, a: A, b: B) {
+            sourceElement?.let {
+                reportOn(it, factory, a, b, this)
+                checkAndCommitReportsOn(it, this)
+            }
+        }
+
+        fun <A : Any, B : Any> report(factory: KtDiagnosticFactoryForDeprecation2<A, B>, a: A, b: B) {
+            report(factory.chooseFactory(this), a, b)
+        }
+
+        fun <A : Any, B : Any, C : Any> report(factory: KtDiagnosticFactory3<A, B, C>, a: A, b: B, c: C) {
+            sourceElement?.let {
+                reportOn(it, factory, a, b, c, this)
+                checkAndCommitReportsOn(it, this)
+            }
         }
 
         override fun equals(other: Any?): Boolean {

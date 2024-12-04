@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // KT-336 Can't infer type parameter for ArrayList in a generic function (Exception in type inference)
 // KT-335 Type inference fails on Collections.sort

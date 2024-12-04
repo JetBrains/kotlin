@@ -1,0 +1,3 @@
+KtNameReferenceExpression(93,101): 'variable'
+  KtSimpleNameReference:
+    variable: MyClass

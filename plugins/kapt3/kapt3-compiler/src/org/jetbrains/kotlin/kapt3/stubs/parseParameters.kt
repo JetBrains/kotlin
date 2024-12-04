@@ -25,7 +25,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AnnotationNode
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.*
 
 internal class ParameterInfo(
     val flags: Long,
@@ -71,11 +70,8 @@ internal fun MethodNode.getParametersInfo(
 
         // @JvmOverloads constructors and ordinary methods don't have "this" local variable
         name = name ?: localVariables.getOrNull(index + localVariableIndexOffset)?.name
-                ?: originalDescriptor.valueParameters.getOrNull(index)?.name?.identifier
-                ?: "p${index - startParameterIndex}"
-
-        // Property setters has bad parameter names
-        if (name.startsWith("<") && name.endsWith(">")) {
+                ?: originalDescriptor.valueParameters.getOrNull(index)?.name?.identifierOrNullIfSpecial
+        if (name == null || name.startsWith("<") && name.endsWith(">")) {
             name = "p${index - startParameterIndex}"
         }
 

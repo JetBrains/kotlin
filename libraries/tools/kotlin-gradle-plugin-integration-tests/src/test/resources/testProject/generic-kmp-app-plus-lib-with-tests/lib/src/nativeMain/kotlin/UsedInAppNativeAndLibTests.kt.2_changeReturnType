@@ -1,0 +1,1 @@
+fun libNativePlatformUtil(unused: Boolean = true): Double = 20.0

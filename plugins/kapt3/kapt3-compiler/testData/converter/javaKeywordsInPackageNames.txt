@@ -1,7 +1,14 @@
 package a.b.c;
 
-import java.lang.System;
-
+/**
+ * public final class a/b/c/A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class A {
 
@@ -14,8 +21,15 @@ public final class A {
 
 package a.b.typealias.c;
 
-import java.lang.System;
-
+/**
+ * public final class a/b/typealias/c/E : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class E {
 

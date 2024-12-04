@@ -1,0 +1,4 @@
+Module names of invalidated sessions:
+A
+C
+L2

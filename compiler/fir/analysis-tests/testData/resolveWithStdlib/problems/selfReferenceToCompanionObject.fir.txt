@@ -53,7 +53,7 @@ FILE: selfReferenceToCompanionObject.kt
                 ))
             }
 
-            public final override val y: R|kotlin/String| = String(K)
+            public open override val y: R|kotlin/String| = String(K)
                 public get(): R|kotlin/String|
 
             public final val closure2: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
@@ -62,7 +62,7 @@ FILE: selfReferenceToCompanionObject.kt
 
                 public get(): R|() -> kotlin/String|
 
-            public final override val z: R|kotlin/String| = this@R|/<anonymous>|.R|/<anonymous>.closure2|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+            public open override val z: R|kotlin/String| = this@R|/<anonymous>|.R|/<anonymous>.closure2|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
                 public get(): R|kotlin/String|
 
         }
@@ -78,6 +78,9 @@ FILE: selfReferenceToCompanionObject.kt
 
         public final static fun valueOf(value: R|kotlin/String|): R|Test| {
         }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Test>|
+            public get(): R|kotlin/enums/EnumEntries<Test>|
 
     }
     public final fun box(): R|kotlin/String| {

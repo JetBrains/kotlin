@@ -7,12 +7,17 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineLambdas
-import org.jetbrains.kotlin.backend.jvm.isGeneratedLambdaClass
+import org.jetbrains.kotlin.backend.jvm.isEnclosedInConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 
-class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLowering(context) {
+/**
+ * Moves local classes from field initializers and anonymous init blocks into the containing class.
+ */
+@PhaseDescription(name = "JvmLocalClassExtraction")
+internal class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLowering(context) {
     private val inlineLambdaToScope = mutableMapOf<IrFunction, IrDeclaration>()
 
     override fun lower(irFile: IrFile) {
@@ -40,7 +45,7 @@ class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLo
         if (parent is IrAnonymousInitializer && !parent.isStatic ||
             parent is IrField && !parent.isStatic
         ) {
-            (context as JvmBackendContext).isEnclosedInConstructor.add(klass.attributeOwnerId)
+            klass.isEnclosedInConstructor = true
             return true
         }
         return false

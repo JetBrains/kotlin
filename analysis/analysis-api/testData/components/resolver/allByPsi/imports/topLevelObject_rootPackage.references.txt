@@ -1,0 +1,71 @@
+KtNameReferenceExpression(39,43): 'main'
+  KtSimpleNameReference:
+    package main
+
+KtNameReferenceExpression(52,66): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in ROOT) object TopLevelObject
+
+KtNameReferenceExpression(67,78): 'NestedClass'
+  KtSimpleNameReference:
+    (in TopLevelObject) class NestedClass
+
+KtNameReferenceExpression(86,100): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in ROOT) object TopLevelObject
+
+KtNameReferenceExpression(101,113): 'NestedObject'
+  KtSimpleNameReference:
+    (in TopLevelObject) object NestedObject
+
+KtNameReferenceExpression(121,135): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in ROOT) object TopLevelObject
+
+KtNameReferenceExpression(136,139): 'foo'
+  KtSimpleNameReference:
+    (in TopLevelObject) fun foo()
+
+KtNameReferenceExpression(147,161): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in ROOT) object TopLevelObject
+
+KtNameReferenceExpression(162,165): 'bar'
+  KtSimpleNameReference:
+    (in TopLevelObject) val bar: kotlin.String
+
+KtNameReferenceExpression(174,188): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in ROOT) object TopLevelObject
+
+KtNameReferenceExpression(189,201): 'NestedObject'
+  KtSimpleNameReference:
+    (in TopLevelObject) object NestedObject
+
+KtNameReferenceExpression(202,213): 'NestedClass'
+  KtSimpleNameReference:
+    (in TopLevelObject.NestedObject) class NestedClass
+
+KtNameReferenceExpression(221,235): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in ROOT) object TopLevelObject
+
+KtNameReferenceExpression(236,248): 'NestedObject'
+  KtSimpleNameReference:
+    (in TopLevelObject) object NestedObject
+
+KtNameReferenceExpression(249,252): 'foo'
+  KtSimpleNameReference:
+    (in TopLevelObject.NestedObject) fun foo()
+
+KtNameReferenceExpression(260,274): 'TopLevelObject'
+  KtSimpleNameReference:
+    (in ROOT) object TopLevelObject
+
+KtNameReferenceExpression(275,287): 'NestedObject'
+  KtSimpleNameReference:
+    (in TopLevelObject) object NestedObject
+
+KtNameReferenceExpression(288,291): 'bar'
+  KtSimpleNameReference:
+    (in TopLevelObject.NestedObject) val bar: kotlin.String

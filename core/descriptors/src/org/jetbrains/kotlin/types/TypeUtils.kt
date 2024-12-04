@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.typeUtil
@@ -24,13 +13,14 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.NewCapturedType
-import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
-import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.error.ErrorType
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
+import org.jetbrains.kotlin.utils.closure as newClosure
 
 enum class TypeNullability {
     NOT_NULL,
@@ -84,6 +74,8 @@ fun KotlinType.isPrimitiveNumberOrNullableType(): Boolean =
 
 fun KotlinType.isTypeParameter(): Boolean = TypeUtils.isTypeParameter(this)
 
+fun KotlinType.containsTypeParameter(): Boolean = TypeUtils.contains(this) { t -> TypeUtils.isTypeParameter(t) }
+
 fun KotlinType.upperBoundedByPrimitiveNumberOrNullableType(): Boolean =
     TypeUtils.getTypeParameterDescriptorOrNull(this)?.upperBounds?.any {
         it.isPrimitiveNumberOrNullableType() || it.upperBoundedByPrimitiveNumberOrNullableType()
@@ -97,6 +89,15 @@ fun KotlinType?.isArrayOfNothing(): Boolean {
 
     val typeArg = arguments.firstOrNull()?.type
     return typeArg != null && KotlinBuiltIns.isNothingOrNullableNothing(typeArg)
+}
+
+fun KotlinType.isGenericArrayOfTypeParameter(): Boolean {
+    if (!KotlinBuiltIns.isArray(this)) return false
+    val argument0 = arguments[0]
+    if (argument0.isStarProjection) return false
+    val argument0type = argument0.type
+    return argument0type.isTypeParameter() ||
+            argument0type.isGenericArrayOfTypeParameter()
 }
 
 
@@ -116,7 +117,7 @@ fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypePro
 
 fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
     if (annotations.isEmpty() && newAnnotations.isEmpty()) return this
-    return unwrap().replaceAnnotations(newAnnotations)
+    return unwrap().replaceAttributes(attributes.replaceAnnotations(newAnnotations))
 }
 
 fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?): Boolean {
@@ -134,25 +135,19 @@ fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupe
 fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
     TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
 
+@Deprecated(
+    "The function has been moved",
+    ReplaceWith(
+        expression = "closure(preserveOrder, f)",
+        imports = ["org.jetbrains.kotlin.utils.CollectionUtilKt.closure"],
+    )
+)
 fun <T> Collection<T>.closure(preserveOrder: Boolean = false, f: (T) -> Collection<T>): Collection<T> {
-    if (size == 0) return this
-
-    val result = if (preserveOrder) LinkedHashSet(this) else HashSet(this)
-    var elementsToCheck = result
-    var oldSize = 0
-    while (result.size > oldSize) {
-        oldSize = result.size
-        val toAdd = if (preserveOrder) linkedSetOf() else hashSetOf<T>()
-        elementsToCheck.forEach { toAdd.addAll(f(it)) }
-        result.addAll(toAdd)
-        elementsToCheck = toAdd
-    }
-
-    return result
+    return newClosure(preserveOrder, f)
 }
 
 fun boundClosure(types: Collection<KotlinType>): Collection<KotlinType> =
-    types.closure { type -> TypeUtils.getTypeParameterDescriptorOrNull(type)?.upperBounds ?: emptySet() }
+    types.newClosure { type -> TypeUtils.getTypeParameterDescriptorOrNull(type)?.upperBounds ?: emptySet() }
 
 fun constituentTypes(types: Collection<KotlinType>): Collection<KotlinType> {
     val result = hashSetOf<KotlinType>()
@@ -246,21 +241,6 @@ private fun KotlinType.containsSelfTypeParameter(
     }
 }
 
-fun KotlinType.replaceArgumentsWithStarProjectionOrMapped(
-    substitutor: TypeSubstitutor,
-    substitutionMap: Map<TypeConstructor, TypeProjection>,
-    variance: Variance,
-    visitedTypeParameters: Set<TypeParameterDescriptor>?
-) =
-    replaceArgumentsByParametersWith { typeParameterDescriptor ->
-        val argument = arguments.getOrNull(typeParameterDescriptor.index)
-        val isTypeParameterVisited = visitedTypeParameters != null && typeParameterDescriptor in visitedTypeParameters
-        if (!isTypeParameterVisited && argument != null && argument.type.constructor in substitutionMap) {
-            argument
-        } else StarProjectionImpl(typeParameterDescriptor)
-    }.let { substitutor.safeSubstitute(it, variance) }
-
-
 inline fun KotlinType.replaceArgumentsByParametersWith(replacement: (TypeParameterDescriptor) -> TypeProjection): KotlinType {
     val unwrapped = unwrap()
     return when (unwrapped) {
@@ -349,7 +329,7 @@ fun SimpleType.unCapture(): UnwrappedType {
 }
 
 fun unCaptureProjection(projection: TypeProjection): TypeProjection {
-    val unCapturedProjection = projection.type.constructor.safeAs<NewCapturedTypeConstructor>()?.projection ?: projection
+    val unCapturedProjection = (projection.type.constructor as? NewCapturedTypeConstructor)?.projection ?: projection
     if (unCapturedProjection.isStarProjection || unCapturedProjection.type is ErrorType) return unCapturedProjection
 
     val newArguments = unCapturedProjection.type.arguments.map(::unCaptureProjection)
@@ -389,3 +369,21 @@ private fun NewCapturedType.unCaptureTopLevelType(): UnwrappedType {
 
 fun KotlinType?.shouldBeUpdated() =
     this == null || contains { it is StubTypeForBuilderInference || it.constructor is TypeVariableTypeConstructorMarker || it.isError }
+
+fun KotlinType.isStubType() = this is AbstractStubType || isDefNotNullStubType<AbstractStubType>()
+
+fun KotlinType.isStubTypeForVariableInSubtyping(): Boolean =
+    this is StubTypeForTypeVariablesInSubtyping || isDefNotNullStubType<StubTypeForTypeVariablesInSubtyping>()
+
+fun KotlinType.isStubTypeForBuilderInference(): Boolean =
+    this is StubTypeForBuilderInference || isDefNotNullStubType<StubTypeForBuilderInference>()
+
+private inline fun <reified S : AbstractStubType> KotlinType.isDefNotNullStubType() = this is DefinitelyNotNullType && this.original is S
+
+@OptIn(ExperimentalContracts::class)
+fun isUnresolvedType(type: KotlinType): Boolean {
+    contract {
+        returns(true) implies (type is ErrorType)
+    }
+    return type is ErrorType && type.kind.isUnresolved
+}

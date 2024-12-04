@@ -1,6 +1,11 @@
 // STRICT
 
-//FILE: test/ClassRefAnnotation.java
+// EXPECTED_ERROR: (other:-1:-1) test.PackedClass: Can't reference type 'AnotherRootClass' from default package in Java stub.
+// EXPECTED_ERROR: (other:-1:-1) test.PackedClass: Can't reference type 'RootClass' from default package in Java stub.
+// EXPECTED_ERROR: (other:-1:-1) test.PackedWithAnnotation: Can't reference type 'RootAnnotation' from default package in Java stub.
+// EXPECTED_ERROR: (other:-1:-1) test.PackedWithAnnotation: Can't reference type 'RootClass' from default package in Java stub.
+
+// FILE: test/ClassRefAnnotation.java
 
 package test;
 
@@ -15,18 +20,21 @@ public @interface ClassRefAnnotation {
     Class<?>[] value();
 }
 
-//FILE: a.kt
+// FILE: a.kt
 
 class RootClass
 
 class AnotherRootClass
 
-//FILE: b.kt
+annotation class RootAnnotation
+
+// FILE: b.kt
 package test
 
 import java.lang.Number as JavaNumber
 import RootClass
 import AnotherRootClass as Arc
+import RootAnnotation
 
 interface PackedClass {
     fun someMethod(): RootClass
@@ -35,9 +43,5 @@ interface PackedClass {
 }
 
 @ClassRefAnnotation(RootClass::class)
+@RootAnnotation
 class PackedWithAnnotation
-
-// EXPECTED_ERROR(kotlin:14:1) cannot find symbol
-// EXPECTED_ERROR(other:-1:-1) test.PackedClass: Can't reference type 'RootClass' from default package in Java stub.
-// EXPECTED_ERROR(other:-1:-1) test.PackedClass: Can't reference type 'AnotherRootClass' from default package in Java stub.
-// EXPECTED_ERROR(other:-1:-1) test.PackedWithAnnotation: Can't reference type 'RootClass' from default package in Java stub.

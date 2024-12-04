@@ -1,0 +1,9 @@
+MODULE main
+	CLASS IC.class
+		CLASS METADATA
+			FUNCTION o-impl(LI;Ljava/lang/String;)Ljava/lang/String;
+				Property: class.metadata.function.valueParameters
+					K1
+						(k: kotlin/String /* = ... */)
+					K2
+						(k: kotlin/String)

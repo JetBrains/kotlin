@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 // FILE: AImpl.java
 
 abstract public class AImpl {

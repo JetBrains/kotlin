@@ -5,8 +5,6 @@ plugins {
     id("jps-compatible")
 }
 
-project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
-
 sourceSets {
     "main" { projectDefault() }
     "test" { }
@@ -16,4 +14,11 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(project(":core:metadata"))
     compileOnly(protobufLite())
+}
+
+kotlin {
+    explicitApi()
+    compilerOptions {
+        freeCompilerArgs.add("-Xallow-kotlin-package")
+    }
 }

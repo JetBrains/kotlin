@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.util.Box;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 
@@ -31,7 +33,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.DEFERRED_TYPE;
 public class DeferredType extends WrappedType {
     private static final Function1<Boolean, KotlinType> RECURSION_PREVENTER = firstTime -> {
         if (firstTime) throw new ReenteringLazyValueComputationException();
-        return ErrorUtils.createErrorType("Recursive dependency");
+        return ErrorUtils.createErrorType(ErrorTypeKind.RECURSIVE_TYPE);
     };
 
     @NotNull

@@ -1,0 +1,18 @@
+FILE: kt55722.kt
+    public abstract interface A<T> : R|kotlin/Any| {
+        public open fun foo(x: R|T?|): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface B<F> : R|A<F>| {
+        public abstract override fun foo(x: R|F?|): R|kotlin/Unit|
+
+    }
+    public final fun <T> bar(x: R|A<in T>|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|B<in T>|) ->  {
+                R|<local>/x|.R|SubstitutionOverride</B.foo: R|kotlin/Unit|>|(Null(null))
+            }
+        }
+
+    }

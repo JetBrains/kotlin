@@ -1,12 +1,10 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: not supported in JVM IR
-// IGNORE_BACKEND: JVM_IR
+// WITH_STDLIB
 
 import kotlin.reflect.KProperty
 
 class OptionDescriptor<T>
 interface ArgumentValueDelegate<T> {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = "OK" as T
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = listOf("OK") as T
 }
 
 abstract class CLIEntity<TResult> constructor(val delegate: ArgumentValueDelegate<TResult>) {
@@ -19,5 +17,5 @@ class SingleNullableOption<T : Any> constructor(descriptor: OptionDescriptor<T>)
 
 fun box(): String {
     val x: List<Any>? by SingleNullableOption(OptionDescriptor())
-    return x.toString()
+    return x?.get(0).toString()
 }

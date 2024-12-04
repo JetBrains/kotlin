@@ -18,4 +18,4 @@ abstract class Bar<T : @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Any
  * TESTCASE NUMBER: 2
  * UNEXPECTED BEHAVIOUR
  */
-class B<T> where @<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) T : Number
+class B<T> where <!ANNOTATION_IN_WHERE_CLAUSE_WARNING!>@<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>)<!> T : Number

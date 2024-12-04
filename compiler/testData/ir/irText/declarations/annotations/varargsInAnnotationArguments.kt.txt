@@ -1,39 +1,39 @@
 open annotation class A1 : Annotation {
+  val xs: IntArray
+    field = xs
+    get
+
   constructor(vararg xs: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val xs: IntArray
-    field = xs
-    get
-
 }
 
 open annotation class A2 : Annotation {
+  val xs: Array<out String>
+    field = xs
+    get
+
   constructor(vararg xs: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val xs: Array<out String>
-    field = xs
-    get
-
 }
 
 open annotation class AA : Annotation {
+  val xs: Array<out A1>
+    field = xs
+    get
+
   constructor(vararg xs: A1) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val xs: Array<out A1>
-    field = xs
-    get
 
 }
 
@@ -48,3 +48,4 @@ fun test1() {
 @AA(xs = [])
 fun test2() {
 }
+

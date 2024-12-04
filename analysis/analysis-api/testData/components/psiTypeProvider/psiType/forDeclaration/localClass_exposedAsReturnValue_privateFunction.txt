@@ -1,2 +1,2 @@
-KtType: kotlin.Unit
-PsiType: PsiType:Unit
+KaType: kotlin.Unit
+PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit

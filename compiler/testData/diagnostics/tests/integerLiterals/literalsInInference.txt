@@ -1,0 +1,14 @@
+package
+
+public fun </*0*/ T> createAssert(/*0*/ value: T): Assert<T>
+public fun getNullableLong(): kotlin.Long?
+public fun takeLong(/*0*/ x: kotlin.Long): kotlin.Unit
+public fun test_1(/*0*/ long: kotlin.Long): kotlin.Unit
+public fun test_2(): kotlin.Unit
+public fun </*0*/ A, /*1*/ B : kotlin.Comparable<A>> Assert<B>.isGreaterThanOrEqualTo(/*0*/ other: A): kotlin.Unit
+
+public interface Assert</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

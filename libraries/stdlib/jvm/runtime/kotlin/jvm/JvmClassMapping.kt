@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:JvmName("JvmClassMappingKt")
@@ -7,6 +7,7 @@
 
 package kotlin.jvm
 
+import kotlin.internal.InlineOnly
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
@@ -105,3 +106,13 @@ public fun <reified T : Any> Array<*>.isArrayOf(): Boolean =
  */
 public val <T : Annotation> T.annotationClass: KClass<out T>
     get() = (this as java.lang.annotation.Annotation).annotationType().kotlin as KClass<out T>
+
+/**
+ * Returns a Java [Class] instance of the enum the given constant belongs to.
+ *
+ * @see java.lang.Enum.getDeclaringClass
+ */
+@SinceKotlin("1.7")
+@InlineOnly
+public inline val <E : Enum<E>> Enum<E>.declaringJavaClass: Class<E>
+    get() = (this as java.lang.Enum<E>).declaringClass

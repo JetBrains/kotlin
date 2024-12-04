@@ -5,201 +5,142 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa.util
 
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentMapOf
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.contracts.description.MarkedEventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.canBeRevisited
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.cfa.isCapturedByValue
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.util.SetMultimap
+import org.jetbrains.kotlin.fir.util.setMultimapOf
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
+class PropertyInitializationInfoData(
+    override val properties: Set<FirVariableSymbol<*>>,
+    override val conditionallyInitializedProperties: Set<FirVariableSymbol<*>>,
+    override val receiver: FirBasedSymbol<*>?,
+    override val graph: ControlFlowGraph,
+) : VariableInitializationInfoData() {
+    private val data by lazy(LazyThreadSafetyMode.NONE) {
+        val declaredVariablesInLoop = setMultimapOf<FirStatement, FirVariableSymbol<*>>().apply {
+            graph.declaration?.accept(PropertyDeclarationCollector(this), null)
+        }
+        graph.traverseToFixedPoint(PropertyInitializationInfoCollector(properties, receiver, declaredVariablesInLoop))
+    }
+
+    override fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {
+        return data.getValue(node)
+    }
+}
 
 class PropertyInitializationInfoCollector(
-    private val localProperties: Set<FirPropertySymbol>,
-    private val declaredVariableCollector: DeclaredVariableCollector = DeclaredVariableCollector(),
-) : ControlFlowGraphVisitor<PathAwarePropertyInitializationInfo, Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>>() {
-    override fun visitNode(
-        node: CFGNode<*>,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
-    ): PathAwarePropertyInitializationInfo {
-        var result: PathAwarePropertyInitializationInfo? = null
-        for ((label, info) in data) {
-            val resultItem = info.applyLabel(node, label)
-            result = result?.merge(resultItem) ?: resultItem
-        }
-        return result ?: PathAwarePropertyInitializationInfo.EMPTY
-    }
+    private val localProperties: Set<FirVariableSymbol<*>>,
+    private val expectedReceiver: FirBasedSymbol<*>? = null,
+    private val declaredVariablesInLoop: SetMultimap<FirStatement, FirVariableSymbol<*>>,
+) : EventCollectingControlFlowGraphVisitor<VariableInitializationEvent>() {
+    // When looking for initializations of member properties, skip subgraphs of member functions;
+    // all properties are assumed to be initialized there.
+    override fun visitSubGraph(node: CFGNodeWithSubgraphs<*>, graph: ControlFlowGraph): Boolean =
+        expectedReceiver == null || node !is ClassExitNode || node !== node.owner.exitNode
 
     override fun visitVariableAssignmentNode(
         node: VariableAssignmentNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+        data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
-        val symbol = node.fir.referredPropertySymbol ?: return dataForNode
-        return if (symbol !in localProperties) {
-            dataForNode
-        } else {
-            processVariableWithAssignment(dataForNode, symbol)
-        }
+        val receiver = (node.fir.dispatchReceiver?.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol
+        if (receiver != expectedReceiver) return dataForNode
+        val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return dataForNode
+        if (symbol !in localProperties) return dataForNode
+        return dataForNode.addRange(symbol, MarkedEventOccurrencesRange.ExactlyOnce(node))
     }
 
     override fun visitVariableDeclarationNode(
         node: VariableDeclarationNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+        data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
-        return processVariableWithAssignment(
-            dataForNode,
-            node.fir.symbol,
-            overwriteRange = node.fir.initializer == null && node.fir.delegate == null
-        )
-    }
-
-    fun getData(graph: ControlFlowGraph) =
-        graph.collectDataForNode(
-            TraverseDirection.Forward,
-            PathAwarePropertyInitializationInfo.EMPTY,
-            this
-        )
-
-    private fun processVariableWithAssignment(
-        dataForNode: PathAwarePropertyInitializationInfo,
-        symbol: FirPropertySymbol,
-        overwriteRange: Boolean = false,
-    ): PathAwarePropertyInitializationInfo {
-        assert(dataForNode.keys.isNotEmpty())
-        return if (overwriteRange)
-            overwriteRange(dataForNode, symbol, EventOccurrencesRange.ZERO, ::PathAwarePropertyInitializationInfo)
-        else
-            addRange(dataForNode, symbol, EventOccurrencesRange.EXACTLY_ONCE, ::PathAwarePropertyInitializationInfo)
-    }
-
-    // --------------------------------------------------
-    // Data flows of declared/assigned variables in loops
-    // --------------------------------------------------
-
-    private fun enterCapturingStatement(statement: FirStatement): Set<FirPropertySymbol> =
-        declaredVariableCollector.enterCapturingStatement(statement)
-
-    private fun exitCapturingStatement(statement: FirStatement) {
-        declaredVariableCollector.exitCapturingStatement(statement)
-    }
-
-    // A merge point for a loop with `continue`
-    override fun visitLoopEnterNode(
-        node: LoopEnterNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
-    ): PathAwarePropertyInitializationInfo {
-        val declaredVariableSymbolsInLoop = enterCapturingStatement(node.fir)
-        if (declaredVariableSymbolsInLoop.isEmpty())
-            return visitNode(node, data)
-
-        return filterDeclaredVariableSymbolsInCapturedScope(node, declaredVariableSymbolsInLoop, data)
-    }
-
-    // A merge point for while loop
-    override fun visitLoopConditionEnterNode(
-        node: LoopConditionEnterNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
-    ): PathAwarePropertyInitializationInfo {
-        val declaredVariableSymbolsInLoop = declaredVariableCollector.declaredVariablesPerElement[node.loop]
-        if (declaredVariableSymbolsInLoop.isEmpty())
-            return visitNode(node, data)
-
-        return filterDeclaredVariableSymbolsInCapturedScope(node, declaredVariableSymbolsInLoop, data)
-    }
-
-    // A merge point for do-while loop
-    override fun visitLoopBlockEnterNode(
-        node: LoopBlockEnterNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
-    ): PathAwarePropertyInitializationInfo {
-        val declaredVariableSymbolsInLoop = declaredVariableCollector.declaredVariablesPerElement[node.fir]
-        if (declaredVariableSymbolsInLoop.isEmpty())
-            return visitNode(node, data)
-
-        return filterDeclaredVariableSymbolsInCapturedScope(node, declaredVariableSymbolsInLoop, data)
-    }
-
-    private fun filterDeclaredVariableSymbolsInCapturedScope(
-        node: CFGNode<*>,
-        declaredVariableSymbolsInCapturedScope: Collection<FirPropertySymbol>,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
-    ): PathAwarePropertyInitializationInfo {
-        var filteredData = data
-        for (variableSymbol in declaredVariableSymbolsInCapturedScope) {
-            filteredData = filteredData.map { (label, pathAwareInfo) ->
-                label to if (label is LoopBackPath) {
-                    removeRange(pathAwareInfo, variableSymbol, ::PathAwarePropertyInitializationInfo)
-                } else {
-                    pathAwareInfo
-                }
-            }
+        return when {
+            expectedReceiver != null ->
+                dataForNode
+            node.fir.initializer == null && node.fir.delegate == null ->
+                dataForNode.removeRange(node.fir.symbol)
+            else ->
+                dataForNode.overwriteRange(node.fir.symbol, MarkedEventOccurrencesRange.ExactlyOnce(node))
         }
-        return visitNode(node, filteredData)
     }
 
-    override fun visitLoopExitNode(
-        node: LoopExitNode,
-        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+    override fun visitPropertyInitializerExitNode(
+        node: PropertyInitializerExitNode,
+        data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
-        exitCapturingStatement(node.fir)
-        return visitNode(node, data)
+        // If member property initializer is empty (there are no nodes between enter and exit node)
+        //   then property is not initialized in its declaration
+        // Otherwise it is
+        val dataForNode = visitNode(node, data)
+        if (node.firstPreviousNode is PropertyInitializerEnterNode) return dataForNode
+        return dataForNode.overwriteRange(node.fir.symbol, MarkedEventOccurrencesRange.ExactlyOnce(node))
+    }
+
+    override fun visitEdge(
+        from: CFGNode<*>,
+        to: CFGNode<*>,
+        metadata: Edge,
+        data: PathAwarePropertyInitializationInfo
+    ): PathAwarePropertyInitializationInfo {
+        val result = super.visitEdge(from, to, metadata, data)
+        if (!metadata.kind.isBack) return result
+        val declaredVariableSymbolsInCapturedScope = when {
+            from is PostponedLambdaExitNode -> declaredVariablesInLoop[from.fir.anonymousFunction]
+            to is LoopEnterNode -> declaredVariablesInLoop[to.fir]
+            to is LoopBlockEnterNode -> declaredVariablesInLoop[to.fir]
+            to is LoopConditionEnterNode -> declaredVariablesInLoop[to.loop]
+            else -> return result // the above should handle all possible back edges
+        }
+        return declaredVariableSymbolsInCapturedScope.fold(data) { filteredData, variableSymbol ->
+            filteredData.removeRange(variableSymbol)
+        }
     }
 }
 
-internal fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> addRange(
-    pathAwareInfo: P,
-    key: K,
-    range: EventOccurrencesRange,
-    constructor: (PersistentMap<EdgeLabel, S>) -> P
-): P {
-    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-    // after (if key is p1):
-    //   { |-> { p1 |-> PI1 + r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-    return updateRange(pathAwareInfo, key, { existingKind -> existingKind + range }, constructor)
-}
-
-private fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> overwriteRange(
-    pathAwareInfo: P,
-    key: K,
-    range: EventOccurrencesRange,
-    constructor: (PersistentMap<EdgeLabel, S>) -> P
-): P {
-    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-    // after (if key is p1):
-    //   { |-> { p1 |-> r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-    return updateRange(pathAwareInfo, key, { range }, constructor)
-}
-
-private inline fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> updateRange(
-    pathAwareInfo: P,
-    key: K,
-    computeNewRange: (EventOccurrencesRange) -> EventOccurrencesRange,
-    constructor: (PersistentMap<EdgeLabel, S>) -> P
-): P {
-    var resultMap = persistentMapOf<EdgeLabel, S>()
-    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-    for ((label, dataPerLabel) in pathAwareInfo) {
-        val existingKind = dataPerLabel[key] ?: EventOccurrencesRange.ZERO
-        val kind = computeNewRange.invoke(existingKind)
-        resultMap = resultMap.put(label, dataPerLabel.put(key, kind))
+private class PropertyDeclarationCollector(
+    val declaredVariablesInLoop: SetMultimap<FirStatement, FirVariableSymbol<*>>
+) : FirVisitor<Unit, FirStatement?>() {
+    override fun visitElement(element: FirElement, data: FirStatement?) {
+        element.acceptChildren(this, data)
     }
-    // after (if key is p1):
-    //   { |-> { p1 |-> computeNewRange(PI1) }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
-    return constructor(resultMap)
-}
 
-private fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> removeRange(
-    pathAwareInfo: P,
-    key: K,
-    constructor: (PersistentMap<EdgeLabel, S>) -> P
-): P {
-    var resultMap = persistentMapOf<EdgeLabel, S>()
-    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-    for ((label, dataPerLabel) in pathAwareInfo) {
-        resultMap = resultMap.put(label, dataPerLabel.remove(key))
+    override fun visitProperty(property: FirProperty, data: FirStatement?) {
+        if (property.isLocal && data != null) {
+            declaredVariablesInLoop.put(data, property.symbol)
+        }
+        visitElement(property, data)
     }
-    // after (if key is p1):
-    //   { |-> { }, l1 |-> { p2 |-> PI2 } }
-    return constructor(resultMap)
+
+    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: FirStatement?) {
+        visitRepeatable(whileLoop, data)
+    }
+
+    override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: FirStatement?) {
+        visitRepeatable(doWhileLoop, data)
+    }
+
+    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: FirStatement?) {
+        if (anonymousFunction.invocationKind?.canBeRevisited() == true) {
+            visitRepeatable(anonymousFunction, data)
+        } else {
+            visitElement(anonymousFunction, data)
+        }
+    }
+
+    private fun visitRepeatable(loop: FirStatement, data: FirStatement?) {
+        visitElement(loop, loop)
+        if (data != null) {
+            declaredVariablesInLoop.putAll(data, declaredVariablesInLoop[loop])
+        }
+    }
 }

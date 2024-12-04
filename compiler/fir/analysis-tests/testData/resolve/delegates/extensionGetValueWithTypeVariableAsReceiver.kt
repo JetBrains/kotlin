@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 inline fun <L> runLogged(action: () -> L): L {
     return action()
 }

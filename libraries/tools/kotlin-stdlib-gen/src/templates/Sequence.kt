@@ -43,7 +43,7 @@ object SequenceOps : TemplateGroupBase() {
             Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated.
             """
         }
-        specialFor(ArraysOfPrimitives, ArraysOfObjects, Iterables) {
+        specialFor(ArraysOfPrimitives, ArraysOfObjects, Iterables, Maps) {
             sample("samples.collections.Sequences.Building.sequenceFrom${f.doc.collection.capitalize()}")
         }
 

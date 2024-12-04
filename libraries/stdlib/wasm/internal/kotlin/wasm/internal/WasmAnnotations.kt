@@ -13,10 +13,6 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.BINARY)
 internal annotation class ExcludedFromCodegen
 
-@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class WasmImport(val module: String, val name: String)
-
 @Target(CLASS)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class WasmArrayOf(
@@ -53,3 +49,12 @@ internal annotation class WasmAutoboxed
 @ExcludedFromCodegen
 internal val implementedAsIntrinsic: Nothing
     get() = null!!
+
+/**
+ * Indicates that annotated constructor is primitive
+ * i.e. has direct layout from it's parameters to object fields (except any's fields) and has no code
+ * In this case no need to call it during an object creation.
+ */
+@Target(AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class WasmPrimitiveConstructor

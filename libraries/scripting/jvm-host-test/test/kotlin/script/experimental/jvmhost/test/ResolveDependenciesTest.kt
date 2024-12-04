@@ -41,8 +41,9 @@ class ResolveDependenciesTest : TestCase() {
         """.trimMargin()
     private val funAndValImportScript = funAndValImportScriptText.toScriptSource()
 
+    // All tests with dependencies from classloader are expected to fail until the KT-60443 is implemented
     @Test
-    fun testResolveClassFromClassloader() {
+    fun testResolveClassFromClassloader() = expectTestToFailOnK2 {
         runScriptAndCheckResult(classAccessScript, configurationWithDependenciesFromClassloader, null, 42)
         runScriptAndCheckResult(classImportScript, configurationWithDependenciesFromClassloader, null, 42)
     }
@@ -54,13 +55,13 @@ class ResolveDependenciesTest : TestCase() {
     }
 
     @Test
-    fun testResolveFunAndValFromClassloader() {
+    fun testResolveFunAndValFromClassloader() = expectTestToFailOnK2 {
         runScriptAndCheckResult(funAndValAccessScript, configurationWithDependenciesFromClassloader, null, 42)
         runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClassloader, null, 42)
     }
 
     @Test
-    fun testReplResolveFunAndValFromClassloader() {
+    fun testReplResolveFunAndValFromClassloader() = expectTestToFailOnK2 {
         checkEvaluateInRepl(
             sequenceOf(funAndValAccessScriptText, funAndValAccessScriptText), sequenceOf(42, 42),
             configurationWithDependenciesFromClassloader,
@@ -81,7 +82,7 @@ class ResolveDependenciesTest : TestCase() {
     }
 
     @Test
-    fun testResolveClassFromClassloaderIsolated() {
+    fun testResolveClassFromClassloaderIsolated() = expectTestToFailOnK2 {
         val evaluationConfiguration = ScriptEvaluationConfiguration {
             jvm {
                 baseClassLoader(null)
@@ -91,7 +92,7 @@ class ResolveDependenciesTest : TestCase() {
     }
 
     @Test
-    fun testResolveClassesFromClassloaderAndClassPath() {
+    fun testResolveClassesFromClassloaderAndClassPath() = expectTestToFailOnK2 {
         val script = """
             org.jetbrains.kotlin.mainKts.MainKtsConfigurator()
             ${thisPackage}.ShouldBeVisibleFromScript().x

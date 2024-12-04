@@ -2,6 +2,7 @@
 // FULL_JDK
 // WITH_STDLIB
 
+
 val xs = arrayListOf("a", "b", "c", "d")
 
 fun box(): String {

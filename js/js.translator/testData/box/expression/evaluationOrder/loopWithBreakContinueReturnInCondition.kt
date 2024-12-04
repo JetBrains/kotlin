@@ -1,4 +1,3 @@
-// EXPECTED_REACHABLE_NODES: 1423
 package foo
 
 var global: String = ""

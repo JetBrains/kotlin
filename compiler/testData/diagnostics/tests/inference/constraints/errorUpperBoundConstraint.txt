@@ -1,6 +1,6 @@
 package
 
-public fun test(/*0*/ e: [ERROR : ErrorType]): kotlin.Unit
+public fun test(/*0*/ e: [Error type: Unresolved type for ErrorType]): kotlin.Unit
 
 public open class Foo {
     public constructor Foo()

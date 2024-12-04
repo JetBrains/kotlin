@@ -1,0 +1,8 @@
+package test
+
+public fun foo(/*0*/ f: suspend test.Context.() -> kotlin.Unit): kotlin.Unit
+
+public final class Context {
+    /*primary*/ public constructor Context()
+}
+public typealias SuspendWithContext = suspend test.Context.() -> kotlin.Unit

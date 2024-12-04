@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// !LANGUAGE: +InlineClasses
+// LANGUAGE: +InlineClasses
 // MODULE: lib
 // USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
 // FILE: 1.kt

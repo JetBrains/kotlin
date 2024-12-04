@@ -16,57 +16,61 @@
 
 package org.jetbrains.kotlin.build
 
-import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
-/**
- * If you want to add a new field, check its type is supported by [serializeToPlainText], [deserializeFromPlainText]
- */
-data class JvmBuildMetaInfo(
-    override val isEAP: Boolean,
-    override val compilerBuildVersion: String,
-    override val languageVersionString: String,
-    override val apiVersionString: String,
-    override val multiplatformEnable: Boolean,
-    override val metadataVersionMajor: Int,
-    override val metadataVersionMinor: Int,
-    override val metadataVersionPatch: Int,
-    val bytecodeVersionMajor: Int,
-    val bytecodeVersionMinor: Int,
-    val bytecodeVersionPatch: Int,
-    override val ownVersion: Int,
-    override val coroutinesVersion: Int,
-    override val multiplatformVersion: Int
-) : BuildMetaInfo {
-    companion object : BuildMetaInfoFactory<JvmBuildMetaInfo>(JvmBuildMetaInfo::class) {
-        override fun create(
-            isEAP: Boolean,
-            compilerBuildVersion: String,
-            languageVersionString: String,
-            apiVersionString: String,
-            multiplatformEnable: Boolean,
-            ownVersion: Int,
-            coroutinesVersion: Int,
-            multiplatformVersion: Int,
-            metadataVersionArray: IntArray?
-        ): JvmBuildMetaInfo {
-            val metadataVersion = metadataVersionArray?.let(::JvmMetadataVersion) ?: JvmMetadataVersion.INSTANCE
-            return JvmBuildMetaInfo(
-                isEAP = isEAP,
-                compilerBuildVersion = compilerBuildVersion,
-                languageVersionString = languageVersionString,
-                apiVersionString = apiVersionString,
-                multiplatformEnable = multiplatformEnable,
-                metadataVersionMajor = metadataVersion.major,
-                metadataVersionMinor = metadataVersion.minor,
-                metadataVersionPatch = metadataVersion.patch,
-                bytecodeVersionMajor = JvmBytecodeBinaryVersion.INSTANCE.major,
-                bytecodeVersionMinor = JvmBytecodeBinaryVersion.INSTANCE.minor,
-                bytecodeVersionPatch = JvmBytecodeBinaryVersion.INSTANCE.patch,
-                ownVersion = ownVersion,
-                coroutinesVersion = coroutinesVersion,
-                multiplatformVersion = multiplatformVersion
-            )
+class JvmBuildMetaInfo : BuildMetaInfo() {
+    override fun checkIfPlatformSpecificCompilerArgumentWasChanged(key: String, currentValue: String, previousValue: String): Boolean? {
+        when (key) {
+            CustomKeys.METADATA_VERSION_STRING.name -> {
+                val currentVersionIntArray = BinaryVersion.parseVersionArray(currentValue)
+                if (currentVersionIntArray?.size != 3) return null
+                val currentVersion = MetadataVersion(currentVersionIntArray[0], currentVersionIntArray[1], currentVersionIntArray[2])
+
+                val previousVersionIntArray = BinaryVersion.parseVersionArray(previousValue)
+                if (previousVersionIntArray?.size != 3) return null
+                val previousVersion = MetadataVersion(previousVersionIntArray[0], previousVersionIntArray[1], previousVersionIntArray[2])
+                return currentVersion != previousVersion
+            }
         }
+        return null
     }
+
+    override fun createPropertiesMapFromCompilerArguments(args: CommonCompilerArguments): Map<String, String> {
+        val resultMap = mutableMapOf<String, String>()
+        val metadataVersionArray = args.metadataVersion?.let { BinaryVersion.parseVersionArray(it) }
+        val metadataVersion = metadataVersionArray?.let(::MetadataVersion) ?: MetadataVersion.INSTANCE
+        val metadataVersionString = metadataVersion.toString()
+        resultMap[CustomKeys.METADATA_VERSION_STRING.name] = metadataVersionString
+
+        return super.createPropertiesMapFromCompilerArguments(args) + resultMap
+    }
+
+    override val excludedProperties: List<String>
+        get() = super.excludedProperties + listOf(
+            "excludedProperties",
+            "backendThreads",
+            "buildFile",
+            "classpath",
+            "declarationsOutputPath",
+            "defaultScriptExtension",
+            "enableDebugMode",
+            "expression",
+            "internalArguments",
+            "profileCompilerCommand",
+            "repeatCompileModules",
+            "scriptResolverEnvironment",
+            "scriptTemplates",
+            "suppressDeprecatedJvmTargetWarning",
+            "useFastJarFileSystem",
+        )
+
+    override val argumentsListForSpecialCheck: List<String>
+        get() = super.argumentsListForSpecialCheck + listOf(
+            "allowNoSourceFiles",
+            "allowUnstableDependencies",
+            "enableJvmPreview",
+            "suppressMissingBuiltinsError",
+        )
 }

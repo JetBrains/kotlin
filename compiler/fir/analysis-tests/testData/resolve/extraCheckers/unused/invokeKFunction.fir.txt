@@ -1,0 +1,5 @@
+FILE: invokeKFunction.kt
+    public final fun foo(action: R|kotlin/reflect/KFunction1<kotlin/String, kotlin/Int>|): R|kotlin/Int| {
+        lval localAction: R|kotlin/reflect/KFunction1<kotlin/String, kotlin/Int>| = R|<local>/action|
+        ^foo R|<local>/localAction|.R|SubstitutionOverride<kotlin/reflect/KFunction1.invoke: R|kotlin/Int|>|(String(hello))
+    }

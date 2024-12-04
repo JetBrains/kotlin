@@ -1,0 +1,2 @@
+interface Module1Interface {
+}

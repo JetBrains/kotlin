@@ -1,0 +1,34 @@
+package
+
+private fun </*0*/ C> createSegment(/*0*/ prev: OneElementSegment<C>?): OneElementSegment<C>
+public inline fun </*0*/ F : Segment<F>> AtomicRef<F>.findSegmentAndMoveForward(/*0*/ createNewSegment: (prev: F?) -> F): kotlin.Nothing?
+
+public final class AtomicRef</*0*/ T> {
+    public constructor AtomicRef</*0*/ T>(/*0*/ value: T)
+    public final val value: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class OneElementSegment</*0*/ O> : Segment<OneElementSegment<O>> {
+    public constructor OneElementSegment</*0*/ O>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Queue</*0*/ Q> {
+    public abstract val tail: AtomicRef<OneElementSegment<Q>>
+    public open fun enqueue(/*0*/ element: Q): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class Segment</*0*/ S : Segment<S>> {
+    public constructor Segment</*0*/ S : Segment<S>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.base.kapt3
+package org.jetbrains.kotlin.kapt3.base
 
 import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
 import java.io.File
@@ -43,7 +43,8 @@ class KaptOptions(
     val processingClassLoader: ClassLoader?,
     //construct new classloader for these processors instead of using one defined in processingClassLoader
     val separateClassloaderForProcessors: Set<String>,
-    val processorsPerfReportFile: File?
+    val processorsStatsReportFile: File?,
+    val fileReadHistoryReportFile: File?
 ) : KaptFlags {
     override fun get(flag: KaptFlag) = flags[flag]
 
@@ -73,7 +74,8 @@ class KaptOptions(
 
         var mode: AptMode = AptMode.WITH_COMPILATION
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
-        var processorsPerfReportFile: File? = null
+        var processorsStatsReportFile: File? = null
+        var fileReadHistoryReportFile: File? = null
 
         fun build(): KaptOptions {
             val sourcesOutputDir = this.sourcesOutputDir ?: error("'sourcesOutputDir' must be set")
@@ -88,7 +90,8 @@ class KaptOptions(
                 mode, detectMemoryLeaks,
                 processingClassLoader = null,
                 separateClassloaderForProcessors = emptySet(),
-                processorsPerfReportFile = processorsPerfReportFile
+                processorsStatsReportFile = processorsStatsReportFile,
+                fileReadHistoryReportFile = fileReadHistoryReportFile
             )
         }
     }
@@ -114,7 +117,7 @@ interface KaptFlags {
 }
 
 enum class KaptFlag(val description: String, val defaultValue: Boolean = false) {
-    SHOW_PROCESSOR_TIMINGS("Show processor time"),
+    SHOW_PROCESSOR_STATS("Show processor stats"),
     VERBOSE("Verbose mode"),
     INFO_AS_WARNINGS("Info as warnings"),
     USE_LIGHT_ANALYSIS("Use light analysis", defaultValue = true),
@@ -156,7 +159,7 @@ fun KaptOptions.collectJavaSourceFiles(sourcesToReprocess: SourcesToReprocess = 
             .sortedBy { Files.isSymbolicLink(it.toPath()) } // Get non-symbolic paths first
             .flatMap { root -> root.walk().filter { it.isFile && it.extension == "java" }.toList() }
             .sortedBy { Files.isSymbolicLink(it.toPath()) } // This time is for .java files
-            .distinctBy { it.canonicalPath }
+            .distinctBy { it.normalize().absolutePath }
     }
 
     return when (sourcesToReprocess) {
@@ -190,7 +193,7 @@ fun collectAggregatedTypes(sourcesToReprocess: SourcesToReprocess = SourcesToRep
 
 fun KaptOptions.logString(additionalInfo: String = "") = buildString {
     val additionalInfoRendered = if (additionalInfo.isEmpty()) "" else " ($additionalInfo)"
-    appendLine("Kapt3 is enabled$additionalInfoRendered.")
+    appendLine("Kapt is enabled$additionalInfoRendered.")
 
     appendLine("Annotation processing mode: ${mode.stringValue}")
     appendLine("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")

@@ -1,7 +1,0 @@
-depends = CoreFoundation IOKit darwin libkern posix
-language = Objective-C
-package = platform.FWAUserLib
-modules = FWAUserLib
-
-compilerOpts = -framework FWAUserLib
-linkerOpts = -framework FWAUserLib

@@ -1,0 +1,35 @@
+@FIELD:Ann()
+owner -> FirPropertySymbol /x
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /x
+
+@PROPERTY:Ann()
+owner -> FirPropertySymbol /y
+context -> FirPropertySymbol /y
+
+@Ann()
+owner -> FirPropertySymbol /z
+context -> FirPropertySymbol /z
+
+@CONSTRUCTOR_PARAMETER:Ann()
+owner -> FirConstructorSymbol /Some.Some
+context -> FirValueParameterSymbol <local>/z from FirConstructorSymbol /Some.Some
+
+@FIELD:Ann()
+owner -> FirPropertySymbol /Some.x
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Some.x
+
+@PROPERTY:Ann()
+owner -> FirPropertySymbol /Some.y
+context -> FirPropertySymbol /Some.y
+
+@FIELD:Ann()
+owner -> FirPropertySymbol /Some.a
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Some.a
+
+@PROPERTY:Ann()
+owner -> FirPropertySymbol /Some.b
+context -> FirPropertySymbol /Some.b
+
+@Ann()
+owner -> FirPropertySymbol /Some.c
+context -> FirPropertySymbol /Some.c

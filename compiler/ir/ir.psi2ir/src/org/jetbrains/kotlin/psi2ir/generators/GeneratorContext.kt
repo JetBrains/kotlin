@@ -9,15 +9,11 @@ import org.jetbrains.kotlin.backend.common.SamTypeApproximator
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.psi.KtFile
@@ -36,7 +32,7 @@ class GeneratorContext private constructor(
     val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     internal val callToSubstitutedDescriptorMap: MutableMap<IrDeclarationReference, CallableDescriptor>,
-    internal val fragmentContext: FragmentContext?,
+    internal var fragmentContext: FragmentContext?,
 ) : IrGeneratorContext {
 
     constructor(
@@ -71,6 +67,8 @@ class GeneratorContext private constructor(
     // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
     val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))
 
+    internal val additionalDescriptorStorage: DescriptorStorageForContextReceivers = DescriptorStorageForContextReceivers()
+
     val samTypeApproximator = SamTypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
 
     fun createFileScopeContext(ktFile: KtFile): GeneratorContext {
@@ -81,7 +79,10 @@ class GeneratorContext private constructor(
             languageVersionSettings,
             symbolTable,
             extensions,
-            TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor, extensions = extensions, ktFile = ktFile),
+            TypeTranslatorImpl(
+                symbolTable, languageVersionSettings, moduleDescriptor, extensions = extensions, ktFile = ktFile,
+                allowErrorTypeInAnnotations = configuration.skipBodies,
+            ),
             irBuiltIns,
             callToSubstitutedDescriptorMap,
             fragmentContext,

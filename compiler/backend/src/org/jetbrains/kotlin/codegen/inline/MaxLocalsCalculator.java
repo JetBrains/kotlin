@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
 
 public class MaxLocalsCalculator extends MethodVisitor {
 
@@ -28,14 +27,7 @@ public class MaxLocalsCalculator extends MethodVisitor {
 
     public MaxLocalsCalculator(int api, int access, String descriptor, MethodVisitor mv) {
         super(api, mv);
-
-        // updates maxLocals
-        int size = Type.getArgumentsAndReturnSizes(descriptor) >> 2;
-        if ((access & Opcodes.ACC_STATIC) != 0) {
-            --size;
-        }
-
-        maxLocals = size;
+        maxLocals = InlineCodegenUtilsKt.argumentsSize(descriptor, (access & Opcodes.ACC_STATIC) != 0);
     }
 
     @Override

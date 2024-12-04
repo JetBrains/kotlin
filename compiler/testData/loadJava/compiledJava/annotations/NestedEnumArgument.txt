@@ -13,7 +13,7 @@ public open class NestedEnumArgument {
         enum entry FIRST
 
         private constructor E()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.NestedEnumArgument.E!): kotlin.Int
@@ -21,6 +21,7 @@ public open class NestedEnumArgument {
         public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.NestedEnumArgument.E!>!
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.NestedEnumArgument.E>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.NestedEnumArgument.E
         public final /*synthesized*/ fun values(): kotlin.Array<test.NestedEnumArgument.E>
     }

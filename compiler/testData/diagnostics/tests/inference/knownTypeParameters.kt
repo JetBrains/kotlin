@@ -1,5 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference
 
 open class A<T1, T2> {
     open inner class A1(val a1: T1)

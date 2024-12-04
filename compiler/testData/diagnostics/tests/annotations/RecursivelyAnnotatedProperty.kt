@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // Properties can be recursively annotated
 annotation class ann(val x: Int)
 class My {

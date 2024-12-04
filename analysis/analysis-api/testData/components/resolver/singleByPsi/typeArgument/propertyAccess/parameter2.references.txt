@@ -1,0 +1,3 @@
+KtNameReferenceExpression(70,73): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable

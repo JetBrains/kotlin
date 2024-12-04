@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.LlvmParameterAttribute
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.classId
+import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 // TODO: We have [org.jetbrains.kotlin.native.interop.gen.ObjCAbiInfo] which does similar thing.
 //  Consider unifying these classes.
@@ -97,3 +99,48 @@ class WindowsX64TargetAbiInfo : ExtendOnCalleeSideTargetAbiInfo(shouldZeroExtBoo
  * In time will be replaced by more specific [TargetAbiInfo] inheritors.
  */
 typealias DefaultTargetAbiInfo = ExtendOnCallerSideTargetAbiInfo
+
+/// Equivalent to TargetCodeGenInfo.markARCOptimizedReturnCallsAsNoTail in Clang.
+///
+/// Determine whether a call to objc_retainAutoreleasedReturnValue or
+/// objc_unsafeClaimAutoreleasedReturnValue should be marked as 'notail'.
+fun KonanTarget.markARCOptimizedReturnCallsAsNoTail(): Boolean = when (this.architecture) {
+    Architecture.X64 -> {
+        /// Disable tail call on x86-64. The epilogue code before the tail jump blocks
+        /// autoreleaseRV/retainRV and autoreleaseRV/unsafeClaimRV optimizations.
+        true
+    }
+    else -> false
+}
+
+/// Equivalent to TargetCodeGenInfo.getARCRetainAutoreleasedReturnValueMarker in Clang.
+///
+/// Retrieve the address of a function to call immediately before
+/// calling objc_retainAutoreleasedReturnValue.  The
+/// implementation of objc_autoreleaseReturnValue sniffs the
+/// instruction stream following its return address to decide
+/// whether it's a call to objc_retainAutoreleasedReturnValue.
+/// This can be prohibitively expensive, depending on the
+/// relocation model, and so on some targets it instead sniffs for
+/// a particular instruction sequence.  This functions returns
+/// that instruction sequence in inline assembly, which will be
+/// empty if none is required.
+fun KonanTarget.getARCRetainAutoreleasedReturnValueMarker(): String? = when (this.architecture) {
+    Architecture.X86 -> "movl\t%ebp, %ebp\t\t// marker for objc_retainAutoreleaseReturnValue"
+    Architecture.ARM64 -> "mov\tfp, fp\t\t// marker for objc_retainAutoreleaseReturnValue"
+    Architecture.ARM32 -> "mov\tr7, r7\t\t// marker for objc_retainAutoreleaseReturnValue"
+    else -> null
+}
+
+val KonanTarget.abiInfo: TargetAbiInfo
+    get() = when {
+        this == KonanTarget.MINGW_X64 -> {
+            WindowsX64TargetAbiInfo()
+        }
+        !family.isAppleFamily && architecture == Architecture.ARM64 -> {
+            AAPCS64TargetAbiInfo()
+        }
+        else -> {
+            DefaultTargetAbiInfo()
+        }
+    }

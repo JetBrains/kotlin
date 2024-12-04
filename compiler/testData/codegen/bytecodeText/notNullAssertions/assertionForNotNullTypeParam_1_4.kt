@@ -1,4 +1,4 @@
-// !API_VERSION: LATEST_STABLE
+// API_VERSION: LATEST_STABLE
 
 fun <T : Any> foo(t: T) = t
 

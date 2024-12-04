@@ -1,7 +1,7 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun check1(p: kotlin.reflect.KProperty1<*, *>) {}
 fun check2(p: kotlin.reflect.KProperty1<in String, *>) {}

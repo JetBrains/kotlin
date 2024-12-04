@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js") version "<pluginMarkerVersion>"
+    kotlin("js")
 }
 
 group = "com.example"
@@ -22,11 +22,11 @@ kotlin {
 
 // We need it for suppress warnings of Gradle 7.0
 // We need to think about it, when we will support multiple binaries
-tasks.named("nodeProductionLibraryPrepare") {
+tasks.named("nodeProductionLibraryDistribution") {
     mustRunAfter("productionExecutableCompileSync")
 }
 
-tasks.named("browserProductionLibraryPrepare") {
+tasks.named("browserProductionLibraryDistribution") {
     mustRunAfter("productionExecutableCompileSync")
 }
 

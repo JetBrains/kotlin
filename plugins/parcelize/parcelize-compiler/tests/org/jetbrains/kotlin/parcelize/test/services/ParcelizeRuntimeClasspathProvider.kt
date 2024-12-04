@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.services
 
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
@@ -21,25 +22,17 @@ import java.io.File
 
 class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     companion object {
-        val layoutlibJar: File by lazy { getLayoutLibFile("layoutlib(-jre[0-9]+)?") }
-        val layoutlibApiJar: File by lazy { getLayoutLibFile("layoutlib-api") }
+        val layoutlibJar: File by lazy { getLayoutLibFile("layoutLib.path") }
+        val layoutlibApiJar: File by lazy { getLayoutLibFile("layoutLibApi.path") }
 
         private const val ANDROID_TOOLS_PREFIX = "studio.android.sdktools."
 
-        private val androidPluginPath: String by lazy {
-            System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
-                ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location")
-        }
-
-        private fun getLayoutLibFile(pattern: String): File {
-            val nameRegex = """^(${ANDROID_TOOLS_PREFIX})?$pattern-[0-9.]+\.jar$""".toRegex()
-            return File(androidPluginPath).listFiles().orEmpty().singleOrNull { it.name.matches(nameRegex) }
-                ?: error(
-                    """
-                    Can't find file for pattern $nameRegex in ${androidPluginPath}. 
-                    Available files: ${File(androidPluginPath).list().orEmpty().asList()}
-                    """.trimIndent()
-                )
+        private fun getLayoutLibFile(property: String): File {
+            val layoutLibFile = File(System.getProperty(property))
+            if (!layoutLibFile.isFile) {
+                error("Can't find jar file in $property system property")
+            }
+            return layoutLibFile
         }
 
         private val JUNIT_GENERATED_TEST_CLASS_BYTES by lazy { constructSyntheticTestClass() }
@@ -108,6 +101,7 @@ class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeCla
     }
 
     override fun runtimeClassPaths(module: TestModule): List<File> {
+        if (ENABLE_PARCELIZE !in module.directives) return emptyList()
         val kotlinRuntimeJar = PathUtil.kotlinPathsForIdeaPlugin.stdlibPath
 
         val robolectricClasspath = System.getProperty("robolectric.classpath")

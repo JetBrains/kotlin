@@ -1,0 +1,83 @@
+package
+
+public fun bam(/*0*/ ref: Indexible2Ref?): kotlin.Unit
+public fun ban(/*0*/ refRef: IndexibleRefRef?, /*1*/ ref: IndexibleRef?): kotlin.Unit
+public fun bap(/*0*/ holder: DelegatedHolder?): kotlin.Unit
+public fun bar(/*0*/ w: Wrapper?): kotlin.Unit
+public fun baz(/*0*/ w2: Wrapper2?): kotlin.Unit
+public fun foo(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+
+public final class DelegatedHolder {
+    public constructor DelegatedHolder()
+    public final var delegated: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Indexible {
+    private constructor Indexible()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun get(/*0*/ index: kotlin.Int): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Indexible2 {
+    private constructor Indexible2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun get(/*0*/ index: kotlin.Int): PlusAssignable
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Indexible2Ref {
+    public constructor Indexible2Ref(/*0*/ ind: Indexible2)
+    public final val ind: Indexible2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class IndexibleRef {
+    public constructor IndexibleRef(/*0*/ ind: Indexible)
+    public final val ind: Indexible
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class IndexibleRefRef {
+    public constructor IndexibleRefRef(/*0*/ ref: IndexibleRef?)
+    public final val ref: IndexibleRef?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object PlusAssignable {
+    private constructor PlusAssignable()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plusAssign(/*0*/ index: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Wrapper {
+    public constructor Wrapper(/*0*/ s: kotlin.String)
+    public final var s: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Wrapper2 {
+    public constructor Wrapper2(/*0*/ w: Wrapper?)
+    public final val w: Wrapper?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

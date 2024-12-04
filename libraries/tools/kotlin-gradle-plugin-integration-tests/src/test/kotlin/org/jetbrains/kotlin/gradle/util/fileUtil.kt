@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.jetbrains.kotlin.gradle.testbase.createTempDirDeleteOnExit
 import java.io.File
-import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.relativeTo
+import kotlin.io.path.copyTo
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
 fun File.getFileByName(name: String): File =
     findFileByName(name) ?: throw AssertionError("Could not find file with name '$name' in $this")
@@ -36,10 +38,7 @@ fun File.addNewLine() {
     modify { "$it\n" }
 }
 
-fun createTempDir(prefix: String): File =
-    Files.createTempDirectory(prefix).toFile().apply {
-        deleteOnExit()
-    }
+fun createTempDir(prefix: String): File = createTempDirDeleteOnExit(prefix).toFile()
 
 /**
  * converts back slashes to forward slashes
@@ -101,4 +100,26 @@ private fun normalizeTail(prefixEnd: Int, path: String, separator: Boolean): Str
     }
 
     return result.toString()
+}
+
+fun Path.replaceText(oldValue: String, newValue: String) {
+    writeText(readText().replace(oldValue, newValue))
+}
+
+fun File.replaceText(oldValue: String, newValue: String) {
+    writeText(readText().replace(oldValue, newValue))
+}
+
+fun File.replaceText(regex: Regex, replacement: String) {
+    writeText(readText().replace(regex, replacement))
+}
+
+fun Path.replaceFirst(oldValue: String, newValue: String) {
+    writeText(readText().replaceFirst(oldValue, newValue))
+}
+
+fun Path.replaceWithVersion(versionSuffix: String): Path {
+    val otherVersion = resolveSibling("$fileName.$versionSuffix")
+    otherVersion.copyTo(this, overwrite = true)
+    return this
 }

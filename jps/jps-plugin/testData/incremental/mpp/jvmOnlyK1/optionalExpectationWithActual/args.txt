@@ -1,0 +1,3 @@
+-Xmulti-platform
+-Xexpect-actual-classes
+-language-version 1.9

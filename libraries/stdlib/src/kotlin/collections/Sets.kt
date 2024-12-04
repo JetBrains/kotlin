@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,7 +41,17 @@ public fun <T> emptySet(): Set<T> = EmptySet
  * The returned set is serializable (JVM).
  * @sample samples.collections.Collections.Sets.readOnlySet
  */
-public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
+public fun <T> setOf(vararg elements: T): Set<T> = elements.toSet()
+
+/**
+ * Returns a new read-only set containing only the specified object [element].
+ *
+ * The returned set is serializable (JVM).
+ *
+ * @sample samples.collections.Collections.Sets.singletonReadOnlySet
+ */
+@SinceKotlin("1.9")
+public expect fun <T> setOf(element: T): Set<T>
 
 /**
  * Returns an empty read-only set.  The returned set is serializable (JVM).
@@ -125,6 +135,7 @@ public fun <T : Any> setOfNotNull(vararg elements: T?): Set<T> {
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildSetInternal(builderAction)
@@ -155,6 +166,7 @@ internal expect inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() 
 @SinceKotlin("1.6")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
     return buildSetInternal(capacity, builderAction)

@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 import A.Base.Companion.FromABaseCompanion
 import B.Base.Companion.FromBBaseCompanion
@@ -54,7 +54,7 @@ object C {
     }
 
     class Derived : Base() {
-        val a = FromCBaseCompanion::foo
+        val a = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>FromCBaseCompanion::foo<!>
     }
 }
 

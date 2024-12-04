@@ -3,7 +3,7 @@ public final class DStringCollection {
     // source: 'collectionByDelegation2.kt'
     private synthetic final field $$delegate_0: java.util.Collection
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
@@ -26,7 +26,7 @@ public final class DStringCollectionByList {
     // source: 'collectionByDelegation2.kt'
     private synthetic final field $$delegate_0: java.util.List
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
@@ -49,7 +49,7 @@ public final class DStringCollectionBySet {
     // source: 'collectionByDelegation2.kt'
     private synthetic final field $$delegate_0: java.util.Set
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Set): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
@@ -91,9 +91,9 @@ public final class DStringList {
     // source: 'collectionByDelegation2.kt'
     private synthetic final field $$delegate_0: java.util.List
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
-    public synthetic method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge method add(p0: int, p1: java.lang.Object): void
     public method add(p0: int, p1: java.lang.String): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
@@ -112,12 +112,12 @@ public final class DStringList {
     public bridge final method lastIndexOf(p0: java.lang.Object): int
     public @org.jetbrains.annotations.NotNull method listIterator(): java.util.ListIterator
     public @org.jetbrains.annotations.NotNull method listIterator(p0: int): java.util.ListIterator
-    public synthetic method remove(p0: int): java.lang.Object
+    public synthetic bridge method remove(p0: int): java.lang.Object
     public method remove(p0: int): java.lang.String
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
     public method set(p0: int, p1: java.lang.String): java.lang.String
     public bridge final method size(): int
     public @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
@@ -130,7 +130,7 @@ public final class DStringListIterator {
     // source: 'collectionByDelegation2.kt'
     private synthetic final field $$delegate_0: java.util.ListIterator
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.ListIterator): void
-    public synthetic method add(p0: java.lang.Object): void
+    public synthetic bridge method add(p0: java.lang.Object): void
     public method add(p0: java.lang.String): void
     public method hasNext(): boolean
     public method hasPrevious(): boolean
@@ -141,7 +141,7 @@ public final class DStringListIterator {
     public @org.jetbrains.annotations.NotNull method previous(): java.lang.String
     public method previousIndex(): int
     public method remove(): void
-    public synthetic method set(p0: java.lang.Object): void
+    public synthetic bridge method set(p0: java.lang.Object): void
     public method set(p0: java.lang.String): void
 }
 
@@ -157,19 +157,22 @@ public final class DStringMap {
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge final method entrySet(): java.util.Set
     public @org.jetbrains.annotations.Nullable method get(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.Number
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.Number
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public @org.jetbrains.annotations.NotNull method getKeys(): java.util.Set
     public method getSize(): int
     public @org.jetbrains.annotations.NotNull method getValues(): java.util.Collection
     public method isEmpty(): boolean
     public bridge final method keySet(): java.util.Set
-    public synthetic method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public method put(p0: java.lang.String, p1: java.lang.Number): java.lang.Number
     public method putAll(p0: java.util.Map): void
-    public method remove(p0: java.lang.Object): java.lang.Object
+    public method remove(p0: java.lang.Object): java.lang.Number
+    public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -182,7 +185,8 @@ public final class DStringMapEntry {
     public @org.jetbrains.annotations.NotNull method getValue(): java.lang.Number
     public synthetic bridge method getValue(): java.lang.Object
     public method setValue(p0: java.lang.Number): java.lang.Number
-    public synthetic method setValue(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method setValue(p0: java.lang.Object): java.lang.Object
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -190,7 +194,7 @@ public final class DStringSet {
     // source: 'collectionByDelegation2.kt'
     private synthetic final field $$delegate_0: java.util.Set
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Set): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void

@@ -6,10 +6,11 @@
 @file:Suppress("INVISIBLE_MEMBER")
 package test.time
 
+import test.TestPlatform
+import test.current
 import test.numbers.assertAlmostEquals
 import kotlin.math.nextDown
 import kotlin.math.pow
-import kotlin.native.concurrent.SharedImmutable
 import kotlin.test.*
 import kotlin.time.*
 import kotlin.random.*
@@ -21,8 +22,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
-@SharedImmutable
-private val units = DurationUnit.values()
+private val units = DurationUnit.entries
 
 class DurationTest {
 
@@ -497,6 +497,50 @@ class DurationTest {
     }
 
     @Test
+    fun truncation() {
+        fun expect(expected: Duration, value: Duration, unit: DurationUnit) {
+            assertEquals(expected, value.truncateTo(unit))
+            assertEquals(-expected, (-value).truncateTo(unit))
+        }
+        for (unit in units) {
+            expect(Duration.ZERO, Duration.ZERO, unit)
+            expect(Duration.INFINITE, Duration.INFINITE, unit)
+            expect(Duration.ZERO, 1.toDuration(unit) - 1.nanoseconds, unit)
+            repeat(100) {
+                val whole = Random.nextInt(100_000).toDuration(unit)
+                expect(whole, whole, unit)
+                if (unit > DurationUnit.NANOSECONDS) {
+                    val part = Random.nextLong(1, 1.toDuration(unit).inWholeNanoseconds).nanoseconds
+                    expect(Duration.ZERO, part, unit)
+                    expect(whole, whole + part, unit)
+                }
+            }
+        }
+        repeat(10) {
+            val d = Random.nextLong().nanoseconds
+            expect(d, d, DurationUnit.NANOSECONDS)
+        }
+        expect(12.microseconds, 12998.nanoseconds, DurationUnit.MICROSECONDS)
+        expect(1503.milliseconds, 1503_889_404.nanoseconds, DurationUnit.MILLISECONDS)
+        expect(340.seconds, 340_990_567_444L.nanoseconds, DurationUnit.SECONDS)
+        expect(3.minutes, 200.seconds, DurationUnit.MINUTES)
+        expect(4.hours, 250.minutes, DurationUnit.HOURS)
+        expect(1.days, 30.hours, DurationUnit.DAYS)
+
+        // big durations
+        run {
+            val d = (Long.MAX_VALUE / 4).milliseconds
+            for (unit in units) {
+                if (unit <= DurationUnit.MILLISECONDS) {
+                    expect(d, d, unit)
+                } else {
+                    expect(d.toLong(unit).toDuration(unit), d, unit)
+                }
+            }
+        }
+    }
+
+    @Test
     fun parseAndFormatIsoString() {
         fun test(duration: Duration, vararg isoStrings: String) {
             assertEquals(isoStrings.first(), duration.toIsoString())
@@ -509,13 +553,13 @@ class DurationTest {
         }
 
         // zero
-        test(Duration.ZERO, "PT0S", "P0D", "PT0H", "PT0M", "P0DT0H", "PT0H0M", "PT0H0S")
+        test(Duration.ZERO, "PT0S", "P0D", "PT0H", "PT0M", "P0DT0H", "PT0H0M", "PT0H0S", "PT000000000000000000000000H")
 
         // single unit
         test(1.days, "PT24H", "P1D", "PT1440M", "PT86400S")
         test(1.hours, "PT1H")
         test(1.minutes, "PT1M")
-        test(1.seconds, "PT1S")
+        test(1.seconds, "PT1S", "PT000000000000000000000001S")
         test(1.milliseconds, "PT0.001S")
         test(1.microseconds, "PT0.000001S")
         test(1.nanoseconds, "PT0.000000001S", "PT0.0000000009S")
@@ -537,11 +581,11 @@ class DurationTest {
         // with sign
         test(-1.days + 15.minutes, "-PT23H45M", "PT-23H-45M", "+PT-24H+15M")
         test(-1.days - 15.minutes, "-PT24H15M", "PT-24H-15M", "-PT25H-45M")
-        test(Duration.ZERO, "PT0S", "P1DT-24H", "+PT-1H+60M", "-PT1M-60S")
+        test(Duration.ZERO, "PT0S", "P1DT-24H", "+PT-1H+60M", "-PT1M-60S", "PT-000000000000000000000000H")
 
         // infinite
-        test(Duration.INFINITE, "PT9999999999999H", "PT+10000000000000H", "-PT-9999999999999H", "-PT-1234567890123456789012S")
-        test(-Duration.INFINITE, "-PT9999999999999H", "-PT10000000000000H", "PT-1234567890123456789012S")
+        test(Duration.INFINITE, "PT9999999999999H", "PT+10000000000000H", "-PT-9999999999999H", "-PT-1234567890123456789012S", "PT+000000000000000001234567890123456789012H")
+        test(-Duration.INFINITE, "-PT9999999999999H", "-PT10000000000000H", "PT-1234567890123456789012S", "PT-000000000000000001234567890123456789012H")
     }
 
     @Test
@@ -551,10 +595,12 @@ class DurationTest {
             "1m", "1d", "2d 11s", "Infinity", "-Infinity",
             "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
             " P1D", "PT1S ",
+            "P3W",
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
             "PT1S2S", "PT1S2H",
             "P9999999999999DT-9999999999999H",
             "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
+            "PT+-2H", "PT-+2H", "PT+-01234567890123456S"
         )) {
             assertNull(Duration.parseIsoStringOrNull(invalidValue), invalidValue)
             assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parseIsoString(invalidValue) }.let { e ->
@@ -566,6 +612,8 @@ class DurationTest {
 
     @Test
     fun parseAndFormatInUnits() {
+        if (TestPlatform.current == TestPlatform.WasmWasi) return
+
         var d = 1.days + 15.hours + 31.minutes + 45.seconds +
                 678.milliseconds + 920.microseconds + 516.34.nanoseconds
 

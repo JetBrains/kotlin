@@ -1,6 +1,8 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: UNRESOLVED_REFERENCE (declaringClass). See https://youtrack.jetbrains.com/issue/KT-49653. To be discussed.
+// IGNORE_BACKEND_K2: JVM_IR
+// K2 status: declaringClass is error for enums since Kotlin 1.9
+// LANGUAGE: -ProhibitEnumDeclaringClass
+
 package test
 
 enum class KEnum { A }

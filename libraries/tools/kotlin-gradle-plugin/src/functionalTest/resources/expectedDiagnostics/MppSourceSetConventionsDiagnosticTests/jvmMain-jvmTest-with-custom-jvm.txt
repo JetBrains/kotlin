@@ -1,0 +1,29 @@
+[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set jvmMain', but jvm target used a custom name 'desktop' (expected 'jvm'):
+
+Replace:
+    kotlin {
+        jvm("desktop") /* <- custom name used */
+    }
+
+With:
+   kotlin {
+       jvm()
+   }
+----
+[PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set jvmTest', but jvm target used a custom name 'desktop' (expected 'jvm'):
+
+Replace:
+    kotlin {
+        jvm("desktop") /* <- custom name used */
+    }
+
+With:
+   kotlin {
+       jvm()
+   }
+----
+[UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
+ * jvmMain
+ * jvmTest
+You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets

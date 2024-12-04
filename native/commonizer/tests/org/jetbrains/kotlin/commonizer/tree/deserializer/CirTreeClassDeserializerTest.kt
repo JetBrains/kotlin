@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import org.jetbrains.kotlin.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.commonizer.tree.CirTreeClass
-import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.tooling.core.withClosure
 import kotlin.test.*
 
 class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
@@ -22,7 +22,6 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
         assertNull(clazz.companion, "Expected class *not* having a companion")
         assertFalse(clazz.isInner, "Expected class *not* being inner")
         assertFalse(clazz.isCompanion, "Expected class *not* being companion")
-        assertFalse(clazz.isExternal, "Expected class *not* being external")
         assertFalse(clazz.isValue, "Expected class *not* being value")
         assertFalse(clazz.isData, "Expected class *not* being data class")
         assertTrue(clazz.supertypes.isEmpty(), "Expected class not having any explicit supertypes")
@@ -130,7 +129,7 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
         )
 
         val pkg = module.assertSinglePackage()
-        val xClass = pkg.classes.flatMap { transitiveClosure(it, CirTreeClass::classes) + it }
+        val xClass = pkg.classes.withClosure<CirTreeClass> { it.classes }
             .singleOrNull { it.clazz.name.toStrippedString() == "X" } ?: kotlin.test.fail("Missing class 'X'")
         val xSuperType = xClass.clazz.supertypes.singleOrNull()
             ?: kotlin.test.fail("Expected single supertype for 'X'. Found ${xClass.clazz.supertypes}")

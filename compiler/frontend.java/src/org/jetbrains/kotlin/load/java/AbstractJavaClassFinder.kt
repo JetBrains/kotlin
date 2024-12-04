@@ -16,6 +16,10 @@
 
 package org.jetbrains.kotlin.load.java
 
+import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.fileTypes.FileTypeRegistry
+import com.intellij.openapi.fileTypes.UnknownFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -28,7 +32,6 @@ import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.JvmCodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.TopPackageNamesProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
-import javax.annotation.PostConstruct
 import javax.inject.Inject
 
 abstract class AbstractJavaClassFinder : JavaClassFinder {
@@ -50,7 +53,6 @@ abstract class AbstractJavaClassFinder : JavaClassFinder {
         this.project = project
     }
 
-    @PostConstruct
     open fun initialize(
         trace: BindingTrace,
         codeAnalyzer: KotlinCodeAnalyzer,
@@ -68,9 +70,22 @@ abstract class AbstractJavaClassFinder : JavaClassFinder {
         override val topPackageNames: Set<String>?
             get() = (myBaseScope as? TopPackageNamesProvider)?.topPackageNames
 
-        override fun contains(file: VirtualFile) =
-            (file.isDirectory || file.fileType !== KotlinFileType.INSTANCE) &&
-                    myBaseScope.contains(file)
+        override fun contains(file: VirtualFile): Boolean {
+            // KTIJ-20095: optimization to avoid heavy file.fileType calculation
+            val extension = file.extension
+            val ktFile =
+                when {
+                    file.isDirectory -> false
+                    extension == KotlinFileType.EXTENSION -> true
+                    extension == JavaFileType.DEFAULT_EXTENSION || extension == JavaClassFileType.INSTANCE.defaultExtension -> false
+                    else -> {
+                        val fileTypeByFileName = FileTypeRegistry.getInstance().getFileTypeByFileName(file.name)
+                        fileTypeByFileName == KotlinFileType.INSTANCE || fileTypeByFileName == UnknownFileType.INSTANCE &&
+                                FileTypeRegistry.getInstance().isFileOfType(file, KotlinFileType.INSTANCE)
+                    }
+                }
+            return !ktFile && myBaseScope.contains(file)
+        }
 
         val base: GlobalSearchScope = myBaseScope
 

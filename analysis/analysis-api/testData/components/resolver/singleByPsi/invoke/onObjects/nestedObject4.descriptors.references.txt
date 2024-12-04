@@ -1,0 +1,6 @@
+KtNameReferenceExpression(129,135): 'Helper'
+  KtSimpleNameReference:
+    (in foo.bar.baz.Foo) object Helper
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

@@ -16,7 +16,6 @@ val IrFunction.realOverrideTarget: IrFunction
     get() = when (this) {
         is IrSimpleFunction -> this.realOverrideTarget
         is IrConstructor -> this
-        else -> compilationException("Unexpected declaration", this)
     }
 
 val IrSimpleFunction.realOverrideTarget: IrSimpleFunction

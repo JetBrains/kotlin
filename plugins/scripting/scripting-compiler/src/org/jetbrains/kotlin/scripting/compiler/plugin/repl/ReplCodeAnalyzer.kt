@@ -43,7 +43,7 @@ import kotlin.script.experimental.jvm.util.SnippetsHistory
 
 open class ReplCodeAnalyzerBase(
     environment: KotlinCoreEnvironment,
-    val trace: BindingTraceContext = NoScopeRecordCliBindingTrace(),
+    val trace: BindingTraceContext = NoScopeRecordCliBindingTrace(environment.project),
     implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null
 ) {
     protected val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
@@ -100,12 +100,20 @@ open class ReplCodeAnalyzerBase(
 
     fun reset(): List<SourceCodeByReplLine> = replState.reset()
 
-    fun analyzeReplLine(psiFile: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
+    protected fun prepareForAnalyze(
+        psiFile: KtFile,
+        priority: Int
+    ) {
         topDownAnalysisContext.scripts.clear()
         trace.clearDiagnostics()
 
-        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
+        val script = psiFile.script!!
 
+        script.putUserData(ScriptPriorities.PRIORITY_KEY, priority)
+    }
+
+    fun analyzeReplLine(psiFile: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
+        prepareForAnalyze(psiFile, codeLine.no)
         return doAnalyze(psiFile, emptyList(), codeLine.toSourceCode())
     }
 
@@ -115,11 +123,7 @@ open class ReplCodeAnalyzerBase(
         codeLine: SourceCode,
         priority: Int
     ): ReplLineAnalysisResult {
-        topDownAnalysisContext.scripts.clear()
-        trace.clearDiagnostics()
-
-        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, priority)
-
+        prepareForAnalyze(psiFile, priority)
         return doAnalyze(psiFile, importedScripts, codeLine.addNo(priority))
     }
 

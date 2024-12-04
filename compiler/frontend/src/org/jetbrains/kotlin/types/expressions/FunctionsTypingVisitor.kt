@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.types.expressions
 
 import com.google.common.collect.Lists
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -18,12 +17,15 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYieldBeforeLambda
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
+import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.checkers.TrailingCommaChecker
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker
@@ -40,7 +42,6 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
 
@@ -149,7 +150,9 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     override fun visitLambdaExpression(expression: KtLambdaExpression, context: ExpressionTypingContext): KotlinTypeInfo? {
-        checkReservedYieldBeforeLambda(expression, context.trace)
+        if (!components.languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+            checkReservedYieldBeforeLambda(expression, context.trace)
+        }
         if (!expression.functionLiteral.hasBody()) return null
 
         val expectedType = context.expectedType
@@ -180,21 +183,16 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             functionDescriptor.createFunctionType(components.builtIns, suspendFunctionTypeExpected)!!
         )
 
+        if (context.inferenceSession is BuilderInferenceSession) {
+            context.inferenceSession.addExpression(expression)
+        }
+
         if (functionTypeExpected) {
             // all checks were done before
             return createTypeInfo(resultType, context)
         }
 
         return components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, expression)
-    }
-
-    private fun checkReservedYield(context: ExpressionTypingContext, expression: PsiElement) {
-        checkReservedPrefixWord(
-            context.trace,
-            expression,
-            "yield",
-            "yield block/lambda. Use 'yield() { ... }' or 'yield(fun...)'"
-        )
     }
 
     private fun createFunctionLiteralDescriptor(
@@ -241,7 +239,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
                 return components.builtIns.unitType
             }
         }
-        return returnType ?: CANT_INFER_FUNCTION_PARAM_TYPE
+        return returnType ?: CANNOT_INFER_FUNCTION_PARAM_TYPE
     }
 
     private fun computeUnsafeReturnType(
@@ -397,6 +395,7 @@ fun SimpleFunctionDescriptor.createFunctionType(
         builtIns,
         Annotations.EMPTY,
         extensionReceiverParameter?.type,
+        contextReceiverParameters.map { it.type },
         if (shouldUseVarargType) valueParameters.map { it.varargElementType ?: it.type } else valueParameters.map { it.type },
         null,
         returnType ?: return null,

@@ -1,7 +1,7 @@
 package
 
 package p {
-    private fun foo(): p.foo.<anonymous>.A.B
-    private fun foo(/*0*/ a: kotlin.Int): p.foo.<anonymous>.A.B
+    private fun foo(): p.foo.`<anonymous>`.A.B
+    private fun foo(/*0*/ a: kotlin.Int): p.foo.`<anonymous>`.A.B
     public fun test(): kotlin.Unit
 }

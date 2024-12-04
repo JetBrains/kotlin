@@ -1,0 +1,12 @@
+KT element: KtIsExpression
+FIR element: FirTypeOperatorCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+(R|<local>/x| is R|kotlin/String|)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] isExpression.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Any|): R|kotlin/Boolean| {
+        ^foo (R|<local>/x| is R|kotlin/String|)
+    }

@@ -31,11 +31,12 @@ interface ValueResolveContext {
 }
 
 class ComponentResolveContext(
-        val container: StorageComponentContainer,
-        val requestingDescriptor: ValueDescriptor,
-        val parentContext: ValueResolveContext? = null
+    val container: StorageComponentContainer,
+    val requestingDescriptor: ValueDescriptor,
+    val parentContext: ValueResolveContext? = null
 ) : ValueResolveContext {
-    override fun resolve(registration: Type): ValueDescriptor? = container.resolve(registration, this) ?: parentContext?.resolve(registration)
+    override fun resolve(registration: Type): ValueDescriptor? =
+        container.resolve(registration, this) ?: parentContext?.resolve(registration)
 
     override fun toString(): String = "for $requestingDescriptor in $container"
 }
@@ -51,17 +52,21 @@ class MethodBinding(val method: Method, private val argumentDescriptors: List<Va
 
 fun computeArguments(argumentDescriptors: List<ValueDescriptor>): List<Any> = argumentDescriptors.map { it.getValue() }
 
-fun Class<*>.bindToConstructor(context: ValueResolveContext): ConstructorBinding {
-    val constructorInfo = getInfo().constructorInfo ?: error("No constructor for $this: ${getInfo()}")
+fun Class<*>.bindToConstructor(containerId: String, context: ValueResolveContext): ConstructorBinding {
+    val constructorInfo = getInfo().constructorInfo ?: error("No constructor for $this: ${getInfo()} in $containerId")
     val candidate = constructorInfo.constructor
-    return ConstructorBinding(candidate, candidate.bindArguments(constructorInfo.parameters, context))
+    return ConstructorBinding(candidate, candidate.bindArguments(containerId, constructorInfo.parameters, context))
 }
 
-fun Method.bindToMethod(context: ValueResolveContext): MethodBinding {
-    return MethodBinding(this, bindArguments(genericParameterTypes.toList(), context))
+fun Method.bindToMethod(containerId: String, context: ValueResolveContext): MethodBinding {
+    return MethodBinding(this, bindArguments(containerId, genericParameterTypes.toList(), context))
 }
 
-private fun Member.bindArguments(parameters: List<Type>, context: ValueResolveContext): List<ValueDescriptor> {
+private fun Member.bindArguments(
+    containerId: String,
+    parameters: List<Type>,
+    context: ValueResolveContext
+): List<ValueDescriptor> {
     val bound = ArrayList<ValueDescriptor>(parameters.size)
     var unsatisfied: MutableList<Type>? = null
 
@@ -71,13 +76,12 @@ private fun Member.bindArguments(parameters: List<Type>, context: ValueResolveCo
             if (unsatisfied == null)
                 unsatisfied = ArrayList<Type>()
             unsatisfied.add(parameter)
-        }
-        else {
+        } else {
             bound.add(descriptor)
         }
     }
     if (unsatisfied != null) {
-        throw UnresolvedDependenciesException("Dependencies for `$this` cannot be satisfied:\n  $unsatisfied")
+        throw UnresolvedDependenciesException("$containerId: Dependencies for `$this` cannot be satisfied:\n  $unsatisfied")
     }
     return bound
 }

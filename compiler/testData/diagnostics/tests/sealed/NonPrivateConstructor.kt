@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 sealed class Sealed protected constructor(val x: Int) {
     object FIRST : Sealed()
 

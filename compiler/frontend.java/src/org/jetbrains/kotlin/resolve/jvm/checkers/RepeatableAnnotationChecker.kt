@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -73,6 +70,15 @@ class RepeatableAnnotationChecker(
                     javaRepeatable != null -> checkJavaRepeatableAnnotationDeclaration(javaRepeatable, annotationClass, trace)
                     kotlinRepeatable != null -> checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, annotationClass, trace)
                 }
+                if (javaRepeatable != null && kotlinRepeatable != null) {
+                    trace.report(
+                        ErrorsJvm.REDUNDANT_REPEATABLE_ANNOTATION.on(
+                            kotlinRepeatable.entry,
+                            kotlinRepeatable.descriptor.abbreviationFqName ?: FqName.ROOT,
+                            javaRepeatable.descriptor.abbreviationFqName ?: FqName.ROOT,
+                        )
+                    )
+                }
             }
         }
     }
@@ -126,21 +132,15 @@ class RepeatableAnnotationChecker(
                 && isRepeatableAnnotation(classDescriptor)
                 && classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE
             ) {
-                when {
-                    jvmTarget == JvmTarget.JVM_1_6 -> {
-                        trace.report(ErrorsJvm.REPEATED_ANNOTATION_TARGET6.on(entry))
+                if (languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations)) {
+                    // It's not allowed to have both a repeated annotation (applied more than once) and its container
+                    // on the same element. See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
+                    val explicitContainer = resolveContainerAnnotation(classDescriptor)
+                    if (explicitContainer != null && annotations.any { it.descriptor.fqName == explicitContainer }) {
+                        trace.report(ErrorsJvm.REPEATED_ANNOTATION_WITH_CONTAINER.on(entry, fqName, explicitContainer))
                     }
-                    languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) -> {
-                        // It's not allowed to have both a repeated annotation (applied more than once) and its container
-                        // on the same element. See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
-                        val explicitContainer = resolveContainerAnnotation(classDescriptor)
-                        if (explicitContainer != null && annotations.any { it.descriptor.fqName == explicitContainer }) {
-                            trace.report(ErrorsJvm.REPEATED_ANNOTATION_WITH_CONTAINER.on(entry, fqName, explicitContainer))
-                        }
-                    }
-                    else -> {
-                        trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry))
-                    }
+                } else {
+                    trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry))
                 }
             }
 

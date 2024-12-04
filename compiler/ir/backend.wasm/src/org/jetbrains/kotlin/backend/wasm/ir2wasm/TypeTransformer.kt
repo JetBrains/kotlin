@@ -5,25 +5,23 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.*
 
 class WasmTypeTransformer(
-    val context: WasmBaseCodegenContext,
-    val builtIns: IrBuiltIns
+    val backendContext: WasmBackendContext,
+    val wasmFileCodegenContext: WasmFileCodegenContext,
 ) {
-    val symbols = context.backendContext.wasmSymbols
+    private val builtIns: IrBuiltIns = backendContext.irBuiltIns
+    private val symbols = backendContext.wasmSymbols
 
     fun IrType.toWasmResultType(): WasmType? =
         when (this) {
@@ -48,8 +46,8 @@ class WasmTypeTransformer(
                 toWasmValueType()
         }
 
-    fun IrType.toWasmGcRefType(): WasmType =
-        WasmRefNullType(WasmHeapType.Type(context.referenceGcType(getRuntimeClass?.symbol ?: builtIns.anyClass)))
+    private fun IrType.toWasmGcRefType(): WasmType =
+        WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(getRuntimeClass(backendContext.irBuiltIns).symbol)))
 
     fun IrType.toBoxedInlineClassType(): WasmType =
         toWasmGcRefType()
@@ -86,32 +84,32 @@ class WasmTypeTransformer(
                 WasmF64
 
             builtIns.nothingNType ->
-                WasmExternRef
+                WasmRefNullrefType
 
             // Value will not be created. Just using a random Wasm type.
             builtIns.nothingType ->
-                WasmExternRef
+                WasmAnyRef
 
             symbols.voidType ->
                 error("Void type can't be used as a value")
 
             else -> {
                 val klass = this.erasedUpperBound ?: builtIns.anyClass.owner
-                val ic = context.backendContext.inlineClassesUtils.getInlinedClass(this)
+                val ic = backendContext.inlineClassesUtils.getInlinedClass(this)
 
                 if (klass.isExternal) {
-                    WasmAnyRef
+                    WasmExternRef
                 } else if (isBuiltInWasmRefType(this)) {
                     when (val name = klass.name.identifier) {
                         "anyref" -> WasmAnyRef
                         "eqref" -> WasmEqRef
-                        "dataref" -> WasmRefNullType(WasmHeapType.Simple.Data)
+                        "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
                         "i31ref" -> WasmI31Ref
                         "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
                         else -> error("Unknown reference type $name")
                     }
                 } else if (ic != null) {
-                    context.backendContext.inlineClassesUtils.getInlineClassUnderlyingType(ic).toWasmValueType()
+                    backendContext.inlineClassesUtils.getInlineClassUnderlyingType(ic).toWasmValueType()
                 } else {
                     this.toWasmGcRefType()
                 }
@@ -126,26 +124,5 @@ fun isBuiltInWasmRefType(type: IrType): Boolean {
 fun isExternalType(type: IrType): Boolean =
     type.erasedUpperBound?.isExternal ?: false
 
-// Return null if upper bound is Any
-private val IrTypeParameter.erasedUpperBound: IrClass?
-    get() {
-        // Pick the (necessarily unique) non-interface upper bound if it exists
-        for (type in superTypes) {
-            return type.erasedUpperBound ?: continue
-        }
-
-        return null
-    }
-
-val IrType.erasedUpperBound: IrClass?
-    get() = when (val classifier = classifierOrNull) {
-        is IrClassSymbol -> classifier.owner
-        is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
-        else -> throw IllegalStateException()
-    }
-
-val IrType.getRuntimeClass: IrClass?
-    get() = erasedUpperBound.let {
-        if (it?.isInterface == true) null
-        else it
-    }
+fun IrType.getRuntimeClass(irBuiltIns: IrBuiltIns): IrClass =
+    erasedUpperBound?.takeIf { !it.isInterface } ?: irBuiltIns.anyClass.owner

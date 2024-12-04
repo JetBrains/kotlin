@@ -1,0 +1,44 @@
+//
+// Source
+// ------------------------------------------
+
+class A {
+    fun makeA(): A { return A() }
+    fun makeB(): B { return B() }
+    class B() {
+    }
+}
+class C {
+    fun useAB() {
+        val a = A()
+        a.makeA()
+        a.makeB()
+        val b = A.B()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class A {
+  public <init>()V
+  public final makeA()LA;
+  public final makeB()LA%B;
+  static <clinit>()V
+  public final static I %stable
+  public final static INNERCLASS A%B A B
+}
+public final class A%B {
+  public <init>()V
+  static <clinit>()V
+  public final static I %stable
+  public final static INNERCLASS A%B A B
+}
+public final class C {
+  public <init>()V
+  public final useAB()V
+  static <clinit>()V
+  public final static I %stable
+  public final static INNERCLASS A%B A B
+}

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val x = ""
 
 fun bar(x : Int = <!TYPE_MISMATCH!>""<!>, y : Int = x, z : String = <!TYPE_MISMATCH!>y<!>) {
@@ -15,13 +16,13 @@ val z = 3
 
 fun foo(x: Int = <!UNINITIALIZED_PARAMETER!>y<!>, y: Int = x, i : Int = z): Int = x + y
 
-fun foo(x: () -> Int = { y }, y: Int = x(), i : Int = z): Int = x() + y
+fun foo(x: () -> Int = { <!UNINITIALIZED_PARAMETER!>y<!> }, y: Int = x(), i : Int = z): Int = x() + y
 
-fun bar(x: () -> Int = { y; 1 }, y: Int) {}
+fun bar(x: () -> Int = { <!UNINITIALIZED_PARAMETER!>y<!>; 1 }, y: Int) {}
 
 fun baz(
     x: () -> Int = {
-        fun bar(xx: () -> Int = { y; 1 }) = xx
+        fun bar(xx: () -> Int = { <!UNINITIALIZED_PARAMETER!>y<!>; 1 }) = xx
         bar()()
     },
     y: Int
@@ -30,7 +31,7 @@ fun baz(
 
 fun boo(
     x: () -> Int = {
-        fun bar(): Int = y
+        fun bar(): Int = <!UNINITIALIZED_PARAMETER!>y<!>
         bar()
     },
     y: Int

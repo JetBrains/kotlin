@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class A {
     init {
         <!RETURN_NOT_ALLOWED!>return<!>
@@ -6,10 +7,10 @@ class A {
     constructor() {
         if (1 == 1) {
             return
-            return 1
+            return <!RETURN_TYPE_MISMATCH!>1<!>
         }
         return
-        return <!TYPE_MISMATCH!>foo()<!>
+        return <!RETURN_TYPE_MISMATCH!>foo()<!>
     }
 
     fun foo(): Int = 1

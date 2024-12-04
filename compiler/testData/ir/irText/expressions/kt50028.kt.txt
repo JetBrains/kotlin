@@ -1,0 +1,18 @@
+fun test_1(): String {
+  return when {
+    else -> { // BLOCK
+      return ""
+    }
+  }
+}
+
+fun test_2(b: Boolean): Boolean {
+  return when {
+    b -> { // BLOCK
+      true
+    }
+    else -> { // BLOCK
+      throw NotImplementedError()
+    }
+  }
+}

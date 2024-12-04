@@ -1,0 +1,1 @@
+@R|MyAnno|[Types](LAZY_EXPRESSION) public final? [ResolvedTo(TYPES)] class Foo : R|kotlin/Any|

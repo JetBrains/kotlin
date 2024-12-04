@@ -67,8 +67,15 @@ public final class IrSimpleType extends
             break;
           }
           case 24: {
-            bitField0_ |= 0x00000002;
-            hasQuestionMark_ = input.readBool();
+            int rawValue = input.readEnum();
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability value = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.valueOf(rawValue);
+            if (value == null) {
+              unknownFieldsCodedOutput.writeRawVarint32(tag);
+              unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+            } else {
+              bitField0_ |= 0x00000002;
+              nullability_ = value;
+            }
             break;
           }
           case 32: {
@@ -195,19 +202,19 @@ public final class IrSimpleType extends
     return classifier_;
   }
 
-  public static final int HAS_QUESTION_MARK_FIELD_NUMBER = 3;
-  private boolean hasQuestionMark_;
+  public static final int NULLABILITY_FIELD_NUMBER = 3;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability_;
   /**
-   * <code>required bool has_question_mark = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
    */
-  public boolean hasHasQuestionMark() {
+  public boolean hasNullability() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required bool has_question_mark = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
    */
-  public boolean getHasQuestionMark() {
-    return hasQuestionMark_;
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability getNullability() {
+    return nullability_;
   }
 
   public static final int ARGUMENT_FIELD_NUMBER = 4;
@@ -263,7 +270,7 @@ public final class IrSimpleType extends
   private void initFields() {
     annotation_ = java.util.Collections.emptyList();
     classifier_ = 0L;
-    hasQuestionMark_ = false;
+    nullability_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.NOT_SPECIFIED;
     argument_ = java.util.Collections.emptyList();
     abbreviation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.getDefaultInstance();
   }
@@ -274,10 +281,6 @@ public final class IrSimpleType extends
     if (isInitialized == 0) return false;
 
     if (!hasClassifier()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasHasQuestionMark()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -307,7 +310,7 @@ public final class IrSimpleType extends
       output.writeInt64(2, classifier_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeBool(3, hasQuestionMark_);
+      output.writeEnum(3, nullability_.getNumber());
     }
     if (getArgumentList().size() > 0) {
       output.writeRawVarint32(34);
@@ -338,7 +341,7 @@ public final class IrSimpleType extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(3, hasQuestionMark_);
+        .computeEnumSize(3, nullability_.getNumber());
     }
     {
       int dataSize = 0;
@@ -456,7 +459,7 @@ public final class IrSimpleType extends
       bitField0_ = (bitField0_ & ~0x00000001);
       classifier_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
-      hasQuestionMark_ = false;
+      nullability_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.NOT_SPECIFIED;
       bitField0_ = (bitField0_ & ~0x00000004);
       argument_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -497,7 +500,7 @@ public final class IrSimpleType extends
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.hasQuestionMark_ = hasQuestionMark_;
+      result.nullability_ = nullability_;
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         argument_ = java.util.Collections.unmodifiableList(argument_);
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -526,8 +529,8 @@ public final class IrSimpleType extends
       if (other.hasClassifier()) {
         setClassifier(other.getClassifier());
       }
-      if (other.hasHasQuestionMark()) {
-        setHasQuestionMark(other.getHasQuestionMark());
+      if (other.hasNullability()) {
+        setNullability(other.getNullability());
       }
       if (!other.argument_.isEmpty()) {
         if (argument_.isEmpty()) {
@@ -549,10 +552,6 @@ public final class IrSimpleType extends
 
     public final boolean isInitialized() {
       if (!hasClassifier()) {
-        
-        return false;
-      }
-      if (!hasHasQuestionMark()) {
         
         return false;
       }
@@ -747,34 +746,37 @@ public final class IrSimpleType extends
       return this;
     }
 
-    private boolean hasQuestionMark_ ;
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.NOT_SPECIFIED;
     /**
-     * <code>required bool has_question_mark = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
      */
-    public boolean hasHasQuestionMark() {
+    public boolean hasNullability() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required bool has_question_mark = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
      */
-    public boolean getHasQuestionMark() {
-      return hasQuestionMark_;
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability getNullability() {
+      return nullability_;
     }
     /**
-     * <code>required bool has_question_mark = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
      */
-    public Builder setHasQuestionMark(boolean value) {
+    public Builder setNullability(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
       bitField0_ |= 0x00000004;
-      hasQuestionMark_ = value;
+      nullability_ = value;
       
       return this;
     }
     /**
-     * <code>required bool has_question_mark = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability nullability = 3 [default = NOT_SPECIFIED];</code>
      */
-    public Builder clearHasQuestionMark() {
+    public Builder clearNullability() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      hasQuestionMark_ = false;
+      nullability_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability.NOT_SPECIFIED;
       
       return this;
     }

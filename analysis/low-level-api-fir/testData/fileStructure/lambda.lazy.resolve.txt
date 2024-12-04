@@ -1,0 +1,13 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] lambda.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|/myRun|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+        [ResolvedTo(BODY_RESOLVE)] lval inLambda: R|kotlin/Int| = Int(10)
+        R|/println|(R|<local>/inLambda|)
+        ^ R|<local>/inLambda|
+    }
+    )
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] fun println([ResolvedTo(BODY_RESOLVE)] any: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final inline [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] R> myRun([ResolvedTo(BODY_RESOLVE)] block: R|() -> R|): R|R| {
+        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+    }

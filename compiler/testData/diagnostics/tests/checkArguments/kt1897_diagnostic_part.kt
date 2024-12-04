@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 //KT-1897 When call cannot be resolved to any function, save information about types of arguments
 
 package a

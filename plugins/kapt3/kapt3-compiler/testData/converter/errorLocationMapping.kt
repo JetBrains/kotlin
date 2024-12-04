@@ -23,10 +23,14 @@ class ErrorInDeclarations {
     fun <T : String> f2() {}
     fun <T : ABC> f3() {}
     fun f4(): ABC? = null
+
+    @JvmOverloads
+    fun f5(a: ABC, b: String = "") {}
+
+    companion object {
+        @JvmStatic
+        fun f6(a: ABC) {}
+    }
 }
 
 annotation class Anno(val a: KClass<Any>)
-
-// EXPECTED_ERROR(kotlin:11:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:6:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:12:1) cannot find symbol

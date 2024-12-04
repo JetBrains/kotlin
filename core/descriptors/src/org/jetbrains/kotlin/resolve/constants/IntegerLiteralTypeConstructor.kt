@@ -60,7 +60,7 @@ class IntegerLiteralTypeConstructor : TypeConstructor {
                 Mode.INTERSECTION_TYPE -> left.possibleTypes union right.possibleTypes
             }
             val constructor = IntegerLiteralTypeConstructor(left.value, left.module, possibleTypes)
-            return KotlinTypeFactory.integerLiteralType(Annotations.EMPTY, constructor, false)
+            return KotlinTypeFactory.integerLiteralType(TypeAttributes.Empty, constructor, false)
         }
 
         private fun fold(left: IntegerLiteralTypeConstructor, right: SimpleType): SimpleType? =
@@ -127,7 +127,7 @@ class IntegerLiteralTypeConstructor : TypeConstructor {
         this.possibleTypes = possibleTypes
     }
 
-    private val type = KotlinTypeFactory.integerLiteralType(Annotations.EMPTY, this, false)
+    private val type = KotlinTypeFactory.integerLiteralType(TypeAttributes.Empty, this, false)
 
     private fun isContainsOnlyUnsignedTypes(): Boolean = module.allSignedLiteralTypes.all { it !in possibleTypes }
 

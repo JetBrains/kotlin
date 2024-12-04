@@ -1,11 +1,10 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_GENERATED
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 data class RGBA(val rgba: Int)
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class RgbaArray(val array: IntArray) {
     val size: Int get() = array.size
 

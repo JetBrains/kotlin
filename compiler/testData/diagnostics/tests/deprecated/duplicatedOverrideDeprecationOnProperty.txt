@@ -1,0 +1,26 @@
+package
+
+public interface A {
+    @kotlin.Deprecated(message = "") public abstract val a: kotlin.String
+    @kotlin.Deprecated(message = "") public abstract val b: kotlin.String
+    @kotlin.Deprecated(message = "") public abstract var c: kotlin.String
+    @kotlin.Deprecated(message = "") public abstract var d: kotlin.String
+    @kotlin.Deprecated(message = "") public abstract var e: kotlin.String
+    @kotlin.Deprecated(message = "") public abstract var h: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object B : A {
+    private constructor B()
+    public open override /*1*/ val a: kotlin.String = ""
+    public open override /*1*/ val b: kotlin.String
+    public open override /*1*/ var c: kotlin.String
+    public open override /*1*/ var d: kotlin.String
+    public open override /*1*/ var e: kotlin.String
+    public open override /*1*/ var h: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

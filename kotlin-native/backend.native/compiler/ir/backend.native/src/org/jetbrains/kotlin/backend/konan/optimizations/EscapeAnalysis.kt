@@ -5,29 +5,41 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
+import org.jetbrains.kotlin.backend.konan.ir.annotations.Escapes
+import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsTo
+import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsToKind
+import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
+import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import kotlin.math.min
-
-private val DataFlowIR.Node.isAlloc
-    get() = this is DataFlowIR.Node.NewObject || this is DataFlowIR.Node.AllocInstance
+import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.getAllSuperclasses
+import org.jetbrains.kotlin.utils.atMostOne
 
 private val DataFlowIR.Node.ir
     get() = when (this) {
         is DataFlowIR.Node.Call -> irCallSite
-        is DataFlowIR.Node.AllocInstance -> irCallSite
+        is DataFlowIR.Node.Alloc -> irCallSite
         is DataFlowIR.Node.ArrayRead -> irCallSite
         is DataFlowIR.Node.FieldRead -> ir
         else -> null
+    }
+
+private val CallGraphNode.CallSite.arguments: List<DataFlowIR.Node>
+    get() {
+        return (0..call.arguments.size).map {
+            if (it < call.arguments.size) call.arguments[it].node else node
+        }
     }
 
 internal object EscapeAnalysis {
@@ -115,140 +127,19 @@ internal object EscapeAnalysis {
     // This is done in order to not handle return parameter somewhat specially.
     private val returnsValueField = DataFlowIR.Field(DataFlowIR.Type.Virtual, -2, "v@lue")
 
-    // Roles in which particular object reference is being used.
-    private enum class Role {
-        RETURN_VALUE,
-        THROW_VALUE,
-        WRITE_FIELD,
-        READ_FIELD,
-        WRITTEN_TO_GLOBAL,
-        ASSIGNED,
-    }
-
     // The less the higher an object escapes.
     object Depths {
         val INFINITY = 1_000_000
         val ROOT_SCOPE = 0
         val RETURN_VALUE = -1
         val PARAMETER = -2
+        val GLOBAL = -3
     }
 
     object DivergenceResolutionParams {
         const val MaxAttempts = 3
         const val NegligibleSize = 100
         const val SwellingFactor = 25
-    }
-
-    private class RoleInfoEntry(val node: DataFlowIR.Node? = null, val field: DataFlowIR.Field?)
-
-    private open class RoleInfo {
-        val entries = mutableListOf<RoleInfoEntry>()
-
-        open fun add(entry: RoleInfoEntry) = entries.add(entry)
-    }
-
-    private class NodeInfo(val depth: Int = Depths.INFINITY) {
-        val data = HashMap<Role, RoleInfo>()
-
-        fun add(role: Role, info: RoleInfoEntry?) {
-            val entry = data.getOrPut(role, { RoleInfo() })
-            if (info != null) entry.add(info)
-        }
-
-        fun has(role: Role): Boolean = data[role] != null
-
-        fun escapes() = has(Role.WRITTEN_TO_GLOBAL) || has(Role.THROW_VALUE)
-
-        override fun toString() =
-                data.keys.joinToString(separator = "; ", prefix = "Roles: ") { it.toString() }
-    }
-
-    private class FunctionAnalysisResult(val function: DataFlowIR.Function,
-                                         val nodesRoles: Map<DataFlowIR.Node, NodeInfo>)
-
-    private class IntraproceduralAnalysis(val context: Context,
-                                          val moduleDFG: ModuleDFG, val externalModulesDFG: ExternalModulesDFG,
-                                          val callGraph: CallGraph) {
-
-        val functions = moduleDFG.functions
-
-        private fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
-            if (this is DataFlowIR.Type.Declared) return this
-            val hash = (this as DataFlowIR.Type.External).hash
-            return externalModulesDFG.publicTypes[hash] ?: error("Unable to resolve exported type $hash")
-        }
-
-        fun analyze(): Map<DataFlowIR.FunctionSymbol, FunctionAnalysisResult> {
-            val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.ir.symbols.nothing.owner).resolved()
-            return callGraph.nodes.filter { functions[it.symbol] != null }.associateBy({ it.symbol }) { callGraphNode ->
-                val function = functions[callGraphNode.symbol]!!
-                val body = function.body
-                val nodesRoles = mutableMapOf<DataFlowIR.Node, NodeInfo>()
-
-                fun computeDepths(node: DataFlowIR.Node, depth: Int) {
-                    if (node is DataFlowIR.Node.Scope)
-                        node.nodes.forEach { computeDepths(it, depth + 1) }
-                    else if (node != DataFlowIR.Node.Null)
-                        nodesRoles[node] = NodeInfo(depth)
-                }
-                computeDepths(body.rootScope, Depths.ROOT_SCOPE - 1)
-
-                fun assignRole(node: DataFlowIR.Node, role: Role, infoEntry: RoleInfoEntry?) {
-                    if (node != DataFlowIR.Node.Null && infoEntry?.node != DataFlowIR.Node.Null)
-                        nodesRoles[node]!!.add(role, infoEntry)
-                }
-
-                body.returns.values.forEach { assignRole(it.node, Role.RETURN_VALUE, null) }
-                body.throws.values.forEach  { assignRole(it.node, Role.THROW_VALUE,  null) }
-
-                body.forEachNonScopeNode { node ->
-                    when (node) {
-                        is DataFlowIR.Node.FieldWrite -> {
-                            val receiver = node.receiver
-                            if (receiver == null)
-                                assignRole(node.value.node, Role.WRITTEN_TO_GLOBAL, null)
-                            else
-                                assignRole(receiver.node, Role.WRITE_FIELD, RoleInfoEntry(node.value.node, node.field))
-                        }
-
-                        is DataFlowIR.Node.Singleton -> {
-                            val type = node.type.resolved()
-                            if (type != nothing)
-                                assignRole(node, Role.WRITTEN_TO_GLOBAL, null)
-                        }
-
-                        is DataFlowIR.Node.FieldRead -> {
-                            val receiver = node.receiver
-                            if (receiver == null)
-                                assignRole(node, Role.WRITTEN_TO_GLOBAL, null)
-                            else
-                                assignRole(receiver.node, Role.READ_FIELD, RoleInfoEntry(node, node.field))
-                        }
-
-                        is DataFlowIR.Node.ArrayWrite -> {
-                            assignRole(node.array.node, Role.WRITE_FIELD, RoleInfoEntry(node.value.node, intestinesField))
-                        }
-
-                        is DataFlowIR.Node.ArrayRead -> {
-                            assignRole(node.array.node, Role.READ_FIELD, RoleInfoEntry(node, intestinesField))
-                        }
-
-                        is DataFlowIR.Node.Variable -> {
-                            for (value in node.values)
-                                assignRole(node, Role.ASSIGNED, RoleInfoEntry(value.node, null))
-                        }
-                        is DataFlowIR.Node.AllocInstance,
-                        is DataFlowIR.Node.Call,
-                        is DataFlowIR.Node.Const,
-                        is DataFlowIR.Node.FunctionReference,
-                        is DataFlowIR.Node.Null,
-                        is DataFlowIR.Node.Parameter,
-                        is DataFlowIR.Node.Scope -> {}
-                    }
-                }
-                FunctionAnalysisResult(function, nodesRoles)
-            }
-        }
     }
 
     private inline fun <reified T: Comparable<T>> Array<T>.sortedAndDistinct(): Array<T> {
@@ -365,22 +256,12 @@ internal object EscapeAnalysis {
             override fun toString() = "$from -> $to"
 
             companion object {
-                fun pointsTo(param1: Int, param2: Int, totalParams: Int, kind: Int): Edge {
-                    /*
-                     * Values extracted from @PointsTo annotation.
-                     *  kind            edge
-                     *   1      p1            -> p2
-                     *   2      p1            -> p2.intestines
-                     *   3      p1.intestines -> p2
-                     *   4      p1.intestines -> p2.intestines
-                     */
-                    if (kind <= 0 || kind > 4)
-                        error("Invalid pointsTo kind: $kind")
-                    val from = if (kind < 3)
+                fun pointsTo(param1: Int, param2: Int, totalParams: Int, kind: PointsToKind): Edge {
+                    val from = if (kind.sourceIsDirect)
                         Node.parameter(param1, totalParams)
                     else
                         Node(NodeKind.parameter(param1, totalParams), Array(1) { intestinesField })
-                    val to = if (kind % 2 == 1)
+                    val to = if (kind.destinationIsDirect)
                         Node.parameter(param2, totalParams)
                     else
                         Node(NodeKind.parameter(param2, totalParams), Array(1) { intestinesField })
@@ -426,19 +307,24 @@ internal object EscapeAnalysis {
         }
 
         companion object {
-            fun fromBits(escapesMask: Int, pointsToMasks: List<Int>): FunctionEscapeAnalysisResult {
-                val paramCount = pointsToMasks.size
+            fun fromAnnotations(escapesAnnotation: Escapes?, pointsToAnnotation: PointsTo?, numberOfParameters: Int): FunctionEscapeAnalysisResult {
+                escapesAnnotation?.run {
+                    assertIsValidFor(numberOfParameters + 1)
+                }
+                pointsToAnnotation?.run {
+                    assertIsValidFor(numberOfParameters + 1)
+                }
                 val edges = mutableListOf<CompressedPointsToGraph.Edge>()
                 val escapes = mutableListOf<CompressedPointsToGraph.Node>()
-                for (param1 in pointsToMasks.indices) {
-                    if (escapesMask and (1 shl param1) != 0)
-                        escapes.add(CompressedPointsToGraph.Node.parameter(param1, paramCount))
-                    val curPointsToMask = pointsToMasks[param1]
-                    for (param2 in pointsToMasks.indices) {
-                        // Read a nibble at position [param2].
-                        val pointsTo = (curPointsToMask shr (4 * param2)) and 15
-                        if (pointsTo != 0)
-                            edges.add(CompressedPointsToGraph.Edge.pointsTo(param1, param2, paramCount, pointsTo))
+                for (paramFrom in 0..numberOfParameters) {
+                    if (escapesAnnotation?.escapesAt(paramFrom) == true)
+                        escapes.add(CompressedPointsToGraph.Node.parameter(paramFrom, numberOfParameters + 1))
+                    pointsToAnnotation?.run {
+                        for (paramTo in 0..numberOfParameters) {
+                            kind(paramFrom, paramTo)?.let {
+                                edges.add(CompressedPointsToGraph.Edge.pointsTo(paramFrom, paramTo, numberOfParameters + 1, it))
+                            }
+                        }
                     }
                 }
                 return FunctionEscapeAnalysisResult(
@@ -456,20 +342,15 @@ internal object EscapeAnalysis {
 
     private class InterproceduralAnalysis(
             val context: Context,
+            val generationState: NativeGenerationState,
             val callGraph: CallGraph,
-            val intraproceduralAnalysisResults: Map<DataFlowIR.FunctionSymbol, FunctionAnalysisResult>,
-            val externalModulesDFG: ExternalModulesDFG,
+            val moduleDFG: ModuleDFG,
             val lifetimes: MutableMap<IrElement, Lifetime>,
             val propagateExiledToHeapObjects: Boolean
     ) {
 
         private val symbols = context.ir.symbols
-
-        private fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
-            if (this is DataFlowIR.Type.Declared) return this
-            val hash = (this as DataFlowIR.Type.External).hash
-            return externalModulesDFG.publicTypes[hash] ?: error("Unable to resolve exported type $hash")
-        }
+        private val throwable = symbols.throwable.owner
 
         val escapeAnalysisResults = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, FunctionEscapeAnalysisResult>()
 
@@ -515,17 +396,22 @@ internal object EscapeAnalysis {
             }
 
             for (functionSymbol in callGraph.directEdges.keys) {
-                if (!intraproceduralAnalysisResults.containsKey(functionSymbol)) continue
+                if (!moduleDFG.functions.containsKey(functionSymbol)) continue
                 // Assume trivial result at the beginning - then iteratively specify it.
                 escapeAnalysisResults[functionSymbol] = FunctionEscapeAnalysisResult.optimistic()
             }
 
-            for (multiNode in condensation.topologicalOrder.reversed())
+            for (multiNode in condensation.topologicalOrder.reversed()) {
                 analyze(callGraph, multiNode)
+            }
 
             context.logMultiple {
                 with(stats) {
-                    +"Managed to alloc on stack: ${stackAllocsCount * 100.0 / (globalAllocsCount + stackAllocsCount)}%"
+                    +"Managed to alloc on stack"
+                    +("    everything (including globals): $totalStackAllocsCount out of ${totalGlobalAllocsCount + totalStackAllocsCount}" +
+                            " (${totalStackAllocsCount * 100.0 / (totalGlobalAllocsCount + totalStackAllocsCount)}%)")
+                    +("    interesting (without globals) : $filteredStackAllocsCount out of ${filteredGlobalAllocsCount + filteredStackAllocsCount}" +
+                            " (${filteredStackAllocsCount * 100.0 / (filteredGlobalAllocsCount + filteredStackAllocsCount)}%)")
                     +"Total ea result size: $totalEAResultSize"
                     +"Total points-to graph size: $totalPTGSize"
                     +"Total data flow graph size: $totalDFGSize"
@@ -533,9 +419,17 @@ internal object EscapeAnalysis {
             }
         }
 
+        private enum class ComputationState {
+            NEW,
+            PENDING,
+            DONE
+        }
+
         private class Stats {
-            var globalAllocsCount = 0
-            var stackAllocsCount = 0
+            var totalGlobalAllocsCount = 0
+            var totalStackAllocsCount = 0
+            var filteredGlobalAllocsCount = 0
+            var filteredStackAllocsCount = 0
             var totalEAResultSize = 0
             var totalPTGSize = 0
             var totalDFGSize = 0
@@ -543,14 +437,22 @@ internal object EscapeAnalysis {
 
         private val stats = Stats()
 
+        private fun maxPointsToGraphSizeOf(function: DataFlowIR.FunctionSymbol) = with(DivergenceResolutionParams) {
+            // A heuristic: the majority of functions have their points-to graph size linear in number of IR (or DFG) nodes,
+            // there are exceptions but it's a trade-off we have to make.
+            // The trick with [NegligibleSize] handles functions that basically delegate their work to other functions.
+            val numberOfNodes = moduleDFG.functions[function]!!.body.allScopes.sumOf { it.nodes.size }
+            NegligibleSize + numberOfNodes * SwellingFactor
+        }
+
         private fun analyze(callGraph: CallGraph, multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>) {
-            val nodes = multiNode.nodes.filter { intraproceduralAnalysisResults.containsKey(it) }.toMutableSet()
+            val nodes = multiNode.nodes.filter { moduleDFG.functions.containsKey(it) }.toMutableSet()
 
             context.logMultiple {
                 +"Analyzing multiNode:\n    ${nodes.joinToString("\n   ") { it.toString() }}"
                 nodes.forEach { from ->
                     +"DataFlowIR"
-                    intraproceduralAnalysisResults[from]!!.function.debugOutput()
+                    moduleDFG.functions[from]!!.debugOutput()
                     callGraph.directEdges[from]!!.callSites.forEach { to ->
                         +"CALL"
                         +"   from $from"
@@ -559,12 +461,12 @@ internal object EscapeAnalysis {
                 }
             }
 
-            val nonTrivialComponent = nodes.size > 1
-            val pointsToGraphs = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, PointsToGraph>()
+            var pointsToGraphs = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, PointsToGraph>()
+            var failedToConverge = false
             val toAnalyze = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
             toAnalyze.addAll(nodes)
             val numberOfRuns = nodes.associateWith { 0 }.toMutableMap()
-            while (toAnalyze.isNotEmpty()) {
+            while (!failedToConverge && toAnalyze.isNotEmpty()) {
                 val function = toAnalyze.first()
                 toAnalyze.remove(function)
                 numberOfRuns[function] = numberOfRuns[function]!! + 1
@@ -575,38 +477,32 @@ internal object EscapeAnalysis {
 
                 val pointsToGraph = PointsToGraph(function)
                 pointsToGraphs[function] = pointsToGraph
-                analyze(callGraph, pointsToGraph, function)
-                val endResult = escapeAnalysisResults[function]!!
 
-                if (startResult == endResult) {
-                    context.log { "Escape analysis is not changed" }
+                if (!analyze(callGraph.directEdges[function]!!.callSites, pointsToGraph, function, maxPointsToGraphSizeOf(function))) {
+                    failedToConverge = true
                 } else {
-                    context.log { "Escape analysis was refined:\n$endResult" }
-                    if (with(DivergenceResolutionParams) {
-                                // A heuristic: the majority of functions have their points-to graph size linear in number of IR (or DFG) nodes,
-                                // there are exceptions but it's a trade-off we have to make.
-                                // The trick with [NegligibleSize] handles functions that basically delegate their work to other functions.
-                                val numberOfNodes = intraproceduralAnalysisResults[function]!!.function.body.allScopes.sumOf { it.nodes.size }
-                                val maxAllowedGraphSize = NegligibleSize + numberOfNodes * SwellingFactor
-
-                                numberOfRuns[function]!! > MaxAttempts
-                                        || (nonTrivialComponent && pointsToGraph.allNodes.size > maxAllowedGraphSize)
+                    val endResult = escapeAnalysisResults[function]!!
+                    if (startResult == endResult) {
+                        context.log { "Escape analysis is not changed" }
+                    } else {
+                        context.log { "Escape analysis was refined:\n$endResult" }
+                        if (numberOfRuns[function]!! > DivergenceResolutionParams.MaxAttempts)
+                            failedToConverge = true
+                        else {
+                            callGraph.reversedEdges[function]?.forEach {
+                                if (nodes.contains(it))
+                                    toAnalyze.add(it)
                             }
-                    ) {
-                        // TODO: suboptimal. May be it is possible somehow handle the entire component at once?
-                        context.log {
-                            "WARNING: Escape analysis for $function seems not to be converging." +
-                                    " Assuming conservative results."
                         }
-                        escapeAnalysisResults[function] = FunctionEscapeAnalysisResult.pessimistic(function.parameters.size)
-                        nodes.remove(function)
-                    }
-
-                    callGraph.reversedEdges[function]?.forEach {
-                        if (nodes.contains(it))
-                            toAnalyze.add(it)
                     }
                 }
+
+                if (failedToConverge)
+                    context.log { "WARNING: Escape analysis for $function seems not to be converging. Falling back to conservative strategy." }
+            }
+
+            if (failedToConverge) {
+                pointsToGraphs = analyzeComponentPessimistically(callGraph, multiNode)
             }
 
             pointsToGraphs.forEach { (function, graph) ->
@@ -614,25 +510,104 @@ internal object EscapeAnalysis {
                 stats.totalEAResultSize += eaResult.numberOfDrains + eaResult.escapes.size + eaResult.pointsTo.edges.size
 
                 stats.totalPTGSize += graph.allNodes.size
-                stats.totalDFGSize += intraproceduralAnalysisResults[function]!!.function.body.allScopes.sumOf { it.nodes.size }
+                stats.totalDFGSize += moduleDFG.functions[function]!!.body.allScopes.sumOf { it.nodes.size }
 
-                // TODO: suboptimal.
-                if (function !in nodes) return@forEach
+                val functionSymbol = graph.functionSymbol
                 for (node in graph.nodes.keys) {
                     node.ir?.let {
                         val lifetime = graph.lifetimeOf(node)
 
-                        if (node.isAlloc) {
-                            if (lifetime == Lifetime.GLOBAL)
-                                ++stats.globalAllocsCount
-                            if (lifetime == Lifetime.STACK)
-                                ++stats.stackAllocsCount
+                        // Filter out some irrelevant cases (like globals and exceptions).
+                        val isFilteredOut = functionSymbol.isStaticFieldInitializer ||
+                                functionSymbol.irFunction?.originalConstructor?.constructedClass?.kind?.let { kind ->
+                                    kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT
+                                } == true ||
+                                (node as? DataFlowIR.Node.Alloc)?.type?.irClass?.getAllSuperclasses()?.contains(throwable) == true
+
+                        if (node is DataFlowIR.Node.Alloc) {
+                            if (lifetime == Lifetime.GLOBAL) {
+                                ++stats.totalGlobalAllocsCount
+                                if (!isFilteredOut)
+                                    ++stats.filteredGlobalAllocsCount
+                            }
+                            if (lifetime == Lifetime.STACK) {
+                                ++stats.totalStackAllocsCount
+                                if (!isFilteredOut)
+                                    ++stats.filteredStackAllocsCount
+                            }
 
                             lifetimes[it] = lifetime
                         }
                     }
                 }
             }
+        }
+
+        private fun analyzeComponentPessimistically(
+                callGraph: CallGraph,
+                multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>
+        ): MutableMap<DataFlowIR.FunctionSymbol.Declared, PointsToGraph> {
+            val nodes = multiNode.nodes.filter { moduleDFG.functions.containsKey(it) }
+            val pointsToGraphs = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, PointsToGraph>()
+            val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
+            nodes.forEach { computationStates[it] = ComputationState.NEW }
+            val toAnalyze = nodes.toMutableList()
+            while (toAnalyze.isNotEmpty()) {
+                val function = toAnalyze.peek()!!
+                val state = computationStates[function]!!
+                val callSites = callGraph.directEdges[function]!!.callSites
+                when (state) {
+                    ComputationState.NEW -> {
+                        computationStates[function] = ComputationState.PENDING
+                        for (callSite in callSites) {
+                            val callee = callSite.actualCallee
+                            val calleeComputationState = computationStates[callee]
+                            if (callSite.isVirtual
+                                    || callee !is DataFlowIR.FunctionSymbol.Declared // An external call.
+                                    || calleeComputationState == null // A call to a function from other component.
+                                    || calleeComputationState == ComputationState.DONE // Already analyzed.
+                            ) {
+                                continue
+                            }
+
+                            if (calleeComputationState == ComputationState.PENDING) {
+                                // A cycle - break it by assuming nothing about the callee.
+                                // This is not the callee's final result - it will be recomputed later in the loop.
+                                escapeAnalysisResults[callee] = FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
+                            } else {
+                                computationStates[callee] = ComputationState.NEW
+                                toAnalyze.push(callee)
+                            }
+                        }
+                    }
+
+                    ComputationState.PENDING -> {
+                        toAnalyze.pop()
+                        computationStates[function] = ComputationState.DONE
+                        val pointsToGraph = PointsToGraph(function)
+                        if (analyze(callSites, pointsToGraph, function, maxPointsToGraphSizeOf(function)))
+                            pointsToGraphs[function] = pointsToGraph
+                        else {
+                            // TODO: suboptimal. May be it is possible somehow handle the entire component at once?
+                            context.log {
+                                "WARNING: Escape analysis for $function seems not to be converging." +
+                                        " Assuming conservative results."
+                            }
+                            escapeAnalysisResults[function] = FunctionEscapeAnalysisResult.pessimistic(function.parameters.size)
+                            // Invalidate the points-to graph.
+                            pointsToGraphs[function] = PointsToGraph(function).apply {
+                                allNodes.forEach { it.depth = Depths.GLOBAL }
+                            }
+                        }
+                    }
+
+                    ComputationState.DONE -> {
+                        toAnalyze.pop()
+                    }
+                }
+            }
+
+            return pointsToGraphs
         }
 
         private fun arrayLengthOf(node: DataFlowIR.Node): Int? =
@@ -642,7 +617,7 @@ internal object EscapeAnalysis {
                         ?: (node as? DataFlowIR.Node.Variable)
                                 ?.values?.singleOrNull()?.let { arrayLengthOf(it.node) }
 
-        private val pointerSize = context.llvm.runtime.pointerSize
+        private val pointerSize = generationState.runtime.pointerSize
 
         private fun arrayItemSizeOf(irClass: IrClass): Int? = when (irClass.symbol) {
             symbols.array -> pointerSize
@@ -657,22 +632,30 @@ internal object EscapeAnalysis {
             else -> null
         }
 
-        private fun arraySize(itemSize: Int, length: Int) =
-                pointerSize /* typeinfo */ + 4 /* size */ + itemSize * length
+        private fun arraySize(itemSize: Int, length: Int): Long =
+                pointerSize /* typeinfo */ + 4 /* size */ + itemSize * length.toLong()
 
-        private fun analyze(callGraph: CallGraph, pointsToGraph: PointsToGraph, function: DataFlowIR.FunctionSymbol.Declared) {
-            context.log {"Before calls analysis" }
+        private fun analyze(
+                callSites: List<CallGraphNode.CallSite>,
+                pointsToGraph: PointsToGraph,
+                function: DataFlowIR.FunctionSymbol.Declared,
+                maxAllowedGraphSize: Int
+        ): Boolean {
+            context.log { "Before calls analysis" }
             pointsToGraph.log()
             pointsToGraph.logDigraph(false)
 
-            callGraph.directEdges[function]!!.callSites.forEach {
+            callSites.forEach {
                 val callee = it.actualCallee
                 val calleeEAResult = if (it.isVirtual)
-                                         getExternalFunctionEAResult(it)
-                                     else
-                                         callGraph.directEdges[callee]?.let { escapeAnalysisResults[it.symbol]!! }
-                                             ?: getExternalFunctionEAResult(it)
+                    getExternalFunctionEAResult(it)
+                else
+                    callGraph.directEdges[callee]?.let { escapeAnalysisResults[it.symbol]!! }
+                            ?: getExternalFunctionEAResult(it)
                 pointsToGraph.processCall(it, calleeEAResult)
+
+                if (pointsToGraph.allNodes.size > maxAllowedGraphSize)
+                    return false
             }
 
             context.log { "After calls analysis" }
@@ -687,16 +670,12 @@ internal object EscapeAnalysis {
             pointsToGraph.logDigraph(true)
 
             escapeAnalysisResults[function] = eaResult
-        }
 
-        private fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
-            if (this is DataFlowIR.FunctionSymbol.External)
-                return externalModulesDFG.publicFunctions[this.hash] ?: this
-            return this
+            return true
         }
 
         private fun getExternalFunctionEAResult(callSite: CallGraphNode.CallSite): FunctionEscapeAnalysisResult {
-            val callee = callSite.actualCallee.resolved()
+            val callee = callSite.actualCallee
 
             val calleeEAResult = if (callSite.isVirtual) {
                 context.log { "A virtual call: $callee" }
@@ -705,12 +684,20 @@ internal object EscapeAnalysis {
                 context.log { "An external call: $callee" }
                 if (callee.name?.startsWith("kfun:kotlin.") == true
                         // TODO: Is it possible to do it in a more fine-grained fashion?
-                        && !callee.name.startsWith("kfun:kotlin.native.concurrent")) {
+                        && !callee.name.startsWith("kfun:kotlin.native.concurrent")
+                        && !callee.name.startsWith("kfun:kotlin.concurrent")) {
                     context.log { "A function from K/N runtime - can use annotations" }
-                    FunctionEscapeAnalysisResult.fromBits(
-                            callee.escapes ?: 0,
-                            (0..callee.parameters.size).map { callee.pointsTo?.elementAtOrNull(it) ?: 0 }
-                    )
+                    if (callee.irFunction?.isBuiltInOperator == false) { // If callee is a function, but not a builtin operator
+                        if (callee.escapes == null && callee.pointsTo == null) { // and it had no EA annotations
+                            require(callee.parameters.all { it.type.irClass == null }) { // all of its parameters must be primitive types
+                                "Function ${callee.name} has reference parameters and is missing EA annotations. Must have been handled by SpecialBackendChecksTraversal"
+                            }
+                            require(callee.returnsUnit || callee.returnsNothing || callee.returnParameter.type.irClass == null) { // as well as the return value
+                                "Function ${callee.name} has reference return value and is missing EA annotations. Must have been handled by SpecialBackendChecksTraversal"
+                            }
+                        }
+                    }
+                    FunctionEscapeAnalysisResult.fromAnnotations(callee.escapes, callee.pointsTo, callee.parameters.size)
                 } else {
                     context.log { "An unknown function - assume pessimistic result" }
                     FunctionEscapeAnalysisResult.pessimistic(callee.parameters.size)
@@ -729,7 +716,8 @@ internal object EscapeAnalysis {
             STACK,
             LOCAL,
             PARAMETER,
-            RETURN_VALUE
+            RETURN_VALUE,
+            GLOBAL
         }
 
         private sealed class PointsToGraphEdge(val node: PointsToGraphNode) {
@@ -738,7 +726,7 @@ internal object EscapeAnalysis {
             class Field(node: PointsToGraphNode, val field: DataFlowIR.Field) : PointsToGraphEdge(node)
         }
 
-        private class PointsToGraphNode(val nodeInfo: NodeInfo, val node: DataFlowIR.Node?) {
+        private class PointsToGraphNode(val startDepth: Int, val node: DataFlowIR.Node?) {
             val edges = mutableListOf<PointsToGraphEdge>()
             val reversedEdges = mutableListOf<PointsToGraphEdge.Assignment>()
 
@@ -752,18 +740,16 @@ internal object EscapeAnalysis {
             fun getFieldNode(field: DataFlowIR.Field, graph: PointsToGraph) =
                     fields.getOrPut(field) { graph.newNode().also { edges += PointsToGraphEdge.Field(it, field) } }
 
-            var depth = when {
-                node is DataFlowIR.Node.Parameter -> Depths.PARAMETER
-                nodeInfo.has(Role.RETURN_VALUE) -> Depths.RETURN_VALUE
-                else -> nodeInfo.depth
-            }
+            var depth = startDepth
 
-            val kind get() = when {
-                depth == Depths.PARAMETER -> PointsToGraphNodeKind.PARAMETER
-                depth == Depths.RETURN_VALUE -> PointsToGraphNodeKind.RETURN_VALUE
-                depth != nodeInfo.depth -> PointsToGraphNodeKind.LOCAL
-                else -> PointsToGraphNodeKind.STACK
-            }
+            val kind
+                get() = when {
+                    depth == Depths.GLOBAL -> PointsToGraphNodeKind.GLOBAL
+                    depth == Depths.PARAMETER -> PointsToGraphNodeKind.PARAMETER
+                    depth == Depths.RETURN_VALUE -> PointsToGraphNodeKind.RETURN_VALUE
+                    depth != startDepth -> PointsToGraphNodeKind.LOCAL
+                    else -> PointsToGraphNodeKind.STACK
+                }
 
             var forcedLifetime: Lifetime? = null
 
@@ -778,8 +764,6 @@ internal object EscapeAnalysis {
                     else it.actualDrain.also { drain = it }
                 }
             val isActualDrain get() = this == actualDrain
-
-            val beingReturned get() = nodeInfo.has(Role.RETURN_VALUE)
         }
 
         private data class ArrayStaticAllocation(val node: PointsToGraphNode, val irClass: IrClass, val size: Int)
@@ -790,18 +774,17 @@ internal object EscapeAnalysis {
         }
 
         private inner class PointsToGraph(val functionSymbol: DataFlowIR.FunctionSymbol) {
-
-            val functionAnalysisResult = intraproceduralAnalysisResults[functionSymbol]!!
+            val function = moduleDFG.functions[functionSymbol]!!
             val nodes = mutableMapOf<DataFlowIR.Node, PointsToGraphNode>()
 
             val allNodes = mutableListOf<PointsToGraphNode>()
 
-            fun newNode(nodeInfo: NodeInfo, node: DataFlowIR.Node?) =
-                    PointsToGraphNode(nodeInfo, node).also { allNodes.add(it) }
-            fun newNode() = newNode(NodeInfo(), null)
+            fun newNode(depth: Int, node: DataFlowIR.Node?) =
+                    PointsToGraphNode(depth, node).also { allNodes.add(it) }
+            fun newNode() = newNode(Depths.INFINITY, null)
             fun newDrain() = newNode().also { it.drain = it }
 
-            val returnsNode = newNode(NodeInfo().also { it.data[Role.RETURN_VALUE] = RoleInfo() }, null)
+            val returnsNode = newNode(Depths.RETURN_VALUE, null)
 
             /*
              * Of all escaping nodes there are some "starting" - call them origins.
@@ -818,10 +801,7 @@ internal object EscapeAnalysis {
 
             fun escapes(node: PointsToGraphNode) = node in reachableFromEscapeOrigins || node in referencingEscapeOrigins
 
-            val ids = (
-                    listOf(functionAnalysisResult.function.body.rootScope)
-                            + functionAnalysisResult.function.body.allScopes.flatMap { it.nodes }
-                    )
+            val ids = (listOf(function.body.rootScope) + function.body.allScopes.flatMap { it.nodes })
                     .withIndex().associateBy({ it.value }, { it.index })
 
             fun lifetimeOf(node: DataFlowIR.Node) = nodes[node]!!.let { it.forcedLifetime ?: lifetimeOf(it) }
@@ -830,6 +810,8 @@ internal object EscapeAnalysis {
                     if (escapes(node))
                         Lifetime.GLOBAL
                     else when (node.kind) {
+                        PointsToGraphNodeKind.GLOBAL -> Lifetime.GLOBAL
+
                         PointsToGraphNodeKind.PARAMETER -> Lifetime.ARGUMENT
 
                         PointsToGraphNodeKind.STACK -> {
@@ -854,60 +836,135 @@ internal object EscapeAnalysis {
                         }
                     }
 
-            private val returnValues: Set<DataFlowIR.Node>
+            private val returnValues: Set<DataFlowIR.Node> = function.body.returns.values.map { it.node }.toSet()
 
             init {
-                context.logMultiple {
-                    +"Building points-to graph for function $functionSymbol"
-                    +"Results of preliminary function analysis"
-                }
-                functionAnalysisResult.nodesRoles.forEach { (node, roles) ->
-                    context.log { "NODE ${nodeToString(node)}: $roles" }
-                    nodes[node] = newNode(roles, node)
-                }
-
-                val returnValues = mutableListOf<DataFlowIR.Node>()
-                functionAnalysisResult.nodesRoles.forEach { (node, roles) ->
-                    val ptgNode = nodes[node]!!
-                    addEdges(ptgNode, roles)
-                    if (ptgNode.beingReturned) {
-                        returnsNode.getFieldNode(returnsValueField, this).addAssignmentEdge(ptgNode)
-                        returnValues += node
+                fun traverseAndConvert(node: DataFlowIR.Node, depth: Int) {
+                    when (node) {
+                        DataFlowIR.Node.Null -> return
+                        is DataFlowIR.Node.Scope -> node.nodes.forEach { traverseAndConvert(it, depth + 1) }
+                        else -> {
+                            val actualDepth = when (node) {
+                                is DataFlowIR.Node.Parameter -> Depths.PARAMETER
+                                in returnValues -> Depths.RETURN_VALUE
+                                else -> depth
+                            }
+                            nodes[node] = newNode(actualDepth, node)
+                        }
                     }
-                    if (roles.escapes())
-                        escapeOrigins += ptgNode
                 }
 
-                this.returnValues = returnValues.toSet()
+                val body = function.body
+
+                traverseAndConvert(body.rootScope, Depths.ROOT_SCOPE - 1)
+
+                val dummyParameter = DataFlowIR.Node.Parameter(-1)
+                val parameters = Array(function.symbol.parameters.size) { dummyParameter } // Put dummy in order to not bother with nullability.
+                // Parameters are declared in the root scope
+                for (node in body.rootScope.nodes) {
+                    (node as? DataFlowIR.Node.Parameter)?.let {
+                        require(parameters[it.index] == dummyParameter) {
+                            "Two different parameters with the same index ${it.index} for $functionSymbol"
+                        }
+                        parameters[it.index] = it
+                    }
+                }
+                parameters.forEachIndexed { index, parameter ->
+                    require(parameter != dummyParameter) {
+                        "No parameter with index $index for $functionSymbol"
+                    }
+                }
+
+                val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.ir.symbols.nothing.owner)
+                body.forEachNonScopeNode { node ->
+                    when (node) {
+                        is DataFlowIR.Node.FieldWrite -> {
+                            val receiverNode = node.receiver?.node
+                            // Here and below the receiver node might be null due to unreachable code
+                            // (including the one having appeared after the inlining phase).
+                            if (node.value.node != DataFlowIR.Node.Null && receiverNode != DataFlowIR.Node.Null) {
+                                val receiver = receiverNode?.let { nodes[it]!! }
+                                val value = nodes[node.value.node]!!
+                                if (receiver == null)
+                                    escapeOrigins.add(value)
+                                else
+                                    receiver.getFieldNode(node.field, this).addAssignmentEdge(value)
+                            }
+                        }
+
+                        is DataFlowIR.Node.Singleton -> {
+                            val type = node.type
+                            if (type != nothing)
+                                escapeOrigins.add(nodes[node]!!)
+                        }
+
+                        is DataFlowIR.Node.FieldRead -> {
+                            val receiverNode = node.receiver?.node
+                            if (receiverNode != DataFlowIR.Node.Null) {
+                                val readResult = nodes[node]!!
+                                val receiver = receiverNode?.let { nodes[it]!! }
+                                if (receiver == null)
+                                    escapeOrigins.add(readResult)
+                                else
+                                    readResult.addAssignmentEdge(receiver.getFieldNode(node.field, this))
+                            }
+                        }
+
+                        is DataFlowIR.Node.ArrayWrite -> {
+                            val arrayNode = node.array.node
+                            val valueNode = node.value.node
+                            if (valueNode != DataFlowIR.Node.Null && arrayNode != DataFlowIR.Node.Null) {
+                                val array = nodes[arrayNode]!!
+                                val value = nodes[valueNode]!!
+                                array.getFieldNode(intestinesField, this).addAssignmentEdge(value)
+                            }
+                        }
+
+                        is DataFlowIR.Node.ArrayRead -> {
+                            val arrayNode = node.array.node
+                            if (arrayNode != DataFlowIR.Node.Null) {
+                                val array = nodes[arrayNode]!!
+                                val readResult = nodes[node]!!
+                                readResult.addAssignmentEdge(array.getFieldNode(intestinesField, this))
+                            }
+                        }
+
+                        is DataFlowIR.Node.SaveCoroutineState -> {
+                            val thisIntestines = nodes[parameters[0]]!!.getFieldNode(intestinesField, this)
+                            for (variable in node.liveVariables)
+                                thisIntestines.addAssignmentEdge(nodes[variable]!!)
+                        }
+
+                        is DataFlowIR.Node.Variable -> {
+                            val variable = nodes[node]!!
+                            for (value in node.values) {
+                                if (value.node != DataFlowIR.Node.Null)
+                                    variable.addAssignmentEdge(nodes[value.node]!!)
+                            }
+                        }
+                        is DataFlowIR.Node.Alloc,
+                        is DataFlowIR.Node.Call,
+                        is DataFlowIR.Node.Const,
+                        is DataFlowIR.Node.FunctionReference,
+                        is DataFlowIR.Node.Null,
+                        is DataFlowIR.Node.Parameter,
+                        is DataFlowIR.Node.Scope -> Unit
+                    }
+                }
+
+                body.throws.values.forEach { escapeOrigins.add(nodes[it.node]!!) }
+                body.returns.values.forEach {
+                    if (it.node != DataFlowIR.Node.Null)
+                        returnsNode.getFieldNode(returnsValueField, this).addAssignmentEdge(nodes[it.node]!!)
+                }
 
                 val escapes = functionSymbol.escapes
                 if (escapes != null) {
-                    // Parameters are declared in the root scope
-                    val parameters = functionAnalysisResult.function.body.rootScope.nodes
-                            .filterIsInstance<DataFlowIR.Node.Parameter>()
                     for (parameter in parameters)
-                        if (escapes and (1 shl parameter.index) != 0)
+                        if (escapes.escapesAt(parameter.index))
                             escapeOrigins += nodes[parameter]!!
-                    if (escapes and (1 shl parameters.size) != 0)
+                    if (escapes.escapesAt(parameters.size))
                         escapeOrigins += returnsNode
-                }
-            }
-
-            private fun addEdges(from: PointsToGraphNode, roles: NodeInfo) {
-                val assigned = roles.data[Role.ASSIGNED]
-                assigned?.entries?.forEach {
-                    val to = nodes[it.node!!]!!
-                    from.addAssignmentEdge(to)
-                }
-                roles.data[Role.WRITE_FIELD]?.entries?.forEach { roleInfo ->
-                    val value = nodes[roleInfo.node!!]!!
-                    val field = roleInfo.field!!
-                    from.getFieldNode(field, this).addAssignmentEdge(value)
-                }
-                roles.data[Role.READ_FIELD]?.entries?.forEach { roleInfo ->
-                    val result = nodes[roleInfo.node!!]!!
-                    val field = roleInfo.field!!
-                    result.addAssignmentEdge(from.getFieldNode(field, this))
                 }
             }
 
@@ -976,25 +1033,13 @@ internal object EscapeAnalysis {
                     +calleeEscapeAnalysisResult.toString()
                 }
 
-                val arguments = if (call is DataFlowIR.Node.NewObject) {
-                                    (0..call.arguments.size).map {
-                                        if (it == 0) call else call.arguments[it - 1].node
-                                    }
-                                } else {
-                                    (0..call.arguments.size).map {
-                                        if (it < call.arguments.size) call.arguments[it].node else call
-                                    }
-                                }
+                val arguments = callSite.arguments
 
                 val calleeDrains = Array(calleeEscapeAnalysisResult.numberOfDrains) { newNode() }
 
                 fun mapNode(compressedNode: CompressedPointsToGraph.Node): Pair<DataFlowIR.Node?, PointsToGraphNode?> {
                     val (arg, rootNode) = when (val kind = compressedNode.kind) {
-                        CompressedPointsToGraph.NodeKind.Return ->
-                            if (call is DataFlowIR.Node.NewObject) // TODO: This better be an assertion.
-                                DataFlowIR.Node.Null to null
-                            else
-                                arguments.last() to nodes[arguments.last()]
+                        CompressedPointsToGraph.NodeKind.Return -> arguments.last() to nodes[arguments.last()]
                         is CompressedPointsToGraph.NodeKind.Param -> arguments[kind.index] to nodes[arguments[kind.index]]
                         is CompressedPointsToGraph.NodeKind.Drain -> null to calleeDrains[kind.index]
                     }
@@ -1080,11 +1125,11 @@ internal object EscapeAnalysis {
                             is PointsToGraphEdge.Assignment ->
                                 compressedEdges += CompressedPointsToGraph.Edge(fromCompressedNode, toCompressedNode)
 
-                            is PointsToGraphEdge.Field ->
-                                if (edge.node == from /* A loop */) {
-                                    compressedEdges += CompressedPointsToGraph.Edge(
-                                            fromCompressedNode.goto(edge.field), toCompressedNode)
-                                }
+                            is PointsToGraphEdge.Field -> {
+                                val next = fromCompressedNode.goto(edge.field)
+                                if (next != toCompressedNode) // Skip loops.
+                                    compressedEdges += CompressedPointsToGraph.Edge(next, toCompressedNode)
+                            }
                         }
                     }
                 }
@@ -1258,7 +1303,7 @@ internal object EscapeAnalysis {
                 // (picking a leaf drain with only one incoming edge at a time).
                 // They can be removed because they don't add any relations between the parameters.
                 val reversedEdges = interestingDrains.associateWith {
-                    mutableListOf<Pair<PointsToGraphNode, PointsToGraphEdge>>()
+                    mutableListOf<PointsToGraphNode>()
                 }
                 val edgesCount = mutableMapOf<PointsToGraphNode, Int>()
                 val leaves = mutableListOf<PointsToGraphNode>()
@@ -1266,7 +1311,7 @@ internal object EscapeAnalysis {
                     var count = 0
                     for (edge in drain.edges) {
                         val nextDrain = edge.node.drain
-                        reversedEdges[nextDrain]!! += drain to edge
+                        reversedEdges[nextDrain]!! += drain
                         if (nextDrain in interestingDrains)
                             ++count
                     }
@@ -1288,10 +1333,10 @@ internal object EscapeAnalysis {
                     if (drain in parameterDrains)
                         continue
                     if (incomingEdges.size == 1
-                            && incomingEdges[0].let { (node, edge) -> escapes(node) || !escapes(edge.node) }
+                            && (escapes(incomingEdges[0]) || !escapes(drain))
                     ) {
                         interestingDrains.remove(drain)
-                        val prevDrain = incomingEdges[0].first
+                        val prevDrain = incomingEdges[0]
                         val count = edgesCount[prevDrain]!! - 1
                         edgesCount[prevDrain] = count
                         if (count == 0)
@@ -1307,7 +1352,7 @@ internal object EscapeAnalysis {
                 val parameters = Array(functionSymbol.parameters.size + 1) { dummyNode }
 
                 // Parameters are declared in the root scope.
-                functionAnalysisResult.function.body.rootScope.nodes
+                function.body.rootScope.nodes
                         .filterIsInstance<DataFlowIR.Node.Parameter>()
                         .forEach {
                             if (parameters[it.index] != dummyNode)
@@ -1428,19 +1473,24 @@ internal object EscapeAnalysis {
                         .filter { nodeIds[it] == null } // Was optimized away.
                         .forEach { drain ->
                             val referencingNodes = findReferencing(drain).filter { nodeIds[it] != null }
-                            var needDrain = false
-                            outerLoop@ for (i in referencingNodes.indices)
-                                for (j in i + 1 until referencingNodes.size) {
-                                    val firstNode = referencingNodes[i]
-                                    val secondNode = referencingNodes[j]
-                                    val pair = Pair(firstNode, secondNode)
-                                    if (pair !in connectedNodes) {
-                                        needDrain = true
-                                        break@outerLoop
-                                    }
-                                }
-                            if (needDrain)
+                            if (escapes(drain) && referencingNodes.all { !escapes(it) }) {
                                 nodeIds[drain] = drainFactory()
+                                escapeOrigins += drain
+                            } else {
+                                var needDrain = false
+                                outerLoop@ for (i in referencingNodes.indices)
+                                    for (j in i + 1 until referencingNodes.size) {
+                                        val firstNode = referencingNodes[i]
+                                        val secondNode = referencingNodes[j]
+                                        val pair = Pair(firstNode, secondNode)
+                                        if (pair !in connectedNodes) {
+                                            needDrain = true
+                                            break@outerLoop
+                                        }
+                                    }
+                                if (needDrain)
+                                    nodeIds[drain] = drainFactory()
+                            }
                         }
             }
 
@@ -1574,6 +1624,8 @@ internal object EscapeAnalysis {
 
                 escapeOrigins.forEach { propagateEscapeOrigin(it) }
 
+                // TODO: To a setting?
+                val allowedToAlloc = 65536
                 val stackArrayCandidates = mutableListOf<ArrayStaticAllocation>()
                 for ((node, ptgNode) in nodes) {
                     if (node.ir == null) continue
@@ -1586,16 +1638,16 @@ internal object EscapeAnalysis {
                         lifetime = Lifetime.GLOBAL
                     }
 
-                    if (lifetime == Lifetime.STACK && node is DataFlowIR.Node.NewObject) {
-                        val constructedType = node.constructedType.resolved()
+                    if (lifetime == Lifetime.STACK && node is DataFlowIR.Node.AllocArray) {
+                        val constructedType = node.type
                         constructedType.irClass?.let { irClass ->
                             val itemSize = arrayItemSizeOf(irClass)
                             if (itemSize != null) {
-                                val sizeArgument = node.arguments.first().node
-                                val arrayLength = arrayLengthOf(sizeArgument)
-                                if (arrayLength != null) {
-                                    stackArrayCandidates +=
-                                            ArrayStaticAllocation(ptgNode, irClass, arraySize(itemSize, arrayLength))
+                                val sizeArgument = node.size.node
+                                val arrayLength = arrayLengthOf(sizeArgument)?.takeIf { it >= 0 }
+                                val arraySize = arraySize(itemSize, arrayLength ?: Int.MAX_VALUE)
+                                if (arraySize <= allowedToAlloc) {
+                                    stackArrayCandidates += ArrayStaticAllocation(ptgNode, irClass, arraySize.toInt())
                                 } else {
                                     // Can be placed into the local arena.
                                     // TODO. Support Lifetime.LOCAL
@@ -1606,7 +1658,7 @@ internal object EscapeAnalysis {
                     }
 
                     if (lifetime != computedLifetime) {
-                        if (propagateExiledToHeapObjects && node.isAlloc) {
+                        if (propagateExiledToHeapObjects && node is DataFlowIR.Node.Alloc) {
                             context.log { "Forcing node ${nodeToString(node)} to escape" }
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)
@@ -1617,14 +1669,13 @@ internal object EscapeAnalysis {
                 }
 
                 stackArrayCandidates.sortBy { it.size }
-                // TODO: To a setting?
-                var allowedToAlloc = 65536
+                var remainedToAlloc = allowedToAlloc
                 for ((ptgNode, irClass, size) in stackArrayCandidates) {
                     if (lifetimeOf(ptgNode) != Lifetime.STACK) continue
-                    if (size <= allowedToAlloc)
-                        allowedToAlloc -= size
+                    if (size <= remainedToAlloc)
+                        remainedToAlloc -= size
                     else {
-                        allowedToAlloc = 0
+                        remainedToAlloc = 0
                         // Do not exile primitive arrays - they ain't reference no object.
                         if (irClass.symbol == symbols.array && propagateExiledToHeapObjects) {
                             context.log { "Forcing node ${nodeToString(ptgNode.node!!)} to escape" }
@@ -1672,52 +1723,66 @@ internal object EscapeAnalysis {
                         nodeIds[drain] = drainFactory()
                 }
 
-                var front = nodeIds.keys.toList()
-                while (front.isNotEmpty()) {
-                    val nextFront = mutableListOf<PointsToGraphNode>()
-                    for (node in front) {
-                        val nodeId = nodeIds[node]!!
-                        node.edges.filterIsInstance<PointsToGraphEdge.Field>().forEach { edge ->
-                            val field = edge.field
-                            val nextNode = edge.node
-                            if (nextNode.drain in interestingDrains && nextNode != node /* Skip loops */) {
-                                val nextNodeId = nodeId.goto(field)
-                                if (nodeIds[nextNode] != null)
-                                    error("Expected only one incoming field edge. ${nodeIds[nextNode]} != $nextNodeId")
-                                nodeIds[nextNode] = nextNodeId
-                                if (nextNode.isDrain)
-                                    nextFront += nextNode
+                var front = nodeIds.keys.toMutableList()
+                do {
+                    while (front.isNotEmpty()) {
+                        val nextFront = mutableListOf<PointsToGraphNode>()
+                        for (node in front) {
+                            val nodeId = nodeIds[node]!!
+                            node.edges.filterIsInstance<PointsToGraphEdge.Field>().forEach { edge ->
+                                val field = edge.field
+                                val nextNode = edge.node
+                                if (nextNode.drain in interestingDrains && nextNode != node /* Skip loops */) {
+                                    val nextNodeId = nodeId.goto(field)
+                                    if (nodeIds[nextNode] == null) {
+                                        nodeIds[nextNode] = nextNodeId
+                                        if (nextNode.isDrain)
+                                            nextFront += nextNode
+                                    }
+                                }
                             }
                         }
+                        front = nextFront
                     }
-                    front = nextFront
-                }
-                for (drain in interestingDrains) {
-                    if (nodeIds[drain] == null && drain.edges.any { it.node.drain in interestingDrains })
-                        error("Drains have not been painted properly")
-                }
+
+                    // Find unpainted drain.
+                    for (drain in interestingDrains) {
+                        if (nodeIds[drain] == null
+                                // A little optimization - skip leaf drains.
+                                && drain.edges.any { it.node.drain in interestingDrains }
+                        ) {
+                            nodeIds[drain] = drainFactory()
+                            front += drain
+                            break
+                        }
+                    }
+                } while (front.isNotEmpty()) // Loop until all drains have been painted.
 
                 return nodeIds
             }
         }
     }
 
-    fun computeLifetimes(context: Context, moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG,
-                         callGraph: CallGraph, lifetimes: MutableMap<IrElement, Lifetime>) {
+    fun computeLifetimes(
+            context: Context,
+            generationState: NativeGenerationState,
+            moduleDFG: ModuleDFG,
+            callGraph: CallGraph,
+            lifetimes: MutableMap<IrElement, Lifetime>
+    ) {
         assert(lifetimes.isEmpty())
 
         try {
-            val intraproceduralAnalysisResult =
-                    IntraproceduralAnalysis(context, moduleDFG, externalModulesDFG, callGraph).analyze()
-            InterproceduralAnalysis(context, callGraph, intraproceduralAnalysisResult, externalModulesDFG, lifetimes,
-                    // TODO: This is a bit conservative, but for more aggressive option some support from runtime is
-                    // needed (namely, determining that a pointer is from the stack; this is easy for x86 or x64,
-                    //         but what about all other platforms?).
-                    propagateExiledToHeapObjects = true
+            InterproceduralAnalysis(context, generationState, callGraph,
+                    moduleDFG, lifetimes,
+                    // The GC must be careful not to scan exiled objects, that have already became dead,
+                    // as they may reference other already destroyed stack-allocated objects.
+                    // TODO somehow tag these object, so that GC could handle them properly.
+                    propagateExiledToHeapObjects = context.config.gc == GC.CONCURRENT_MARK_AND_SWEEP
             ).analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
-                        """
+                    """
                         Please try to disable escape analysis and rerun the build. To do it add the following snippet to the gradle script:
 
                             kotlin.targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {

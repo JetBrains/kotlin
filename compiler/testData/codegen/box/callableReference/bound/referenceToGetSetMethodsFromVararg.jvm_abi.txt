@@ -1,0 +1,41 @@
+MODULE main
+	CLASS ReferenceToGetSetMethodsFromVarargKt$bar1$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<Ljava/lang/Integer;*Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<Ljava/lang/Integer;TT;Lkotlin/Unit;>;
+		K1
+			---
+		K2
+			invoke(ILjava/lang/Object;)V [public, final]
+		K1
+			invoke(ILjava/lang/Void;)V [public, final]
+		K2
+			---
+	CLASS ReferenceToGetSetMethodsFromVarargKt$bar3$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<Ljava/lang/Integer;*Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<Ljava/lang/Integer;TT;Lkotlin/Unit;>;
+		K1
+			---
+		K2
+			invoke(ILjava/lang/Object;)V [public, final]
+		K1
+			invoke(ILjava/lang/Void;)V [public, final]
+		K2
+			---
+	CLASS ReferenceToGetSetMethodsFromVarargKt$bar5$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<Ljava/lang/Integer;TT;Lkotlin/Unit;>;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<Ljava/lang/Integer;Ljava/lang/Object;Lkotlin/Unit;>;
+		METHOD invoke(ILjava/lang/Object;)V
+			Property: method.signature
+				K1
+					(ITT;)V
+				K2
+					NULL

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 
 class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -24,7 +23,6 @@ class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(te
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (RUN_DEX_CHECKER !in module.directives || IGNORE_DEXING in module.directives) return
-        val compiledClassesManager = testServices.compiledClassesManager
         try {
             D8Checker.check(info.classFileFactory)
         } catch (e: Throwable) {
@@ -32,12 +30,6 @@ class DxCheckerHandler(testServices: TestServices) : JvmBinaryArtifactHandler(te
                 !testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
             ) {
                 try {
-                    val javaDir = compiledClassesManager.getCompiledJavaDirForModule(module)
-                    if (javaDir != null) {
-                        println("Compiled Java files: ${javaDir.absolutePath}")
-                    }
-                    val kotlinDir = compiledClassesManager.getCompiledKotlinDirForModule(module)
-                    println("Compiled Kotlin files: ${kotlinDir.absolutePath}")
                     info.classFileFactory.getClassFiles().forEach {
                         println(" * ${it.relativePath}")
                     }

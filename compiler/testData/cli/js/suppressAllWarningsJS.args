@@ -1,4 +1,9 @@
 $TESTDATA_DIR$/../warnings.kt
+-Xir-produce-klib-dir
+-libraries
+$STDLIB_JS$
 -nowarn
--output
-$TEMP_DIR$/out.js
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils.spec
 
-import groovy.util.Node
-import groovy.util.XmlParser
+import com.intellij.openapi.util.JDOMUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.BufferedInputStream
@@ -29,14 +28,17 @@ object HtmlSpecLoader {
     }
 
     private fun getLastSpecVersion(): Pair<String, String> {
-        val xmlParser = XmlParser()
-        val buildInfo =
-            xmlParser.parse("$TC_URL/$TC_PATH_PREFIX/buildType:(id:$SPEC_DOCS_TC_CONFIGURATION_ID),count:1,status:SUCCESS?branch=$STABLE_BRANCH")
-        val artifactsLink = (buildInfo.children().find { (it as Node).name() == "artifacts" } as Node).attribute("href").toString()
-        val artifacts = xmlParser.parse(TC_URL + artifactsLink)
-        val artifactName = (artifacts.children().single() as Node).attribute("name").toString()
-        val artifactNameMatches =
-            Pattern.compile("""kotlin-spec-(?<specVersion>\d+\.\d+)-(?<buildNumber>[1-9]\d*)\.zip""").matcher(artifactName).apply { find() }
+        val buildInfo = JDOMUtil.load(
+            URL("$TC_URL/$TC_PATH_PREFIX/buildType:(id:$SPEC_DOCS_TC_CONFIGURATION_ID),count:1,status:SUCCESS?branch=$STABLE_BRANCH")
+        )
+        val artifactsLink = (buildInfo.children.find { it.name == "artifacts" })!!.getAttribute("href").value
+        val artifacts = JDOMUtil.load(URL(TC_URL + artifactsLink))
+        val pattern = Pattern.compile("""kotlin-spec-(?<specVersion>latest)-(?<buildNumber>[1-9]\d*)\.zip""")
+
+        val artifactNameMatches = artifacts.children
+            .map { it.getAttribute("name").value }
+            .mapNotNull { pattern.matcher(it) }
+            .single { it.find() }
 
         return Pair(artifactNameMatches.group("specVersion"), artifactNameMatches.group("buildNumber"))
     }

@@ -1,12 +1,13 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IFoo<T> {
     fun foo(x: T): String = "O"
     fun T.bar(): String = "K"
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class L(val x: Long) : IFoo<L>
 
 fun box(): String {

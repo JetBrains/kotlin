@@ -1,4 +1,4 @@
-depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit IOSurface ImageIO Metal MetalPerformanceShaders Security darwin libkern osx posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit IOSurface Metal MetalPerformanceShaders Security darwin libkern osx posix
 language = Objective-C
 package = platform.MetalPerformanceShadersGraph
 

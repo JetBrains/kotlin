@@ -14,7 +14,7 @@ FILE: builderInferenceFromStdlib.kt
         R|/takeList|(R|<local>/list|)
     }
     public final fun <E> myBuildList(@R|kotlin/BuilderInference|() builderAction: R|kotlin/collections/MutableList<E>.() -> kotlin/Unit|): R|kotlin/collections/List<E>| {
-        ^myBuildList R|java/util/ArrayList.ArrayList|<R|E|>().R|kotlin/apply|<R|java/util/ArrayList<E>|>(R|<local>/builderAction|)
+        ^myBuildList R|java/util/ArrayList.ArrayList|<R|E|>().R|kotlin/apply|<R|{kotlin/collections/ArrayList<E>=} java/util/ArrayList<E>|>(R|<local>/builderAction|)
     }
     public final fun takeList(list: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
     }

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
+import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -73,7 +74,6 @@ import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.util.*
 import java.util.function.Predicate
 import java.util.regex.Pattern
 
@@ -98,19 +98,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun analyzeAndCheckUnhandled(testDataFile: File, files: List<TestFile>) {
         val groupedByModule = files.groupBy(TestFile::module)
 
-        var lazyOperationsLog: LazyOperationsLog? = null
-
         val tracker = ExceptionTracker()
-        val storageManager: StorageManager
-        if (files.any(TestFile::checkLazyLog)) {
-            lazyOperationsLog = LazyOperationsLog(HASH_SANITIZER)
-            storageManager = LoggingStorageManager(
-                LockBasedStorageManager.createWithExceptionHandling("AbstractDiagnosticTest", tracker),
-                lazyOperationsLog.addRecordFunction
-            )
-        } else {
-            storageManager = LockBasedStorageManager.createWithExceptionHandling("AbstractDiagnosticTest", tracker)
-        }
+        val storageManager: StorageManager = LockBasedStorageManager.createWithExceptionHandling("AbstractDiagnosticTest", tracker)
 
         val context = SimpleGlobalContext(storageManager, tracker)
 
@@ -132,7 +121,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
             val result = analyzeModuleContents(
-                moduleContext, ktFiles, NoScopeRecordCliBindingTrace(),
+                moduleContext, ktFiles, NoScopeRecordCliBindingTrace(project),
                 languageVersionSettings, separateModules, loadJvmTarget(testFilesInModule)
             )
             if (oldModule != result.moduleDescriptor) {
@@ -158,14 +147,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         // We want to always create a test data file (txt) if it was missing,
         // but don't want to skip the following checks in case this one fails
-        var exceptionFromLazyResolveLogValidation: Throwable? = null
-        if (lazyOperationsLog != null) {
-            exceptionFromLazyResolveLogValidation = checkLazyResolveLog(lazyOperationsLog, testDataFile)
-        } else {
-            val lazyLogFile = getLazyLogFile(testDataFile)
-            assertFalse("No lazy log expected, but found: ${lazyLogFile.absolutePath}", lazyLogFile.exists())
-        }
-
         var exceptionFromDescriptorValidation: Throwable? = null
         try {
             val expectedFile = getExpectedDescriptorFile(testDataFile, files)
@@ -183,7 +164,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val diagnosticsFullTextCollector =
             GroupingMessageCollector(
                 PrintingMessageCollector(diagnosticsFullTextPrintStream, MessageRenderer.SYSTEM_INDEPENDENT_RELATIVE_PATHS, true),
-                false
+                false,
+                false,
             )
 
         val actualText = StringBuilder()
@@ -205,14 +187,17 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 moduleBindingContext,
                 implementingModulesBindings,
                 actualText,
-                shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule,
                 languageVersionSettingsByModule[module]!!,
                 moduleDescriptor
             )
 
             if (testFile.renderDiagnosticsFullText) {
                 shouldCheckDiagnosticsFullText = true
-                AnalyzerWithCompilerReport.reportDiagnostics(moduleBindingContext.diagnostics, diagnosticsFullTextCollector)
+                AnalyzerWithCompilerReport.reportDiagnostics(
+                    moduleBindingContext.diagnostics,
+                    diagnosticsFullTextCollector,
+                    renderInternalDiagnosticName = false
+                )
             }
         }
 
@@ -239,7 +224,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         // now we throw a previously found error, if any
         exceptionFromDescriptorValidation?.let { throw it }
-        exceptionFromLazyResolveLogValidation?.let { throw it }
         exceptionFromDynamicCallDescriptorsValidation?.let { throw it }
 
         performAdditionalChecksAfterDiagnostics(
@@ -348,21 +332,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         }
     }
 
-    protected open fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>): Boolean =
-        groupedByModule.size > 1
-
-    private fun checkLazyResolveLog(lazyOperationsLog: LazyOperationsLog, testDataFile: File): Throwable? =
-        try {
-            val expectedFile = getLazyLogFile(testDataFile)
-            KotlinTestUtils.assertEqualsToFile(expectedFile, lazyOperationsLog.getText(), HASH_SANITIZER)
-            null
-        } catch (e: Throwable) {
-            e
-        }
-
-    private fun getLazyLogFile(testDataFile: File): File =
-        File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".lazy.log")
-
     protected open fun analyzeModuleContents(
         moduleContext: ModuleContext,
         files: List<KtFile>,
@@ -424,7 +393,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             moduleContentScope,
             moduleClassResolver,
             CompilerEnvironment,
-            LookupTracker.DO_NOTHING, ExpectActualTracker.DoNothing, InlineConstTracker.DoNothing,
+            LookupTracker.DO_NOTHING, ExpectActualTracker.DoNothing, InlineConstTracker.DoNothing, EnumWhenTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             languageVersionSettings,
             useBuiltInsProvider = true
@@ -712,8 +681,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     }
 
     companion object {
-        private val HASH_SANITIZER = fun(s: String): String = s.replace("@(\\d)+".toRegex(), "")
-
         private val MODULE_FILES = ModuleCapability<List<KtFile>>("")
 
         private val NAMES_OF_CHECK_TYPE_HELPER = listOf("checkSubtype", "CheckTypeInv", "_", "checkType").map { Name.identifier(it) }

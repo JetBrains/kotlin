@@ -1,0 +1,35 @@
+package
+
+public fun </*0*/ T> assertEquals(/*0*/ a: T, /*1*/ b: T): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public final class OverridenGetterTest : SetterTest {
+    public constructor OverridenGetterTest()
+    @lombok.Getter @lombok.Setter invisible_fake final override /*1*/ /*fake_override*/ var age: kotlin.Int
+    @lombok.Setter(value = AccessLevel.PROTECTED) invisible_fake final override /*1*/ /*fake_override*/ var name: kotlin.String!
+    @lombok.Setter invisible_fake final override /*1*/ /*fake_override*/ var primitiveBoolean: kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun getAge(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun setAge(/*0*/ age: kotlin.Int): kotlin.Unit
+    protected open override /*1*/ /*fake_override*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setPrimitiveBoolean(/*0*/ primitiveBoolean: kotlin.Boolean): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun usage(): kotlin.Unit
+}
+
+public open class SetterTest {
+    public constructor SetterTest()
+    @lombok.Getter @lombok.Setter private final var age: kotlin.Int
+    @lombok.Setter(value = AccessLevel.PROTECTED) private final var name: kotlin.String!
+    @lombok.Setter private final var primitiveBoolean: kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open /*synthesized*/ fun getAge(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open /*synthesized*/ fun setAge(/*0*/ age: kotlin.Int): kotlin.Unit
+    protected open /*synthesized*/ fun setName(/*0*/ name: kotlin.String!): kotlin.Unit
+    public open /*synthesized*/ fun setPrimitiveBoolean(/*0*/ primitiveBoolean: kotlin.Boolean): kotlin.Unit
+    public/*package*/ open fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

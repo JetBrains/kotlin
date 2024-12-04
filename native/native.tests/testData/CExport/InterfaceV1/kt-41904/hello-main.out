@@ -1,0 +1,5 @@
+TestInterface constructor(Int): 153.0
+TestInterface constructor(Double): 42.0
+InnerInterface constructor(Int): 153.0
+InnerInterface constructor(Double): 42.0
+TestInterface initialized from inner package: 19.0

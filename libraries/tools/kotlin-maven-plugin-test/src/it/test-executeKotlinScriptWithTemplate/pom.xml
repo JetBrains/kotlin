@@ -19,16 +19,11 @@
             <artifactId>kotlin-compiler</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-script-util</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
      </dependencies>
 
     <properties>
-        <kotlin.compiler.scriptTemplates>org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving</kotlin.compiler.scriptTemplates>
-        <kotlin.compiler.scriptClasspath>${org.jetbrains.kotlin:kotlin-script-util:jar}</kotlin.compiler.scriptClasspath>
+        <kotlin.compiler.scriptTemplates>kotlin.script.templates.standard.ScriptTemplateWithArgs</kotlin.compiler.scriptTemplates>
+        <kotlin.compiler.scriptClasspath>${org.jetbrains.kotlin:kotlin-script-runtime:jar}</kotlin.compiler.scriptClasspath>
     </properties>
 
     <build>
@@ -54,11 +49,6 @@
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-stdlib</artifactId>
-                        <version>${kotlin.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-script-util</artifactId>
                         <version>${kotlin.version}</version>
                     </dependency>
                 </dependencies>

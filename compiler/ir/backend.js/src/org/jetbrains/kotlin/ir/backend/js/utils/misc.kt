@@ -1,14 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
-import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -16,18 +13,19 @@ import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.util.invokeFun
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isMethodOfAny
+import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
 
-fun IrFunction.hasStableJsName(context: JsIrBackendContext?): Boolean {
+fun IrFunction.hasStableJsName(context: JsIrBackendContext): Boolean {
     if (
         origin == JsLoweredDeclarationOrigin.BRIDGE_WITH_STABLE_NAME ||
         (this as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
@@ -37,8 +35,8 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext?): Boolean {
 
     if (
         origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
-        origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-        origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME
+        origin == JsLoweredDeclarationOrigin.BRIDGE_WITHOUT_STABLE_NAME ||
+        origin == JsLoweredDeclarationOrigin.BRIDGE_PROPERTY_ACCESSOR
     ) {
         return false
     }
@@ -52,15 +50,16 @@ fun IrFunction.hasStableJsName(context: JsIrBackendContext?): Boolean {
                 owner.getter?.getJsName() != null
             }
         }
-        else -> true
+        is IrConstructor -> true
     }
 
     return (isEffectivelyExternal() || getJsName() != null || isExported(context)) && namedOrMissingGetter
 }
 
-fun IrFunction.isEqualsInheritedFromAny() =
-    name == Name.identifier("equals") &&
+fun IrFunction.isEqualsInheritedFromAny(): Boolean =
+    name == OperatorNameConventions.EQUALS &&
             dispatchReceiverParameter != null &&
+            extensionReceiverParameter == null &&
             valueParameters.size == 1 &&
             valueParameters[0].type.isNullableAny()
 
@@ -100,11 +99,18 @@ fun IrBody.prependFunctionCall(
                 call
             )
         }
+        is IrSyntheticBody -> Unit
     }
 }
 
 fun JsCommonBackendContext.findUnitGetInstanceFunction(): IrSimpleFunction =
     mapping.objectToGetInstanceFunction[irBuiltIns.unitClass.owner]!!
+
+fun JsCommonBackendContext.findUnitInstanceField(): IrField =
+    mapping.objectToInstanceField[irBuiltIns.unitClass.owner]!!
+
+val JsCommonBackendContext.compileSuspendAsJsGenerator: Boolean
+    get() = this is JsIrBackendContext && configuration[JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR] == true
 
 fun IrDeclaration.isImportedFromModuleOnly(): Boolean {
     return isTopLevel && isEffectivelyExternal() && (getJsModule() != null && !isJsNonModule() || (parent as? IrAnnotationContainer)?.getJsModule() != null)
@@ -114,8 +120,4 @@ fun invokeFunForLambda(call: IrCall) =
     call.extensionReceiver!!
         .type
         .getClass()!!
-        .declarations
-        .filterIsInstance<IrSimpleFunction>()
-        .single { it.name.asString() == "invoke" }
-
-fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }
+        .invokeFun!!

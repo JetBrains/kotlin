@@ -5,19 +5,13 @@
 
 package org.jetbrains.kotlin.js.backend.ast
 
-import org.jetbrains.kotlin.js.common.Symbol
-
 class JsClass(
     private var name: JsName? = null,
-    var baseClass: JsNameRef? = null,
+    var baseClass: JsExpression? = null,
     var constructor: JsFunction? = null,
     val members: MutableList<JsFunction> = mutableListOf()
 ) : JsLiteral(), HasName {
     override fun getName(): JsName? {
-        return name
-    }
-
-    override fun getSymbol(): Symbol? {
         return name
     }
 
@@ -30,11 +24,14 @@ class JsClass(
     }
 
     override fun acceptChildren(visitor: JsVisitor) {
+        visitor.accept(baseClass)
         visitor.accept(constructor)
+        visitor.acceptList(members)
     }
 
     override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         if (v.visit(this, ctx)) {
+            baseClass = v.accept(baseClass)
             constructor = v.accept(constructor)
             v.acceptList(members)
         }

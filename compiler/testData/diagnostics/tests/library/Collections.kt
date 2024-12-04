@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package collections
 
 fun <T> testCollection(c: Collection<T>, t: T) {

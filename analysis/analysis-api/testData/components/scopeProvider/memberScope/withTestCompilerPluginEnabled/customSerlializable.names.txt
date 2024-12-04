@@ -1,0 +1,9 @@
+Classifier names:
+
+Callable names:
+  <init>
+  equals
+  hashCode
+  serializeFirstTarget
+  serializeSecondTarget
+  toString

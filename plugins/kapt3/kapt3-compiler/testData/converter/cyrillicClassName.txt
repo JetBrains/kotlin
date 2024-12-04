@@ -1,5 +1,12 @@
-import java.lang.System;
-
+/**
+ * public final class République : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class République {
 
@@ -11,8 +18,15 @@ public final class République {
 ////////////////////
 
 
-import java.lang.System;
-
+/**
+ * public final class Привет : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Привет {
 

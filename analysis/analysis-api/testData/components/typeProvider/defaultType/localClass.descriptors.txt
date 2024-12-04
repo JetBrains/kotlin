@@ -1,0 +1,8 @@
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    KaTypeParameterType:
+      annotations: []
+      type: A
+  ]
+  type: foo/LocalClass<A>

@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JVM
+// WITH_SIGNATURES
+// WITH_STDLIB
 
 // FILE: indySamConversionViaProxyFun.kt.kt
 inline fun ifn() {}
@@ -14,9 +15,14 @@ fun test() {
 
     // Proxy function for arrayOf fun should be non-synthetic
     use(Sam3(::intArrayOf))
+
+    // Proxy function for generic fun should have valid generic signature
+    use4<Map<String, String>>(::mutableMapOf)
 }
 
 fun use(x: Any) {}
+
+fun <U> use4(x: Sam4<U>) {}
 
 // FILE: Sam1.java
 public interface Sam1 {
@@ -31,4 +37,9 @@ public interface Sam2 {
 // FILE: Sam3.java
 public interface Sam3 {
     int[] get(int[] s);
+}
+
+// FILE: Sam4.java
+public interface Sam4<T> {
+    T get();
 }

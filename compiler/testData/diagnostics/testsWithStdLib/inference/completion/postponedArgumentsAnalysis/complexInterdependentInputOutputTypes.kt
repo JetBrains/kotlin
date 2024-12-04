@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: BACKEND
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_PARAMETER
 
 interface AssertionPlant<out T : Any>
 interface AssertionPlantNullable<out T : Any?>: BaseAssertionPlant<T, AssertionPlantNullable<T>>

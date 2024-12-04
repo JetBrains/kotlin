@@ -1,0 +1,131 @@
+KtNameReferenceExpression(4,7): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(15,18): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(21,24): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(27,31): 'this'
+  KtSimpleNameReference:
+    (in ROOT) fun kotlin.Int.foo(a: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(32,33): '+'
+  KtSimpleNameReference:
+    (in kotlin.Int) operator fun plus(other: kotlin.Int): kotlin.Int
+
+KtNameReferenceExpression(34,35): 'a'
+  KtSimpleNameReference:
+    a: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(40,43): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(52,58): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(59,62): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(65,68): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtNameReferenceExpression(71,75): 'this'
+  KtSimpleNameReference:
+    (in ROOT) fun kotlin.Int?.bar(b: kotlin.Int): kotlin.Int
+
+KtOperationReferenceExpression(76,78): '?:'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(79,80): 'b'
+  KtSimpleNameReference:
+    b: kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(103,109): 'foo(2)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(103,106): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun kotlin.Int.foo(a: kotlin.Int): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(110,116): 'bar(3)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(110,113): 'bar'
+  KtSimpleNameReference:
+    (in ROOT) fun kotlin.Int?.bar(b: kotlin.Int): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtOperationReferenceExpression(117,120): 'as?'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(121,124): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+
+KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(127,130): 'foo'
+  KtSimpleNameReference:
+    (in ROOT) fun kotlin.Int.foo(a: kotlin.Int): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(133,139): 'bar(5)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(133,136): 'bar'
+  KtSimpleNameReference:
+    (in ROOT) fun kotlin.Int?.bar(b: kotlin.Int): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(140,146): 'bar(6)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(140,143): 'bar'
+  KtSimpleNameReference:
+    (in ROOT) fun kotlin.Int?.bar(b: kotlin.Int): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)
+
+KtCallExpression(148,154): 'bar(0)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(148,151): 'bar'
+  KtSimpleNameReference:
+    (in ROOT) fun kotlin.Int?.bar(b: kotlin.Int): kotlin.Int
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

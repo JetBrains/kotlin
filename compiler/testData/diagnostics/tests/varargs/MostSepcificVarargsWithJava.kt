@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // FILE: kotlin.kt
 fun main(j : C, s : Array<String?>) {

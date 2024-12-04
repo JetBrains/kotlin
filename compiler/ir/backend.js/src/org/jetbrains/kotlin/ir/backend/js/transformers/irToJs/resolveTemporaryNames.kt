@@ -8,21 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.js.backend.ast.*
 
 fun JsNode.resolveTemporaryNames() {
-    object : JsVisitorWithContextImpl() {
-        override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
-            x.name?.ident?.let {
-                if (it.contains('.')) {
-                    val parts = it.split('.').map { JsName(it, false) }
-                    var result = JsNameRef(parts[0])
-                    for (i in 1 until parts.size) {
-                        result = JsNameRef(parts[i], result)
-                    }
-                    ctx.replaceMe(result)
-                }
-            }
-        }
-    }.accept(this)
-
     val renamings = resolveNames()
     accept(object : RecursiveJsVisitor() {
         override fun visitElement(node: JsNode) {
@@ -39,7 +24,7 @@ fun JsNode.resolveTemporaryNames() {
 
 private fun JsNode.resolveNames(): Map<JsName, JsName> {
     val rootScope = computeScopes().liftUsedNames()
-    val replacements = mutableMapOf<JsName, JsName>()
+    val replacements = hashMapOf<JsName, JsName>()
     fun traverse(scope: Scope) {
         // Don't clash with non-temporary names declared in current scope. It's for rare cases like `_` or `Kotlin` names,
         // since most of local declarations are temporary.
@@ -52,12 +37,14 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
         // Outer `foo` resolves first, so when traversing inner scope, we should take it into account.
         occupiedNames += scope.usedNames.asSequence().mapNotNull { if (!it.isTemporary) it.ident else replacements[it]?.ident }
 
+        val nextSuffix = hashMapOf<String, Int>()
         for (temporaryName in scope.declaredNames.asSequence().filter { it.isTemporary }) {
             var resolvedName = temporaryName.ident
-            var suffix = 0
-            while (resolvedName in JsDeclarationScope.RESERVED_WORDS || !occupiedNames.add(resolvedName)) {
+            var suffix = nextSuffix.getOrDefault(temporaryName.ident, 0)
+            while (resolvedName in JsDeclarationScope.RESERVED_WORDS || resolvedName in occupiedNames) {
                 resolvedName = "${temporaryName.ident}_${suffix++}"
             }
+            nextSuffix[temporaryName.ident] = suffix
             replacements[temporaryName] = JsDynamicScope.declareName(resolvedName).apply { copyMetadataFrom(temporaryName) }
             occupiedNames += resolvedName
         }
@@ -87,11 +74,23 @@ private fun JsNode.computeScopes(): Scope {
     accept(object : RecursiveJsVisitor() {
         var currentScope: Scope = rootScope
 
-        override fun visitFunction(x: JsFunction) {
+        override fun visitClass(x: JsClass) {
             x.name?.let { currentScope.declaredNames += it }
+            // We need it to not rename methods and fields inside class body
+            // Because if they are in clash with something, it means overriding
+            x.constructor?.accept(this)
+            x.baseClass?.accept(this)
+            x.members.forEach { visitFunction(it, shouldReserveName = false) }
+        }
+
+        override fun visitFunction(x: JsFunction) {
+            visitFunction(x, shouldReserveName = true)
+        }
+
+        fun visitFunction(x: JsFunction, shouldReserveName: Boolean) {
+            x.name?.takeIf { shouldReserveName }?.let { currentScope.declaredNames += it }
             val oldScope = currentScope
             currentScope = Scope().apply {
-                parent = currentScope
                 currentScope.children += this
             }
             currentScope.declaredNames += x.parameters.map { it.name }
@@ -118,6 +117,18 @@ private fun JsNode.computeScopes(): Scope {
             super.visitNameRef(nameRef)
         }
 
+        override fun visitImport(import: JsImport) {
+            when (val target = import.target) {
+                is JsImport.Target.Effect -> {}
+                is JsImport.Target.All -> target.alias.name?.let { currentScope.declaredNames += it }
+                is JsImport.Target.Default -> target.name.name?.let { currentScope.declaredNames += it }
+                is JsImport.Target.Elements -> target.elements.forEach {
+                    currentScope.declaredNames += it.alias?.name ?: it.name
+                }
+            }
+            super.visitImport(import)
+        }
+
         override fun visitBreak(x: JsBreak) {}
 
         override fun visitContinue(x: JsContinue) {}
@@ -127,7 +138,6 @@ private fun JsNode.computeScopes(): Scope {
 }
 
 private class Scope {
-    var parent: Scope? = null
     val declaredNames = mutableSetOf<JsName>()
     val usedNames = mutableSetOf<JsName>()
     val children = mutableSetOf<Scope>()

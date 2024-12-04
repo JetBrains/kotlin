@@ -1,6 +1,6 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +ProhibitRepeatedUseSiteTargetAnnotations
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ProhibitRepeatedUseSiteTargetAnnotations
 
 // Ann is not repeatable
 annotation class Ann(val x: Int)

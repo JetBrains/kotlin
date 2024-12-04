@@ -1,4 +1,8 @@
 $TEMP_DIR$
--no-stdlib
--output
-$TESTDATA_DIR$
+-Xir-produce-klib-dir
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

@@ -1,0 +1,25 @@
+IGNORE_PER_MODULE: true
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2, main
+    dirty js files:   lib1/demo, lib1/JsModuleA, lib1/JsModuleB, lib2/test, main/m, main/m.export, main
+STEP 1:
+    libs: lib1, lib2, main
+    dirty js files:   lib1/demo, lib1/JsModuleA, lib1/JsModuleB
+STEP 2:
+    libs: lib1, lib2, main
+    dirty js files:   lib1/demo, lib1/JsModuleB
+STEP 3:
+    libs: lib1, lib2, main
+    dirty js files:   lib1/demo, lib2/test
+STEP 4:
+    libs: lib1, lib2, main
+    dirty js files:   lib1/JsModuleA, lib1/JsModuleB, lib2/test
+STEP 5:
+    libs: lib1, lib2, main
+    dirty js files:   lib1/JsModuleA, lib2/JsModuleC, lib2/test
+STEP 6:
+    libs: lib1, lib2, main
+    dirty js files:   lib2/JsModuleC, lib2/test

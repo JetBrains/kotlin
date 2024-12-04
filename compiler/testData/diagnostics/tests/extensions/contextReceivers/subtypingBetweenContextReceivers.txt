@@ -1,0 +1,161 @@
+package
+
+context(A, A) public val p1: kotlin.Any?
+context(Cov<A>, Cov<B>) public val p10: kotlin.Any?
+context(Cov<T>, Cov<A>) public val </*0*/ T> p11: kotlin.Any?
+context(T, A) public val </*0*/ T> p12: kotlin.Any?
+context(A, B) public val p2: kotlin.Any?
+context(A, C /* = B */) public val p3: kotlin.Any?
+context(B, C /* = B */) public val p4: kotlin.Any?
+context(C /* = B */, C /* = B */) public val p5: kotlin.Any?
+context(A, A, A) public val p6: kotlin.Any?
+context(Inv<A>, Inv<B>) public val p7: kotlin.Any?
+context(Inv<A>, Inv<A>) public val p8: kotlin.Any?
+context(Inv<T>, Inv<A>) public val </*0*/ T> p9: kotlin.Any?
+context(A, B) public fun f(/*0*/ g: context(A, B) () -> kotlin.Unit, /*1*/ value: kotlin.Any): context(A, B) () -> kotlin.Unit
+context(A, A) public fun f1(): kotlin.Unit
+context(Cov<A>, Cov<B>) public fun f10(): kotlin.Unit
+context(Cov<T>, Cov<A>) public fun </*0*/ T> f11(): kotlin.Unit
+context(T, A) public fun </*0*/ T> f12(): kotlin.Unit
+context(A, B) public fun f2(): kotlin.Unit
+context(A, C /* = B */) public fun f3(): kotlin.Unit
+context(B, C /* = B */) public fun f4(): kotlin.Unit
+context(C /* = B */, C /* = B */) public fun f5(): kotlin.Unit
+context(A, A, A) public fun f6(): kotlin.Unit
+context(Inv<A>, Inv<B>) public fun f7(): kotlin.Unit
+context(Inv<A>, Inv<A>) public fun f8(): kotlin.Unit
+context(Inv<T>, Inv<A>) public fun </*0*/ T> f9(): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B : A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(A, A) public final class C1 {
+    public constructor C1()
+    context(A, A) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(A, A) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(Cov<A>, Cov<B>) public final class C10 {
+    public constructor C10()
+    context(Cov<A>, Cov<B>) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(Cov<A>, Cov<B>) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(Cov<T>, Cov<A>) public final class C11</*0*/ T> {
+    public constructor C11</*0*/ T>()
+    context(Cov<T>, Cov<A>) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(Cov<T>, Cov<A>) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(T, A) public final class C12</*0*/ T> {
+    public constructor C12</*0*/ T>()
+    context(T, A) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(T, A) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(A, B) public final class C2 {
+    public constructor C2()
+    context(A, B) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(A, B) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(A, C /* = B */) public final class C3 {
+    public constructor C3()
+    context(A, C /* = B */) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(A, C /* = B */) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(B, C /* = B */) public final class C4 {
+    public constructor C4()
+    context(B, C /* = B */) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(B, C /* = B */) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(C /* = B */, C /* = B */) public final class C5 {
+    public constructor C5()
+    context(C /* = B */, C /* = B */) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(C /* = B */, C /* = B */) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(A, A, A) public final class C6 {
+    public constructor C6()
+    context(A, A, A) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(A, A, A) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(Inv<A>, Inv<B>) public final class C7 {
+    public constructor C7()
+    context(Inv<A>, Inv<B>) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(Inv<A>, Inv<B>) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(Inv<A>, Inv<A>) public final class C8 {
+    public constructor C8()
+    context(Inv<A>, Inv<A>) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(Inv<A>, Inv<A>) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+context(Inv<T>, Inv<A>) public final class C9</*0*/ T> {
+    public constructor C9</*0*/ T>()
+    context(Inv<T>, Inv<A>) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(Inv<T>, Inv<A>) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Cov</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Inv</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias C = B

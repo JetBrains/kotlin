@@ -47,8 +47,8 @@ fun getNumAfterLocalInvoke(): Int {
     return a
 }
 
-const val a = returnTheSameValueFun(2).<!EVALUATED: `2`!>invoke()<!>
-const val b = multiplyByTwo(1).<!EVALUATED: `2`!>invoke()<!>
+const val a = <!EVALUATED: `2`!>returnTheSameValueFun(2).invoke()<!>
+const val b = <!EVALUATED: `2`!>multiplyByTwo(1).invoke()<!>
 const val c = <!EVALUATED: `5`!>checkStackCorrectness()<!>
 const val d = <!EVALUATED: `previous = 10; multiplied by two = 20; b = 0`!>checkLaterInvoke()<!>
 const val e = <!EVALUATED: `result = 8; (a, b) = (10, 20)`!>localInline()<!>

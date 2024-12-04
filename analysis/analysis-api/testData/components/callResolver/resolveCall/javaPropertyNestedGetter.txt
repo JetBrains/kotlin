@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = /JavaClass.getSub(<dispatch receiver>: JavaClass): ft<JavaSubClass, JavaSubClass?>
-substitutor = <empty substitutor>

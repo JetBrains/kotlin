@@ -1,0 +1,8 @@
+class Test {
+    const val bar : Int = 42
+}
+
+fun box() {
+    val t = Test()
+    t.<expr>bar</expr>
+}

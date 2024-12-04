@@ -1,0 +1,197 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(33,45): 'package main'
+  null
+
+KtNameReferenceExpression(41,45): 'main'
+  null
+
+KtImportList(47,349): 'import one.two.TopLevelObject.NestedClass'
+  null
+
+KtImportDirective(47,88): 'import one.two.TopLevelObject.NestedClass'
+  null
+
+KtDotQualifiedExpression(54,88): 'one.two.TopLevelObject.NestedClass'
+  null
+
+KtDotQualifiedExpression(54,76): 'one.two.TopLevelObject'
+  null
+
+KtDotQualifiedExpression(54,61): 'one.two'
+  null
+
+KtNameReferenceExpression(54,57): 'one'
+  null
+
+KtNameReferenceExpression(58,61): 'two'
+  null
+
+KtNameReferenceExpression(62,76): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(77,88): 'NestedClass'
+  null
+
+KtImportDirective(89,131): 'import one.two.TopLevelObject.NestedObject'
+  null
+
+KtDotQualifiedExpression(96,131): 'one.two.TopLevelObject.NestedObject'
+  null
+
+KtDotQualifiedExpression(96,118): 'one.two.TopLevelObject'
+  null
+
+KtDotQualifiedExpression(96,103): 'one.two'
+  null
+
+KtNameReferenceExpression(96,99): 'one'
+  null
+
+KtNameReferenceExpression(100,103): 'two'
+  null
+
+KtNameReferenceExpression(104,118): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(119,131): 'NestedObject'
+  null
+
+KtImportDirective(132,165): 'import one.two.TopLevelObject.foo'
+  null
+
+KtDotQualifiedExpression(139,165): 'one.two.TopLevelObject.foo'
+  null
+
+KtDotQualifiedExpression(139,161): 'one.two.TopLevelObject'
+  null
+
+KtDotQualifiedExpression(139,146): 'one.two'
+  null
+
+KtNameReferenceExpression(139,142): 'one'
+  null
+
+KtNameReferenceExpression(143,146): 'two'
+  null
+
+KtNameReferenceExpression(147,161): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(162,165): 'foo'
+  null
+
+KtImportDirective(166,199): 'import one.two.TopLevelObject.bar'
+  null
+
+KtDotQualifiedExpression(173,199): 'one.two.TopLevelObject.bar'
+  null
+
+KtDotQualifiedExpression(173,195): 'one.two.TopLevelObject'
+  null
+
+KtDotQualifiedExpression(173,180): 'one.two'
+  null
+
+KtNameReferenceExpression(173,176): 'one'
+  null
+
+KtNameReferenceExpression(177,180): 'two'
+  null
+
+KtNameReferenceExpression(181,195): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(196,199): 'bar'
+  null
+
+KtImportDirective(201,255): 'import one.two.TopLevelObject.NestedObject.NestedClass'
+  null
+
+KtDotQualifiedExpression(208,255): 'one.two.TopLevelObject.NestedObject.NestedClass'
+  null
+
+KtDotQualifiedExpression(208,243): 'one.two.TopLevelObject.NestedObject'
+  null
+
+KtDotQualifiedExpression(208,230): 'one.two.TopLevelObject'
+  null
+
+KtDotQualifiedExpression(208,215): 'one.two'
+  null
+
+KtNameReferenceExpression(208,211): 'one'
+  null
+
+KtNameReferenceExpression(212,215): 'two'
+  null
+
+KtNameReferenceExpression(216,230): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(231,243): 'NestedObject'
+  null
+
+KtNameReferenceExpression(244,255): 'NestedClass'
+  null
+
+KtImportDirective(256,302): 'import one.two.TopLevelObject.NestedObject.foo'
+  null
+
+KtDotQualifiedExpression(263,302): 'one.two.TopLevelObject.NestedObject.foo'
+  null
+
+KtDotQualifiedExpression(263,298): 'one.two.TopLevelObject.NestedObject'
+  null
+
+KtDotQualifiedExpression(263,285): 'one.two.TopLevelObject'
+  null
+
+KtDotQualifiedExpression(263,270): 'one.two'
+  null
+
+KtNameReferenceExpression(263,266): 'one'
+  null
+
+KtNameReferenceExpression(267,270): 'two'
+  null
+
+KtNameReferenceExpression(271,285): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(286,298): 'NestedObject'
+  null
+
+KtNameReferenceExpression(299,302): 'foo'
+  null
+
+KtImportDirective(303,349): 'import one.two.TopLevelObject.NestedObject.bar'
+  null
+
+KtDotQualifiedExpression(310,349): 'one.two.TopLevelObject.NestedObject.bar'
+  null
+
+KtDotQualifiedExpression(310,345): 'one.two.TopLevelObject.NestedObject'
+  null
+
+KtDotQualifiedExpression(310,332): 'one.two.TopLevelObject'
+  null
+
+KtDotQualifiedExpression(310,317): 'one.two'
+  null
+
+KtNameReferenceExpression(310,313): 'one'
+  null
+
+KtNameReferenceExpression(314,317): 'two'
+  null
+
+KtNameReferenceExpression(318,332): 'TopLevelObject'
+  null
+
+KtNameReferenceExpression(333,345): 'NestedObject'
+  null
+
+KtNameReferenceExpression(346,349): 'bar'
+  null

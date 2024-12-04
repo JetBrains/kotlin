@@ -1,3 +1,0 @@
-KtAnnotationCall:
-argumentMapping = { [Annotation("v1", "v2"), Annotation(["v3", "v4"])] -> (vararg annos: Annotation) }
-targetFunction = <constructor>(vararg annos: Annotation): AnnotationArray

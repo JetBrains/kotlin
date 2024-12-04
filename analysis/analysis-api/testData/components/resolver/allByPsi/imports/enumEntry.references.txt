@@ -1,0 +1,59 @@
+KtNameReferenceExpression(30,34): 'main'
+  KtSimpleNameReference:
+    package main
+
+KtNameReferenceExpression(43,46): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(47,50): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(51,56): 'Color'
+  KtSimpleNameReference:
+    (in one.two) enum class Color
+
+KtNameReferenceExpression(64,67): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(68,71): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(72,77): 'Color'
+  KtSimpleNameReference:
+    (in one.two) enum class Color
+
+KtNameReferenceExpression(78,83): 'Black'
+  KtSimpleNameReference:
+    (in one.two.Color) Black
+
+KtNameReferenceExpression(91,94): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(95,98): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(99,104): 'Color'
+  KtSimpleNameReference:
+    (in one.two) enum class Color
+
+KtNameReferenceExpression(105,110): 'Green'
+  KtSimpleNameReference:
+    (in one.two.Color) Green
+
+KtNameReferenceExpression(118,121): 'one'
+  KtSimpleNameReference:
+    package one
+
+KtNameReferenceExpression(122,125): 'two'
+  KtSimpleNameReference:
+    package one.two
+
+KtNameReferenceExpression(126,131): 'Color'
+  KtSimpleNameReference:
+    (in one.two) enum class Color

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 fun interface IFoo {
     fun foo(i: Int)
 }

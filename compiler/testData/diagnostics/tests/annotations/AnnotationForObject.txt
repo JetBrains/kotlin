@@ -1,6 +1,6 @@
 package
 
-@[ERROR : someErrorAnnotation] /* annotation class not found */ public object Test {
+@[Error type: Unresolved type for someErrorAnnotation] /* annotation class not found */ public object Test {
     private constructor Test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

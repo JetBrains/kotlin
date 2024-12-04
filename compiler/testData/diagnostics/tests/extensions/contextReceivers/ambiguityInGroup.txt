@@ -1,0 +1,29 @@
+package
+
+context(Common) public fun supertypeContextual(): kotlin.Unit
+context(C1, C2) public fun test(): kotlin.Unit
+public fun Common.supertypeExtension(): kotlin.Unit
+public fun </*0*/ T : Common> T.supertypeExtensionGeneric(): kotlin.Unit
+
+public interface C1 : Common {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun member(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun supertypeMember(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface C2 : Common {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun member(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun supertypeMember(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Common {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun supertypeMember(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

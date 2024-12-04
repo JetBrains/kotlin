@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class A(val x: (String.() -> Unit)?, val y: (String.() -> Int))
 
 fun test(a: A) {

@@ -8,7 +8,7 @@ public val c1: kotlin.Comparable<kotlin.UInt>
 public val h1: kotlin.UInt = 255.toUInt()
 public val h2: kotlin.UShort = 255.toUShort()
 public val i0: kotlin.Int = 1.toUInt()
-public val m0: [ERROR : Type for -1u]
+public val m0: [Error type: Not found recorded type for -1u]
 public val m1: kotlin.UInt
 public val n0: kotlin.Number = 1.toUInt()
 public val u0: kotlin.UInt = 1.toUInt()

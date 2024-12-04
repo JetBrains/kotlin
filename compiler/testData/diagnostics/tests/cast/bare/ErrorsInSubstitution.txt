@@ -1,6 +1,6 @@
 package
 
-public fun f(/*0*/ p: B<[ERROR : Foo]>): kotlin.Any
+public fun f(/*0*/ p: B<[Error type: Unresolved type for Foo]>): kotlin.Any
 
 public interface B</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

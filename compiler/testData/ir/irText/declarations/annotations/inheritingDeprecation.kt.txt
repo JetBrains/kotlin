@@ -1,44 +1,29 @@
-interface IFoo {
-  @Deprecated(message = "")
-  val prop: String
-    get(): String {
-      return ""
-    }
-
-  @Deprecated(message = "")
-  val String.extProp: String
-    get(): String {
-      return ""
-    }
-
-}
-
-class Delegated : IFoo {
-  constructor(foo: IFoo) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  private /* final field */ val $$delegate_0: IFoo = foo
-  override val prop: String
-    override get(): String {
-      return <this>.#$$delegate_0.<get-prop>()
-    }
-
-  override val String.extProp: String
-    override get(): String {
-      return (<this>.#$$delegate_0, <this>).<get-extProp>()
-    }
-
-}
-
 class DefaultImpl : IFoo {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
+
+}
+
+class Delegated : IFoo {
+  private /* final field */ val $$delegate_0: IFoo = foo
+  constructor(foo: IFoo) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override val String.extProp: String
+    override get(): String {
+      return (<this>.#$$delegate_0, <this>).<get-extProp>()
+    }
+
+  override val prop: String
+    override get(): String {
+      return <this>.#$$delegate_0.<get-prop>()
+    }
 
 }
 
@@ -49,14 +34,30 @@ class ExplicitOverride : IFoo {
 
   }
 
-  override val prop: String
-    override get(): String {
-      return ""
-    }
-
   override val String.extProp: String
     override get(): String {
       return ""
     }
 
+  override val prop: String
+    override get(): String {
+      return ""
+    }
+
 }
+
+interface IFoo {
+  @Deprecated(message = "")
+  val String.extProp: String
+    get(): String {
+      return ""
+    }
+
+  @Deprecated(message = "")
+  val prop: String
+    get(): String {
+      return ""
+    }
+
+}
+

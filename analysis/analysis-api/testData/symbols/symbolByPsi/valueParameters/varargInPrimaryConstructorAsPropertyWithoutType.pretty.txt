@@ -1,0 +1,3 @@
+class Foo(vararg ints: ERROR(Incomplete code)) {
+  val ints: kotlin.Array<out ERROR(Incomplete code)>
+}

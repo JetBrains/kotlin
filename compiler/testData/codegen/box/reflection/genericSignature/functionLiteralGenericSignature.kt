@@ -1,7 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: Fail, expected: kotlin.jvm.functions.Function1<java.util.List<java.lang.Double>, java.util.List<java.lang.Integer>>,
-// actual: interface kotlin.jvm.functions.Function1
 // TARGET_BACKEND: JVM
+// LAMBDAS: CLASS
 
 import java.util.Date
 

@@ -12,5 +12,5 @@ package b {
 package c {
     public val v1: kotlin.Int = 1
     public val v2: kotlin.String = ""
-    public val v3: [ERROR : Type for y]
+    public val v3: [Error type: Not found recorded type for y]
 }

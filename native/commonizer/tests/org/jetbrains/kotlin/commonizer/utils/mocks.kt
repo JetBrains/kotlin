@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.commonizer.utils
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
@@ -20,9 +19,9 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
 
 internal fun mockTAType(
     typeAliasId: String,
@@ -76,7 +75,7 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
                     isData = false,
                     isValue = false,
                     isInner = false,
-                    isExternal = false
+                    hasEnumEntries = false
                 )
             }
         )
@@ -98,7 +97,7 @@ internal class MockModulesProvider private constructor(
         return SERIALIZER.serializeModule(module)
     }
 
-    private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"), null)
+    private fun fakeModuleInfo(name: String) = ModuleInfo(name, null)
 
     companion object {
         @JvmName("createByModuleNames")
@@ -175,11 +174,12 @@ internal class MockResultsConsumer : ResultsConsumer {
 fun MockNativeManifestDataProvider(
     target: CommonizerTarget,
     uniqueName: String = "mock",
-    versions: KotlinLibraryVersioning = KotlinLibraryVersioning(null, null, null, null, null),
+    versions: KotlinLibraryVersioning = KotlinLibraryVersioning(null, null, null),
     dependencies: List<String> = emptyList(),
-    isInterop: Boolean = true,
+    isCInterop: Boolean = true,
     packageFqName: String? = "mock",
     exportForwardDeclarations: List<String> = emptyList(),
+    includedForwardDeclarations: List<String> = emptyList(),
     nativeTargets: Collection<String> = emptyList(),
     shortName: String? = "mock"
 ): NativeManifestDataProvider = object : NativeManifestDataProvider {
@@ -188,9 +188,10 @@ fun MockNativeManifestDataProvider(
             uniqueName = uniqueName,
             versions = versions,
             dependencies = dependencies,
-            isInterop = isInterop,
+            isCInterop = isCInterop,
             packageFqName = packageFqName,
             exportForwardDeclarations = exportForwardDeclarations,
+            includedForwardDeclarations = includedForwardDeclarations,
             nativeTargets = nativeTargets,
             shortName = shortName,
             commonizerTarget = target,

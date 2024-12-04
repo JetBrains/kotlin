@@ -1,6 +1,5 @@
-// FIR_IDENTICAL
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // IGNORE_BACKEND: JVM
 
 fun foo(f: () -> String, g: suspend () -> String, h: suspend () -> String) {}

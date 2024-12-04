@@ -33,7 +33,8 @@ object DocExtensions {
         get() = when (this) {
             CharSequences -> "char sequence"
             ArraysOfObjects, ArraysOfPrimitives, InvariantArraysOfObjects, ArraysOfUnsigned -> "array"
-            Ranges, RangesOfPrimitives -> "range"
+            Ranges, RangesOfPrimitives, OpenRanges -> "range"
+            ProgressionsOfPrimitives -> "progression"
             Strings, Sequences, Maps, Lists, Sets -> name.singularize().decapitalize()
             else -> "collection"
         }

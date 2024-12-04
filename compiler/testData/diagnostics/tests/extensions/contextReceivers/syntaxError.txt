@@ -1,0 +1,3 @@
+package
+
+context([Error type: No type specified for unknown element]) public fun foo(): kotlin.Unit

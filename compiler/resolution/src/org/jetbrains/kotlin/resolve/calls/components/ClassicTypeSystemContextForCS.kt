@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstr
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class ClassicTypeSystemContextForCS(
     override val builtIns: KotlinBuiltIns,
@@ -60,7 +58,8 @@ class ClassicTypeSystemContextForCS(
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
         if (map.isEmpty()) return createEmptySubstitutor()
-        return NewTypeSubstitutorByConstructorMap(map.cast())
+        @Suppress("UNCHECKED_CAST")
+        return NewTypeSubstitutorByConstructorMap(map as Map<TypeConstructor, UnwrappedType>)
     }
 
     override fun createEmptySubstitutor(): TypeSubstitutorMarker {
@@ -68,24 +67,25 @@ class ClassicTypeSystemContextForCS(
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
-        require(type is UnwrappedType, type::errorMessage)
+        require(type is KotlinType, type::errorMessage)
+        val unwrappedType = type.unwrap()
         return when (this) {
-            is NewTypeSubstitutor -> safeSubstitute(type)
-            is TypeSubstitutor -> safeSubstitute(type, Variance.INVARIANT)
+            is NewTypeSubstitutor -> safeSubstitute(unwrappedType)
+            is TypeSubstitutor -> safeSubstitute(unwrappedType, Variance.INVARIANT)
             else -> error(this.errorMessage())
         }
     }
 
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
         return StubTypeForBuilderInference(
-            typeVariable.freshTypeConstructor() as TypeConstructor,
+            typeVariable.freshTypeConstructor() as NewTypeVariableConstructor,
             typeVariable.defaultType().isMarkedNullable()
         )
     }
 
     override fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker {
         return StubTypeForTypeVariablesInSubtyping(
-            typeVariable.freshTypeConstructor() as TypeConstructor,
+            typeVariable.freshTypeConstructor() as NewTypeVariableConstructor,
             typeVariable.defaultType().isMarkedNullable()
         )
     }
@@ -109,8 +109,6 @@ class ClassicTypeSystemContextForCS(
     }
 }
 
-
-
 @Suppress("NOTHING_TO_INLINE")
 private inline fun Any?.errorMessage(): String {
     return "ClassicTypeSystemContextForCS couldn't handle: $this, ${this?.let { it::class }}"
@@ -120,7 +118,8 @@ private inline fun Any?.errorMessage(): String {
 fun NewConstraintSystemImpl(
     constraintInjector: ConstraintInjector,
     builtIns: KotlinBuiltIns,
-    kotlinTypeRefiner: KotlinTypeRefiner
+    kotlinTypeRefiner: KotlinTypeRefiner,
+    languageVersionSettings: LanguageVersionSettings
 ): NewConstraintSystemImpl {
-    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns, kotlinTypeRefiner))
+    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns, kotlinTypeRefiner), languageVersionSettings)
 }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -36,6 +38,8 @@ import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.*
+import org.jetbrains.kotlin.resolve.checkers.PassingProgressionAsCollectionCallChecker
+import org.jetbrains.kotlin.resolve.checkers.ResolutionWithStubTypesChecker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -72,8 +76,14 @@ class PSICallResolver(
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
     private val candidateInterceptor: CandidateInterceptor,
-    private val missingSupertypesResolver: MissingSupertypesResolver
+    private val missingSupertypesResolver: MissingSupertypesResolver,
+    private val resultTypeResolver: ResultTypeResolver,
 ) {
+    private val callCheckersWithAdditionalResolve = listOf(
+        PassingProgressionAsCollectionCallChecker(kotlinCallResolver),
+        ResolutionWithStubTypesChecker(kotlinCallResolver)
+    )
+
     private val givenCandidatesName = Name.special("<given candidates>")
 
     private val arePartiallySpecifiedTypeArgumentsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.PartiallySpecifiedTypeArguments)
@@ -91,31 +101,37 @@ class PSICallResolver(
         resolutionKind: NewResolutionOldInference.ResolutionKind,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
-        val isBinaryRemOperator = isBinaryRemOperator(context.call)
-        val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
-
         val kotlinCallKind = resolutionKind.toKotlinCallKind()
-        val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, refinedName, tracingStrategy, isSpecialFunction = false)
+        val kotlinCall = toKotlinCall(context, kotlinCallKind, context.call, name, tracingStrategy, isSpecialFunction = false)
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
         val expectedType = calculateExpectedType(context)
-        var result = kotlinCallResolver.resolveAndCompleteCall(
+        val result = kotlinCallResolver.resolveAndCompleteCall(
             scopeTower, resolutionCallbacks, kotlinCall, expectedType, context.collectAllCandidates
         )
-
-        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
-        if (isBinaryRemOperator && shouldUseOperatorRem && (result.isEmpty() || result.areAllInapplicable())) {
-            result = resolveToDeprecatedMod(name, context, kotlinCallKind, tracingStrategy, scopeTower, resolutionCallbacks, expectedType)
-        }
 
         if (result.isEmpty() && reportAdditionalDiagnosticIfNoCandidates(context, scopeTower, kotlinCallKind, kotlinCall)) {
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
         val overloadResolutionResults = convertToOverloadResolutionResults<D>(context, result, tracingStrategy)
+
         return overloadResolutionResults.also {
             clearCacheForApproximationResults()
+            checkCallWithAdditionalResolve(it, scopeTower, resolutionCallbacks, expectedType, context)
+        }
+    }
+
+    private fun <D : CallableDescriptor> checkCallWithAdditionalResolve(
+        overloadResolutionResults: OverloadResolutionResults<D>,
+        scopeTower: ImplicitScopeTower,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        expectedType: UnwrappedType?,
+        context: BasicCallResolutionContext,
+    ) {
+        for (callChecker in callCheckersWithAdditionalResolve) {
+            callChecker.check(overloadResolutionResults, scopeTower, resolutionCallbacks, expectedType, context)
         }
     }
 
@@ -157,29 +173,6 @@ class PSICallResolver(
         typeApproximator.clearCache()
     }
 
-    private fun resolveToDeprecatedMod(
-        remOperatorName: Name,
-        context: BasicCallResolutionContext,
-        kotlinCallKind: KotlinCallKind,
-        tracingStrategy: TracingStrategy,
-        scopeTower: ImplicitScopeTower,
-        resolutionCallbacks: KotlinResolutionCallbacksImpl,
-        expectedType: UnwrappedType?
-    ): CallResolutionResult {
-        val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[remOperatorName]!!
-        val callWithDeprecatedName = toKotlinCall(
-            context, kotlinCallKind, context.call, deprecatedName, tracingStrategy, isSpecialFunction = false
-        )
-        return kotlinCallResolver.resolveAndCompleteCall(
-            scopeTower, resolutionCallbacks, callWithDeprecatedName, expectedType, context.collectAllCandidates
-        )
-    }
-
-    private fun refineNameForRemOperator(isBinaryRemOperator: Boolean, name: Name): Name {
-        val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
-        return if (isBinaryRemOperator && !shouldUseOperatorRem) OperatorConventions.REM_TO_MOD_OPERATION_NAMES[name]!! else name
-    }
-
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =
         createResolutionCallbacks(context.trace, context.inferenceSession, context)
 
@@ -189,7 +182,8 @@ class PSICallResolver(
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
             dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver,
             this, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents,
-            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context, missingSupertypesResolver, kotlinCallResolver
+            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context, missingSupertypesResolver, kotlinCallResolver,
+            resultTypeResolver
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
@@ -323,10 +317,7 @@ class PSICallResolver(
     private fun CallResolutionResult.isEmpty(): Boolean =
         diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>() != null
 
-    private fun Collection<ResolutionCandidate>.areAllFailed() =
-        all {
-            !it.resultingApplicability.isSuccess
-        }
+    private fun Collection<ResolutionCandidate>.areAllFailed() = all { !it.isSuccessful }
 
     private fun Collection<ResolutionCandidate>.areAllFailedWithInapplicableWrongReceiver() =
         all {
@@ -394,6 +385,7 @@ class PSICallResolver(
         override val syntheticScopes: SyntheticScopes get() = this@PSICallResolver.syntheticScopes
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
         override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+        override val areContextReceiversEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
         override val languageVersionSettings: LanguageVersionSettings get() = context.languageVersionSettings
         override val lexicalScope: LexicalScope get() = context.scope
         override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
@@ -407,6 +399,9 @@ class PSICallResolver(
                 context.transformToReceiverWithSmartCastInfo(implicitReceiver.value)
             }
         }
+
+        override fun getContextReceivers(scope: LexicalScope): List<ReceiverValueWithSmartCastInfo> =
+            scope.contextReceiversGroup.map { cache.getOrPut(it) { context.transformToReceiverWithSmartCastInfo(it.value) } }
 
         override fun getNameForGivenImportAlias(name: Name): Name? =
             (context.call.callElement.containingFile as? KtFile)?.getNameForGivenImportAlias(name)
@@ -516,7 +511,7 @@ class PSICallResolver(
 
             val psiKotlinCall = variable.resolvedCall.atom.psiKotlinCall
 
-            val variableResult = PartialCallResolutionResult(variable.resolvedCall, listOf(), variable.getSystem().asReadOnlyStorage())
+            val variableResult = PartialCallResolutionResult(variable.resolvedCall, listOf(), variable.getSystem())
 
             return SubKotlinCallArgumentImpl(
                 CallMaker.makeExternalValueArgument((variableReceiver.receiverValue as ExpressionReceiver).expression),
@@ -588,8 +583,8 @@ class PSICallResolver(
             }
             if (allValueArguments.isEmpty()) {
                 throw KotlinExceptionWithAttachments("Can not find an external argument for 'set' method")
-                    .withAttachment("callElement.kt", oldCall.callElement.text)
-                    .withAttachment("file.kt", oldCall.callElement.takeIf { it.isValid }?.containingFile?.text ?: "<no file>")
+                    .withPsiAttachment("callElement.kt", oldCall.callElement)
+                    .withPsiAttachment("file.kt", oldCall.callElement.takeIf { it.isValid }?.containingFile)
             }
             allValueArguments.last()
         } else {

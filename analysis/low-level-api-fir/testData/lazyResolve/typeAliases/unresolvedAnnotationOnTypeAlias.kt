@@ -1,0 +1,1 @@
+val myA<caret>lias = @Anno(Foo) Foo

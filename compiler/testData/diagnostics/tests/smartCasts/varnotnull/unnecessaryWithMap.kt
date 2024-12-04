@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 fun create(): Map<String, String> = null!!
 
 operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> = null!!

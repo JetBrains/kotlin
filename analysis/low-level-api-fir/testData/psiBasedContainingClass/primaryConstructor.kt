@@ -1,0 +1,1 @@
+class Foo(val x: Int)

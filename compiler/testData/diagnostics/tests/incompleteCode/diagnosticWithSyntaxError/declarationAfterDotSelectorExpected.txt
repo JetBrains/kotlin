@@ -4,13 +4,13 @@ public fun foo(/*0*/ x: kotlin.Any): kotlin.Unit
 
 public final class A {
     public constructor A()
-    public final var a: [ERROR : Type for 24.]
+    public final var a: [Error type: Not found recorded type for 24.]
     public final var b: kotlin.Double
-    public final val q: [ERROR : Type for "c".
+    public final val q: [Error type: Not found recorded type for "c".
     fun String.() = 6]
     public final val x: kotlin.Int = 4
-    public final val y: [ERROR : Type for "b".]
-    public final val z: [ERROR : Type for "a".]
+    public final val y: [Error type: Not found recorded type for "b".]
+    public final val z: [Error type: Not found recorded type for "a".]
     public final fun baz(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -14,7 +14,7 @@ fun box(): String {
         {
             foo(foo, 1)
             foo("K")
-        } ()
+        }.let { it() }
     }
 
     return s

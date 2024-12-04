@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 val that: Number
     field = 239
 

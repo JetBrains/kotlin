@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 class Num<T : Number>
 class NumColl<T : Collection<Number>>
@@ -18,7 +19,7 @@ val test5 = NA<Int>()
 val test6 = NA<<!UPPER_BOUND_VIOLATED!>Any<!>>()
 val test7 = NL<Int>()
 val test8 = MMMM<<!UPPER_BOUND_VIOLATED!>Int<!>>()
-val test9dwd = NL<Any>()
+val test9dwd = NL<<!UPPER_BOUND_VIOLATED_WARNING!>Any<!>>()
 
 fun test9(x: TC<Number, Collection<Number>>) {}
 fun test10(x: TC<Number, Collection<Int>>) {}
@@ -28,4 +29,4 @@ fun test12(x: TC<Number, <!UPPER_BOUND_VIOLATED!>List<Any><!>>) {}
 val test13 = TC<Number, Collection<Number>>()
 val test14 = TC<Number, Collection<Int>>()
 val test15 = TC<Number, List<Int>>()
-val test16 = TC<Number, <!UPPER_BOUND_VIOLATED!>List<Any><!>>()
+val test16 = TC<Number, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>List<Any><!>>()

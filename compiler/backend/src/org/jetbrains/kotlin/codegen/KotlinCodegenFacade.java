@@ -18,33 +18,37 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.Collection;
 
 public class KotlinCodegenFacade {
-    public static void compileCorrectFiles(@NotNull GenerationState state) {
+    public static void compileCorrectFiles(
+            Collection<KtFile> files,
+            @NotNull GenerationState state,
+            CodegenFactory codegenFactory
+    ) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         state.beforeCompile();
 
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-
-        CodegenFactory.IrConversionInput psi2irInput = CodegenFactory.IrConversionInput.Companion.fromGenerationState(state);
-        CodegenFactory.BackendInput backendInput = state.getCodegenFactory().convertToIr(psi2irInput);
+        CodegenFactory.IrConversionInput psi2irInput = CodegenFactory.IrConversionInput.Companion.fromGenerationStateAndFiles(state, files);
+        CodegenFactory.BackendInput backendInput = codegenFactory.convertToIr(psi2irInput);
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        state.getCodegenFactory().generateModule(state, backendInput);
+        codegenFactory.generateModule(state, backendInput);
 
         CodegenFactory.Companion.doCheckCancelled(state);
         state.getFactory().done();
     }
 
-    public static void generatePackage(@NotNull GenerationState state, @NotNull FqName packageFqName, @NotNull Collection<KtFile> files) {
-        DefaultCodegenFactory.INSTANCE.generatePackage(state, packageFqName, files);
+    // TODO: remove after cleanin up IDE counterpart
+    public static void compileCorrectFiles(@NotNull GenerationState state) {
+        CodegenFactory codegenFactory = state.getCodegenFactory();
+        assert codegenFactory != null : "CodegenFactory should be initialized";
+        compileCorrectFiles(state.getFiles(), state, codegenFactory);
     }
 
     private KotlinCodegenFacade() {}

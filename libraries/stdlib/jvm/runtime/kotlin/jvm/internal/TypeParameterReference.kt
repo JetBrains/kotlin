@@ -11,7 +11,7 @@ import kotlin.reflect.KVariance
 import kotlin.reflect.typeOf
 
 @SinceKotlin("1.4")
-class TypeParameterReference(
+public class TypeParameterReference(
     private val container: Any?, // Either ClassReference or CallableReference
     override val name: String,
     override val variance: KVariance,
@@ -24,7 +24,7 @@ class TypeParameterReference(
     override val upperBounds: List<KType>
         get() = bounds ?: listOf(typeOf<Any?>()).also { bounds = it }
 
-    fun setUpperBounds(upperBounds: List<KType>) {
+    public fun setUpperBounds(upperBounds: List<KType>) {
         // This assertion is only checking that the typeOf compiler implementation didn't generate some nonsense in bytecode.
         // Since this class is not used anywhere else, we don't use any locks to prevent double initialization here intentionally.
         if (bounds != null) {
@@ -41,8 +41,8 @@ class TypeParameterReference(
 
     override fun toString(): String = toString(this)
 
-    companion object {
-        fun toString(typeParameter: KTypeParameter): String =
+    public companion object {
+        public fun toString(typeParameter: KTypeParameter): String =
             buildString {
                 when (typeParameter.variance) {
                     KVariance.INVARIANT -> {

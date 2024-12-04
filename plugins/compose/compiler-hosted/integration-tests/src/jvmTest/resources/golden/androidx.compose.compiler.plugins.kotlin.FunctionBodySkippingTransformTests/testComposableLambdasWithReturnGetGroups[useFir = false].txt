@@ -1,0 +1,31 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+fun A(factory: @Composable () -> Int): Unit {}
+fun B() = A { 123 }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+fun A(factory: Function2<Composer, Int, Int>) { }
+fun B() {
+  return A { %composer: Composer?, %changed: Int ->
+    %composer.startReplaceGroup(<>)
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = 123
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    %composer.endReplaceGroup()
+    tmp0
+  }
+}

@@ -10,16 +10,18 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.Companion.DIAGNOSTIC_IN_TESTDATA_PATTERN
-import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.walkTopDown
 import org.jetbrains.kotlin.fir.lightTree.walkTopDownWithTestData
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.utils.isCustomTestData
 import org.junit.runner.RunWith
 import java.io.File
 
@@ -36,7 +38,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 errorCounter++
                 differentFiles += file
             }
-            if (!file.name.endsWith(".fir.kt")) {
+            if (!file.isCustomTestData) {
                 counter++
             }
         }
@@ -55,58 +57,113 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     private fun compareAll() {
+        @OptIn(ObsoleteTestInfrastructure::class)
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider
+            session = FirSessionFactoryHelper.createEmptySession(),
+            scopeProvider = StubFirScopeProvider,
+            diagnosticsReporter = null
         )
         compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
-            val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
+            val (text, linesMapping) = with(file.inputStream().reader(Charsets.UTF_8)) {
+                this.readSourceFileWithMapping()
+            }
+            splitText(file.path, text.toString().trim()).forEach { pair ->
+                val (filePath, fileText) = pair
 
-            //psi
-            val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
-            val firFileFromPsi = ktFile.toFirFile()
-            val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firFileFromPsi) }.toString()
+                //psi
+                val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileText) as KtFile
+                val firFileFromPsi = ktFile.toFirFile()
+                val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
+                    .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
-            //light tree
-            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name, file.path)
-            val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
+                //light tree
+                val firFileFromLightTree = lightTreeConverter.buildFirFile(text, KtIoFileSourceFile(file), linesMapping)
+                val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
+                    .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
-            return@compareBase treeFromLightTree == treeFromPsi
+                if (treeFromLightTree != treeFromPsi) {
+                    return@compareBase false
+                }
+            }
+            return@compareBase true
         }
     }
 
     fun testCompareDiagnostics() {
+        @OptIn(ObsoleteTestInfrastructure::class)
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider
+            session = FirSessionFactoryHelper.createEmptySession(),
+            scopeProvider = StubFirScopeProvider,
+            diagnosticsReporter = null
         )
         compareBase("compiler/testData/diagnostics/tests", withTestData = true) { file ->
-            if (file.name.endsWith(".fir.kt")) {
+            if (file.isCustomTestData) {
                 return@compareBase true
             }
-            if (file.path.replace("\\", "/") == "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt") {
-                // `DIAGNOSTIC_IN_TESTDATA_PATTERN` fails to correctly strip diagnostics from this file
-                return@compareBase true
+            when (file.path.replace("\\", "/")) {
+                "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt" -> {
+                    // `DIAGNOSTIC_IN_TESTDATA_PATTERN` fails to correctly strip diagnostics from this file
+                    return@compareBase true
+                }
+                "compiler/testData/diagnostics/tests/visibility/checkCastToInaccessibleInterface.kt" -> {
+                    // KT-73138
+                    return@compareBase true
+                }
             }
+
             val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             val text = notEditedText.replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "").replaceAfter(".java", "")
 
-            //psi
-            val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
-            val firFileFromPsi = ktFile.toFirFile()
-            val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firFileFromPsi) }.toString()
-                .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
+            splitText(file.path, text).forEach { pair ->
+                val (filePath, fileText) = pair
+                //psi
+                val fileName = PathUtil.getFileName(filePath)
+                val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(fileName), fileText) as KtFile
+                val firFileFromPsi = ktFile.toFirFile()
+                val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
+                    .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
+                    .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
-            //light tree
-            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name, file.path)
-            val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
-                .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
+                //light tree
+                val firFileFromLightTree =
+                    lightTreeConverter.buildFirFile(
+                        fileText,
+                        KtInMemoryTextSourceFile(fileName, filePath, fileText),
+                        fileText.toSourceLinesMapping()
+                    )
+                val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
+                    .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
+                    .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
-            return@compareBase treeFromLightTree == treeFromPsi
+                if (treeFromLightTree != treeFromPsi) {
+                    return@compareBase false
+                }
+            }
+            return@compareBase true
         }
     }
 
     fun testCompareAll() {
         compareAll()
+    }
+
+    private fun splitText(filePath: String, text: String): List<Pair<String, String>> {
+        val fileDirective = "// FILE:"
+        val idx = text.indexOf(fileDirective)
+        if (idx > 0 && text[idx - 1] != '\n') {
+            //try to avoid splitting of sources
+            return emptyList()
+        }
+        if (idx >= 0) {
+            val result = mutableListOf<Pair<String, String>>()
+            val strings = text.drop(idx).drop(fileDirective.length).split(fileDirective)
+            for (string in strings) {
+                val newLineIdx = string.indexOf("\n")
+                if (newLineIdx < 0) return emptyList()
+                result.add(Pair(string.substring(0, newLineIdx).trim(), string.substring(newLineIdx)))
+            }
+            return result
+        }
+        return listOf(Pair(filePath, text))
     }
 }

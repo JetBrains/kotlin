@@ -195,7 +195,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @Nullable
     @Override
-    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
+    public ValueClassRepresentation<SimpleType> getValueClassRepresentation() {
         return null;
     }
 

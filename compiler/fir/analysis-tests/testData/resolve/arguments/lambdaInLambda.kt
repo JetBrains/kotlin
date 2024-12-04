@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 class StringBuilder {
     fun append(s: String) {}
 }
@@ -16,7 +17,7 @@ fun test(ordinal: Int) {
     buildString {
         insert(KDocTemplate()) {
             definition {
-                <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>ordinal<!UNNECESSARY_SAFE_CALL!>?.<!>let {}<!>
+                ordinal<!UNNECESSARY_SAFE_CALL!>?.<!>let {}
             }
         }
     }

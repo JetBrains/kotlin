@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 data class A1(val <!REDECLARATION, REDECLARATION, REDECLARATION!>x<!>: Int, val y: String, val <!REDECLARATION, REDECLARATION, REDECLARATION!>x<!>: Int) {
     val z = ""
 }

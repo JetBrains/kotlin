@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: Test.java
 public class Test {
     public static int i1 = Integer.MAX_VALUE;

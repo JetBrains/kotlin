@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 fun <T> castFun(x: Any) = x as T
 
 fun <T> Any.castExtFun() = this as T

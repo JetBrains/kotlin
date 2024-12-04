@@ -5,16 +5,20 @@ plugins {
 
 dependencies {
     api(project(":core:util.runtime"))
-    api(commonDep("javax.inject"))
+    api(commonDependency("javax.inject"))
     compileOnly(kotlinStdlib())
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
     testApi(kotlinStdlib())
     testCompileOnly("org.jetbrains:annotations:13.0")
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(project(":kotlin-test:kotlin-test-junit"))
-    testApi(commonDep("junit:junit"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("trove4j", "util") }
+    testApi(kotlinTest("junit"))
+    testCompileOnly(libs.junit4)
+    testCompileOnly(intellijCore())
+
+    testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(intellijCore())
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
 
 sourceSets {
@@ -25,6 +29,6 @@ sourceSets {
 testsJar {}
 
 projectTest(parallel = true) {
-    dependsOn(":dist")
     workingDir = rootDir
+    useJUnitPlatform()
 }

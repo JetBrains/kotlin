@@ -36,8 +36,8 @@ fun getClassCAsB(num: Int): B {
 }
 
 // all methods call from C
-const val num1 = getClassCAsA(1).<!EVALUATED: `1`!>getIntNum()<!>
-const val num2 = getClassCAsB(2).<!EVALUATED: `2`!>getIntNum()<!>
+const val num1 = <!EVALUATED: `1`!>getClassCAsA(1).getIntNum()<!>
+const val num2 = <!EVALUATED: `2`!>getClassCAsB(2).getIntNum()<!>
 
-const val num3 = getClassCAsA(3).<!EVALUATED: `-3`!>getIntNumInverse()<!>
-const val num4 = getClassCAsB(4).<!EVALUATED: `-4`!>getIntNumInverse()<!>
+const val num3 = <!EVALUATED: `-3`!>getClassCAsA(3).getIntNumInverse()<!>
+const val num4 = <!EVALUATED: `-4`!>getClassCAsB(4).getIntNumInverse()<!>

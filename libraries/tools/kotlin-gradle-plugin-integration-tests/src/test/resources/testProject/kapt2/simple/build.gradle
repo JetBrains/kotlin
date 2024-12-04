@@ -4,6 +4,8 @@ plugins {
     id "org.jetbrains.kotlin.kapt"
 }
 
+kotlin.jvmToolchain(8)
+
 repositories {
     mavenLocal()
     mavenCentral()
@@ -15,5 +17,3 @@ dependencies {
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     testImplementation 'junit:junit:4.13.2'
 }
-
-compileKotlin.kotlinOptions.allWarningsAsErrors = true

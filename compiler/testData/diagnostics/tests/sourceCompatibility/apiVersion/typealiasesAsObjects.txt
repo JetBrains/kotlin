@@ -1,6 +1,6 @@
 package
 
-public val test1: [ERROR : Type for Since_1_1_Alias]
+public val test1: [Error type: Not found recorded type for Since_1_1_Alias]
 public val test2: kotlin.Int = 42
 
 @kotlin.SinceKotlin(version = "1.1") public object Since_1_1 {

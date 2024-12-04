@@ -12,4 +12,4 @@ Resulting descriptor: operator fun Int.invoke(): Unit defined in kotlin.Function
 
 Explicit receiver kind = DISPATCH_RECEIVER
 Dispatch receiver = f {[@kotlin.ExtensionFunctionType] Function1<Int, Unit>}
-Extension receiver = IntExt{fun Int.<anonymous>(): Unit defined in bar}
+Extension receiver = IntExt{fun Int.`<anonymous>`(): Unit defined in bar}

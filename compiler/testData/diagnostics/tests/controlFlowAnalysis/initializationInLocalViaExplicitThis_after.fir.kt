@@ -1,4 +1,5 @@
-// !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
 // See KT-17479
 
 class Test {
@@ -10,9 +11,9 @@ class Test {
 
         run {
             // Not sure do we need diagnostic also here
-            this@Test.str = "B"
+            this@Test.<!VAL_REASSIGNMENT!>str<!> = "B"
         }
 
-        str = "C"
+        <!VAL_REASSIGNMENT!>str<!> = "C"
     }
 }

@@ -1,5 +1,6 @@
-// !LANGUAGE: +UnitConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +UnitConversionsOnArbitraryExpressions
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun foo(f: () -> Unit) {}
 fun <T> fooGeneric(f: (T) -> Unit): T = TODO()
@@ -12,5 +13,5 @@ fun test(g: () -> String, h: (Float) -> String) {
     foo { "something" }
     foo(<!ARGUMENT_TYPE_MISMATCH!>g<!>)
 
-    fooGeneric(<!ARGUMENT_TYPE_MISMATCH!>h<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>fooGeneric<!>(<!ARGUMENT_TYPE_MISMATCH!>h<!>)
 }

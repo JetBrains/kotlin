@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 enum class TestOk(val x: String = "OK") {
     TEST1,
     TEST2(),
@@ -6,7 +7,7 @@ enum class TestOk(val x: String = "OK") {
 
 enum class TestErrors(val x: String) {
     <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>TEST1,<!>
-    TEST2(<!NO_VALUE_FOR_PARAMETER!>)<!>,
+    TEST2<!NO_VALUE_FOR_PARAMETER!>()<!>,
     TEST3("Hello")
 }
 

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 object A {
     val x : Int = 0
 }

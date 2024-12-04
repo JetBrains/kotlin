@@ -1,8 +1,8 @@
 import kotlin.collections.*
 
-const val a = listOf(1, 2, 3).<!EVALUATED: `3`!>size<!>
-const val b = emptyList<Int>().<!EVALUATED: `0`!>size<!>
-const val c = listOf<Int>().<!EVALUATED: `1`!>hashCode()<!>
+const val a = <!EVALUATED: `3`!>listOf(1, 2, 3).size<!>
+const val b = <!EVALUATED: `0`!>emptyList<Int>().size<!>
+const val c = <!EVALUATED: `1`!>listOf<Int>().hashCode()<!>
 
 @CompileTimeCalculation
 fun getSum(list: List<Int>): Int {

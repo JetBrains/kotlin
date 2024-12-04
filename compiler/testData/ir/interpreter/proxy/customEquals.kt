@@ -23,4 +23,4 @@ class B(val b: Int) {
     override fun toString(): String = "B($b)"
 }
 const val areEquals = <!EVALUATED: `true`!>listOf(B(1), B(2)) == listOf(B(1), B(2))<!>
-const val asString = listOf(B(1), B(2)).<!EVALUATED: `[B(1), B(2)]`!>toString()<!>
+const val asString = <!EVALUATED: `[B(1), B(2)]`!>listOf(B(1), B(2)).toString()<!>

@@ -1,5 +1,6 @@
-// !LANGUAGE: -ProhibitSuperCallsFromPublicInline
-// !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ProhibitSuperCallsFromPublicInline +QualifiedSupertypeMayBeExtendedByOtherSupertype
+// DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 // FILE: main.kt
 open class AndroidTargetConfigurator :
@@ -34,10 +35,10 @@ open class AndroidTargetConfigurator :
             }
 
             inline fun anonymousInline() {
-                super.classFun() + super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>ModuleConfiguratorWithTests<!>>.getConfiguratorSettings() + super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>AndroidModuleConfigurator<!>>.getConfiguratorSettings()
+                super.classFun() + super<ModuleConfiguratorWithTests>.getConfiguratorSettings() + super<AndroidModuleConfigurator>.getConfiguratorSettings()
             }
 
-            fun run() = super.classFun() + super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>ModuleConfiguratorWithTests<!>>.getConfiguratorSettings() + super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>AndroidModuleConfigurator<!>>.getConfiguratorSettings()
+            fun run() = super.classFun() + super<ModuleConfiguratorWithTests>.getConfiguratorSettings() + super<AndroidModuleConfigurator>.getConfiguratorSettings()
         }.run()
     }
 

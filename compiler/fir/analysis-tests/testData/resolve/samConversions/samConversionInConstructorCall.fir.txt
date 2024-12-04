@@ -1,7 +1,7 @@
 FILE: main.kt
     public final fun test(): R|kotlin/Unit| {
-        R|/Foo.Foo|(<L> = Foo@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <inline=NoInline>  {
+        R|/Foo.Foo|(<L> = SAM(Foo@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ R|<local>/it|
         }
-        )
+        ))
     }

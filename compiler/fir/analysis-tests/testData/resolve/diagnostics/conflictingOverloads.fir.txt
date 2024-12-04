@@ -30,16 +30,16 @@ FILE: conflictingOverloads.kt
             super<R|A|>()
         }
 
-        public final override fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
+        public open override fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        public final fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
+        public final override fun rest(s: R|kotlin/String|): R|kotlin/Unit| {
         }
 
         public final fun rest(l: R|kotlin/Long|): R|kotlin/Unit| {
         }
 
-        public final override val u: R|kotlin/Int| = Int(310)
+        public open override val u: R|kotlin/Int| = Int(310)
             public get(): R|kotlin/Int|
 
     }
@@ -56,11 +56,16 @@ FILE: conflictingOverloads.kt
         public final static fun valueOf(value: R|kotlin/String|): R|B| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<B>|
+            public get(): R|kotlin/enums/EnumEntries<B>|
+
     }
     public final val u: R|kotlin/Int| = Int(10)
         public get(): R|kotlin/Int|
     public final val u: R|kotlin/Int| = Int(20)
         public get(): R|kotlin/Int|
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
     public final typealias TA = R|A|
     public final typealias TA = R|B|
     public final typealias BA = R|A|

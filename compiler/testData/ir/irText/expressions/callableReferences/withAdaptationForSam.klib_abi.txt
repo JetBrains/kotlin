@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract fun interface /IFoo { // /IFoo|null[0]
+    abstract fun foo(kotlin/Int) // /IFoo.foo|foo(kotlin.Int){}[0]
+}
+final fun /test() // /test|test(){}[0]
+final fun /useFoo(/IFoo) // /useFoo|useFoo(IFoo){}[0]
+final fun /withVararg(kotlin/IntArray...): kotlin/Int // /withVararg|withVararg(kotlin.IntArray...){}[0]

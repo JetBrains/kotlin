@@ -1,6 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-// !ALLOW_RESULT_RETURN_TYPE
-// !LANGUAGE: -AllowNullOperatorsForResult
 
 fun result(): Result<Int> = TODO()
 val resultP: Result<Int> = result()

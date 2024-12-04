@@ -1,4 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// FIR_DIFFERENCE: KT-55234
 // FILE: 1.kt
 package k
 
@@ -20,23 +22,23 @@ fun all(a: String) {}
 
 // FILE: 2.kt
 
-import k.zero
+import k.<!INVISIBLE_REFERENCE!>zero<!>
 import k.one
 import k.two
 import k.all
 
 fun test() {
-    <!NONE_APPLICABLE!>zero<!>()
-    <!NONE_APPLICABLE!>zero<!>(1)
-    <!NONE_APPLICABLE!>zero<!>("")
+    <!INVISIBLE_REFERENCE!>zero<!>()
+    <!INVISIBLE_REFERENCE!>zero<!>(1)
+    <!INVISIBLE_REFERENCE!>zero<!>("")
 
     one()
-    one(<!TOO_MANY_ARGUMENTS!>1<!>)
-    one(<!TOO_MANY_ARGUMENTS!>""<!>)
+    <!INVISIBLE_REFERENCE!>one<!>(1)
+    <!INVISIBLE_REFERENCE!>one<!>("")
 
     two()
     two(1)
-    two(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
+    <!INVISIBLE_REFERENCE!>two<!>("")
 
     all()
     all(1)

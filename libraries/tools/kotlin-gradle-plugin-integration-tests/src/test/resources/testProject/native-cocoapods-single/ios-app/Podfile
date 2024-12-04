@@ -1,6 +1,6 @@
 <import_mode_directive>
 
-platform :ios, '9.0'
+platform :ios, '14.0'
 
 target 'ios-app' do
     pod 'pod_dependency', :path => '../pod_dependency'

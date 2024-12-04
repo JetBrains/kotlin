@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incremental
+package org.jetbrains.kotlin.kapt3.base.incremental
 
-import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
-import org.jetbrains.kotlin.kapt3.base.incremental.MentionedTypesTaskListener
-import org.junit.Assert.assertEquals
-import org.junit.BeforeClass
-import org.junit.ClassRule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.jetbrains.kotlin.kapt3.base.newCacheFolder
+import org.jetbrains.kotlin.kapt3.base.newFolder
+import org.jetbrains.kotlin.kapt3.base.newGeneratedSourcesFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 private val MY_TEST_DIR = File("plugins/kapt3/kapt3-base/testData/runner/incremental/constants")
@@ -19,21 +19,17 @@ private val MY_TEST_DIR = File("plugins/kapt3/kapt3-base/testData/runner/increme
 class ReferencedConstantsTest {
 
     companion object {
-        @ClassRule
-        @JvmField
-        var tmp = TemporaryFolder()
-
         private lateinit var cache: JavaClassCacheManager
         private lateinit var generatedSources: File
 
         @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            val compiledClasses = tmp.newFolder()
+        @BeforeAll
+        fun setUp(@TempDir tmp: File) {
+            val compiledClasses = tmp.newFolder("compiledClasses")
             compileSources(listOf(MY_TEST_DIR.resolve("CKlass.java")), compiledClasses)
 
-            cache = JavaClassCacheManager(tmp.newFolder())
-            generatedSources = tmp.newFolder()
+            cache = JavaClassCacheManager(tmp.newCacheFolder())
+            generatedSources = tmp.newGeneratedSourcesFolder()
             cache.close()
             val processor = SimpleProcessor().toAggregating()
             val srcFiles = listOf(
@@ -54,9 +50,9 @@ class ReferencedConstantsTest {
 
     @Test
     fun testConstantInField() {
-        val klassA = cache.javaCache.getStructure(MY_TEST_DIR.resolve("A.java"))!!
+        val klassA = cache.javaCache.getStructure(MY_TEST_DIR.resolve("A.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.A"), klassA.getDeclaredTypes())
+        assertEquals(setOf("test.A"), klassA.declaredTypes)
         assertEquals(emptySet<String>(), klassA.getMentionedAnnotations())
         assertEquals(emptySet<String>(), klassA.getPrivateTypes())
         assertEquals(setOf("test.A"), klassA.getMentionedTypes())
@@ -70,21 +66,20 @@ class ReferencedConstantsTest {
 
     @Test
     fun testConstantInDefaultValue() {
-        val annotationA = cache.javaCache.getStructure(MY_TEST_DIR.resolve("AnnotationA.java"))!!
+        val annotationA = cache.javaCache.getStructure(MY_TEST_DIR.resolve("AnnotationA.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.AnnotationA"), annotationA.getDeclaredTypes())
+        assertEquals(setOf("test.AnnotationA"), annotationA.declaredTypes)
         assertEquals(emptySet<String>(), annotationA.getMentionedAnnotations())
         assertEquals(emptySet<String>(), annotationA.getPrivateTypes())
         assertEquals(setOf("test.AnnotationA"), annotationA.getMentionedTypes())
-        assertEquals(mapOf("test.B" to setOf("INT_VALUE")), annotationA.getMentionedConstants()
-        )
+        assertEquals(mapOf("test.B" to setOf("INT_VALUE")), annotationA.getMentionedConstants())
     }
 
     @Test
     fun testConstantInAnnotationElementValue() {
-        val annotated = cache.javaCache.getStructure(MY_TEST_DIR.resolve("AnnotatedType.java"))!!
+        val annotated = cache.javaCache.getStructure(MY_TEST_DIR.resolve("AnnotatedType.java"))!! as SourceFileStructure
 
-        assertEquals(setOf("test.AnnotatedType"), annotated.getDeclaredTypes())
+        assertEquals(setOf("test.AnnotatedType"), annotated.declaredTypes)
         assertEquals(setOf("test.AnnotationA"), annotated.getMentionedAnnotations())
         assertEquals(emptySet<String>(), annotated.getPrivateTypes())
         assertEquals(setOf("test.AnnotatedType", "test.AnnotationA"), annotated.getMentionedTypes())

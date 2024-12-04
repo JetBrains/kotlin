@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.js.analyzer
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.ErrorUtils
 import java.io.File
 
 open class JsAnalysisResult(
@@ -30,10 +28,6 @@ open class JsAnalysisResult(
 ) : AnalysisResult(bindingTrace.bindingContext, moduleDescriptor, shouldGenerateCode) {
 
     companion object {
-        @JvmStatic fun success(trace: BindingTrace, module: ModuleDescriptor): JsAnalysisResult {
-            return JsAnalysisResult(trace, module, true)
-        }
-
         @JvmStatic fun success(trace: BindingTrace, module: ModuleDescriptor, shouldGenerateCode: Boolean): JsAnalysisResult {
             return JsAnalysisResult(trace, module, shouldGenerateCode)
         }

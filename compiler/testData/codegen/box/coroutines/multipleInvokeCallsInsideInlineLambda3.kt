@@ -86,7 +86,7 @@ fun box(): String {
                 result = "OK"
             }
         }
-    } ()
+    }.let { it() }
 
     return "OK"
 }

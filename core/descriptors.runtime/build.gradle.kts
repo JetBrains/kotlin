@@ -5,17 +5,7 @@ plugins {
     id("jps-compatible")
 }
 
-tasks
-    .matching { it.name == "compileKotlin" && it is KotlinCompile }
-    .configureEach {
-        (this as KotlinCompile).configureTaskToolchain(JdkMajorVersion.JDK_1_6)
-    }
-
-tasks
-    .matching { it.name == "compileJava" && it is JavaCompile }
-    .configureEach {
-        (this as JavaCompile).configureTaskToolchain(JdkMajorVersion.JDK_1_6)
-    }
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 dependencies {
     compileOnly(project(":core:util.runtime"))
@@ -25,9 +15,9 @@ dependencies {
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":generators:test-generator"))
 
-    testApi(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "idea_rt", rootProject = rootProject) }
-    testRuntimeOnly(jpsStandalone()) { includeJars("jps-model") }
+    testApi(intellijCore())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {

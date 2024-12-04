@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitContextReceiver
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
@@ -83,6 +84,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             typeAliasConstructor.initialize(
                 null,
                 underlyingConstructorDescriptor.dispatchReceiverParameter?.substitute(substitutorForUnderlyingClass),
+                underlyingConstructorDescriptor.contextReceiverParameters.map { it.substitute(substitutorForUnderlyingClass) },
                 typeAliasDescriptor.declaredTypeParameters,
                 valueParameters,
                 returnType,
@@ -202,9 +204,23 @@ class TypeAliasConstructorDescriptorImpl private constructor(
                 )
             }
 
+            val classDescriptor = typeAliasDescriptor.classDescriptor
+            val contextReceiverParameters = classDescriptor?.let {
+                constructor.contextReceiverParameters.mapIndexed { index, contextReceiver ->
+                    DescriptorFactory.createContextReceiverParameterForClass(
+                        classDescriptor,
+                        substitutorForUnderlyingClass.safeSubstitute(contextReceiver.type, Variance.INVARIANT),
+                        (contextReceiver.value as ImplicitContextReceiver).customLabelName,
+                        Annotations.EMPTY,
+                        index
+                    )
+                }
+            } ?: emptyList()
+
             typeAliasConstructor.initialize(
                 receiverParameter,
                 null,
+                contextReceiverParameters,
                 typeAliasDescriptor.declaredTypeParameters,
                 valueParameters,
                 returnType,

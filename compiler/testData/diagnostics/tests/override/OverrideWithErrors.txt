@@ -5,7 +5,7 @@ package test {
     public open class A {
         public constructor A()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open fun foo(/*0*/ a: [ERROR : E]): kotlin.Unit
+        public open fun foo(/*0*/ a: [Error type: Unresolved type for E]): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
@@ -13,7 +13,7 @@ package test {
     public final class B : test.A {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ fun foo(/*0*/ a: [ERROR : E]): kotlin.Unit
+        public open override /*1*/ fun foo(/*0*/ a: [Error type: Unresolved type for E]): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

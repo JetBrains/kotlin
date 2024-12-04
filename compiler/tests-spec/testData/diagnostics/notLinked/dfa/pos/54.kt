@@ -1,5 +1,5 @@
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
 
 /*
@@ -146,8 +146,9 @@ fun case_7() {
         var b = a
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String"), DEBUG_INFO_SMARTCAST!>b<!>.length
-        <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (true) {
+        when (true) {
             true -> b = a
+            else -> {}
         }
 
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>

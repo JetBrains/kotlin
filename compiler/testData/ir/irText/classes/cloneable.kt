@@ -1,4 +1,7 @@
-// SKIP_KLIB_TEST
+// FIR_IDENTICAL
+// TARGET_BACKEND: JVM
+// STATUS: Cloneable is JVM-specific API
+
 class A : Cloneable
 
 interface I : Cloneable

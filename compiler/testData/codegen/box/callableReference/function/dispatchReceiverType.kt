@@ -1,15 +1,13 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: IAE: tried to access class test.PX from class BoxKt$box$2
 // MODULE: lib
-// FILE: X.java
+// FILE: test/X.java
 package test;
 
 public class X extends PX {
     public X(String x) { super(x); }
 }
 
-// FILE: PX.java
+// FILE: test/PX.java
 package test;
 
 class PX {

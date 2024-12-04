@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.ALWAYS_SUITABLE_RECEIVER
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.lexer.KtKeywordToken
@@ -370,11 +371,16 @@ private class KJvmReplCompleter(
         private val inDescriptor: DeclarationDescriptor
     ) : (DeclarationDescriptor) -> Boolean {
         override fun invoke(descriptor: DeclarationDescriptor): Boolean {
-            if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
+            if (descriptor is TypeParameterDescriptor) return isTypeParameterVisible(descriptor)
 
             if (descriptor is DeclarationDescriptorWithVisibility) {
                 return try {
-                    descriptor.visibility.isVisible(null, descriptor, inDescriptor, useSpecialRulesForPrivateSealedConstructors = true)
+                    descriptor.visibility.isVisible(
+                        ALWAYS_SUITABLE_RECEIVER,
+                        descriptor,
+                        inDescriptor,
+                        useSpecialRulesForPrivateSealedConstructors = true,
+                    )
                 } catch (e: IllegalStateException) {
                     true
                 }

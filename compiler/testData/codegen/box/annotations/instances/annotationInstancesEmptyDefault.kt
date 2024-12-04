@@ -1,9 +1,8 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: WASM
-// DONT_TARGET_EXACT_BACKEND: JS
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 package test
 
@@ -21,9 +20,17 @@ annotation class C(
     val i: Int = 42,
     val b: B = B(),
     val kClass: KClass<*> = B::class,
+    val kClassArray: Array<KClass<*>> = [E::class, A::class],
     val e: E = E.B,
     val aS: Array<String> = arrayOf("a", "b"),
     val aI: IntArray = intArrayOf(1, 2)
+)
+
+annotation class EmptyDefaultArrays(
+    val kClassArray: Array<KClass<*>> = [],
+    val intArray: IntArray = [],
+    val stringArray: Array<String> = [],
+    val enumArray : Array<E> = []
 )
 
 annotation class Partial(
@@ -37,6 +44,7 @@ fun box(): String {
     assertEquals(42, c.i)
     assertEquals(A(), c.b.a)
     assertEquals(B::class, c.kClass)
+    assertEquals(2, c.kClassArray.size)
     assertEquals(E.B, c.e)
     assert(arrayOf("a", "b").contentEquals(c.aS))
     assert(intArrayOf(1, 2).contentEquals(c.aI))
@@ -44,5 +52,10 @@ fun box(): String {
     assertEquals(42, p.i)
     assertEquals("bar", p.s)
     assertEquals(E.B, p.e)
+    val eda = EmptyDefaultArrays()
+    assertEquals(0, eda.intArray.size)
+    assertEquals(0, eda.kClassArray.size)
+    assertEquals(0, eda.stringArray.size)
+    assertEquals(0, eda.enumArray.size)
     return "OK"
 }

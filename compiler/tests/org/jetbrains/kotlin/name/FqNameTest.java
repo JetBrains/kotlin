@@ -28,7 +28,7 @@ public class FqNameTest {
     public void pathSegments() {
         Assert.assertEquals(new ArrayList<Name>(), new FqName("").pathSegments());
 
-        for (String name : new String[] { "org", "org.jetbrains", "org.jetbrains.kotlin" }) {
+        for (String name : new String[] {"org", "org.jetbrains", "org.jetbrains.kotlin"}) {
             List<Name> segments = new FqName(name).pathSegments();
             List<String> segmentsStrings = new ArrayList<>();
             for (Name segment : segments) {
@@ -54,12 +54,19 @@ public class FqNameTest {
     public void isValidJavaFqName() {
         Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName(""));
         Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("a"));
-        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("1"));
+        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("a1"));
         Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("a.a"));
         Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("org.jetbrains"));
         Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("$"));
+        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("_"));
         Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("org.A$B"));
+        Assert.assertTrue(FqNamesUtilKt.isValidJavaFqName("晴れの日"));
 
+        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName(" "));
+        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName(" a"));
+        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a "));
+        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("1"));
+        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("1a"));
         Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("."));
         Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName(".."));
         Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a."));
@@ -69,5 +76,6 @@ public class FqNameTest {
         Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b."));
         Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b...)"));
         Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("a.b.<special>"));
+        Assert.assertFalse(FqNamesUtilKt.isValidJavaFqName("😀"));
     }
 }

@@ -23,23 +23,23 @@ data class CommonizerParameters(
     val storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS,
     val statsCollector: StatsCollector? = null,
     val logger: Logger? = null,
+    val settings: CommonizerSettings,
 )
 
 internal fun CommonizerParameters.dependencyClassifiers(target: CommonizerTarget): CirProvidedClassifiers {
-    val targetModulesProvider = targetProviders.getOrNull(target)?.modulesProvider
     val dependenciesModulesProvider = dependenciesProvider[target]
 
-    val providedByTarget = if (targetModulesProvider != null)
-        CirProvidedClassifiersByModules.loadExportedForwardDeclarations(targetModulesProvider) else null
+    val exportedForwardDeclarations = target.withAllLeaves()
+        .mapNotNull { targetOrLeaf -> targetProviders.getOrNull(targetOrLeaf)?.modulesProvider }
+        .plus(listOfNotNull(dependenciesModulesProvider))
+        .let { modulesProviders -> CirProvidedClassifiersByModules.loadExportedForwardDeclarations(modulesProviders) }
 
     val providedByDependencies = if (dependenciesModulesProvider != null)
-        CirProvidedClassifiers.of(
-            CirProvidedClassifiersByModules.load(dependenciesModulesProvider),
-            CirProvidedClassifiersByModules.loadExportedForwardDeclarations(dependenciesModulesProvider)
-        ) else null
+        CirProvidedClassifiersByModules.load(dependenciesModulesProvider)
+    else null
 
 
     return CirProvidedClassifiers.of(
-        *listOfNotNull(CirFictitiousFunctionClassifiers, providedByTarget, providedByDependencies).toTypedArray()
+        *listOfNotNull(CirFictitiousFunctionClassifiers, exportedForwardDeclarations, providedByDependencies).toTypedArray()
     )
 }

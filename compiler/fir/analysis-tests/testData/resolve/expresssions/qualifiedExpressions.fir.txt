@@ -42,6 +42,9 @@ FILE: qualifiedExpressions.kt
         public final static fun valueOf(value: R|kotlin/String|): R|a/b/E| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<a/b/E>|
+            public get(): R|kotlin/enums/EnumEntries<a/b/E>|
+
     }
     public final fun foo(): R|kotlin/Unit| {
     }

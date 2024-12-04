@@ -1,11 +1,12 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 annotation class Ann(val value: String)
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class C<T>(val x: String)
 
 @Ann("OK")

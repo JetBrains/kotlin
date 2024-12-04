@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 import A.foo
 import A.bar
 import A.fooExt

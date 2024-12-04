@@ -1,87 +1,123 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
-import org.jetbrains.kotlin.allopen.AbstractIrBytecodeListingTestForAllOpen
-import org.jetbrains.kotlin.android.parcel.AbstractParcelBoxTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBoxTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBytecodeListingTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
-import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.fir.plugin.runners.AbstractAllOpenBlackBoxCodegenTest
-import org.jetbrains.kotlin.fir.plugin.runners.AbstractFir2IrAllOpenTest
-import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirAllOpenDiagnosticTest
-import org.jetbrains.kotlin.generators.TestGroup
+import org.jetbrains.kotlin.allopen.*
+import org.jetbrains.kotlin.assignment.plugin.AbstractAssignmentPluginDiagnosticTest
+import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin
+import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
+import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
+import org.jetbrains.kotlin.compiler.plugins.AbstractPluginInteractionFirBlackBoxCodegenTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
+import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.WITH_JAVA
+import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.incrementalJvmTestData
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.jvm.abi.*
+import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
+import org.jetbrains.kotlin.jvm.abi.AbstractCompileAgainstJvmAbiTest
+import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
+import org.jetbrains.kotlin.kapt.cli.test.AbstractKapt4ToolIntegrationTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
-import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
-import org.jetbrains.kotlin.kapt3.test.AbstractIrClassFileToSourceStubConverterTest
-import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
-import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
-import org.jetbrains.kotlin.lombok.AbstractLombokCompileTest
+import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrKotlinKaptContextTest
+import org.jetbrains.kotlin.kapt3.test.runners.AbstractKaptStubConverterTest
+import org.jetbrains.kotlin.kapt4.AbstractFirKaptStubConverterTest
+import org.jetbrains.kotlin.lombok.AbstractDiagnosticTestForLombok
+import org.jetbrains.kotlin.lombok.AbstractFirLightTreeBlackBoxCodegenTestForLombok
+import org.jetbrains.kotlin.lombok.AbstractFirPsiDiagnosticTestForLombok
+import org.jetbrains.kotlin.lombok.AbstractIrBlackBoxCodegenTestForLombok
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
-import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
-import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
+import org.jetbrains.kotlin.plugin.sandbox.AbstractFirLightTreePluginBlackBoxCodegenTest
+import org.jetbrains.kotlin.plugin.sandbox.AbstractFirLoadK2CompiledWithPluginJsKotlinTest
+import org.jetbrains.kotlin.plugin.sandbox.AbstractFirLoadK2CompiledWithPluginJvmKotlinTest
+import org.jetbrains.kotlin.plugin.sandbox.AbstractFirPsiPluginDiagnosticTest
+import org.jetbrains.kotlin.powerassert.AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert
+import org.jetbrains.kotlin.powerassert.AbstractIrBlackBoxCodegenTestForPowerAssert
+import org.jetbrains.kotlin.samWithReceiver.*
+import org.jetbrains.kotlin.scripting.test.AbstractReplWithCustomDefDiagnosticsTestBase
+import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefBlackBoxCodegenTest
+import org.jetbrains.kotlin.scripting.test.AbstractScriptWithCustomDefDiagnosticsTestBase
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
-import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
-import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
+import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
+import org.jetbrains.kotlinx.atomicfu.runners.*
+
+private class ExcludePattern {
+    companion object {
+        private const val MEMBER_ALIAS = "(^removeMemberTypeAlias)|(^addMemberTypeAlias)"
+
+        private const val ALL_EXPECT = "(^.*Expect.*)"
+
+        internal val forK2 = listOf(
+            ALL_EXPECT, // KT-63125 - Partially related to single-module expect-actual tests, but regexp is really wide
+            MEMBER_ALIAS, // KT-55195 - Invalid for K2
+        ).joinToString("|")
+    }
+}
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
-        testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
-            fun incrementalJvmTestData(targetBackend: TargetBackend): TestGroup.TestClass.() -> Unit = {
-                model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = targetBackend)
-                model("incremental/classHierarchyAffected", extension = null, recursive = false, targetBackend = targetBackend)
-                model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
-                model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
-                model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
-            }
-            testClass<AbstractIncrementalJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR))
-            testClass<AbstractIncrementalJvmOldBackendCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM))
-            testClass<AbstractIncrementalFirJvmCompilerRunnerTest>(init = incrementalJvmTestData(TargetBackend.JVM_IR))
+        testGroup("compiler/incremental-compilation-impl/test", "jps/jps-plugin/testData") {
+            testClass<AbstractIncrementalK1JvmCompilerRunnerTest>(
+                init = incrementalJvmTestData(
+                    targetBackend = TargetBackend.JVM_IR,
+                    folderToExcludePatternMap = mapOf(
+                        PURE_KOTLIN to ".*SinceK2",
+                        WITH_JAVA to "(^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature)" // KT-56681
+                    )
+                )
+            )
 
-            testClass<AbstractIncrementalJsCompilerRunnerTest> {
-                model("incremental/pureKotlin", extension = null, recursive = false)
-                model("incremental/classHierarchyAffected", extension = null, recursive = false)
-                model("incremental/js", extension = null, excludeParentDirs = true)
-            }
+            // K2
+            testClass<AbstractIncrementalK2JvmCompilerRunnerTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    folderToExcludePatternMap = mapOf(
+                        PURE_KOTLIN to ExcludePattern.forK2
+                    )
+                )
+            )
 
-            testClass<AbstractIncrementalJsKlibCompilerRunnerTest>() {
+            testClass<AbstractIncrementalK2FirICJvmCompilerRunnerTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    folderToExcludePatternMap = mapOf(
+                        PURE_KOTLIN to ExcludePattern.forK2,
+                        WITH_JAVA to "^classToPackageFacade" // KT-56698
+                    )
+                )
+            )
+            testClass<AbstractIncrementalK2PsiJvmCompilerRunnerTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    folderToExcludePatternMap = mapOf(
+                        PURE_KOTLIN to ExcludePattern.forK2
+                    )
+                )
+            )
+
+            testClass<AbstractIncrementalK1JsKlibCompilerRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
-                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^sealed.*")
+                model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalMultiModuleJsCompilerRunnerTest> {
+            testClass<AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest> {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest> {
+            testClass<AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest> {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalJsCompilerRunnerWithMetadataOnlyTest> {
-                model("incremental/pureKotlin", extension = null, recursive = false)
-                model("incremental/classHierarchyAffected", extension = null, recursive = false)
-                model("incremental/js", extension = null, excludeParentDirs = true)
-            }
-
-            testClass<AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest> {
+            testClass<AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
                 model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^sealed.*")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
@@ -89,287 +125,89 @@ fun main(args: Array<String>) {
                 model("incremental/scopeExpansion", extension = null, excludeParentDirs = true)
             }
 
-            testClass<AbstractIncrementalJsCompilerRunnerWithFriendModulesDisabledTest> {
+            // TODO: https://youtrack.jetbrains.com/issue/KT-61602/JS-K2-ICL-Fix-muted-tests
+            testClass<AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest> {
+                // IC of sealed interfaces are not supported in JS
+                model(
+                    "incremental/pureKotlin", extension = null, recursive = false,
+                    // TODO: 'fileWithConstantRemoved' should be fixed in https://youtrack.jetbrains.com/issue/KT-58824
+                    excludedPattern = "^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)"
+                )
+                model(
+                    "incremental/classHierarchyAffected", extension = null, recursive = false,
+                    excludedPattern = "secondaryConstructorAdded"
+                )
+                model("incremental/js", extension = null, excludeParentDirs = true)
+            }
+
+            testClass<AbstractIncrementalK1JsKlibCompilerRunnerWithFriendModulesDisabledTest> {
                 model("incremental/js/friendsModuleDisabled", extension = null, recursive = false)
             }
 
             testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
-                model("incremental/mpp/jvmOnly", extension = null, excludeParentDirs = true)
+                model("incremental/mpp/jvmOnlyK1", extension = null, excludeParentDirs = true)
             }
-            testClass<AbstractIncrementalMultiplatformJsCompilerRunnerTest> {
+            testClass<AbstractIncrementalK1JsKlibMultiplatformJsCompilerRunnerTest> {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
             }
-        }
-
-        testGroup(
-            "plugins/android-extensions/android-extensions-compiler/test",
-            "plugins/android-extensions/android-extensions-compiler/testData"
-        ) {
-            testClass<AbstractAndroidSyntheticPropertyDescriptorTest> {
-                model("descriptors", recursive = false, extension = null)
-            }
-
-            testClass<AbstractAndroidBoxTest> {
-                model("codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest")
-                model("codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke")
-            }
-
-            testClass<AbstractAndroidIrBoxTest> {
-                model(
-                    "codegen/android", recursive = false, extension = null, testMethod = "doCompileAgainstAndroidSdkTest",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-                model(
-                    "codegen/android", recursive = false, extension = null, testMethod = "doFakeInvocationTest", testClassName = "Invoke",
-                    targetBackend = TargetBackend.JVM_IR
-                )
-            }
-
-            testClass<AbstractAndroidBytecodeShapeTest> {
-                model("codegen/bytecodeShape", recursive = false, extension = null)
-            }
-
-            testClass<AbstractParcelBoxTest> {
-                model("parcel/box", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelIrBoxTest> {
-                model("parcel/box", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractParcelBytecodeListingTest> {
-                model("parcel/codegen", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelIrBytecodeListingTest> {
-                model("parcel/codegen", targetBackend = TargetBackend.JVM_IR)
-            }
+            //TODO: write a proper k2 multiplatform test runner KT-63183
         }
 
         testGroup("plugins/jvm-abi-gen/test", "plugins/jvm-abi-gen/testData") {
             testClass<AbstractCompareJvmAbiTest> {
-                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractJvmAbiContentTest> {
-                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractCompileAgainstJvmAbiTest> {
-                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractIrCompareJvmAbiTest> {
                 model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrJvmAbiContentTest> {
+            testClass<AbstractJvmAbiContentTest> {
                 model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractIrCompileAgainstJvmAbiTest> {
+            testClass<AbstractCompileAgainstJvmAbiTest> {
                 model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
             }
         }
 
-        testGroup(
-            "plugins/jvm-abi-gen/test", "plugins/jvm-abi-gen/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_LEGACY: \"")
-        ) {
-            testClass<AbstractLegacyCompareJvmAbiTest> {
-                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractLegacyJvmAbiContentTest> {
-                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractLegacyCompileAgainstJvmAbiTest> {
-                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
-            }
-        }
-
-        testGroup("plugins/kapt3/kapt3-compiler/test", "plugins/kapt3/kapt3-compiler/testData") {
-            testClass<AbstractClassFileToSourceStubConverterTest> {
-                model("converter")
-            }
-
-            testClass<AbstractKotlinKaptContextTest> {
-                model("kotlinRunner")
-            }
-
-            testClass<AbstractIrClassFileToSourceStubConverterTest> {
-                model("converter", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractIrKotlinKaptContextTest> {
-                model("kotlinRunner", targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
-        testGroup("plugins/kapt3/kapt3-cli/test", "plugins/kapt3/kapt3-cli/testData") {
-            testClass<AbstractArgumentParsingTest> {
-                model("argumentParsing", extension = "txt")
-            }
-
-            testClass<AbstractKaptToolIntegrationTest> {
-                model("integration", recursive = false, extension = null)
-            }
-        }
-
-        testGroup("plugins/allopen/allopen-cli/test", "plugins/allopen/allopen-cli/testData") {
-            testClass<AbstractBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", extension = "kt")
-            }
-            testClass<AbstractIrBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", extension = "kt")
-            }
-        }
-
-        testGroup("plugins/noarg/noarg-cli/test", "plugins/noarg/noarg-cli/testData") {
-            testClass<AbstractDiagnosticsTestForNoArg> { model("diagnostics", extension = "kt") }
-
-            testClass<AbstractBytecodeListingTestForNoArg> {
-                model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM)
-            }
-            testClass<AbstractIrBytecodeListingTestForNoArg> {
-                model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM) }
-            testClass<AbstractIrBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM_IR) }
-        }
-
-        testGroup("plugins/sam-with-receiver/sam-with-receiver-cli/test", "plugins/sam-with-receiver/sam-with-receiver-cli/testData") {
-            testClass<AbstractSamWithReceiverTest> {
-                model("diagnostics")
-            }
+        testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
             testClass<AbstractSamWithReceiverScriptTest> {
+                model("script", extension = "kts")
+            }
+
+            testClass<AbstractSamWithReceiverScriptNewDefTest> {
                 model("script", extension = "kts")
             }
         }
 
-        testGroup(
-            "plugins/kotlin-serialization/kotlin-serialization-compiler/test",
-            "plugins/kotlin-serialization/kotlin-serialization-compiler/testData"
-        ) {
-            testClass<AbstractSerializationPluginDiagnosticTest> {
-                model("diagnostics")
-            }
-
-            testClass<AbstractSerializationPluginBytecodeListingTest> {
-                model("codegen")
-            }
-
-            testClass<AbstractSerializationIrBytecodeListingTest> {
-                model("codegen")
+        testGroup("plugins/plugin-sandbox/plugin-sandbox-ic-test/tests-gen", "plugins/plugin-sandbox/plugin-sandbox-ic-test/testData") {
+            testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
+                model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
         }
 
-        testGroup("plugins/lombok/lombok-compiler-plugin/tests", "plugins/lombok/lombok-compiler-plugin/testData") {
-            testClass<AbstractLombokCompileTest> {
-                model("compile")
+        testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData/") {
+            testClass<AbstractIncrementalK2JVMWithAtomicfuRunnerTest> {
+                model("projects/", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
         }
-/*
-    testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
-        testClass<AbstractAndroidCompletionTest> {
-            model("android/completion", recursive = false, extension = null)
-        }
-
-        testClass<AbstractAndroidGotoTest> {
-            model("android/goto", recursive = false, extension = null)
-        }
-
-        testClass<AbstractAndroidRenameTest> {
-            model("android/rename", recursive = false, extension = null)
-        }
-
-        testClass<AbstractAndroidLayoutRenameTest> {
-            model("android/renameLayout", recursive = false, extension = null)
-        }
-
-        testClass<AbstractAndroidFindUsagesTest> {
-            model("android/findUsages", recursive = false, extension = null)
-        }
-
-        testClass<AbstractAndroidUsageHighlightingTest> {
-            model("android/usageHighlighting", recursive = false, extension = null)
-        }
-
-        testClass<AbstractAndroidExtractionTest> {
-            model("android/extraction", recursive = false, extension = null)
-        }
-
-        testClass<AbstractParcelCheckerTest> {
-            model("android/parcel/checker", excludeParentDirs = true)
-        }
-
-        testClass<AbstractParcelQuickFixTest> {
-            model("android/parcel/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
-        }
-    }
-
-    testGroup("idea/idea-android/tests", "idea/testData") {
-        testClass<AbstractConfigureProjectTest> {
-            model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
-            model("configuration/android-gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestAndroidGradle")
-        }
-
-        testClass<AbstractAndroidIntentionTest> {
-            model("android/intention", pattern = "^([\\w\\-_]+)\\.kt$")
-        }
-
-        testClass<AbstractAndroidResourceIntentionTest> {
-            model("android/resourceIntention", extension = "test", singleClass = true)
-        }
-
-        testClass<AbstractAndroidQuickFixMultiFileTest> {
-            model("android/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
-        }
-
-        testClass<AbstractKotlinLintTest> {
-            model("android/lint", excludeParentDirs = true)
-        }
-
-        testClass<AbstractAndroidLintQuickfixTest> {
-            model("android/lintQuickfix", pattern = "^([\\w\\-_]+)\\.kt$")
-        }
-
-        testClass<AbstractAndroidResourceFoldingTest> {
-            model("android/folding")
-        }
-
-        testClass<AbstractAndroidGutterIconTest> {
-            model("android/gutterIcon")
-        }
-    }
-*/
     }
 
     generateTestGroupSuiteWithJUnit5 {
-        val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+        val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
 
         testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
-            testClass<AbstractParcelizeBoxTest> {
-                model("box")
-            }
-
             testClass<AbstractParcelizeIrBoxTest> {
                 model("box")
             }
 
-            testClass<AbstractParcelizeFirBoxTest> {
+            testClass<AbstractParcelizeFirLightTreeBoxTest> {
                 model("box")
             }
 
-            testClass<AbstractParcelizeBytecodeListingTest> {
+            testClass<AbstractParcelizeIrBytecodeListingTest> {
                 model("codegen")
             }
 
-            testClass<AbstractParcelizeIrBytecodeListingTest> {
+            testClass<AbstractFirParcelizeBytecodeListingTest> {
                 model("codegen")
             }
 
@@ -377,22 +215,202 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
 
-            testClass<AbstractFirParcelizeDiagnosticTest> {
+            testClass<AbstractFirPsiParcelizeDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
         }
 
-        testGroup("plugins/fir/fir-plugin-prototype/tests-gen", "plugins/fir/fir-plugin-prototype/testData") {
-            testClass<AbstractFirAllOpenDiagnosticTest> {
+        testGroup("plugins/plugin-sandbox/tests-gen", "plugins/plugin-sandbox/testData") {
+            testClass<AbstractFirPsiPluginDiagnosticTest> {
                 model("diagnostics")
             }
 
-            testClass<AbstractFir2IrAllOpenTest> {
-                model("fir2ir")
+            testClass<AbstractFirLightTreePluginBlackBoxCodegenTest> {
+                model("box")
             }
 
-            testClass<AbstractAllOpenBlackBoxCodegenTest> {
+            testClass<AbstractFirLoadK2CompiledWithPluginJvmKotlinTest> {
+                model("firLoadK2Compiled")
+            }
+
+            testClass<AbstractFirLoadK2CompiledWithPluginJsKotlinTest> {
+                model("firLoadK2Compiled")
+            }
+        }
+
+        testGroup(
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
+            "plugins/atomicfu/atomicfu-compiler/testData",
+            testRunnerMethodName = "runTest0"
+        ) {
+            testClass<AbstractAtomicfuJsIrTest> {
+                model("box/")
+            }
+
+            testClass<AbstractAtomicfuJsFirTest> {
+                model("box/")
+            }
+        }
+
+        testGroup(
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
+            "plugins/atomicfu/atomicfu-compiler/testData",
+            testRunnerMethodName = "runTest0"
+        ) {
+            testClass<AbstractAtomicfuFirCheckerTest> {
+                model("diagnostics/")
+            }
+
+            testClass<AbstractAtomicfuJvmIrTest> {
+                model("box/")
+            }
+
+            testClass<AbstractAtomicfuJvmFirLightTreeTest> {
+                model("box/")
+            }
+        }
+
+        testGroup("plugins/allopen/tests-gen", "plugins/allopen/testData") {
+            testClass<AbstractIrBytecodeListingTestForAllOpen> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirPsiBytecodeListingTestForAllOpen> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractDiagnosticTestForAllOpenBase> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirLightTreeDiagnosticTestForAllOpen> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirPsiDiagnosticTestForAllOpen> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/noarg/tests-gen", "plugins/noarg/testData") {
+            testClass<AbstractDiagnosticsTestForNoArg> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirPsiDiagnosticsTestForNoArg> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractIrBytecodeListingTestForNoArg> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirLightTreeBytecodeListingTestForNoArg> {
+                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractIrBlackBoxCodegenTestForNoArg> {
                 model("box")
+            }
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForNoArg> {
+                model("box")
+            }
+        }
+
+        testGroup("plugins/lombok/tests-gen", "plugins/lombok/testData") {
+            testClass<AbstractIrBlackBoxCodegenTestForLombok> {
+                model("box")
+            }
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForLombok> {
+                model("box")
+            }
+            testClass<AbstractDiagnosticTestForLombok> {
+                model("diagnostics/k1+k2", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirPsiDiagnosticTestForLombok> {
+                model("diagnostics")
+            }
+        }
+
+        testGroup("plugins/power-assert/tests-gen", "plugins/power-assert/testData") {
+            testClass<AbstractIrBlackBoxCodegenTestForPowerAssert> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForPowerAssert> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
+            testClass<AbstractSamWithReceiverTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirPsiSamWithReceiverDiagnosticTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractIrBlackBoxCodegenTestForSamWithReceiver> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/kapt3/kapt3-cli/tests-gen", "plugins/kapt3/kapt3-cli/testData") {
+            testClass<AbstractArgumentParsingTest> {
+                model("argumentParsing", extension = "txt")
+            }
+            testClass<AbstractKaptToolIntegrationTest> {
+                model("integration", recursive = false, extension = null)
+            }
+            testClass<AbstractKapt4ToolIntegrationTest> {
+                model("integration-kapt4", recursive = false, extension = null)
+            }
+        }
+
+        testGroup("plugins/kapt3/kapt3-compiler/tests-gen", "plugins/kapt3/kapt3-compiler/testData") {
+            testClass<AbstractIrKotlinKaptContextTest> {
+                model("kotlinRunner")
+            }
+            testClass<AbstractKaptStubConverterTest> {
+                model("converter")
+            }
+        }
+
+        testGroup("plugins/kapt4/tests-gen", "plugins/kapt3/kapt3-compiler/testData") {
+            testClass<AbstractFirKaptStubConverterTest> {
+                model("converter")
+            }
+        }
+
+        testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
+            testClass<AbstractScriptWithCustomDefDiagnosticsTestBase> {
+                model("testData/diagnostics/testScripts", extension = "kts")
+            }
+        }
+
+        testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
+            testClass<AbstractScriptWithCustomDefBlackBoxCodegenTest> {
+                model("testData/codegen/testScripts", extension = "kts")
+            }
+        }
+
+        testGroup("plugins/scripting/scripting-tests/tests-gen", "plugins/scripting/scripting-tests") {
+            testClass<AbstractReplWithCustomDefDiagnosticsTestBase> {
+                model("testData/diagnostics/repl", extension = "kts")
+            }
+        }
+
+        testGroup("plugins/assign-plugin/tests-gen", "plugins/assign-plugin/testData") {
+            testClass<AbstractAssignmentPluginDiagnosticTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirPsiAssignmentPluginDiagnosticTest> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractIrBlackBoxCodegenTestAssignmentPlugin> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin> {
+                model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/plugins-interactions-testing/tests-gen", "plugins/plugins-interactions-testing/testData") {
+            testClass<AbstractPluginInteractionFirBlackBoxCodegenTest> {
+                model("box", excludedPattern = excludedFirTestdataPattern)
             }
         }
     }

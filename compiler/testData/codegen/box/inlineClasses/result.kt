@@ -1,13 +1,16 @@
-// IGNORE_BACKEND: WASM
+// TARGET_BACKEND: JVM
+// In this test, stdlib class `public value class Result<out T>` within `kotlin` package is replaced with a custom non-generic class
+
 // IGNORE_BACKEND: ANDROID
-// IGNORE_BACKEND: NATIVE
 // ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 // FILE: result.kt
 package kotlin
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Result(val value: Any?)
 
 // FILE: box.kt

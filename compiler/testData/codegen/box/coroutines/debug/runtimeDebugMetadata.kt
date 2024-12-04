@@ -3,6 +3,7 @@
 // WITH_STDLIB
 // FULL_JDK
 // WITH_COROUTINES
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
 package test
@@ -47,14 +48,14 @@ fun box(): String {
     builder {
         res = named()
     }
-    if (res != Pair("runtimeDebugMetadata.kt", 33)) {
+    if (res != Pair("runtimeDebugMetadata.kt", 34)) {
         return "" + res
     }
     builder {
         dummy()
         res = getSourceFileAndLineNumberFromContinuation()
     }
-    if (res != Pair("runtimeDebugMetadata.kt", 55)) {
+    if (res != Pair("runtimeDebugMetadata.kt", 56)) {
         return "" + res
     }
 
@@ -62,7 +63,7 @@ fun box(): String {
         suspended()
     }
     res = (continuation!! as BaseContinuationImpl).getSourceFileAndLineNumber()
-    if (res != Pair("runtimeDebugMetadata.kt", 38)) {
+    if (res != Pair("runtimeDebugMetadata.kt", 39)) {
         return "" + res
     }
     return "OK"

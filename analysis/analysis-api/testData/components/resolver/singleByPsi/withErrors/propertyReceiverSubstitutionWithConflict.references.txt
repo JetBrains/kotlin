@@ -1,0 +1,3 @@
+KtNameReferenceExpression(118,119): 'f'
+  KtSimpleNameReference:
+    f: Foo<kotlin.String>

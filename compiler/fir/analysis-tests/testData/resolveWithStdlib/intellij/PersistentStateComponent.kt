@@ -1,3 +1,5 @@
+// RUN_PIPELINE_TILL: BACKEND
+// DISABLE_JAVA_FACADE
 // FILE: ComponentSerializationUtil.java
 
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +22,7 @@ fun <T> deserializeAndLoadState(
 ) {}
 
 fun use(beforeRunTask: BeforeRunTask<*>) {
-    if (beforeRunTask is PersistentStateComponent<*>) {
+    if (<!USELESS_IS_CHECK!>beforeRunTask is PersistentStateComponent<*><!>) {
         deserializeAndLoadState(beforeRunTask)
     }
 }

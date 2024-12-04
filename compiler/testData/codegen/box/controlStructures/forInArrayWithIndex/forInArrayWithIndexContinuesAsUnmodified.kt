@@ -1,5 +1,4 @@
 // See https://youtrack.jetbrains.com/issue/KT-22424
-// IGNORE_BACKEND: JS
 // WITH_STDLIB
 
 fun testUnoptimized(): String {

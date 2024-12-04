@@ -104,7 +104,7 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
 
         val extensionSignature = FlatSignature.createForPossiblyShadowedExtension(extension)
         val memberSignature = FlatSignature.createFromCallableDescriptor(member)
-        return isSignatureNotLessSpecific(extensionSignature, memberSignature)
+        return isSignatureEquallyOrMoreSpecific(extensionSignature, memberSignature)
     }
 
     private fun getInvokeOperatorShadowingExtensionFunction(
@@ -114,11 +114,11 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
         member.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
             .firstOrNull { it.isPublic() && it.isOperator && isExtensionFunctionShadowedByMemberFunction(extension, it) }
 
-    private fun isSignatureNotLessSpecific(
+    private fun isSignatureEquallyOrMoreSpecific(
         extensionSignature: FlatSignature<FunctionDescriptor>,
         memberSignature: FlatSignature<FunctionDescriptor>
     ): Boolean =
-        ConstraintSystemBuilderImpl.forSpecificity().isSignatureNotLessSpecific(
+        ConstraintSystemBuilderImpl.forSpecificity().isSignatureEquallyOrMoreSpecific(
             extensionSignature,
             memberSignature,
             OverloadabilitySpecificityCallbacks,

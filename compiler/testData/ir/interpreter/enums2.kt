@@ -15,15 +15,15 @@ enum class Color(val rgb: Int) {
     fun getColorAsInt(): Int = rgb
 }
 
-const val a1 = Empty.values().<!EVALUATED: `0`!>size<!>
-const val a2 = enumValues<Empty>().<!EVALUATED: `0`!>size<!>
+const val a1 = <!EVALUATED: `0`!>Empty.values().size<!>
+const val a2 = <!EVALUATED: `0`!>enumValues<Empty>().size<!>
 
-const val b1 = Color.BLACK.<!EVALUATED: `BLACK`!>name<!>
-const val b2 = Color.BLACK.<!EVALUATED: `0x000000`!>getColorAsString()<!>
-const val b3 = Color.RED.<!EVALUATED: `0xFF0000`!>getColorAsString()<!>
+const val b1 = <!EVALUATED: `BLACK`!>Color.BLACK.name<!>
+const val b2 = <!EVALUATED: `0x000000`!>Color.BLACK.getColorAsString()<!>
+const val b3 = <!EVALUATED: `0xFF0000`!>Color.RED.getColorAsString()<!>
 
-const val c1 = Color.BLACK.<!EVALUATED: `0`!>getColorAsInt()<!>
-const val c2 = Color.RED.<!EVALUATED: `16711680`!>getColorAsInt()<!>
+const val c1 = <!EVALUATED: `0`!>Color.BLACK.getColorAsInt()<!>
+const val c2 = <!EVALUATED: `16711680`!>Color.RED.getColorAsInt()<!>
 
 @CompileTimeCalculation
 enum class EnumWithoutPrimary {
@@ -37,5 +37,5 @@ enum class EnumWithoutPrimary {
     }
 }
 
-const val d1 = EnumWithoutPrimary.X.<!EVALUATED: `0`!>someProp<!>
-const val d2 = EnumWithoutPrimary.Y.<!EVALUATED: `10`!>someProp<!>
+const val d1 = <!EVALUATED: `0`!>EnumWithoutPrimary.X.someProp<!>
+const val d2 = <!EVALUATED: `10`!>EnumWithoutPrimary.Y.someProp<!>

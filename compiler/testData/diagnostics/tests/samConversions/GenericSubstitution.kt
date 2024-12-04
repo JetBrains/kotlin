@@ -1,6 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +NewInference +SamConversionPerArgument
-// !CHECK_TYPE
+// LANGUAGE: +SamConversionPerArgument
+// CHECK_TYPE
 // FILE: J.java
 public interface J<T> {
     void f_t(F<T> f1, F<T> f2);

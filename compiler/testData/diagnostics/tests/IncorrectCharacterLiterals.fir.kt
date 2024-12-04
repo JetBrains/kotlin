@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // http://youtrack.jetbrains.net/issue/KT-451
 // KT-451 Incorrect character literals cause assertion failures
 

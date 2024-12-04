@@ -37,11 +37,10 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.deserialization.SuspendFunctionTypeUtilKt;
-import org.jetbrains.kotlin.types.CommonSupertypes;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.error.ErrorTypeKind;
+import org.jetbrains.kotlin.types.error.ErrorUtils;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
@@ -60,9 +59,6 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingServices.ge
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 
 public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
-
-    private static final String RETURN_NOT_ALLOWED_MESSAGE = "Return not allowed";
-
     protected ControlStructureTypingVisitor(@NotNull ExpressionTypingInternals facade) {
         super(facade);
     }
@@ -111,7 +107,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
                     elseBranch, elseScope, elseInfo, thenInfo, context, ifExpression);
         }
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(ifExpression, false);
+        KtPsiFactory psiFactory = new KtPsiFactory(ifExpression.getProject(), false);
         KtBlockExpression thenBlock = psiFactory.wrapInABlockWrapper(thenBranch);
         KtBlockExpression elseBlock = psiFactory.wrapInABlockWrapper(elseBranch);
         Call callForIf = createCallForSpecialConstruction(ifExpression, ifExpression, Lists.newArrayList(thenBlock, elseBlock));
@@ -433,7 +429,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             loopScope.addVariableDescriptor(variableDescriptor);
             KtDestructuringDeclaration multiParameter = loopParameter.getDestructuringDeclaration();
             if (multiParameter != null) {
-                KotlinType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
+                KotlinType elementType = expectedParameterType == null ? ErrorUtils.createErrorType(ErrorTypeKind.NO_TYPE_FOR_LOOP_RANGE) : expectedParameterType;
                 TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
                 components.annotationResolver.resolveAnnotationsWithArguments(loopScope, loopParameter.getModifierList(), context.trace);
                 components.destructuringDeclarationResolver.defineLocalVariablesFromDestructuringDeclaration(
@@ -479,7 +475,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             if (expectedParameterType == null) {
-                expectedParameterType = ErrorUtils.createErrorType("Error");
+                expectedParameterType = ErrorUtils.createErrorType(ErrorTypeKind.NO_TYPE_FOR_LOOP_PARAMETER);
             }
             variableDescriptor = components.descriptorResolver.
                     resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
@@ -614,22 +610,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         Call callForTry = createCallForSpecialConstruction(tryExpression, tryExpression, arguments);
 
         MutableDataFlowInfoForArguments dataFlowInfoForArguments;
-        if (components.languageVersionSettings.supportsFeature(LanguageFeature.NewDataFlowForTryExpressions)) {
-            dataFlowInfoForArguments = createDataFlowInfoForArgumentsOfTryCall(callForTry, dataFlowInfoBeforeTry, dataFlowInfoAfterTry);
-        } else {
-            dataFlowInfoForArguments = createDataFlowInfoForArgumentsOfTryCall(callForTry, dataFlowInfoBeforeTry, dataFlowInfoBeforeTry);
-        }
+        dataFlowInfoForArguments = createDataFlowInfoForArgumentsOfTryCall(callForTry, dataFlowInfoBeforeTry, dataFlowInfoBeforeTry);
         ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils
                 .resolveTryAsCall(callForTry, catchClausesBlocksAndParameters, tryInputContext, dataFlowInfoForArguments);
         KotlinType resultType = resolvedCall.getResultingDescriptor().getReturnType();
 
         BindingContext bindingContext = tryInputContext.trace.getBindingContext();
 
-        if (components.languageVersionSettings.supportsFeature(LanguageFeature.NewDataFlowForTryExpressions)) {
-            return processTryBranchesWithNewDataFlowAlgorithm(tryExpression, tryBlock, tryOutputContext, dataFlowInfoAfterTry, catchBlocks, finallyBlock, bindingContext, resultType);
-        } else {
-            return processTryBranches(tryExpression, tryBlock, tryInputContext, catchBlocks, finallyBlock, bindingContext, resultType);
-        }
+        return processTryBranches(tryExpression, tryBlock, tryInputContext, catchBlocks, finallyBlock, bindingContext, resultType);
     }
 
     @NotNull
@@ -653,8 +641,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         boolean nothingInAllCatchBranches = isCatchBranchesReturnsNothing(catchBlocks, bindingContext);
 
         // it is not actually correct way (#KT-28370) of computing context, but it's how was in OI
-        // Fix of it is breaking change and allowed with NewDataFlowForTryExpressions language feature.
-        //   See [processTryBranchesWithNewDataFlowAlgorithm] function
         ExpressionTypingContext tryOutputContext = getCleanedContextFromTryWithAssignmentsToVar(tryExpression, nothingInAllCatchBranches, context)
                 .replaceExpectedType(NO_EXPECTED_TYPE)
                 .replaceContextDependency(INDEPENDENT);
@@ -671,75 +657,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     dataFlowInfoAfterTry
             );
         }
-    }
-
-    @NotNull
-    private KotlinTypeInfo processTryBranchesWithNewDataFlowAlgorithm(
-            @NotNull KtTryExpression tryExpression,
-            KtBlockExpression tryBlock,
-            ExpressionTypingContext tryOutputContext,
-            DataFlowInfo dataFlowInfoAfterTry,
-            List<KtExpression> catchBlocks,
-            KtBlockExpression finallyBlock,
-            BindingContext bindingContext,
-            KotlinType resultType
-    ) {
-        /*
-         * See [resolveTryExpressionWithNewInference] for the definition of tryOutputContext
-         * Here was added some others context and another definitions:
-         * - catchOutputContextFromNonNothingBranches is a tryOutputContext without information about variables
-         *     assigned in non-Nothing catch branches
-         * - catchOutputContextFromAllBranches is tryOutputContext that was cut with assignments from all catch branches
-         * - tryInfo is resolved KotlinTypeInfo of try branch, so its dataFlowInfo contains all interesting infos from try block
-         *     (e.g. info about s != null from example in function [resolveTryExpressionWithNewInference])
-         * - finallyTypeInfo is resolved KotlinTypeInfo of finally branch (it's resolved with assumption that we can came into
-         *     finally block from any catch block, even if it returns Nothing)
-         * - resultDataFlowInfo is dataFlowInfo that leaves after try/catch/finally (if catch or finally is presented)
-         *
-         *
-         * All analysis passes under strict assumption, that we can fail with exception in any place of try block, so we can't use any
-         *     resolved dataFlowInfo from it. But, there is a one case, when we can use it: if there are no catch branches or all catch
-         *     branches returns Nothing, so we can reach code after try only if there was no exceptions in try block, so we can use
-         *     dataFlowInfo from it (see nothingInAllCatchBranches variable)
-         */
-        List<Boolean> branchesReturningNothing = whichCatchBranchesReturnNothing(catchBlocks, bindingContext);
-        PreliminaryLoopVisitor catchVisitorForNonNothingBranches = PreliminaryLoopVisitor.visitCatchBlocks(tryExpression, mapNot(branchesReturningNothing));
-        ExpressionTypingContext catchOutputContextFromNonNothingBranches = tryOutputContext.replaceDataFlowInfo(
-                catchVisitorForNonNothingBranches.clearDataFlowInfoForAssignedLocalVariables(dataFlowInfoAfterTry, components.languageVersionSettings)
-        );
-
-        KotlinTypeInfo tryInfo = BindingContextUtils.getRecordedTypeInfo(tryBlock, bindingContext);
-        boolean nothingInAllCatchBranches = CollectionsKt.all(branchesReturningNothing, it -> it);
-        DataFlowInfo nonExceptionalTryCatchesOutputInfo;
-        if (tryInfo == null) {
-            nonExceptionalTryCatchesOutputInfo = DataFlowInfo.Companion.getEMPTY();
-        } else if (nothingInAllCatchBranches) {
-            nonExceptionalTryCatchesOutputInfo = tryInfo.getDataFlowInfo();
-        } else {
-            nonExceptionalTryCatchesOutputInfo = catchOutputContextFromNonNothingBranches.dataFlowInfo;
-        }
-
-        DataFlowInfo resultDataFlowInfo;
-        if (finallyBlock != null) {
-            PreliminaryLoopVisitor catchVisitor = PreliminaryLoopVisitor.visitCatchBlocks(tryExpression);
-            ExpressionTypingContext catchOutputContextFromAllBranches = tryOutputContext.replaceDataFlowInfo(
-                    catchVisitor.clearDataFlowInfoForAssignedLocalVariables(dataFlowInfoAfterTry, components.languageVersionSettings)
-            ).replaceContextDependency(INDEPENDENT).replaceExpectedType(NO_EXPECTED_TYPE);
-            KotlinTypeInfo finallyTypeInfo = facade.getTypeInfo(finallyBlock, catchOutputContextFromAllBranches);
-            DataFlowInfo finallyDataFlowInfo = finallyTypeInfo.getDataFlowInfo();
-            resultDataFlowInfo = finallyDataFlowInfo.and(nonExceptionalTryCatchesOutputInfo);
-        } else {
-            resultDataFlowInfo = nonExceptionalTryCatchesOutputInfo;
-        }
-
-        return TypeInfoFactoryKt.createTypeInfo(
-                components.dataFlowAnalyzer.checkType(resultType, tryExpression, catchOutputContextFromNonNothingBranches),
-                resultDataFlowInfo
-        );
-    }
-
-    private static List<Boolean> mapNot(List<Boolean> list) {
-        return CollectionsKt.map(list, it -> !it);
     }
 
     private static boolean isCatchBranchesReturnsNothing(List<KtExpression> catchBlocks, BindingContext bindingContext) {
@@ -852,7 +769,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     isClassInitializer(containingFunInfo)) {
                     // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
-                    resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
+                    resultType = ErrorUtils.createErrorType(ErrorTypeKind.RETURN_NOT_ALLOWED);
                 }
 
                 expectedType = getFunctionExpectedReturnType(containingFunctionDescriptor, (KtElement) containingFunInfo.getSecond(), context);
@@ -861,7 +778,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             else {
                 // Outside a function
                 context.trace.report(RETURN_NOT_ALLOWED.on(expression));
-                resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
+                resultType = ErrorUtils.createErrorType(ErrorTypeKind.RETURN_NOT_ALLOWED);
             }
         }
         else if (labelTargetElement != null) {
@@ -872,7 +789,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 if (!InlineUtil.checkNonLocalReturnUsage(functionDescriptor, expression, context)) {
                     // Qualified, non-local
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
-                    resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);
+                    resultType = ErrorUtils.createErrorType(ErrorTypeKind.RETURN_NOT_ALLOWED);
                 }
                 else if (labelTargetElement instanceof KtFunctionLiteral
                          && Objects.equals(expression.getLabelName(), "suspend")) {

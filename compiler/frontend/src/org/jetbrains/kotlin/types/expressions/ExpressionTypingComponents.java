@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker;
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
@@ -17,8 +18,10 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.checkers.AssignmentChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker;
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
@@ -29,45 +32,49 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker;
 import javax.inject.Inject;
 
 public class ExpressionTypingComponents {
-    /*package*/ GlobalContext globalContext;
-    /*package*/ ModuleDescriptor moduleDescriptor;
-    /*package*/ ExpressionTypingServices expressionTypingServices;
-    /*package*/ CallResolver callResolver;
-    /*package*/ PlatformToKotlinClassMapper platformToKotlinClassMapper;
-    /*package*/ ControlStructureTypingUtils controlStructureTypingUtils;
-    /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
-    /*package*/ FakeCallResolver fakeCallResolver;
-    /*package*/ KotlinBuiltIns builtIns;
-    /*package*/ LocalClassifierAnalyzer localClassifierAnalyzer;
-    /*package*/ FunctionDescriptorResolver functionDescriptorResolver;
-    /*package*/ CallExpressionResolver callExpressionResolver;
-    /*package*/ DoubleColonExpressionResolver doubleColonExpressionResolver;
-    /*package*/ DescriptorResolver descriptorResolver;
-    /*package*/ TypeResolver typeResolver;
-    /*package*/ AnnotationResolver annotationResolver;
-    /*package*/ ValueParameterResolver valueParameterResolver;
-    /*package*/ DestructuringDeclarationResolver destructuringDeclarationResolver;
-    /*package*/ ConstantExpressionEvaluator constantExpressionEvaluator;
-    /*package*/ ModifiersChecker modifiersChecker;
-    /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
-    /*package*/ Iterable<CallChecker> callCheckers;
-    /*package*/ IdentifierChecker identifierChecker;
-    /*package*/ DeclarationsCheckerBuilder declarationsCheckerBuilder;
-    /*package*/ LocalVariableResolver localVariableResolver;
-    /*package*/ LookupTracker lookupTracker;
-    /*package*/ OverloadChecker overloadChecker;
-    /*package*/ LanguageVersionSettings languageVersionSettings;
-    /*package*/ Iterable<RttiExpressionChecker> rttiExpressionCheckers;
-    /*package*/ WrappedTypeFactory wrappedTypeFactory;
-    /*package*/ CollectionLiteralResolver collectionLiteralResolver;
-    /*package*/ DeprecationResolver deprecationResolver;
-    /*package*/ EffectSystem effectSystem;
-    /*package*/ ContractParsingServices contractParsingServices;
-    /*package*/ DataFlowValueFactory dataFlowValueFactory;
-    /*package*/ NewKotlinTypeChecker kotlinTypeChecker;
-    /*package*/ TypeResolutionInterceptor typeResolutionInterceptor;
-    /*package*/ MissingSupertypesResolver missingSupertypesResolver;
-    /*package*/ AnnotationChecker annotationChecker;
+    public GlobalContext globalContext;
+    public ModuleDescriptor moduleDescriptor;
+    public ExpressionTypingServices expressionTypingServices;
+    public CallResolver callResolver;
+    public PlatformToKotlinClassMapper platformToKotlinClassMapper;
+    public PlatformSpecificCastChecker platformSpecificCastChecker;
+    public ControlStructureTypingUtils controlStructureTypingUtils;
+    public ForLoopConventionsChecker forLoopConventionsChecker;
+    public FakeCallResolver fakeCallResolver;
+    public KotlinBuiltIns builtIns;
+    public LocalClassifierAnalyzer localClassifierAnalyzer;
+    public FunctionDescriptorResolver functionDescriptorResolver;
+    public CallExpressionResolver callExpressionResolver;
+    public DoubleColonExpressionResolver doubleColonExpressionResolver;
+    public DescriptorResolver descriptorResolver;
+    public TypeResolver typeResolver;
+    public AnnotationResolver annotationResolver;
+    public ValueParameterResolver valueParameterResolver;
+    public DestructuringDeclarationResolver destructuringDeclarationResolver;
+    public ConstantExpressionEvaluator constantExpressionEvaluator;
+    public ModifiersChecker modifiersChecker;
+    public DataFlowAnalyzer dataFlowAnalyzer;
+    public Iterable<CallChecker> callCheckers;
+    public Iterable<AssignmentChecker> assignmentCheckers;
+    public IdentifierChecker identifierChecker;
+    public DeclarationsCheckerBuilder declarationsCheckerBuilder;
+    public LocalVariableResolver localVariableResolver;
+    public LookupTracker lookupTracker;
+    public OverloadChecker overloadChecker;
+    public LanguageVersionSettings languageVersionSettings;
+    public Iterable<RttiExpressionChecker> rttiExpressionCheckers;
+    public WrappedTypeFactory wrappedTypeFactory;
+    public CollectionLiteralResolver collectionLiteralResolver;
+    public DeprecationResolver deprecationResolver;
+    public EffectSystem effectSystem;
+    public ContractParsingServices contractParsingServices;
+    public DataFlowValueFactory dataFlowValueFactory;
+    public NewKotlinTypeChecker kotlinTypeChecker;
+    public TypeResolutionInterceptor typeResolutionInterceptor;
+    public MissingSupertypesResolver missingSupertypesResolver;
+    public AnnotationChecker annotationChecker;
+
+    public KotlinCallComponents callComponents;
 
 
     @Inject
@@ -93,6 +100,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setPlatformToKotlinClassMap(@NotNull PlatformToKotlinClassMapper platformToKotlinClassMapper) {
         this.platformToKotlinClassMapper = platformToKotlinClassMapper;
+    }
+
+    @Inject
+    public void setPlatformToKotlinClassMap(@NotNull PlatformSpecificCastChecker platformSpecificCastChecker) {
+        this.platformSpecificCastChecker = platformSpecificCastChecker;
     }
 
     @Inject
@@ -186,6 +198,11 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
+    public void setAssignmentCheckers(@NotNull Iterable<AssignmentChecker> assignmentCheckers) {
+        this.assignmentCheckers = assignmentCheckers;
+    }
+
+    @Inject
     public void setDeclarationsCheckerBuilder(@NotNull DeclarationsCheckerBuilder declarationsCheckerBuilder) {
         this.declarationsCheckerBuilder = declarationsCheckerBuilder;
     }
@@ -263,5 +280,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setAnnotationChecker(@NotNull AnnotationChecker annotationChecker) {
         this.annotationChecker = annotationChecker;
+    }
+
+    @Inject
+    public void setCallComponents(@NotNull KotlinCallComponents callComponents) {
+        this.callComponents = callComponents;
     }
 }

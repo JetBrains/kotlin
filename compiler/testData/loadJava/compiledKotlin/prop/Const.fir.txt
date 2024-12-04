@@ -1,0 +1,24 @@
+private final const val topLevel: R|kotlin/Int| = Int(1)
+    private get(): R|kotlin/Int|
+
+public final object A : R|kotlin/Any| {
+    internal final const val inObject: R|kotlin/Int| = Int(2)
+        internal get(): R|kotlin/Int|
+
+    private constructor(): R|test/A|
+
+}
+
+public final class B : R|kotlin/Any| {
+    public constructor(): R|test/B|
+
+    public final companion object Companion : R|kotlin/Any| {
+        public final const val inCompanion: R|kotlin/Int| = Int(3)
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|test/B.Companion|
+
+    }
+
+}
+

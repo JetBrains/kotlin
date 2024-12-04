@@ -1,0 +1,6 @@
+-no-stdlib
+$TESTDATA_DIR$/noStdlib.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

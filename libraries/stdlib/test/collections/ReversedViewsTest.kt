@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.collections
 
 import test.collections.behaviors.listBehavior
-import test.collections.compare
 import kotlin.test.*
 
 class ReversedViewsTest {
@@ -17,6 +16,14 @@ class ReversedViewsTest {
 
     @Test fun testBehavior() {
         val original = listOf(2L, 3L, Long.MAX_VALUE)
+        val reversed = original.reversed()
+        compare(reversed, original.asReversed()) {
+            listBehavior()
+        }
+    }
+
+    @Test fun testMutableBehavior() {
+        val original = mutableListOf(2L, 3L, Long.MAX_VALUE)
         val reversed = original.reversed()
         compare(reversed, original.asReversed()) {
             listBehavior()
@@ -147,11 +154,6 @@ class ReversedViewsTest {
         assertTrue { 1 in mutableListOf(1, 2, 3).asReversed() }
     }
 
-    @Test fun testIndexOf() {
-        assertEquals(2, listOf(1, 2, 3).asReversed().indexOf(1))
-        assertEquals(2, mutableListOf(1, 2, 3).asReversed().indexOf(1))
-    }
-
     @Test fun testBidirectionalModifications() {
         val original = mutableListOf(1, 2, 3, 4)
         val reversed = original.asReversed()
@@ -165,47 +167,178 @@ class ReversedViewsTest {
         assertEquals(listOf(3, 2), reversed)
     }
 
-    @Test fun testGetIOOB() {
-        val success = try {
-            listOf(1, 2, 3).asReversed().get(3)
-            true
-        } catch (expected: IndexOutOfBoundsException) {
-            false
+    @Test fun testIndexOf() {
+        assertEquals(2, listOf(1, 2, 3).asReversed().indexOf(1))
+        assertEquals(2, mutableListOf(1, 2, 3).asReversed().indexOf(1))
+
+        assertEquals(-1, listOf(1, 2, 3).asReversed().indexOf(0))
+        assertEquals(-1, mutableListOf(1, 2, 3).asReversed().indexOf(0))
+    }
+
+    @Test fun testLastIndexOf() {
+        assertEquals(2, listOf(1, 2, 3).asReversed().indexOf(1))
+        assertEquals(2, mutableListOf(1, 2, 3).asReversed().indexOf(1))
+
+        assertEquals(-1, listOf(1, 2, 3).asReversed().lastIndexOf(0))
+        assertEquals(-1, mutableListOf(1, 2, 3).asReversed().lastIndexOf(0))
+    }
+
+    @Test fun testIteratorAdd() {
+        val original = mutableListOf(1, 2, 4)
+        val reversedView = original.asReversed()
+        val iter = reversedView.listIterator()
+
+        val reversedCopy = original.reversed().toMutableList()
+        val copyIter = reversedCopy.listIterator()
+
+        compare(copyIter, iter) {
+            propertyEquals { add(5) }
+            propertyEquals { previousIndex() }
+            propertyEquals { nextIndex() }
+            propertyEquals { next() }
+        }
+        assertEquals(reversedCopy, reversedView)
+        assertEquals(listOf(1, 2, 4, 5), original)
+
+        compare(copyIter, iter) {
+            propertyEquals { add(3) }
+            propertyEquals { previousIndex() }
+            propertyEquals { nextIndex() }
+            propertyEquals { previous() }
         }
 
-        assertFalse(success)
+        iter.seekEnd()
+        iter.add(0)
+        assertEquals(listOf(5, 4, 3, 2, 1, 0), reversedView)
+        assertEquals(listOf(0, 1, 2, 3, 4, 5), original)
+    }
+
+    @Test fun testIteratorRemove() {
+        val original = mutableListOf(0, 1, 2, 3, 4)
+        val reversedView = original.asReversed()
+        val iter = reversedView.listIterator()
+
+        val reversedCopy = original.reversed().toMutableList()
+        val copyIter = reversedCopy.listIterator()
+
+        compare(copyIter, iter) {
+            propertyFailsWith<IllegalStateException> { remove() }
+            propertyEquals {
+                next()
+                remove()
+            }
+            propertyEquals { previousIndex() }
+            propertyEquals { nextIndex() }
+            propertyFailsWith<IllegalStateException> { remove() }
+            propertyEquals { next() }
+        }
+        assertEquals(reversedCopy, reversedView)
+        assertEquals(listOf(0, 1, 2, 3), original)
+
+        compare(copyIter, iter) {
+            propertyEquals {
+                next()
+                remove()
+            }
+            propertyEquals { previousIndex() }
+            propertyEquals { nextIndex() }
+            propertyEquals { previous() }
+        }
+        assertEquals(reversedCopy, reversedView)
+        assertEquals(listOf(0, 1, 3), original)
+
+        iter.seekEnd()
+        iter.remove()
+        assertEquals(listOf(3, 1), reversedView)
+        assertEquals(listOf(1, 3), original)
+    }
+
+    @Test fun testIteratorSet() {
+        val original = mutableListOf(2, 3, 4)
+        val iter = original.asReversed().listIterator()
+
+        while (iter.hasNext()) {
+            val v = iter.next()
+            iter.set(v * v)
+        }
+
+        assertEquals(listOf(4, 9, 16), original)
+    }
+
+    @Test fun testGetIOOB() {
+        assertFailsWith<IndexOutOfBoundsException> {
+            listOf(1, 2, 3).asReversed().get(3)
+        }.let { exception ->
+            // we actually don't care about the exact wording,
+            // we just need the index to be not confusing
+            assertContains(exception.message!!, "index 3")
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            mutableListOf(1, 2, 3).asReversed().get(3)
+        }.let { exception ->
+            // we actually don't care about the exact wording,
+            // we just need the index to be not confusing
+            assertContains(exception.message!!, "index 3")
+        }
     }
 
     @Test fun testSetIOOB() {
-        val success = try {
-            mutableListOf(1, 2, 3).asReversed().set(3, 0)
-            true
-        } catch(expected: IndexOutOfBoundsException) {
-            false
+        assertFailsWith<IndexOutOfBoundsException> {
+            mutableListOf(1, 2, 3, 4).asReversed().set(4, 0)
+        }.let { exception ->
+            // we actually don't care about the exact wording,
+            // we just need the index to be not confusing
+            assertContains(exception.message!!, "index 4")
         }
-
-        assertFalse(success)
     }
 
     @Test fun testAddIOOB() {
-        val success = try {
+        assertFailsWith<IndexOutOfBoundsException> {
             mutableListOf(1, 2, 3).asReversed().add(4, 0)
-            true
-        } catch(expected: IndexOutOfBoundsException) {
-            false
+        }.let { exception ->
+            // we actually don't care about the exact wording,
+            // we just need the index to be not confusing
+            assertContains(exception.message!!, "index 4")
         }
-
-        assertFalse(success)
     }
 
     @Test fun testRemoveIOOB() {
-        val success = try {
+        assertFailsWith<IndexOutOfBoundsException> {
             mutableListOf(1, 2, 3).asReversed().removeAt(3)
-            true
-        } catch(expected: IndexOutOfBoundsException) {
-            false
+        }.let { exception ->
+            // we actually don't care about the exact wording,
+            // we just need the index to be not confusing
+            assertContains(exception.message!!, "index 3")
+        }
+    }
+
+    @Test fun testIteratorNSEOnNext() {
+        assertFailsWith<NoSuchElementException> {
+            val it = listOf(1, 2, 3).asReversed().iterator()
+            it.seekEnd()
+            it.next()
         }
 
-        assertFalse(success)
+        assertFailsWith<NoSuchElementException> {
+            val it = mutableListOf(1, 2, 3).asReversed().iterator()
+            it.seekEnd()
+            it.next()
+        }
+    }
+
+    @Test fun testIteratorNSEOnPrevious() {
+        assertFailsWith<NoSuchElementException> {
+            listOf(1, 2, 3).asReversed().listIterator().previous()
+        }
+        assertFailsWith<NoSuchElementException> {
+            mutableListOf(1, 2, 3).asReversed().listIterator().previous()
+        }
+    }
+}
+
+private fun Iterator<*>.seekEnd() {
+    while (hasNext()) {
+        next()
     }
 }

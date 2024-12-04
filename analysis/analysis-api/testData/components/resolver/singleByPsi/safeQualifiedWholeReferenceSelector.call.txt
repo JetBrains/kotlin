@@ -1,0 +1,17 @@
+KtSafeQualifiedExpression(45,49): 'a?.y'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = true
+          type = A
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = y
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val y: kotlin.Int
+          callableId = /A.y
+      simpleAccess = Read
+      typeArgumentsMapping = {}

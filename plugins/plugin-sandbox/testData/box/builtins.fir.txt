@@ -1,0 +1,60 @@
+FILE: builtins.kt
+    public final fun foo1(): R|kotlin/Unit| {
+    }
+    public final fun foo2(): R|kotlin/Int| {
+        ^foo2 Int(2)
+    }
+    public final fun foo3(): R|kotlin/Short| {
+        ^foo3 Short(3)
+    }
+    public final fun foo4(): R|kotlin/Byte| {
+        ^foo4 Byte(4)
+    }
+    public final fun foo5(): R|kotlin/Long| {
+        ^foo5 Long(5)
+    }
+    public final fun foo6(): R|kotlin/Float| {
+        ^foo6 Float(6.0)
+    }
+    public final fun foo7(): R|kotlin/Double| {
+        ^foo7 Double(7.0)
+    }
+    public final fun foo8(): R|kotlin/Char| {
+        ^foo8 Char(8)
+    }
+    public final fun foo9(): R|kotlin/Boolean| {
+        ^foo9 Boolean(true)
+    }
+    public final fun foo10(): R|kotlin/String| {
+        ^foo10 String(10)
+    }
+    public final fun foo11(): R|kotlin/collections/List<kotlin/String>| {
+        ^foo11 R|kotlin/collections/listOf|<R|kotlin/String|>(String(11))
+    }
+    public final fun foo12(): R|kotlin/collections/MutableList<kotlin/String>| {
+        ^foo12 R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String(12)))
+    }
+    public final fun foo13(): R|kotlin/Any| {
+        ^foo13 Int(13)
+    }
+    public final fun foo14(): R|kotlin/Nothing| {
+        ^foo14 R|kotlin/TODO|()
+    }
+    public final fun foo15(): R|() -> kotlin/Int| {
+        ^foo15 fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(15)
+        }
+
+    }
+    public final fun foo16(): R|kotlin/Array<kotlin/String>| {
+        ^foo16 R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(16)))
+    }
+    public final fun foo17(): R|kotlin/Number| {
+        ^foo17 Int(17)
+    }
+    public final fun foo18(): R|kotlin/annotation/AnnotationTarget| {
+        ^foo18 Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

@@ -2,13 +2,13 @@ package
 
 package i {
     public val i.C.bar: i.C.D
-    public val kotlin.String.bd: [ERROR : <ERROR FUNCTION RETURN TYPE>]
+    public val kotlin.String.bd: [Error type: Return type for function cannot be resolved]
     public val kotlin.String.bd1: kotlin.String
-    public val i.A.foo: [ERROR : Type for ii]
+    public val i.A.foo: [Error type: Not found recorded type for ii]
     public val i.C.foo: i.C.D
     public val i.A.foo1: kotlin.Int
     public val i.C.foo1: i.C.D
-    public val </*0*/ T> kotlin.collections.List<T>.length: [ERROR : Type for size]
+    public val </*0*/ T> kotlin.collections.List<T>.length: [Error type: Not found recorded type for size]
     public val </*0*/ T> kotlin.collections.List<T>.length1: kotlin.Int
 
     public final class A {

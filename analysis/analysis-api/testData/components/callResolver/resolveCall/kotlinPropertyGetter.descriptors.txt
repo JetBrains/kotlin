@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = {  }
-targetFunction = <getter>(<dispatch receiver>: KtClass): kotlin.Int
-substitutor = <empty substitutor>

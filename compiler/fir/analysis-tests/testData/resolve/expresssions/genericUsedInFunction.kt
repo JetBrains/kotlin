@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Generic<T : CharSequence?>(val value: T) {
     fun foo(): T = value
 }

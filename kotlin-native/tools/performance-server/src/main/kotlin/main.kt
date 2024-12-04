@@ -1,25 +1,18 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+import org.jetbrains.network.*
+import org.jetbrains.elastic.*
+
 
 external fun require(module: String): dynamic
 
 external val process: dynamic
 external val __dirname: dynamic
 
-fun main(args: Array<String>) {
+fun main() {
     println("Server Starting!")
 
     val express = require("express")
@@ -37,12 +30,26 @@ fun main(args: Array<String>) {
     app.set("view engine", "ejs")
     app.use(express.static("ui"))
 
-    val server = http.createServer(app)
+    http.createServer(app)
     app.listen(port, {
         println("App listening on port " + port + "!")
     })
 
-    app.use("/", router())
+    val elasticHost = process.env.ELASTIC_HOST as Any?
+    val elasticPort = (process.env.ELASTIC_PORT as Any?)?.takeIf { it != kotlin.js.undefined }
+    val elasticUsername = (process.env.ELASTIC_USER as Any?)?.takeIf { it != kotlin.js.undefined }
+    val elasticPassword = (process.env.ELASTIC_PASSWORD as Any?)?.takeIf { it != kotlin.js.undefined }
+    if (elasticHost !is String) throw IllegalStateException("ELASTIC_HOST env variable is not defined")
+    if (elasticPort !is String?) throw IllegalStateException("ELASTIC_PORT env variable is not defined")
+    if (elasticUsername !is String) throw IllegalStateException("ELASTIC_USER env variable is not defined")
+    if (elasticPassword !is String) throw IllegalStateException("ELASTIC_PASSWORD env variable is not defined")
+    val connector = ElasticSearchConnector(
+            UrlNetworkConnector(elasticHost, elasticPort?.toInt()),
+            elasticUsername,
+            elasticPassword
+    )
+
+    app.use("/", router(connector))
 }
 
 fun normalizePort(port: Int) =

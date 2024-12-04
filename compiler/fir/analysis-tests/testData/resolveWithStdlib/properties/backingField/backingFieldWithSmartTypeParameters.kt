@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 val items: List<String>
     field = mutableListOf()
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -17,15 +18,18 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirAbstractSimpleImportingScope(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractImportingScope(session, scopeSession, FirImportingScopeFilter.ALL, lookupInFir = true) {
+) : FirAbstractImportingScope(session, scopeSession, lookupInFir = true) {
 
     // TODO try to hide this
     abstract val simpleImports: Map<Name, List<FirResolvedImport>>
 
+    override fun isExcluded(import: FirResolvedImport, name: Name): Boolean = false
+
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         val imports = simpleImports[name] ?: return
-        val symbol = findSingleClassifierSymbolByName(null, imports) ?: return
-        processor(symbol, ConeSubstitutor.Empty)
+        processClassifiersFromImportsByName(name = null, imports) { symbol ->
+            processor(symbol, ConeSubstitutor.Empty)
+        }
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
@@ -37,4 +41,7 @@ abstract class FirAbstractSimpleImportingScope(
         val imports = simpleImports[name] ?: return
         processPropertiesByName(null, imports, processor)
     }
+
+    @DelicateScopeAPI
+    abstract override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirAbstractSimpleImportingScope
 }

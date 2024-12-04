@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
 import org.jetbrains.kotlin.types.SimpleType
 
-interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters {
+interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters, TypeAliasSymbolMarker {
     /// Right-hand side of the type alias definition.
     /// May contain type aliases.
     val underlyingType: SimpleType

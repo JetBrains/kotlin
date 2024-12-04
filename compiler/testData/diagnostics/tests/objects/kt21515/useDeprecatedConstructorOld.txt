@@ -2,22 +2,22 @@ package
 
 public final class C : O.B {
     public constructor C()
-    public final val a: [ERROR : Type for A()]
-    public final val b: [ERROR : Type for B()]
+    public final val a: [Error type: Not found recorded type for A()]
+    public final val b: [Error type: Not found recorded type for B()]
     public final val c: O.A.FromA
     public final val d: O.B.FromB
     public final val e: O.A.Companion.FromCompanionA
     public final val f: O.B.Companion.FromCompanionB
-    public final val g: [ERROR : Type for Alpha()]
-    public final val h: [ERROR : Type for Beta()]
-    public final val i: [ERROR : Type for Gamma()]
+    public final val g: [Error type: Not found recorded type for Alpha()]
+    public final val h: [Error type: Not found recorded type for Beta()]
+    public final val i: [Error type: Not found recorded type for Gamma()]
     public final val k: O.Alpha.FromAlpha
     public final val l: O.Beta.FromBeta
     public final val m: O.Gamma.FromGamma
     public final val n: C.Companion.FromCompanionC
-    public final val o: [ERROR : Type for FromCompanionAlpha()]
-    public final val p: [ERROR : Type for FromCompanionBeta()]
-    public final val q: [ERROR : Type for FromCompanionGamma()]
+    public final val o: [Error type: Not found recorded type for FromCompanionAlpha()]
+    public final val p: [Error type: Not found recorded type for FromCompanionBeta()]
+    public final val q: [Error type: Not found recorded type for FromCompanionGamma()]
     public final val r: Delta.FromDelta
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

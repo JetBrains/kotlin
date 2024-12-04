@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.parcelize.test.services
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.parcelize.ParcelizeComponentRegistrar
-import org.jetbrains.kotlin.parcelize.ParcelizeFirIrGeneratorExtension
+import org.jetbrains.kotlin.parcelize.ParcelizeConfigurationKeys
+import org.jetbrains.kotlin.parcelize.kotlinxImmutable
+import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -18,22 +21,54 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
-class ParcelizeEnvironmentConfigurator(
-    testServices: TestServices,
-    private val useFirExtension: Boolean
-) : EnvironmentConfigurator(testServices) {
+private fun getLibraryJar(classToDetect: String): File? = try {
+    PathUtil.getResourcePathForClass(Class.forName(classToDetect))
+} catch (e: ClassNotFoundException) {
+    null
+}
+
+class ParcelizeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, PathUtil.PARCELIZE_RUNTIME_PLUGIN_JAR_NAME)
-        val androidExtensionsRuntimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, PathUtil.ANDROID_EXTENSIONS_RUNTIME_PLUGIN_JAR_NAME)
+        if (ENABLE_PARCELIZE !in module.directives) return
+        val libPath = PathUtil.kotlinPathsForCompiler.libPath
+        val runtimeLibrary = File(libPath, PathUtil.PARCELIZE_RUNTIME_PLUGIN_JAR_NAME)
+        val androidExtensionsRuntimeLibrary = File(libPath, PathUtil.ANDROID_EXTENSIONS_RUNTIME_PLUGIN_JAR_NAME)
         val androidApiJar = KtTestUtil.findAndroidApiJar()
-        configuration.addJvmClasspathRoots(listOf(runtimeLibrary, androidExtensionsRuntimeLibrary, androidApiJar))
+        val kotlinxCollectionsImmutable = getLibraryJar(kotlinxImmutable("ImmutableList"))
+            ?: error("kotlinx-collections-immutable is not found on classpath")
+
+        configuration.addJvmClasspathRoots(
+            listOf(
+                runtimeLibrary,
+                androidExtensionsRuntimeLibrary,
+                androidApiJar,
+                kotlinxCollectionsImmutable
+            )
+        )
+
+        // Hard coding a name of an additional annotation for parcelize. Test that use this, need to provide the
+        // additional annotations as part of the test sources.
+        configuration.put(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION, listOf("test.TriggerParcelize"))
+        // Allow bare value arguments for inherited classes.
+        configuration.put(ParcelizeConfigurationKeys.EXPERIMENTAL_CODE_GENERATION, true)
     }
 
-    override fun registerCompilerExtensions(project: Project) {
-        if (useFirExtension) {
-            IrGenerationExtension.registerExtension(project, ParcelizeFirIrGeneratorExtension())
-        } else {
-            ParcelizeComponentRegistrar.registerParcelizeComponents(project)
-        }
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration
+    ) {
+        if (ENABLE_PARCELIZE !in module.directives) return
+        val additionalAnnotation = configuration.get(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION) ?: emptyList()
+        val experimentalCodeGeneration = configuration.get(ParcelizeConfigurationKeys.EXPERIMENTAL_CODE_GENERATION) ?: false
+        ParcelizeComponentRegistrar.registerParcelizeComponents(
+            this,
+            additionalAnnotation,
+            experimentalCodeGeneration,
+            useFir = module.frontendKind == FrontendKinds.FIR
+        )
     }
+}
+
+object ParcelizeDirectives : SimpleDirectivesContainer() {
+    val ENABLE_PARCELIZE by directive("Enables parcelize plugin")
 }

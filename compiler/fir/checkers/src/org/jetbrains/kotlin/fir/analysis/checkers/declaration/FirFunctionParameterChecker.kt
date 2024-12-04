@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isInlineClass
-import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.leastUpperBound
+import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -23,13 +24,13 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-object FirFunctionParameterChecker : FirFunctionChecker() {
+object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         checkVarargParameters(declaration, context, reporter)
         checkParameterTypes(declaration, context, reporter)
@@ -47,9 +48,8 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
 
             val diagnostic = returnTypeRef.diagnostic
             if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation) {
-                reporter.reportOnWithSuppression(
-                    valueParameter,
-                    FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION,
+                reporter.reportOn(
+                    valueParameter.source, FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE,
                     context
                 )
             }
@@ -60,21 +60,27 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
         val varargParameters = function.valueParameters.filter { it.isVararg }
         if (varargParameters.size > 1) {
             for (parameter in varargParameters) {
-                reporter.reportOnWithSuppression(parameter, FirErrors.MULTIPLE_VARARG_PARAMETERS, context)
+                reporter.reportOn(parameter.source, FirErrors.MULTIPLE_VARARG_PARAMETERS, context)
             }
         }
 
-        val nullableNothingType = context.session.builtinTypes.nullableNothingType.coneType
         for (varargParameter in varargParameters) {
-            val varargParameterType = varargParameter.returnTypeRef.coneType.arrayElementType() ?: continue
-            if (AbstractTypeChecker.isSubtypeOf(context.session.typeContext, varargParameterType, nullableNothingType) ||
-                (varargParameterType.isInlineClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
+            val coneType = varargParameter.returnTypeRef.coneType
+            val varargParameterType = when (function) {
+                is FirAnonymousFunction -> coneType
+                else -> coneType.arrayElementType()
+            }?.fullyExpandedType(context.session) ?: continue
+            // LUB is checked to ensure varargParameterType may
+            // never be anything except `Nothing` or `Nothing?`
+            // in case it is a complex type that quantifies
+            // over many other types.
+            if (varargParameterType.leastUpperBound(context.session).fullyExpandedType(context.session).isNothingOrNullableNothing ||
+                (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
             ) {
-                reporter.reportOnWithSuppression(
-                    varargParameter,
-                    FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE,
+                reporter.reportOn(
+                    varargParameter.source, FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE,
                     varargParameterType,
                     context
                 )
@@ -92,21 +98,14 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
                 }
 
                 override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
-                    val namedReference = qualifiedAccessExpression.calleeReference as? FirResolvedNamedReference ?: return
+                    val referredParameter = qualifiedAccessExpression.calleeReference.toResolvedValueParameterSymbol() ?: return
 
-                    @OptIn(SymbolInternals::class)
-                    val referredParameter = namedReference.resolvedSymbol.fir as? FirValueParameter ?: return
-                    val referredParameterIndex = function.valueParameters.indexOf(referredParameter)
+                    val referredParameterIndex = function.valueParameters.indexOfFirst { it.symbol == referredParameter }
                     // Skip if the referred parameter is not declared in the same function.
                     if (referredParameterIndex < 0) return
 
                     if (index <= referredParameterIndex) {
-                        reporter.reportOnWithSuppression(
-                            qualifiedAccessExpression,
-                            FirErrors.UNINITIALIZED_PARAMETER,
-                            referredParameter.symbol,
-                            context
-                        )
+                        reporter.reportOn(qualifiedAccessExpression.source, FirErrors.UNINITIALIZED_PARAMETER, referredParameter, context)
                     }
                 }
 
@@ -124,14 +123,25 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
         }
 
         for (valueParameter in function.valueParameters) {
-            val source = valueParameter.source
-            if (source?.kind is KtFakeSourceElementKind) continue
-            source.valOrVarKeyword?.let {
-                if (function is FirConstructor) {
-                    reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it, context)
-                } else {
-                    reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it, context)
-                }
+            checkValOrVar(valueParameter, reporter, context)
+        }
+        for (contextParameter in function.contextParameters) {
+            checkValOrVar(contextParameter, reporter, context)
+        }
+    }
+
+    private fun checkValOrVar(
+        valueParameter: FirValueParameter,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        val source = valueParameter.source
+        if (source?.kind is KtFakeSourceElementKind) return
+        source.valOrVarKeyword?.let {
+            if (valueParameter.containingDeclarationSymbol is FirConstructorSymbol) {
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, it, context)
+            } else {
+                reporter.reportOn(source, FirErrors.VAL_OR_VAR_ON_FUN_PARAMETER, it, context)
             }
         }
     }

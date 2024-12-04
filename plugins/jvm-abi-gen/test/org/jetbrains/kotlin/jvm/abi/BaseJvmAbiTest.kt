@@ -8,20 +8,19 @@ package org.jetbrains.kotlin.jvm.abi
 import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.compileJavaFiles
 import java.io.File
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
 abstract class BaseJvmAbiTest : TestCase() {
     private lateinit var workingDir: File
 
-    @OptIn(ExperimentalPathApi::class)
     override fun setUp() {
         super.setUp()
         workingDir = createTempDirectory(javaClass.simpleName).toFile().apply { deleteOnExit() }
@@ -54,7 +53,7 @@ abstract class BaseJvmAbiTest : TestCase() {
             get() = if (name == null) workingDir.resolve("javaOut") else workingDir.resolve("$name/javaOut")
 
         val directives: File
-            get() = workingDir.resolve("directives.txt")
+            get() = projectDir.resolve("directives.txt")
 
         override fun toString(): String =
             "compilation '$name'"
@@ -69,7 +68,9 @@ abstract class BaseJvmAbiTest : TestCase() {
             dep.abiDir
         }
 
-        val messageCollector = LocationReportingTestMessageCollector()
+        val directives = if (compilation.directives.exists()) compilation.directives.readText() else ""
+
+        val messageCollector = MessageCollectorImpl()
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
             freeArgs = listOf(compilation.srcDir.canonicalPath)
@@ -77,17 +78,35 @@ abstract class BaseJvmAbiTest : TestCase() {
             pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
             pluginOptions = listOfNotNull(
                 abiOption(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.optionName, compilation.abiDir.canonicalPath),
-                if (useLegacyAbiGen) abiOption("useLegacyAbiGen", "true") else null
+                abiOption(JvmAbiCommandLineProcessor.REMOVE_DEBUG_INFO_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_DEBUG_INFO") != null
+                },
+                abiOption(
+                    JvmAbiCommandLineProcessor.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION.optionName, true.toString()
+                ).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE") != null
+                },
+                abiOption(JvmAbiCommandLineProcessor.PRESERVE_DECLARATION_ORDER_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// PRESERVE_DECLARATION_ORDER") != null
+                },
+                abiOption(JvmAbiCommandLineProcessor.REMOVE_PRIVATE_CLASSES_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_PRIVATE_CLASSES") != null
+                },
+                abiOption(JvmAbiCommandLineProcessor.TREAT_INTERNAL_AS_PRIVATE_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// TREAT_INTERNAL_AS_PRIVATE") != null
+                },
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
-            useOldBackend = !useIrBackend
-            languageVersion = if (!compilation.directives.exists()) null else {
-                InTextDirectivesUtils.findStringWithPrefixes(compilation.directives.readText(), "// LANGUAGE_VERSION:")
+            noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
+
+            if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// INHERIT_MULTIFILE_PARTS") != null) {
+                inheritMultifileParts = true
             }
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
         if (exitCode != ExitCode.OK || messageCollector.errors.isNotEmpty()) {
-            val errorLines = listOf("Could not compile $compilation", "Exit code: $exitCode", "Errors:") + messageCollector.errors
+            val errorLines = listOf("Could not compile $compilation", "Exit code: $exitCode", "Errors:") +
+                    messageCollector.errors.map { "e: ${it.location}: ${it.message}" }
             error(errorLines.joinToString("\n"))
         }
 
@@ -103,17 +122,11 @@ abstract class BaseJvmAbiTest : TestCase() {
                 "-d",
                 compilation.javaDestinationDir.canonicalPath
             )
-            KotlinTestUtils.compileJavaFiles(javaFiles, javacOptions)
+            compileJavaFiles(javaFiles, javacOptions).assertSuccessful()
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.destinationDir)
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.abiDir)
         }
     }
-
-    protected open val useIrBackend: Boolean
-        get() = false
-
-    protected open val useLegacyAbiGen: Boolean
-        get() = false
 
     protected val kotlinJvmStdlib = File("dist/kotlinc/lib/kotlin-stdlib.jar").also {
         check(it.exists()) { "Stdlib file '$it' does not exist" }

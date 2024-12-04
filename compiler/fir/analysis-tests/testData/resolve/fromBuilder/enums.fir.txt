@@ -13,6 +13,9 @@ FILE: enums.kt
         public final static fun valueOf(value: R|kotlin/String|): R|Order| {
         }
 
+        public final static val entries: R|kotlin/enums/EnumEntries<Order>|
+            public get(): R|kotlin/enums/EnumEntries<Order>|
+
     }
     public final enum class Planet : R|kotlin/Enum<Planet>| {
         private constructor(m: R|kotlin/Double|, r: R|kotlin/Double|): R|Planet| {
@@ -30,7 +33,7 @@ FILE: enums.kt
                 super<R|Planet|>(Double(1.0), Double(2.0))
             }
 
-            public final override fun sayHello(): R|kotlin/Unit| {
+            public open override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Hello!!!))
             }
 
@@ -41,7 +44,7 @@ FILE: enums.kt
                 super<R|Planet|>(Double(3.0), Double(4.0))
             }
 
-            public final override fun sayHello(): R|kotlin/Unit| {
+            public open override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Ola!!!))
             }
 
@@ -52,7 +55,7 @@ FILE: enums.kt
                 super<R|Planet|>(Double(5.0), Double(6.0))
             }
 
-            public final override fun sayHello(): R|kotlin/Unit| {
+            public open override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Privet!!!))
             }
 
@@ -78,5 +81,8 @@ FILE: enums.kt
 
         public final static fun valueOf(value: R|kotlin/String|): R|Planet| {
         }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Planet>|
+            public get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }

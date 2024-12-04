@@ -1,0 +1,18 @@
+fun test1(d: dynamic): dynamic {
+  return d.member(1, 2, 3)
+}
+
+fun test2(d: dynamic): dynamic {
+  return { // BLOCK
+    val tmp_0: dynamic = d
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.member(1, 2, 3)
+    }
+  }
+}
+
+fun test3(d: dynamic): dynamic {
+  return d.member(1, 2, 3)
+}
+

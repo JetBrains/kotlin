@@ -1,0 +1,3 @@
+package
+
+public fun kotlin.Any.test(): kotlin.Unit

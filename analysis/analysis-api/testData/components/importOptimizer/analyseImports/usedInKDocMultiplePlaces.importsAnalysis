@@ -1,0 +1,9 @@
+USED DECLARATIONS:
+
+Declaration: pkg1.foo
+By names: [foo]
+
+Declaration: pkg2.foo
+By names: [foo]
+
+UNRESOLVED NAMES:

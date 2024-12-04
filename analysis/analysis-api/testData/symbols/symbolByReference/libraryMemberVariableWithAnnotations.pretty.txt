@@ -1,0 +1,6 @@
+@one.Anno
+var memberVariableWithAnnotations: kotlin.Long
+  @one.Anno
+  get()
+  @one.Anno
+  set(@one.Anno value: kotlin.Long)

@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // Issue: KT-35075
 
 fun foo() {}
@@ -26,6 +27,6 @@ fun main() {
     // It must be OK
     val x18 = String?::hashCode <!USELESS_ELVIS!>?: ::foo<!>
     val x19 = String::hashCode <!USELESS_ELVIS!>?: ::foo<!>
-    val x20 = String?::hashCode::hashCode
-    val x21 = kotlin.String?::hashCode::hashCode
+    val x20 = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>String?::hashCode<!>::hashCode
+    val x21 = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>kotlin.String?::hashCode<!>::hashCode
 }

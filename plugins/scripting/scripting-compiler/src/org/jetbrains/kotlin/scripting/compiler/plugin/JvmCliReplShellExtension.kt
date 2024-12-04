@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplFromTerminal
 
 class JvmCliReplShellExtension : ShellExtension {
@@ -22,8 +21,7 @@ class JvmCliReplShellExtension : ShellExtension {
         configuration: CompilerConfiguration,
         projectEnvironment: JavaCoreProjectEnvironment
     ): ExitCode {
-        configuration.put(JVMConfigurationKeys.IR, false)
-        ReplFromTerminal.run(projectEnvironment.parentDisposable, configuration)
+        ReplFromTerminal.run(projectEnvironment, configuration)
         return ExitCode.OK
     }
 }

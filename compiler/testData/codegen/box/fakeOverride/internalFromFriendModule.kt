@@ -1,4 +1,3 @@
-
 // MODULE: lib
 // FILE: l.kt
 
@@ -10,7 +9,7 @@ open internal class In {
     fun k() = "K"
 }
 
-// MODULE: main(lib)(lib)
+// MODULE: main()(lib)
 // FILE: m.kt
 
 class Derived: Base()

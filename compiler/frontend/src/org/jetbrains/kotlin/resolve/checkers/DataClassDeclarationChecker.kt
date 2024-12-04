@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -27,7 +28,7 @@ class DataClassDeclarationChecker : DeclarationChecker {
         if (descriptor !is ClassDescriptor) return
         if (declaration !is KtClassOrObject) return
 
-        if (descriptor.isData) {
+        if (descriptor.isData && descriptor.kind == ClassKind.CLASS) {
             if (descriptor.unsubstitutedPrimaryConstructor == null && descriptor.constructors.isNotEmpty()) {
                 declaration.nameIdentifier?.let { context.trace.report(Errors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS.on(it)) }
             }

@@ -1,70 +1,40 @@
+plugins {
+    id("maven-publish")
+}
+
 description = 'Kotlin Common Standard Library'
 
-apply plugin: 'kotlin-platform-common'
-
-configurePublishing(project)
-
-JvmToolchain.updateJvmTarget(project, "1.6")
-
-def commonSrcDir = "../src"
-def commonTestSrcDir = "../test"
-
-sourceSets {
-    main {
-        kotlin {
-            srcDir 'src'
-            srcDir commonSrcDir
-            srcDir '../unsigned/src'
-        }
-    }
-    test {
-        kotlin {
-            srcDir commonTestSrcDir
-            srcDir 'test'
-        }
-    }
+def stdlibCommonDependencies = configurations.create("stdlibCommonDependencies") {
+    canBeResolved = true
+    canBeConsumed = false
 }
-
+def stdlibCommonElements = configurations.create("stdlibCommonElements") {
+    canBeResolved = false
+    canBeConsumed = true
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
+    }
+    extendsFrom(stdlibCommonDependencies)
+}
 dependencies {
-    testApi project(":kotlin-test:kotlin-test-common")
-    testApi project(":kotlin-test:kotlin-test-annotations-common")
+    add(stdlibCommonDependencies.name, project(":kotlin-stdlib"))
 }
 
-compileKotlinCommon {
-    dependsOn(":prepare:build.version:writeStdlibVersion")
-//    dependsOn ":prepare:compiler:prepare-compiler-with-bootstrap-runtime"
-//    compilerJarFile = compilerJarWithBootstrapRuntime
+SoftwareComponentFactory componentFactory = plugins.publishing.CustomVariantPublishingDslKt.getComponentFactory(project)
+
+def rootComponent = componentFactory.adhoc("root")
+rootComponent.addVariantsFromConfiguration(stdlibCommonElements) {
+    mapToOptional()
 }
 
-compileKotlinCommon {
-    kotlinOptions {
-        freeCompilerArgs = [
-                "-module-name", project.name,
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlin.ExperimentalMultiplatform",
-                "-opt-in=kotlin.contracts.ExperimentalContracts",
-                "-Xallow-kotlin-package",
-        ]
+plugins.KotlinBuildPublishingPluginKt.configureDefaultPublishing(project)
+
+publishing {
+    publications {
+        def mainPublication = register("main", MavenPublication) {
+            from(rootComponent)
+            plugins.KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(it, project, "Kotlin Common Standard Library (legacy, use kotlin-stdlib instead)", "pom", null)
+        }
+        SbomKt.configureSbom(project, "Main", "kotlin-stdlib-common", ["stdlibCommonDependencies"], mainPublication)
     }
 }
-
-compileTestKotlinCommon {
-    kotlinOptions {
-        freeCompilerArgs += [
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlin.ExperimentalUnsignedTypes",
-                "-opt-in=kotlin.ExperimentalStdlibApi",
-        ]
-    }
-}
-
-jar {
-    manifestAttributes(manifest, project, 'Main')
-}
-
-configureSourcesJar()
-configureJavadocJar()
-
-sourcesJar.dependsOn(":prepare:build.version:writeStdlibVersion")
-
-classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })

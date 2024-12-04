@@ -1,16 +1,16 @@
 import kotlin.collections.*
 
-const val doubleListSize = listOf(
+const val doubleListSize = <!EVALUATED: `3`!>listOf(
     listOf("1", "2", "3"),
     listOf("4", "5", "6"),
     listOf("7", "8", "9")
-).<!EVALUATED: `3`!>size<!>
+).size<!>
 
-const val doubleListSizeOfList = listOf(
+const val doubleListSizeOfList = <!EVALUATED: `3`!>listOf(
     listOf("1"),
     listOf("4", "5"),
     listOf("7", "8", "9")
-)[2].<!EVALUATED: `3`!>size<!>
+)[2].size<!>
 
 const val doubleListGetSingleElement = <!EVALUATED: `9`!>listOf(
     listOf("1"),
@@ -18,8 +18,8 @@ const val doubleListGetSingleElement = <!EVALUATED: `9`!>listOf(
     listOf("7", "8", "9")
 )[2][2]<!>
 
-const val doubleListElements = listOf(
+const val doubleListElements = <!EVALUATED: `1; 4, 5; 7, 8, 9`!>listOf(
     listOf("1"),
     listOf("4", "5"),
     listOf("7", "8", "9")
-).<!EVALUATED: `1; 4, 5; 7, 8, 9`!>joinToString(separator = "; ") { it.joinToString() }<!>
+).joinToString(separator = "; ") { it.joinToString() }<!>

@@ -1,0 +1,6 @@
+C:
+  [Enhancement]: public open fun foo(x: R|@EnhancedNullability kotlin/Int|): R|kotlin/Unit| from Use site scope of /C [id: 0]
+    [Enhancement]: public open fun foo(x: R|@EnhancedNullability kotlin/Int|): R|kotlin/Unit| from Java enhancement scope for /A [id: 0]
+  [Source]: public open fun foo(x: R|kotlin/Int|): R|kotlin/Unit| from Use site scope of /C [id: 0]
+    [Source]: public open fun foo(x: R|kotlin/Int|): R|kotlin/Unit| from Use site scope of /B [id: 0]
+

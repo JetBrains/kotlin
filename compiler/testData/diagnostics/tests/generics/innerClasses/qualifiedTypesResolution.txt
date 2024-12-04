@@ -1,13 +1,13 @@
 package
 
-public fun error1(): [ERROR : Inner3]<A, B, C, D>
-public fun error2(): [ERROR : Inner2]<A, B, C, D>
-public fun error3(): [ERROR : Inner3]<A, B, C>
-public fun error4(): [ERROR : Inner4]<A, B, C>
-public fun error5(): [ERROR : Inner5]<A, B, C>
-public fun error6(): [ERROR : Inner5]<A, B, C>
-public fun error7(): [ERROR : Inner5]<kotlin.String, A, B>
-public fun errorTypeWithArguments(): [ERROR : Q<A>.W<B, C, D>.R.M]<A, B, C, D>
+public fun error1(): [Error type: Type for error type constructor (Inner3)]<A, B, C, D>
+public fun error2(): [Error type: Type for error type constructor (Inner2)]<A, B, C, D>
+public fun error3(): [Error type: Type for error type constructor (Inner3)]<A, B, C>
+public fun error4(): [Error type: Type for error type constructor (Inner4)]<A, B, C>
+public fun error5(): [Error type: Type for error type constructor (Inner5)]<A, B, C>
+public fun error6(): [Error type: Type for error type constructor (Inner5)]<A, B, C>
+public fun error7(): [Error type: Type for error type constructor (Inner5)]<kotlin.String, A, B>
+public fun errorTypeWithArguments(): [Error type: Unresolved type for Q<A>.W<B, C, D>.R.M]<A, B, C, D>
 public fun ok1(): test.Outer<A>.Inner<B, C>.Inner2
 public fun ok2(): test.Outer<A>.Inner<B, C>.Inner2
 public fun ok22(): test.Outer<A>.Inner<B, C>.Inner3<D>

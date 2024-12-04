@@ -1,0 +1,77 @@
+FILE: nested.kt
+    public final enum class Outer : R|kotlin/Enum<Outer>| {
+        private constructor(): R|Outer| {
+            super<R|kotlin/Enum<Outer>|>()
+        }
+
+        public final static enum entry FIRST: R|Outer|
+        public final static enum entry SECOND: R|Outer|
+        public final static fun values(): R|kotlin/Array<Outer>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Outer| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Outer>|
+            public get(): R|kotlin/enums/EnumEntries<Outer>|
+
+    }
+    public final enum class Inner : R|kotlin/Enum<Inner>| {
+        private constructor(): R|Inner| {
+            super<R|kotlin/Enum<Inner>|>()
+        }
+
+        public final static enum entry SECOND: R|Inner|
+        public final static enum entry THIRD: R|Inner|
+        public final static fun values(): R|kotlin/Array<Inner>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Inner| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Inner>|
+            public get(): R|kotlin/enums/EnumEntries<Inner>|
+
+    }
+    public final fun foo(o: R|Outer|, i: R|Inner|): R|kotlin/Int| {
+        ^foo when (R|<local>/o|) {
+            ==($subj$, R|/Outer.FIRST|) ->  {
+                Int(1)
+            }
+            ==($subj$, R|/Outer.SECOND|) ->  {
+                when (R|<local>/i|) {
+                    ==($subj$, R|/Inner.SECOND|) ->  {
+                        Int(2)
+                    }
+                    ==($subj$, R|/Inner.THIRD|) ->  {
+                        Int(3)
+                    }
+                }
+
+            }
+        }
+
+    }
+    public final fun bar(o: R|Outer|, i: R|Inner|): R|kotlin/Int| {
+        ^bar when (R|<local>/o|) {
+            ==($subj$, R|/Outer.FIRST|) ->  {
+                Int(1)
+            }
+            ==($subj$, R|/Outer.SECOND|) ->  {
+                local final fun baz(): R|kotlin/Int| {
+                    ^baz when (R|<local>/i|) {
+                        ==($subj$, R|/Inner.SECOND|) ->  {
+                            Int(2)
+                        }
+                        ==($subj$, R|/Inner.THIRD|) ->  {
+                            Int(3)
+                        }
+                    }
+
+                }
+
+                R|<local>/baz|()
+            }
+        }
+
+    }

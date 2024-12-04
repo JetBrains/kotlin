@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Set;
 
-import static org.jetbrains.kotlin.psi.KtPsiFactoryKt.KtPsiFactory;
-
 abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends KtDeclarationStub<T> implements KtNamedDeclaration {
     public KtNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
@@ -45,7 +43,7 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
 
     @Override
     public String getName() {
-        T stub = getStub();
+        T stub = getGreenStub();
         if (stub != null) {
             return stub.getName();
         }
@@ -99,8 +97,7 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
             }
         }
 
-        PsiElement newIdentifier =
-                KtPsiFactory(this).createNameIdentifierIfPossible(KtPsiUtilKt.quoteIfNeeded(name));
+        PsiElement newIdentifier = new KtPsiFactory(getProject()).createNameIdentifierIfPossible(KtPsiUtilKt.quoteIfNeeded(name));
         if (newIdentifier != null) {
             KtPsiUtilKt.astReplace(identifier, newIdentifier);
         }
@@ -203,7 +200,7 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
     public FqName getFqName() {
         // TODO: stubs do not agree with PSI here in case where there's no name:
         // stubs return a normalized name, and PSI returns null
-        T stub = getStub();
+        T stub = getGreenStub();
         if (stub != null) {
             return stub.getFqName();
         }

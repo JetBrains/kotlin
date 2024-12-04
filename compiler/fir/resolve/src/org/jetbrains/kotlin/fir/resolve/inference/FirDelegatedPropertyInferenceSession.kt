@@ -5,143 +5,207 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.processPostponedAtoms
+import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.DelegatedPropertyConstraintPosition
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class FirDelegatedPropertyInferenceSession(
-    val property: FirProperty,
-    initialCall: FirExpression,
-    resolutionContext: ResolutionContext,
-    private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-) : AbstractManyCandidatesInferenceSession(resolutionContext) {
-    init {
-        val initialCandidate = (initialCall as? FirResolvable)
-            ?.calleeReference
-            ?.safeAs<FirNamedReferenceWithCandidate>()
-            ?.candidate
-        if (initialCandidate != null) {
-            addPartiallyResolvedCall(initialCall)
+    private val resolutionContext: ResolutionContext,
+    private val callCompleter: FirCallCompleter,
+    private val delegateExpression: FirExpression,
+) : FirInferenceSession() {
+
+    private val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
+
+    private val components: BodyResolveComponents
+        get() = resolutionContext.bodyResolveComponents
+
+    private val FirResolvable.candidate: Candidate
+        get() = candidate()!!
+
+    private val nonTrivialParentSession: FirInferenceSession? =
+        resolutionContext.bodyResolveContext.inferenceSession.takeIf { it !== DEFAULT }
+
+    val parentSessionIsNonTrivial: Boolean
+        get() = nonTrivialParentSession != null
+
+    private val delegateCandidate = (delegateExpression as? FirResolvable)?.candidate()
+    private val parentConstraintSystem =
+        delegateCandidate?.system
+            ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession)?.currentCommonSystem
+            ?: components.session.inferenceComponents.createConstraintSystem()
+
+    private val currentConstraintSystem =
+        prepareSharedBaseSystem(parentConstraintSystem, components.session.inferenceComponents)
+
+    val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
+
+    private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.coneType
+
+    private var wasCompletionRun = false
+
+    override fun baseConstraintStorageForCandidate(candidate: Candidate, bodyResolveContext: BodyResolveContext): ConstraintStorage? {
+        if (wasCompletionRun || !candidate.callInfo.callSite.isAnyOfDelegateOperators()) return null
+        return currentConstraintStorage
+    }
+
+    override fun customCompletionModeInsteadOfFull(call: FirResolvable): ConstraintSystemCompletionMode? = when {
+        call.isAnyOfDelegateOperators() && !wasCompletionRun -> ConstraintSystemCompletionMode.PARTIAL
+        else -> null
+    }
+
+    override fun <T> processPartiallyResolvedCall(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode,
+    ) where T : FirResolvable, T : FirExpression {
+        if (wasCompletionRun || !call.isAnyOfDelegateOperators()) return
+
+        requireCallIsDelegateOperator(call)
+
+        val candidate = call.candidate
+
+        // Ignore unsuccessful `provideDelegate` candidates
+        // This behavior is aligned with a relevant part at FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
+        if (call.isProvideDelegate() && !candidate.isSuccessful) return
+
+        val candidateSystem = candidate.system
+
+        partiallyResolvedCalls.add(call to candidate)
+        currentConstraintSystem.addOtherSystem(candidateSystem.currentStorage())
+    }
+
+    private fun <T> requireCallIsDelegateOperator(call: T) where T : FirResolvable, T : FirStatement {
+        require(call.isAnyOfDelegateOperators()) {
+            "Unexpected ${call.render()} call"
         }
     }
 
-    val expectedType: ConeKotlinType? by lazy { property.returnTypeRef.coneTypeSafe() }
-    private val unitType: ConeKotlinType = components.session.builtinTypes.unitType.type
-    private lateinit var resultingConstraintSystem: NewConstraintSystem
+    private fun <T> T.isProvideDelegate() where T : FirResolvable, T : FirStatement =
+        isAnyOfDelegateOperators() && (this as FirResolvable).candidate()?.callInfo?.name == OperatorNameConventions.PROVIDE_DELEGATE
 
-    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = false
+    fun completeSessionOrPostponeIfNonRoot(onCompletionResultsWriting: (ConeSubstitutor) -> Unit) {
+        check(!wasCompletionRun)
+        wasCompletionRun = true
 
-    override fun inferPostponedVariables(
-        lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage,
-        completionMode: ConstraintSystemCompletionMode
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
+        parentConstraintSystem.addOtherSystem(currentConstraintStorage)
 
-    override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+        (nonTrivialParentSession as? FirPCLAInferenceSession)?.apply {
+            if (delegateCandidate != null) {
+                require(delegateExpression is FirResolvable)
+                callCompleter.runCompletionForCall(
+                    delegateCandidate,
+                    ConstraintSystemCompletionMode.PCLA_POSTPONED_CALL,
+                    delegateExpression,
+                    components.initialTypeOfCandidate(delegateCandidate)
+                )
+            }
 
-    fun completeCandidates(): List<FirResolvable> {
-        @Suppress("UNCHECKED_CAST")
-        val resolvedCalls = partiallyResolvedCalls.map { it.first }
-        val commonSystem = components.session.inferenceComponents.createConstraintSystem().apply {
-            addOtherSystem(currentConstraintSystem)
+            integrateChildSession(
+                buildList {
+                    addIfNotNull(ConeResolutionAtom.createRawAtom(delegateExpression))
+                    partiallyResolvedCalls.mapTo(this) { (expression, candidate) ->
+                        ConeAtomWithCandidate(expression as FirExpression, candidate)
+                    }
+                },
+                parentConstraintSystem.currentStorage(),
+                onCompletionResultsWriting,
+            )
+            return
         }
-        prepareForCompletion(commonSystem, resolvedCalls)
+
+        val completedCalls = completeCandidatesForRootSession()
+
+        val finalSubstitutor = parentConstraintSystem.asReadOnlyStorage()
+            .buildAbstractResultingSubstitutor(components.session.typeContext) as ConeSubstitutor
+
+        val callCompletionResultsWriter = callCompleter.createCompletionResultsWriter(
+            finalSubstitutor,
+            // TODO: Get rid of the mode
+            mode = FirCallCompletionResultsWriterTransformer.Mode.DelegatedPropertyCompletion
+        )
+        completedCalls.forEach {
+            it.transformSingle(callCompletionResultsWriter, null)
+        }
+
+        onCompletionResultsWriting(finalSubstitutor)
+    }
+
+    private fun completeCandidatesForRootSession(): List<FirResolvable> {
+        val parentSystem = parentConstraintSystem.apply { prepareForGlobalCompletion() }
+
+        val notCompletedCalls = buildList {
+            if (delegateExpression is FirResolvable) {
+                val delegateCandidate = delegateExpression.candidate()
+                if (delegateCandidate != null) {
+                    add(ConeAtomWithCandidate(delegateExpression, delegateCandidate))
+                }
+            }
+            partiallyResolvedCalls.mapNotNullTo(this) { (partiallyResolvedCall, _) ->
+                val candidate = partiallyResolvedCall.candidate() ?: return@mapNotNullTo null
+                ConeAtomWithCandidate(partiallyResolvedCall as FirExpression, candidate)
+            }
+        }
+
         resolutionContext.bodyResolveContext.withInferenceSession(DEFAULT) {
-            @Suppress("UNCHECKED_CAST")
             components.callCompleter.completer.complete(
-                commonSystem.asConstraintSystemCompleterContext(),
+                parentSystem.asConstraintSystemCompleterContext(),
                 ConstraintSystemCompletionMode.FULL,
-                resolvedCalls as List<FirStatement>,
+                notCompletedCalls,
                 unitType, resolutionContext
-            ) {
-                postponedArgumentsAnalyzer.analyze(
-                    commonSystem.asPostponedArgumentsAnalyzerContext(),
-                    it,
-                    resolvedCalls.first().candidate,
-                    ConstraintSystemCompletionMode.FULL,
+            ) { lambdaAtom, withPCLASession ->
+                // Reversed here bc we want top-most call to avoid exponential visit
+                val containingCandidateForLambda = notCompletedCalls.asReversed().first {
+                    var found = false
+                    it.processPostponedAtoms { postponedAtom ->
+                        found = found || postponedAtom == lambdaAtom
+                    }
+                    found
+                }.candidate
+                callCompleter.createPostponedArgumentsAnalyzer(resolutionContext).analyze(
+                    parentSystem,
+                    lambdaAtom,
+                    containingCandidateForLambda,
+                    withPCLASession
                 )
             }
         }
 
-        for ((_, candidate) in partiallyResolvedCalls) {
-            for (error in commonSystem.errors) {
-                candidate.system.addError(error)
+        for (candidate in notCompletedCalls.mapNotNull { (it.expression as FirResolvable).candidate() }) {
+            for (error in parentSystem.errors) {
+                candidate.addDiagnostic(InferenceError(error))
             }
         }
 
-        resultingConstraintSystem = commonSystem
-        return resolvedCalls
+        return notCompletedCalls.map { it.expression as FirResolvable }
+    }
+}
+
+fun FirElement.isAnyOfDelegateOperators(): Boolean {
+    if (this is FirPropertyAccessExpression) {
+        val originalCall = this.candidate()?.callInfo?.callSite as? FirFunctionCall ?: return false
+        return originalCall.isAnyOfDelegateOperators()
     }
 
-    private fun prepareForCompletion(commonSystem: NewConstraintSystem, partiallyResolvedCalls: List<FirResolvable>) {
-        val csBuilder = commonSystem.getBuilder()
-        for (call in partiallyResolvedCalls) {
-            val candidate = call.candidate
-            when ((call.calleeReference as FirNamedReference).name) {
-                OperatorNameConventions.GET_VALUE -> candidate.addConstraintsForGetValueMethod(csBuilder)
-                OperatorNameConventions.SET_VALUE -> candidate.addConstraintsForSetValueMethod(csBuilder)
-            }
-        }
-    }
-
-    fun createFinalSubstitutor(): ConeSubstitutor {
-        return resultingConstraintSystem.asReadOnlyStorage()
-            .buildAbstractResultingSubstitutor(components.session.typeContext) as ConeSubstitutor
-    }
-
-    private fun Candidate.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {
-        if (expectedType != null) {
-            val accessor = symbol.fir as? FirSimpleFunction ?: return
-            val unsubstitutedReturnType = accessor.returnTypeRef.coneType
-
-            val substitutedReturnType = substitutor.substituteOrSelf(unsubstitutedReturnType)
-            commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType!!, DelegatedPropertyConstraintPosition(callInfo.callSite))
-        }
-
-        addConstraintForThis(commonSystem)
-    }
-
-    private fun Candidate.addConstraintsForSetValueMethod(commonSystem: ConstraintSystemBuilder) {
-        if (expectedType != null) {
-            val accessor = symbol.fir as? FirSimpleFunction ?: return
-            val unsubstitutedParameterType = accessor.valueParameters.getOrNull(2)?.returnTypeRef?.coneType ?: return
-
-            val substitutedReturnType = substitutor.substituteOrSelf(unsubstitutedParameterType)
-            commonSystem.addSubtypeConstraint(expectedType!!, substitutedReturnType, DelegatedPropertyConstraintPosition(callInfo.callSite))
-        }
-
-        addConstraintForThis(commonSystem)
-    }
-
-    private fun Candidate.addConstraintForThis(commonSystem: ConstraintSystemBuilder) {
-        val typeOfThis: ConeKotlinType = property.receiverTypeRef?.coneType
-            ?: when (val container = components.container) {
-                is FirRegularClass -> container.defaultType()
-                is FirAnonymousObject -> container.defaultType()
-                is FirCallableDeclaration -> container.dispatchReceiverType
-                else -> null
-            } ?: components.session.builtinTypes.nullableNothingType.type
-        val valueParameterForThis = (symbol as? FirFunctionSymbol<*>)?.fir?.valueParameters?.firstOrNull() ?: return
-        val substitutedType = substitutor.substituteOrSelf(valueParameterForThis.returnTypeRef.coneType)
-        commonSystem.addSubtypeConstraint(typeOfThis, substitutedType, DelegatedPropertyConstraintPosition(callInfo.callSite))
-    }
-
-    override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false
+    if (this !is FirFunctionCall || origin != FirFunctionCallOrigin.Operator) return false
+    val name = calleeReference.name
+    return name == OperatorNameConventions.PROVIDE_DELEGATE || name == OperatorNameConventions.GET_VALUE || name == OperatorNameConventions.SET_VALUE
 }

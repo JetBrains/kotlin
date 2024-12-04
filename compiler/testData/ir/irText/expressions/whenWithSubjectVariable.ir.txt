@@ -12,36 +12,36 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+                arg0: GET_VAR 'val y: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
                 arg1: CONST Int type=kotlin.Int value=42
               then: CONST Int type=kotlin.Int value=1
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-                GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+                GET_VAR 'val y: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
               then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
                 $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                  GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+                  GET_VAR 'val y: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
             BRANCH
-              if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCL
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCL
                 $this: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-                  GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+                  GET_VAR 'val y: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=2
             BRANCH
-              if: CALL 'public open fun contains (value: kotlin.Int): kotlin.Boolean [operator] declared in kotlin.ranges.IntRange' type=kotlin.Boolean origin=IN
-                $this: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange [operator] declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
+              if: CALL 'public open fun contains (value: kotlin.Int): kotlin.Boolean declared in kotlin.ranges.IntRange' type=kotlin.Boolean origin=IN
+                $this: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                   $this: CONST Int type=kotlin.Int value=0
                   other: CONST Int type=kotlin.Int value=10
                 value: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+                  GET_VAR 'val y: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=3
             BRANCH
-              if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCL
-                $this: CALL 'public open fun contains (value: kotlin.Int): kotlin.Boolean [operator] declared in kotlin.ranges.IntRange' type=kotlin.Boolean origin=NOT_IN
-                  $this: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange [operator] declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
+              if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCL
+                $this: CALL 'public open fun contains (value: kotlin.Int): kotlin.Boolean declared in kotlin.ranges.IntRange' type=kotlin.Boolean origin=NOT_IN
+                  $this: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                     $this: CONST Int type=kotlin.Int value=10
                     other: CONST Int type=kotlin.Int value=20
                   value: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                    GET_VAR 'val y: kotlin.Any [val] declared in <root>.test' type=kotlin.Any origin=null
+                    GET_VAR 'val y: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=4
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true

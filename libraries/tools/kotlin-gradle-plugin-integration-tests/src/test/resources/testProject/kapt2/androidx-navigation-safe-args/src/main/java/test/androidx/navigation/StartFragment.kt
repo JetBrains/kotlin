@@ -7,10 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_start.*
-import kotlinx.android.synthetic.main.fragment_start.view.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -47,11 +46,11 @@ class StartFragment : Fragment() {
 
         val inf = inflater.inflate(R.layout.fragment_start,container,false)
 
-        inf.button.setOnClickListener {
+        (inf.findViewById(R.id.button) as Button).setOnClickListener {
             it.findNavController().navigate(StartFragmentDirections.actionStartFragmentToDestinationFragment1())
         }
 
-        inf.button2.setOnClickListener {
+        (inf.findViewById(R.id.button2) as Button).setOnClickListener {
             it.findNavController().navigate(StartFragmentDirections.actionStartFragmentToDestinationFragment2())
         }
 

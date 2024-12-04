@@ -1,11 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace "mobi.porquenao.poc.kotlin"
     compileSdkVersion 23
-    buildToolsVersion '25.0.2'
 
     defaultConfig {
         minSdkVersion 14
@@ -17,13 +16,12 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+    kotlin {
+        jvmToolchain(8)
     }
 }
 
-def dbflow_version = "3.1.1"
+def dbflow_version = "4.2.4"
 
 dependencies {
     // Android Support Libraries

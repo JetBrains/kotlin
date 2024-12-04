@@ -28,9 +28,13 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionC
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
+import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -49,7 +53,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 data class LambdaContextInfo(
     var typeInfo: KotlinTypeInfo? = null,
@@ -79,6 +82,7 @@ class KotlinResolutionCallbacksImpl(
     private val topLevelCallContext: BasicCallResolutionContext,
     private val missingSupertypesResolver: MissingSupertypesResolver,
     private val kotlinCallResolver: KotlinCallResolver,
+    private val resultTypeResolver: ResultTypeResolver,
 ) : KotlinResolutionCallbacks {
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
         val returnStatements = ArrayList<Pair<KtReturnExpression, LambdaContextInfo?>>()
@@ -88,6 +92,19 @@ class KotlinResolutionCallbacksImpl(
             val STUB_EMPTY = LambdaInfo(TypeUtils.NO_EXPECTED_TYPE, ContextDependency.INDEPENDENT)
         }
     }
+
+    override fun findResultType(constraintSystem: NewConstraintSystem, typeVariable: TypeVariableTypeConstructor): KotlinType? {
+        val variableWithConstraints = constraintSystem.getBuilder().currentStorage().notFixedTypeVariables[typeVariable] ?: return null
+        return resultTypeResolver.findResultType(
+            constraintSystem.asConstraintSystemCompleterContext(),
+            variableWithConstraints,
+            TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+        ) as KotlinType
+    }
+
+    override fun createEmptyConstraintSystem(): NewConstraintSystem = NewConstraintSystemImpl(
+        callComponents.constraintInjector, callComponents.builtIns, callComponents.kotlinTypeRefiner, callComponents.languageVersionSettings
+    )
 
     override fun resolveCallableReferenceArgument(
         argument: CallableReferenceKotlinCallArgument,
@@ -106,6 +123,7 @@ class KotlinResolutionCallbacksImpl(
         lambdaArgument: LambdaKotlinCallArgument,
         isSuspend: Boolean,
         receiverType: UnwrappedType?,
+        contextReceiversTypes: List<UnwrappedType>,
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?,
         annotations: Annotations,
@@ -170,16 +188,19 @@ class KotlinResolutionCallbacksImpl(
         val refinedReceiverType = receiverType?.let {
             @OptIn(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
         }
+        val refinedContextReceiverTypes = contextReceiversTypes.map {
+            @OptIn(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
+        }
 
         val expectedType = createFunctionType(
-            builtIns, annotations, refinedReceiverType, parameters, null,
+            builtIns, annotations, refinedReceiverType, refinedContextReceiverTypes, parameters, null,
             lambdaInfo.expectedType, isSuspend
         )
 
         val approximatesExpectedType =
             typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
 
-        val coroutineSession =
+        val builderInferenceSession =
             if (stubsForPostponedVariables.isNotEmpty()) {
                 BuilderInferenceSession(
                     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
@@ -187,14 +208,13 @@ class KotlinResolutionCallbacksImpl(
                     kotlinToResolvedCallTransformer, expressionTypingServices, argumentTypeResolver,
                     doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, typeApproximator,
                     missingSupertypesResolver, lambdaArgument
-                )
+                ).apply { lambdaArgument.builderInferenceSession = this }
             } else {
                 null
             }
 
-
-        val temporaryTrace = if (coroutineSession != null)
-            TemporaryBindingTrace.create(trace, "Trace to resolve coroutine $lambdaArgument")
+        val temporaryTrace = if (builderInferenceSession != null)
+            TemporaryBindingTrace.create(trace, "Trace to resolve builder inference lambda: $lambdaArgument")
         else
             null
 
@@ -205,14 +225,16 @@ class KotlinResolutionCallbacksImpl(
             .replaceContextDependency(lambdaInfo.contextDependency)
             .replaceExpectedType(approximatesExpectedType)
             .replaceDataFlowInfo(psiCallArgument.dataFlowInfoBeforeThisArgument).let {
-                if (coroutineSession != null) it.replaceInferenceSession(coroutineSession) else it
+                if (builderInferenceSession != null) it.replaceInferenceSession(builderInferenceSession) else it
             }
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
         (temporaryTrace ?: trace).record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
-        if (coroutineSession?.hasInapplicableCall() == true) {
-            return ReturnArgumentsAnalysisResult(ReturnArgumentsInfo.empty, coroutineSession, hasInapplicableCallForBuilderInference = true)
+        if (builderInferenceSession?.hasInapplicableCall() == true) {
+            return ReturnArgumentsAnalysisResult(
+                ReturnArgumentsInfo.empty, builderInferenceSession, hasInapplicableCallForBuilderInference = true
+            )
         } else {
             temporaryTrace?.commit()
         }
@@ -259,7 +281,7 @@ class KotlinResolutionCallbacksImpl(
                 lastExpressionCoercedToUnit,
                 returnArgumentFound
             ),
-            coroutineSession,
+            builderInferenceSession,
         )
     }
 
@@ -287,7 +309,7 @@ class KotlinResolutionCallbacksImpl(
         val returnType = descriptor.returnType ?: return false
         if (!isPrimitiveTypeOrNullablePrimitiveType(returnType) || !isPrimitiveTypeOrNullablePrimitiveType(expectedType)) return false
 
-        val callElement = resolvedAtom.atom.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>() ?: return false
+        val callElement = (resolvedAtom.atom.psiKotlinCall.psiCall.callElement as? KtExpression) ?: return false
         val expression = findCommonParent(callElement, resolvedAtom.atom.psiKotlinCall.explicitReceiver)
 
         val temporaryBindingTrace = TemporaryBindingTrace.create(
@@ -304,7 +326,7 @@ class KotlinResolutionCallbacksImpl(
 
     override fun getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedAtom: ResolvedCallAtom): UnwrappedType? {
         val candidateDescriptor = resolvedAtom.candidateDescriptor as? FunctionDescriptor ?: return null
-        val call = resolvedAtom.atom.safeAs<PSIKotlinCall>()?.psiCall ?: return null
+        val call = (resolvedAtom.atom as? PSIKotlinCall)?.psiCall ?: return null
 
         if (call.typeArgumentList != null || !candidateDescriptor.isFunctionForExpectTypeFromCastFeature()) return null
         val binaryParent = call.calleeExpression?.getBinaryWithTypeParent() ?: return null

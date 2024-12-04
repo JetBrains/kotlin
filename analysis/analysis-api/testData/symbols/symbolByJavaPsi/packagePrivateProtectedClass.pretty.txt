@@ -1,0 +1,1 @@
+open inner class InnerClass

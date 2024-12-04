@@ -1,3 +1,8 @@
+var p: Int
+  field = 0
+  get
+  set
+
 open annotation class AnnParam : Annotation {
   constructor() /* primary */ {
     super/*Any*/()
@@ -7,21 +12,17 @@ open annotation class AnnParam : Annotation {
 
 }
 
-var p: Int
-  field = 0
-  get
-  set
-
 class C {
+  var p: Int
+    field = p
+    get
+    set
+
   constructor(p: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  var p: Int
-    field = p
-    get
-    set
-
 }
+

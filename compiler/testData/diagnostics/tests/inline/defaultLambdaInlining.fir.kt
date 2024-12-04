@@ -1,5 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
-// !LANGUAGE: +InlineDefaultFunctionalParameters
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+// LANGUAGE: +InlineDefaultFunctionalParameters
 
 fun test() = "OK"
 
@@ -28,7 +29,7 @@ val a = Foo()
 inline fun default8(s : () -> String = a::test) {}
 inline fun default9(s : () -> String = a::prop) {}
 
-inline fun default10(s : () -> String = <!INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE!>object<!> : Function0<String> {
+inline fun default10(s : () -> String = <!INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE!>object : Function0<String><!> {
     override fun invoke(): String {
         return "FAIL"
     }
@@ -39,7 +40,7 @@ abstract class Base {
 }
 
 class Derived : Base() {
-    <!OVERRIDE_BY_INLINE!>override final inline fun foo(<!NOT_YET_SUPPORTED_IN_INLINE!>f: () -> Unit<!>)<!> {
+    override final inline <!OVERRIDE_BY_INLINE!>fun foo(<!NOT_YET_SUPPORTED_IN_INLINE!>f: () -> Unit<!>)<!> {
         f()
     }
 }

@@ -4,11 +4,7 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
-// JVM_IR_TEMPLATES
 // 1 java/lang/invoke/LambdaMetafactory
-
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates: [kotlin/collections/plus, kotlin/collections/plus]
 
 // FILE: multifileClassMemberFromStdlib.kt
 

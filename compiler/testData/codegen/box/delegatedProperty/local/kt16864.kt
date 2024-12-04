@@ -8,5 +8,5 @@ fun box(): String {
         object {
             val keys = key
         }.keys
-    } ()
+    }.let { it() }
 }

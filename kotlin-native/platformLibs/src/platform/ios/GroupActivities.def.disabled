@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.GroupActivities
+
+modules = GroupActivities
+compilerOpts = -framework GroupActivities
+linkerOpts = -framework GroupActivities
+#Disabled: Swift-only framework

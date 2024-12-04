@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,30 +11,48 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
-import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class FirModuleVisibilityChecker : FirSessionComponent {
     abstract fun isInFriendModule(declaration: FirMemberDeclaration): Boolean
 
     class Standard(val session: FirSession) : FirModuleVisibilityChecker() {
+        private val useSiteModuleData = session.moduleData
+        private val allDependsOnDependencies = useSiteModuleData.allDependsOnDependencies
+
         override fun isInFriendModule(declaration: FirMemberDeclaration): Boolean {
-            val useSiteModuleData = session.moduleData
-            val declarationModuleData = declaration.moduleData
-            return useSiteModuleData == declarationModuleData || declarationModuleData in useSiteModuleData.friendDependencies
+            return when (declaration.moduleData) {
+                useSiteModuleData,
+                in useSiteModuleData.friendDependencies,
+                in allDependsOnDependencies -> true
+
+                else -> false
+            }
+        }
+    }
+}
+
+abstract class FirModulePrivateVisibilityChecker : FirSessionComponent {
+    abstract fun canSeePrivateDeclaration(declaration: FirMemberDeclaration): Boolean
+
+    open class Standard(private val session: FirSession) : FirModulePrivateVisibilityChecker() {
+        override fun canSeePrivateDeclaration(declaration: FirMemberDeclaration): Boolean {
+            return session.moduleData == declaration.moduleData
         }
     }
 }
@@ -47,13 +65,40 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             symbol: FirBasedSymbol<*>,
             useSiteFile: FirFile,
             containingDeclarations: List<FirDeclaration>,
-            dispatchReceiver: ReceiverValue?,
+            dispatchReceiver: FirExpression?,
             session: FirSession,
             isCallToPropertySetter: Boolean,
             supertypeSupplier: SupertypeSupplier
         ): Boolean {
             return true
         }
+
+        override fun platformOverrideVisibilityCheck(
+            packageNameOfDerivedClass: FqName,
+            symbolInBaseClass: FirBasedSymbol<*>,
+            visibilityInBaseClass: Visibility,
+        ): Boolean {
+            return true
+        }
+    }
+
+    fun isClassLikeVisible(
+        declaration: FirClassLikeDeclaration,
+        session: FirSession,
+        useSiteFile: FirFile,
+        containingDeclarations: List<FirDeclaration>,
+    ): Boolean {
+        return isVisible(
+            declaration,
+            session,
+            useSiteFile,
+            containingDeclarations,
+            dispatchReceiver = null,
+            isCallToPropertySetter = false,
+            staticQualifierClassForCallable = null,
+            skipCheckForContainingClassVisibility = false,
+            supertypeSupplier = SupertypeSupplier.Default
+        )
     }
 
     fun isVisible(
@@ -61,8 +106,9 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         session: FirSession,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
-        dispatchReceiver: ReceiverValue?,
+        dispatchReceiver: FirExpression?,
         isCallToPropertySetter: Boolean = false,
+        staticQualifierClassForCallable: FirRegularClass? = null,
         // There's no need to check if containing class is visible in case we check if a member might be overridden in a subclass
         // because visibility for its supertype that contain overridden member is being checked when resolving the type reference.
         // Such flag is not necessary in FE1.0, since there are full structure of fake overrides and containing declaration for overridden
@@ -71,7 +117,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
     ): Boolean {
         if (!isSpecificDeclarationVisible(
-                declaration,
+                if (declaration is FirCallableDeclaration) declaration.originalOrSelf() else declaration,
                 session,
                 useSiteFile,
                 containingDeclarations,
@@ -85,47 +131,73 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
         if (skipCheckForContainingClassVisibility) return true
 
-        val parentClass = declaration.containingNonLocalClass(session, dispatchReceiver) ?: return true
-        return generateSequence(parentClass) { it.containingNonLocalClass(session) }.all { parent ->
+        if (staticQualifierClassForCallable != null) {
+            return isSpecificDeclarationVisible(
+                staticQualifierClassForCallable,
+                session,
+                useSiteFile,
+                containingDeclarations,
+                dispatchReceiver = null,
+                isCallToPropertySetter,
+                supertypeSupplier
+            )
+        }
+        return declaration.parentDeclarationSequence(session, dispatchReceiver, containingDeclarations, supertypeSupplier)?.all { parent ->
             isSpecificDeclarationVisible(
                 parent,
                 session,
                 useSiteFile,
                 containingDeclarations,
-                dispatchReceiver,
+                dispatchReceiver = null,
                 isCallToPropertySetter,
                 supertypeSupplier
             )
-        }
+        } ?: true
     }
 
-    private fun FirMemberDeclaration.containingNonLocalClass(
-        session: FirSession,
-        dispatchReceiverValue: ReceiverValue?
-    ): FirClassLikeDeclaration? {
-        return when (this) {
-            is FirCallableDeclaration -> {
-                if (dispatchReceiverValue != null && dispatchReceiverType != null) {
-                    dispatchReceiverValue.type.findClassRepresentation(dispatchReceiverType!!, session)?.toSymbol(session)?.fir?.let {
-                        return it
-                    }
-                }
+    fun isVisibleForOverriding(
+        candidateInDerivedClass: FirCallableDeclaration,
+        candidateInBaseClass: FirCallableDeclaration,
+    ): Boolean = isVisibleForOverriding(
+        candidateInDerivedClass.moduleData, candidateInDerivedClass.symbol.callableId.packageName, candidateInBaseClass
+    )
 
-                this.containingClass()?.toSymbol(session)?.fir
-            }
-            is FirClassLikeDeclaration -> containingNonLocalClass(session)
+    fun isVisibleForOverriding(
+        derivedClassModuleData: FirModuleData,
+        symbolFromDerivedClass: FirClassSymbol<*>,
+        candidateInBaseClass: FirCallableDeclaration,
+    ): Boolean = isVisibleForOverriding(derivedClassModuleData, symbolFromDerivedClass.classId.packageFqName, candidateInBaseClass)
+
+    private fun isVisibleForOverriding(
+        derivedClassModuleData: FirModuleData,
+        packageNameOfDerivedClass: FqName,
+        candidateInBaseClass: FirCallableDeclaration,
+    ): Boolean = isSpecificDeclarationVisibleForOverriding(
+        derivedClassModuleData,
+        packageNameOfDerivedClass,
+        // It is important for package-private visibility as fake override can be in another package
+        candidateInBaseClass.originalOrSelf(),
+    )
+
+    private fun isSpecificDeclarationVisibleForOverriding(
+        derivedClassModuleData: FirModuleData,
+        packageNameOfDerivedClass: FqName,
+        candidateInBaseClass: FirCallableDeclaration,
+    ): Boolean = when (candidateInBaseClass.visibility) {
+        Visibilities.Internal -> {
+            candidateInBaseClass.moduleData == derivedClassModuleData ||
+                    derivedClassModuleData.session.moduleVisibilityChecker?.isInFriendModule(candidateInBaseClass) == true
         }
-    }
 
-    private fun FirClassLikeDeclaration.containingNonLocalClass(session: FirSession): FirClassLikeDeclaration? {
-        return when (this) {
-            is FirClass -> {
-                if (isLocal) return null
+        Visibilities.Private, Visibilities.PrivateToThis -> false
+        Visibilities.Protected -> true
+        else -> {
 
-                this.classId.outerClassId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
-            }
-            // Currently, type aliases are only top-level
-            is FirTypeAlias -> null
+            platformOverrideVisibilityCheck(
+                packageNameOfDerivedClass,
+                candidateInBaseClass.symbol,
+                candidateInBaseClass.visibility
+            )
         }
     }
 
@@ -134,41 +206,35 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         session: FirSession,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
-        dispatchReceiver: ReceiverValue?,
+        dispatchReceiver: FirExpression?,
         isCallToPropertySetter: Boolean = false,
         supertypeSupplier: SupertypeSupplier
     ): Boolean {
         val symbol = declaration.symbol
         val provider = session.firProvider
+
         return when (declaration.visibility) {
             Visibilities.Internal -> {
                 declaration.moduleData == session.moduleData || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
             }
             Visibilities.Private, Visibilities.PrivateToThis -> {
                 val ownerLookupTag = symbol.getOwnerLookupTag()
-                if (declaration.moduleData == session.moduleData) {
+                if (session.modulePrivateVisibilityChecker.canSeePrivateDeclaration(declaration)) {
                     when {
                         ownerLookupTag == null -> {
-                            val candidateFile = when (symbol) {
-                                is FirSyntheticFunctionSymbol -> {
-                                    // SAM case
-                                    val classId = ClassId(symbol.callableId.packageName, symbol.callableId.callableName)
-                                    provider.getFirClassifierContainerFile(classId)
-                                }
-                                is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
-                                is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
-                                else -> null
-                            }
                             // Top-level: visible in file
-                            candidateFile == useSiteFile
-                        }
-                        declaration is FirConstructor && declaration.isFromSealedClass -> {
-                            // Sealed class constructor: visible in same package
-                            declaration.symbol.callableId.packageName == useSiteFile.packageFqName
+                            provider.getContainingFile(symbol) == useSiteFile
                         }
                         else -> {
                             // Member: visible inside parent class, including all its member classes
-                            canSeePrivateMemberOf(containingDeclarations, ownerLookupTag, session)
+                            canSeePrivateMemberOf(
+                                symbol,
+                                containingDeclarations,
+                                ownerLookupTag,
+                                dispatchReceiver,
+                                isVariableOrNamedFunction = symbol.isVariableOrNamedFunction(),
+                                session
+                            )
                         }
                     }
                 } else {
@@ -179,8 +245,8 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             Visibilities.Protected -> {
                 val ownerId = symbol.getOwnerLookupTag()
                 ownerId != null && canSeeProtectedMemberOf(
-                    containingDeclarations, dispatchReceiver, ownerId, session,
-                    isVariableOrNamedFunction = symbol is FirVariableSymbol || symbol is FirNamedFunctionSymbol || symbol is FirPropertyAccessorSymbol,
+                    symbol, containingDeclarations, dispatchReceiver, ownerId, session,
+                    isVariableOrNamedFunction = symbol.isVariableOrNamedFunction(),
                     symbol.fir is FirSyntheticPropertyAccessor,
                     supertypeSupplier
                 )
@@ -204,25 +270,75 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         symbol: FirBasedSymbol<*>,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
-        dispatchReceiver: ReceiverValue?,
+        dispatchReceiver: FirExpression?,
         session: FirSession,
         isCallToPropertySetter: Boolean,
         supertypeSupplier: SupertypeSupplier
     ): Boolean
 
+    protected abstract fun platformOverrideVisibilityCheck(
+        packageNameOfDerivedClass: FqName,
+        symbolInBaseClass: FirBasedSymbol<*>,
+        visibilityInBaseClass: Visibility,
+    ): Boolean
+
     private fun canSeePrivateMemberOf(
+        symbol: FirBasedSymbol<*>,
         containingDeclarationOfUseSite: List<FirDeclaration>,
         ownerLookupTag: ConeClassLikeLookupTag,
+        dispatchReceiver: FirExpression?,
+        isVariableOrNamedFunction: Boolean,
         session: FirSession
     ): Boolean {
         ownerLookupTag.ownerIfCompanion(session)?.let { companionOwnerLookupTag ->
-            return canSeePrivateMemberOf(containingDeclarationOfUseSite, companionOwnerLookupTag, session)
+            return canSeePrivateMemberOf(
+                symbol,
+                containingDeclarationOfUseSite,
+                companionOwnerLookupTag,
+                dispatchReceiver,
+                isVariableOrNamedFunction,
+                session
+            )
+        }
+
+        // Note: private static symbols aren't accessible by use-site dispatch receiver
+        // See e.g. diagnostics/tests/scopes/inheritance/statics/hidePrivateByPublic.kt,
+        // private A.a becomes visible from outside without filtering static callables here
+        if (dispatchReceiver != null && (symbol !is FirCallableSymbol || !symbol.isStatic)) {
+            val fir = symbol.fir
+            val dispatchReceiverParameterClassSymbol =
+                (fir as? FirCallableDeclaration)
+                    ?.propertyIfAccessor?.propertyIfBackingField
+                    ?.dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)
+                    ?: return true
+
+            val dispatchReceiverParameterClassLookupTag = dispatchReceiverParameterClassSymbol.toLookupTag()
+            val dispatchReceiverValueOwnerLookupTag =
+                dispatchReceiver.resolvedType.findClassRepresentation(
+                    dispatchReceiverParameterClassLookupTag.constructClassType(
+                        Array(dispatchReceiverParameterClassSymbol.fir.typeParameters.size) { ConeStarProjection },
+                        isMarkedNullable = true
+                    ),
+                    session,
+                )
+
+            if (dispatchReceiverParameterClassLookupTag != dispatchReceiverValueOwnerLookupTag) return false
+            if (fir.visibility == Visibilities.PrivateToThis) {
+                when (dispatchReceiver) {
+                    is FirThisReceiverExpression -> {
+                        if (dispatchReceiver.calleeReference.boundSymbol != dispatchReceiverParameterClassSymbol) {
+                            return false
+                        }
+                    }
+                    else -> return false
+                }
+            }
         }
 
         for (declaration in containingDeclarationOfUseSite) {
             if (declaration !is FirClass) continue
             val boundSymbol = declaration.symbol
-            if (boundSymbol.classId.isSame(ownerLookupTag.classId)) {
+            if (boundSymbol.toLookupTag() == ownerLookupTag) {
                 return true
             }
         }
@@ -230,24 +346,20 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         return false
     }
 
-    // 'local' isn't taken into account here
-    private fun ClassId.isSame(other: ClassId): Boolean =
-        packageFqName == other.packageFqName && relativeClassName == other.relativeClassName
-
     private fun ConeClassLikeLookupTag.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? {
         if (classId.isLocal) return null
         val outerClassId = classId.outerClassId ?: return null
-        val ownerSymbol = toSymbol(session) as? FirRegularClassSymbol
+        val ownerSymbol = toRegularClassSymbol(session)
 
         if (ownerSymbol?.fir?.isCompanion == true) {
-            return ConeClassLikeLookupTagImpl(outerClassId)
+            return outerClassId.toLookupTag()
         }
         return null
     }
 
     private fun canSeeProtectedMemberOf(
         containingUseSiteClass: FirClass,
-        dispatchReceiver: ReceiverValue?,
+        dispatchReceiver: FirExpression?,
         ownerLookupTag: ConeClassLikeLookupTag,
         session: FirSession,
         isVariableOrNamedFunction: Boolean,
@@ -255,11 +367,11 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         supertypeSupplier: SupertypeSupplier
     ): Boolean {
         dispatchReceiver?.ownerIfCompanion(session)?.let { companionOwnerLookupTag ->
-            if (containingUseSiteClass.isSubClass(companionOwnerLookupTag, session, supertypeSupplier)) return true
+            if (containingUseSiteClass.isSubclassOf(companionOwnerLookupTag, session, isStrict = false, supertypeSupplier)) return true
         }
 
         return when {
-            !containingUseSiteClass.isSubClass(ownerLookupTag, session, supertypeSupplier) -> false
+            !containingUseSiteClass.isSubclassOf(ownerLookupTag, session, isStrict = false, supertypeSupplier) -> false
             isVariableOrNamedFunction -> doesReceiverFitForProtectedVisibility(
                 dispatchReceiver,
                 containingUseSiteClass,
@@ -272,27 +384,26 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     private fun doesReceiverFitForProtectedVisibility(
-        dispatchReceiver: ReceiverValue?,
+        dispatchReceiver: FirExpression?,
         containingUseSiteClass: FirClass,
         ownerLookupTag: ConeClassLikeLookupTag,
         isSyntheticProperty: Boolean,
         session: FirSession
     ): Boolean {
         if (dispatchReceiver == null) return true
-        var dispatchReceiverType = dispatchReceiver.type
-        if (dispatchReceiver is ExpressionReceiverValue) {
-            val explicitReceiver = dispatchReceiver.explicitReceiver
-            if (explicitReceiver is FirPropertyAccessExpression && explicitReceiver.calleeReference is FirSuperReference) {
-                // Special 'super' case: type of this, not of super, should be taken for the check below
-                dispatchReceiverType = explicitReceiver.dispatchReceiver.typeRef.coneType
-            }
+        var dispatchReceiverType = dispatchReceiver.resolvedType
+        if (dispatchReceiver is FirPropertyAccessExpression && dispatchReceiver.calleeReference is FirSuperReference) {
+            // Special 'super' case: type of this, not of super, should be taken for the check below
+            dispatchReceiverType = dispatchReceiver.dispatchReceiver!!.resolvedType
         }
         val typeCheckerState = session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
         if (AbstractTypeChecker.isSubtypeOf(
-                typeCheckerState, dispatchReceiverType.fullyExpandedType(session), containingUseSiteClass.typeWithStarProjections()
+                typeCheckerState,
+                dispatchReceiverType.fullyExpandedType(session),
+                containingUseSiteClass.symbol.constructStarProjectedType()
             )
         ) {
             return true
@@ -308,28 +419,9 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         return false
     }
 
-    private fun FirClass.isSubClass(
-        ownerLookupTag: ConeClassLikeLookupTag,
-        session: FirSession,
-        supertypeSupplier: SupertypeSupplier
-    ): Boolean {
-        if (classId.isSame(ownerLookupTag.classId)) return true
-
-        return lookupSuperTypes(
-            this,
-            lookupInterfaces = true,
-            deep = true,
-            session,
-            substituteTypes = false,
-            supertypeSupplier
-        ).any { superType ->
-            // Note: We check just classId here, so type substitution isn't needed   ^ (we aren't interested in type arguments)
-            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isSame(ownerLookupTag.classId) == true
-        }
-    }
-
-    private fun ReceiverValue?.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? =
-        (this?.type as? ConeClassLikeType)?.lookupTag?.ownerIfCompanion(session)
+    private fun FirExpression?.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? =
+        // TODO: what if there is an intersection type from smartcast?
+        (this?.resolvedType?.lowerBoundIfFlexible() as? ConeClassLikeType)?.lookupTag?.ownerIfCompanion(session)
 
     // monitorEnter/monitorExit are the only functions which are accessed "illegally" (see kotlin/util/Synchronized.kt).
     // Since they are intrinsified in the codegen, FIR should treat it as visible.
@@ -342,15 +434,24 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     }
 
     protected fun canSeeProtectedMemberOf(
+        usedSymbol: FirBasedSymbol<*>,
         containingDeclarationOfUseSite: List<FirDeclaration>,
-        dispatchReceiver: ReceiverValue?,
+        dispatchReceiver: FirExpression?,
         ownerLookupTag: ConeClassLikeLookupTag,
         session: FirSession,
         isVariableOrNamedFunction: Boolean,
         isSyntheticProperty: Boolean,
         supertypeSupplier: SupertypeSupplier
     ): Boolean {
-        if (canSeePrivateMemberOf(containingDeclarationOfUseSite, ownerLookupTag, session)) return true
+        if (canSeePrivateMemberOf(
+                usedSymbol,
+                containingDeclarationOfUseSite,
+                ownerLookupTag,
+                dispatchReceiver,
+                isVariableOrNamedFunction,
+                session
+            )
+        ) return true
 
         for (containingDeclaration in containingDeclarationOfUseSite) {
             if (containingDeclaration is FirClass) {
@@ -377,31 +478,106 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
         return false
     }
-
-    protected fun FirBasedSymbol<*>.packageFqName(): FqName {
-        return when (this) {
-            is FirClassLikeSymbol<*> -> classId.packageFqName
-            is FirCallableSymbol<*> -> callableId.packageName
-            else -> error("No package fq name for $this")
-        }
-    }
 }
 
 val FirSession.moduleVisibilityChecker: FirModuleVisibilityChecker? by FirSession.nullableSessionComponentAccessor()
+val FirSession.modulePrivateVisibilityChecker: FirModulePrivateVisibilityChecker by FirSession.sessionComponentAccessor()
 val FirSession.visibilityChecker: FirVisibilityChecker by FirSession.sessionComponentAccessor()
 
 fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {
     return when (this) {
         is FirBackingFieldSymbol -> fir.propertySymbol.getOwnerLookupTag()
-        is FirClassLikeSymbol<*> -> {
-            if (classId.isLocal) {
-                (fir as? FirRegularClass)?.containingClassForLocal()
-            } else {
-                val ownerId = classId.outerClassId
-                ownerId?.let { ConeClassLikeLookupTagImpl(it) }
-            }
+        is FirClassLikeSymbol<*> -> getContainingClassLookupTag()
+        is FirCallableSymbol<*> -> containingClassLookupTag()
+        is FirScriptSymbol, is FirCodeFragmentSymbol -> null
+        else -> errorWithAttachment("Unsupported owner search for ${fir::class.java}") {
+            withFirEntry("ownerDeclaration", fir)
         }
-        is FirCallableSymbol<*> -> containingClass()
-        else -> error("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
     }
+}
+
+fun FirBasedSymbol<*>.isVariableOrNamedFunction(): Boolean {
+    return this is FirVariableSymbol || this is FirNamedFunctionSymbol || this is FirPropertyAccessorSymbol
+}
+
+
+fun FirMemberDeclaration.parentDeclarationSequence(
+    session: FirSession,
+    dispatchReceiver: FirExpression?,
+    containingDeclarations: List<FirDeclaration>,
+    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
+): Sequence<FirClassLikeDeclaration>? {
+    val parentClass = containingNonLocalClass(
+        session,
+        dispatchReceiver,
+        containingDeclarations,
+        supertypeSupplier
+    ) ?: return null
+
+    return generateSequence(parentClass) { it.containingNonLocalClass(session) }
+}
+
+private fun FirMemberDeclaration.containingNonLocalClass(
+    session: FirSession,
+    dispatchReceiver: FirExpression?,
+    containingUseSiteDeclarations: List<FirDeclaration>,
+    supertypeSupplier: SupertypeSupplier
+): FirClassLikeDeclaration? {
+    return when (this) {
+        is FirCallableDeclaration -> {
+            if (dispatchReceiver != null) {
+                val baseReceiverType = dispatchReceiverClassTypeOrNull()
+                if (baseReceiverType != null) {
+                    dispatchReceiver.resolvedType.findClassRepresentation(baseReceiverType, session)?.toSymbol(session)?.fir?.let {
+                        return it
+                    }
+                }
+            }
+
+            val containingLookupTag = this.containingClassLookupTag()
+            val containingClass = containingLookupTag?.toSymbol(session)?.fir
+
+            if (isStatic && containingClass != null) {
+                containingUseSiteDeclarations.firstNotNullOfOrNull {
+                    if (it !is FirClass) return@firstNotNullOfOrNull null
+                    it.takeIf { it.isSubclassOf(containingLookupTag, session, isStrict = false, supertypeSupplier) }
+                }?.let { return it }
+            }
+
+            containingClass
+        }
+        is FirClassLikeDeclaration -> containingNonLocalClass(session)
+    }
+}
+
+private fun FirClassLikeDeclaration.containingNonLocalClass(session: FirSession): FirClassLikeDeclaration? {
+    return when (this) {
+        is FirClass -> {
+            if (isLocal) return null
+
+            this.classId.outerClassId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
+        }
+        // Currently, type aliases are only top-level
+        is FirTypeAlias -> null
+    }
+}
+
+/**
+ * The returned fir can be passed to the visibility checker, but don't
+ * use it for anything else.
+ */
+val <D, S : FirBasedSymbol<D>> S.firForVisibilityChecker: D
+    get() = fir.also {
+        lazyResolveToPhase(FirResolvePhase.STATUS)
+    }
+
+fun FirVisibilityChecker.isVisible(
+    symbol: FirCallableSymbol<*>,
+    session: FirSession,
+    useSiteFile: FirFile,
+    containingDeclarations: List<FirDeclaration>,
+    dispatchReceiver: FirExpression?,
+): Boolean {
+    symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+    return isVisible(symbol.fir, session, useSiteFile, containingDeclarations, dispatchReceiver)
 }

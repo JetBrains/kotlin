@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorResolver.transformAnonymousTypeIfNeeded
-import org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
@@ -37,8 +38,9 @@ class VariableTypeAndInitializerResolver(
     private val anonymousTypeTransformers: Iterable<DeclarationSignatureAnonymousTypeTransformer>
 ) {
     companion object {
-        @JvmField
-        val STUB_FOR_PROPERTY_WITHOUT_TYPE = ErrorUtils.createErrorType("No type, no body")
+        @JvmStatic
+        fun getTypeForPropertyWithoutReturnType(property: String): SimpleType =
+            ErrorUtils.createErrorType(ErrorTypeKind.RETURN_TYPE_FOR_PROPERTY, property)
     }
 
     fun resolveType(
@@ -58,7 +60,7 @@ class VariableTypeAndInitializerResolver(
             trace.report(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER.on(variable))
         }
 
-        return STUB_FOR_PROPERTY_WITHOUT_TYPE
+        return getTypeForPropertyWithoutReturnType(variableDescriptor.name.asString())
     }
 
     fun resolveTypeNullable(
@@ -114,9 +116,9 @@ class VariableTypeAndInitializerResolver(
         trace: BindingTrace
     ) {
         if (!variable.hasInitializer() || variable.isVar) return
-        variableDescriptor.setCompileTimeInitializer(
+        variableDescriptor.setCompileTimeInitializerFactory {
             storageManager.createRecursionTolerantNullableLazyValue(
-                computeInitializer@ {
+                computeInitializer@{
                     if (!DescriptorUtils.shouldRecordInitializerForProperty(
                             variableDescriptor,
                             variableType
@@ -125,26 +127,18 @@ class VariableTypeAndInitializerResolver(
                     val initializer = variable.initializer
                     val initializerType =
                         expressionTypingServices.safeGetType(scope, initializer!!, variableType, dataFlowInfo, inferenceSession, trace)
-                    NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(
-                        variableType,
-                        initializer,
-                        languageVersionSettings,
-                        trace,
-                        constantExpressionEvaluator.module
-                    )
                     val constant = constantExpressionEvaluator.evaluateExpression(initializer, trace, initializerType)
-                            ?: return@computeInitializer null
+                        ?: return@computeInitializer null
 
                     if (constant.usesNonConstValAsConstant && variableDescriptor.isConst) {
                         trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(initializer))
                     }
 
-                    val qqq = constant.toConstantValue(initializerType)
-                    qqq
+                    constant.toConstantValue(initializerType)
                 },
                 null
             )
-        )
+        }
     }
 
     private fun resolveDelegatedPropertyType(
@@ -166,7 +160,7 @@ class VariableTypeAndInitializerResolver(
         )
 
         val delegatedType = getterReturnType?.let { approximateType(it, local) }
-            ?: ErrorUtils.createErrorType("Type from delegate")
+            ?: ErrorUtils.createErrorType(ErrorTypeKind.TYPE_FOR_DELEGATION, delegateExpression.text)
 
         transformAnonymousTypeIfNeeded(
             variableDescriptor, property, delegatedType, trace, anonymousTypeTransformers, languageVersionSettings

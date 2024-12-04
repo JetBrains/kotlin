@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 class Simple {
     operator fun invoke(): String = "invoke"
 }

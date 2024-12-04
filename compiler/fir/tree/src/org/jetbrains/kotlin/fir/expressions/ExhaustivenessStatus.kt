@@ -16,21 +16,30 @@ sealed class ExhaustivenessStatus {
     object ProperlyExhaustive : ExhaustivenessStatus()
 
     /**
+     * This value is used when there is an `else` branch present and the subject type is [ProperlyExhaustive].
+     * If the subject type is flexible, the upper bound must be [ProperlyExhaustive].
+     */
+    object RedundantlyExhaustive : ExhaustivenessStatus()
+
+    /**
      *  This value is used if the subject has type `Nothing`, in which case even an empty `when` is considered exhaustive. Also, in this
      *  case, a synthetic else branch is created.
      */
-    object ExhaustiveAsNothing : ExhaustivenessStatus()
+    data object ExhaustiveAsNothing : ExhaustivenessStatus()
 
     class NotExhaustive(val reasons: List<WhenMissingCase>) : ExhaustivenessStatus() {
         companion object {
-            val NO_ELSE_BRANCH = NotExhaustive(listOf(WhenMissingCase.Unknown))
+            val NO_ELSE_BRANCH: NotExhaustive = NotExhaustive(listOf(WhenMissingCase.Unknown))
         }
     }
 }
 
 
 val FirWhenExpression.isExhaustive: Boolean
-    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive || exhaustivenessStatus == ExhaustivenessStatus.ExhaustiveAsNothing
+    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive ||
+            exhaustivenessStatus == ExhaustivenessStatus.ExhaustiveAsNothing ||
+            exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive
 
 val FirWhenExpression.isProperlyExhaustive: Boolean
-    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive
+    get() = exhaustivenessStatus == ExhaustivenessStatus.ProperlyExhaustive ||
+            exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive

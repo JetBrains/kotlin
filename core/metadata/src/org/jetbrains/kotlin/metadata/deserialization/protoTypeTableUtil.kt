@@ -113,3 +113,12 @@ fun ProtoBuf.Expression.isInstanceType(typeTable: TypeTable): ProtoBuf.Type? = w
     hasIsInstanceTypeId() -> typeTable[isInstanceTypeId]
     else -> null
 }
+
+fun ProtoBuf.Class.contextReceiverTypes(typeTable: TypeTable): List<ProtoBuf.Type> =
+    contextReceiverTypeList.takeIf(Collection<*>::isNotEmpty) ?: contextReceiverTypeIdList.map { typeTable[it] }
+
+fun ProtoBuf.Function.contextReceiverTypes(typeTable: TypeTable): List<ProtoBuf.Type> =
+    contextReceiverTypeList.takeIf(Collection<*>::isNotEmpty) ?: contextReceiverTypeIdList.map { typeTable[it] }
+
+fun ProtoBuf.Property.contextReceiverTypes(typeTable: TypeTable): List<ProtoBuf.Type> =
+    contextReceiverTypeList.takeIf(Collection<*>::isNotEmpty) ?: contextReceiverTypeIdList.map { typeTable[it] }

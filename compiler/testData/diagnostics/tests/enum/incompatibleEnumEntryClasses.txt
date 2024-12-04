@@ -10,7 +10,7 @@ public final enum class E1 : kotlin.Enum<E1>, I {
     enum entry B
 
     private constructor E1()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E1): kotlin.Int
@@ -22,6 +22,7 @@ public final enum class E1 : kotlin.Enum<E1>, I {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<E1>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E1
     public final /*synthesized*/ fun values(): kotlin.Array<E1>
 }
@@ -32,7 +33,7 @@ public final enum class E2 : kotlin.Enum<E2>, I {
     enum entry B
 
     private constructor E2()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: E2): kotlin.Int
@@ -44,6 +45,7 @@ public final enum class E2 : kotlin.Enum<E2>, I {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<E2>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E2
     public final /*synthesized*/ fun values(): kotlin.Array<E2>
 }

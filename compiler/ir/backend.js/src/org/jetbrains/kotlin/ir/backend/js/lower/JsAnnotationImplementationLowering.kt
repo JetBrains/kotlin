@@ -20,11 +20,14 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
+import org.jetbrains.kotlin.ir.util.isUnsignedArray
 
-
+/**
+ * Creates synthetic annotations implementations and uses them in annotations constructor calls.
+ */
 // JS PIR (and IC) requires DeclarationTransformer instead of FileLoweringPass
-class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
-    AnnotationImplementationTransformer(jsContext, null),
+class JsAnnotationImplementationTransformer(jsContext: JsIrBackendContext) :
+    AnnotationImplementationTransformer(jsContext, jsContext.symbolTable, null),
     DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
@@ -36,13 +39,16 @@ class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
         return expression
     }
 
+    override fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall): IrConstructor =
+        compilationException("Should not be called", implClass)
+
     override fun visitClassNew(declaration: IrClass): IrStatement {
-        if (declaration.isAnnotationClass) {
-            context.irFactory.stageController.unrestrictDeclarationListsAccess {
-                implementGeneratedFunctions(declaration, declaration)
+        return declaration.apply {
+            if (isAnnotationClass) {
+                implementGeneratedFunctions(this, this)
             }
+            addConstructorBodyForCompatibility()
         }
-        return super.visitClassNew(declaration)
     }
 
     private val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> =
@@ -50,7 +56,7 @@ class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
 
     override fun getArrayContentEqualsSymbol(type: IrType) =
         when {
-            type.isPrimitiveArray() -> arraysContentEquals[type]
+            type.isPrimitiveArray() || type.isUnsignedArray() -> arraysContentEquals[type]
             else -> arraysContentEquals.entries.singleOrNull { (k, _) -> k.isArray() }?.value
         } ?: compilationException("Can't find an Arrays.contentEquals method for array type", type)
 

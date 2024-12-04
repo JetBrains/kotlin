@@ -1,3 +1,0 @@
-Resolved to:
-0: (in kotlin.collections) inline fun <T> MutableList(size: kotlin.Int, init: (kotlin.Int) -> T): kotlin.collections.MutableList<T>
-1: (in kotlin.collections) interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E>

@@ -1,7 +1,7 @@
 package
 
 public interface ComputablePath</*0*/ NumberType : kotlin.Number, /*1*/ PointType, /*2*/ out SegmentType> {
-    public abstract fun anyTwoSegments(/*0*/ comparator: EachSegmentComparator<[ERROR : ComputableSegment<NumberType, PointType>]<NumberType, PointType>> /* = ([ERROR : ComputableSegment<NumberType, PointType>]<NumberType, PointType>, [ERROR : ComputableSegment<NumberType, PointType>]<NumberType, PointType>, relationship: kotlin.Int) -> kotlin.Boolean */): kotlin.Boolean
+    public abstract fun anyTwoSegments(/*0*/ comparator: EachSegmentComparator<[Error type: Unresolved type for ComputableSegment<NumberType, PointType>]<NumberType, PointType>> /* = ([Error type: Unresolved type for ComputableSegment<NumberType, PointType>]<NumberType, PointType>, [Error type: Unresolved type for ComputableSegment<NumberType, PointType>]<NumberType, PointType>, relationship: kotlin.Int) -> kotlin.Boolean */): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

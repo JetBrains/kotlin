@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks
 
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.getFunctionTypeKind
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -90,5 +90,5 @@ fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
     }
 
     return real.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
-            real.containingDeclaration.getFunctionalClassKind() != null
+            real.containingDeclaration.getFunctionTypeKind() != null
 }

@@ -1,3 +1,7 @@
+val test: A
+  field = A()
+  get
+
 class A {
   constructor() /* primary */ {
     super/*Any*/()
@@ -7,6 +11,3 @@ class A {
 
 }
 
-val test: A
-  field = A()
-  get

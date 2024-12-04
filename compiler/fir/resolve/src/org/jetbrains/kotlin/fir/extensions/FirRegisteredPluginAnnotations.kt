@@ -11,18 +11,30 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-abstract class FirRegisteredPluginAnnotations(val session: FirSession) : FirSessionComponent {
-    companion object {
-        fun create(session: FirSession): FirRegisteredPluginAnnotations {
-            return FirRegisteredPluginAnnotationsImpl(session)
-        }
-    }
-
+abstract class FirRegisteredPluginAnnotations : FirSessionComponent {
+    /**
+     * Contains all annotations that can be targeted by the plugins. It includes the annotations directly mentioned by the plugin,
+     * and all the user-defined annotations which are meta-annotated by the annotations from the [metaAnnotations] list.
+     */
     abstract val annotations: Set<AnnotationFqn>
+
+    /**
+     * Contains meta-annotations that can be targeted by the plugins.
+     */
     abstract val metaAnnotations: Set<AnnotationFqn>
+
+    val hasRegisteredAnnotations: Boolean
+        get() = annotations.isNotEmpty() || metaAnnotations.isNotEmpty()
+
     abstract fun getAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Collection<AnnotationFqn>
 
     abstract fun registerUserDefinedAnnotation(metaAnnotation: AnnotationFqn, annotationClasses: Collection<FirRegularClass>)
@@ -31,35 +43,51 @@ abstract class FirRegisteredPluginAnnotations(val session: FirSession) : FirSess
 
     @PluginServicesInitialization
     abstract fun initialize()
+
+    object Empty : FirRegisteredPluginAnnotations() {
+        override val annotations: Set<AnnotationFqn>
+            get() = emptySet()
+        override val metaAnnotations: Set<AnnotationFqn>
+            get() = emptySet()
+
+        override fun getAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Collection<AnnotationFqn> {
+            return emptyList()
+        }
+
+        override fun registerUserDefinedAnnotation(metaAnnotation: AnnotationFqn, annotationClasses: Collection<FirRegularClass>) {
+            shouldNotBeCalled()
+        }
+
+        override fun getAnnotationsForPredicate(predicate: DeclarationPredicate): Set<AnnotationFqn> {
+            return emptySet()
+        }
+
+        @PluginServicesInitialization
+        override fun initialize() {
+            shouldNotBeCalled()
+        }
+    }
 }
 
-@NoMutableState
-private class FirRegisteredPluginAnnotationsImpl(session: FirSession) : FirRegisteredPluginAnnotations(session) {
-    override val annotations: MutableSet<AnnotationFqn> = mutableSetOf()
-    override val metaAnnotations: MutableSet<AnnotationFqn> = mutableSetOf()
+/**
+ * Collecting annotations directly from registered plugins works the same way for all implementations of
+ * [FirRegisteredPluginAnnotations], so this abstract base class was introduced.
+ *
+ * It also has some common code in it.
+ */
+abstract class AbstractFirRegisteredPluginAnnotations(protected val session: FirSession) : FirRegisteredPluginAnnotations() {
+    final override val metaAnnotations: MutableSet<AnnotationFqn> = mutableSetOf()
 
-    // MetaAnnotation -> Annotations
-    private val userDefinedAnnotations: Multimap<AnnotationFqn, AnnotationFqn> = LinkedHashMultimap.create()
+    private val annotationsForPredicateCache: FirCache<DeclarationPredicate, Set<AnnotationFqn>, Nothing?> =
+        session.firCachesFactory.createCache { predicate ->
+            collectAnnotations(predicate)
+        }
 
-    private val annotationsForPredicateCache: MutableMap<DeclarationPredicate, Set<AnnotationFqn>> = mutableMapOf()
-
-    override fun getAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Collection<AnnotationFqn> {
-        return userDefinedAnnotations[metaAnnotation]
-    }
-
-    override fun registerUserDefinedAnnotation(metaAnnotation: AnnotationFqn, annotationClasses: Collection<FirRegularClass>) {
-        require(annotationClasses.all { it.classKind == ClassKind.ANNOTATION_CLASS })
-        val annotations = annotationClasses.map { it.symbol.classId.asSingleFqName() }
-        this.annotations += annotations
-        userDefinedAnnotations.putAll(metaAnnotation, annotations)
-    }
-
-    override fun getAnnotationsForPredicate(predicate: DeclarationPredicate): Set<AnnotationFqn> {
-        return annotationsForPredicateCache.computeIfAbsent(predicate, ::collectAnnotations)
+    final override fun getAnnotationsForPredicate(predicate: DeclarationPredicate): Set<AnnotationFqn> {
+        return annotationsForPredicateCache.getValue(predicate)
     }
 
     private fun collectAnnotations(predicate: DeclarationPredicate): Set<AnnotationFqn> {
-        if (predicate.metaAnnotations.isEmpty()) return predicate.annotations
         val result = predicate.metaAnnotations.flatMapTo(mutableSetOf()) { getAnnotationsWithMetaAnnotation(it) }
         if (result.isEmpty()) return predicate.annotations
         result += predicate.annotations
@@ -67,29 +95,53 @@ private class FirRegisteredPluginAnnotationsImpl(session: FirSession) : FirRegis
     }
 
     @PluginServicesInitialization
-    override fun initialize() {
+    final override fun initialize() {
         val registrar = object : FirDeclarationPredicateRegistrar() {
-            val predicates = mutableListOf<DeclarationPredicate>()
-            override fun register(vararg predicates: DeclarationPredicate) {
+            val predicates = mutableListOf<AbstractPredicate<*>>()
+            override fun register(vararg predicates: AbstractPredicate<*>) {
                 this.predicates += predicates
             }
 
-            override fun register(predicates: Collection<DeclarationPredicate>) {
+            override fun register(predicates: Collection<AbstractPredicate<*>>) {
                 this.predicates += predicates
             }
         }
 
         for (extension in session.extensionService.getAllExtensions()) {
-            if (extension !is FirPredicateBasedExtension) continue
             with(extension) {
                 registrar.registerPredicates()
             }
         }
 
         for (predicate in registrar.predicates) {
-            annotations += predicate.annotations
+            saveAnnotationsFromPlugin(predicate.annotations)
             metaAnnotations += predicate.metaAnnotations
         }
+    }
+
+    protected abstract fun saveAnnotationsFromPlugin(annotations: Collection<AnnotationFqn>)
+}
+
+@NoMutableState
+class FirRegisteredPluginAnnotationsImpl(session: FirSession) : AbstractFirRegisteredPluginAnnotations(session) {
+    override val annotations: MutableSet<AnnotationFqn> = mutableSetOf()
+
+    // MetaAnnotation -> Annotations
+    private val userDefinedAnnotations: Multimap<AnnotationFqn, AnnotationFqn> = LinkedHashMultimap.create()
+
+    override fun getAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Collection<AnnotationFqn> {
+        return userDefinedAnnotations[metaAnnotation]
+    }
+
+    override fun saveAnnotationsFromPlugin(annotations: Collection<AnnotationFqn>) {
+        this.annotations += annotations
+    }
+
+    override fun registerUserDefinedAnnotation(metaAnnotation: AnnotationFqn, annotationClasses: Collection<FirRegularClass>) {
+        require(annotationClasses.all { it.classKind == ClassKind.ANNOTATION_CLASS })
+        val annotations = annotationClasses.map { it.symbol.classId.asSingleFqName() }
+        this.annotations += annotations
+        userDefinedAnnotations.putAll(metaAnnotation, annotations)
     }
 }
 

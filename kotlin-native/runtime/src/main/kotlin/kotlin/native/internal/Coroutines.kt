@@ -6,7 +6,7 @@
 package kotlin.native.internal
 
 import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.native.internal.escapeAnalysis.Escapes
 
 @kotlin.internal.InlineOnly
 @PublishedApi
@@ -26,5 +26,11 @@ internal inline suspend fun getCoroutineContext(): CoroutineContext =
 @PublishedApi
 internal external suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T
 
-@TypedIntrinsic(IntrinsicType.COROUTINE_LAUNCHPAD)
-internal external fun coroutineLaunchpad(suspendFunctionCall: Any?, continuation: Continuation<*>): Any?
+@TypedIntrinsic(IntrinsicType.SAVE_COROUTINE_STATE)
+@PublishedApi
+internal external fun saveCoroutineState()
+
+@TypedIntrinsic(IntrinsicType.RESTORE_COROUTINE_STATE)
+@PublishedApi
+internal external fun restoreCoroutineState()
+

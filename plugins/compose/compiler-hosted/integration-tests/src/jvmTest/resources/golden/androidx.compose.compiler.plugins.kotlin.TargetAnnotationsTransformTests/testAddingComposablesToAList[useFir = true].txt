@@ -1,0 +1,40 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+class Scope {
+    private val list = IntervalList<Scope.(Int) -> (@Composable () -> Unit)>()
+    fun item(content: @Composable Scope.() -> Unit) {
+        list.add(1) { @Composable { content() } }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class Scope {
+  val list: IntervalList<@[ExtensionFunctionType] Function2<Scope, Int, Function2<Composer, Int, Unit>>> = IntervalList()
+  fun item(content: @[ExtensionFunctionType] Function3<Scope, Composer, Int, Unit>) {
+    list.add(1) { it: Int ->
+      composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+        sourceInformation(%composer, "C<conten...>:Test.kt")
+        if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+          if (isTraceInProgress()) {
+            traceEventStart(<>, %changed, -1, <>)
+          }
+          content(%this%add, %composer, 0)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+        } else {
+          %composer.skipToGroupEnd()
+        }
+      }
+    }
+  }
+  static val %stable: Int = 0
+}

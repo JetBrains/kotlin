@@ -1,0 +1,71 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+import androidx.compose.runtime.MutableState
+
+@Composable
+fun VarargComposable(state: MutableState<Int>, vararg values: String = Array(1) { "value " + it }) {
+    state.value
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(VarargComposable):Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(state)) 0b0100 else 0b0010
+  }
+  %composer.startMovableGroup(<>, values.size)
+  val <iterator> = values.iterator()
+  while (<iterator>.hasNext()) {
+    val value = <iterator>.next()
+    %dirty = %dirty or if (%composer.changed(value)) 0b00100000 else 0
+  }
+  %composer.endMovableGroup()
+  if (%dirty and 0b01110000 == 0) {
+    %dirty = %dirty or 0b00010000
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0010 != 0) {
+        values = Array(1) { it: Int ->
+          val tmp0_return = "value " + it
+          tmp0_return
+        }
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    state.value
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    VarargComposable(state, *values, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

@@ -1,4 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
+// IGNORE_FIR_DIAGNOSTICS
+// RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -8,7 +9,7 @@ expect annotation class Foo3
 expect annotation class Foo4
 expect annotation class Foo5()
 expect annotation class Foo6()
-expect annotation class Foo7()
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect<!> annotation class Foo7<!EXPECT_ACTUAL_MISMATCH{JVM}!>()<!>
 
 @<!UNRESOLVED_REFERENCE!>Foo1<!>
 fun foo() {}

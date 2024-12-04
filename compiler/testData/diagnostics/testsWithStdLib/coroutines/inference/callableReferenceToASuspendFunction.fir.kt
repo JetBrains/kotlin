@@ -1,6 +1,6 @@
-// !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !OPT_IN: kotlin.RequiresOptIn
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
 
 import kotlin.reflect.KSuspendFunction0
 import kotlin.reflect.KSuspendFunction1
@@ -15,8 +15,8 @@ suspend fun bar(x: Int) {}
 
 fun test() {
     test0(::foo)
-    <!INAPPLICABLE_CANDIDATE!>test1<!>(::<!UNRESOLVED_REFERENCE!>foo<!>)
+    test1(::<!INAPPLICABLE_CANDIDATE!>foo<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>test0<!>(::<!UNRESOLVED_REFERENCE!>bar<!>)
+    test0(::<!INAPPLICABLE_CANDIDATE!>bar<!>)
     test1(::bar)
 }

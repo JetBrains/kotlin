@@ -8,7 +8,7 @@ package kt2418 {
         enum entry FOO
 
         private constructor A()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt2418.A): kotlin.Int
@@ -19,6 +19,7 @@ package kt2418 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kt2418.A>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt2418.A
         public final /*synthesized*/ fun values(): kotlin.Array<kt2418.A>
     }
@@ -27,7 +28,7 @@ package kt2418 {
         enum entry FOO
 
         private constructor B()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         public final fun FOO(): kotlin.Unit
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
@@ -39,6 +40,7 @@ package kt2418 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kt2418.B>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt2418.B
         public final /*synthesized*/ fun values(): kotlin.Array<kt2418.B>
     }
@@ -48,7 +50,7 @@ package kt2418 {
 
         private constructor C()
         public final val FOO: kotlin.Int = 1
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt2418.C): kotlin.Int
@@ -59,6 +61,7 @@ package kt2418 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kt2418.C>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt2418.C
         public final /*synthesized*/ fun values(): kotlin.Array<kt2418.C>
     }
@@ -67,7 +70,7 @@ package kt2418 {
         enum entry FOO
 
         private constructor D()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kt2418.D): kotlin.Int
@@ -85,6 +88,7 @@ package kt2418 {
         }
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kt2418.D>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt2418.D
         public final /*synthesized*/ fun values(): kotlin.Array<kt2418.D>
     }

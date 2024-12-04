@@ -6,7 +6,6 @@
 package test.collections
 
 import test.collections.behaviors.*
-import test.testOnNonJvm6And7
 import kotlin.test.*
 
 class AbstractCollectionsTest {
@@ -75,6 +74,9 @@ class AbstractCollectionsTest {
         compare(map.toMap(), map) {
             mapBehavior()
         }
+
+        // values collection does not provide equals implementation
+        assertNotEquals(map.values, ReadOnlyMap().values)
     }
 
     class MutColl(val storage: MutableCollection<String> = mutableListOf()) : AbstractMutableCollection<String>() {
@@ -128,9 +130,7 @@ class AbstractCollectionsTest {
 
         assertEquals(listOf("ok", "element"), list)
 
-        testOnNonJvm6And7 {
-            assertFailsWith<IndexOutOfBoundsException> { list.addAll(-1, listOf()) }
-        }
+        assertFailsWith<IndexOutOfBoundsException> { list.addAll(-1, listOf()) }
 
         compare(list.storage, list) {
             listBehavior()
@@ -168,5 +168,8 @@ class AbstractCollectionsTest {
         compare(map.storage, map) {
             mapBehavior()
         }
+
+        // values collection does not provide equals implementation
+        assertNotEquals(map.values, MutMap(map).values)
     }
 }

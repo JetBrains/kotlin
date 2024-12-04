@@ -1,0 +1,8 @@
+class MyClass {
+  companion object {
+    fun functionFromCompanion(i: kotlin.Int)
+
+    @kotlin.jvm.JvmStatic
+    fun staticFunctionFromCompanion(): kotlin.Int
+  }
+}

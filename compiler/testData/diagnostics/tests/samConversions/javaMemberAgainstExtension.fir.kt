@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// RUN_PIPELINE_TILL: FRONTEND
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 // FILE: Observer.java
 public interface Observer<K> {
@@ -16,7 +17,7 @@ fun <T> LiveData<T>.observe(a: Any, observer: (T) -> Unit): Observer<T> {
 }
 
 // FILE: test.kt
-fun <T> test1(r: Runnable, l: LiveData<T>): Observer<T> = <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>l.observe(r) {  }<!> // partial conversion
+fun <T> test1(r: Runnable, l: LiveData<T>): Observer<T> = <!RETURN_TYPE_MISMATCH!>l.observe(r) {  }<!> // partial conversion
 
 fun <T> test2(r: Runnable, o: Observer<T>, l: LiveData<T>) {
     val a = l.observe(r, o) // no conversion

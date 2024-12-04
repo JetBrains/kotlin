@@ -1,0 +1,32 @@
+FILE: enumEntryWithAnnotations.kt
+    @EnumAnnotation(String(enum)) public final? enum class MyEnumClass : R|kotlin/Enum<MyEnumClass>| {
+        private [ContainingClassKey=MyEnumClass] constructor(): R|MyEnumClass| {
+            super<R|kotlin/Enum<MyEnumClass>|>()
+        }
+
+        @Anno(String(implicit)) @PROPERTY:Anno(String(explicit)) public final static [ContainingClassKey=MyEnumClass] enum entry ENUM_ENTRY: R|MyEnumClass| = object : R|MyEnumClass| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|MyEnumClass|>()
+            }
+
+            @Anno(String(init annotations)) init {
+                @Expression(String(expression annotation)) foo#()
+            }
+
+            @FunAnno(String(fun)) public? final? fun foo(): @Anno(String(return type)) A<@Anno(String(nested return type)) B> {
+            }
+
+            <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+        }
+
+        public final static [ContainingClassKey=MyEnumClass] fun values(): R|kotlin/Array<MyEnumClass>| {
+        }
+
+        public final static [ContainingClassKey=MyEnumClass] fun valueOf(value: R|kotlin/String|): R|MyEnumClass| {
+        }
+
+        public final static [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
+            public get(): R|kotlin/enums/EnumEntries<MyEnumClass>|
+
+    }

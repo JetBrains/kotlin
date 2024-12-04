@@ -5,83 +5,133 @@
 
 package kotlin.native.internal
 
+import kotlin.native.internal.escapeAnalysis.Escapes
+
 @GCUnsafeCall("getCachedBooleanBox")
-external fun getCachedBooleanBox(value: Boolean): Boolean?
+@Escapes(0b10) // The return value is stored in a global.
+@PublishedApi internal external fun getCachedBooleanBox(value: Boolean): Boolean?
 
 @GCUnsafeCall("inBooleanBoxCache")
-external fun inBooleanBoxCache(value: Boolean): Boolean
+@PublishedApi internal external fun inBooleanBoxCache(value: Boolean): Boolean
 
 @GCUnsafeCall("getCachedByteBox")
-external fun getCachedByteBox(value: Byte): Byte?
+@Escapes(0b10) // The return value is stored in a global.
+@PublishedApi internal external fun getCachedByteBox(value: Byte): Byte?
 
 @GCUnsafeCall("inByteBoxCache")
-external fun inByteBoxCache(value: Byte): Boolean
+@PublishedApi internal external fun inByteBoxCache(value: Byte): Boolean
 
 @GCUnsafeCall("getCachedCharBox")
-external fun getCachedCharBox(value: Char): Char?
+@Escapes(0b10) // The return value is stored in a global.
+@PublishedApi internal external fun getCachedCharBox(value: Char): Char?
 
 @GCUnsafeCall("inCharBoxCache")
-external fun inCharBoxCache(value: Char): Boolean
+@PublishedApi internal external fun inCharBoxCache(value: Char): Boolean
 
 @GCUnsafeCall("getCachedShortBox")
-external fun getCachedShortBox(value: Short): Short?
+@Escapes(0b10) // The return value is stored in a global.
+@PublishedApi internal external fun getCachedShortBox(value: Short): Short?
 
 @GCUnsafeCall("inShortBoxCache")
-external fun inShortBoxCache(value: Short): Boolean
+@PublishedApi internal external fun inShortBoxCache(value: Short): Boolean
 
 @GCUnsafeCall("getCachedIntBox")
-external fun getCachedIntBox(idx: Int): Int?
+@Escapes(0b10) // The return value is stored in a global.
+@PublishedApi internal external fun getCachedIntBox(idx: Int): Int?
 
 @GCUnsafeCall("inIntBoxCache")
-external fun inIntBoxCache(value: Int): Boolean
+@PublishedApi internal external fun inIntBoxCache(value: Int): Boolean
 
 @GCUnsafeCall("getCachedLongBox")
-external fun getCachedLongBox(value: Long): Long?
+@Escapes(0b10) // The return value is stored in a global.
+@PublishedApi internal external fun getCachedLongBox(value: Long): Long?
 
 @GCUnsafeCall("inLongBoxCache")
-external fun inLongBoxCache(value: Long): Boolean
+@PublishedApi internal external fun inLongBoxCache(value: Long): Boolean
 
-// TODO: functions below are used for ObjCExport, move and rename them correspondigly.
+// TODO: functions below are used for ObjCExport and CAdapterGenerator, move and rename them correspondingly.
 
 @ExportForCppRuntime("Kotlin_boxBoolean")
-fun boxBoolean(value: Boolean): Boolean? = value
+@PublishedApi internal fun boxBoolean(value: Boolean): Boolean? = value
 
 @ExportForCppRuntime("Kotlin_boxChar")
-fun boxChar(value: Char): Char? = value
+@PublishedApi internal fun boxChar(value: Char): Char? = value
 
 @ExportForCppRuntime("Kotlin_boxByte")
-fun boxByte(value: Byte): Byte? = value
+@PublishedApi internal fun boxByte(value: Byte): Byte? = value
 
 @ExportForCppRuntime("Kotlin_boxShort")
-fun boxShort(value: Short): Short? = value
+@PublishedApi internal fun boxShort(value: Short): Short? = value
 
 @ExportForCppRuntime("Kotlin_boxInt")
-fun boxInt(value: Int): Int? = value
+@PublishedApi internal fun boxInt(value: Int): Int? = value
 
 @ExportForCppRuntime("Kotlin_boxLong")
-fun boxLong(value: Long): Long? = value
+@PublishedApi internal fun boxLong(value: Long): Long? = value
 
 @ExperimentalUnsignedTypes
 @ExportForCppRuntime("Kotlin_boxUByte")
-fun boxUByte(value: UByte): UByte? = value
+@PublishedApi internal fun boxUByte(value: UByte): UByte? = value
 
-@ExperimentalUnsignedTypes
+@ExperimentalUnsignedTypes 
 @ExportForCppRuntime("Kotlin_boxUShort")
-fun boxUShort(value: UShort): UShort? = value
+@PublishedApi internal fun boxUShort(value: UShort): UShort? = value
 
 @ExperimentalUnsignedTypes
 @ExportForCppRuntime("Kotlin_boxUInt")
-fun boxUInt(value: UInt): UInt? = value
+@PublishedApi internal fun boxUInt(value: UInt): UInt? = value
 
 @ExperimentalUnsignedTypes
 @ExportForCppRuntime("Kotlin_boxULong")
-fun boxULong(value: ULong): ULong? = value
+@PublishedApi internal fun boxULong(value: ULong): ULong? = value
 
 @ExportForCppRuntime("Kotlin_boxFloat")
-fun boxFloat(value: Float): Float? = value
+@PublishedApi internal fun boxFloat(value: Float): Float? = value
 
 @ExportForCppRuntime("Kotlin_boxDouble")
-fun boxDouble(value: Double): Double? = value
+@PublishedApi internal fun boxDouble(value: Double): Double? = value
 
 @ExportForCppRuntime("Kotlin_boxUnit")
-internal fun Kotlin_boxUnit(): Unit? = Unit
+@PublishedApi internal fun Kotlin_boxUnit(): Unit? = Unit
+
+// Unbox fuctions
+
+@ExportForCppRuntime("Kotlin_unboxBoolean")
+@PublishedApi internal fun unboxBoolean(value: Boolean?): Boolean = value!!
+
+@ExportForCppRuntime("Kotlin_unboxChar")
+@PublishedApi internal fun unboxChar(value: Char?): Char = value!!
+
+@ExportForCppRuntime("Kotlin_unboxByte")
+@PublishedApi internal fun unboxByte(value: Byte?): Byte = value!!
+
+@ExportForCppRuntime("Kotlin_unboxShort")
+@PublishedApi internal fun unboxShort(value: Short?): Short = value!!
+
+@ExportForCppRuntime("Kotlin_unboxInt")
+@PublishedApi internal fun unboxInt(value: Int?): Int = value!!
+
+@ExportForCppRuntime("Kotlin_unboxLong")
+@PublishedApi internal fun unboxLong(value: Long?): Long = value!!
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_unboxUByte")
+@PublishedApi internal fun unboxUByte(value: UByte?): UByte = value!!
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_unboxUShort")
+@PublishedApi internal fun unboxUShort(value: UShort?): UShort = value!!
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_unboxUInt")
+@PublishedApi internal fun unboxUInt(value: UInt?): UInt = value!!
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_unboxULong")
+@PublishedApi internal fun unboxULong(value: ULong?): ULong = value!!
+
+@ExportForCppRuntime("Kotlin_unboxFloat")
+@PublishedApi internal fun unboxFloat(value: Float?): Float = value!!
+
+@ExportForCppRuntime("Kotlin_unboxDouble")
+@PublishedApi internal fun unboxDouble(value: Double?): Double = value!!

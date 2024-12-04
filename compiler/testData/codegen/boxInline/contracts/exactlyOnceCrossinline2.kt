@@ -1,6 +1,6 @@
-// IGNORE_FIR_DIAGNOSTICS
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// IGNORE_BACKEND: NATIVE
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// JVM_ABI_K1_K2_DIFF: KT-62845
+
 // FILE: 1.kt
 package test
 
@@ -27,7 +27,7 @@ inline fun baz(crossinline exactly_once: () -> Unit) {
         callsInPlace(exactly_once, InvocationKind.EXACTLY_ONCE)
     };
 
-    { exactly_once() }()
+    { exactly_once() }.let { it() }
 }
 
 // FILE: 2.kt

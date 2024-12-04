@@ -6,9 +6,15 @@
 package org.jetbrains.kotlin.wasm.ir.convertors
 
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.debug.DebugData
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformation
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationConsumer
+import org.jetbrains.kotlin.wasm.ir.debug.DebugInformationGenerator
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMappingToText
 
 open class SExpressionBuilder {
-    protected val stringBuilder = StringBuilder()
+    protected val stringBuilder = StringBuilderWithLocations()
     protected var indent = 0
 
     protected inline fun indented(body: () -> Unit) {
@@ -45,7 +51,22 @@ open class SExpressionBuilder {
 }
 
 
-class WasmIrToText : SExpressionBuilder() {
+class WasmIrToText(
+    private val debugInformationGenerator: DebugInformationGenerator? = null,
+    private val optimizeInstructionFlow: Boolean = true,
+) : SExpressionBuilder(), DebugInformationConsumer {
+    override fun consumeDebugInformation(debugInformation: DebugInformation) {
+        debugInformation.forEach {
+            newLine()
+            stringBuilder.append("(; @custom ")
+            stringBuilder.append(it.name)
+            when (it.data) {
+                is DebugData.StringData -> stringBuilder.append(" \"${it.data.value}\"")
+            }
+            stringBuilder.append(" ;)")
+        }
+    }
+
     fun appendOffset(value: UInt) {
         if (value != 0u)
             appendElement("offset=$value")
@@ -58,15 +79,71 @@ class WasmIrToText : SExpressionBuilder() {
             appendElement("align=$alignEffective")
     }
 
+    private fun appendInstrList(instr: List<WasmInstr>) {
+        if (optimizeInstructionFlow) {
+            for (instruction in processInstructionsFlow(instr.asSequence())) {
+                appendInstr(instruction)
+            }
+        } else {
+            instr.forEach(::appendInstr)
+        }
+    }
+
     private fun appendInstr(wasmInstr: WasmInstr) {
+        wasmInstr.location?.let {
+            debugInformationGenerator?.addSourceLocation(
+                SourceLocationMappingToText(
+                    it,
+                    SourceLocation.Location("", "", stringBuilder.lineNumber, stringBuilder.columnNumber),
+                )
+            )
+        }
+
         val op = wasmInstr.operator
-        if (op == WasmOp.END || op == WasmOp.ELSE || op == WasmOp.CATCH)
+
+        if (op.opcode == WASM_OP_PSEUDO_OPCODE) {
+            fun commentText() =
+                (wasmInstr.immediates.single() as WasmImmediate.ConstString).value
+
+            when (op) {
+                WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR -> {
+                    val text = commentText()
+                    require(text.lineSequence().count() < 2) { "Comments for single instruction should be in one line" }
+                    stringBuilder.append("  ;; ")
+                    stringBuilder.append(text)
+                }
+                WasmOp.PSEUDO_COMMENT_GROUP_START -> {
+                    newLine()
+                    commentText().lines().forEach { line ->
+                        newLine()
+                        stringBuilder.append(";; ")
+                        stringBuilder.append(line)
+                    }
+                }
+                WasmOp.PSEUDO_COMMENT_GROUP_END -> {
+                    newLine()
+                }
+                else -> error("Unknown pseudo op $op")
+            }
+            return
+        }
+
+        if (op == WasmOp.END || op == WasmOp.ELSE || op == WasmOp.CATCH || op == WasmOp.CATCH_ALL)
             indent--
 
         newLine()
         stringBuilder.append(wasmInstr.operator.mnemonic)
 
-        if (op == WasmOp.BLOCK || op == WasmOp.LOOP || op == WasmOp.IF || op == WasmOp.ELSE || op == WasmOp.CATCH || op == WasmOp.TRY)
+        if (
+            op == WasmOp.BLOCK ||
+            op == WasmOp.LOOP ||
+            op == WasmOp.IF ||
+            op == WasmOp.ELSE ||
+            op == WasmOp.CATCH ||
+            op == WasmOp.CATCH_ALL ||
+            op == WasmOp.TRY ||
+            op == WasmOp.TRY_TABLE
+        )
             indent++
 
         if (wasmInstr.operator in setOf(WasmOp.CALL_INDIRECT, WasmOp.TABLE_INIT)) {
@@ -82,6 +159,7 @@ class WasmIrToText : SExpressionBuilder() {
 
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
+            is WasmImmediate.ConstU8 -> appendElement(x.value.toString().lowercase())
             is WasmImmediate.ConstI32 -> appendElement(x.value.toString().lowercase())
             is WasmImmediate.ConstI64 -> appendElement(x.value.toString().lowercase())
             is WasmImmediate.ConstF32 -> appendElement(f32Str(x).lowercase())
@@ -96,7 +174,7 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmImmediate.LocalIdx -> appendLocalReference(x.value.owner)
             is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.TypeIdx -> sameLineList("type") { appendModuleFieldReference(x.value.owner) }
-            is WasmImmediate.MemoryIdx -> appendModuleFieldIdIfNotNull(x.value.owner)
+            is WasmImmediate.MemoryIdx -> appendIdxIfNotZero(x.value)
             is WasmImmediate.DataIdx -> appendElement(x.value.toString())
             is WasmImmediate.TableIdx -> appendElement(x.value.toString())
             is WasmImmediate.LabelIdx -> appendElement(x.value.toString())
@@ -113,9 +191,12 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmImmediate.HeapType -> {
                 appendHeapType(x.value)
             }
+
+            is WasmImmediate.ConstString -> error("Pseudo immediate")
+
+            is WasmImmediate.Catch -> appendCatch(x)
         }
     }
-
 
     private fun f32Str(x: WasmImmediate.ConstF32): String {
         val bits = x.rawBits.toInt()
@@ -126,7 +207,8 @@ class WasmIrToText : SExpressionBuilder() {
             } else {
                 "-"
             }
-            if (bits != Float.NaN.toRawBits()) {
+
+            if (bits != F32_CANON_NAN) {
                 val customPayload = bits and 0x7fffff
                 "${sign}nan:0x${customPayload.toString(16)}"
             } else {
@@ -152,7 +234,7 @@ class WasmIrToText : SExpressionBuilder() {
             } else {
                 "-"
             }
-            if (bits != Double.NaN.toRawBits()) {
+            if (bits != F64_CANON_NAN) {
                 val customPayload = bits and 0xfffffffffffff
                 "${sign}nan:0x${customPayload.toString(16)}"
             } else {
@@ -198,15 +280,22 @@ class WasmIrToText : SExpressionBuilder() {
         with(module) {
             newLineList("module") {
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                gcTypes.forEach {
-                    when (it) {
-                        is WasmStructDeclaration ->
-                            appendStructTypeDeclaration(it)
-                        is WasmArrayDeclaration ->
-                            appendArrayTypeDeclaration(it)
-                        else -> error("Unexpected GC type: $it")
+
+                if(recGroupTypes.isNotEmpty()) {
+                    newLineList("rec") {
+                        recGroupTypes.forEach {
+                            when (it) {
+                                is WasmStructDeclaration ->
+                                    appendStructTypeDeclaration(it)
+                                is WasmArrayDeclaration ->
+                                    appendArrayTypeDeclaration(it)
+                                is WasmFunctionType ->
+                                    appendFunctionTypeDeclaration(it)
+                            }
+                        }
                     }
                 }
+
                 importsInOrder.forEach {
                     when (it) {
                         is WasmFunction.Imported -> appendImportedFunction(it)
@@ -226,6 +315,7 @@ class WasmIrToText : SExpressionBuilder() {
                 startFunction?.let { appendStartFunction(it) }
                 data.forEach { appendData(it) }
                 tags.forEach { appendTag(it) }
+                debugInformationGenerator?.let { consumeDebugInformation(it.generateDebugInformation()) }
             }
         }
     }
@@ -246,12 +336,26 @@ class WasmIrToText : SExpressionBuilder() {
         }
     }
 
+    private inline fun maybeSubType(superType: WasmTypeDeclaration?, body: () -> Unit) {
+        if (superType != null) {
+            sameLineList("sub") {
+                appendModuleFieldReference(superType)
+                body()
+            }
+        } else {
+            body()
+        }
+    }
+
+
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
         newLineList("type") {
             appendModuleFieldReference(type)
-            sameLineList("struct") {
-                type.fields.forEach {
-                    appendStructField(it)
+            maybeSubType(type.superType?.owner) {
+                sameLineList("struct") {
+                    type.fields.forEach {
+                        appendStructField(it)
+                    }
                 }
             }
         }
@@ -261,7 +365,7 @@ class WasmIrToText : SExpressionBuilder() {
         newLineList("type") {
             appendModuleFieldReference(type)
             sameLineList("array") {
-                appendStructField(type.field)
+                appendFieldType(type.field)
             }
         }
     }
@@ -275,10 +379,10 @@ class WasmIrToText : SExpressionBuilder() {
         }
     }
 
-    private fun WasmImportPair.appendImportPair() {
+    private fun WasmImportDescriptor.appendImportPair() {
         sameLineList("import") {
             toWatString(moduleName)
-            toWatString(declarationName)
+            toWatString(declarationName.owner)
         }
     }
 
@@ -287,13 +391,13 @@ class WasmIrToText : SExpressionBuilder() {
             appendModuleFieldReference(function)
             sameLineList("type") { appendModuleFieldReference(function.type) }
             function.locals.forEach { if (it.isParameter) appendLocal(it) }
-            if (function.type.resultTypes.isNotEmpty()) {
+            if (function.type.owner.resultTypes.isNotEmpty()) {
                 sameLineList("result") {
-                    function.type.resultTypes.forEach { appendType(it) }
+                    function.type.owner.resultTypes.forEach { appendType(it) }
                 }
             }
             function.locals.forEach { if (!it.isParameter) appendLocal(it) }
-            function.instructions.forEach { appendInstr(it) }
+            appendInstrList(function.instructions)
         }
     }
 
@@ -330,7 +434,7 @@ class WasmIrToText : SExpressionBuilder() {
             else
                 appendType(global.type)
 
-            global.init.forEach { appendInstr(it) }
+            appendInstrList(global.init)
         }
     }
 
@@ -438,6 +542,7 @@ class WasmIrToText : SExpressionBuilder() {
     fun appendReferencedType(type: WasmType) {
         when (type) {
             is WasmFuncRef -> appendElement("func")
+            is WasmAnyRef -> appendElement("any")
             is WasmExternRef -> appendElement("extern")
             else -> TODO()
         }
@@ -455,12 +560,6 @@ class WasmIrToText : SExpressionBuilder() {
                     appendHeapType(type.heapType)
                 }
 
-            is WasmRtt ->
-                sameLineList("rtt") {
-                    appendElement(type.depth.toString())
-                    appendModuleFieldReference(type.type.owner)
-                }
-
             WasmUnreachableType -> {
             }
 
@@ -471,11 +570,15 @@ class WasmIrToText : SExpressionBuilder() {
 
     private fun appendStructField(field: WasmStructFieldDeclaration) {
         sameLineList("field") {
-            if (field.isMutable) {
-                sameLineList("mut") { appendType(field.type) }
-            } else {
-                appendType(field.type)
-            }
+            appendFieldType(field)
+        }
+    }
+
+    private fun appendFieldType(field: WasmStructFieldDeclaration) {
+        if (field.isMutable) {
+            sameLineList("mut") { appendType(field.type) }
+        } else {
+            appendType(field.type)
         }
     }
 
@@ -483,10 +586,17 @@ class WasmIrToText : SExpressionBuilder() {
         appendElement("$${local.id}_${sanitizeWatIdentifier(local.name)}")
     }
 
-    fun appendModuleFieldIdIfNotNull(field: WasmNamedModuleField) {
-        val id = field.id
-            ?: error("${field::class} ${field.name} ID is unlinked")
+    fun appendIdxIfNotZero(id: Int) {
         if (id != 0) appendElement(id.toString())
+    }
+
+    fun appendCatch(catch: WasmImmediate.Catch) {
+        appendElement(catch.type.mnemonic)
+        catch.immediates.forEach(this::appendImmediate)
+    }
+
+    fun appendModuleFieldReference(field: WasmSymbolReadOnly<WasmNamedModuleField>) {
+        appendModuleFieldReference(field.owner)
     }
 
     fun appendModuleFieldReference(field: WasmNamedModuleField) {
@@ -518,6 +628,42 @@ class WasmIrToText : SExpressionBuilder() {
     }
 }
 
+class StringBuilderWithLocations {
+    private val builder = StringBuilder()
+
+    var lineNumber: Int = 0
+        private set
+
+    var columnNumber: Int = -1
+        private set
+
+    fun append(char: Char) {
+        if (char == '\n') {
+            appendLine()
+        } else {
+            builder.append(char)
+        }
+    }
+
+    fun append(text: String) {
+        builder.append(text)
+
+        val lines = text.split('\n').also {
+            if (it.size > 1) columnNumber = -1
+        }
+        lineNumber += lines.size - 1
+        columnNumber += lines.last().length
+    }
+
+    fun appendLine() {
+        builder.appendLine()
+        lineNumber += 1
+        columnNumber = -1
+    }
+
+    override fun toString() = builder.toString()
+}
+
 
 fun Byte.toWatData() = "\\" + this.toUByte().toString(16).padStart(2, '0')
 fun ByteArray.toWatData(): String = "\"" + joinToString("") { it.toWatData() } + "\""
@@ -537,3 +683,7 @@ fun isValidWatIdentifierChar(c: Char): Boolean =
             //  permitted identifiers: '?', '<'
             || c in "!#$%&′*+-./:<=>?@\\^_`|~"
             || c in "$.@_"
+
+// https://webassembly.github.io/spec/core/syntax/values.html#floating-point
+private const val F32_CANON_NAN = 0x7FC0_0000
+private const val F64_CANON_NAN = 0x7FF8_0000_0000_0000L

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: WASM
-// EXPECTED_REACHABLE_NODES: 1310
 package foo
 
 fun box(): String {

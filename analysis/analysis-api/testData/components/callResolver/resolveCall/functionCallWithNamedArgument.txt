@@ -1,4 +1,0 @@
-KtFunctionCall:
-argumentMapping = { "foo" -> (b: kotlin.String), 1 -> (a: kotlin.Int) }
-targetFunction = /function(a: kotlin.Int, b: kotlin.String): kotlin.Unit
-substitutor = <empty substitutor>

@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: FRONTEND
 package b
 
 fun <T, R> foo(map: Map<T, R>) : R = throw Exception()

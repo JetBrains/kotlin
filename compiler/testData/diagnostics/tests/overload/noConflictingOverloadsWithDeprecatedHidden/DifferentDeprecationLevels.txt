@@ -1,0 +1,9 @@
+package
+
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "") public fun TestError(): kotlin.Unit
+public fun TestError(): kotlin.Unit
+@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun TestHidden(): kotlin.Unit
+public fun TestHidden(): kotlin.Unit
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "") public fun TestWarning(): kotlin.Unit
+public fun TestWarning(): kotlin.Unit
+

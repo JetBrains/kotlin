@@ -8,10 +8,10 @@ public val test3: Test3 /* = EnumClass */
 public val test3a: EnumClass
 public val test4: Test4 /* = SealedClass */
 public val test4a: SealedClass
-public val test5: [ERROR : Type for Test5()]
-public val test5a: [ERROR : Type for Outer.Inner()]
-public val test5b: [ERROR : Type for Outer.TestInner()]
-public val test5c: [ERROR : Type for Outer().TestInner()]
+public val test5: [Error type: Not found recorded type for Test5()]
+public val test5a: [Error type: Not found recorded type for Outer.Inner()]
+public val test5b: [Error type: Not found recorded type for Outer.TestInner()]
+public val test5c: [Error type: Not found recorded type for Outer().TestInner()]
 public val test5d: Outer.Inner
 public val test5e: Test5 /* = Outer.Inner */
 
@@ -35,7 +35,7 @@ public final enum class EnumClass : kotlin.Enum<EnumClass> {
     enum entry VALUE2
 
     private constructor EnumClass()
-    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumClass): kotlin.Int
@@ -46,6 +46,7 @@ public final enum class EnumClass : kotlin.Enum<EnumClass> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<EnumClass>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumClass
     public final /*synthesized*/ fun values(): kotlin.Array<EnumClass>
 }
@@ -76,4 +77,3 @@ public typealias Test2 = AnnotationClass
 public typealias Test3 = EnumClass
 public typealias Test4 = SealedClass
 public typealias Test5 = Outer.Inner
-

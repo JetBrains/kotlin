@@ -1,15 +1,20 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '<pluginMarkerVersion>'
-    id 'org.jetbrains.kotlin.kapt' version '<pluginMarkerVersion>'
-    id 'org.jetbrains.kotlin.plugin.allopen' version '<pluginMarkerVersion>'
-    id 'org.jetbrains.kotlin.plugin.spring' version '<pluginMarkerVersion>'
-    id 'org.jetbrains.kotlin.plugin.noarg' version '<pluginMarkerVersion>'
-    id 'org.jetbrains.kotlin.plugin.jpa' version '<pluginMarkerVersion>'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'org.jetbrains.kotlin.plugin.allopen'
+    id 'org.jetbrains.kotlin.plugin.spring'
+    id 'org.jetbrains.kotlin.plugin.noarg'
+    id 'org.jetbrains.kotlin.plugin.jpa'
+    id 'org.jetbrains.kotlin.plugin.atomicfu'
+    id 'org.jetbrains.kotlin.plugin.lombok'
+    id 'org.jetbrains.kotlin.plugin.power-assert'
+    id 'org.jetbrains.kotlin.plugin.sam.with.receiver'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
@@ -18,5 +23,5 @@ dependencies {
 }
 
 afterEvaluate {
-    plugins.forEach { println("applied plugin class:" + it.class.canonicalName) }
+    plugins.forEach { logger.info("applied plugin class:" + it.class.canonicalName) }
 }

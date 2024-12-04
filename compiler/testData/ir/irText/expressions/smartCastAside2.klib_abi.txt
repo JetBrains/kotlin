@@ -1,0 +1,19 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract class <#A: kotlin/Any> /Bar { // /Bar|null[0]
+    constructor <init>() // /Bar.<init>|<init>(){}[0]
+    abstract fun bar() // /Bar.bar|bar(){}[0]
+}
+abstract interface <#A: out kotlin/Any?> /Foo { // /Foo|null[0]
+    abstract fun foo() // /Foo.foo|foo(){}[0]
+}
+final fun <#A: kotlin/Any> (/Bar<#A>)./extBar() // /extBar|extBar@Bar<0:0>(){0§<kotlin.Any>}[0]
+final fun <#A: kotlin/Any?> (/Foo<#A>)./extFoo() // /extFoo|extFoo@Foo<0:0>(){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> /materialize(): #A // /materialize|materialize(){0§<kotlin.Any?>}[0]
+final fun /test_1(kotlin/Any) // /test_1|test_1(kotlin.Any){}[0]
+final fun /test_2(kotlin/Any) // /test_2|test_2(kotlin.Any){}[0]
+final fun /test_3(kotlin/Any) // /test_3|test_3(kotlin.Any){}[0]

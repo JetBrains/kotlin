@@ -1,0 +1,24 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /Result { // /Result|null[0]
+    final val i // /Result.i|{}i[0]
+        final fun <get-i>(): kotlin/Int // /Result.i.<get-i>|<get-i>(){}[0]
+    constructor <init>(kotlin/Int) // /Result.<init>|<init>(kotlin.Int){}[0]
+    final fun component1(): kotlin/Int // /Result.component1|component1(){}[0]
+    final fun copy(kotlin/Int = ...): /Result // /Result.copy|copy(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /Result.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /Result.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /Result.toString|toString(){}[0]
+}
+final var /operationScore // /operationScore|{}operationScore[0]
+    final fun <get-operationScore>(): kotlin/Int // /operationScore.<get-operationScore>|<get-operationScore>(){}[0]
+    final fun <set-operationScore>(kotlin/Int) // /operationScore.<set-operationScore>|<set-operationScore>(kotlin.Int){}[0]
+final fun /box(): kotlin/String // /box|box(){}[0]
+final fun context(/Result) (/Result)./dec(): /Result // /dec|dec!kotlin.Int@Result(){}[0]
+final fun context(/Result) (/Result)./inc(): /Result // /inc|inc!kotlin.Int@Result(){}[0]
+final fun context(/Result) (/Result)./unaryMinus(): /Result // /unaryMinus|unaryMinus!kotlin.Int@Result(){}[0]
+final fun context(/Result) (/Result)./unaryPlus(): /Result // /unaryPlus|unaryPlus!kotlin.Int@Result(){}[0]

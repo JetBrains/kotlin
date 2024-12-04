@@ -3,46 +3,38 @@ function f(x) {
 }
 
 function testRegular() {
-    var result;
-    result = f("testRegular");
+    var result = f("testRegular");
     return result;
 }
 
 function testIrregular() {
-    var result;
-    result = f("testIrregular");
+    var result = f("testIrregular");
     return result;
 }
 
 function testDoubleUse1() {
-    var result;
-    var $b;
-    $b = f("testDoubleUse1");
-    result = $b;
+    var $b = f("testDoubleUse1");
+    var result = $b;
     f($b);
     return result;
 }
 
 function testDoubleUse2() {
-    var $d;
-    $d = f("testDoubleUse2");
+    var $d = f("testDoubleUse2");
     var result = $d;
     f($d);
     return result;
 }
 
 function testDoubleUse3() {
-    var result;
-    var $a;
-    $a = f("testDoubleUse3");
-    result = $a;
+    var $a = f("testDoubleUse3");
+    var result = $a;
     f($a);
     return result;
 }
 
 function testCircular() {
-    var $b;
-    $b = f("testCircular");
+    var $b = f("testCircular");
     $b = $b;
     var result = $b;
     return result;

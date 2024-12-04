@@ -1,0 +1,32 @@
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class AllOpen {
+    // source: 'alreadyOpen.kt'
+}
+
+@AllOpen
+@kotlin.Metadata
+public class Test1 {
+    // source: 'alreadyOpen.kt'
+    public method <init>(): void
+}
+
+@AllOpen
+@kotlin.Metadata
+public class Test2 {
+    // source: 'alreadyOpen.kt'
+    private final @org.jetbrains.annotations.NotNull field prop: java.lang.String
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public method method(): void
+}
+
+@AllOpen
+@kotlin.Metadata
+public class Test3 {
+    // source: 'alreadyOpen.kt'
+    private final @org.jetbrains.annotations.NotNull field prop: java.lang.String
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public method method(): void
+}

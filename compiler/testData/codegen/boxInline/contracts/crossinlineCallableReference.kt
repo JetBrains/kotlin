@@ -1,7 +1,7 @@
-// IGNORE_FIR_DIAGNOSTICS
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// IGNORE_BACKEND: NATIVE
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // NO_CHECK_LAMBDA_INLINING
+// JVM_ABI_K1_K2_DIFF: KT-62845
+
 // FILE: 1.kt
 
 package test
@@ -22,7 +22,7 @@ inline fun vBox(crossinline action: () -> Unit) {
     contract {
         callsInPlace(action, InvocationKind.EXACTLY_ONCE)
     }
-    return { action() }()
+    return { action() }.let { it() }
 }
 
 inline fun button(onAction: () -> Unit) {

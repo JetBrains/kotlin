@@ -1,4 +1,6 @@
-// SKIP_KLIB_TEST
+// FIR_IDENTICAL
+// TARGET_BACKEND: JVM_IR
+
 // FILE: Collector.java
 
 public class Collector {

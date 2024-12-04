@@ -1,7 +1,7 @@
 FILE: removeIf.kt
     public final fun test(collection: R|kotlin/collections/MutableCollection<kotlin/Boolean>|): R|kotlin/Unit| {
-        R|<local>/collection|.R|SubstitutionOverride<kotlin/collections/MutableCollection.removeIf: R|kotlin/Boolean|>|(<L> = removeIf@fun <anonymous>(it: R|@EnhancedNullability kotlin/Boolean|): R|kotlin/Boolean| <inline=NoInline>  {
+        R|<local>/collection|.R|SubstitutionOverride<kotlin/collections/MutableCollection.removeIf: R|kotlin/Boolean|>|(<L> = SAM(removeIf@fun <anonymous>(it: R|@EnhancedNullability kotlin/Boolean|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ R|<local>/it|
         }
-        )
+        ))
     }

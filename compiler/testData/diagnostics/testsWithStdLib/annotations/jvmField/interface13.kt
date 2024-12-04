@@ -1,5 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// !LANGUAGE: +JvmFieldInInterface
+// LANGUAGE: +JvmFieldInInterface
 
 interface A {
 
