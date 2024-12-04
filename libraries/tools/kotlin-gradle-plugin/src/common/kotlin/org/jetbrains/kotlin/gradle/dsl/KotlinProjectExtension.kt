@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import com.gradle.scan.agent.serialization.scan.serializer.kryo.it
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
@@ -197,23 +196,6 @@ abstract class KotlinJvmProjectExtension @Inject constructor(
     }
 }
 
-abstract class Kotlin2JsProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    @Suppress("DEPRECATION")
-    override val target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
-        get() {
-            if (!targetFuture.isCompleted) throw IllegalStateException("Extension target is not initialized!")
-            return targetFuture.getOrThrow()
-        }
-
-    @Suppress("DEPRECATION")
-    override val targetFuture = CompletableFuture<KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>>()
-    open fun target(
-        @Suppress("DEPRECATION") body: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>.() -> Unit
-    ) {
-        project.launch(Undispatched) { targetFuture.await().body() }
-    }
-}
-
 abstract class KotlinJsProjectExtension(project: Project) :
     KotlinSingleTargetExtension<KotlinJsTargetDsl>(project),
     KotlinJsCompilerTypeHolder {
@@ -298,21 +280,6 @@ abstract class KotlinJsProjectExtension(project: Project) :
             target.project.container(KotlinTarget::class.java)
                 .apply { add(target) }
         }
-}
-
-abstract class KotlinCommonProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    override val target: KotlinWithJavaTarget<*, *> get() = targetFuture.getOrThrow()
-
-    @Suppress("DEPRECATION")
-    override val targetFuture =
-        CompletableFuture<KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>>()
-
-    open fun target(
-        @Suppress("DEPRECATION")
-        body: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>.() -> Unit,
-    ) = project.launch(Undispatched) {
-        targetFuture.await().body()
-    }
 }
 
 abstract class KotlinAndroidProjectExtension @Inject constructor(

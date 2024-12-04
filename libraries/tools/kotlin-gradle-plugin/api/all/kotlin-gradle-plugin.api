@@ -144,14 +144,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/DeprecatedKotlinTargetHierarc
 	public fun default (Lkotlin/jvm/functions/Function1;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/dsl/Kotlin2JsProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinSingleJavaTargetExtension {
-	public fun <init> (Lorg/gradle/api/Project;)V
-	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinWithJavaTarget;
-	public synthetic fun getTargetFuture$kotlin_gradle_plugin_common ()Lorg/jetbrains/kotlin/gradle/utils/Future;
-	public fun target (Lkotlin/jvm/functions/Function1;)V
-}
-
 public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinSingleTargetExtension, org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension {
 	public fun <init> (Lorg/gradle/api/Project;)V
 	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
@@ -172,14 +164,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile$DefaultIm
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile;Lorg/gradle/api/Action;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile;Lorg/gradle/api/Action;)V
-}
-
-public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinCommonProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinSingleJavaTargetExtension {
-	public fun <init> (Lorg/gradle/api/Project;)V
-	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
-	public fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinWithJavaTarget;
-	public synthetic fun getTargetFuture$kotlin_gradle_plugin_common ()Lorg/jetbrains/kotlin/gradle/utils/Future;
-	public fun target (Lkotlin/jvm/functions/Function1;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompile : org/jetbrains/kotlin/gradle/dsl/KotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
@@ -562,19 +546,7 @@ public final class org/jetbrains/kotlin/gradle/model/impl/SourceSetImpl : java/i
 public final class org/jetbrains/kotlin/gradle/model/impl/SourceSetImpl$Companion {
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlin2JsPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
-	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
-	protected final fun getRegistry ()Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
-	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
-	protected final fun getRegistry ()Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;
-}
-
-public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinCommonPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
 	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
 	protected final fun getRegistry ()Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;
@@ -713,13 +685,6 @@ public class org/jetbrains/kotlin/gradle/plugin/KaptJavacOptionsDelegate : org/j
 	public fun option (Ljava/lang/String;Ljava/lang/String;)V
 }
 
-public class org/jetbrains/kotlin/gradle/plugin/Kotlin2JsPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlin2JsPluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-	public fun getPluginVariant ()Ljava/lang/String;
-}
-
 public class org/jetbrains/kotlin/gradle/plugin/KotlinAndroidPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPluginWrapper {
 	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
 	public synthetic fun apply (Ljava/lang/Object;)V
@@ -763,13 +728,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper
 	public fun apply (Lorg/gradle/api/Project;)V
 	public abstract fun getPluginVariant ()Ljava/lang/String;
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
-}
-
-public class org/jetbrains/kotlin/gradle/plugin/KotlinCommonPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinCommonPluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-	public fun getPluginVariant ()Ljava/lang/String;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinCompilationProcessor {
