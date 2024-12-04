@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -131,3 +132,6 @@ fun IrDeclaration.isFromInteropLibrary(): Boolean = isFromCInteropLibrary()
     DeprecationLevel.ERROR
 )
 fun DeclarationDescriptor.isFromInteropLibrary(): Boolean = isFromCInteropLibrary()
+
+val ModuleDescriptor.isForwardDeclarationModule: Boolean
+    get() = name == FORWARD_DECLARATIONS_MODULE_NAME

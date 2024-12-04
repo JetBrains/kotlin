@@ -50,7 +50,7 @@ class SerializedInlineFunctionReference(val file: SerializedFileReference, val f
                                         val valueParameterSigs: IntArray, val typeParameterSigs: IntArray,
                                         val defaultValues: IntArray)
 
-internal object InlineFunctionBodyReferenceSerializer {
+object InlineFunctionBodyReferenceSerializer {
     fun serialize(bodies: List<SerializedInlineFunctionReference>): ByteArray {
         val stringTable = buildStringTable {
             bodies.forEach {
@@ -115,7 +115,7 @@ class SerializedClassFieldInfo(val name: String, val binaryType: Int, val flags:
 class SerializedClassFields(val file: SerializedFileReference, val classSignature: IdSignature, val typeParameterSigs: IntArray,
                             val outerThisIndex: Int, val fields: Array<SerializedClassFieldInfo>)
 
-internal object ClassFieldsSerializer {
+object ClassFieldsSerializer {
 
     fun serialize(classFields: List<SerializedClassFields>): ByteArray {
 
@@ -221,7 +221,7 @@ internal object ClassFieldsSerializer {
 
 class SerializedEagerInitializedFile(val file: SerializedFileReference)
 
-internal object EagerInitializedPropertySerializer {
+object EagerInitializedPropertySerializer {
     fun serialize(properties: List<SerializedEagerInitializedFile>): ByteArray {
         val stringTable = buildStringTable {
             properties.forEach {
