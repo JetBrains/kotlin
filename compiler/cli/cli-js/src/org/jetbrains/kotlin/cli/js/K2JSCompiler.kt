@@ -421,7 +421,6 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
                 val phaseConfig = createPhaseConfig(
                     JsPreSerializationLoweringPhasesProvider.lowerings(configuration),
                     arguments,
-                    messageCollector,
                 )
 
                 PhaseEngine(

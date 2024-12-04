@@ -139,7 +139,7 @@ internal class K2WasmCompilerImpl(
             loadFunctionInterfacesIntoStdlib = true,
         )
 
-        configuration.phaseConfig = createPhaseConfig(getWasmPhases(configuration, isIncremental = false), arguments, messageCollector)
+        configuration.phaseConfig = createPhaseConfig(getWasmPhases(configuration, isIncremental = false), arguments)
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             irModuleInfo,
             module.mainModule,
