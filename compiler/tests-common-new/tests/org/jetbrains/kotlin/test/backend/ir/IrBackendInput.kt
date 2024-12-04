@@ -6,22 +6,18 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.KotlinFileSerializedData
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.ir.backend.js.IrModuleInfo
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.test.Constructor
-import org.jetbrains.kotlin.test.model.BackendFacade
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.BackendKinds
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import java.io.File
 

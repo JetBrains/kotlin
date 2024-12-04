@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.lower.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
@@ -81,7 +81,7 @@ fun compileIr(
     moduleToName: Map<IrModuleFragment, String>,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    irLinker: JsIrLinker,
+    irLinker: KotlinIrLinker,
     phaseConfig: PhaseConfig,
     exportedDeclarations: Set<FqName>,
     keep: Set<String>,

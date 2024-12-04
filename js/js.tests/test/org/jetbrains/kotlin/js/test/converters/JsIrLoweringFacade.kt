@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
