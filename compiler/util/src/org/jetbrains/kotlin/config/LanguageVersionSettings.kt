@@ -367,6 +367,7 @@ enum class LanguageFeature(
     ConsiderForkPointsWhenCheckingContradictions(KOTLIN_2_2), // KT-68768
     CallableReferenceOverloadResolutionInLambda(KOTLIN_2_2), // KT-73011
     ForbidInferOfInvisibleTypeAsReifiedOrVararg(KOTLIN_2_2, kind = BUG_FIX), // KT-25513
+    AllowReifiedTypeInCatchClause(KOTLIN_2_2, kind = BUG_FIX), // KT-54363
 
     // 2.3
 

@@ -1611,7 +1611,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Variance annotations are only allowed for type parameters of classes and interfaces."
         )
         map.put(CATCH_PARAMETER_WITH_DEFAULT_VALUE, "Catch clause parameter cannot have a default value.")
-        map.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is prohibited for catch parameter.")
+        map.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is allowed for catch parameter only since version 2.2.")
         map.put(TYPE_PARAMETER_IN_CATCH_CLAUSE, "Type parameter is prohibited for catch parameter.")
 
         map.put(

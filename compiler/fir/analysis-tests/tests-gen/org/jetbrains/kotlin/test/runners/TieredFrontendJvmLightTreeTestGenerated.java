@@ -5135,6 +5135,18 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
       }
 
       @Test
+      @TestMetadata("catchReifiedTypeAllowed.kt")
+      public void testCatchReifiedTypeAllowed() {
+        runTest("compiler/testData/diagnostics/tests/controlStructures/catchReifiedTypeAllowed.kt");
+      }
+
+      @Test
+      @TestMetadata("catchReifiedTypeForbidden.kt")
+      public void testCatchReifiedTypeForbidden() {
+        runTest("compiler/testData/diagnostics/tests/controlStructures/catchReifiedTypeForbidden.kt");
+      }
+
+      @Test
       @TestMetadata("catchWithDefault.kt")
       public void testCatchWithDefault() {
         runTest("compiler/testData/diagnostics/tests/controlStructures/catchWithDefault.kt");

@@ -7507,6 +7507,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("tryCatchReifiedType.kt")
+    public void testTryCatchReifiedType() {
+      runTest("compiler/testData/codegen/box/controlStructures/tryCatchReifiedType.kt");
+    }
+
+    @Test
     @TestMetadata("tryFinally.kt")
     public void testTryFinally() {
       runTest("compiler/testData/codegen/box/controlStructures/tryFinally.kt");

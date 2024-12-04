@@ -704,11 +704,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     private static void checkCatchParameterType(KtParameter catchParameter, KotlinType catchParameterType, ExpressionTypingContext context) {
         TypeParameterDescriptor typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(catchParameterType);
         if (typeParameterDescriptor != null) {
-            if (typeParameterDescriptor.isReified()) {
-                context.trace.report(REIFIED_TYPE_IN_CATCH_CLAUSE.on(catchParameter));
-            }
-            else {
+            if (!typeParameterDescriptor.isReified()) {
                 context.trace.report(TYPE_PARAMETER_IN_CATCH_CLAUSE.on(catchParameter));
+            } else if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AllowReifiedTypeInCatchClause)) {
+                context.trace.report(REIFIED_TYPE_IN_CATCH_CLAUSE.on(catchParameter));
             }
         }
     }
