@@ -14,16 +14,25 @@ import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.psi.doNotAnalyze
 
 /**
- * Specifies how references to non-local declarations in the dangling files should be resolved.
+ * Specifies how references to non-local declarations in dangling files should be resolved.
  */
 public enum class KaDanglingFileResolutionMode {
-    /** Resolve first to declarations in the dangling file, and delegate to the original file or module only when needed. */
+    /**
+     * Resolve first to declarations in the dangling file, and delegate to the original file or module only when needed.
+     */
     PREFER_SELF,
 
-    /** * Resolve only to declarations in the original file or module. Ignore all non-local declarations in the dangling file copy. */
+    /**
+     * Resolve only to declarations in the original file or module. Ignore all non-local declarations in the dangling file.
+     */
     IGNORE_SELF
 }
 
+/**
+ * Whether the [KtFile] is a *dangling* file.
+ *
+ * @see org.jetbrains.kotlin.analysis.api.analyzeCopy
+ */
 @OptIn(KaImplementationDetail::class)
 public val KtFile.isDangling: Boolean
     get() = when {
@@ -36,14 +45,14 @@ public val KtFile.isDangling: Boolean
     }
 
 /**
- * Returns the resolution mode that is explicitly set for this dangling file.
- * Returns `null` for files that are not dangling, or if the mode was not set.
+ * Returns the resolution mode that is explicitly set for this dangling file, or `null` for files that are not dangling or if the mode was
+ * not set.
  *
- * Use the `analyzeCopy {}` method for specifying the analysis mode. Note that the effect is thread-local; this is made on purpose, as
- * the file might potentially be resolved in parallel in different threads.
+ * Use the [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] function for specifying the analysis mode. The effect is
+ * thread-local by design, as the file might potentially be resolved concurrently in different threads.
  *
- * Note that the resolution mode affects equality of [KaDanglingFileModule]. It means that for each resolution mode, a separate
- * resolution session will be created.
+ * The resolution mode affects equality of [KaDanglingFileModule]s. For each resolution mode, a separate resolution module and session will
+ * be created.
  */
 public val KtFile.danglingFileResolutionMode: KaDanglingFileResolutionMode?
     get() = danglingFileResolutionModeState?.get()
@@ -51,7 +60,7 @@ public val KtFile.danglingFileResolutionMode: KaDanglingFileResolutionMode?
 /**
  * Runs the [action] with a resolution mode being explicitly set for the dangling [file].
  *
- * Avoid using this function in client-side code. Use `analyzeCopy {}` from Analysis API instead.
+ * Avoid using this function in client-side code. Use [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
  */
 @KaImplementationDetail
 public fun <R> withDanglingFileResolutionMode(file: KtFile, mode: KaDanglingFileResolutionMode, action: () -> R): R {

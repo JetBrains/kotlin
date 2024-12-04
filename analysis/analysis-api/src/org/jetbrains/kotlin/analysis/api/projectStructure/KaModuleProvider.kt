@@ -20,8 +20,8 @@ public interface KaModuleProvider {
      *
      * Here, the use-site module is a way to disambiguate the [KaModule] of [element]s with whom multiple modules might be associated:
      *
-     *  1. It allows replacing the original [KaModule] of [element] with another module, e.g. for supporting outsider files (see below).
-     *  2. It helps to distinguish between multiple possible [KaModule]s for library elements.
+     * 1. It allows replacing the original [KaModule] of [element] with another module, e.g. for supporting outsider files (see below).
+     * 2. It helps to distinguish between multiple possible [KaModule]s for library elements.
      *
      * If you have a use-site module in hand, please pass it as an argument to stay consistent. In the future, we may utilize the use-site
      * module for additional purposes not listed above.
