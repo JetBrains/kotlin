@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -DontCreateSyntheticPropertiesWithoutBaseJavaGetter -ForbidSyntheticPropertiesWithoutBaseJavaGetter
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -DontCreateSyntheticPropertiesWithoutBaseJavaGetter +ForbidSyntheticPropertiesWithoutBaseJavaGetter
 
 // FILE: Base.kt
 open class Base {
@@ -18,11 +18,11 @@ public class Derived extends Base {
 class Impl : Derived()
 
 fun test_1(x: Impl) {
-    x.<!UNRESOLVED_REFERENCE!>foo<!>
-    x.<!UNRESOLVED_REFERENCE!>foo<!> = "a"
+    x.<!FUNCTION_CALL_EXPECTED!>foo<!>
+    x.<!FUNCTION_CALL_EXPECTED!>foo<!> = "a"
 }
 
 fun test_2(x: Impl) {
-    x.<!UNRESOLVED_REFERENCE!>bar<!>
-    x.<!UNRESOLVED_REFERENCE!>bar<!> = "a"
+    x.<!FUNCTION_CALL_EXPECTED!>bar<!>
+    x.<!FUNCTION_CALL_EXPECTED!>bar<!> = "a"
 }

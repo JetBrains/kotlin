@@ -11,7 +11,7 @@ open class KotlinClass {
 
 fun foo(javaClass: JavaClass) {
     useInt(javaClass.getSomething1())
-    useInt(javaClass.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>something1<!>)
+    useInt(javaClass.<!FUNCTION_CALL_EXPECTED!>something1<!>)
 
     javaClass.setSomething2(javaClass.getSomething2() + 1)
     javaClass.something2 = javaClass.something2 + 1

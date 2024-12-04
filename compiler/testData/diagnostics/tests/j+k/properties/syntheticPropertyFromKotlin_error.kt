@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -DontCreateSyntheticPropertiesWithoutBaseJavaGetter -ForbidSyntheticPropertiesWithoutBaseJavaGetter
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -DontCreateSyntheticPropertiesWithoutBaseJavaGetter +ForbidSyntheticPropertiesWithoutBaseJavaGetter
 
 // FILE: Base.kt
 open class Base {
