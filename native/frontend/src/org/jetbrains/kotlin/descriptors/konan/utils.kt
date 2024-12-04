@@ -12,9 +12,5 @@ import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.Name
 
-val NATIVE_STDLIB_MODULE_NAME: Name = Name.special("<$KONAN_STDLIB_NAME>")
-
-fun ModuleDescriptor.isNativeStdlib(): Boolean = name == NATIVE_STDLIB_MODULE_NAME
-
 fun ClassDescriptor.getForwardDeclarationKindOrNull(): NativeForwardDeclarationKind? =
     NativeForwardDeclarationKind.packageFqNameToKind[(containingDeclaration as? PackageFragmentDescriptor)?.fqName]

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-internal class KonanPartialModuleDeserializer(
+class KonanPartialModuleDeserializer(
         konanIrLinker: KonanIrLinker,
         moduleDescriptor: ModuleDescriptor,
         override val klib: KotlinLibrary,

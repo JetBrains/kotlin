@@ -34,7 +34,7 @@ internal class KonanInteropModuleDeserializer(
     override val klib: KotlinLibrary,
     override val moduleDependencies: Collection<IrModuleDeserializer>,
     private val isLibraryCached: Boolean,
-    private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
+    private val cenumsProvider: ProviderForCEnumAndCStructStubs,
     private val stubGenerator: DeclarationStubGenerator,
     private val builtIns: IrBuiltIns,
 ) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {

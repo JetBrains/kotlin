@@ -16,12 +16,35 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+
+const val KONAN_STDLIB_NAME = "stdlib"
+val NATIVE_STDLIB_MODULE_NAME: Name = Name.special("<$KONAN_STDLIB_NAME>")
+
+fun ModuleDescriptor.isNativeStdlib(): Boolean = name == NATIVE_STDLIB_MODULE_NAME
+
+val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
+
+val IrPackageFragment.konanLibrary: KotlinLibrary?
+    get() {
+        if (this is IrFile) {
+            val fileMetadata = metadata as? DescriptorMetadataSource.File
+            val moduleDescriptor = fileMetadata?.descriptors?.singleOrNull() as? ModuleDescriptor
+            moduleDescriptor?.konanLibrary?.let { return it }
+        }
+        return this.moduleDescriptor.konanLibrary
+    }
 
 /**
  * Determine if the [IrDeclaration] is from a C-interop library.

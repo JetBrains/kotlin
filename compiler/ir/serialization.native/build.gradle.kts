@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":core:compiler.common.native"))
+    implementation(project(":native:kotlin-native-utils"))
 
     compileOnly(intellijCore())
 }
