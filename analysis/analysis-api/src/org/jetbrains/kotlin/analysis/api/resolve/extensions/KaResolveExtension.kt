@@ -11,24 +11,28 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.name.FqName
 
 /**
- * Provides a list of Kotlin files which contain additional generated declarations for resolution.
+ * A resolve extension provides additional Kotlin files containing generated declarations, which will be included in the resolution as if
+ * they were regular source files in the module.
  *
- * It is created by [KaResolveExtensionProvider].
+ * Each resolve extension is defined for a specific [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule], which is
+ * determined by the [KaResolveExtensionProvider] which creates the resolve extension.
  *
  * All member implementations should:
- * - consider caching the results for subsequent invocations.
- * - be lightweight and not build the whole file structure inside.
- * - not use Kotlin resolve inside, as these functions are called during session initialization, so Analysis API access is forbidden.
  *
- * #### Lifecycle Management
+ * - Consider caching the results for subsequent invocations.
+ * - Be lightweight and avoid building the whole file structure eagerly.
+ * - Avoid using Kotlin resolution, as these functions are called during session initialization, so Analysis API access is forbidden.
  *
- * A [KaResolveExtension] is tied to the lifetime of its module's analysis session. It is created by [KaResolveExtensionProvider] during
- * creation of an analysis session, and disposed after the analysis session has been invalidated.
+ * ### Lifecycle Management
+ *
+ * A resolve extension is tied to the lifetime of its module's [analysis session][org.jetbrains.kotlin.analysis.api.KaSession]. It is
+ * created by [KaResolveExtensionProvider] during creation of an analysis session, and disposed after the analysis session has been
+ * invalidated.
  *
  * [KaResolveExtension] implements the [Disposable] interface. The resolve extension can then act as a parent disposable, e.g. for a message
  * bus connection.
  *
- * You *must not* implement [KaResolveExtension]s as module-level services, due to the following reasons:
+ * You *must not* implement resolve extensions as module-level services, due to the following reasons:
  *
  * 1. The IntelliJ platform SDK [discourages](https://plugins.jetbrains.com/docs/intellij/plugin-services.html#types) the use of
  *    module-level services due to memory consumption. In particular, resolve extensions implemented as module-level services live longer
@@ -36,7 +40,7 @@ import org.jetbrains.kotlin.name.FqName
  *    session has been invalidated.
  * 2. The module-level service living longer than the analysis session increases the risk of caching invalidated entities in a resolve
  *    extension.
- * 3. Because the [KaResolveExtension] is a [Disposable], if implemented as a module-level service, the service would be disposed too early
+ * 3. Because the resolve extension is a [Disposable], if implemented as a module-level service, the service would be disposed too early
  *    during invalidation of the corresponding analysis session.
  *
  * @see KaResolveExtensionFile
@@ -45,32 +49,28 @@ import org.jetbrains.kotlin.name.FqName
 @KaExperimentalApi
 public abstract class KaResolveExtension : Disposable {
     /**
-     * Get the list of files that should be generated for the module. Returned files should contain valid Kotlin code.
+     * Returns the list of files that should be generated for the module. The files should contain valid Kotlin code.
+     *
+     * ### Modification and Invalidation
      *
      * If the content of these files becomes invalid (e.g., because the source declarations they were based on changed), the
-     * [KaResolveExtension] must publish an out-of-block modification event via the Analysis API message bus:
+     * resolve extension must publish an out-of-block modification event via the Analysis API message bus:
      * `KotlinModificationTopics.MODULE_OUT_OF_BLOCK_MODIFICATION`.
      *
-     * To react to changes in Kotlin sources, [KaResolveExtension] may subscribe to Analysis API modification topics:
-     * `KotlinModificationTopics`. If the [KaResolveExtension] both subscribes to and publishes modification events, care needs to be taken
-     * that no cycles are introduced. In general, the [KaResolveExtension] should never publish an event for a module A in a listener for
+     * To react to changes in Kotlin sources, the resolve extension may subscribe to Analysis API modification topics:
+     * `KotlinModificationTopics`. If the resolve extension both subscribes to and publishes modification events, care needs to be taken
+     * that no cycles are introduced. In general, the resolve extension should never publish an event for a module A in a listener for
      * the same module A.
      *
-     * An out-of-block modification event for the [KaResolveExtension]'s associated module does not need to be published in response to an
+     * An out-of-block modification event for the resolve extension's associated module does not need to be published in response to an
      * out-of-block modification event for the same module, because the original event suffices for invalidation.
      *
      * @see KaResolveExtensionFile
-     * @see KaResolveExtension
      */
     public abstract fun getKtFiles(): List<KaResolveExtensionFile>
 
     /**
-     * Returns the set of packages that are contained in the files provided by [getKtFiles].
-     *
-     * The returned package set should be a strict set of all file packages,
-     * so `for-all pckg: pckg in getContainedPackages() <=> exists file: file in getKtFiles() && file.getFilePackageName() == pckg`
-     *
-     * @see KaResolveExtension
+     * Returns the set of packages that are contained in the files provided by [getKtFiles]. It should be an exact set of all file packages.
      */
     public abstract fun getContainedPackages(): Set<FqName>
 
@@ -80,10 +80,10 @@ public abstract class KaResolveExtension : Disposable {
      * Any files in the module that are included in this scope will be removed from analysis results. This allows the files provided by
      * [getKtFiles] to cleanly replace those files from the module.
      *
-     * If this resolve extension is being used to generate declarations that would normally be provided by sources generated by an external
-     * build task, such as a resource compiler or annotation processor, the resolve extension should provide a scope here that covers those
-     * externally generated sources. This will prevent collisions between the definitions provided by [getKtFiles] and those provided by the
-     * (potentially stale) externally generated sources.
+     * Resolve extensions may be used to generate declarations that would normally be provided by sources generated by an external build
+     * task, such as a resource compiler or annotation processor. In such a case, the resolve extension should provide a shadowed scope that
+     * covers those externally generated sources. This will prevent collisions between the definitions provided by [getKtFiles] and those
+     * provided by the (potentially stale) externally generated sources.
      */
     public open fun getShadowedScope(): GlobalSearchScope = GlobalSearchScope.EMPTY_SCOPE
 

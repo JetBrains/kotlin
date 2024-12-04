@@ -10,22 +10,21 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
- * Allows extending Kotlin resolution by generating additional declarations.
- *
- * Those declarations will be analyzed the same way as they were just regular source files inside the project.
- *
- * All member implementations should consider caching the results for subsequent invocations.
+ * Provides [resolve extensions][KaResolveExtension] for [KaModule]s. Resolve extensions provide additional Kotlin files containing
+ * generated declarations, which will be included in the resolution as if they were regular source files in the module.
  */
 @KaExperimentalApi
 public abstract class KaResolveExtensionProvider {
     /**
-     * Provides a list of [KaResolveExtension]s for a given [KaModule].
+     * Provides a list of [resolve extensions][KaResolveExtension] for the given [module].
      *
-     * Should not perform any heavy analysis and the generation of the actual files. All file generation should be performed only in [KaResolveExtensionFile.buildFileText].
+     * The function should not generate the actual file text or perform any heavy analysis. Any file text should only be generated *lazily*
+     * in [KaResolveExtensionFile.buildFileText].
      *
-     * Implementations should consider caching the results, so the subsequent invocations should be performed instantly.
+     * Additionally, all implementations should:
      *
-     * Implementation cannot use the Kotlin resolve inside, as this function is called during session initialization, so Analysis API access is forbidden.
+     * - Consider caching the results for subsequent invocations.
+     * - Avoid using Kotlin resolution, as this function is called during session initialization, so Analysis API access is forbidden.
      */
     public abstract fun provideExtensionsFor(module: KaModule): List<KaResolveExtension>
 
