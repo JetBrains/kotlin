@@ -755,7 +755,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/signatures/KaF
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/signatures/KaVariableSignature : org/jetbrains/kotlin/analysis/api/signatures/KaCallableSignature {
-	public fun getName ()Lorg/jetbrains/kotlin/name/Name;
+	public abstract fun getName ()Lorg/jetbrains/kotlin/name/Name;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/AdditionalKDocResolutionProvider {
