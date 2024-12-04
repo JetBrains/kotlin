@@ -1098,8 +1098,82 @@ class LinkTest : BaseAbstractTest() {
         }
     }
 
+    @Test
+    fun `KDoc link should be unresolved to non-existed property with the name of Kotlin getter #3681`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |fun getProperty() = 0
+            |/**
+            |* [property] is unresolved
+            | */
+            |fun usage() = 0
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(null, module.getLinkDRIFrom("usage"))
+            }
+        }
+    }
+
+    @Test
+    fun `KDoc link should be resolved to two extensions with the same name #3631`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |class C
+            |public fun C.ensureActive() {}
+            |/**
+            | * [C.ensureActive]
+            | */
+            |class B
+            |/**
+            | * [C.ensureActive]
+            | */
+            |public fun B.ensureActive() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val DRItoBensureActive = DRI(
+                    "",
+                    classNames = null,
+                    callable = Callable(
+                        name = "ensureActive",
+                        receiver = TypeConstructor(fullyQualifiedName = "B", params = emptyList()),
+                        params = emptyList()
+                    )
+                )
+                val link1 = module.dfs {
+                    it.dri == DRItoBensureActive
+                }?.documentation?.values?.single()?.firstMemberOfTypeOrNull<DocumentationLink>()?.dri
+                val link2 = module.getLinkDRIFrom("B")
+
+
+                assertEquals(
+                    link1,
+                    DRI(
+                        "",
+                        classNames = null,
+                        callable = Callable(
+                            name = "ensureActive",
+                            receiver = TypeConstructor(fullyQualifiedName = "C", params = emptyList()),
+                            params = emptyList()
+                        )
+                    )
+                )
+
+                assertEquals(link1, link2)
+            }
+        }
+    }
+
     private fun DModule.getLinkDRIFrom(name: String): DRI? {
-        val link =  this.dfs { it.name == name }?.documentation?.values?.single()?.firstMemberOfTypeOrNull<DocumentationLink>()
+        val doc = this.dfs { it.name == name }?.documentation?.values?.single()
+            ?: throw IllegalStateException("Can't find documentation for declaration '$name'")
+        val link = doc.firstMemberOfTypeOrNull<DocumentationLink>()
         return link?.dri
     }
 
