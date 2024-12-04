@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 fun createPhaseConfig(
-    compoundPhase: CompilerPhase<*, *, *>,
     arguments: CommonCompilerArguments
 ): PhaseConfig {
     val toDumpBoth = createPhaseSetFromArguments(arguments.phasesToDump)
@@ -28,14 +27,10 @@ fun createPhaseConfig(
         arguments.profilePhases,
         arguments.checkPhaseConditions,
         arguments.checkStickyPhaseConditions
-    ).also {
-        if (arguments.listPhases) {
-            it.list(compoundPhase)
-        }
-    }
+    )
 }
 
-private fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
+fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
     for ((depth, phase) in compoundPhase.getNamedSubphases()) {
         println(buildString {
             append("    ".repeat(depth))

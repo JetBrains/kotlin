@@ -418,10 +418,9 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
         // Serialize klib
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
             val transformedResult = if (!arguments.wasm) {
-                val phaseConfig = createPhaseConfig(
-                    JsPreSerializationLoweringPhasesProvider.lowerings(configuration),
-                    arguments,
-                )
+                val phaseConfig = createPhaseConfig(arguments).also {
+                    if (arguments.listPhases) it.list(JsPreSerializationLoweringPhasesProvider.lowerings(configuration))
+                }
 
                 PhaseEngine(
                     phaseConfig,
