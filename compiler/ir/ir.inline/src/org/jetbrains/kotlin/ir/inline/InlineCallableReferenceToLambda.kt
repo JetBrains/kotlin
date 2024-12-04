@@ -189,7 +189,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
             this@toLambda.parent = scope
             +this@toLambda
             +IrFunctionReferenceImpl.fromSymbolOwner(
-                startOffset, endOffset, original.type.convertKPropertyToKFunction(context.irBuiltIns), symbol,
+                startOffset, endOffset, original.type.convertToFunctionIfNeeded(context.irBuiltIns), symbol,
                 typeArgumentsCount = 0, reflectionTarget = null,
                 origin = LoweredStatementOrigins.INLINE_LAMBDA
             ).apply {
@@ -212,11 +212,17 @@ abstract class InlineCallableReferenceToLambdaPhase(
 private val IrStatementOrigin?.isInlinable: Boolean
     get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
 
-private fun IrType.convertKPropertyToKFunction(irBuiltIns: IrBuiltIns): IrType {
-    if (this !is IrSimpleType) return this
-    if (!this.isKProperty() && !this.isKMutableProperty()) return this
-
-    return this.toBuilder().apply { classifier = irBuiltIns.functionN(arguments.size - 1).symbol }.buildSimpleType()
+private fun IrType.convertToFunctionIfNeeded(irBuiltIns: IrBuiltIns): IrType {
+    return when {
+        this !is IrSimpleType -> this
+        isKProperty() || isKMutableProperty() || isKFunction() -> {
+            this.toBuilder().apply { classifier = irBuiltIns.functionN(arguments.size - 1).symbol }.buildSimpleType()
+        }
+        isKSuspendFunction() -> {
+            this.toBuilder().apply { classifier = irBuiltIns.suspendFunctionN(arguments.size - 1).symbol }.buildSimpleType()
+        }
+        else -> this
+    }
 }
 
 // Returns dispatch or extension receiver of function or property reference, if any. Otherwise, return null.
