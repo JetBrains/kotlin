@@ -27,7 +27,7 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
     @OptIn(CfgInternals::class)
-    fun makeSnapshot(nodeMapper: (CFGNode<*>) -> CFGNode<*>): ControlFlowGraph {
+    fun createSnapshot(nodeMapper: (CFGNode<*>) -> CFGNode<*>): ControlFlowGraph {
         return ControlFlowGraph(declaration, name, kind).also { snapshot ->
             snapshot.nodeCount = nodeCount
             snapshot.nodes = nodes.map(nodeMapper)

@@ -17,7 +17,7 @@ abstract class Stack<T> {
      */
     abstract fun all(): List<T>
 
-    abstract fun <R> makeSnapshot(transform: (T) -> R): Stack<R>
+    abstract fun <R> createSnapshot(transform: (T) -> R): Stack<R>
 }
 
 fun <T> stackOf(vararg values: T): Stack<T> = StackImpl(*values)
@@ -44,7 +44,7 @@ private class StackImpl<T>(values: List<T>) : Stack<T>() {
 
     override fun all(): List<T> = values.asReversed()
 
-    override fun <R> makeSnapshot(transform: (T) -> R): Stack<R> {
+    override fun <R> createSnapshot(transform: (T) -> R): Stack<R> {
         val newValues = values.map(transform)
         return StackImpl(newValues)
     }

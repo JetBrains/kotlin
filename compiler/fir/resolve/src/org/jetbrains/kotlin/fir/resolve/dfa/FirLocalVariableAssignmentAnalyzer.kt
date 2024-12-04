@@ -56,14 +56,14 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
         postponedLambdas = stackOf(),
     )
 
-    fun makeSnapshot(): FirLocalVariableAssignmentAnalyzer {
+    fun createSnapshot(): FirLocalVariableAssignmentAnalyzer {
         return FirLocalVariableAssignmentAnalyzer(
             rootFunction,
             assignedLocalVariablesByDeclaration = assignedLocalVariablesByDeclaration?.toMap(),
             variableAssignments = variableAssignments?.toMap(),
-            scopes = scopes.makeSnapshot { (fork, assignments) -> fork to assignments.copy() },
-            postponedLambdas = postponedLambdas.makeSnapshot { list ->
-                list.mapKeysTo(mutableMapOf()) { it.key.makeSnapshot() }
+            scopes = scopes.createSnapshot { (fork, assignments) -> fork to assignments.copy() },
+            postponedLambdas = postponedLambdas.createSnapshot { list ->
+                list.mapKeysTo(mutableMapOf()) { it.key.createSnapshot() }
             }
         )
     }
@@ -330,7 +330,7 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
             val assignedLater: VariableAssignments,
             val assignedInside: VariableAssignments,
         ) {
-            fun makeSnapshot(): Fork {
+            fun createSnapshot(): Fork {
                 return Fork(assignedLater.copy(), assignedInside.copy())
             }
         }

@@ -223,7 +223,7 @@ private class FirPartialBodyExpressionResolveTransformer(
                         performedAnalysesCount = performedAnalysesCount + 1,
                         analysisStateSnapshot = LLPartialBodyResolveSnapshot(
                             towerDataContext = context.towerDataContext.createSnapshot(keepMutable = true),
-                            dataFlowAnalyzerContext = context.dataFlowAnalyzerContext
+                            dataFlowAnalyzerContext = context.dataFlowAnalyzerContext.createSnapshot()
                         )
                     )
                     shouldStop = true
@@ -609,16 +609,7 @@ internal object BodyStateKeepers {
     }
 
     val PARTIAL_BODY_RESOLVABLE: StateKeeper<FirDeclaration, FirDesignation> = stateKeeper { builder, declaration, context ->
-        builder.add(
-            provider = FirDeclaration::partialBodyResolveState,
-            mutator = { owner, oldPartialBodyResolveState ->
-                // On exceptions, remove the partial body resolve state so the function will be analyzed from the beginning
-                if (oldPartialBodyResolveState != null) {
-                    oldPartialBodyResolveState.invalidate()
-                    owner.partialBodyResolveState = null
-                }
-            }
-        )
+        builder.add(FirDeclaration::partialBodyResolveState::get, FirDeclaration::partialBodyResolveState::set)
     }
 
     val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignation> = stateKeeper { builder, initializer, designation ->
