@@ -45,9 +45,10 @@ class WasmLoweringFacade(
         require(WasmEnvironmentConfigurator.isMainModule(module, testServices))
         require(inputArtifact is IrBackendInput.WasmDeserializedFromKlibBackendInput)
 
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val moduleInfo = inputArtifact.moduleInfo
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
-        val wasmPhases = getWasmPhases(isIncremental = false)
+        val wasmPhases = getWasmPhases(configuration, isIncremental = false)
         val phaseConfig = if (debugMode >= DebugMode.SUPER_DEBUG) {
             val outputDirBase = testServices.getWasmTestOutputDirectory()
             val dumpOutputDir = File(outputDirBase, "irdump")
@@ -61,7 +62,6 @@ class WasmLoweringFacade(
         }
 
         val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         configuration.phaseConfig = phaseConfig
 
         val testPackage = extractTestPackage(testServices)

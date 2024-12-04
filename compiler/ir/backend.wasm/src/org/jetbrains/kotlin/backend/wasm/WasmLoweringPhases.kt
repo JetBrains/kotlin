@@ -5,15 +5,20 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
+import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
+import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.wasm.lower.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.noDoubleInlining
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.SameTypeNamedCompilerPhase
 import org.jetbrains.kotlin.config.phaser.SimpleNamedCompilerPhase
@@ -22,8 +27,13 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunc
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.inline.InlineMode
+import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
+import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.utils.bind
 
 private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>>.toCompilerPhase() =
     reduce { acc, lowering -> acc.then(lowering) }
@@ -33,8 +43,44 @@ private val validateIrBeforeLowering = makeIrModulePhase(
     name = "ValidateIrBeforeLowering",
 )
 
-private val validateIrAfterInliningPhase = makeIrModulePhase(
-    ::IrValidationAfterInliningAllFunctionsPhase,
+private val validateIrAfterInliningOnlyPrivateFunctionsPhase = makeIrModulePhase(
+    { context: WasmBackendContext ->
+        IrValidationAfterInliningOnlyPrivateFunctionsPhase(
+            context,
+            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+                val inlineFunction = inlineFunctionUseSite.symbol.owner
+                when {
+                    // TODO: remove this condition after the fix of KT-69457:
+                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
+
+                    // Call sites of only non-private functions are allowed at this stage.
+                    else -> !inlineFunction.isConsideredAsPrivateForInlining()
+                }
+            }
+        )
+    },
+    name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
+)
+
+private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
+    { context: WasmBackendContext ->
+        IrValidationAfterInliningAllFunctionsPhase(
+            context,
+            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+                // No inline function call sites should remain at this stage.
+                val inlineFunction = inlineFunctionUseSite.symbol.owner
+                when {
+                    // TODO: remove this condition after the fix of KT-69457:
+                    inlineFunctionUseSite is IrFunctionReference && !inlineFunction.isReifiable() -> true // temporarily permitted
+
+                    // TODO: remove this condition after the fix of KT-70361:
+                    isTypeOfIntrinsic(inlineFunction.symbol) -> true // temporarily permitted
+
+                    else -> false // forbidden
+                }
+            }
+        )
+    },
     name = "IrValidationAfterInliningAllFunctionsPhase",
 )
 
@@ -112,10 +158,31 @@ private val wrapInlineDeclarationsWithReifiedTypeParametersPhase = makeIrModuleP
     name = "WrapInlineDeclarationsWithReifiedTypeParametersPhase",
 )
 
-private val functionInliningPhase = makeIrModulePhase(
-    ::WasmFunctionInlining,
-    name = "FunctionInliningPhase",
+private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
+    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+    name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
+)
+
+/**
+ * The first phase of inlining (inline only private functions).
+ */
+private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
+    ::WasmFunctionInlining.bind(InlineMode.PRIVATE_INLINE_FUNCTIONS),
+    name = "InlineOnlyPrivateFunctions",
+    prerequisite = setOf(outerThisSpecialAccessorInInlineFunctionsPhase)
+)
+
+internal val syntheticAccessorGenerationPhase = makeIrModulePhase(
+    lowering = ::SyntheticAccessorLowering,
+    name = "SyntheticAccessorGeneration",
+    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
+)
+
+private val inlineAllFunctionsPhase = makeIrModulePhase(
+    ::WasmFunctionInlining.bind(InlineMode.ALL_INLINE_FUNCTIONS),
+    name = "InlineAllFunctions",
     prerequisite = setOf(
+        outerThisSpecialAccessorInInlineFunctionsPhase,
         expectDeclarationsRemovingPhase,
         wrapInlineDeclarationsWithReifiedTypeParametersPhase,
         localClassesInInlineLambdasPhase,
@@ -125,7 +192,7 @@ private val functionInliningPhase = makeIrModulePhase(
 private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeIrModulePhase(
     { RemoveInlineDeclarationsWithReifiedTypeParametersLowering() },
     name = "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val tailrecLoweringPhase = makeIrModulePhase(
@@ -365,7 +432,7 @@ private val unhandledExceptionLowering = makeIrModulePhase(
 private val tryCatchCanonicalization = makeIrModulePhase(
     ::TryCatchCanonicalization,
     name = "TryCatchCanonicalization",
-    prerequisite = setOf(functionInliningPhase, unhandledExceptionLowering)
+    prerequisite = setOf(inlineAllFunctionsPhase, unhandledExceptionLowering)
 )
 
 private val bridgesConstructionPhase = makeIrModulePhase(
@@ -522,10 +589,11 @@ val constEvaluationPhase = makeIrModulePhase(
         ConstEvaluationLowering(context, configuration = configuration)
     },
     name = "ConstEvaluationLowering",
-    prerequisite = setOf(functionInliningPhase)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 fun getWasmLowerings(
+    configuration: CompilerConfiguration,
     isIncremental: Boolean
 ): List<SimpleNamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
     validateIrBeforeLowering,
@@ -539,16 +607,20 @@ fun getWasmLowerings(
     rangeContainsLoweringPhase,
 
     sharedVariablesLoweringPhase,
+    outerThisSpecialAccessorInInlineFunctionsPhase,
     localClassesInInlineLambdasPhase,
-    localClassesInInlineFunctionsPhase,
-    localClassesExtractionFromInlineFunctionsPhase,
+    localClassesInInlineFunctionsPhase.takeIf { configuration.noDoubleInlining },
+    localClassesExtractionFromInlineFunctionsPhase.takeIf { configuration.noDoubleInlining },
 
     inlineCallableReferenceToLambdaPhase,
     arrayConstructorPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersPhase,
 
-    functionInliningPhase,
-    validateIrAfterInliningPhase,
+    inlineOnlyPrivateFunctionsPhase.takeUnless { configuration.noDoubleInlining },
+    syntheticAccessorGenerationPhase.takeUnless { configuration.noDoubleInlining },
+    validateIrAfterInliningOnlyPrivateFunctionsPhase.takeUnless { configuration.noDoubleInlining },
+    inlineAllFunctionsPhase,
+    validateIrAfterInliningAllFunctionsPhase,
     constEvaluationPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
 
@@ -661,10 +733,11 @@ fun getWasmLowerings(
 )
 
 fun getWasmPhases(
+    configuration: CompilerConfiguration,
     isIncremental: Boolean
 ): SameTypeNamedCompilerPhase<WasmBackendContext, IrModuleFragment> = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
-    lower = getWasmLowerings(isIncremental).toCompilerPhase(),
+    lower = getWasmLowerings(configuration, isIncremental).toCompilerPhase(),
     actions = DEFAULT_IR_ACTIONS,
     nlevels = 1
 )
