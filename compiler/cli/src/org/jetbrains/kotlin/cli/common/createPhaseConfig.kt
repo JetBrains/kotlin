@@ -10,30 +10,25 @@ import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 
 fun createPhaseConfig(
     compoundPhase: CompilerPhase<*, *, *>,
-    arguments: CommonCompilerArguments,
-    messageCollector: MessageCollector
+    arguments: CommonCompilerArguments
 ): PhaseConfig {
-    fun report(message: String) = messageCollector.report(CompilerMessageSeverity.ERROR, message)
-
     val phases = compoundPhase.toPhaseMap()
-    val disabled = computeDisabled(phases, arguments.disablePhases, ::report).toMutableSet()
-    val verbose = phaseSetFromArguments(phases, arguments.verbosePhases, ::report)
+    val disabled = computeDisabled(phases, arguments.disablePhases).toMutableSet()
+    val verbose = phaseSetFromArguments(phases, arguments.verbosePhases)
 
-    val beforeDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpBefore, ::report)
-    val afterDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpAfter, ::report)
-    val bothDumpSet = phaseSetFromArguments(phases, arguments.phasesToDump, ::report)
+    val beforeDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpBefore)
+    val afterDumpSet = phaseSetFromArguments(phases, arguments.phasesToDumpAfter)
+    val bothDumpSet = phaseSetFromArguments(phases, arguments.phasesToDump)
     val toDumpStateBefore = beforeDumpSet + bothDumpSet
     val toDumpStateAfter = afterDumpSet + bothDumpSet
     val dumpDirectory = arguments.dumpDirectory
     val dumpOnlyFqName = arguments.dumpOnlyFqName
-    val beforeValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateBefore, ::report)
-    val afterValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateAfter, ::report)
-    val bothValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidate, ::report)
+    val beforeValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateBefore)
+    val afterValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidateAfter)
+    val bothValidateSet = phaseSetFromArguments(phases, arguments.phasesToValidate)
     val toValidateStateBefore = beforeValidateSet + bothValidateSet
     val toValidateStateAfter = afterValidateSet + bothValidateSet
 
@@ -78,22 +73,15 @@ private fun list(
 private fun computeDisabled(
     phases: MutableMap<String, AnyNamedPhase>,
     namesOfDisabled: Array<String>?,
-    report: (String) -> Unit
 ): Set<AnyNamedPhase> {
-    return phaseSetFromArguments(phases, namesOfDisabled, report)
+    return phaseSetFromArguments(phases, namesOfDisabled)
 }
 
 private fun phaseSetFromArguments(
     phases: MutableMap<String, AnyNamedPhase>,
     names: Array<String>?,
-    report: (String) -> Unit
 ): Set<AnyNamedPhase> {
     if (names == null) return emptySet()
     if ("ALL" in names) return phases.values.toSet()
-    return names.mapNotNull {
-        phases[it] ?: run {
-            report("no phase named $it")
-            null
-        }
-    }.toSet()
+    return names.mapNotNull { phases[it] }.toSet()
 }

@@ -271,7 +271,7 @@ internal class K2JsCompilerImpl(
             messageCollector.report(STRONG_WARNING, "Dumping the size of declarations to file is not supported for Kotlin/Js.")
         }
 
-        configuration.phaseConfig = createPhaseConfig(getJsPhases(configuration), arguments, messageCollector)
+        configuration.phaseConfig = createPhaseConfig(getJsPhases(configuration), arguments)
 
         val start = System.currentTimeMillis()
 
