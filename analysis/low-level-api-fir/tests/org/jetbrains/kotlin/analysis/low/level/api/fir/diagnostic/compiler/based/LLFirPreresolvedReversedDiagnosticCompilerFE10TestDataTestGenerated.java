@@ -13261,6 +13261,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("uninitializedTypeArgumentsMappingIfErrorCandidates.kt")
+      public void testUninitializedTypeArgumentsMappingIfErrorCandidates() {
+        runTest("compiler/testData/diagnostics/tests/exceptions/uninitializedTypeArgumentsMappingIfErrorCandidates.kt");
+      }
+
+      @Test
       @TestMetadata("unresolvedReferenceDuringProjectionRelationChecking.kt")
       public void testUnresolvedReferenceDuringProjectionRelationChecking() {
         runTest("compiler/testData/diagnostics/tests/exceptions/unresolvedReferenceDuringProjectionRelationChecking.kt");

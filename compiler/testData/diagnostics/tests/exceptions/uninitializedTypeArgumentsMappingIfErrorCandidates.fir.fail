@@ -1,0 +1,18 @@
+lateinit property typeArgumentMapping has not been initialized
+kotlin.UninitializedPropertyAccessException: lateinit property typeArgumentMapping has not been initialized
+	at org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate.getTypeArgumentMapping(Candidate.kt:177)
+	at org.jetbrains.kotlin.fir.resolve.calls.stages.CreateFreshTypeVariableSubstitutorStage.check(CreateFreshTypeVariableSubstitutorStage.kt:54)
+	at org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner$processCandidate$1.invokeSuspend(ResolutionStageRunner.kt:26)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner.processCandidate(ResolutionStageRunner.kt:39)
+	at org.jetbrains.kotlin.fir.resolve.calls.candidate.ErrorCandidateUtilsKt.fullyProcessCandidate(errorCandidateUtils.kt:52)
+	at org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver.reduceCandidates(FirCallResolver.kt:240)
+	at org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver.collectCandidates(FirCallResolver.kt:212)
+	at org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver.collectCandidates$default(FirCallResolver.kt:176)
+	at org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver.resolveCallAndSelectCandidate(FirCallResolver.kt:86)
+	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformFunctionCallInternal$resolve(FirExpressionsResolveTransformer.kt:524)
+	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformFunctionCall(FirExpressionsResolveTransformer.kt:453)
+	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher.transformFunctionCall(FirAbstractBodyResolveTransformerDispatcher.kt:174)
+	at org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher.transformFunctionCall(FirAbstractBodyResolveTransformerDispatcher.kt:24)
+	at org.jetbrains.kotlin.fir.expressions.FirFunctionCall.transform(FirFunctionCall.kt:45)
+	...
