@@ -327,7 +327,7 @@ fun collectPropertiesOrFieldsAfterLowering(irClass: IrClass, context: JvmBackend
         }
 
         fun handleAccessor(element: IrSimpleFunction) {
-            if (element.extensionReceiverParameter == null && element.contextReceiverParametersCount == 0) {
+            if (element.parameters.none { it.kind == IrParameterKind.ExtensionReceiver || it.kind == IrParameterKind.Context }) {
                 element.correspondingPropertySymbol?.owner?.let { add(Property(it)) }
             }
         }
@@ -373,9 +373,8 @@ fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
 
     val customEqualsMfvc = mfvc.functions.singleOrNull {
         it.name == OperatorNameConventions.EQUALS &&
-                it.contextReceiverParametersCount == 0 &&
-                it.extensionReceiverParameter == null &&
-                it.valueParameters.singleOrNull()?.type?.erasedUpperBound == mfvc
+                it.hasShape(dispatchReceiver = true, regularParameters = 1) &&
+                it.parameters[1].type.erasedUpperBound == mfvc
     }
 
     val specializedEqualsMethod = makeSpecializedEqualsMethod(context, mfvc, oldFields, customEqualsAny, customEqualsMfvc)
@@ -405,8 +404,8 @@ private fun makeSpecializedEqualsMethod(
         body = with(context.createJvmIrBuilder(this.symbol)) {
             if (customEqualsAny != null) {
                 irExprBody(irCall(customEqualsAny).apply {
-                    dispatchReceiver = irGet(dispatchReceiverParameter!!)
-                    putValueArgument(0, irGet(other))
+                    arguments[0] = irGet(dispatchReceiverParameter!!)
+                    arguments[1] = irGet(other)
                 })
             } else {
                 val leftArgs = oldFields.map { irGetField(irGet(dispatchReceiverParameter!!), it) }
@@ -414,8 +413,8 @@ private fun makeSpecializedEqualsMethod(
                 val conjunctions = leftArgs.zip(rightArgs) { l, r -> irEquals(l, r) }
                 irExprBody(conjunctions.reduce { acc, current ->
                     irCall(context.irBuiltIns.andandSymbol).apply {
-                        putValueArgument(0, acc)
-                        putValueArgument(1, current)
+                        arguments[0] = acc
+                        arguments[1] = current
                     }
                 })
             }

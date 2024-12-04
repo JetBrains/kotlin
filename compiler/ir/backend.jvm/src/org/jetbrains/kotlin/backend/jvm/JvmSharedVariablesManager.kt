@@ -126,7 +126,7 @@ class JvmSharedVariablesManager(
         IrCallImpl.fromSymbolOwner(value.startOffset, value.endOffset, to, symbols.unsafeCoerceIntrinsic).apply {
             putTypeArgument(0, from)
             putTypeArgument(1, to)
-            putValueArgument(0, value)
+            arguments[0] = value
         }
 
     override fun getSharedValue(sharedVariableSymbol: IrValueSymbol, originalGet: IrGetValue): IrExpression =
