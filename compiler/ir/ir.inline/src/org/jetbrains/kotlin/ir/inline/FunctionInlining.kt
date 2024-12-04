@@ -509,10 +509,7 @@ open class FunctionInlining(
                                 )
                             }
                         }
-                        val parameterToSet = when (parameter) {
-                            function.dispatchReceiverParameter -> inlinedFunction.dispatchReceiverParameter!!
-                            else -> inlinedFunction.parameters[parameter.indexInParameters]
-                        }
+                        val parameterToSet = inlinedFunction.parameters[parameter.indexInParameters]
                         arguments[parameterToSet] = argument.doImplicitCastIfNeededTo(parameterToSet.type)
                     }
                     assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
@@ -704,11 +701,6 @@ open class FunctionInlining(
             val arguments = reference.getArgumentsWithIr().map { ParameterToArgument(it.first, it.second) }
             val evaluationStatements = mutableListOf<IrVariable>()
             val substitutor = ParameterSubstitutor()
-            val referenced = when (reference) {
-                is IrFunctionReference -> reference.symbol.owner
-                is IrPropertyReference -> reference.getter!!.owner
-                else -> error(this)
-            }
             arguments.forEach {
                 // Arguments may reference the previous ones - substitute them.
                 val irExpression = it.argumentExpression.transform(substitutor, data = null)
@@ -732,10 +724,7 @@ open class FunctionInlining(
 
                     irGetValueWithoutLocation(newVariable.symbol)
                 }
-                when (it.parameter) {
-                    referenced.dispatchReceiverParameter -> reference.dispatchReceiver = newArgument
-                    else -> reference.arguments[it.parameter] = newArgument
-                }
+                reference.arguments[it.parameter] = newArgument
             }
             return evaluationStatements
         }
