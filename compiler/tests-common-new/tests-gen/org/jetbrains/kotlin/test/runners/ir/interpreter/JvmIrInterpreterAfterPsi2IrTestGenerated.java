@@ -707,6 +707,12 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
     }
 
     @Test
+    @TestMetadata("functionReferenceCallViaReflection.kt")
+    public void testFunctionReferenceCallViaReflection() {
+      runTest("compiler/testData/ir/interpreter/reference/functionReferenceCallViaReflection.kt");
+    }
+
+    @Test
     @TestMetadata("getClass.kt")
     public void testGetClass() {
       runTest("compiler/testData/ir/interpreter/reference/getClass.kt");
@@ -722,6 +728,12 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
     @TestMetadata("propertyReference.kt")
     public void testPropertyReference() {
       runTest("compiler/testData/ir/interpreter/reference/propertyReference.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyReferenceAccessors.kt")
+    public void testPropertyReferenceAccessors() {
+      runTest("compiler/testData/ir/interpreter/reference/propertyReferenceAccessors.kt");
     }
   }
 }
