@@ -103,7 +103,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(constructor, "FirConstructorImpl") {
             openBuilder()
-            withCopy()
         }
 
         builder(typeParameter) {
