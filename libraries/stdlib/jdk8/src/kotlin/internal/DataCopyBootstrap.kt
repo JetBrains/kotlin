@@ -23,7 +23,8 @@ public object DataCopyBootstrap {
         // these will eventually be given from the constant pool
         // https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-4.html#jvms-4.4
         klass: Class<*>,
-        vararg givenComponents: Int,
+        // GraalVM requires vararg in invokedynamic to be Object
+        vararg givenComponents: Any,
     ): CallSite? {
         // requirements
         require(name == "copy") { "Only copy is supported" }
