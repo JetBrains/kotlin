@@ -253,7 +253,7 @@ abstract class Symbols(
         fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
                 function.isTopLevelInPackage("typeOf", KOTLIN_REFLECT_FQ_NAME)
-                        && function.parameters.isEmpty()
+                        && function.hasShape()
             }
     }
 }
