@@ -114,6 +114,7 @@ internal class KaFirConstructorSymbol private constructor(
             KaFirTypeAliasedConstructorMemberPointer(
                 analysisSession.createOwnerPointer(this),
                 FirCallableSignature.createSignature(firSymbol),
+                this
             )
         } else {
             KaFirConstructorSymbolPointer(
