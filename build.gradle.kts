@@ -1081,6 +1081,16 @@ tasks {
             environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
         }
     }
+
+    register<Exec>("installJps") {
+        notCompatibleWithConfigurationCache("Uses project.rootDir")
+        group = "publishing"
+        workingDir = rootProject.projectDir.resolve("libraries")
+        commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests", "-DexcludeTestModules=true")
+        doFirst {
+            environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
+        }
+    }
 }
 
 val zipCompiler by tasks.registering(Zip::class) {
