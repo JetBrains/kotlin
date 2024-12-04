@@ -137,6 +137,8 @@ internal fun Project.registerKotlinPluginExtensions() {
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
+        // FIXME: This isn't mpp only
+        // FIXME: Disabling this breaks KotlinTargetSoftwareComponentImpl
         register(project, KotlinMetadataArtifact)
         register(project, KotlinLegacyCompatibilityMetadataArtifact)
         register(project, KotlinLegacyMetadataArtifact)

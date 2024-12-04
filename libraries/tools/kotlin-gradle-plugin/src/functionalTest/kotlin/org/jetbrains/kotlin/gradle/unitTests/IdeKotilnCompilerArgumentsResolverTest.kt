@@ -62,7 +62,7 @@ class IdeCompilerArgumentsResolverTest {
                 else parseCommandLineArguments<K2MetadataCompilerArguments>(argumentsList)
                 KotlinPlatformType.jvm, KotlinPlatformType.androidJvm -> parseCommandLineArguments<K2JVMCompilerArguments>(argumentsList)
                 KotlinPlatformType.js, KotlinPlatformType.wasm -> parseCommandLineArguments<K2JSCompilerArguments>(argumentsList)
-                KotlinPlatformType.native, KotlinPlatformType.unknown -> parseCommandLineArguments<K2NativeCompilerArguments>(argumentsList)
+                KotlinPlatformType.native -> parseCommandLineArguments<K2NativeCompilerArguments>(argumentsList)
             }
 
             val parsedArgumentsList = parsedArguments.toArgumentStrings(shortArgumentKeys = true, compactArgumentValues = false)

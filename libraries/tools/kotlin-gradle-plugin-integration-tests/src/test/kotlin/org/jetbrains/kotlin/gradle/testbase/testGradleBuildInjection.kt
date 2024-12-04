@@ -109,11 +109,14 @@ class BuildScriptAfterEvaluationReturn<T>(
      * query anything from relevant tasks since they have executed. However, we have to disable CC, so that the returning closure can reach
      * out for configuration entities.
      */
-    fun buildAndReturn(evaluationTask: String = "tasks"): T {
+    fun buildAndReturn(
+        evaluationTask: String = "tasks",
+        deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+    ): T {
         gradleProject.build(
             evaluationTask,
             "-P${injectionLoadProperty}=true",
-            buildOptions = gradleProject.buildOptions.copy(
+            buildOptions = gradleProject.deriveBuildOptions().copy(
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
             )
         )

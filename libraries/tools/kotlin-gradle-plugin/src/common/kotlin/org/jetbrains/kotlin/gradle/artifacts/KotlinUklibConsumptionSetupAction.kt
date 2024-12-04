@@ -5,202 +5,142 @@
 
 package org.jetbrains.kotlin.gradle.artifacts
 
+import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.transform.InputArtifact
 import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.attributes.*
-import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.file.*
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.setupPublication
-import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
+import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
+import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
-import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
-import org.jetbrains.kotlin.gradle.plugin.await
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.setAttribute
 import javax.inject.Inject
 
-private val artifactType: Attribute<String> get() = Attribute.of("artifactType", String::class.java)
-private val uklibArtifactType: String get() = "uklib"
-private val uklibUnzippedArtifactType: String get() = "uklib-unzipped"
-
 internal val KotlinUklibConsumptionSetupAction = KotlinProjectSetupAction {
-
-    if (project.kotlinPropertiesProvider.publishUklibVariant) {
-        project.launch {
-            setupPublication()
-        }
-    }
-
     when (project.kotlinPropertiesProvider.uklibResolutionStrategy) {
-        UklibResolutionStrategy.PreferUklibVariant,
-        UklibResolutionStrategy.PreferPlatformSpecificVariant -> project.launch { setupConsumption() }
+        UklibResolutionStrategy.AllowResolvingUklibs -> project.launch { setupUklibConsumption() }
         UklibResolutionStrategy.ResolveOnlyPlatformSpecificVariant -> { /* do nothing */ }
     }
 }
 
-val uklibStateAttribute = Attribute.of("uklibState", String::class.java)
-val uklibStateZipped = "zipped"
-val uklibStateUnzipped = "unzipped"
+internal val uklibStateAttribute = Attribute.of("uklibState", String::class.java)
+internal val uklibStateZipped = "zipped"
+internal val uklibStateUnzipped = "unzipped"
 
-val uklibPlatformAttribute = Attribute.of("uklibPlatform", String::class.java)
-val uklibPlatformUnknown = "unknown"
-val uklibNativeSliceAttribute = Attribute.of("uklibNativeSlice", String::class.java)
-val uklibNativeSliceUnknown = "unknown"
+internal val uklibDestinationAttribute = Attribute.of("uklibDestination", String::class.java)
+internal val uklibDestinationUnknown = "unknown"
 
-private suspend fun Project.setupConsumption() {
+/**
+ * Resolve Uklib artifacts using transforms:
+ * - Request a known [uklibDestinationAttribute] in all resolvable configurations that should be able to resolve uklibs
+ * - Register transform "zipped -> unzipped uklib"
+ * - Register transform "unzipped uklib -> [uklibDestinationAttribute]"
+ */
+private suspend fun Project.setupUklibConsumption() {
     val sourceSets = multiplatformExtension.awaitSourceSets()
-    val metadataTarget = multiplatformExtension.awaitMetadataTarget()
     val targets = multiplatformExtension.awaitTargets()
     AfterFinaliseCompilations.await()
 
-    sourceSets.configureEach {
-        with(it.internal.resolvableMetadataConfiguration) {
-            attributes {
-                when (project.kotlinPropertiesProvider.uklibResolutionStrategy) {
-                    UklibResolutionStrategy.PreferUklibVariant -> it.attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_UKLIB))
-                    UklibResolutionStrategy.PreferPlatformSpecificVariant -> {
-                        /* rely on the default + compatibility rule */
-                    }
-                }
-                it.attribute(uklibStateAttribute, uklibStateUnzipped)
-                it.attribute(uklibPlatformAttribute, KotlinPlatformType.common.name)
-            }
-        }
-    }
-    // FIXME: Drop this transform and use the unzip transform instead
-    dependencies.registerTransform(UnzippedUklibToMetadataCompilationTransform::class.java) {
-        it.from
-            .attribute(uklibStateAttribute, uklibStateUnzipped)
-            .attribute(uklibPlatformAttribute, uklibPlatformUnknown)
-        it.to
-            .attribute(uklibStateAttribute, uklibStateUnzipped)
-            .attribute(uklibPlatformAttribute, KotlinPlatformType.common.name)
-    }
+    registerZippedUklibArtifact()
+    allowUklibsToUnzip()
+    allowMetadataConfigurationsToResolveUnzippedUklib(sourceSets)
+    allowPlatformCompilationsToResolvePlatformCompilationArtifactFromUklib(targets)
+}
 
+private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifactFromUklib(
+    targets: NamedDomainObjectCollection<KotlinTarget>
+) {
     targets.configureEach { target ->
-        if (target is KotlinMetadataTarget) return@configureEach
-        if (target is KotlinNativeTarget) {
-            dependencies.registerTransform(UnzippedUklibToPlatformCompilationTransform::class.java) {
-                it.from
-                    .attribute(uklibStateAttribute, uklibStateUnzipped)
-                    .attribute(uklibPlatformAttribute, uklibPlatformUnknown)
-                    .attribute(uklibNativeSliceAttribute, uklibNativeSliceUnknown)
-                it.to
-                    .attribute(uklibStateAttribute, uklibStateUnzipped)
-                    .attribute(uklibPlatformAttribute, target.platformType.name)
-                    .attribute(uklibNativeSliceAttribute, target.targetName)
+        val destinationAttribute = when (target) {
+            is KotlinNativeTarget -> target.uklibFragmentPlatformAttribute
+            is KotlinJsIrTarget -> target.uklibFragmentPlatformAttribute
+            is KotlinJvmTarget -> target.uklibFragmentPlatformAttribute
+            else -> return@configureEach
+        }
 
-                it.parameters.targetAttributes.set(setOf(target.targetName))
-                it.parameters.fakeTransform.set(kotlinPropertiesProvider.fakeUkibTransforms)
-            }
-            target.compilations.configureEach {
-                listOfNotNull(
-                    it.internal.configurations.compileDependencyConfiguration,
-                    it.internal.configurations.runtimeDependencyConfiguration,
-                ).forEach { config ->
-                    with(config.attributes) {
-                        when (project.kotlinPropertiesProvider.uklibResolutionStrategy) {
-                            UklibResolutionStrategy.PreferUklibVariant -> attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_UKLIB))
-                            UklibResolutionStrategy.PreferPlatformSpecificVariant -> {
-                                /* rely on the default + compatibility rule */
-                            }
-                        }
-                        attribute(uklibStateAttribute, uklibStateUnzipped)
-                        attribute(uklibPlatformAttribute, target.platformType.name)
-                        attribute(uklibNativeSliceAttribute, target.targetName)
-                    }
-                }
-            }
-        } else {
-            dependencies.registerTransform(UnzippedUklibToPlatformCompilationTransform::class.java) {
-                it.from
-                    .attribute(uklibStateAttribute, uklibStateUnzipped)
-                    .attribute(uklibPlatformAttribute, uklibPlatformUnknown)
-                it.to
-                    .attribute(uklibStateAttribute, uklibStateUnzipped)
-                    .attribute(uklibPlatformAttribute, target.platformType.name)
+        dependencies.registerTransform(UnzippedUklibToPlatformCompilationTransform::class.java) {
+            it.from
+                .attribute(uklibStateAttribute, uklibStateUnzipped)
+                .attribute(uklibDestinationAttribute, uklibDestinationUnknown)
+            it.to
+                .attribute(uklibStateAttribute, uklibStateUnzipped)
+                .attribute(uklibDestinationAttribute, destinationAttribute.unwrap())
 
-                it.parameters.targetAttributes.set(setOf(target.targetName))
-                it.parameters.fakeTransform.set(kotlinPropertiesProvider.fakeUkibTransforms)
-            }
-            target.compilations.configureEach {
-                listOfNotNull(
-                    it.internal.configurations.compileDependencyConfiguration,
-                    it.internal.configurations.runtimeDependencyConfiguration,
-                ).forEach { config ->
-                    with(config.attributes) {
-                        when (project.kotlinPropertiesProvider.uklibResolutionStrategy) {
-                            UklibResolutionStrategy.PreferUklibVariant -> attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_UKLIB))
-                            UklibResolutionStrategy.PreferPlatformSpecificVariant -> {
-                                /* rely on the default + compatibility rule */
-                            }
-                        }
+            it.parameters.targetFragmentAttribute.set(destinationAttribute.unwrap())
+            it.parameters.fakeTransform.set(kotlinPropertiesProvider.fakeUkibTransforms)
+        }
 
-                        attribute(uklibStateAttribute, uklibStateUnzipped)
-                        attribute(uklibPlatformAttribute, target.platformType.name)
-                    }
+        // FIXME: Refactor this and encode what configurations should be allowed to transform per KotlinTarget somewhere around [uklibFragmentPlatformAttribute]
+        target.compilations.configureEach {
+            listOfNotNull(
+                it.internal.configurations.compileDependencyConfiguration,
+                it.internal.configurations.runtimeDependencyConfiguration,
+            ).forEach {
+                it.attributes {
+                    it.attribute(uklibStateAttribute, uklibStateUnzipped)
+                    it.attribute(uklibDestinationAttribute, destinationAttribute.unwrap())
                 }
             }
         }
     }
+}
 
-    with(dependencies.artifactTypes.create("uklib").attributes) {
+private fun Project.registerZippedUklibArtifact() {
+    with(dependencies.artifactTypes.create(Uklib.UKLIB_EXTENSION).attributes) {
         attribute(uklibStateAttribute, uklibStateZipped)
-        attribute(uklibPlatformAttribute, uklibPlatformUnknown)
-        attribute(uklibNativeSliceAttribute, uklibNativeSliceUnknown)
+        attribute(uklibDestinationAttribute, uklibDestinationUnknown)
     }
+}
 
-    dependencies.registerTransform(UklibUnzipTransform::class.java) {
+private fun Project.allowUklibsToUnzip() {
+    dependencies.registerTransform(UnzipUklibTransform::class.java) {
         it.from.attribute(uklibStateAttribute, uklibStateZipped)
         it.to.attribute(uklibStateAttribute, uklibStateUnzipped)
         it.parameters.performUnzip.set(!kotlinPropertiesProvider.fakeUkibTransforms)
     }
-
-    dependencies.attributesSchema.attribute(Usage.USAGE_ATTRIBUTE).compatibilityRules.add(
-        MakeUklibCompatibleWithPlatformCompilations::class.java
-    )
-    dependencies.attributesSchema.attribute(Usage.USAGE_ATTRIBUTE).compatibilityRules.add(
-        MakePlatformCompilationsCompatibleWithUklibCompilations::class.java
-    )
-    dependencies.attributesSchema.attribute(Usage.USAGE_ATTRIBUTE).disambiguationRules.add(
-        MakeJavaRuntimePreferableForUklibCompilations::class.java
-    )
-
-    dependencies.attributesSchema.attribute(KotlinPlatformType.attribute).compatibilityRules.add(
-        MakePlatformCompatibleWithUklibs::class.java
-    )
-    dependencies.attributesSchema.attribute(KotlinNativeTarget.konanTargetAttribute).compatibilityRules.add(
-        MakeKNSliceCompatibleWithUklibs::class.java
-    )
-    dependencies.attributesSchema.attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE).compatibilityRules.add(
-        MakeTargetJvmEnvironmentCompatibleWithUklibs::class.java
-    )
-
 }
 
-abstract class UklibUnzipTransform @Inject constructor(
+private fun Project.allowMetadataConfigurationsToResolveUnzippedUklib(
+    sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
+) {
+    sourceSets.configureEach {
+        with(it.internal.resolvableMetadataConfiguration) {
+            attributes {
+                it.attribute(uklibStateAttribute, uklibStateUnzipped)
+                it.attribute(uklibDestinationAttribute, KotlinPlatformType.common.name)
+            }
+        }
+    }
+    dependencies.registerTransform(UnzippedUklibToMetadataCompilationTransform::class.java) {
+        it.from
+            .attribute(uklibStateAttribute, uklibStateUnzipped)
+            .attribute(uklibDestinationAttribute, uklibDestinationUnknown)
+        it.to
+            .attribute(uklibStateAttribute, uklibStateUnzipped)
+            .attribute(uklibDestinationAttribute, KotlinPlatformType.common.name)
+    }
+}
+
+
+internal abstract class UnzipUklibTransform @Inject constructor(
     private val fileOperations: FileSystemOperations,
     private val archiveOperations: ArchiveOperations,
-) : TransformAction<UklibUnzipTransform.Parameters> {
+) : TransformAction<UnzipUklibTransform.Parameters> {
     interface Parameters : TransformParameters {
         @get:Input
         val performUnzip: Property<Boolean>
@@ -210,11 +150,14 @@ abstract class UklibUnzipTransform @Inject constructor(
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
-        // FIXME: 25.11.2024 - When resolving a jar with uklib packaging Gradle comes here with the jar
         val input = inputArtifact.get().asFile
-        if (input.extension == "uklib") {
+        /**
+         * FIXME: Test this !!!
+         *
+         * Due to kotlin-api/runtime Usages being compatible with java Usages, we might see a jar in this transform
+         */
+        if (input.extension == Uklib.UKLIB_EXTENSION) {
             val outputDir = outputs.dir("unzipped_uklib_${input.name}")
-            // FIXME: 13.11.2024 - Throw this away because this is not really testable with UT?
             if (parameters.performUnzip.get()) {
                 fileOperations.copy {
                     it.from(archiveOperations.zipTree(inputArtifact.get().asFile))
@@ -225,9 +168,7 @@ abstract class UklibUnzipTransform @Inject constructor(
     }
 }
 
-abstract class UnzippedUklibToMetadataCompilationTransform @Inject constructor() : TransformAction<UnzippedUklibToMetadataCompilationTransform.Parameters> {
-    interface Parameters : TransformParameters {}
-
+internal abstract class UnzippedUklibToMetadataCompilationTransform : TransformAction<TransformParameters.None> {
     @get:InputArtifact
     abstract val inputArtifact: Provider<FileSystemLocation>
 
@@ -236,11 +177,10 @@ abstract class UnzippedUklibToMetadataCompilationTransform @Inject constructor()
     }
 }
 
-abstract class UnzippedUklibToPlatformCompilationTransform @Inject constructor(
-) : TransformAction<UnzippedUklibToPlatformCompilationTransform.Parameters> {
+internal abstract class UnzippedUklibToPlatformCompilationTransform : TransformAction<UnzippedUklibToPlatformCompilationTransform.Parameters> {
     interface Parameters : TransformParameters {
         @get:Input
-        val targetAttributes: SetProperty<String>
+        val targetFragmentAttribute: Property<String>
 
         @get:Input
         val fakeTransform: Property<Boolean>
@@ -256,115 +196,45 @@ abstract class UnzippedUklibToPlatformCompilationTransform @Inject constructor(
         }
 
         val unzippedUklib = inputArtifact.get().asFile
-
-        val targetAttributes = parameters.targetAttributes.get()
-        val uklib = Uklib.deserializeFromDirectory(unzippedUklib)
-        // FIXME: Build up a Set<Attribute> -> Fragment instead?
-        val platformFragments = uklib.module.fragments.filter { it.attributes == targetAttributes }
+        val targetFragmentAttribute = parameters.targetFragmentAttribute.get()
+        // FIXME: Build up a Set<Attribute> -> Fragment map instead?
+        val platformFragments = Uklib.deserializeFromDirectory(unzippedUklib)
+            .module.fragments
+            .filter { it.attributes == setOf(targetFragmentAttribute) }
 
         if (platformFragments.isEmpty()) {
-            // The fragment is just not there. Skip this dependency
-            return
+            /**
+             * FIXME: Uklib spec mentions that there may be an intermediate fragment without refiners. Was this a crutch for kotlin-test? Should we check this case silently ignore this case here?
+             */
+            error("Couldn't resolve platform compilation artifact from ${unzippedUklib} failed. Needed fragment with attribute '${targetFragmentAttribute}', but only the following fragments were available ${platformFragments}")
         }
 
         if (platformFragments.size > 1) {
-            error("Somehow more than one platform fragment matches platform attributes: ${platformFragments}")
+            error("Matched multiple fragments from ${unzippedUklib}, but was expecting to find exactly one. Found fragments: ${platformFragments}")
         }
 
-        outputs.dir(uklib.fragmentToArtifact[platformFragments.single().identifier]!!)
+        outputs.dir(platformFragments.single().file())
     }
 }
 
 internal fun HasAttributes.configureUklibConfigurationAttributes(project: Project) {
     attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
     attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB))
-
-    attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.unknown)
-    attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, "???")
-    attributes.setAttribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.PACKED))
-    attributes.setAttribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named("???"))
 }
 
-
-class MakeUklibCompatibleWithPlatformCompilations : AttributeCompatibilityRule<Usage> {
-    override fun execute(t: CompatibilityCheckDetails<Usage>) {
-        val allowedConsumers = setOf(
-            KotlinUsages.KOTLIN_API,
-            Usage.JAVA_API,
-            Usage.JAVA_RUNTIME,
-        )
-
-        if (t.producerValue?.name == KotlinUsages.KOTLIN_UKLIB && t.consumerValue?.name in allowedConsumers) {
-            t.compatible()
-        }
-    }
-}
-
-class MakePlatformCompilationsCompatibleWithUklibCompilations : AttributeCompatibilityRule<Usage> {
-    override fun execute(t: CompatibilityCheckDetails<Usage>) {
-        val allowedProducers = setOf(
-            KotlinUsages.KOTLIN_API,
-            Usage.JAVA_API,
-            Usage.JAVA_RUNTIME,
-        )
-
-        if (t.producerValue?.name in allowedProducers && t.consumerValue?.name == KotlinUsages.KOTLIN_UKLIB) {
-            t.compatible()
-        }
-    }
-}
-
-class MakeKNSliceCompatibleWithUklibs : AttributeCompatibilityRule<String> {
-    override fun execute(t: CompatibilityCheckDetails<String>) {
-        if (t.producerValue == "???") {
-            t.compatible()
-        }
-    }
-}
-
-class MakeTargetJvmEnvironmentCompatibleWithUklibs : AttributeCompatibilityRule<TargetJvmEnvironment> {
-    override fun execute(t: CompatibilityCheckDetails<TargetJvmEnvironment>) {
-        if (t.producerValue?.name == "???") {
-            t.compatible()
-        }
-    }
-}
-
-
-class MakePlatformCompatibleWithUklibs : AttributeCompatibilityRule<KotlinPlatformType> {
-    override fun execute(t: CompatibilityCheckDetails<KotlinPlatformType>) {
-        if (t.producerValue == KotlinPlatformType.unknown) {
-            t.compatible()
-        }
-    }
-}
-
-class MakeJavaRuntimePreferableForUklibCompilations : AttributeDisambiguationRule<Usage> {
-    override fun execute(p0: MultipleCandidatesDetails<Usage>) {
-        if (p0.consumerValue?.name == KotlinUsages.KOTLIN_UKLIB) {
-            p0.candidateValues.firstOrNull { it.name == Usage.JAVA_RUNTIME }?.let {
-                p0.closestMatch(it)
-            }
-        }
-    }
-}
-
-enum class UklibResolutionStrategy {
-    PreferUklibVariant,
-    PreferPlatformSpecificVariant,
+internal enum class UklibResolutionStrategy {
+    AllowResolvingUklibs,
     ResolveOnlyPlatformSpecificVariant;
 
     val propertyName: String
         get() = when (this) {
-            PreferUklibVariant -> "preferUklibVariant"
-            PreferPlatformSpecificVariant -> "preferPlatformSpecificVariant"
+            AllowResolvingUklibs -> "allowResolvingUklibs"
             ResolveOnlyPlatformSpecificVariant -> "resolveOnlyPlatformSpecificVariant"
         }
 
     companion object {
         fun fromProperty(name: String): UklibResolutionStrategy? = when (name) {
-            PreferUklibVariant.propertyName -> PreferUklibVariant
-            PreferPlatformSpecificVariant.propertyName -> PreferPlatformSpecificVariant
+            AllowResolvingUklibs.propertyName -> AllowResolvingUklibs
             ResolveOnlyPlatformSpecificVariant.propertyName -> ResolveOnlyPlatformSpecificVariant
             else -> null
         }

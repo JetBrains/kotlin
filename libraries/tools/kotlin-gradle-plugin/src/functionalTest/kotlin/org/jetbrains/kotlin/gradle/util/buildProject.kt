@@ -135,10 +135,10 @@ fun Project.disablePlatformSpecificComponentReferences(disabled: Boolean = true)
 }
 
 fun Project.publishUklibVariant(enabled: Boolean = true) {
-    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB_VARIANT, enabled.toString())
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, enabled.toString())
 }
 
-fun Project.setUklibResolutionStrategy(strategy: UklibResolutionStrategy) {
+internal fun Project.setUklibResolutionStrategy(strategy: UklibResolutionStrategy) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY, strategy.propertyName)
 }
 

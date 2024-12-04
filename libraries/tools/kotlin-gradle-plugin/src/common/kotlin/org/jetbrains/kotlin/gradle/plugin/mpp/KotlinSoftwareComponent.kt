@@ -86,7 +86,7 @@ abstract class KotlinSoftwareComponent(
                 // overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
 
-            if (project.kotlinPropertiesProvider.publishUklibVariant) {
+            if (project.kotlinPropertiesProvider.publishUklib) {
                 this += DefaultKotlinUsageContext(
                     compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                     mavenScope = KotlinUsageContext.MavenScope.COMPILE,
@@ -202,10 +202,15 @@ class DefaultKotlinUsageContext(
     override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> =
         configuration.incoming.dependencyConstraints
 
-    override fun getArtifacts(): Set<PublishArtifact> =
-        overrideConfigurationArtifacts?.get()?.toSet() ?:
+    override fun getArtifacts(): Set<PublishArtifact> {
+        // Don't publish anything except the uklib
+        // FIXME: 11.11.2024 - I used this to disable the publication of all other artifacts
+        // FIXME: 19.11.2024 - Use this under a feature toggle?
+        // if (configuration.name != "metadataUklibElements") return emptySet()
+        return overrideConfigurationArtifacts?.get()?.toSet() ?:
         // TODO Gradle Java plugin does that in a different way; check whether we can improve this
         configuration.artifacts
+    }
 
     override fun getAttributes(): AttributeContainer {
         val configurationAttributes = overrideConfigurationAttributes ?: configuration.attributes

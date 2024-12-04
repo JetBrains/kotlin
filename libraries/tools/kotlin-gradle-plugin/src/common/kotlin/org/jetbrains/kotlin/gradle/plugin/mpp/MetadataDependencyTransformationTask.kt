@@ -139,6 +139,7 @@ abstract class MetadataDependencyTransformationTask
 
     @TaskAction
     fun transformMetadata() {
+        // Не понимаю, это parent всмысле как commonMain для iosMain
         val parentLibrariesRecords: List<List<TransformedMetadataLibraryRecord>> = parentLibrariesIndexFiles
             .get()
             .map { librariesIndexFile -> librariesIndexFile.records() }

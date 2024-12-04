@@ -133,7 +133,12 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     }
 
     if (target is KotlinMetadataTarget) {
-        if (target.project.kotlinPropertiesProvider.publishUklibVariant) {
+        if (target.project.kotlinPropertiesProvider.publishUklib) {
+            /**
+             * FIXME: 29.11.2024 - Do we actually want/need a consumable configuration?
+             *
+             * How will the POM publish with a project dependency and a multi-project publication?
+             */
             configurations.maybeCreateConsumable(target.internal.uklibElementsConfigurationName).apply {
                 description = "Resource files of main compilation of ${target.name}."
                 isVisible = false

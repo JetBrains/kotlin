@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB_VARIANT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_FILTER_RESOURCES_BY_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
@@ -195,10 +195,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val uklibResolutionStrategy: UklibResolutionStrategy
         get() = this.get(KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY)?.let {
             UklibResolutionStrategy.fromProperty(it)
-        } ?: UklibResolutionStrategy.PreferUklibVariant
+        } ?: UklibResolutionStrategy.AllowResolvingUklibs
 
-    val publishUklibVariant: Boolean
-        get() = booleanProperty(KOTLIN_MPP_PUBLISH_UKLIB_VARIANT) ?: false
+    val publishUklib: Boolean
+        get() = booleanProperty(KOTLIN_MPP_PUBLISH_UKLIB) ?: false
 
     val fakeUkibTransforms: Boolean
         get() = booleanProperty(KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS) ?: false
@@ -639,7 +639,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_STDLIB_DOM_API_INCLUDED = property("kotlin.js.stdlib.dom.api.included")
         val KOTLIN_JS_YARN = property("kotlin.js.yarn")
 
-        val KOTLIN_MPP_PUBLISH_UKLIB_VARIANT = property("kotlin.mpp.publishUklibVariant")
+        val KOTLIN_MPP_PUBLISH_UKLIB = property("kotlin.mpp.publishUklib")
         val KOTLIN_MPP_FAKE_UKLIB_TRANSFORMS = property("kotlin.mpp.fakeUklibTransforms")
         val KOTLIN_MPP_DISABLE_PLATFORM_SPECIFIC_COMPONENTS_REFERENCES = property("kotlin.mpp.disablePlatformSpecificComponentsReferences")
         val KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY = property("kotlin.mpp.uklibResolutionStrategy")

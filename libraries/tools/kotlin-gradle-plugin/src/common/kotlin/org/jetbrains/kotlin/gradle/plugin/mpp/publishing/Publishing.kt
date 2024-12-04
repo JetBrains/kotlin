@@ -12,6 +12,9 @@ import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
+import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.archiveUklibTask
+import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -34,6 +37,7 @@ internal val MultiplatformPublishingSetupAction = KotlinProjectSetupCoroutine {
             project.extensions.configure(PublishingExtension::class.java) { publishing ->
                 createRootPublication(project, publishing).also(kotlinMultiplatformRootPublicationImpl::complete)
                 createTargetPublications(project, publishing)
+                createUklibSpecificMavenPublications(project, publishing)
             }
         } else {
             kotlinMultiplatformRootPublicationImpl.complete(null)
@@ -55,6 +59,9 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
         (this as MavenPublicationInternal).publishWithOriginalFileName()
 
         addKotlinToolingMetadataArtifactIfNeeded(project)
+        if (project.kotlinPropertiesProvider.publishUklib) {
+            addUklibArtifactAndChangePackaging(project)
+        }
     }
 }
 
@@ -64,6 +71,16 @@ private fun MavenPublication.addKotlinToolingMetadataArtifactIfNeeded(project: P
     artifact(buildKotlinToolingMetadataTask.map { it.outputFile }) { artifact ->
         artifact.classifier = "kotlin-tooling-metadata"
         artifact.builtBy(buildKotlinToolingMetadataTask)
+    }
+}
+
+private fun MavenPublication.addUklibArtifactAndChangePackaging(project: Project) {
+    // FIXME: This will break coroutines !!!
+    pom.packaging = Uklib.UKLIB_PACKAGING
+    project.launch {
+        artifact(project.archiveUklibTask()) { artifact ->
+            artifact.extension = Uklib.UKLIB_EXTENSION
+        }
     }
 }
 
@@ -82,6 +99,22 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
             else
                 kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
         }
+}
+
+private fun createUklibSpecificMavenPublications(project: Project, publishing: PublishingExtension) {
+    val publications = publishing.publications
+    project.launch {
+        val metadataTarget = project.multiplatformExtension.awaitMetadataTarget()
+        val componentPublication = publications.create("uklib", MavenPublication::class.java).apply {
+            artifactId = "${artifactId}-uklib"
+
+            // FIXME: jvm + uklib
+//            artifact(
+//
+//            )
+        }
+        metadataTarget.onPublicationCreated(componentPublication)
+    }
 }
 
 private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publications: PublicationContainer) {

@@ -95,17 +95,16 @@ constructor(
             )
         )
 
-        val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
+        val result = createKotlinVariant(componentName, usageContexts)
 
         setOf(result)
     }
 
     override fun createKotlinVariant(
         componentName: String,
-        compilation: KotlinCompilation<*>,
         usageContexts: Set<DefaultKotlinUsageContext>,
     ): KotlinVariant {
-        return super.createKotlinVariant(componentName, compilation, usageContexts).apply {
+        return super.createKotlinVariant(componentName, usageContexts).apply {
             artifactTargetName = wasmDecamelizedDefaultNameOrNull() ?: componentName
         }
     }
@@ -120,6 +119,7 @@ constructor(
                     compilation = compilations.getByName(MAIN_COMPILATION_NAME),
                     mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                     dependencyConfigurationName = commonFakeApiElementsConfigurationName,
+                    // !!!
                     overrideConfigurationArtifacts = project.setProperty { emptyList() }
                 )
     }
