@@ -3,4 +3,6 @@ Please remove the following dependsOn invocations from your build scripts:
  * x64Main.dependsOn(commonMain)
  * linuxX64Main.dependsOn(x64Main)
  * mingwX64Main.dependsOn(x64Main)
+
+Please remove the redundant dependsOn invocations from your build scripts.
 They are already added from Kotlin Target Hierarchy template https://kotl.in/hierarchy-template

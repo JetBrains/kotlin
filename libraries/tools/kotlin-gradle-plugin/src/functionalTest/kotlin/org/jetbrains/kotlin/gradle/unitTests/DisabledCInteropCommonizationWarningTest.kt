@@ -121,5 +121,18 @@ private fun Project.getWarningMessage(): String? {
 
     if (diagnostics.size > 1) fail("Unexpected multiple diagnostics reported:\n\n" + diagnostics.joinToString(separator = "\n\n"))
 
-    return diagnostics.singleOrNull()?.message
+    return diagnostics.singleOrNull()?.let {
+        buildString {
+            appendLine(it.message)
+            it.solution?.let {
+                appendLine()
+                appendLine(it)
+            }
+
+            it.documentation?.let {
+                appendLine()
+                appendLine(it.urlWithHint)
+            }
+        }
+    }
 }

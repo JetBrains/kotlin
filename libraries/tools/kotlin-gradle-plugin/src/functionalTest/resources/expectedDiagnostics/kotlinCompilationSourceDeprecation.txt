@@ -1,6 +1,6 @@
 [KotlinCompilationSourceDeprecation | WARNING] `KotlinCompilation.source(KotlinSourceSet)` method is deprecated
 and will be removed in upcoming Kotlin releases.
-
+Please use `KotlinCompilation.defaultSourceSet` instead.
 See https://kotl.in/compilation-source-deprecation for details.
 ----
 [MultipleSourceSetRootsInCompilation | WARNING] Kotlin Source Sets: 'jvmCustom', 'customMain'
@@ -12,4 +12,5 @@ Please remove these kotlin source sets and include their source directories to t
     kotlin.sourceSets["jvmCustom"].kotlin.srcDir() // <-- pass sources directories here
 
 Or, if the solution above is not applicable, specify `dependsOn` edges between these source sets so that there are no multiple roots.
+Please remove these kotlin source sets and include their source directories to the compilation's default source set.
 See https://kotl.in/connecting-source-sets for more details.

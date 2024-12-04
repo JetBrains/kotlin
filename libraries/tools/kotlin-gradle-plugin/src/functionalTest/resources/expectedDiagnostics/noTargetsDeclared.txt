@@ -1,4 +1,5 @@
 [NoKotlinTargetsDeclared | ERROR] Please initialize at least one Kotlin target in 'noTargetsDeclared (:)'.
+Please declare at least one Kotlin target.
 Read more https://kotl.in/set-up-targets
 ----
 [UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
