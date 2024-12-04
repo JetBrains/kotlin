@@ -8,11 +8,39 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.fir.FirElement
 
 internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit>() {
+    private val cachedGraphs = HashMap<ControlFlowGraph, ControlFlowGraph>()
     private val cachedNodes = HashMap<CFGNode<*>, CFGNode<*>>()
 
+    operator fun get(graph: ControlFlowGraph): ControlFlowGraph {
+        val cachedGraph = cachedGraphs.get(graph)
+        if (cachedGraph != null) {
+            return cachedGraph
+        }
+
+        val newGraph = ControlFlowGraph(graph.declaration, graph.name, graph.kind)
+        cachedGraphs.put(graph, newGraph)
+
+        @OptIn(CfgInternals::class)
+        newGraph.copyData(graph, ::get)
+
+        return newGraph
+    }
+
     operator fun <E : FirElement, N : CFGNode<E>> get(node: N): N {
+        val cachedNode = cachedNodes.get(node)
+        if (cachedNode != null) {
+            @Suppress("UNCHECKED_CAST")
+            return cachedNode as N
+        }
+
+        val newNode = node.accept(this, Unit)
+        cachedNodes.put(node, newNode)
+
+        @OptIn(CfgInternals::class)
+        newNode.copyData(node, ::get)
+
         @Suppress("UNCHECKED_CAST")
-        return cachedNodes.computeIfAbsent(node) { node -> node.accept(this, Unit) } as N
+        return newNode as N
     }
 
     override fun visitNode(node: CFGNode<*>, data: Unit): CFGNode<*> {
@@ -20,359 +48,352 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
     }
 
     override fun visitFunctionEnterNode(node: FunctionEnterNode, data: Unit): CFGNode<*> {
-        return FunctionEnterNode(node.owner, node.fir, node.level).withData(node)
+        return FunctionEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFunctionExitNode(node: FunctionExitNode, data: Unit): CFGNode<*> {
-        return FunctionExitNode(node.owner, node.fir, node.level).withData(node)
+        return FunctionExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode, data: Unit): CFGNode<*> {
-        return LocalFunctionDeclarationNode(node.owner, node.fir, node.level).withData(node)
+        return LocalFunctionDeclarationNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitEnterValueParameterNode(node: EnterValueParameterNode, data: Unit): CFGNode<*> {
-        return EnterValueParameterNode(node.owner, node.fir, node.level).withData(node)
+        return EnterValueParameterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitEnterDefaultArgumentsNode(node: EnterDefaultArgumentsNode, data: Unit): CFGNode<*> {
-        return EnterDefaultArgumentsNode(node.owner, node.fir, node.level).withData(node)
+        return EnterDefaultArgumentsNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitExitDefaultArgumentsNode(node: ExitDefaultArgumentsNode, data: Unit): CFGNode<*> {
-        return ExitDefaultArgumentsNode(node.owner, node.fir, node.level).withData(node)
+        return ExitDefaultArgumentsNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitExitValueParameterNode(node: ExitValueParameterNode, data: Unit): CFGNode<*> {
-        return ExitValueParameterNode(node.owner, node.fir, node.level).withData(node)
+        return ExitValueParameterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitSplitPostponedLambdasNode(node: SplitPostponedLambdasNode, data: Unit): CFGNode<*> {
-        return SplitPostponedLambdasNode(node.owner, node.fir, node.lambdas, node.level).withData(node)
+        return SplitPostponedLambdasNode(get(node.owner), node.fir, node.lambdas, node.level)
     }
 
     override fun visitPostponedLambdaExitNode(node: PostponedLambdaExitNode, data: Unit): CFGNode<*> {
-        return PostponedLambdaExitNode(node.owner, node.fir, node.level).withData(node)
+        return PostponedLambdaExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitMergePostponedLambdaExitsNode(node: MergePostponedLambdaExitsNode, data: Unit): CFGNode<*> {
-        return MergePostponedLambdaExitsNode(node.owner, node.fir, node.level).withData(node)
+        return MergePostponedLambdaExitsNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitAnonymousFunctionCaptureNode(node: AnonymousFunctionCaptureNode, data: Unit): CFGNode<*> {
-        return AnonymousFunctionCaptureNode(node.owner, node.fir, node.level).withData(node)
+        return AnonymousFunctionCaptureNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode, data: Unit): CFGNode<*> {
-        return AnonymousFunctionExpressionNode(node.owner, node.fir, node.level).withData(node)
+        return AnonymousFunctionExpressionNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFileEnterNode(node: FileEnterNode, data: Unit): CFGNode<*> {
-        return FileEnterNode(node.owner, node.fir, node.level).withData(node)
+        return FileEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFileExitNode(node: FileExitNode, data: Unit): CFGNode<*> {
-        return FileExitNode(node.owner, node.fir, node.level).withData(node)
+        return FileExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitAnonymousObjectEnterNode(node: AnonymousObjectEnterNode, data: Unit): CFGNode<*> {
-        return AnonymousObjectEnterNode(node.owner, node.fir, node.level).withData(node)
+        return AnonymousObjectEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitAnonymousObjectExpressionExitNode(node: AnonymousObjectExpressionExitNode, data: Unit): CFGNode<*> {
-        return AnonymousObjectExpressionExitNode(node.owner, node.fir, node.level).withData(node)
+        return AnonymousObjectExpressionExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitClassEnterNode(node: ClassEnterNode, data: Unit): CFGNode<*> {
-        return ClassEnterNode(node.owner, node.fir, node.level).withData(node)
+        return ClassEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitClassExitNode(node: ClassExitNode, data: Unit): CFGNode<*> {
-        return ClassExitNode(node.owner, node.fir, node.level).withData(node)
+        return ClassExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitLocalClassExitNode(node: LocalClassExitNode, data: Unit): CFGNode<*> {
-        return LocalClassExitNode(node.owner, node.fir, node.level).withData(node)
+        return LocalClassExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitScriptEnterNode(node: ScriptEnterNode, data: Unit): CFGNode<*> {
-        return ScriptEnterNode(node.owner, node.fir, node.level).withData(node)
+        return ScriptEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitScriptExitNode(node: ScriptExitNode, data: Unit): CFGNode<*> {
-        return ScriptExitNode(node.owner, node.fir, node.level).withData(node)
+        return ScriptExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitCodeFragmentEnterNode(node: CodeFragmentEnterNode, data: Unit): CFGNode<*> {
-        return CodeFragmentEnterNode(node.owner, node.fir, node.level).withData(node)
+        return CodeFragmentEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitCodeFragmentExitNode(node: CodeFragmentExitNode, data: Unit): CFGNode<*> {
-        return CodeFragmentExitNode(node.owner, node.fir, node.level).withData(node)
+        return CodeFragmentExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitReplSnippetEnterNode(node: ReplSnippetEnterNode, data: Unit): CFGNode<*> {
-        return ReplSnippetEnterNode(node.owner, node.fir, node.level).withData(node)
+        return ReplSnippetEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitReplSnippetExitNode(node: ReplSnippetExitNode, data: Unit): CFGNode<*> {
-        return ReplSnippetExitNode(node.owner, node.fir, node.level).withData(node)
+        return ReplSnippetExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitPropertyInitializerEnterNode(node: PropertyInitializerEnterNode, data: Unit): CFGNode<*> {
-        return PropertyInitializerEnterNode(node.owner, node.fir, node.level).withData(node)
+        return PropertyInitializerEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitPropertyInitializerExitNode(node: PropertyInitializerExitNode, data: Unit): CFGNode<*> {
-        return PropertyInitializerExitNode(node.owner, node.fir, node.level).withData(node)
+        return PropertyInitializerExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitDelegateExpressionExitNode(node: DelegateExpressionExitNode, data: Unit): CFGNode<*> {
-        return DelegateExpressionExitNode(node.owner, node.fir, node.level).withData(node)
+        return DelegateExpressionExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFieldInitializerEnterNode(node: FieldInitializerEnterNode, data: Unit): CFGNode<*> {
-        return FieldInitializerEnterNode(node.owner, node.fir, node.level).withData(node)
+        return FieldInitializerEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFieldInitializerExitNode(node: FieldInitializerExitNode, data: Unit): CFGNode<*> {
-        return FieldInitializerExitNode(node.owner, node.fir, node.level).withData(node)
+        return FieldInitializerExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitInitBlockEnterNode(node: InitBlockEnterNode, data: Unit): CFGNode<*> {
-        return InitBlockEnterNode(node.owner, node.fir, node.level).withData(node)
+        return InitBlockEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitInitBlockExitNode(node: InitBlockExitNode, data: Unit): CFGNode<*> {
-        return InitBlockExitNode(node.owner, node.fir, node.level).withData(node)
+        return InitBlockExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitBlockEnterNode(node: BlockEnterNode, data: Unit): CFGNode<*> {
-        return BlockEnterNode(node.owner, node.fir, node.level).withData(node)
+        return BlockEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitBlockExitNode(node: BlockExitNode, data: Unit): CFGNode<*> {
-        return BlockExitNode(node.owner, node.fir, node.level).withData(node)
+        return BlockExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitWhenEnterNode(node: WhenEnterNode, data: Unit): CFGNode<*> {
-        return WhenEnterNode(node.owner, node.fir, node.level).withData(node)
+        return WhenEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitWhenExitNode(node: WhenExitNode, data: Unit): CFGNode<*> {
-        return WhenExitNode(node.owner, node.fir, node.level).withData(node)
+        return WhenExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitWhenBranchConditionEnterNode(node: WhenBranchConditionEnterNode, data: Unit): CFGNode<*> {
-        return WhenBranchConditionEnterNode(node.owner, node.fir, node.level).withData(node)
+        return WhenBranchConditionEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitWhenBranchConditionExitNode(node: WhenBranchConditionExitNode, data: Unit): CFGNode<*> {
-        return WhenBranchConditionExitNode(node.owner, node.fir, node.level).withData(node)
+        return WhenBranchConditionExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitWhenBranchResultEnterNode(node: WhenBranchResultEnterNode, data: Unit): CFGNode<*> {
-        return WhenBranchResultEnterNode(node.owner, node.fir, node.level).withData(node)
+        return WhenBranchResultEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitWhenBranchResultExitNode(node: WhenBranchResultExitNode, data: Unit): CFGNode<*> {
-        return WhenBranchResultExitNode(node.owner, node.fir, node.level).withData(node)
+        return WhenBranchResultExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitWhenSyntheticElseBranchNode(node: WhenSyntheticElseBranchNode, data: Unit): CFGNode<*> {
-        return WhenSyntheticElseBranchNode(node.owner, node.fir, node.level).withData(node)
+        return WhenSyntheticElseBranchNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitLoopEnterNode(node: LoopEnterNode, data: Unit): CFGNode<*> {
-        return LoopEnterNode(node.owner, node.fir, node.level).withData(node)
+        return LoopEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitLoopBlockEnterNode(node: LoopBlockEnterNode, data: Unit): CFGNode<*> {
-        return LoopBlockEnterNode(node.owner, node.fir, node.level).withData(node)
+        return LoopBlockEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitLoopBlockExitNode(node: LoopBlockExitNode, data: Unit): CFGNode<*> {
-        return LoopBlockExitNode(node.owner, node.fir, node.level).withData(node)
+        return LoopBlockExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitLoopConditionEnterNode(node: LoopConditionEnterNode, data: Unit): CFGNode<*> {
-        return LoopConditionEnterNode(node.owner, node.fir, node.loop, node.level).withData(node)
+        return LoopConditionEnterNode(get(node.owner), node.fir, node.loop, node.level)
     }
 
     override fun visitLoopConditionExitNode(node: LoopConditionExitNode, data: Unit): CFGNode<*> {
-        return LoopConditionExitNode(node.owner, node.fir, node.loop, node.level).withData(node)
+        return LoopConditionExitNode(get(node.owner), node.fir, node.loop, node.level)
     }
 
     override fun visitLoopExitNode(node: LoopExitNode, data: Unit): CFGNode<*> {
-        return LoopExitNode(node.owner, node.fir, node.level).withData(node)
+        return LoopExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitTryExpressionEnterNode(node: TryExpressionEnterNode, data: Unit): CFGNode<*> {
-        return TryExpressionEnterNode(node.owner, node.fir, node.level).withData(node)
+        return TryExpressionEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitTryMainBlockEnterNode(node: TryMainBlockEnterNode, data: Unit): CFGNode<*> {
-        return TryMainBlockEnterNode(node.owner, node.fir, node.level).withData(node)
+        return TryMainBlockEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitTryMainBlockExitNode(node: TryMainBlockExitNode, data: Unit): CFGNode<*> {
-        return TryMainBlockExitNode(node.owner, node.fir, node.level).withData(node)
+        return TryMainBlockExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitCatchClauseEnterNode(node: CatchClauseEnterNode, data: Unit): CFGNode<*> {
-        return CatchClauseEnterNode(node.owner, node.fir, node.level).withData(node)
+        return CatchClauseEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitCatchClauseExitNode(node: CatchClauseExitNode, data: Unit): CFGNode<*> {
-        return CatchClauseExitNode(node.owner, node.fir, node.level).withData(node)
+        return CatchClauseExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFinallyBlockEnterNode(node: FinallyBlockEnterNode, data: Unit): CFGNode<*> {
-        return FinallyBlockEnterNode(node.owner, node.fir, node.level).withData(node)
+        return FinallyBlockEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFinallyBlockExitNode(node: FinallyBlockExitNode, data: Unit): CFGNode<*> {
-        return FinallyBlockExitNode(node.owner, node.fir, node.level).withData(node)
+        return FinallyBlockExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitTryExpressionExitNode(node: TryExpressionExitNode, data: Unit): CFGNode<*> {
-        return TryExpressionExitNode(node.owner, node.fir, node.level).withData(node)
+        return TryExpressionExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitBooleanOperatorEnterNode(node: BooleanOperatorEnterNode, data: Unit): CFGNode<*> {
-        return BooleanOperatorEnterNode(node.owner, node.fir, node.level).withData(node)
+        return BooleanOperatorEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitBooleanOperatorExitLeftOperandNode(node: BooleanOperatorExitLeftOperandNode, data: Unit): CFGNode<*> {
-        return BooleanOperatorExitLeftOperandNode(node.owner, node.fir, node.level).withData(node)
+        return BooleanOperatorExitLeftOperandNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitBooleanOperatorEnterRightOperandNode(node: BooleanOperatorEnterRightOperandNode, data: Unit): CFGNode<*> {
-        return BooleanOperatorEnterRightOperandNode(node.owner, node.fir, node.level).withData(node)
+        return BooleanOperatorEnterRightOperandNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitBooleanOperatorExitNode(node: BooleanOperatorExitNode, data: Unit): CFGNode<*> {
         val leftOperandNode = get(node.leftOperandNode)
         val rightOperandNode = get(node.rightOperandNode)
-        return BooleanOperatorExitNode(node.owner, node.fir, leftOperandNode, rightOperandNode, node.level).withData(node)
+        return BooleanOperatorExitNode(get(node.owner), node.fir, leftOperandNode, rightOperandNode, node.level)
     }
 
     override fun visitTypeOperatorCallNode(node: TypeOperatorCallNode, data: Unit): CFGNode<*> {
-        return TypeOperatorCallNode(node.owner, node.fir, node.level).withData(node)
+        return TypeOperatorCallNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitComparisonExpressionNode(node: ComparisonExpressionNode, data: Unit): CFGNode<*> {
-        return ComparisonExpressionNode(node.owner, node.fir, node.level).withData(node)
+        return ComparisonExpressionNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitEqualityOperatorCallNode(node: EqualityOperatorCallNode, data: Unit): CFGNode<*> {
-        return EqualityOperatorCallNode(node.owner, node.fir, node.level).withData(node)
+        return EqualityOperatorCallNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitJumpNode(node: JumpNode, data: Unit): CFGNode<*> {
-        return JumpNode(node.owner, node.fir, node.level).withData(node)
+        return JumpNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitLiteralExpressionNode(node: LiteralExpressionNode, data: Unit): CFGNode<*> {
-        return LiteralExpressionNode(node.owner, node.fir, node.level).withData(node)
+        return LiteralExpressionNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitCheckNotNullCallNode(node: CheckNotNullCallNode, data: Unit): CFGNode<*> {
-        return CheckNotNullCallNode(node.owner, node.fir, node.level).withData(node)
+        return CheckNotNullCallNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitQualifiedAccessNode(node: QualifiedAccessNode, data: Unit): CFGNode<*> {
-        return QualifiedAccessNode(node.owner, node.fir, node.level).withData(node)
+        return QualifiedAccessNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitResolvedQualifierNode(node: ResolvedQualifierNode, data: Unit): CFGNode<*> {
-        return ResolvedQualifierNode(node.owner, node.fir, node.level).withData(node)
+        return ResolvedQualifierNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFunctionCallArgumentsEnterNode(node: FunctionCallArgumentsEnterNode, data: Unit): CFGNode<*> {
-        return FunctionCallArgumentsEnterNode(node.owner, node.fir, node.level).withData(node)
+        return FunctionCallArgumentsEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFunctionCallArgumentsExitNode(node: FunctionCallArgumentsExitNode, data: Unit): CFGNode<*> {
-        return FunctionCallArgumentsExitNode(node.owner, node.fir, node.explicitReceiverExitNode, node.level).withData(node)
+        return FunctionCallArgumentsExitNode(get(node.owner), node.fir, node.explicitReceiverExitNode, node.level)
     }
 
     override fun visitFunctionCallEnterNode(node: FunctionCallEnterNode, data: Unit): CFGNode<*> {
-        return FunctionCallEnterNode(node.owner, node.fir, node.level).withData(node)
+        return FunctionCallEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitFunctionCallExitNode(node: FunctionCallExitNode, data: Unit): CFGNode<*> {
-        return FunctionCallExitNode(node.owner, node.fir, node.level).withData(node)
+        return FunctionCallExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitCallableReferenceNode(node: CallableReferenceNode, data: Unit): CFGNode<*> {
-        return CallableReferenceNode(node.owner, node.fir, node.level).withData(node)
+        return CallableReferenceNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitGetClassCallNode(node: GetClassCallNode, data: Unit): CFGNode<*> {
-        return GetClassCallNode(node.owner, node.fir, node.level).withData(node)
+        return GetClassCallNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitDelegatedConstructorCallNode(node: DelegatedConstructorCallNode, data: Unit): CFGNode<*> {
-        return DelegatedConstructorCallNode(node.owner, node.fir, node.level).withData(node)
+        return DelegatedConstructorCallNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitStringConcatenationCallNode(node: StringConcatenationCallNode, data: Unit): CFGNode<*> {
-        return StringConcatenationCallNode(node.owner, node.fir, node.level).withData(node)
+        return StringConcatenationCallNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitThrowExceptionNode(node: ThrowExceptionNode, data: Unit): CFGNode<*> {
-        return ThrowExceptionNode(node.owner, node.fir, node.level).withData(node)
+        return ThrowExceptionNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitStubNode(node: StubNode, data: Unit): CFGNode<*> {
-        return StubNode(node.owner, node.level).withData(node)
+        return StubNode(get(node.owner), node.level)
     }
 
     override fun visitVariableDeclarationNode(node: VariableDeclarationNode, data: Unit): CFGNode<*> {
-        return VariableDeclarationNode(node.owner, node.fir, node.level).withData(node)
+        return VariableDeclarationNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Unit): CFGNode<*> {
-        return VariableAssignmentNode(node.owner, node.fir, node.level).withData(node)
+        return VariableAssignmentNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitEnterSafeCallNode(node: EnterSafeCallNode, data: Unit): CFGNode<*> {
-        return EnterSafeCallNode(node.owner, node.fir, node.level).withData(node)
+        return EnterSafeCallNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitExitSafeCallNode(node: ExitSafeCallNode, data: Unit): CFGNode<*> {
-        return ExitSafeCallNode(node.owner, node.fir, node.level).withData(node)
+        return ExitSafeCallNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitWhenSubjectExpressionExitNode(node: WhenSubjectExpressionExitNode, data: Unit): CFGNode<*> {
-        return WhenSubjectExpressionExitNode(node.owner, node.fir, node.level).withData(node)
+        return WhenSubjectExpressionExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitElvisLhsExitNode(node: ElvisLhsExitNode, data: Unit): CFGNode<*> {
-        return ElvisLhsExitNode(node.owner, node.fir, node.level).withData(node)
+        return ElvisLhsExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitElvisLhsIsNotNullNode(node: ElvisLhsIsNotNullNode, data: Unit): CFGNode<*> {
-        return ElvisLhsIsNotNullNode(node.owner, node.fir, node.level).withData(node)
+        return ElvisLhsIsNotNullNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitElvisRhsEnterNode(node: ElvisRhsEnterNode, data: Unit): CFGNode<*> {
-        return ElvisRhsEnterNode(node.owner, node.fir, node.level).withData(node)
+        return ElvisRhsEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitElvisExitNode(node: ElvisExitNode, data: Unit): CFGNode<*> {
-        return ElvisExitNode(node.owner, node.fir, node.level).withData(node)
+        return ElvisExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitSmartCastExpressionExitNode(node: SmartCastExpressionExitNode, data: Unit): CFGNode<*> {
-        return SmartCastExpressionExitNode(node.owner, node.fir, node.level).withData(node)
-    }
-
-    @OptIn(CfgInternals::class)
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun <E : FirElement, N : CFGNode<E>> N.withData(from: N): N {
-        copyData(from, ::get)
-        return this
+        return SmartCastExpressionExitNode(get(node.owner), node.fir, node.level)
     }
 }

@@ -203,7 +203,7 @@ internal class PartialBodyDeclarationFirElementProvider(
 
                 // Publish new state
                 bodyMappings = consumer
-                this@PartialBodyDeclarationFirElementProvider.cachedState = newState
+                this.cachedState = newState
             }
         } else {
             // The body has never been analyzed (otherwise the partial body resolve state should have been present)
