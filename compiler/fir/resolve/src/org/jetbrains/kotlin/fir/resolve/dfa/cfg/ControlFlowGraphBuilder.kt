@@ -92,12 +92,12 @@ class ControlFlowGraphBuilder private constructor(
         notCompletedFunctionCalls = stackOf(),
     )
 
-    fun makeSnapshot(): ControlFlowGraphBuilder {
+    fun createSnapshot(): ControlFlowGraphBuilder {
         val copier = ControlFlowGraphCopier()
 
         return ControlFlowGraphBuilder(
-            graphs = graphs.makeSnapshot { it.makeSnapshot(copier::get) },
-            lastNodes = lastNodes.makeSnapshot { copier[it] },
+            graphs = graphs.createSnapshot { it.createSnapshot(copier::get) },
+            lastNodes = lastNodes.createSnapshot { copier[it] },
             exitTargetsForReturn = exitTargetsForReturn.mapValuesTo(mutableMapOf()) { copier[it.value] },
             enterToLocalClassesMembers = enterToLocalClassesMembers.mapValuesTo(mutableMapOf()) { (_, value) ->
                 Pair(copier[value.first], value.second)
@@ -107,30 +107,30 @@ class ControlFlowGraphBuilder private constructor(
                     newNonDirectJumps.putAll(copier[node], jumps.map(copier::get))
                 }
             },
-            argumentListSplitNodes = argumentListSplitNodes.makeSnapshot { it?.let(copier::get) },
+            argumentListSplitNodes = argumentListSplitNodes.createSnapshot { it?.let(copier::get) },
             postponedAnonymousFunctionNodes = postponedAnonymousFunctionNodes.mapValuesTo(mutableMapOf()) { (_, value) ->
                 Pair(copier[value.first], value.second?.let(copier::get))
             },
             anonymousFunctionCaptureNodes = anonymousFunctionCaptureNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
-            postponedLambdaExits = postponedLambdaExits.makeSnapshot { lambdas ->
+            postponedLambdaExits = postponedLambdaExits.createSnapshot { lambdas ->
                 val newExits = lambdas.exits.mapTo(mutableListOf()) { Pair(copier[it.first], it.second) }
                 PostponedLambdas(lambdas.lambdas, newExits)
             },
             loopConditionEnterNodes = loopConditionEnterNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
             loopExitNodes = loopExitNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
-            whenExitNodes = whenExitNodes.makeSnapshot { copier[it] },
-            tryExitNodes = tryExitNodes.makeSnapshot { copier[it] },
-            catchNodes = catchNodes.makeSnapshot { it.map(copier::get) },
-            catchBlocksInProgress = catchBlocksInProgress.makeSnapshot { copier[it] },
-            finallyEnterNodes = finallyEnterNodes.makeSnapshot { copier[it] },
-            finallyBlocksInProgress = finallyBlocksInProgress.makeSnapshot { copier[it] },
+            whenExitNodes = whenExitNodes.createSnapshot { copier[it] },
+            tryExitNodes = tryExitNodes.createSnapshot { copier[it] },
+            catchNodes = catchNodes.createSnapshot { it.map(copier::get) },
+            catchBlocksInProgress = catchBlocksInProgress.createSnapshot { copier[it] },
+            finallyEnterNodes = finallyEnterNodes.createSnapshot { copier[it] },
+            finallyBlocksInProgress = finallyBlocksInProgress.createSnapshot { copier[it] },
             finallyBlocksInProgressSet = finallyBlocksInProgressSet.toMutableSet(),
-            exitFunctionCallArgumentsNodes = exitFunctionCallArgumentsNodes.makeSnapshot { it?.let(copier::get) },
-            exitSafeCallNodes = exitSafeCallNodes.makeSnapshot { copier[it] },
-            exitElvisExpressionNodes = exitElvisExpressionNodes.makeSnapshot { copier[it] },
-            elvisRhsEnterNodes = elvisRhsEnterNodes.makeSnapshot { copier[it] },
-            equalityOperatorCallLhsExitNodes = equalityOperatorCallLhsExitNodes.makeSnapshot { copier[it] },
-            notCompletedFunctionCalls = notCompletedFunctionCalls.makeSnapshot { it.mapTo(mutableListOf(), copier::get) },
+            exitFunctionCallArgumentsNodes = exitFunctionCallArgumentsNodes.createSnapshot { it?.let(copier::get) },
+            exitSafeCallNodes = exitSafeCallNodes.createSnapshot { copier[it] },
+            exitElvisExpressionNodes = exitElvisExpressionNodes.createSnapshot { copier[it] },
+            elvisRhsEnterNodes = elvisRhsEnterNodes.createSnapshot { copier[it] },
+            equalityOperatorCallLhsExitNodes = equalityOperatorCallLhsExitNodes.createSnapshot { copier[it] },
+            notCompletedFunctionCalls = notCompletedFunctionCalls.createSnapshot { it.mapTo(mutableListOf(), copier::get) },
         )
     }
 

@@ -57,12 +57,12 @@ class DataFlowAnalyzerContext private constructor(
         assignmentCounter = 0
     )
 
-    fun makeSnapshot(): DataFlowAnalyzerContext {
+    fun createSnapshot(): DataFlowAnalyzerContext {
         return DataFlowAnalyzerContext(
             session,
-            graphBuilder = graphBuilder.makeSnapshot(),
-            variableAssignmentAnalyzer = variableAssignmentAnalyzer.makeSnapshot(),
-            variableStorage = variableStorage.makeSnapshot(),
+            graphBuilder = graphBuilder.createSnapshot(),
+            variableAssignmentAnalyzer = variableAssignmentAnalyzer.createSnapshot(),
+            variableStorage = variableStorage.createSnapshot(),
             assignmentCounter = assignmentCounter
         )
     }

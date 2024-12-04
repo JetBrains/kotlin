@@ -32,7 +32,7 @@ class VariableStorage private constructor(
         memberVariables = setMultimapOf()
     )
 
-    fun makeSnapshot(): VariableStorage {
+    fun createSnapshot(): VariableStorage {
         return VariableStorage(
             session,
             realVariables = realVariables.toMutableMap(),
