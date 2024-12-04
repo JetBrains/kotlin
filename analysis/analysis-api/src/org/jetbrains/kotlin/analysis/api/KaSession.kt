@@ -61,6 +61,43 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
  *     }
  * }
  * ```
+ *
+ * ### Nested analysis
+ *
+ * While [analyze] calls can be nested, it is currently not recommended to use [lifetime owners][KaLifetimeOwner] from the outer analysis
+ * context in the inner analysis context. This section illustrates the reasons behind this recommendation.
+ *
+ * As there is one analysis session per use-site [module][KaModule], in the best case, the analyzed element will be from the same module.
+ * Then the nested [analyze] call will simply perform the analysis in the same analysis session context. As such, it *would* be possible to
+ * use a symbol from the outer analysis context in the inner [analyze] call. But if it's the same use-site module, it's better to pass the
+ * analysis session down the call chain directly, instead of calling [analyze] again. In addition, relying on two elements having the same
+ * use-site module is an open invitation for bugs.
+ *
+ * In more problematic cases, nested analysis may lead to various issues. First of all, a [KaLifetimeOwner] can usually only be accessed
+ * in the session where it was created. Nesting [analyze] and starting analysis from a different use-site module will effectively change the
+ * current [KaSession] context. Any calls to symbols created in other sessions *will* result in an exception (unless the Analysis API
+ * platform defines different accessibility rules, such as the Standalone Analysis API).
+ *
+ * Furthermore, even if such an access exception wasn't thrown, it is conceptually problematic to access a symbol in a different use-site
+ * context. Symbols are *always* viewed from a specific use-site context. It is unclear whether the symbol would even exist in the other
+ * use-site context. And even if the symbol is accessible, analyzing it may lead to different results due to differences in the use site's
+ * dependencies. For example, the supertypes of a class symbol may resolve to different declaration symbols.
+ *
+ * In summary, using lifetime owners from an outer context in a nested [analyze] block will likely lead to an access exception given the
+ * accessibility rules of lifetime owners. And even if this wasn't the case, there's a conceptual problem with using a lifetime owner in the
+ * wrong session, as lifetime owners such as symbols are always viewed from a specific use-site context.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * // DO NOT DO THIS
+ * analyze(element1) {
+ *     val symbol1 = element1.symbol
+ *     analyze(element2) {
+ *          val type1 = symbol1.returnType // <-- error when `element1.module` != `element2.module`
+ *     }
+ * }
+ * ```
  */
 @Suppress("DEPRECATION")
 @OptIn(KaNonPublicApi::class, KaExperimentalApi::class, KaIdeApi::class)
