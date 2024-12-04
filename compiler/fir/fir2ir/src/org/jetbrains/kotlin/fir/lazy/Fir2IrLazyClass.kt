@@ -258,7 +258,14 @@ class Fir2IrLazyClass(
         set(_) = error("We should never need to store metadata of external declarations.")
 
     override val moduleName: String?
-        get() = fir.moduleName
+        get() {
+            fir.moduleName?.let { return it }
+            val moduleNameFromModuleData = fir.moduleData.stableModuleName ?: return null
+            require(moduleNameFromModuleData.startsWith("<") && moduleNameFromModuleData.endsWith(">")) {
+                "Stable module name is expected to be wrapped in '<>' brackets, but got `$moduleNameFromModuleData` instead"
+            }
+            return moduleNameFromModuleData.substring(1, moduleNameFromModuleData.length - 1)
+        }
 
     override val isNewPlaceForBodyGeneration: Boolean
         get() = fir.isNewPlaceForBodyGeneration == true
