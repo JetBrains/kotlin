@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.internalName
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.*
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
@@ -31,29 +32,24 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
         if (_members != null) return _members!!
         _members = classReference.declarations
             .filter { it !is IrClass && it !is IrConstructor }
-            .map {
-                when (it) {
+            .map { member ->
+                when (member) {
                     is IrProperty -> {
-                        val withExtension = it.getter?.extensionReceiverParameter != null
-                        when {
-                            !withExtension && !it.isVar ->
-                                KProperty1Proxy(KPropertyState(it, callInterceptor.irBuiltIns.getKPropertyClass(false, 1).owner), callInterceptor)
-                            !withExtension && it.isVar ->
-                                KMutableProperty1Proxy(
-                                    KPropertyState(it, callInterceptor.irBuiltIns.getKPropertyClass(true, 1).owner), callInterceptor
-                                )
-                            withExtension && !it.isVar ->
-                                KProperty2Proxy(KPropertyState(it, callInterceptor.irBuiltIns.getKPropertyClass(false, 2).owner), callInterceptor)
-                            !withExtension && it.isVar ->
-                                KMutableProperty2Proxy(
-                                    KPropertyState(it, callInterceptor.irBuiltIns.getKPropertyClass(true, 2).owner), callInterceptor
-                                )
-                            else -> TODO()
+                        val parameterCount = member.getter!!.parameters.size
+                        val irClass = callInterceptor.irBuiltIns.getKPropertyClass(member.isVar, parameterCount).owner
+                        val propertyState = KPropertyState(callInterceptor, member, irClass, emptyList())
+                        when (parameterCount) {
+                            0 -> error("\"Static\" properties are not supported")
+                            1 -> if (member.isVar) KMutableProperty1Proxy(propertyState, callInterceptor)
+                            else KProperty1Proxy(propertyState, callInterceptor)
+                            2 -> if (member.isVar) KMutableProperty2Proxy(propertyState, callInterceptor)
+                            else KProperty2Proxy(propertyState, callInterceptor)
+                            else -> TODO("Properties with context parameters are not supported")
                         }
                     }
                     is IrFunction -> {
-                        val irClass = callInterceptor.irBuiltIns.kFunctionN(it.valueParameters.size)
-                        KFunctionProxy(KFunctionState(it, irClass, callInterceptor.environment), callInterceptor)
+                        val irClass = callInterceptor.irBuiltIns.kFunctionN(member.parameters.size)
+                        KRegularFunctionProxy(KFunctionState(member, irClass, callInterceptor.environment), callInterceptor)
                     }
                     else -> TODO()
                 }
@@ -66,8 +62,8 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
         _constructors = classReference.declarations
             .filterIsInstance<IrConstructor>()
             .map {
-                val irClass = callInterceptor.irBuiltIns.kFunctionN(it.valueParameters.size)
-                KFunctionProxy(KFunctionState(it, irClass, callInterceptor.environment), callInterceptor)
+                val irClass = callInterceptor.irBuiltIns.kFunctionN(it.parameters.size)
+                KRegularFunctionProxy(KFunctionState(it, irClass, callInterceptor.environment), callInterceptor)
             }
         return _constructors!!
     }
@@ -75,7 +71,8 @@ internal class KClassState(val classReference: IrClass, override val irClass: Ir
     fun getTypeParameters(callInterceptor: CallInterceptor): List<KTypeParameter> {
         if (_typeParameters != null) return _typeParameters!!
         val kTypeParameterIrClass = callInterceptor.environment.kTypeParameterClass.owner
-        _typeParameters = classReference.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParameterIrClass), callInterceptor) }
+        _typeParameters =
+            classReference.typeParameters.map { KTypeParameterProxy(KTypeParameterState(it, kTypeParameterIrClass), callInterceptor) }
         return _typeParameters!!
     }
 

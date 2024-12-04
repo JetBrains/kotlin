@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.ir.interpreter.state.reflection
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KParameterProxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.KTypeProxy
 import org.jetbrains.kotlin.ir.interpreter.state.State
@@ -17,27 +18,42 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
-internal class KPropertyState(val property: IrProperty, override val irClass: IrClass, val receiver: State? = null) : ReflectionState() {
-    constructor(propertyReference: IrPropertyReference, receiver: State?)
-            : this(propertyReference.symbol.owner, propertyReference.type.classOrNull!!.owner, receiver)
+internal class KPropertyState(
+    callInterceptor: CallInterceptor,
+    val property: IrProperty,
+    override val irClass: IrClass,
+    val boundValues: List<State?>,
+) : ReflectionState() {
+    constructor(
+        callInterceptor: CallInterceptor,
+        propertyReference: IrPropertyReference,
+        boundValues: List<State?>,
+    ) : this(
+        callInterceptor,
+        propertyReference.symbol.owner,
+        propertyReference.type.classOrNull!!.owner,
+        boundValues
+    )
 
-    private var _parameters: List<KParameter>? = null
     private var _returnType: KType? = null
 
-    fun convertGetterToKFunctionState(environment: IrInterpreterEnvironment): KFunctionState {
-        return KFunctionState(property.getter!!, environment.irBuiltIns.functionN(1), environment)
+    val getterState = property.getter?.let { crateAccessorState(callInterceptor, it) }
+    val setterState = property.setter?.let { crateAccessorState(callInterceptor, it) }
+
+    private fun crateAccessorState(callInterceptor: CallInterceptor, accessor: IrSimpleFunction): KFunctionState {
+        val irClass = callInterceptor.irBuiltIns.kFunctionN(accessor.parameters.size)
+        val boundParameters = (accessor.parameters zip boundValues)
+            .mapNotNull { (param, value) -> value?.let { param.symbol to value } }
+        return KFunctionState(
+            accessor,
+            irClass,
+            callInterceptor.environment,
+            boundParameters,
+        )
     }
 
     fun getParameters(callInterceptor: CallInterceptor): List<KParameter> {
-        if (_parameters != null) return _parameters!!
-        val kParameterIrClass = callInterceptor.environment.kParameterClass.owner
-        var index = 0
-        val instanceParameter = property.getter?.dispatchReceiverParameter?.takeIf { receiver == null }
-            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.INSTANCE), callInterceptor) }
-        val extensionParameter = property.getter?.extensionReceiverParameter
-            ?.let { KParameterProxy(KParameterState(kParameterIrClass, it, index++, KParameter.Kind.EXTENSION_RECEIVER), callInterceptor) }
-        _parameters = listOfNotNull(instanceParameter, extensionParameter)
-        return _parameters!!
+        return getterState!!.getParameters(callInterceptor)
     }
 
     fun getReturnType(callInterceptor: CallInterceptor): KType {
@@ -66,14 +82,14 @@ internal class KPropertyState(val property: IrProperty, override val irClass: Ir
         other as KPropertyState
 
         if (property != other.property) return false
-        if (receiver != other.receiver) return false
+        if (boundValues != other.boundValues) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = property.hashCode()
-        result = 31 * result + (receiver?.hashCode() ?: 0)
+        result = 31 * result + boundValues.hashCode()
         return result
     }
 
