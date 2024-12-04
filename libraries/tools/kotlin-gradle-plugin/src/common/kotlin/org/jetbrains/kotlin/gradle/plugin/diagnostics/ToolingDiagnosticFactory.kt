@@ -8,33 +8,77 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
 @InternalKotlinGradlePluginApi // used in integration tests
-abstract class ToolingDiagnosticFactory(private val predefinedSeverity: ToolingDiagnostic.Severity?, customId: String?) {
-    constructor(customId: String) : this(null, customId)
-    constructor(predefinedSeverity: ToolingDiagnostic.Severity?) : this(predefinedSeverity, null)
-
+abstract class ToolingDiagnosticFactory(
+    private val predefinedSeverity: ToolingDiagnostic.Severity? = null,
+    customId: String? = null,
+) {
     open val id: String = customId ?: this::class.simpleName!!
 
-    protected fun build(message: String, severity: ToolingDiagnostic.Severity? = null, throwable: Throwable? = null): ToolingDiagnostic {
-        if (severity == null && predefinedSeverity == null) {
-            error(
-                "Can't determine severity. " +
-                        "Either provide it in constructor of ToolingDiagnosticFactory, or in the 'build'-function invocation"
-            )
-        }
+    protected fun build(
+        severity: ToolingDiagnostic.Severity? = null,
+        throwable: Throwable? = null,
+        builder: ToolingDiagnosticBuilder.() -> Unit,
+    ) = ToolingDiagnosticBuilderImp().apply(builder).let { diagnosticBuilder ->
+        val finalSeverity = severity ?: predefinedSeverity ?: error(
+            "Can't determine severity. Either provide it in constructor of ToolingDiagnosticFactory," +
+                    " or in the 'build'-function invocation"
+        )
+
         if (severity != null && predefinedSeverity != null) {
             error(
                 "Please provide severity either in ToolingDiagnosticFactory constructor, or as the 'build'-function parameter," +
                         " but not both at once"
             )
         }
-        return ToolingDiagnostic(id, message, severity ?: predefinedSeverity!!, throwable)
+
+        ToolingDiagnostic(
+            identifier = ToolingDiagnostic.ID(id, diagnosticBuilder.name),
+            message = diagnosticBuilder.message,
+            severity = finalSeverity,
+            solutions = diagnosticBuilder.solutions,
+            documentation = diagnosticBuilder.documentation,
+            throwable = throwable
+        )
+    }
+}
+
+interface ToolingDiagnosticBuilder {
+    fun name(string: () -> String)
+    fun message(string: () -> String)
+    fun solution(singleString: () -> String)
+    fun solutions(stringList: () -> List<String>)
+    fun documentation(url: String, urlBuilder: (String) -> String = { "See $url for more details." })
+}
+
+internal class ToolingDiagnosticBuilderImp : ToolingDiagnosticBuilder {
+
+    val name: String get() = _name ?: error("Name is not provided")
+    val message: String get() = _message ?: error("Message is not provided")
+    val solution: String? get() = _solution
+    val documentation: ToolingDiagnostic.Documentation? get() = _documentation
+
+    private var _name: String? = null
+    private var _message: String? = null
+    private var _solution: String? = null
+    private var _documentation: ToolingDiagnostic.Documentation? = null
+
+    private fun checkSolutionIsSingleLine(text: String) {
+        require(text.lines().size == 1) { "Solution should not be multi-line: $text" }
     }
 
-    internal fun build(
-        severity: ToolingDiagnostic.Severity? = null,
-        throwable: Throwable? = null,
-        builder: StringBuilder.() -> Unit,
-    ) = build(buildString(builder), severity, throwable)
+    override fun name(string: () -> String) {
+        _name = string()
+    }
 
-    protected fun String.onlyIf(condition: Boolean) = if (condition) this else ""
+    override fun message(string: () -> String) {
+        _message = string()
+    }
+
+    fun solution(string: () -> String) {
+        _solution = string()
+    }
+
+    override fun documentation(url: String, urlBuilder: (String) -> String) {
+        _documentation = ToolingDiagnostic.Documentation(url, urlBuilder(url))
+    }
 }
