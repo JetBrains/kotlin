@@ -22,8 +22,23 @@ public interface KaSymbolInformationProvider {
     @KaExperimentalApi
     public val KaSymbol.deprecationStatus: DeprecationInfo?
 
+    /**
+     * Whether a named function meets all the requirements to become an `operator fun` with the same name
+     *
+     *```kotlin
+     *  class A
+     *
+     *  fun A.plus(that: A): A = A() // canBeOperator = true, as it meets all requirements for `plus`
+     *
+     *  operator fun A.contains(that: A): Boolean = true // canBeOperator = true, as it's already an operator
+     *
+     *  fun A.something(that: A): A = A() // canBeOperator = false, as there is no operator with such name
+     *
+     *  fun A.minus(): A = A() // canBeOperator = false, as `minus` is a binary operator and should have one parameter
+     *```
+     */
     @KaExperimentalApi
-    public fun KaNamedFunctionSymbol.canBeOperator(): Boolean
+    public val KaNamedFunctionSymbol.canBeOperator: Boolean
 
     /**
      * The deprecation status of the given symbol related to the [annotationUseSiteTarget], or `null` if the declaration is not deprecated.

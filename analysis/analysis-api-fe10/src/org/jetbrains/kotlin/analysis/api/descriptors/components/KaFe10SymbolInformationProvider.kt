@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
-import org.jetbrains.kotlin.util.CheckResult
 import org.jetbrains.kotlin.util.OperatorChecks
 
 internal class KaFe10SymbolInformationProvider(
@@ -35,10 +34,11 @@ internal class KaFe10SymbolInformationProvider(
             return getDeprecation(descriptor)
         }
 
-    override fun KaNamedFunctionSymbol.canBeOperator(): Boolean = withValidityAssertion {
-        val functionDescriptor = this.getDescriptor() as? FunctionDescriptor ?: return false
-        OperatorChecks.check(functionDescriptor) == CheckResult.SuccessCheck
-    }
+    override val KaNamedFunctionSymbol.canBeOperator: Boolean
+        get() = withValidityAssertion {
+            val functionDescriptor = this.getDescriptor() as? FunctionDescriptor ?: return false
+            OperatorChecks.check(functionDescriptor).isSuccess
+        }
 
     override fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? = withValidityAssertion {
         when (annotationUseSiteTarget) {
