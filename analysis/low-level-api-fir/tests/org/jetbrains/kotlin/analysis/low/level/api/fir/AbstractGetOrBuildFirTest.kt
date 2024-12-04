@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.util.descendants
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractGetOrBuildFirTest.Directives.SKIP_CONTAINMENT_CHECK
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -35,6 +37,11 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.useDirectives(Directives)
+    }
+
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         fun findElement(qualifierIndex: Int?): KtElement? {
             val qualifier = if (qualifierIndex != null) "$qualifierIndex" else ""
@@ -66,7 +73,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
             for ((index, element) in elementsToAnalyze.withIndex()) {
                 val firElement = intercept(index, mainModule.testModule) { element.getOrBuildFir(session) }
 
-                if (firElement != null) {
+                if (firElement != null && SKIP_CONTAINMENT_CHECK !in mainModule.testModule.directives) {
                     check(isInside(firElement, firFile))
                 }
 
@@ -94,6 +101,9 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
                     result = true
                 } else if (!result) {
                     e.acceptChildren(this)
+
+                    /** Delegated type references are not visited in [FirResolvedTypeRef.acceptChildren] */
+                    (e as? FirResolvedTypeRef)?.delegatedTypeRef?.accept(this)
                 }
             }
         })
@@ -103,6 +113,10 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
 
     protected open fun <T : Any> intercept(index: Int, testModule: TestModule, block: () -> T?): T? {
         return block()
+    }
+
+    private object Directives : SimpleDirectivesContainer() {
+        val SKIP_CONTAINMENT_CHECK by directive("Do not check that a found child can be accessed from its containing file tree")
     }
 }
 
