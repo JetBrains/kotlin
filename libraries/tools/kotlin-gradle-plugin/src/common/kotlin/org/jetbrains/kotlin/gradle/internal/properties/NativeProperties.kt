@@ -222,7 +222,7 @@ private class NativePropertiesLoader(private val project: Project) : NativePrope
          * Dependencies caching strategy for all targets that support caches.
          */
         private val NATIVE_CACHE_KIND = PropertiesBuildService.NullableStringGradleProperty(
-            name = "$PROPERTIES_PREFIX.cacheKind.enable",
+            name = "$PROPERTIES_PREFIX.cacheKind",
         )
     }
 }
