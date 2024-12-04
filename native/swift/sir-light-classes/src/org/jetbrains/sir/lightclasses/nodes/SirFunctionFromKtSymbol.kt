@@ -54,13 +54,9 @@ internal class SirFunctionFromKtSymbol(
         }
         set(_) = Unit
 
-    override val isOverride: Boolean
-        get() = isInstance && overridableCandidates.any {
-            this.name == it.name &&
-            this.parameters.isSuitableForOverrideOf(it.parameters) &&
-            this.returnType.isSubtypeOf(it.returnType) &&
-            this.isInstance == it.isInstance
-        }
+    override val isOverride: Boolean get() = overrideStatus is OverrideStatus.Overrides
+
+    private val overrideStatus: OverrideStatus<SirFunction>? by lazy { computeIsOverride() }
 
     override val isInstance: Boolean
         get() = !ktSymbol.isTopLevel && !ktSymbol.isStatic
@@ -68,7 +64,9 @@ internal class SirFunctionFromKtSymbol(
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality
 
-    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override val attributes: List<SirAttribute> by lazy {
+        this.translatedAttributes + listOfNotNull(SirAttribute.NonOverride.takeIf { overrideStatus is OverrideStatus.Conflicts })
+    }
 
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
 

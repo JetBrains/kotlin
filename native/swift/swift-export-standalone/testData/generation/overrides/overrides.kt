@@ -106,3 +106,40 @@ class FinalDerived3 : AbstractDerived2 {
 
     override fun abstractFun1() {}
 }
+
+// MODULE: bad_overrides(overrides)
+// EXPORT_TO_SWIFT
+// FILE: overrides_across_modules.kt
+
+package weird
+
+open class A {
+    @Throws(Throwable::class)
+    constructor() {
+        // this implicitly [non]overrides the default constructor of KotlinBase
+    }
+
+    @Throws(Throwable::class)
+    open fun throws() {
+
+    }
+
+    @Deprecated("", level = DeprecationLevel.ERROR)
+    open fun foo() {}
+
+    open val bar: Int get() = 42
+}
+
+class B: A {
+    constructor() : super() {
+
+    }
+
+    override fun throws() {
+
+    }
+
+    override fun foo() {}
+
+    override val bar: Nothing get() = error("42")
+}
