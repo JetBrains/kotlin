@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.*
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -48,14 +51,14 @@ internal class KaFirSymbolInformationProvider(
             }?.toDeprecationInfo()
         }
 
-    override fun KaNamedFunctionSymbol.canBeOperator(): Boolean =
-        withValidityAssertion {
+    override val KaNamedFunctionSymbol.canBeOperator: Boolean
+        get() = withValidityAssertion {
             val functionFir = this@canBeOperator.firSymbol.fir as? FirSimpleFunction ?: return false
             return OperatorFunctionChecks.isOperator(
                 functionFir,
                 analysisSession.firSession,
                 analysisSession.getScopeSessionFor(analysisSession.firSession)
-            ) == CheckResult.SuccessCheck
+            ).isSuccess
         }
 
 
