@@ -12,16 +12,16 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.Uklib
+import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
 import org.jetbrains.kotlin.gradle.utils.getFile
 
-internal abstract class UklibArchiveTask : DefaultTask() {
+internal abstract class ArchiveUklibTask : DefaultTask() {
     @get:Internal
-    abstract val model: Property<Uklib<String>>
+    abstract val model: Property<Uklib>
 
     @get:OutputFile
     val outputZip: RegularFileProperty = project.objects.fileProperty().convention(
-        project.layout.buildDirectory.file("output.uklib")
+        project.layout.buildDirectory.file("package.${Uklib.UKLIB_EXTENSION}")
     )
 
     @get:Internal

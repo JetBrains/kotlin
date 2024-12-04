@@ -3,14 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>foo.bar</groupId>
-  <artifactId>uklib-maven-jar-packaging-classifier</artifactId>
+  <artifactId>pure-maven-jvm-with-trasitive-uklib-dependency</artifactId>
   <version>1.0</version>
-<!--  This is the implicit default-->
-<!--  <packaging>jar</packaging>-->
   <dependencies>
     <dependency>
       <groupId>foo.bar</groupId>
-      <artifactId>uklib-maven-gradle-packaging</artifactId>
+      <artifactId>pure-maven-uklib-with-transitive-non-uklib-dependency</artifactId>
       <version>1.0</version>
     </dependency>
   </dependencies>

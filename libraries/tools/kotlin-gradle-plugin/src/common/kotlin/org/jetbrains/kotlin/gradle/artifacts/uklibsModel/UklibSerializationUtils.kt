@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin
 
+import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import java.io.BufferedOutputStream
 import java.io.File
@@ -10,18 +11,38 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
-fun zipFragments(
+/**
+ * // FIXME: Test this!!!
+ *
+ * All of the rezipping happens at execution time in ArchiveUklibTask:
+ * - if the incoming fragment is a .klib or a .jar, just unzip it and zip into the .uklib zip
+ * - if the incoming fragment is a directory, probably it's an unpacked klib, so just copy it
+ */
+private val allowRepackingArchivesWithExtensions = setOf(
+    "klib",
+    "jar",
+)
+
+internal fun zipFragments(
     manifest: String,
     fragmentToArtifact: Map<String, File>,
     outputZip: File,
     temporariesDirectory: File,
 ) {
-    ZipOutputStream(BufferedOutputStream(FileOutputStream(outputZip))).use { zos ->
+    ZipOutputStream(
+        BufferedOutputStream(
+            FileOutputStream(outputZip)
+        )
+    ).use { zipOutputStream ->
+        // Pack the manifest
+        zipOutputStream.putNextEntry(ZipEntry(Uklib.UMANIFEST_FILE_NAME))
+        manifest.byteInputStream().copyTo(zipOutputStream)
+
         fragmentToArtifact.forEach { (identifier, file) ->
-            // Unpacked metadata classes
+            // Assume we are handling unpacked metadata and platform klibs
             if (file.isDirectory) {
-                packDirectory(file, identifier, zos)
-            } else if (file.extension == "klib") {
+                packDirectory(file, identifier, zipOutputStream)
+            } else if (file.extension in allowRepackingArchivesWithExtensions) {
                 val temp = temporariesDirectory.resolve(identifier)
                 if (temp.exists()) temp.deleteDirectoryContents()
                 temp.mkdirs()
@@ -32,52 +53,48 @@ fun zipFragments(
                 packDirectory(
                     directory = temp,
                     identifier = identifier,
-                    zos = zos,
+                    zipOutputStream = zipOutputStream,
                 )
             } else {
                 error("Trying to pack invalid file in uklib: ${file}")
             }
         }
-        zos.putNextEntry(ZipEntry("umanifest"))
-        manifest.byteInputStream().copyTo(zos)
-        zos.closeEntry()
+        zipOutputStream.closeEntry()
     }
 }
 
 private fun packDirectory(
     directory: File,
     identifier: String,
-    zos: ZipOutputStream
+    zipOutputStream: ZipOutputStream
 ) {
     Files.walk(directory.toPath()).forEach { path ->
         val zipEntry = ZipEntry(identifier + "/" + path.toFile().toRelativeString(directory))
         if (!Files.isDirectory(path)) {
-            zos.putNextEntry(zipEntry)
+            zipOutputStream.putNextEntry(zipEntry)
             Files.newInputStream(path).use { inputStream ->
-                inputStream.copyTo(zos)
+                inputStream.copyTo(zipOutputStream)
             }
-            zos.closeEntry()
+            zipOutputStream.closeEntry()
         }
     }
 }
 
-fun unzip(zipFilePath: File, outputFolderPath: File) {
-    val buffer = ByteArray(1024)
-    ZipInputStream(FileInputStream(zipFilePath)).use { zis ->
-        var zipEntry: ZipEntry? = zis.nextEntry
+private fun unzip(zipFilePath: File, outputFolderPath: File) {
+    ZipInputStream(FileInputStream(zipFilePath)).use { zipInputStream ->
+        var zipEntry: ZipEntry? = zipInputStream.nextEntry
         while (zipEntry != null) {
             val newFile = File(outputFolderPath, zipEntry.name)
             if (zipEntry.isDirectory) {
                 newFile.mkdirs()
             } else {
                 newFile.parentFile?.mkdirs()
-                FileOutputStream(newFile).use { fos ->
-                    zis.copyTo(fos)
+                FileOutputStream(newFile).use { fileOutputStream ->
+                    zipInputStream.copyTo(fileOutputStream)
                 }
             }
-            zipEntry = zis.nextEntry
+            zipEntry = zipInputStream.nextEntry
         }
-        zis.closeEntry()
+        zipInputStream.closeEntry()
     }
 }
-

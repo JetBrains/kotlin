@@ -59,7 +59,13 @@ object KotlinUsages {
     private const val JAVA_RUNTIME_CLASSES = "java-runtime-classes"
     private const val JAVA_RUNTIME_RESOURCES = "java-runtime-resources"
 
+    // FIXME: Rename this?
     val values = setOf(KOTLIN_API, KOTLIN_RUNTIME)
+    val compatibleKotlinConsumerUsages = mapOf(
+        setOf(KOTLIN_API) to setOf(JAVA_API, "java-api-jars"),
+        // This should really only list KOTLIN_RUNTIME
+        setOf(KOTLIN_API, KOTLIN_RUNTIME) to setOf(JAVA_RUNTIME, "java-runtime-jars"),
+    )
 
     private val jvmPlatformTypes: Set<KotlinPlatformType> = setOf(jvm, androidJvm)
 
@@ -113,6 +119,7 @@ object KotlinUsages {
             when {
                 consumerValue?.name == KOTLIN_API && producerValue?.name.let { it == JAVA_API || it == "java-api-jars" } ->
                     compatible()
+                // FIXME: This can't really match KOTLIN_API because it matches the case above???
                 consumerValue?.name in values && producerValue?.name.let { it == JAVA_RUNTIME || it == "java-runtime-jars" } ->
                     compatible()
             }

@@ -192,7 +192,6 @@ abstract class KotlinAndroidTarget @Inject constructor(
 
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
-                    compilation,
                     usageContexts,
                 ).apply {
                     publishable = isVariantPublished(androidVariant)
@@ -281,6 +280,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
                 compilation,
                 mavenScope,
                 dependencyConfigurationName,
+                // !!!
                 overrideConfigurationArtifacts = project.setProperty { listOf(artifact) },
                 overrideConfigurationAttributes = configuration.attributes.filterOutAndroidVariantAttributes()
             )

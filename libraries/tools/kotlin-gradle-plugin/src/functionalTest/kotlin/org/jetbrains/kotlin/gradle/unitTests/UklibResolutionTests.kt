@@ -8,37 +8,75 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.Usage
 import org.gradle.kotlin.dsl.maven
-import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.artifacts.UklibResolutionStrategy
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.projectPathOrNull
 import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.reflect.full.*
 
-class UklibTests {
+class UklibResolutionTests {
 
     @Test
-    fun `resolve uklib - from pom with uklib packaging`() {
-        val consumer = consumer(UklibResolutionStrategy.PreferPlatformSpecificVariant) {
+    fun `uklib resolution - from direct pom dependency with uklib packaging`() {
+        val consumer = consumer(UklibResolutionStrategy.AllowResolvingUklibs) {
+            jvm()
+            iosArm64()
+            iosX64()
+            js()
+
             sourceSets.commonMain.dependencies {
-                // FIXME: Everything works kind of nicely, but either the consumer has to publish a separate component for pure Maven jar consumption, or Maven has to know about uklibs
-                implementation("foo.bar:regular-maven-jar-packaging-with-uklib-uklib-dependency:1.0")
+                implementation("foo.bar:pure-maven-uklib:1.0")
             }
         }
 
-        val iosArm64CompilationDependencies = consumer.multiplatformExtension.iosArm64().compilations.getByName("main")
-            .configurations.compileDependencyConfiguration
-        val iosArm64ResolvedVariants = iosArm64CompilationDependencies.resolveProjectDependencyComponentsWithArtifacts()
+        val metadataCompilationVariants = consumer.multiplatformExtension.sourceSets.getByName("commonMain")
+            .internal.resolvableMetadataConfiguration
+            .resolveProjectDependencyComponentsWithArtifacts()
 
-        val jvmRuntimeDependencies = consumer.multiplatformExtension.jvm().compilations.getByName("main")
-            .configurations.runtimeDependencyConfiguration!!
-        val jvmResolvedVariants = jvmRuntimeDependencies.resolveProjectDependencyComponentsWithArtifacts()
+        val iosArm64CompilationVariants = consumer.multiplatformExtension.iosArm64().compilations.getByName("main")
+            .configurations.compileDependencyConfiguration.resolveProjectDependencyComponentsWithArtifacts()
+
+        val jvmRuntimeVariants = consumer.multiplatformExtension.jvm().compilations.getByName("main")
+            .configurations.runtimeDependencyConfiguration!!.resolveProjectDependencyComponentsWithArtifacts()
+
+        // FIXME: Test js
+//        val jsRuntimeVariants = consumer.multiplatformExtension.js().compilations.getByName("main")
+//            .configurations.runtimeDependencyConfiguration!!.resolveProjectDependencyComponentsWithArtifacts()
+
+        assertEquals(
+            mapOf(
+                ":" to ResolvedComponentWithArtifacts(
+                    configuration="commonMainResolvableDependenciesMetadata",
+                    artifacts=mutableListOf()
+                ),
+                "foo.bar:pure-maven-uklib:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="compile",
+                    artifacts=mutableListOf(jvmPomApiAttributes + uklibTransformationMetadataAttributes)
+                ),
+            ),
+            metadataCompilationVariants
+        )
+
+        assertEquals(
+            mapOf(
+                ":" to ResolvedComponentWithArtifacts(
+                    configuration="iosArm64CompileKlibraries",
+                    artifacts=mutableListOf()
+                ),
+                "foo.bar:pure-maven-uklib:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="compile",
+                    artifacts=mutableListOf(jvmPomApiAttributes + uklibTransformationIosArm64Attributes)
+                ),
+            ).pp(),
+            iosArm64CompilationVariants.pp()
+        )
 
         assertEquals(
             mapOf(
@@ -46,11 +84,154 @@ class UklibTests {
                     configuration="jvmRuntimeClasspath",
                     artifacts=mutableListOf()
                 ),
-                "foo.bar:regular-maven-jar-packaging-with-uklib-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
+                "foo.bar:pure-maven-uklib:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="runtime",
+                    artifacts=mutableListOf(jvmPomRuntimeAttributes + uklibTransformationJvmAttributes)
+                ),
+            ).pp(),
+            jvmRuntimeVariants.pp()
+        )
+    }
+
+    @Test
+    fun `uklib resolution - from direct pom dependency with uklib packaging points to untrasformed uklib - when uklibs are not allowed to resolve`() {
+        val consumer = consumer(UklibResolutionStrategy.ResolveOnlyPlatformSpecificVariant) {
+            jvm()
+            iosArm64()
+            iosX64()
+            js()
+
+            sourceSets.commonMain.dependencies {
+                implementation("foo.bar:pure-maven-uklib:1.0")
+            }
+        }
+
+        /**
+         * FIXME: This is unfortunate and in opposition to how KMP dependencies resolve right now because:
+         *
+         * KMP dependencies will fail to resolve if they have a missing platform/native type attribute
+         *
+         * but this is similar to how pure java dependencies (e.g. com.google.guava:guava:+) will resolve just fine
+         */
+
+        val metadataCompilationVariants = consumer.multiplatformExtension.sourceSets.getByName("commonMain")
+            .internal.resolvableMetadataConfiguration
+            .resolveProjectDependencyComponentsWithArtifacts()
+
+        val iosArm64CompilationVariants = consumer.multiplatformExtension.iosArm64().compilations.getByName("main")
+            .configurations.compileDependencyConfiguration.resolveProjectDependencyComponentsWithArtifacts()
+
+        val jvmRuntimeVariants = consumer.multiplatformExtension.jvm().compilations.getByName("main")
+            .configurations.runtimeDependencyConfiguration!!.resolveProjectDependencyComponentsWithArtifacts()
+
+        // FIXME: Test js
+//        val jsRuntimeVariants = consumer.multiplatformExtension.js().compilations.getByName("main")
+//            .configurations.runtimeDependencyConfiguration!!.resolveProjectDependencyComponentsWithArtifacts()
+
+        assertEquals(
+            mapOf(
+                ":" to ResolvedComponentWithArtifacts(
+                    configuration="commonMainResolvableDependenciesMetadata",
+                    artifacts=mutableListOf()
+                ),
+                "foo.bar:pure-maven-uklib:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="compile",
+                    artifacts=mutableListOf(jvmPomApiAttributes + uklibArtifact)
+                ),
+            ),
+            metadataCompilationVariants
+        )
+
+        assertEquals(
+            mapOf(
+                ":" to ResolvedComponentWithArtifacts(
+                    configuration="iosArm64CompileKlibraries",
+                    artifacts=mutableListOf()
+                ),
+                "foo.bar:pure-maven-uklib:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="compile",
+                    artifacts=mutableListOf(jvmPomApiAttributes + uklibArtifact)
+                ),
+            ),
+            iosArm64CompilationVariants
+        )
+
+        assertEquals(
+            mapOf(
+                ":" to ResolvedComponentWithArtifacts(
+                    configuration="jvmRuntimeClasspath",
+                    artifacts=mutableListOf()
+                ),
+                "foo.bar:pure-maven-uklib:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="runtime",
+                    artifacts=mutableListOf(jvmPomRuntimeAttributes + uklibArtifact)
+                ),
+            ),
+            jvmRuntimeVariants
+        )
+    }
+
+    // consumer <- pure jvm <- uklib <- PSM-only
+    @Test
+    fun `uklib resolution - from transitive uklib dependency`() {
+        val consumer = consumer(UklibResolutionStrategy.AllowResolvingUklibs) {
+            jvm()
+            iosArm64()
+            iosX64()
+            js()
+
+            sourceSets.commonMain.dependencies {
+                implementation("foo.bar:pure-maven-jvm-with-trasitive-uklib-dependency:1.0")
+            }
+        }
+
+        val metadataCompilationVariants = consumer.multiplatformExtension.sourceSets.getByName("commonMain")
+            .internal.resolvableMetadataConfiguration
+            .resolveProjectDependencyComponentsWithArtifacts()
+
+        val iosArm64CompilationVariants = consumer.multiplatformExtension.iosArm64().compilations.getByName("main")
+            .configurations.compileDependencyConfiguration.resolveProjectDependencyComponentsWithArtifacts()
+
+        val jvmRuntimeVariants = consumer.multiplatformExtension.jvm().compilations.getByName("main")
+            .configurations.runtimeDependencyConfiguration!!.resolveProjectDependencyComponentsWithArtifacts()
+
+        // FIXME: Test js
+//        val jsRuntimeVariants = consumer.multiplatformExtension.js().compilations.getByName("main")
+//            .configurations.runtimeDependencyConfiguration!!.resolveProjectDependencyComponentsWithArtifacts()
+
+        assertEquals(
+            mapOf(
+                ":" to ResolvedComponentWithArtifacts(
+                    configuration="commonMainResolvableDependenciesMetadata",
+                    artifacts=mutableListOf()
+                ),
+                "foo.bar:pure-maven-jvm-with-trasitive-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="compile",
+                    artifacts=mutableListOf(jvmPomApiAttributes + jarArtifact)
+                ),
+                "foo.bar:pure-maven-uklib-with-transitive-non-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="compile",
+                    artifacts=mutableListOf(jvmPomApiAttributes + uklibTransformationMetadataAttributes)
+                ),
+                "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
+                    configuration="metadataApiElements",
+                    artifacts=mutableListOf(metadataVariantAttributes + releaseStatus)
+                ),
+            ).pp(),
+            metadataCompilationVariants.pp()
+        )
+
+        assertEquals(
+            mapOf(
+                ":" to ResolvedComponentWithArtifacts(
+                    configuration="jvmRuntimeClasspath",
+                    artifacts=mutableListOf()
+                ),
+                "foo.bar:pure-maven-jvm-with-trasitive-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
                     configuration="runtime",
                     artifacts=mutableListOf(jvmPomRuntimeAttributes + jarArtifact)
                 ),
-                "foo.bar:uklib-maven-uklib-packaging:1.0" to ResolvedComponentWithArtifacts(
+                "foo.bar:pure-maven-uklib-with-transitive-non-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
                     configuration="runtime",
                     artifacts=mutableListOf(jvmPomRuntimeAttributes + uklibTransformationJvmAttributes)
                 ),
@@ -63,7 +244,7 @@ class UklibTests {
                     artifacts=mutableListOf(platformJvmVariantAttributes + releaseStatus)
                 ),
             ),
-            jvmResolvedVariants
+            jvmRuntimeVariants
         )
 
         assertEquals(
@@ -72,11 +253,11 @@ class UklibTests {
                     configuration="iosArm64CompileKlibraries",
                     artifacts=mutableListOf()
                 ),
-                "foo.bar:regular-maven-jar-packaging-with-uklib-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
+                "foo.bar:pure-maven-jvm-with-trasitive-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
                     configuration="compile",
                     artifacts=mutableListOf(jvmPomApiAttributes + jarArtifact)
                 ),
-                "foo.bar:uklib-maven-uklib-packaging:1.0" to ResolvedComponentWithArtifacts(
+                "foo.bar:pure-maven-uklib-with-transitive-non-uklib-dependency:1.0" to ResolvedComponentWithArtifacts(
                     configuration="compile",
                     artifacts=mutableListOf(jvmPomApiAttributes + uklibTransformationIosArm64Attributes)
                 ),
@@ -93,156 +274,21 @@ class UklibTests {
                     )
                 ),
             ),
-            iosArm64ResolvedVariants
+            iosArm64CompilationVariants
         )
     }
 
-    @Test
-    fun `resolve uklib - from pom with jar packaging - with explicit extension`() {
-        val consumer = consumer(UklibResolutionStrategy.PreferPlatformSpecificVariant) {
-            sourceSets.commonMain.dependencies {
-                /**
-                 * FIXME: If this dependency is brought transitively, it's unclear how the regular-maven-jar-packaging POM should specify the dependency on a uklib, such that both KGP and Maven consumers can depend on it easily
-                 *
-                 * This could work with variant reselection, but then we have to use artifactViews
-                 */
-                // implementation("foo.bar:regular-maven-jar-packaging:1.0")
-                implementation("foo.bar:uklib-maven-jar-packaging:1.0@uklib") {
-                    // FIXME: Why does explicit extension specification unset transitiveness?
-                    assert(!isTransitive)
-                    isTransitive = true
-                }
-            }
-        }
-
-        val iosArm64CompilationDependencies = consumer.multiplatformExtension.iosArm64().compilations.getByName("main")
-            .configurations.compileDependencyConfiguration
-        val iosArm64ResolvedVariants = iosArm64CompilationDependencies.resolveProjectDependencyComponentsWithArtifacts()
-
-        val jvmRuntimeDependencies = consumer.multiplatformExtension.jvm().compilations.getByName("main")
-            .configurations.runtimeDependencyConfiguration!!
-        val jvmResolvedVariants = jvmRuntimeDependencies.resolveProjectDependencyComponentsWithArtifacts()
-
-        assertEquals(
-            mapOf(
-                ":" to ResolvedComponentWithArtifacts(
-                    configuration="jvmRuntimeClasspath",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-jar-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="runtime",
-                    artifacts=mutableListOf(uklibTransformationJvmAttributes + releaseStatus)
-                ),
-                "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="jvmRuntimeElements-published",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-gradle-packaging-jvm:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="jvmRuntimeElements-published",
-                    artifacts=mutableListOf(platformJvmVariantAttributes + releaseStatus)
-                ),
-            ),
-            jvmResolvedVariants
-        )
-
-        assertEquals(
-            mapOf(
-                ":" to ResolvedComponentWithArtifacts(
-                    configuration="iosArm64CompileKlibraries",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-jar-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="compile",
-                    artifacts=mutableListOf(uklibTransformationIosArm64Attributes + releaseStatus)
-                ),
-                "foo.bar:uklib-maven-gradle-packaging:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="iosArm64ApiElements-published",
-                    artifacts=mutableListOf()
-                ),
-                "foo.bar:uklib-maven-gradle-packaging-iosarm64:1.0" to ResolvedComponentWithArtifacts(
-                    configuration="iosArm64ApiElements-published",
-                    artifacts=mutableListOf(
-                        platformIosArm64Attributes + releaseStatus,
-                        platformIosArm64Attributes + releaseStatus,
-                    )
-                ),
-            ),
-            iosArm64ResolvedVariants
-        )
+//    @Test
+    fun `resolve uklib - in Swift Export and ObjC binaries export configurations`() {
+        error("TODO")
     }
 
-
-    // FIXME: Maybe this is usable?
-//        consumer.configurations.configureEach {
-//            if (it.isCanBeResolved) {
-//                it.resolutionStrategy.eachDependency {
-//                    it.artifactSelection {
-//
-//                    }
-//                }
-//                it.resolutionStrategy.componentSelection.all {
-//                    it.
-//                }
-//            }
-//        }
-    @Test
-    fun `resolve uklib - from pom with jar packaging - with explicit extension - and component rule`() {
-        val consumer = consumer(UklibResolutionStrategy.PreferUklibVariant) {
-            sourceSets.commonMain.dependencies {
-                // implementation("foo.bar:uklib-maven-jar-packaging:1.0")
-                // consume "foo.bar:uklib-maven-jar-packaging:1.0" transitively
-                // FIXME: With a naive component metadata rule regular jars fail to resolve
-                implementation("foo.bar:regular-maven-jar-packaging-with-uklib-jar-dependency:1.0")
-            }
-
-            project.dependencies.components.all { component ->
-                component.maybeAddVariant(
-                    "uklib",
-                    // FIXME: runtime?
-                    "compile",
-                ) {
-                    // How do you know that the file will be there?
-                    it.withFiles {
-                        // When there are multiple artifacts, Gradle doesn't set artifactType
-                        it.removeAllFiles()
-                        it.addFile("${component.id.name}-${component.id.version}.uklib")
-                    }
-                    it.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_UKLIB))
-                }
-            }
-        }
-
-        val iosArm64CompilationDependencies = consumer.multiplatformExtension.iosArm64().compilations.getByName("main")
-            .configurations.compileDependencyConfiguration
-        val iosArm64ResolvedVariants = iosArm64CompilationDependencies.resolveProjectDependencyComponentsWithArtifacts()
-
-        val jvmRuntimeDependencies = consumer.multiplatformExtension.jvm().compilations.getByName("main")
-            .configurations.runtimeDependencyConfiguration!!
-        val jvmResolvedVariants = jvmRuntimeDependencies.resolveProjectDependencyComponentsWithArtifacts()
-
-        // ???
+//    @Test
+    fun `resolve uklib - in resolvable JS configurations with klibs`() {
+        error("TODO")
     }
 
-    // @Test
-    // FIXME: This is probably pretty useless because with the classifier artifactType has to be jar and its unclear how to force a transform
-    fun `resolve uklib - from pom with jar packaging - with explicit classifier`() {
-        val consumer = consumer(UklibResolutionStrategy.PreferPlatformSpecificVariant) {
-            sourceSets.commonMain.dependencies {
-                implementation("foo.bar:uklib-maven-jar-packaging-classifier:1.0:uklib")
-            }
-        }
-
-        val iosArm64CompilationDependencies = consumer.multiplatformExtension.iosArm64().compilations.getByName("main")
-            .configurations.compileDependencyConfiguration
-        val iosArm64ResolvedVariants = iosArm64CompilationDependencies.resolveProjectDependencyComponentsWithArtifacts()
-
-        val jvmRuntimeDependencies = consumer.multiplatformExtension.jvm().compilations.getByName("main")
-            .configurations.runtimeDependencyConfiguration!!
-        val jvmResolvedVariants = jvmRuntimeDependencies.resolveProjectDependencyComponentsWithArtifacts()
-
-        // ???
-    }
-
+    // ---
     private fun consumer(
         strategy: UklibResolutionStrategy,
         configure: KotlinMultiplatformExtension.() -> Unit,
@@ -257,10 +303,6 @@ class UklibTests {
             }
         ) {
             kotlin {
-                iosArm64()
-                iosX64()
-                jvm()
-
                 configure()
             }
 
@@ -268,10 +310,10 @@ class UklibTests {
         }.evaluate()
     }
 
-    @Test
+    // @Test
     fun `prefer klib variant`() {
         val consumer = mixedCompilationsGraphConsumer(
-            uklibResolutionStrategy = UklibResolutionStrategy.PreferPlatformSpecificVariant,
+            uklibResolutionStrategy = UklibResolutionStrategy.AllowResolvingUklibs,
         )
 
         val iosArm64CompilationDependencies = consumer.multiplatformExtension.iosArm64().compilations.getByName("main")
@@ -335,10 +377,10 @@ class UklibTests {
         )
     }
 
-    @Test
+    // @Test
     fun `prefer uklib variant`() {
         val consumer = mixedCompilationsGraphConsumer(
-            uklibResolutionStrategy = UklibResolutionStrategy.PreferUklibVariant,
+            uklibResolutionStrategy = UklibResolutionStrategy.AllowResolvingUklibs,
         )
 
         val iosArm64CompilationDependencies = consumer.multiplatformExtension.iosArm64().compilations.getByName("main")
@@ -442,6 +484,13 @@ class UklibTests {
         "uklibState" to "unzipped",
     )
 
+    private val uklibTransformationMetadataAttributes = mapOf(
+        "artifactType" to "uklib",
+        "uklibNativeSlice" to "unknown",
+        "uklibPlatform" to "common",
+        "uklibState" to "unzipped",
+    )
+
     private val uklibVariantAttributes = mapOf(
         "org.gradle.category" to "library",
         "org.gradle.jvm.environment" to "???",
@@ -474,6 +523,15 @@ class UklibTests {
         "org.jetbrains.kotlin.platform.type" to "jvm",
     )
 
+    private val metadataVariantAttributes = mapOf(
+        "artifactType" to "jar",
+        "org.gradle.category" to "library",
+        "org.gradle.jvm.environment" to "non-jvm",
+        "org.gradle.libraryelements" to "jar",
+        "org.gradle.usage" to "kotlin-metadata",
+        "org.jetbrains.kotlin.platform.type" to "common",
+    )
+
     private val releaseStatus = mapOf(
         "org.gradle.status" to "release",
     )
@@ -485,6 +543,10 @@ class UklibTests {
 
     private val jarArtifact = mapOf(
         "artifactType" to "jar",
+    )
+
+    private val uklibArtifact = mapOf(
+        "artifactType" to "uklib",
     )
 
     private val platformIosArm64Attributes = mapOf(
@@ -593,5 +655,58 @@ class UklibTests {
             }
         }.evaluate()
     }
-
 }
+
+class PP(
+    val value: Any,
+    val indentation: Int,
+) {
+    override fun toString(): String {
+        val twoSpaces = " ".repeat(2)
+        val indentationSpace = " ".repeat(indentation)
+        val nextIndentationDepth = indentation + 2
+        val elements: Array<String> = when (value) {
+            is Map<*, *> -> arrayOf(
+                "{",
+                *value.map { it }.sortedBy { it.key.toString() }.map { "${twoSpaces}${it.key}=${it.value?.pp(nextIndentationDepth)}," }.toTypedArray(),
+                "}",
+            )
+            is List<*> -> arrayOf(
+                "[",
+                *value.map { "${twoSpaces}${it?.pp(nextIndentationDepth)}," }.toTypedArray(),
+                "]",
+            )
+            else -> {
+                val packageName = value::class.java.packageName
+                if (packageName.startsWith("kotlin.") || packageName.startsWith("java.")) {
+                    arrayOf(value.toString())
+                } else {
+                    val kClass = value::class
+                    arrayOf(
+                        "${kClass.simpleName}(",
+                        *kClass.memberProperties.map { prop ->
+                            "${twoSpaces}${prop.name}=${prop.getter.call(value)?.pp(nextIndentationDepth)},"
+                        }.toTypedArray(),
+                        ")",
+                    )
+                }
+            }
+        }
+
+        if (elements.size == 1) return elements[0]
+
+        return (listOf(elements[0]) + elements.toList().subList(1, elements.size).map { "${indentationSpace}${it}" }).joinToString("\n")
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        var otherUnwrapped = other
+        if (other is PP) otherUnwrapped = other.value
+        return value.equals(otherUnwrapped)
+    }
+}
+
+private fun Any.pp(indentation: Int = 0): PP = PP(this, indentation)

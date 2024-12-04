@@ -38,7 +38,7 @@ fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.creat
             KotlinPlatformType.jvm -> KotlinJvmCompilerOptionsFactory
             KotlinPlatformType.androidJvm -> KotlinJvmCompilerOptionsFactory
             KotlinPlatformType.js -> KotlinJsCompilerOptionsFactory
-            KotlinPlatformType.native, KotlinPlatformType.unknown -> KotlinNativeCompilerOptionsFactory
+            KotlinPlatformType.native -> KotlinNativeCompilerOptionsFactory
             KotlinPlatformType.wasm -> KotlinMultiplatformCommonCompilerOptionsFactory
         },
         compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(descriptor.defaultSourceSet) },

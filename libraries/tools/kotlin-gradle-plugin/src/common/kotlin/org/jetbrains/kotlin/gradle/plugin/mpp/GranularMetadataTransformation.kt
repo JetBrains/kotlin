@@ -17,6 +17,10 @@ import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.artifacts.uklibStateAttribute
 import org.jetbrains.kotlin.gradle.artifacts.uklibStateUnzipped
+import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Fragment
+import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
+import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.isSubsetOf
+import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -47,6 +51,9 @@ internal sealed class MetadataDependencyResolution(
         return "$verb, dependency = $dependency"
     }
 
+    /**
+     * KeepOriginalDependency нужен для кейса если в GMT попали настоящие jar'ники?
+     */
     class KeepOriginalDependency(
         dependency: ResolvedComponentResult,
     ) : MetadataDependencyResolution(dependency)
@@ -116,8 +123,7 @@ internal class GranularMetadataTransformation(
         val objects: ObjectFactory,
         val kotlinKmpProjectIsolationEnabled: Boolean,
         val sourceSetMetadataLocationsOfProjectDependencies: KotlinProjectSharedDataProvider<SourceSetMetadataLocations>,
-        // FIXME: ???
-        val sourceSetTargetMembership: Set<String>,
+        val uklibFragmentAttributes: Set<String>,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet) : this(
             build = project.currentBuild,
@@ -133,11 +139,10 @@ internal class GranularMetadataTransformation(
             kotlinKmpProjectIsolationEnabled = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled,
             sourceSetMetadataLocationsOfProjectDependencies = project.kotlinSecondaryVariantsDataSharing
                 .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration),
-            sourceSetTargetMembership = kotlinSourceSet.internal.compilations
+            uklibFragmentAttributes = kotlinSourceSet.internal.compilations
                 .map { it.target }
                 .filter { it !is KotlinMetadataTarget }
-                // FIXME: See uklibFromKGPModel
-                .map { it.targetName }
+                .map { it.uklibFragmentPlatformAttribute.unwrap() }
                 .toSet()
         )
     }
@@ -161,6 +166,7 @@ internal class GranularMetadataTransformation(
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
         val result = mutableListOf<MetadataDependencyResolution>()
 
+        // Это очередь из порезолвленных компонентнов?
         val resolvedDependencyQueue: Queue<ResolvedDependencyResult> = ArrayDeque<ResolvedDependencyResult>().apply {
             addAll(
                 params.resolvedMetadataConfiguration
@@ -234,13 +240,25 @@ internal class GranularMetadataTransformation(
      * * based on the project structure metadata, determine which of the module's dependencies are requested by the
      *   source sets in *S*, then consider only these transitive dependencies, ignore the others;
      */
+    // По идее эта логика исполняется на зависимость, на каждый потребляющий SS
     private fun processDependency(
         dependency: ResolvedDependencyResult,
+        // Я не понимаю откуда приходят эти SS
+        /**
+         * 24.11.2024 - Наверное для iosMain они приходят из commonMain. Это точно так, они приходят из parent тасок которые делают GMT
+         */
         sourceSetsVisibleInParents: Set<String>,
     ): MetadataDependencyResolution {
         val module = dependency.selected
         val moduleId = module.id
 
+        /**
+         * FIXME: 01.12-2024 - Add diagnostics:
+         *
+         * 1. Look at the graph of
+         */
+
+        // Это .jar ник с метадатными klib'ами
         val artifact = params
             .resolvedMetadataConfiguration
             .getArtifacts(dependency)
@@ -266,44 +284,43 @@ internal class GranularMetadataTransformation(
                 moduleId,
                 sourceSetsVisibleInParents,
 
-                sourceSetName = params.sourceSetName,
-                targetMembership = params.sourceSetTargetMembership,
+                //sourceSetName = params.sourceSetName,
+                uklibFragmentAttributes = params.uklibFragmentAttributes,
             )
         } else {
             return MetadataDependencyResolution.KeepOriginalDependency(module)
         }
     }
 
+    // FIXME: How do we ensure classpath ordering for PSM dependencies ???
     private fun processUklibDependency(
         compositeMetadataArtifact: ResolvedArtifactResult,
         dependency: ResolvedDependencyResult,
         module: ResolvedComponentResult,
         moduleId: ComponentIdentifier,
-        // FIXME: ???
-        sourceSetsVisibleInParents: Set<String>,
 
-        sourceSetName: String,
-        targetMembership: Set<String>,
+        sourceSetsVisibleInParents: Set<String>,
+        uklibFragmentAttributes: Set<String>,
     ): MetadataDependencyResolution {
+        // Validate that
+
         val uklibDependency = Uklib.deserializeFromDirectory(
             compositeMetadataArtifact.file,
         )
 
-        val fragment = Fragment(sourceSetName, targetMembership)
-        val canSee: Fragment<String>.(Fragment<String>) -> Boolean = { attributes.isSubsetOf(it.attributes) }
-
+        val fragmentCanSee: Fragment.(Fragment) -> Boolean = { attributes.isSubsetOf(it.attributes) }
         val visibleFragments = uklibDependency.module.fragments.filter {
-            fragment.canSee(it)
-                    // FIXME: ??
+            uklibFragmentAttributes.isSubsetOf(it.attributes)
+                    // FIXME: Is this the correct place to filter out compilations transformed by the parent ?? See allVisibleSourceSetNames and visibleSourceSetNamesExcludingDependsOn
                     && it.identifier !in sourceSetsVisibleInParents
         }.sortedWith(
-            object : Comparator<Fragment<String>> {
-                override fun compare(left: Fragment<String>, right: Fragment<String>): Int {
-                    if (left.canSee(right)) {
+            object : Comparator<Fragment> {
+                override fun compare(left: Fragment, right: Fragment): Int {
+                    if (left.fragmentCanSee(right)) {
                         return -1
-                    } else if (right.canSee(left)) {
+                    } else if (right.fragmentCanSee(left)) {
                         return 1
-                    } else if (left == right) {
+                    } else if (left.attributes == right.attributes) {
                         return 0
                     } else {
                         return left.identifier.compareTo(right.identifier)
@@ -318,12 +335,12 @@ internal class GranularMetadataTransformation(
             dependency = dependency.selected,
             projectStructureMetadata = null,
             // FIXME: Don't filter this
-            allVisibleSourceSetNames = visibleFragments.map { it.identifier }.toSet(),
+            allVisibleSourceSetNames = visibleFragments.map { it.identifier }.toHashSet(),
             // FIXME: Only filter this, but for some reason this doesn't work???
-            visibleSourceSetNamesExcludingDependsOn = visibleFragments.map { it.identifier }.toSet(),
+            visibleSourceSetNamesExcludingDependsOn = visibleFragments.map { it.identifier }.toHashSet(),
 
             // 26.11.2024 - This is likely only used to walk further dependencies, so we want all of them
-            visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toSet(),
+            visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toHashSet(),
             metadataProvider = ArtifactMetadataProvider(
                 object : CompositeMetadataArtifact {
 
@@ -359,7 +376,7 @@ internal class GranularMetadataTransformation(
                                                     get() = ""
 
                                                 override fun copyTo(file: File): Boolean {
-                                                    return uklibDependency.fragmentToArtifact[fragment.identifier]!!.copyRecursively(
+                                                    return fragment.file().copyRecursively(
                                                         file,
                                                         overwrite = true,
                                                     )
@@ -431,11 +448,18 @@ internal class GranularMetadataTransformation(
                 isResolvedToProject
             )
 
+        // Тут будут те SS которые видит потребитель? Но где тогда происходит маппинг между SS?
+        /**
+         * 24.11.2024 - Все это происходит в рамках resolve'а classpath текущего SS
+         */
         val allVisibleSourceSets = sourceSetVisibility.visibleSourceSetNames
 
         // Keep only the transitive dependencies requested by the visible source sets:
         // Visit the transitive dependencies visible by parents, too (i.e. allVisibleSourceSets), as this source set might get a more
         // concrete view on them:
+        /**
+         * Набираем то, какие зависимости были указаны в рамках SS
+         */
         val requestedTransitiveDependencies: Set<ModuleDependencyIdentifier> =
             mutableSetOf<ModuleDependencyIdentifier>().apply {
                 projectStructureMetadata.sourceSetModuleDependencies.forEach { (sourceSetName, moduleDependencies) ->
@@ -449,9 +473,15 @@ internal class GranularMetadataTransformation(
             .filterIsInstance<ResolvedDependencyResult>()
             .filterTo(mutableSetOf()) { it.toModuleDependencyIdentifier() in requestedTransitiveDependencies }
 
+        /**
+         * Кажется мы проверяем, что SS в котором мы сейчас не платформенный и что он не порезолвился в проектную зависимость
+         *
+         * Не понимаю зачем это нужно, особенно как работает часть про !isResolvedToProject
+         */
         if (params.sourceSetName in params.platformCompilationSourceSets && !isResolvedToProject)
             return MetadataDependencyResolution.Exclude.PublishedPlatformSourceSetDependency(module, transitiveDependenciesToVisit)
 
+        // Наверное тут будут только новые видимые SS которые еще не были видны в parent SS
         val visibleSourceSetsExcludingDependsOn = allVisibleSourceSets.filterTo(mutableSetOf()) { it !in sourceSetsVisibleInParents }
 
         val metadataProvider = when (mppDependencyMetadataExtractor) {
