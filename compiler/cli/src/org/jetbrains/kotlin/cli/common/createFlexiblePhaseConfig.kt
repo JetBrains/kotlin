@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.cli.common
 
 import org.jetbrains.kotlin.backend.common.phaser.FlexiblePhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.PhaseSet
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 fun createFlexiblePhaseConfig(
