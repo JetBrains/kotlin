@@ -393,17 +393,17 @@ object CheckDslScopeViolation : ResolutionStage() {
 
         if (closerOrOnTheSameLevelImplicitValues.any {
                 receiverValueToCheck.expression != it.computeExpression()
-                        && it.leadsToDslError(dslMarkers, context)
+                        && it.containsAnyOfGivenDslMarkers(dslMarkers, context)
             }) {
             sink.reportDiagnostic(DslScopeViolation(candidate.symbol))
         }
     }
 
-    private fun ImplicitValue.leadsToDslError(
-        dslMarkersOfChosenReceiver: Set<ClassId>,
+    private fun ImplicitValue.containsAnyOfGivenDslMarkers(
+        otherDslMarkers: Set<ClassId>,
         context: ResolutionContext,
     ): Boolean {
-        return getDslMarkersOfImplicitValue(boundSymbol, type, context).any { it in dslMarkersOfChosenReceiver }
+        return getDslMarkersOfImplicitValue(boundSymbol, type, context).any { it in otherDslMarkers }
     }
 
     private fun FirBasedSymbol<*>.containingDeclarationIfParameter(): FirBasedSymbol<*> {
