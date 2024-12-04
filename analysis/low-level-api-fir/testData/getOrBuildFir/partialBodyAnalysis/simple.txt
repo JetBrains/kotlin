@@ -14,8 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
         consume#(String(foo))
         consume#(Char(b))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 =====
 
@@ -35,5 +34,4 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
         R|/consume<Inapplicable(INAPPLICABLE): /consume>#|(String(foo))
         consume#(Char(b))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

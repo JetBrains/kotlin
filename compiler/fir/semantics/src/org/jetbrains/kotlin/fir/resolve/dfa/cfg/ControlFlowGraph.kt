@@ -26,6 +26,20 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     val subGraphs: List<ControlFlowGraph>
         get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
+    @OptIn(CfgInternals::class)
+    fun makeSnapshot(nodeMapper: (CFGNode<*>) -> CFGNode<*>): ControlFlowGraph {
+        return ControlFlowGraph(declaration, name, kind).also { snapshot ->
+            snapshot.nodeCount = nodeCount
+            snapshot.nodes = nodes.map(nodeMapper)
+            if (::enterNode.isInitialized) {
+                snapshot.enterNode = nodeMapper(enterNode)
+            }
+            if (::exitNode.isInitialized) {
+                snapshot.exitNode = nodeMapper(exitNode)
+            }
+        }
+    }
+
     @CfgInternals
     fun complete() {
         nodes = orderNodes()

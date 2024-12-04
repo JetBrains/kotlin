@@ -16,8 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] fullThenPartial.kt
         R|/consume|(Int(4))
         R|/consume|(Int(5))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 =====
 
@@ -39,5 +38,4 @@ FILE: [ResolvedTo(IMPORTS)] fullThenPartial.kt
         R|/consume|(Int(4))
         R|/consume|(Int(5))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

@@ -16,8 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] reverseOrder2.kt
         consume#(foo#.result#)
         consume#(IntegerLiteral(5))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 =====
 
@@ -39,8 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] reverseOrder2.kt
         consume#(foo#.result#)
         consume#(IntegerLiteral(5))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 =====
 
@@ -62,5 +60,4 @@ FILE: [ResolvedTo(IMPORTS)] reverseOrder2.kt
         consume#(foo#.result#)
         consume#(IntegerLiteral(5))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] n: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

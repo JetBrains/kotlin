@@ -159,6 +159,42 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             _incomingEdges?.let { map -> map.size == previousNodes.size && map.values.all { it.kind.isDead || !it.kind.usedInCfa } } == true
     }
 
+    @CfgInternals
+    fun copyData(from: CFGNode<*>, mapper: (CFGNode<*>) -> CFGNode<*>) {
+        from.previousNodes.forEach { _previousNodes += mapper(it) }
+        from.followingNodes.forEach { _followingNodes += mapper(it) }
+
+        val incomingEdges = from._incomingEdges
+        if (incomingEdges != null) {
+            for ((node, edge) in incomingEdges) {
+                val mappedEdge = mapLabelOwner(edge, edge.label, mapper) { Edge(it, edge.kind) }
+                insertIncomingEdge(mapper(node), mappedEdge)
+            }
+        }
+
+        if (fir !is FirStub) {
+            _flow = from._flow
+        }
+
+        isDead = from.isDead
+
+        from._alternateFlows?.forEach { (flowPath, flow) ->
+            val mappedFlowPath = when (flowPath) {
+                is FlowPath.CfgEdge -> mapLabelOwner(flowPath, flowPath.label, mapper) { FlowPath.CfgEdge(it, flowPath.fir) }
+                FlowPath.Default -> flowPath
+            }
+            addAlternateFlow(mappedFlowPath, flow)
+        }
+    }
+
+    private inline fun <T> mapLabelOwner(owner: T, label: EdgeLabel, mapper: (CFGNode<*>) -> CFGNode<*>, factory: (EdgeLabel) -> T): T {
+        return if (label is CFGNode<*>) {
+            factory(mapper(label) as EdgeLabel)
+        } else {
+            owner
+        }
+    }
+
     abstract fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R
 
     fun accept(visitor: ControlFlowGraphVisitorVoid) {

@@ -17,12 +17,30 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 
-class VariableStorage(private val session: FirSession) {
+class VariableStorage private constructor(
+    private val session: FirSession,
+
     // This is basically a set, since it maps each key to itself. The only point of having it as a map
     // is to deduplicate equal instances with lookups. The impact of that is questionable, but whatever.
-    private val realVariables: MutableMap<RealVariable, RealVariable> = HashMap()
+    private val realVariables: MutableMap<RealVariable, RealVariable>,
 
-    private val memberVariables: SetMultimap<RealVariable, RealVariable> = setMultimapOf()
+    private val memberVariables: SetMultimap<RealVariable, RealVariable>
+) {
+    constructor(session: FirSession) : this(
+        session,
+        realVariables = HashMap(),
+        memberVariables = setMultimapOf()
+    )
+
+    fun makeSnapshot(): VariableStorage {
+        return VariableStorage(
+            session,
+            realVariables = realVariables.toMutableMap(),
+            memberVariables = setMultimapOf<RealVariable, RealVariable>().also { newMemberVariables ->
+                memberVariables.forEach { (key, value) -> newMemberVariables.putAll(key, value) }
+            }
+        )
+    }
 
     /**
      * Retrieve a [DataFlowVariable] representing the given [FirExpression]. If [fir] is a property reference,
