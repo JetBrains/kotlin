@@ -1457,6 +1457,10 @@ public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingD
 	public final fun invoke (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/diagnostics/KotlinToolingProblemsService {
+	public abstract fun reportProblemDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic$Documentation {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
