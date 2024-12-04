@@ -17,12 +17,12 @@ fun CompilerPhase<*, *, *>.toPhaseMap(): MutableMap<String, AnyNamedPhase> =
  * It is defined before compilation and can't be modified in the process.
  */
 class PhaseConfig(
-    disabledPhases: Set<AnyNamedPhase> = emptySet(),
-    val verbose: Set<AnyNamedPhase> = emptySet(),
-    val toDumpStateBefore: Set<AnyNamedPhase> = emptySet(),
-    val toDumpStateAfter: Set<AnyNamedPhase> = emptySet(),
-    private val toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
-    private val toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
+    disabledPhases: Set<String> = emptySet(),
+    val verbose: Set<String> = emptySet(),
+    val toDumpStateBefore: PhaseSet = PhaseSet.Enum(emptySet()),
+    val toDumpStateAfter: PhaseSet = PhaseSet.Enum(emptySet()),
+    private val toValidateStateBefore: PhaseSet = PhaseSet.Enum(emptySet()),
+    private val toValidateStateAfter: PhaseSet = PhaseSet.Enum(emptySet()),
     override val dumpToDirectory: String? = null,
     override val dumpOnlyFqName: String? = null,
     override val needProfiling: Boolean = false,
@@ -32,13 +32,13 @@ class PhaseConfig(
     private val disabledMut = disabledPhases.toMutableSet()
 
     override fun isEnabled(phase: AnyNamedPhase): Boolean =
-        phase !in disabledMut
+        phase.name !in disabledMut
 
     override fun isVerbose(phase: AnyNamedPhase): Boolean =
-        phase in verbose
+        phase.name in verbose
 
     override fun disable(phase: AnyNamedPhase) {
-        disabledMut.add(phase)
+        disabledMut += phase.name
     }
 
     override fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =

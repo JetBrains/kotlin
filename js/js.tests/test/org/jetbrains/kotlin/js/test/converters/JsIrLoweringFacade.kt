@@ -112,7 +112,7 @@ class JsIrLoweringFacade(
             ).dump(module, firstTimeCompilation)
         }
 
-        configuration.phaseConfig = createTestPhaseConfig(testServices, module, getJsPhases(configuration))
+        configuration.phaseConfig = createTestPhaseConfig(testServices, module)
 
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
 

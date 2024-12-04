@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -59,6 +60,7 @@ import org.jetbrains.kotlin.test.services.jvm.CompiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.joinToArrayString
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
@@ -343,11 +345,11 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
     private fun CompilerConfiguration.putCustomPhaseConfigWithEnabledDump(module: TestModule) {
         val dumpDirectory = testServices.getOrCreateTempDirectory(PhasedIrDumpHandler.DUMPED_IR_FOLDER_NAME)
-        val phases = module.directives[CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES].toSet()
+        val phases = module.directives[CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES]
         if (phases.isNotEmpty()) {
             phaseConfig = PhaseConfig(
-                toDumpStateBefore = phases,
-                toDumpStateAfter = phases,
+                toDumpStateBefore = PhaseSet.Enum(phases.map { it.toLowerCaseAsciiOnly() }.toSet()),
+                toDumpStateAfter = PhaseSet.Enum(phases.map { it.toLowerCaseAsciiOnly() }.toSet()),
                 dumpToDirectory = dumpDirectory.absolutePath
             )
         }
