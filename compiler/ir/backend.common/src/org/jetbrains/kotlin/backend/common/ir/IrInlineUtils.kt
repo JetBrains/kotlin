@@ -36,13 +36,8 @@ fun IrExpression.asInlinableFunctionReference(): IrFunctionReference? {
     val (function, reference) = statements
     if (function !is IrSimpleFunction || reference !is IrFunctionReference || function.symbol != reference.symbol)
         return null
-    if (function.dispatchReceiverParameter != null)
-        return null
-    if (
-        reference.arguments.zip(reference.symbol.owner.parameters)
-            .any { (argument, parameter) ->
-                (parameter.kind == IrParameterKind.Regular || parameter.kind == IrParameterKind.Context) && argument != null
-            }
+    if (reference.arguments.zip(reference.symbol.owner.parameters)
+            .any { (argument, parameter) -> parameter.kind != IrParameterKind.ExtensionReceiver && argument != null }
     ) return null
     if (function.parameters.any { it.isVararg || it.defaultValue != null })
         return null
