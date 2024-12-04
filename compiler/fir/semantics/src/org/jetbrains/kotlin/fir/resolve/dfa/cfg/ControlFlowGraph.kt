@@ -26,17 +26,18 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     val subGraphs: List<ControlFlowGraph>
         get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
-    @OptIn(CfgInternals::class)
-    fun createSnapshot(nodeMapper: (CFGNode<*>) -> CFGNode<*>): ControlFlowGraph {
-        return ControlFlowGraph(declaration, name, kind).also { snapshot ->
-            snapshot.nodeCount = nodeCount
-            snapshot.nodes = nodes.map(nodeMapper)
-            if (::enterNode.isInitialized) {
-                snapshot.enterNode = nodeMapper(enterNode)
-            }
-            if (::exitNode.isInitialized) {
-                snapshot.exitNode = nodeMapper(exitNode)
-            }
+    @CfgInternals
+    fun copyData(from: ControlFlowGraph, nodeMapper: (CFGNode<*>) -> CFGNode<*>) {
+        /** Sic! [nodeCount] is intentionally ignored as it's incremented on node creation. See [CFGNode.id]. */
+
+        if (from::nodes.isInitialized) {
+            nodes = from.nodes.map(nodeMapper)
+        }
+        if (from::enterNode.isInitialized) {
+            enterNode = nodeMapper(from.enterNode)
+        }
+        if (from::exitNode.isInitialized) {
+            exitNode = nodeMapper(from.exitNode)
         }
     }
 

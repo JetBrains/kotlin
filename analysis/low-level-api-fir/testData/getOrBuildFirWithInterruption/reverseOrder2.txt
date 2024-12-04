@@ -31,7 +31,7 @@ null
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] reverseOrder2.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] foo: R|broken/lib/Foo|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=3(3/5) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] foo: R|broken/lib/Foo|): R|kotlin/Unit| {
         R|/consume|(Int(1))
         R|/consume|(Int(2))
         R|/consume|(Int(3))
@@ -53,10 +53,10 @@ R|/consume|(Int(2))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] reverseOrder2.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=2(2/5) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] foo: R|broken/lib/Foo|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=3(3/5) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] foo: R|broken/lib/Foo|): R|kotlin/Unit| {
         R|/consume|(Int(1))
         R|/consume|(Int(2))
-        consume#(IntegerLiteral(3))
+        R|/consume|(Int(3))
         consume#(foo#.result#)
         consume#(IntegerLiteral(5))
     }

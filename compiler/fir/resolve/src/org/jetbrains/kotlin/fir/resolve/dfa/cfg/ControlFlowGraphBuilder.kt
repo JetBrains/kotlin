@@ -96,7 +96,7 @@ class ControlFlowGraphBuilder private constructor(
         val copier = ControlFlowGraphCopier()
 
         return ControlFlowGraphBuilder(
-            graphs = graphs.createSnapshot { it.createSnapshot(copier::get) },
+            graphs = graphs.createSnapshot { copier[it] },
             lastNodes = lastNodes.createSnapshot { copier[it] },
             exitTargetsForReturn = exitTargetsForReturn.mapValuesTo(mutableMapOf()) { copier[it.value] },
             enterToLocalClassesMembers = enterToLocalClassesMembers.mapValuesTo(mutableMapOf()) { (_, value) ->

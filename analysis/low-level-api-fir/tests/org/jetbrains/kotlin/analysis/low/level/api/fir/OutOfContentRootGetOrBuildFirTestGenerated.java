@@ -1262,6 +1262,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("logicalOperators.kt")
+    public void testLogicalOperators() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/logicalOperators.kt");
+    }
+
+    @Test
     @TestMetadata("partialThenFull.kt")
     public void testPartialThenFull() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/partialThenFull.kt");
