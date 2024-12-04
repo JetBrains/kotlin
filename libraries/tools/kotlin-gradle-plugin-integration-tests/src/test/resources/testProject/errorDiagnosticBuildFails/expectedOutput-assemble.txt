@@ -1,8 +1,10 @@
 > Configure project :
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
 
 
 > Task :checkKotlinGradlePluginConfigurationErrors FAILED
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end

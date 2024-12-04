@@ -5,6 +5,7 @@ kotlin.internal.suppressGradlePluginErrors
 
 Internal properties are not recommended for production use.
 Stability and future compatibility of the build is not guaranteed.
+Please consider using the public API instead of internal properties.
 #diagnostic-end
 
 

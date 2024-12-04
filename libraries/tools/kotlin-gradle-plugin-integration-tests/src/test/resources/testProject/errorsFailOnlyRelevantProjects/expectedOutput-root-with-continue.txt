@@ -2,11 +2,13 @@
 
 > Configure project :brokenProjectA
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
 
 
 > Configure project :brokenProjectB
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
 
 
@@ -14,11 +16,13 @@ e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare de
 
 > Task :brokenProjectA:checkKotlinGradlePluginConfigurationErrors FAILED
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
 
 
 > Task :brokenProjectB:checkKotlinGradlePluginConfigurationErrors FAILED
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+Please remove the `dependsOn` configuration from the commonMain source set
 #diagnostic-end
 
 

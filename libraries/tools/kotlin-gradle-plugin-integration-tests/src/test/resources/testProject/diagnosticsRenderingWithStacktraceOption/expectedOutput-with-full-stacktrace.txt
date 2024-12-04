@@ -2,14 +2,19 @@
 w: [PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set jvmMain', but jvm target used a custom name 'customName' (expected 'jvm'):
 
 Replace:
-    kotlin {
-        jvm("customName") /* <- custom name used */
-    }
+```
+kotlin {
+    jvm("customName") /* <- custom name used */
+}
+```
 
 With:
-   kotlin {
-       jvm()
-   }
+```
+kotlin {
+    jvm()
+}
+```
+Please use the jvm() target name.
 
 Stacktrace:
     <... stackframes are omitted for test stability ...>

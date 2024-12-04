@@ -1,5 +1,6 @@
 > Configure project :
 e: [NoKotlinTargetsDeclared | ERROR] Please initialize at least one Kotlin target in 'diagnostics-rendering-smoke (:)'.
+Please declare at least one Kotlin target.
 Read more https://kotl.in/set-up-targets
 #diagnostic-end
 
