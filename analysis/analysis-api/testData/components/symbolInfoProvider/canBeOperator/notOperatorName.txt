@@ -1,0 +1,100 @@
+FUNCTION:
+  KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /A.something
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: something
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: A
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: A
+        symbol: KaNamedClassSymbol(A)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(A)
+    typeArguments: []
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: a
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        abbreviation: null
+        annotations: []
+        classId: A
+        nullability: NON_NULLABLE
+        qualifiers: [
+          qualifier:
+            name: A
+            symbol: KaNamedClassSymbol(A)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(A)
+        typeArguments: []
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(notOperatorName.kt)
+      getContainingJvmClassName: A
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: A
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: A
+        symbol: KaNamedClassSymbol(A)
+        typeArguments: []
+    ]
+    symbol: KaNamedClassSymbol(A)
+    typeArguments: []
+  getContainingFileSymbol: KaFileSymbol(notOperatorName.kt)
+  getContainingJvmClassName: A
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+CAN_BE_OPERATOR:
+  false
