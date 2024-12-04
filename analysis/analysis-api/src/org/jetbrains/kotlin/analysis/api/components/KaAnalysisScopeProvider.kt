@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 
-public interface KaAnalysisScopeProvider {
+public interface KaAnalysisScopeProvider : KaSessionComponent {
     /**
      * A [GlobalSearchScope] which spans the files that can be analyzed by the current [KaSession].
      *

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.Variance
  * Provides services for rendering [declaration symbols][KaDeclarationSymbol] and [types][KaType] to strings.
  */
 @KaExperimentalApi
-public interface KaRenderer {
+public interface KaRenderer : KaSessionComponent {
     /**
      * Renders the given [KaDeclarationSymbol] to a string. The particular rendering strategy is defined by the [renderer].
      */

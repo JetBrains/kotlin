@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 
-public interface KaExpressionTypeProvider {
+public interface KaExpressionTypeProvider : KaSessionComponent {
     /**
      * The type of the given [KtExpression], or `null` if it does not have a type.
      *

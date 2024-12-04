@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.psi.KtExpression
 
-public interface KaEvaluator {
+public interface KaEvaluator : KaSessionComponent {
     /**
      * Attempts to evaluate the given [KtExpression] to a [compile-time constant value][KaConstantValue], or returns `null` if this is not
      * possible.

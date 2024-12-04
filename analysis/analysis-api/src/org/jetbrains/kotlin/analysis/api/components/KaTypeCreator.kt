@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
-public interface KaTypeCreator {
+public interface KaTypeCreator : KaSessionComponent {
     /**
      * Builds a class type with the given class ID.
      *

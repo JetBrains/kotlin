@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
 @KaIdeApi
-public interface KaImportOptimizer {
+public interface KaImportOptimizer : KaSessionComponent {
     /**
      * Analyzes imports in the given [file] and returns a [KaImportOptimizerResult] which can later be used to optimize imports.
      * Does **not** change the file.
