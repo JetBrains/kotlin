@@ -55,9 +55,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerProjectServices(project: MockProject, testServices: TestServices) {
+    override fun registerProjectServices(project: MockProject, data: TestServices) {
         project.apply {
-            registerPlatformSettings(testServices)
+            registerPlatformSettings(data)
 
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStandaloneModificationTrackerFactory::class.java)
             registerService(KotlinGlobalModificationService::class.java, KotlinStandaloneGlobalModificationService::class.java)
@@ -98,8 +98,8 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         }
     }
 
-    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
-        val moduleStructure = testServices.ktTestModuleStructure
+    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: TestServices) {
+        val moduleStructure = data.ktTestModuleStructure
         val testKtFiles = moduleStructure.mainModules.flatMap { it.ktFiles }
 
         // We explicitly exclude decompiled libraries. Their decompiled PSI files are indexed by the declaration provider, so it shouldn't
@@ -121,14 +121,14 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
         val mainBinaryRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
             mainBinaryModules.flatMap { it.binaryRoots },
-            testServices.environmentManager.getProjectEnvironment(),
+            data.environmentManager.getProjectEnvironment(),
         ).distinct()
 
         val mainBinaryVirtualFiles = mainBinaryModules.flatMap { it.binaryVirtualFiles }.distinct()
 
         val sharedBinaryRoots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
             sharedBinaryDependencies.flatMap { binary -> binary.binaryRoots },
-            testServices.environmentManager.getProjectEnvironment()
+            data.environmentManager.getProjectEnvironment()
         ).distinct()
 
         val sharedBinaryVirtualFiles = sharedBinaryDependencies.flatMap { it.binaryVirtualFiles }.distinct()
@@ -142,14 +142,14 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
                 BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = false
 
                 val shouldBuildStubsForBinaryLibraries =
-                    testServices.libraryIndexingConfiguration.binaryLibraryIndexingMode == AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS
+                    data.libraryIndexingConfiguration.binaryLibraryIndexingMode == AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS
 
                 val declarationProviderFactory = KotlinStandaloneDeclarationProviderFactory(
                     project,
                     testKtFiles,
                     binaryRoots = mainBinaryRoots + mainBinaryVirtualFiles,
                     sharedBinaryRoots = sharedBinaryRoots + sharedBinaryVirtualFiles,
-                    skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
+                    skipBuiltins = data.moduleStructure.allDirectives.contains(NO_RUNTIME),
                     shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
                 )
 
@@ -170,11 +170,11 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         }
     }
 
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        testServices.environmentManager.getApplicationEnvironment()
+    override fun registerApplicationServices(application: MockApplication, data: TestServices) {
+        data.environmentManager.getApplicationEnvironment()
             .registerFileType(KotlinBuiltInFileType, BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION)
 
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, METADATA_FILE_EXTENSION)
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KlibMetaFileType, KLIB_METADATA_FILE_EXTENSION)
+        data.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, METADATA_FILE_EXTENSION)
+        data.environmentManager.getApplicationEnvironment().registerFileType(KlibMetaFileType, KLIB_METADATA_FILE_EXTENSION)
     }
 }

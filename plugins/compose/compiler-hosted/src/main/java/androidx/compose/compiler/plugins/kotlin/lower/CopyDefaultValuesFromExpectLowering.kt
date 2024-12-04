@@ -100,8 +100,8 @@ class CopyDefaultValuesFromExpectLowering(
         return original
     }
 
-    override fun lower(module: IrModuleFragment) {
-        module.transformChildrenVoid(this)
+    override fun lower(irModule: IrModuleFragment) {
+        irModule.transformChildrenVoid(this)
     }
 
     private inline fun <reified T : IrFunction> T.findActualForExpected(): T {

@@ -389,11 +389,11 @@ class ComposableFunctionBodyTransformer(
 
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
 
-    override fun lower(module: IrModuleFragment) {
-        inlineLambdaInfo.scan(module)
-        module.transformChildrenVoid(this)
+    override fun lower(irModule: IrModuleFragment) {
+        inlineLambdaInfo.scan(irModule)
+        irModule.transformChildrenVoid(this)
         applySourceFixups()
-        module.patchDeclarationParents()
+        irModule.patchDeclarationParents()
     }
 
     override fun lower(irFile: IrFile) {

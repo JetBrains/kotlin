@@ -19,5 +19,5 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 interface ModuleLoweringPass {
-    fun lower(module: IrModuleFragment)
+    fun lower(irModule: IrModuleFragment)
 }

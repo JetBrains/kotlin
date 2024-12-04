@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerProjectServices(project: MockProject, testServices: TestServices) {
+    override fun registerProjectServices(project: MockProject, data: TestServices) {
         project.apply {
-            registerService(KotlinPackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
+            registerService(KotlinPackagePartProviderFactory::class.java, PackagePartProviderTestImpl(data))
         }
     }
 
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
+    override fun registerApplicationServices(application: MockApplication, data: TestServices) {
         application.apply {
             registerService(KotlinForeignValueProviderService::class.java, TestForeignValueProviderService())
         }

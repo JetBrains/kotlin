@@ -45,8 +45,8 @@ class ComposerIntrinsicTransformer(
     private fun currentComposerFqName(): FqName =
         ComposeFqNames.CurrentComposerIntrinsic
 
-    override fun lower(module: IrModuleFragment) {
-        module.transformChildrenVoid(this)
+    override fun lower(irModule: IrModuleFragment) {
+        irModule.transformChildrenVoid(this)
     }
 
     override fun lower(irFile: IrFile) {

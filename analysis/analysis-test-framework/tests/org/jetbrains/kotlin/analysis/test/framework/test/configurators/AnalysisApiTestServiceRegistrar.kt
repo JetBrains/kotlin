@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.Analys
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AnalysisApiTestServiceRegistrar : AnalysisApiServiceRegistrar<TestServices> {
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {}
+    override fun registerApplicationServices(application: MockApplication, data: TestServices) {}
 
-    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
+    override fun registerProjectExtensionPoints(project: MockProject, data: TestServices) {}
 
-    override fun registerProjectServices(project: MockProject, testServices: TestServices) {}
+    override fun registerProjectServices(project: MockProject, data: TestServices) {}
 
-    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {}
+    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: TestServices) {}
 }

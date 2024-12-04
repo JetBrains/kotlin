@@ -176,14 +176,14 @@ class ComposableTargetAnnotationsTransformer(
         }
     )
 
-    override fun lower(module: IrModuleFragment) {
+    override fun lower(irModule: IrModuleFragment) {
         // Only transform if the attributes being inferred are in the runtime
         if (
             ComposableTargetClass != null &&
             ComposableInferredTargetClass != null &&
             ComposableOpenTargetClass != null
         ) {
-            module.transformChildrenVoid(this)
+            irModule.transformChildrenVoid(this)
         }
     }
 

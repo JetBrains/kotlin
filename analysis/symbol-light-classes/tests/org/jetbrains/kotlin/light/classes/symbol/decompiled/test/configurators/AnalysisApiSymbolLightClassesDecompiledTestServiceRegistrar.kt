@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiSymbolLightClassesDecompiledTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
+    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: TestServices) {
         project.apply {
             registerService(ClsJavaStubByVirtualFileCache::class.java)
             registerService(PsiNameHelper::class.java, PsiNameHelperImpl::class.java)

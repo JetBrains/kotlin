@@ -78,7 +78,7 @@ object ResolveExtensionDisposalTestConfigurator : AnalysisApiFirSourceTestConfig
 object ResolveExtensionDisposalTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectServices(
         project: MockProject,
-        testServices: TestServices,
+        data: TestServices,
     ) {
         val extensionPoint = project.extensionArea.getExtensionPoint(KaResolveExtensionProvider.EP_NAME)
         extensionPoint.registerExtension(KaResolveExtensionWithDisposalTrackerProvider(), project)

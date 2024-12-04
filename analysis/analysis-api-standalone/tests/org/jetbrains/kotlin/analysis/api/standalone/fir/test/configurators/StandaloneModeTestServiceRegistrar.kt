@@ -15,6 +15,6 @@ import org.jetbrains.kotlin.test.services.TestServices
  * [FirStandaloneServiceRegistrar][org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar].
  */
 object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
+    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: TestServices) {
     }
 }

@@ -101,9 +101,9 @@ class WrapJsComposableLambdaLowering(
             }.symbol
     }
 
-    override fun lower(module: IrModuleFragment) {
-        module.transformChildrenVoid(this)
-        module.patchDeclarationParents()
+    override fun lower(irModule: IrModuleFragment) {
+        irModule.transformChildrenVoid(this)
+        irModule.patchDeclarationParents()
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
