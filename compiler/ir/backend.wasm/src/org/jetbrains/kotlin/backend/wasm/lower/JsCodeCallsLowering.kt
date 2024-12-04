@@ -38,8 +38,12 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
     private fun transformFunction(function: IrSimpleFunction): List<IrDeclaration>? {
         val body = function.body ?: return null
-        check(body is IrBlockBody)  // Should be lowered to block body
-        val statement = body.statements.singleOrNull() ?: return null
+
+        val statement = when (body) {
+            is IrExpressionBody -> body.expression
+            is IrBlockBody -> body.statements.singleOrNull()
+            else -> null
+        }
 
         val isSingleExpressionJsCode: Boolean
         val jsCode: String
@@ -54,6 +58,7 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
             else -> return null
         }
+
         val valueParameters = function.valueParameters
         val jsFunCode = buildString {
             append('(')
