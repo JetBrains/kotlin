@@ -377,7 +377,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         val boundSymbolOfReceiverToCheck = receiverValueToCheck.expression.implicitlyReferencedSymbolOrNull() ?: return
         val dslMarkers =
             getDslMarkersOfImplicitValue(
-                boundSymbolOfReceiverToCheck.containingDeclarationIfParameter(),
+                boundSymbolOfReceiverToCheck,
                 receiverValueToCheck.expression.resolvedType,
                 context
             ).ifEmpty { return }
@@ -403,8 +403,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         dslMarkersOfChosenReceiver: Set<ClassId>,
         context: ResolutionContext,
     ): Boolean {
-        val containingDeclaration = boundSymbol.containingDeclarationIfParameter()
-        return getDslMarkersOfImplicitValue(containingDeclaration, type, context).any { it in dslMarkersOfChosenReceiver }
+        return getDslMarkersOfImplicitValue(boundSymbol, type, context).any { it in dslMarkersOfChosenReceiver }
     }
 
     private fun FirBasedSymbol<*>.containingDeclarationIfParameter(): FirBasedSymbol<*> {
@@ -416,12 +415,13 @@ object CheckDslScopeViolation : ResolutionStage() {
     }
 
     private fun getDslMarkersOfImplicitValue(
-        containingDeclarationSymbol: FirBasedSymbol<*>,
+        // Symbol to which the relevant receiver or context parameter is bound
+        boundSymbol: FirBasedSymbol<*>,
         type: ConeKotlinType,
         context: ResolutionContext,
     ): Set<ClassId> {
         return buildSet {
-            (containingDeclarationSymbol as? FirAnonymousFunctionSymbol)?.fir?.matchingParameterFunctionType?.let {
+            (boundSymbol.containingDeclarationIfParameter() as? FirAnonymousFunctionSymbol)?.fir?.matchingParameterFunctionType?.let {
                 // collect annotations in the function type at declaration site. For example, the `@A` and `@B` in the following code.
                 // ```
                 // fun <T> body(block: @A ((@B T).() -> Unit)) { ... }
