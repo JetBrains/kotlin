@@ -52,7 +52,7 @@ internal open class BasicPhaseContext(
 
 internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
     val phaserState = PhaserState<Any>()
-    val phaseConfig = config.flexiblePhaseConfig
+    val phaseConfig = config.phaseConfig
     val context = BasicPhaseContext(config)
     val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
         override fun phaseBody(context: PhaseContext, input: Any) {

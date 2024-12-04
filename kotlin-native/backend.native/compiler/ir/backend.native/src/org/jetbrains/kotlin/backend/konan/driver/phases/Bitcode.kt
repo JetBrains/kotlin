@@ -135,7 +135,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             context,
             context.llvm.targetTriple,
             closedWorld = context.config.isFinalBinary,
-            timePasses = context.config.flexiblePhaseConfig.needProfiling,
+            timePasses = context.config.phaseConfig.needProfiling,
     )
     useContext(OptimizationState(context.config, optimizationConfig)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
