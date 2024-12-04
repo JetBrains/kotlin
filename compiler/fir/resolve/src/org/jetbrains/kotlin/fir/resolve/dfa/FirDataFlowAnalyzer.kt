@@ -42,20 +42,29 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class DataFlowAnalyzerContext(private val session: FirSession) {
-    internal var graphBuilder: ControlFlowGraphBuilder = ControlFlowGraphBuilder()
-        private set
+class DataFlowAnalyzerContext private constructor(
+    private val session: FirSession,
+    graphBuilder: ControlFlowGraphBuilder,
+    variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer,
+    variableStorage: VariableStorage,
+    private var assignmentCounter: Int
+) {
+    constructor(session: FirSession) : this(
+        session,
+        graphBuilder = ControlFlowGraphBuilder(),
+        variableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer(),
+        variableStorage = VariableStorage(session),
+        assignmentCounter = 0
+    )
 
-    internal var variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer()
-        private set
-
-    internal var variableStorage: VariableStorage = VariableStorage(session)
-        private set
-
-    private var assignmentCounter = 0
-
-    fun newAssignmentIndex(): Int {
-        return assignmentCounter++
+    fun makeSnapshot(): DataFlowAnalyzerContext {
+        return DataFlowAnalyzerContext(
+            session,
+            graphBuilder = graphBuilder.makeSnapshot(),
+            variableAssignmentAnalyzer = variableAssignmentAnalyzer.makeSnapshot(),
+            variableStorage = variableStorage.makeSnapshot(),
+            assignmentCounter = assignmentCounter
+        )
     }
 
     fun resetFrom(source: DataFlowAnalyzerContext) {
@@ -71,6 +80,19 @@ class DataFlowAnalyzerContext(private val session: FirSession) {
         graphBuilder.reset()
         variableAssignmentAnalyzer.reset()
         variableStorage = VariableStorage(session)
+    }
+
+    internal var graphBuilder: ControlFlowGraphBuilder = graphBuilder
+        private set
+
+    internal var variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = variableAssignmentAnalyzer
+        private set
+
+    internal var variableStorage: VariableStorage = variableStorage
+        private set
+
+    fun newAssignmentIndex(): Int {
+        return assignmentCounter++
     }
 }
 

@@ -16,6 +16,8 @@ abstract class Stack<T> {
      * returns all elements of the stack in order of retrieval
      */
     abstract fun all(): List<T>
+
+    abstract fun <R> makeSnapshot(transform: (T) -> R): Stack<R>
 }
 
 fun <T> stackOf(vararg values: T): Stack<T> = StackImpl(*values)
@@ -23,20 +25,27 @@ val Stack<*>.isEmpty: Boolean get() = size == 0
 val Stack<*>.isNotEmpty: Boolean get() = size != 0
 fun <T> Stack<T>.topOrNull(): T? = if (size == 0) null else top()
 
-private class StackImpl<T>(vararg values: T) : Stack<T>() {
-    private val stack = mutableListOf(*values)
+private class StackImpl<T>(values: List<T>) : Stack<T>() {
+    constructor(vararg values: T) : this(values.asList())
 
-    override fun top(): T = stack[stack.size - 1]
-    override fun pop(): T = stack.removeAt(stack.size - 1)
+    private val values = ArrayList(values)
+
+    override fun top(): T = values[values.size - 1]
+    override fun pop(): T = values.removeAt(values.size - 1)
 
     override fun push(value: T) {
-        stack.add(value)
+        values.add(value)
     }
 
-    override val size: Int get() = stack.size
+    override val size: Int get() = values.size
     override fun reset() {
-        stack.clear()
+        values.clear()
     }
 
-    override fun all(): List<T> = stack.asReversed()
+    override fun all(): List<T> = values.asReversed()
+
+    override fun <R> makeSnapshot(transform: (T) -> R): Stack<R> {
+        val newValues = values.map(transform)
+        return StackImpl(newValues)
+    }
 }

@@ -29,8 +29,110 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 data class FirAnonymousFunctionReturnExpressionInfo(val expression: FirExpression, val isExplicit: Boolean)
 
 @OptIn(CfgInternals::class)
-class ControlFlowGraphBuilder {
-    private val graphs: Stack<ControlFlowGraph> = stackOf()
+class ControlFlowGraphBuilder private constructor(
+    private val graphs: Stack<ControlFlowGraph>,
+    private val lastNodes: Stack<CFGNode<*>>,
+
+    // ----------------------------------- Node caches -----------------------------------
+
+    private val exitTargetsForReturn: MutableMap<FirFunctionSymbol<*>, FunctionExitNode>,
+    private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, Pair<CFGNode<*>, EdgeKind>>,
+
+    private val nonDirectJumps: ListMultimap<CFGNode<*>, JumpNode>, //return jumps via finally blocks, target -> jumps
+
+    private val argumentListSplitNodes: Stack<SplitPostponedLambdasNode?>,
+    private val postponedAnonymousFunctionNodes: MutableMap<FirFunctionSymbol<*>, Pair<CFGNode<*>, PostponedLambdaExitNode?>>,
+    private val anonymousFunctionCaptureNodes: MutableMap<FirFunctionSymbol<*>, AnonymousFunctionCaptureNode>,
+    private val postponedLambdaExits: Stack<PostponedLambdas>,
+
+    private val loopConditionEnterNodes: MutableMap<FirLoop, LoopConditionEnterNode>,
+    private val loopExitNodes: MutableMap<FirLoop, LoopExitNode>,
+
+    private val whenExitNodes: Stack<WhenExitNode>,
+
+    private val tryExitNodes: Stack<TryExpressionExitNode>,
+    private val catchNodes: Stack<List<CatchClauseEnterNode>>,
+    private val catchBlocksInProgress: Stack<CatchClauseEnterNode>,
+    private val finallyEnterNodes: Stack<FinallyBlockEnterNode>,
+    private val finallyBlocksInProgress: Stack<FinallyBlockEnterNode>,
+    private val finallyBlocksInProgressSet: MutableSet<FirElement>,
+
+    private val exitFunctionCallArgumentsNodes: Stack<FunctionCallArgumentsExitNode?>,
+    private val exitSafeCallNodes: Stack<ExitSafeCallNode>,
+    private val exitElvisExpressionNodes: Stack<ElvisExitNode>,
+    private val elvisRhsEnterNodes: Stack<ElvisRhsEnterNode>,
+    private val equalityOperatorCallLhsExitNodes: Stack<CFGNode<*>>,
+
+    private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallExitNode>>,
+) {
+    constructor() : this(
+        graphs = stackOf(),
+        lastNodes = stackOf(),
+        exitTargetsForReturn = mutableMapOf(),
+        enterToLocalClassesMembers = mutableMapOf(),
+        nonDirectJumps = listMultimapOf(),
+        argumentListSplitNodes = stackOf(),
+        postponedAnonymousFunctionNodes = mutableMapOf(),
+        anonymousFunctionCaptureNodes = mutableMapOf(),
+        postponedLambdaExits = stackOf(),
+        loopConditionEnterNodes = mutableMapOf(),
+        loopExitNodes = mutableMapOf(),
+        whenExitNodes = stackOf(),
+        tryExitNodes = stackOf(),
+        catchNodes = stackOf(),
+        catchBlocksInProgress = stackOf(),
+        finallyEnterNodes = stackOf(),
+        finallyBlocksInProgress = stackOf(),
+        finallyBlocksInProgressSet = mutableSetOf(),
+        exitFunctionCallArgumentsNodes = stackOf(),
+        exitSafeCallNodes = stackOf(),
+        exitElvisExpressionNodes = stackOf(),
+        elvisRhsEnterNodes = stackOf(),
+        equalityOperatorCallLhsExitNodes = stackOf(),
+        notCompletedFunctionCalls = stackOf(),
+    )
+
+    fun makeSnapshot(): ControlFlowGraphBuilder {
+        val copier = ControlFlowGraphCopier()
+
+        return ControlFlowGraphBuilder(
+            graphs = graphs.makeSnapshot { it.makeSnapshot(copier::get) },
+            lastNodes = lastNodes.makeSnapshot { copier[it] },
+            exitTargetsForReturn = exitTargetsForReturn.mapValuesTo(mutableMapOf()) { copier[it.value] },
+            enterToLocalClassesMembers = enterToLocalClassesMembers.mapValuesTo(mutableMapOf()) { (_, value) ->
+                Pair(copier[value.first], value.second)
+            },
+            nonDirectJumps = listMultimapOf<CFGNode<*>, JumpNode>().also { newNonDirectJumps ->
+                for ((node, jumps) in nonDirectJumps) {
+                    newNonDirectJumps.putAll(copier[node], jumps.map(copier::get))
+                }
+            },
+            argumentListSplitNodes = argumentListSplitNodes.makeSnapshot { it?.let(copier::get) },
+            postponedAnonymousFunctionNodes = postponedAnonymousFunctionNodes.mapValuesTo(mutableMapOf()) { (_, value) ->
+                Pair(copier[value.first], value.second?.let(copier::get))
+            },
+            anonymousFunctionCaptureNodes = anonymousFunctionCaptureNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
+            postponedLambdaExits = postponedLambdaExits.makeSnapshot { lambdas ->
+                val newExits = lambdas.exits.mapTo(mutableListOf()) { Pair(copier[it.first], it.second) }
+                PostponedLambdas(lambdas.lambdas, newExits)
+            },
+            loopConditionEnterNodes = loopConditionEnterNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
+            loopExitNodes = loopExitNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
+            whenExitNodes = whenExitNodes.makeSnapshot { copier[it] },
+            tryExitNodes = tryExitNodes.makeSnapshot { copier[it] },
+            catchNodes = catchNodes.makeSnapshot { it.map(copier::get) },
+            catchBlocksInProgress = catchBlocksInProgress.makeSnapshot { copier[it] },
+            finallyEnterNodes = finallyEnterNodes.makeSnapshot { copier[it] },
+            finallyBlocksInProgress = finallyBlocksInProgress.makeSnapshot { copier[it] },
+            finallyBlocksInProgressSet = finallyBlocksInProgressSet.toMutableSet(),
+            exitFunctionCallArgumentsNodes = exitFunctionCallArgumentsNodes.makeSnapshot { it?.let(copier::get) },
+            exitSafeCallNodes = exitSafeCallNodes.makeSnapshot { copier[it] },
+            exitElvisExpressionNodes = exitElvisExpressionNodes.makeSnapshot { copier[it] },
+            elvisRhsEnterNodes = elvisRhsEnterNodes.makeSnapshot { copier[it] },
+            equalityOperatorCallLhsExitNodes = equalityOperatorCallLhsExitNodes.makeSnapshot { copier[it] },
+            notCompletedFunctionCalls = notCompletedFunctionCalls.makeSnapshot { it.mapTo(mutableListOf(), copier::get) },
+        )
+    }
 
     val isTopLevel: Boolean
         get() = graphs.isEmpty || graphs.topOrNull()?.kind == ControlFlowGraph.Kind.File
@@ -46,47 +148,11 @@ class ControlFlowGraphBuilder {
         // are inside the try and which aren't
         get() = graphs.size + tryExitNodes.size
 
-    private val lastNodes: Stack<CFGNode<*>> = stackOf()
     val lastNode: CFGNode<*>
         get() = lastNodes.top()
 
     val lastNodeOrNull: CFGNode<*>?
         get() = lastNodes.topOrNull()
-
-    // ----------------------------------- Node caches -----------------------------------
-
-    private val exitTargetsForReturn: MutableMap<FirFunctionSymbol<*>, FunctionExitNode> = mutableMapOf()
-    private val enterToLocalClassesMembers: MutableMap<FirBasedSymbol<*>, Pair<CFGNode<*>, EdgeKind>> = mutableMapOf()
-
-    //return jumps via finally blocks, target -> jumps
-    private val nonDirectJumps: ListMultimap<CFGNode<*>, JumpNode> = listMultimapOf()
-
-    private val argumentListSplitNodes: Stack<SplitPostponedLambdasNode?> = stackOf()
-    private val postponedAnonymousFunctionNodes =
-        mutableMapOf<FirFunctionSymbol<*>, Pair<CFGNode<*>, PostponedLambdaExitNode?>>()
-    private val anonymousFunctionCaptureNodes =
-        mutableMapOf<FirFunctionSymbol<*>, AnonymousFunctionCaptureNode>()
-    private val postponedLambdaExits: Stack<PostponedLambdas> = stackOf()
-
-    private val loopConditionEnterNodes: MutableMap<FirLoop, LoopConditionEnterNode> = mutableMapOf()
-    private val loopExitNodes: MutableMap<FirLoop, LoopExitNode> = mutableMapOf()
-
-    private val whenExitNodes: Stack<WhenExitNode> = stackOf()
-
-    private val tryExitNodes: Stack<TryExpressionExitNode> = stackOf()
-    private val catchNodes: Stack<List<CatchClauseEnterNode>> = stackOf()
-    private val catchBlocksInProgress: Stack<CatchClauseEnterNode> = stackOf()
-    private val finallyEnterNodes: Stack<FinallyBlockEnterNode> = stackOf()
-    private val finallyBlocksInProgress: Stack<FinallyBlockEnterNode> = stackOf()
-    private val finallyBlocksInProgressSet = mutableSetOf<FirElement>()
-
-    private val exitFunctionCallArgumentsNodes: Stack<FunctionCallArgumentsExitNode?> = stackOf()
-    private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
-    private val exitElvisExpressionNodes: Stack<ElvisExitNode> = stackOf()
-    private val elvisRhsEnterNodes: Stack<ElvisRhsEnterNode> = stackOf()
-    private val equalityOperatorCallLhsExitNodes: Stack<CFGNode<*>> = stackOf()
-
-    private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallExitNode>> = stackOf()
 
     // ----------------------------------- Public API -----------------------------------
 

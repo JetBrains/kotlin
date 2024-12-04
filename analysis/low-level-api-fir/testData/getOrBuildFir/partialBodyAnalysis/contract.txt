@@ -61,6 +61,5 @@ FILE: [ResolvedTo(IMPORTS)] contract.kt
         R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         after#()
     }
-    public final [ResolvedTo(CONTRACTS)] fun before(): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(CONTRACTS)] fun before(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun after(): R|kotlin/Unit| { LAZY_BLOCK }
