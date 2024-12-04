@@ -741,7 +741,7 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 fun getJsLowerings(
     configuration: CompilerConfiguration
 ): List<SimpleNamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = listOfNotNull(
-    // BEGIN: Common Native/JS prefix.
+    // BEGIN: Common Native/JS/Wasm prefix.
     validateIrBeforeLowering,
     jsCodeOutliningPhase,
     lateinitPhase,
@@ -765,7 +765,7 @@ fun getJsLowerings(
                 configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null
     },
     validateIrAfterInliningAllFunctions,
-    // END: Common Native/JS prefix.
+    // END: Common Native/JS/Wasm prefix.
 
     constEvaluationPhase,
     copyInlineFunctionBodyLoweringPhase,

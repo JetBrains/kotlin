@@ -143,7 +143,7 @@ internal class K2WasmCompilerImpl(
             module.mainModule,
             configuration,
             performanceManager,
-            phaseConfig = createPhaseConfig(getWasmPhases(isIncremental = false), arguments, messageCollector),
+            phaseConfig = createPhaseConfig(getWasmPhases(configuration, isIncremental = false), arguments, messageCollector),
             exportedDeclarations = setOf(FqName("main")),
             generateTypeScriptFragment = generateDts,
             propertyLazyInitialization = arguments.irPropertyLazyInitialization,
