@@ -16,16 +16,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-
 /**
- * A signature of a variable-like symbol. This includes properties, enum entries local variables, etc.
+ * A [callable signature][KaCallableSignature] of a [variable symbol][KaVariableSymbol].
  */
 public interface KaVariableSignature<out S : KaVariableSymbol> : KaCallableSignature<S> {
     /**
-     * A name of the variable with respect to the `@ParameterName` annotation. Can be different from the [KaVariableSymbol.name].
+     * The name of the variable with respect to a [ParameterName] annotation. It can be different from [KaVariableSymbol.name].
      *
      * Some variables can have their names changed by special annotations like `@ParameterName(name = "newName")`. This is used to preserve
-     * the names of the lambda parameters in the situations like this:
+     * the names of the lambda parameters in situations like this:
      *
      * ```
      * // compiled library
@@ -38,13 +37,10 @@ public interface KaVariableSignature<out S : KaVariableSymbol> : KaCallableSigna
      * }
      * ```
      *
-     * Unfortunately, [symbol] for the `action("")` call will be pointing to the `Function1<P1, R>.invoke(p1: P1): R`, because we
+     * Unfortunately, the [symbol] for the `action("")` call will be pointing to `Function1<P1, R>.invoke(p1: P1): R`, because we
      * intentionally unwrap use-site substitution overrides. Because of this, `symbol.name` will yield `"p1"`, and not `"bar"`.
      *
-     * To overcome this problem, [name] property is introduced: it allows to get the intended name of the parameter,
-     * with respect to `@ParameterName` annotation.
-     *
-     * @see org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder.unwrapUseSiteSubstitutionOverride
+     * To overcome this problem, [name] allows to get the intended name of the parameter, with respect to the `@ParameterName` annotation.
      */
     public val name: Name
         get() = withValidityAssertion {
