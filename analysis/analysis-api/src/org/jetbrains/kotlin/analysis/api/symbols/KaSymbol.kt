@@ -48,7 +48,8 @@ public interface KaSymbol : KaLifetimeOwner {
      * - [KaSymbolOrigin.JAVA_LIBRARY]
      * - [KaSymbolOrigin.LIBRARY] (the [psi] source element is taken from the generated Kotlin class file)
      *
-     * For other usually synthetic origins, the property is undefined.
+     * For other (usually synthetic) origins, the [psi] might be `null` or non-null. The Analysis API makes no consistent guarantees about
+     * the PSI of such origins.
      */
     public val psi: PsiElement?
 
