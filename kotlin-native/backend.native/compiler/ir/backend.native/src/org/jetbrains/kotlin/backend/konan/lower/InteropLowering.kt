@@ -541,7 +541,7 @@ private class InteropTransformerPart1(
         }
 
         return irCallWithSubstitutedType(callee, listOf(type)).apply {
-            putValueArgument(0, expression)
+            arguments[0] = expression
         }
     }
 
