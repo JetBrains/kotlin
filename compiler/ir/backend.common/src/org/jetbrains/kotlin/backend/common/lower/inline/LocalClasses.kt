@@ -89,6 +89,11 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                             localFunctions.add(declaration)
                         }
 
+                        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
+                            // Do not extract getter of delegated property
+                            return
+                        }
+
                         override fun visitCall(expression: IrCall) {
                             val callee = expression.symbol.owner
                             if (!callee.isInline) {
