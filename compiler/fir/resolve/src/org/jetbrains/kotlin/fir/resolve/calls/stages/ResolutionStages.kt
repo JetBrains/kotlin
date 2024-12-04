@@ -377,7 +377,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         val boundSymbolOfReceiverToCheck = receiverValueToCheck.expression.implicitlyReferencedSymbolOrNull() ?: return
         val dslMarkers =
             getDslMarkersOfImplicitValue(
-                boundSymbolOfReceiverToCheck.containingDeclaration(),
+                boundSymbolOfReceiverToCheck.containingDeclarationIfParameter(),
                 receiverValueToCheck.expression.resolvedType,
                 context
             ).ifEmpty { return }
@@ -403,11 +403,11 @@ object CheckDslScopeViolation : ResolutionStage() {
         dslMarkersOfChosenReceiver: Set<ClassId>,
         context: ResolutionContext,
     ): Boolean {
-        val containingDeclaration = boundSymbol.containingDeclaration()
+        val containingDeclaration = boundSymbol.containingDeclarationIfParameter()
         return getDslMarkersOfImplicitValue(containingDeclaration, type, context).any { it in dslMarkersOfChosenReceiver }
     }
 
-    private fun FirBasedSymbol<*>.containingDeclaration(): FirBasedSymbol<*> {
+    private fun FirBasedSymbol<*>.containingDeclarationIfParameter(): FirBasedSymbol<*> {
         return when (this) {
             is FirReceiverParameterSymbol -> containingDeclarationSymbol
             is FirValueParameterSymbol -> containingDeclarationSymbol
