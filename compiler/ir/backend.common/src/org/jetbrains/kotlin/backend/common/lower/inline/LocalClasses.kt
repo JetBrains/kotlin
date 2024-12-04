@@ -88,6 +88,15 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                             localFunctions.add(declaration)
                         }
 
+                        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
+                            // Do not extract local delegates from the inline function.
+                            // Doing that can lead to inconsistent IR. Local delegated property consists of two elements: property and
+                            // accessors to it. Inside the accessor we have a reference to the property.
+                            // `LocalClassesInInlineLambdasLowering` can only extract the accessor out of inline lambda, leaving the
+                            // property in place. Because of this, we have not entirely correct reference.
+                            return
+                        }
+
                         override fun visitCall(expression: IrCall) {
                             val callee = expression.symbol.owner
                             if (!callee.isInline) {
