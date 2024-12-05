@@ -995,14 +995,22 @@ private class InteropTransformerPart2(
         return irBlock
     }
 
-    private fun IrBuilderWithScope.transformManagedArguments(oldCall: IrFunctionAccessExpression, oldFunction: IrFunction, newCall: IrFunctionAccessExpression, newFunction: IrFunction) {
-        for (index in 0 until oldCall.valueArgumentsCount) {
+    private fun IrBuilderWithScope.transformManagedArguments(
+            startIndex: Int,
+            shift: Int,
+            oldCall: IrFunctionAccessExpression,
+            oldFunction: IrFunction,
+            newCall: IrFunctionAccessExpression,
+            newFunction: IrFunction,
+    ) {
+        for (newIndex in startIndex..<newFunction.parameters.size) {
+            val oldIndex = newIndex - shift
             val newArgument = irBlock {
-                val oldArgument = irTemporary(oldCall.getValueArgument(index)!!)
-                if (oldFunction.valueParameters[index].type.isManagedType()) {
+                val oldArgument = irTemporary(oldCall.arguments[oldIndex]!!)
+                if (oldFunction.parameters[oldIndex].type.isManagedType()) {
                     +irSafeCall(
                             irGet(oldArgument),
-                            listOf((newFunction.valueParameters[index].type as IrSimpleType).arguments.single()),
+                            listOf((newFunction.parameters[newIndex].type as IrSimpleType).arguments.single()),
                             symbols.interopManagedGetPtr
                             // symbols.interopGetPtr
                     )
@@ -1010,7 +1018,7 @@ private class InteropTransformerPart2(
                     +irGet(oldArgument)
                 }
             }
-            newCall.putValueArgument(index, newArgument)
+            newCall.arguments[newIndex] = newArgument
         }
     }
 
@@ -1036,7 +1044,7 @@ private class InteropTransformerPart2(
         val irBlock = builder.at(expression)
                 .irBlock {
                     val cppConstructorCall = irCall(correspondingCppConstructor.symbol).apply {
-                        transformManagedArguments(expression, irConstructor, this, correspondingCppConstructor)
+                        transformManagedArguments(0, 0, expression, irConstructor, this, correspondingCppConstructor)
                     }
                     val call = irCall(primaryConstructor).also {
                         it.putValueArgument(0, transformCppConstructorCall(cppConstructorCall))
@@ -1322,7 +1330,7 @@ private class InteropTransformerPart2(
                 dispatchReceiver = irCall(cppProperty.getter!!).apply {
                     dispatchReceiver = expression.dispatchReceiver
                 }
-                transformManagedArguments(expression, function, this, newFunction)
+                transformManagedArguments(1, 0, expression, function, this, newFunction)
             }
         }
         val ccall = generateCCall(newCall as IrCall)
@@ -1395,7 +1403,7 @@ private class InteropTransformerPart2(
         val newCall = with (builder.at(expression)) {
             irCall(newFunction).apply {
                 dispatchReceiver = irGetObject(cppCompanion.symbol)
-                transformManagedArguments(expression, function, this, newFunction)
+                transformManagedArguments(1, 1, expression, function, this, newFunction)
             }
         }
         // TODO: this is exactly the same code as in transformManagedCall
