@@ -1428,13 +1428,7 @@ private class InteropTransformerPart2(
             value: IrExpression
     ): IrExpression {
         val conversion = symbols.integerConversions[source to target]!!
-        return irCall(conversion.owner).apply {
-            if (conversion.owner.dispatchReceiverParameter != null) {
-                dispatchReceiver = value
-            } else {
-                extensionReceiver = value
-            }
-        }
+        return irCall(conversion.owner).apply { arguments[0] = value }
     }
 
     private class StaticFunctionArgument(val function: IrFunction, val defined: Boolean)
