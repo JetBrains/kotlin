@@ -68,6 +68,14 @@ public expect fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Uni
 
 
 // from Grouping.kt
+/**
+ * Groups elements from the [Grouping] source by key and counts elements in each group.
+ *
+ * @return a [Map] associating the key of each group with the count of elements in the group.
+ *
+ * @sample samples.collections.Grouping.groupingByEachCount
+ */
+@SinceKotlin("1.1")
 public expect fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int>
 // public expect inline fun <T, K> Grouping<T, K>.eachSumOf(valueSelector: (T) -> Int): Map<K, Int>
 
