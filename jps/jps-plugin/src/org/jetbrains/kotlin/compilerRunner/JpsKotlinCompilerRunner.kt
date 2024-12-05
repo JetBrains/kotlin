@@ -88,6 +88,41 @@ class JpsKotlinCompilerRunner {
         }
 
         const val FAIL_ON_FALLBACK_PROPERTY = "test.kotlin.jps.compiler.runner.fail.on.fallback"
+        fun setupK2JvmArguments(moduleFile: File, settings: K2JVMCompilerArguments) {
+            with(settings) {
+                buildFile = moduleFile.absolutePath
+                destination = null
+                noStdlib = true
+                noReflect = true
+                noJdk = true
+            }
+        }
+        /*
+    * This function filters duplicates of -P plugin:<pluginId>:<optionName>=<value> in the compiler arguments
+    * */
+        fun filterDuplicatedCompilerPluginOptions(compilerArguments: List<String>): List<String> {
+            val filteredArguments = mutableListOf<String>()
+            val knownPluginOptions = mutableSetOf<String>()
+            val argumentsIterator = compilerArguments.iterator()
+
+            while (argumentsIterator.hasNext()) {
+                val argument = argumentsIterator.next()
+                // try to find pair -P plugin:<pluginId>:<optionName>=<value>
+                if (argument == "-P" && argumentsIterator.hasNext()) {
+                    val pluginOption = argumentsIterator.next() // expected plugin:<pluginId>:<optionName>=<value>
+                    val elementIsUnique = knownPluginOptions.add(pluginOption)
+                    if (elementIsUnique) {
+                        filteredArguments.add(argument) // add -P
+                        filteredArguments.add(pluginOption) // add the plugin option
+                    }
+                } else {
+                    // skip filtering for all other arguments
+                    filteredArguments.add(argument)
+                }
+            }
+
+            return filteredArguments
+        }
     }
 
     fun classesFqNamesByFiles(
@@ -273,32 +308,7 @@ class JpsKotlinCompilerRunner {
         return filterDuplicatedCompilerPluginOptions(allArgs).toTypedArray()
     }
 
-    /*
-    * This function filters duplicates of -P plugin:<pluginId>:<optionName>=<value> in the compiler arguments
-    * */
-    private fun filterDuplicatedCompilerPluginOptions(compilerArguments: List<String>): List<String> {
-        val filteredArguments = mutableListOf<String>()
-        val knownPluginOptions = mutableSetOf<String>()
-        val argumentsIterator = compilerArguments.iterator()
 
-        while (argumentsIterator.hasNext()) {
-            val argument = argumentsIterator.next()
-            // try to find pair -P plugin:<pluginId>:<optionName>=<value>
-            if (argument == "-P" && argumentsIterator.hasNext()) {
-                val pluginOption = argumentsIterator.next() // expected plugin:<pluginId>:<optionName>=<value>
-                val elementIsUnique = knownPluginOptions.add(pluginOption)
-                if (elementIsUnique) {
-                    filteredArguments.add(argument) // add -P
-                    filteredArguments.add(pluginOption) // add the plugin option
-                }
-            } else {
-                // skip filtering for all other arguments
-                filteredArguments.add(argument)
-            }
-        }
-
-        return filteredArguments
-    }
 
     private fun reportCategories(verbose: Boolean): Array<Int> {
         val categories =
@@ -349,16 +359,6 @@ class JpsKotlinCompilerRunner {
         // so we take it's contents through reflection
         val exitCode = ExitCode.valueOf(getReturnCodeFromObject(rc))
         processCompilerOutput(environment.messageCollector, environment.outputItemsCollector, stream, exitCode)
-    }
-
-    private fun setupK2JvmArguments(moduleFile: File, settings: K2JVMCompilerArguments) {
-        with(settings) {
-            buildFile = moduleFile.absolutePath
-            destination = null
-            noStdlib = true
-            noReflect = true
-            noJdk = true
-        }
     }
 
     private fun setupK2JsArguments(

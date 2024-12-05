@@ -110,7 +110,7 @@ object CompilerRunnerUtil {
         method.invoke(klass, files) as? Set<String>
     } ?: emptySet()
 
-    private fun <T> withCompilerClassloader(
+    fun <T> withCompilerClassloader(
         environment: JpsCompilerEnvironment,
         fn: (ClassLoader) -> T
     ): T? {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
 import org.jetbrains.jps.builders.FileProcessor
@@ -18,6 +19,7 @@ import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.model.JpsProject
+import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
@@ -25,21 +27,32 @@ import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.JpsBuildTime
 import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.buildtools.api.CompilationService.Companion.loadImplementation
+import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.mergeBeans
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.CompilerRunnerUtil.withCompilerClassloader
+import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner.Companion.filterDuplicatedCompilerPluginOptions
+import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner.Companion.setupK2JvmArguments
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageManager
+import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
+import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import org.jetbrains.kotlin.jps.model.kotlinKind
 import org.jetbrains.kotlin.jps.statistic.JpsBuilderMetricReporter
 import org.jetbrains.kotlin.jps.statistic.JpsStatisticsReportService
@@ -54,6 +67,9 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
+import java.util.*
 import kotlin.system.measureTimeMillis
 
 class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
@@ -223,7 +239,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun markAdditionalFilesForInitialRound(
         kotlinChunk: KotlinChunk,
         chunk: ModuleChunk,
-        kotlinContext: KotlinCompileContext
+        kotlinContext: KotlinCompileContext,
     ) {
         val context = kotlinContext.jpsContext
         val dirtyFilesHolder = KotlinDirtySourceFilesHolder(
@@ -302,7 +318,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         context: CompileContext,
         chunk: ModuleChunk,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-        outputConsumer: OutputConsumer
+        outputConsumer: OutputConsumer,
     ): ExitCode {
         val reportService = JpsStatisticsReportService.getFromContext(context)
         reportService.moduleBuildStarted(chunk)
@@ -315,7 +331,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         context: CompileContext,
         chunk: ModuleChunk,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-        outputConsumer: OutputConsumer
+        outputConsumer: OutputConsumer,
     ): ExitCode {
         if (chunk.isDummy(context))
             return NOTHING_DONE
@@ -466,10 +482,96 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         cleanJsOutputs(context, kotlinChunk, incrementalCaches, kotlinDirtyFilesHolder)
 
 
-
         val reportService = JpsStatisticsReportService.getFromContext(context)
         reportService.reportCompilerArguments(chunk, kotlinChunk)
         val start = System.nanoTime()
+
+
+        if (System.getProperty("kotlin.jps.build.bta") == "true") {
+            val groupId = "org.jetbrains.kotlin"
+            val version = "2.1.255-SNAPSHOT"
+            val artifactId = "kotlin-build-tools-impl"
+            val m2Repo = System.getProperty("user.home") + "/.m2/repository"
+            val groupPath = groupId.replace(".", "/")
+            val jarFile = File("$m2Repo/$groupPath/$artifactId/$version/$artifactId-$version.jar")
+            if (!jarFile.exists()) throw IllegalStateException("kotlin-build-tools-impl.jar is not found in $m2Repo. File: ${jarFile.absolutePath}")
+
+            val urls = AetherResolver().resolveArtifact("$groupId:$artifactId:$version")
+//kotlinbuildtoolsapiclasspath
+//            withCompilerClassloader(environment) { classloader ->
+////            val classpath = resolve("kotlin-build-tools-impl"), kotlinVersion) // => list of jar files
+////                val classpath = arrayOf(jarFile.toURI().toURL())
+////                val parentClassloader = SharedApiClassesClassLoader() // load BTA interfaces to JPS process
+////                val classloader = URLClassLoader(classpath, parentClassloader)
+//
+//
+//                val className = "org.jetbrains.kotlin.buildtools.internal.CompilationServiceImpl" // Известное имя класса в JAR
+//                val isJarLoaded = try {
+//                    classloader.loadClass(className)
+//                    true
+//                } catch (e: ClassNotFoundException) {
+//                    false
+//                }
+//                fun addJarToClassLoader(jarFile: File, classloader: ClassLoader): ClassLoader {
+//                    require(jarFile.exists() && jarFile.extension == "jar") { "Invalid JAR file: ${jarFile.absolutePath}" }
+//                    val jarUrl = jarFile.toURI().toURL()
+//
+//                    return if (classloader is URLClassLoader) {
+//                        val method = URLClassLoader::class.java.getDeclaredMethod("addURL", URL::class.java)
+//                        method.isAccessible = true
+//                        method.invoke(classloader, jarUrl)
+//                        classloader
+//                    } else {
+//                        // Create a new URLClassLoader
+//                        URLClassLoader(arrayOf(jarUrl), classloader)
+//                    }
+//                }
+//
+//                val compilationService: CompilationService = if (!isJarLoaded) {
+//                    val updatedClassLoader = addJarToClassLoader(jarFile, classloader)
+//                    // Проверка после добавления
+//                    try {
+//                        updatedClassLoader.loadClass(className)
+//                        println("JAR successfully added to ClassLoader.")
+//                    } catch (e: ClassNotFoundException) {
+//                        println("Failed to load class from added JAR.")
+//                    }
+//                    loadImplementation(updatedClassLoader)
+//                } else {
+//                    loadImplementation(classloader)
+//                }
+
+
+//            val tracker = object : BtaLookupTracker {
+//                override fun report(lookups: List<String>) {
+//                    println(lookups) // check classloader clash
+//                }
+//            }
+
+//        compilationService.compileDumbJvm(ProjectId.ProjectUUID(""), null, null, null, null, tracker)
+            val parentClassloader = SharedApiClassesClassLoader() // load BTA interfaces to JPS process
+            val classloader = URLClassLoader(urls, parentClassloader)
+            val compilationService: CompilationService = loadImplementation(classloader)
+
+            // Prepare args
+            val arguments = collectArguments(kotlinChunk, representativeTarget, kotlinDirtyFilesHolder)
+            // do non-inc compile
+            compilationService.compileJvm(
+                projectId = ProjectId.ProjectUUID(uuid = UUID.randomUUID()),
+                strategyConfig = compilationService.makeCompilerExecutionStrategyConfiguration().apply {
+//                    useInProcessStrategy()
+                    useDaemonStrategy(listOf("-Xmx2G"))
+                },
+                compilationConfig = compilationService.makeJvmCompilationConfiguration().apply {
+//                     useIncrementalCompilation() // now - disabled IC
+                },
+                sources = kotlinDirtyFilesHolder.allDirtyFiles.toList(),
+                arguments = arguments
+            )
+
+            return OK
+        }
+
         val outputItemCollector = doCompileModuleChunk(
             kotlinChunk,
             representativeTarget,
@@ -500,7 +602,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val generatedFiles = getGeneratedFiles(context, chunk, environment.outputItemsCollector)
 
-        if (!isKotlinBuilderInDumbMode) markDirtyComplementaryMultifileClasses(generatedFiles, kotlinContext, incrementalCaches, fsOperations)
+        if (!isKotlinBuilderInDumbMode) markDirtyComplementaryMultifileClasses(
+            generatedFiles,
+            kotlinContext,
+            incrementalCaches,
+            fsOperations
+        )
 
         val kotlinTargets = kotlinContext.targetsBinding
         for ((target, outputItems) in generatedFiles) {
@@ -570,11 +677,29 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         return OK
     }
 
+    private fun collectArguments(kotlinChunk: KotlinChunk, representativeTarget: KotlinModuleBuildTarget<*>, dirtyFilesHolder: KotlinDirtySourceFilesHolder): List<String> {
+        val module = representativeTarget.module
+        val commonArguments = kotlinChunk.compilerArguments
+        val k2jvmArguments = module.k2JvmCompilerArguments
+        val compilerSettings = module.kotlinCompilerSettings
+        val moduleFile = (representativeTarget as? KotlinJvmModuleBuildTarget)!!.generateChunkModuleDescription(dirtyFilesHolder) ?: return emptyList() // TODO: do nothing
+        val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2jvmArguments))
+        setupK2JvmArguments(moduleFile, arguments)
+
+        val allArgs = ArgumentUtils.convertArgumentsToStringList(arguments) +
+                (compilerSettings.additionalArgumentsAsList)
+        return filterDuplicatedCompilerPluginOptions(allArgs)
+
+//        withCompilerSettings(compilerSettings) {
+//            runCompiler(KotlinCompilerClass.JVM, arguments, environment, buildMetricReporter)
+//        }
+//        return emptyList()
+    }
     private fun cleanJsOutputs(
         context: CompileContext,
         kotlinChunk: KotlinChunk,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
-        kotlinDirtyFilesHolder: KotlinDirtySourceFilesHolder
+        kotlinDirtyFilesHolder: KotlinDirtySourceFilesHolder,
     ) {
         for (target in kotlinChunk.targets) {
             val cache = incrementalCaches[target] ?: continue
@@ -668,7 +793,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         enumWhenTracker: EnumWhenTracker,
         importTracker: ImportTracker,
         chunk: ModuleChunk,
-        messageCollector: MessageCollectorAdapter
+        messageCollector: MessageCollectorAdapter,
     ): JpsCompilerEnvironment? {
         val compilerServices = with(Services.Builder()) {
             kotlinModuleBuilderTarget.makeServices(
@@ -717,7 +842,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun getGeneratedFiles(
         context: CompileContext,
         chunk: ModuleChunk,
-        outputItemCollector: OutputItemsCollectorImpl
+        outputItemCollector: OutputItemsCollectorImpl,
     ): Map<ModuleBuildTarget, List<GeneratedFile>> {
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
         val sourceToTarget = HashMap<File, ModuleBuildTarget>()
@@ -747,7 +872,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     private fun updateLookupStorage(
         lookupTracker: LookupTracker,
         lookupStorageManager: JpsLookupStorageManager,
-        dirtyFilesHolder: KotlinDirtySourceFilesHolder
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
     ) {
         if (lookupTracker !is LookupTrackerImpl)
             throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
@@ -762,7 +887,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         generatedFiles: Map<ModuleBuildTarget, List<GeneratedFile>>,
         kotlinContext: KotlinCompileContext,
         incrementalCaches: Map<KotlinModuleBuildTarget<*>, JpsIncrementalCache>,
-        fsOperations: FSOperationsHelper
+        fsOperations: FSOperationsHelper,
     ) {
         for ((target, files) in generatedFiles) {
             val kotlinModuleBuilderTarget = kotlinContext.targetsBinding[target] ?: continue
@@ -797,7 +922,7 @@ private fun ChangesCollector.processChangesUsingLookups(
     compiledFiles: Set<File>,
     lookupStorageManager: JpsLookupStorageManager,
     fsOperations: FSOperationsHelper,
-    caches: Iterable<JpsIncrementalCache>
+    caches: Iterable<JpsIncrementalCache>,
 ) {
     val allCaches = caches.flatMap { it.thisWithDependentCaches }
     val reporter = JpsICReporter()
@@ -823,7 +948,7 @@ data class FilesToRecompile(val dirtyFiles: Set<File>, val forceRecompileTogethe
 
 private fun ChangesCollector.getDirtyFiles(
     caches: Iterable<IncrementalCacheCommon>,
-    lookupStorageManager: JpsLookupStorageManager
+    lookupStorageManager: JpsLookupStorageManager,
 ): FilesToRecompile {
     val reporter = JpsICReporter()
     val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = getChangedAndImpactedSymbols(caches, reporter)

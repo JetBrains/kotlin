@@ -81,6 +81,13 @@ dependencies {
 
     testImplementation("org.projectlombok:lombok:1.18.16")
     testImplementation(libs.kotlinx.serialization.json)
+
+    implementation("org.eclipse.aether:aether-api:1.1.0")
+    implementation("org.eclipse.aether:aether-util:1.1.0")
+    implementation("org.eclipse.aether:aether-connector-basic:1.1.0")
+    implementation("org.eclipse.aether:aether-transport-file:1.1.0")
+    implementation("org.eclipse.aether:aether-transport-http:1.1.0")
+    implementation("org.apache.maven:maven-resolver-provider:3.8.1")
 }
 
 sourceSets {
@@ -143,6 +150,10 @@ testsJar {}
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
     compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
     compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
+//    compilerOptions {
+//        optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
+//    }
+    compilerOptions.optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
 }
 
 /**
@@ -176,3 +187,19 @@ configurations.all {
         }
     }
 }
+
+//kotlin {
+//    compilerOptions {
+//        optIn.addAll(
+//            "kotlin.RequiresOptIn",
+//            "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
+//            "org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi",
+//            "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
+//            "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
+//            "org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi",
+//            "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
+//            "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
+//            "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl"
+//        )
+//    }
+//}
