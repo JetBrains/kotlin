@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -325,14 +326,15 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 }
 
 private fun KtImportList.computeHasImportAlias(): Boolean {
-    var child: PsiElement? = firstChild
-    while (child != null) {
-        if (child is KtImportDirective && child.alias != null) {
-            return true
+    val stub = greenStub
+    if (stub != null) {
+        return stub.childrenStubs.any {
+            it is KotlinImportDirectiveStub && it.findChildStubByType(KtStubElementTypes.IMPORT_ALIAS) != null
         }
-
-        child = child.nextSibling
     }
 
-    return false
+    return node.children().any {
+        val psi = it.psi
+        psi is KtImportDirective && psi.alias != null
+    }
 }
