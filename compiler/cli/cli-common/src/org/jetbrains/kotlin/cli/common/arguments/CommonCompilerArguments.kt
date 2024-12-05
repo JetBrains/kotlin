@@ -840,6 +840,16 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             field = value
         }
 
+    @Argument(
+        value = "-XXdebug-level-compiler-checks",
+        description = "Enable debug level compiler checks. ATTENTION: these checks can slow compiler down or even crash it."
+    )
+    var debugLevelCompilerChecks = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
