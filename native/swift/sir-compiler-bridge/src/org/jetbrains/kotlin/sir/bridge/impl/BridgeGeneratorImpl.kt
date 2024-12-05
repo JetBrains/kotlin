@@ -290,8 +290,18 @@ private fun BridgeFunctionDescriptor.swiftCall(typeNamer: SirTypeNamer): String 
     return returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvoke(typeNamer))
 }
 
-private fun BridgeFunctionDescriptor.cDeclaration() =
-    "${returnType.cType.repr.format("${cBridgeName}(${allParameters.filter { it.isRenderable }.joinToString { it.bridge.cType.repr.format(it.name.cIdentifier) }})${if (returnType.swiftType.isNever) " __attribute((noreturn))" else ""}")};"
+private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
+    append(
+        returnType.cType.render(buildString {
+            append(cBridgeName)
+            append("(")
+            allParameters.filter { it.isRenderable }.joinTo(this) { it.bridge.cType.render(it.name.cIdentifier) }
+            append(')')
+        })
+    )
+    if (returnType.swiftType.isNever) append(" __attribute((noreturn))")
+    append(";")
+}
 
 private fun BridgeFunctionDescriptor.createFunctionBridge(kotlinCall: BridgeFunctionDescriptor.() -> String) =
     FunctionBridge(
@@ -400,43 +410,50 @@ private data class BridgeParameter(
 }
 
 private sealed class CType {
-    abstract val repr: String
+    abstract fun render(name: String): String
 
-    sealed class Predefined(override val repr: String) : CType()
+    sealed class Predefined(private val repr: String) : CType() {
+        override fun render(name: String): String = if (name.isBlank()) repr else "$repr $name"
+    }
 
-    data object Void : Predefined("void %s")
-    data object Bool : Predefined("_Bool %s")
-    data object Int8 : Predefined("int8_t %s")
-    data object Int16 : Predefined("int16_t %s")
-    data object Int32 : Predefined("int32_t %s")
-    data object Int64 : Predefined("int64_t %s")
-    data object UInt8 : Predefined("uint8_t %s")
-    data object UInt16 : Predefined("uint16_t %s")
-    data object UInt32 : Predefined("uint32_t %s")
-    data object UInt64 : Predefined("uint64_t %s")
-    data object Float : Predefined("float %s")
-    data object Double : Predefined("double %s")
-    data object Object : Predefined("uintptr_t %s")
-    data object OutObject : Predefined("uintptr_t * %s")
-    data object NSString : Predefined("NSString * %s")
-    data object NSNumber : Predefined("NSNumber * %s")
-    data object NSArray : Predefined("NSArray * %s")
-    data object NSSet : Predefined("NSSet * %s")
-    data object NSDictionary : Predefined("NSDictionary * %s")
+    data object Void : Predefined("void")
+    data object Bool : Predefined("_Bool")
+    data object Int8 : Predefined("int8_t")
+    data object Int16 : Predefined("int16_t")
+    data object Int32 : Predefined("int32_t")
+    data object Int64 : Predefined("int64_t")
+    data object UInt8 : Predefined("uint8_t")
+    data object UInt16 : Predefined("uint16_t")
+    data object UInt32 : Predefined("uint32_t")
+    data object UInt64 : Predefined("uint64_t")
+    data object Float : Predefined("float")
+    data object Double : Predefined("double")
+    data object Object : Predefined("uintptr_t")
+    data object OutObject : Predefined("uintptr_t *")
+    data object NSString : Predefined("NSString *")
+    data object NSNumber : Predefined("NSNumber *")
+    data object NSArray : Predefined("NSArray *")
+    data object NSSet : Predefined("NSSet *")
+    data object NSDictionary : Predefined("NSDictionary *")
 
     class BlockPointer(val parameters: List<Bridge>, val returnType: Bridge) : CType() {
-        override val repr: String
-            get() = returnType.cType.repr.format("(^%s)(${parameters.printCParametersForBlock()})")
+        override fun render(name: String): String = returnType.cType.render(buildString {
+            append("(")
+            append("^$name")
+            append(")(")
+            append(parameters.printCParametersForBlock())
+            append(')')
+        })
 
         private fun List<Bridge>.printCParametersForBlock(): String = if (isEmpty()) {
             "void" // A block declaration without a prototype is deprecated
         } else {
-            joinToString { it.cType.repr }
+            joinToString { it.cType.render("") }
         }
     }
 }
 
-private enum class KotlinType(val repr: kotlin.String) {
+private enum class KotlinType(val repr: String) {
     Unit("Unit"),
 
     Boolean("Boolean"),
