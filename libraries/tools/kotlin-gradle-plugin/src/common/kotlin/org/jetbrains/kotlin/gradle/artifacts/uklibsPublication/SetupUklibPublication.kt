@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.artifacts.uklibsPublication
 
+import groovy.util.Node
+import groovy.util.NodeList
 import org.gradle.api.Project
+import org.gradle.api.XmlProvider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
 import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Module
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
 internal suspend fun Project.archiveUklibTask(): TaskProvider<ArchiveUklibTask> {
@@ -50,4 +54,38 @@ internal suspend fun Project.archiveUklibTask(): TaskProvider<ArchiveUklibTask> 
     }
 
     return archiveUklib
+}
+
+// FIXME: Project dependencies?
+// FIXME: Look at the (unresolved?) dependencies of all configurations that contribute to the POM (UsageComponents?) and set compile/runtime accordingly
+internal class UklibPomDependenciesRewriter {
+    data class DependencyGA(
+        val group: String?,
+        val artifact: String,
+    )
+
+    fun makeAllDependenciesCompile(
+        pomXml: XmlProvider,
+        mapping: Map<DependencyGA, KotlinUsageContext.MavenScope>,
+    ) {
+        val dependenciesNode = (pomXml.asNode().get("dependencies") as NodeList).filterIsInstance<Node>().singleOrNull() ?: return
+        val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()
+
+        dependencyNodes.forEach { dependencyNode ->
+//            fun Node.getSingleChildValueOrNull(childName: String): String? =
+//                ((get(childName) as NodeList?)?.singleOrNull() as Node?)?.text()
+            val g = ((dependencyNode.get("groupId") as NodeList).singleOrNull() as Node?)?.text() ?: return@forEach
+            val a = ((dependencyNode.get("artifactId") as NodeList).singleOrNull() as Node?)?.text() ?: return@forEach
+            val scope = ((dependencyNode.get("scope") as NodeList).singleOrNull() as Node?)
+
+            // Leave if it's already compile
+            if (scope?.text() == "compile") return@forEach
+            mapping[DependencyGA(g, a)]?.let {
+                when (it) {
+                    KotlinUsageContext.MavenScope.COMPILE -> scope?.setValue("compile")
+                    KotlinUsageContext.MavenScope.RUNTIME -> scope?.setValue("runtime")
+                }
+            }
+        }
+    }
 }

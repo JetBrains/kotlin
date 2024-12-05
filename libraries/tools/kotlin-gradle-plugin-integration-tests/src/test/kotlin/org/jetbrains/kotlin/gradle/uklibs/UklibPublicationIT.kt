@@ -316,8 +316,7 @@ class UklibPublicationIT : KGPBaseTest() {
         assertEquals(
             listOf(
                 MavenDependency(groupId = "foo", artifactId = "api", version = "1.0", scope = "compile"),
-                // FIXME: This should be runtime
-                MavenDependency(groupId = "foo", artifactId = "implementation", version = "1.0", scope = "compile"),
+                MavenDependency(groupId = "foo", artifactId = "implementation", version = "1.0", scope = "runtime"),
             ),
             parsePom(publisher.pom).mavenDependencies().filterNot {
                 it.artifactId == "kotlin-stdlib"

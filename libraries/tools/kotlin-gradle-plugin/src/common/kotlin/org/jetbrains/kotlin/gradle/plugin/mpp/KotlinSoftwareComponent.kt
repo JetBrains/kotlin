@@ -17,7 +17,6 @@ import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.SetProperty
-import org.gradle.api.publish.internal.component.MavenPublishingAwareVariant
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -47,10 +46,12 @@ abstract class KotlinSoftwareComponent(
 
     private val metadataTarget get() = project.multiplatformExtension.metadataTarget
 
+    internal val targetsWithDedicatedComponents = kotlinTargets
+        .filter { target -> target !is KotlinMetadataTarget }
+
     private val _variants = project.future {
         AfterFinaliseCompilations.await()
-        kotlinTargets
-            .filter { target -> target !is KotlinMetadataTarget }
+        targetsWithDedicatedComponents
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
                     .filter { component -> component.publishable }
