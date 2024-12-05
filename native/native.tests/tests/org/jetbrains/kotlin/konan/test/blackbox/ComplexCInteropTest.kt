@@ -261,8 +261,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("objCAction")
     fun testObjCAction() {
-        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.CMS, "Muted because of KT-72501")
-
         val execResult = testDylibCinteropExe(
             "objCAction",
             extraCompilerOpts = listOf("-tr"),
