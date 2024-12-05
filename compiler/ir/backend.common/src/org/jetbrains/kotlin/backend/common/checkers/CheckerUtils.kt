@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -123,14 +124,28 @@ private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
     "kotlin.wasm.internal.ClosureBoxFloat",
     "kotlin.wasm.internal.ClosureBoxDouble",
     "kotlin.wasm.internal.ClosureBoxAny",
+    "kotlin.wasm.internal.wasmTypeId",
+    "kotlin.native.internal.KClassImpl",
+    "kotlin.native.internal.KTypeImpl",
+    "kotlin.native.internal.KTypeProjectionList",
+    "kotlin.native.internal.KTypeParameterImpl",
 ).mapTo(hashSetOf(), ::FqName)
+
+private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
+    for (excludedFqName in FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS) {
+        if (hasEqualFqName(excludedFqName)) return true
+        val owner = owner
+        if (owner is IrDeclaration && (owner.parent as? IrDeclaration)?.symbol?.hasEqualFqName(excludedFqName) == true) return true
+    }
+    return false
+}
 
 internal fun checkVisibility(
     referencedDeclarationSymbol: IrSymbol,
     reference: IrElement,
     context: CheckerContext,
 ) {
-    if (FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS.any(referencedDeclarationSymbol::hasEqualFqName)) {
+    if (referencedDeclarationSymbol.isExcludedFromVisibilityChecks()) {
         return
     }
 
