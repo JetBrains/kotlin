@@ -138,9 +138,6 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/generated")
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
-                // kotlinx and org.w3c might become excluded in future
-                sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlinx")
-                sourceRoots.from("$kotlin_stdlib_dir/js/src/org.w3c")
 
                 sourceRoots.from("$kotlin_stdlib_dir/js/builtins")
 
@@ -155,11 +152,11 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                     "Number.kt",
                 ).forEach { sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins/$it") }
 
-                perPackageOption("org.w3c") {
-                    reportUndocumented.set(false)
+                perPackageOption("kotlin.browser") {
+                    suppress.set(true)
                 }
-                perPackageOption("org.khronos") {
-                    reportUndocumented.set(false)
+                perPackageOption("kotlin.dom") {
+                    suppress.set(true)
                 }
             }
             register("native") {
