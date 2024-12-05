@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.psiUtil.children
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 /**
@@ -97,7 +97,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             isScript?.let { if (!it) return null }
             greenStub?.let { if (!it.isScript()) return null }
 
-            val result = getChildOfType<KtScript>()
+            val result = findChildBeforeFirstDeclarationInclusiveByType<KtScript>(KtStubElementTypes.SCRIPT)
             if (isScript == null) {
                 isScript = result != null
             }
@@ -151,8 +151,8 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
      * So this function will iterate as a maximum only through all non-declarations in the beginning plus one declaration.
      * This one declaration processing is required to support the optimization for [KtScript] as well as it can be only in the beginning.
      */
-    private fun <T : KtElementImplStub<out StubElement<*>>> findChildBeforeFirstDeclarationInclusiveByType(
-        elementType: KtPlaceHolderStubElementType<T>,
+    private fun <T : KtElementImplStub<out StubElement<T>>> findChildBeforeFirstDeclarationInclusiveByType(
+        elementType: KtStubElementType<out StubElement<T>, T>,
     ): T? {
         val stub = greenStub
         if (stub != null) {
