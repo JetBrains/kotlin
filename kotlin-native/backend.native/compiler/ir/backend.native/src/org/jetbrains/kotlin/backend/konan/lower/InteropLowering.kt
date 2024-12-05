@@ -1359,7 +1359,7 @@ private class InteropTransformerPart2(
         if (one.classOrNull?.owner?.hasAnnotation(RuntimeNames.managedType) != true) return false
         if (!another.isCPointer(symbols) && !another.isCValuesRef(symbols)) return false
 
-        val cppType = one.classOrNull!!.owner.primaryConstructor?.valueParameters?.first()?.type ?: return false
+        val cppType = one.classOrNull!!.owner.primaryConstructor?.parameters?.first()?.type ?: return false
         val pointedType = (another as? IrSimpleType)?.arguments?.single() as? IrSimpleType ?: return false
         return cppType == pointedType
     }
