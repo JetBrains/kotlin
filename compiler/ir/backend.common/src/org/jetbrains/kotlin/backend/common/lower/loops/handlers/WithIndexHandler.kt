@@ -50,8 +50,11 @@ internal class WithIndexHandler(
     }
 
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo? {
+        val extensionReceiver = expression.arguments.zip(expression.symbol.owner.parameters).first { (_, parameter) ->
+            parameter.kind == IrParameterKind.ExtensionReceiver
+        }.first
         // WithIndexHeaderInfo is a composite that contains the HeaderInfo for the underlying iterable (if any).
-        val nestedInfo = expression.extensionReceiver!!.accept(visitor, null) ?: return null
+        val nestedInfo = extensionReceiver!!.accept(visitor, null) ?: return null
 
         // We cannot lower `iterable.withIndex().withIndex()`.
         // NestedHeaderInfoBuilderForWithIndex should not be yielding a WithIndexHeaderInfo, hence the assert.
