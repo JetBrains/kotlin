@@ -103,8 +103,7 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
     override val IrType.getFunction
         get() = getClass()!!.functions.single {
             it.name == getFunctionName &&
-                    it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type.isInt()
+                    it.parameters.singleOrNull{ it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }?.type?.isInt() == true
         }
 }
 
