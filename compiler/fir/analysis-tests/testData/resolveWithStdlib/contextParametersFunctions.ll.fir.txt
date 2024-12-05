@@ -1,0 +1,108 @@
+FILE: contextParametersFunctions.ll.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final fun usage1(): R|A| {
+        ^usage1 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<R|A|>()
+    }
+    context(b: R|B|)
+    public final fun usage2(): R|A| {
+        ^usage2 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<R|A|>()
+    }
+    public final fun R|A|.usage3(): R|A| {
+        ^usage3 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<R|A|>()
+    }
+    context(a: R|A|)
+    public final fun R|A|.usage4(): R|A| {
+        ^usage4 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<R|A|>()
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun usage5(): R|A| {
+        ^usage5 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<R|A|>()
+    }
+    context(a: R|A|)
+    public final fun usage6(): R|A| {
+        ^usage6 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+    }
+    context(a: R|A|, c: R|C|)
+    public final fun usage7(): R|A| {
+        ^usage7 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+    }
+    context(a: R|A|)
+    public final fun usage8(): <ERROR TYPE REF: Cannot infer argument for type parameter A> {
+        ^usage8 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+    }
+    context(a: R|A|, c: R|C|)
+    public final fun usage9(): <ERROR TYPE REF: Cannot infer argument for type parameter A> {
+        ^usage9 R|kotlin/fromContext<Inapplicable(INAPPLICABLE): kotlin/fromContext>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+    }
+    public final fun context1(): R|A| {
+        ^context1 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/usage1<Inapplicable(INAPPLICABLE): /usage1>#|()
+        }
+        )
+    }
+    public final fun context2(): R|A| {
+        ^context2 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/usage2<Inapplicable(INAPPLICABLE): /usage2>#|()
+        }
+        )
+    }
+    public final fun context3(): R|A| {
+        ^context3 R|kotlin/context<Inapplicable(INAPPLICABLE): kotlin/context>#|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ <Unresolved name: usage3>#()
+        }
+        )
+    }
+    public final fun context4(): R|A| {
+        ^context4 R|kotlin/context<Inapplicable(INAPPLICABLE): kotlin/context>#|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ <Unresolved name: usage4>#()
+        }
+        )
+    }
+    public final fun context5(): R|A| {
+        ^context5 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/usage5<Inapplicable(INAPPLICABLE): /usage5>#|()
+        }
+        )
+    }
+    public final fun context6(): R|A| {
+        ^context6 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/usage6<Inapplicable(INAPPLICABLE): /usage6>#|()
+        }
+        )
+    }
+    public final fun context7(): R|A| {
+        ^context7 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/usage7<Inapplicable(INAPPLICABLE): /usage7>#|()
+        }
+        )
+    }
+    public final fun context8(): R|A| {
+        ^context8 R|kotlin/context<Inapplicable(INAPPLICABLE): kotlin/context>#|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/usage8<Inapplicable(INAPPLICABLE): /usage8>#|()
+        }
+        )
+    }
+    public final fun context9(): R|A| {
+        ^context9 R|kotlin/context<Inapplicable(INAPPLICABLE): kotlin/context>#|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/usage9<Inapplicable(INAPPLICABLE): /usage9>#|()
+        }
+        )
+    }
