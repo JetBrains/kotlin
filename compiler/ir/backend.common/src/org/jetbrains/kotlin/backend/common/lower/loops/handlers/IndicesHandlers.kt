@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -30,17 +31,22 @@ internal abstract class IndicesHandler(protected val context: CommonBackendConte
             val last: IrExpression
             val lastInclusive: IrExpression?
             val isLastInclusive: Boolean
+            val (extensionReceiverParameter, extensionReceiver) = expression.symbol.owner.parameters
+                .zip(expression.arguments)
+                .first { (parameter, _) ->
+                    parameter.kind == IrParameterKind.ExtensionReceiver
+                }
 
             if (preferJavaLikeCounterLoop) {
                 // Convert range with inclusive upper bound to exclusive upper bound if possible.
                 // This affects loop code performance on JVM.
-                last = irCall(expression.symbol.owner.extensionReceiverParameter!!.type.sizePropertyGetter)
-                    .apply { dispatchReceiver = expression.extensionReceiver!! }
+                last = irCall(extensionReceiverParameter.type.sizePropertyGetter)
+                    .apply { dispatchReceiver = extensionReceiver!! }
                 lastInclusive = last.decrement()
                 isLastInclusive = false
             } else {
-                last = irCall(expression.symbol.owner.extensionReceiverParameter!!.type.sizePropertyGetter)
-                    .apply { dispatchReceiver = expression.extensionReceiver!! }
+                last = irCall(extensionReceiverParameter.type.sizePropertyGetter)
+                    .apply { dispatchReceiver = extensionReceiver!! }
                     .decrement()
                 lastInclusive = null
                 isLastInclusive = true
