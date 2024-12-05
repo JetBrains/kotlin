@@ -890,7 +890,7 @@ private class InteropTransformerPart2(
                         irEqeqeq(irGet(tmp), irNull()),
                         irNull(),
                         irCall(callee).apply {
-                            extensionReceiver = irGet(tmp)
+                            arguments[0] = irGet(tmp)
                             typeArguments.forEachIndexed { index, arg ->
                                 putTypeArgument(index, arg.typeOrNull!!)
                             }
