@@ -12,6 +12,11 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
     private val cachedNodes = HashMap<CFGNode<*>, CFGNode<*>>()
 
     operator fun get(graph: ControlFlowGraph): ControlFlowGraph {
+        if (graph.isComplete) {
+            // Do not copy the already complete graph – it's effectively immutable anyway
+            return graph
+        }
+
         val cachedGraph = cachedGraphs.get(graph)
         if (cachedGraph != null) {
             return cachedGraph
@@ -27,6 +32,10 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
     }
 
     operator fun <E : FirElement, N : CFGNode<E>> get(node: N): N {
+        if (node.owner.isComplete) {
+            return node
+        }
+
         val cachedNode = cachedNodes.get(node)
         if (cachedNode != null) {
             @Suppress("UNCHECKED_CAST")
