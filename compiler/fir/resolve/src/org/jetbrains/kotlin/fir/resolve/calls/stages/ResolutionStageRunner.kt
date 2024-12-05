@@ -20,10 +20,13 @@ class ResolutionStageRunner {
         val sink = CheckerSinkImpl(candidate, stopOnFirstError = stopOnFirstError)
         var finished = false
         sink.continuation = suspend {
-            candidate.callInfo.callKind.resolutionSequence.forEachIndexed { index, stage ->
-                if (index < candidate.passedStages) return@forEachIndexed
-                candidate.passedStages++
-                stage.check(candidate, candidate.callInfo, sink, context)
+            // Multiple runs on the same candidate are possible,
+            // that's why we have to skip already processed stages on the next run.
+            // Neither regular `for` loop nor iterating by index don't work here,
+            // because we have to start from the next unprocessed stage and mutate `Candidate.passedStages` on every iteration.
+            val resolutionSequence = candidate.callInfo.callKind.resolutionSequence
+            while (candidate.passedStages < resolutionSequence.size) {
+                resolutionSequence[candidate.passedStages++].check(candidate, candidate.callInfo, sink, context)
             }
         }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
             override val context: CoroutineContext
