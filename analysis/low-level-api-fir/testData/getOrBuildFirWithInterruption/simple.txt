@@ -69,7 +69,7 @@ R|/consume|(Int(5))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
-    public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyResolveStateKey=5(5/5) #1] fun test([ResolvedTo(BODY_RESOLVE)] foo: R|broken/lib/Foo|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyResolveStateKey=5(5/5) #3] fun test([ResolvedTo(BODY_RESOLVE)] foo: R|broken/lib/Foo|): R|kotlin/Unit| {
         R|/consume|(Int(1))
         R|/consume|(R|<local>/foo|.R|broken/lib/Foo.result|)
         R|/consume|(Int(3))

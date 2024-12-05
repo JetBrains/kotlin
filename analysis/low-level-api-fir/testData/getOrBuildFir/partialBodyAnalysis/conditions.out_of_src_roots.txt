@@ -1,0 +1,100 @@
+KT element: KtForExpression
+KT element text:
+for (line in lines) {
+        if (line.isNotEmpty) {
+            log(line)
+            count += 1
+        }
+    }
+FIR element: FirWhileLoopImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+    [ResolvedTo(RAW_FIR)] lval line: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
+     {
+        when () {
+            R|<local>/line|.<Unresolved name: isNotEmpty># ->  {
+                R|/log|(R|<local>/line|)
+                R|<local>/count| = R|<local>/count|.R|kotlin/Int.plus|(Int(1))
+            }
+        }
+
+    }
+
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] conditions.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=3(3/4) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] lines: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+        when () {
+            R|<local>/lines|.R|SubstitutionOverride<kotlin/collections/List.isEmpty: R|kotlin/Boolean|>|() ->  {
+                ^test Unit
+            }
+        }
+
+        [ResolvedTo(RAW_FIR)] lvar count: R|kotlin/Int| = Int(0)
+         {
+            [ResolvedTo(RAW_FIR)] lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/lines|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                [ResolvedTo(RAW_FIR)] lval line: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
+                 {
+                    when () {
+                        R|<local>/line|.<Unresolved name: isNotEmpty># ->  {
+                            R|/log|(R|<local>/line|)
+                            R|<local>/count| = R|<local>/count|.R|kotlin/Int.plus|(Int(1))
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        log#(count#.toString#())
+    }
+    public final [ResolvedTo(CONTRACTS)] fun log([ResolvedTo(CONTRACTS)] line: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+=====
+
+KT element: KtCallExpression
+KT element text:
+log(count.toString())
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/log|(R|<local>/count|.R|kotlin/Int.toString|())
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] conditions.kt
+    public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyResolveStateKey=4(4/4) #2] fun test([ResolvedTo(BODY_RESOLVE)] lines: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+        when () {
+            R|<local>/lines|.R|SubstitutionOverride<kotlin/collections/List.isEmpty: R|kotlin/Boolean|>|() ->  {
+                ^test Unit
+            }
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lvar count: R|kotlin/Int| = Int(0)
+         {
+            [ResolvedTo(BODY_RESOLVE)] lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/lines|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                [ResolvedTo(BODY_RESOLVE)] lval line: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
+                 {
+                    when () {
+                        R|<local>/line|.<Unresolved name: isNotEmpty># ->  {
+                            R|/log|(R|<local>/line|)
+                            R|<local>/count| = R|<local>/count|.R|kotlin/Int.plus|(Int(1))
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        R|/log|(R|<local>/count|.R|kotlin/Int.toString|())
+    }
+    public final [ResolvedTo(CONTRACTS)] fun log([ResolvedTo(CONTRACTS)] line: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
