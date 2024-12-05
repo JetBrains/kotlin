@@ -95,7 +95,7 @@ class ControlFlowGraphBuilder private constructor(
     fun createSnapshot(): ControlFlowGraphBuilder {
         val copier = ControlFlowGraphCopier()
 
-        return ControlFlowGraphBuilder(
+        val result = ControlFlowGraphBuilder(
             graphs = graphs.createSnapshot { copier[it] },
             lastNodes = lastNodes.createSnapshot { copier[it] },
             exitTargetsForReturn = exitTargetsForReturn.mapValuesTo(mutableMapOf()) { copier[it.value] },
@@ -132,6 +132,9 @@ class ControlFlowGraphBuilder private constructor(
             equalityOperatorCallLhsExitNodes = equalityOperatorCallLhsExitNodes.createSnapshot { copier[it] },
             notCompletedFunctionCalls = notCompletedFunctionCalls.createSnapshot { it.mapTo(mutableListOf(), copier::get) },
         )
+
+        copier.copyData()
+        return result
     }
 
     val isTopLevel: Boolean
