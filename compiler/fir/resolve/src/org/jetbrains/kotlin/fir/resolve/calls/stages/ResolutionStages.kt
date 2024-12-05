@@ -392,7 +392,7 @@ object CheckDslScopeViolation : ResolutionStage() {
             implicitValues.dropWhile { it.boundSymbol != boundSymbolOfReceiverToCheck }.ifEmpty { return }
 
         if (closerOrOnTheSameLevelImplicitValues.any {
-                receiverValueToCheck.expression != it.computeExpression()
+                !it.isSameImplicitReceiverInstance(receiverValueToCheck.expression)
                         && it.containsAnyOfGivenDslMarkers(dslMarkers, context)
             }) {
             sink.reportDiagnostic(DslScopeViolation(candidate.symbol))
