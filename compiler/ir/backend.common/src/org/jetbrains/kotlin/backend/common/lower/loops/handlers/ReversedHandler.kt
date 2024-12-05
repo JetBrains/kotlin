@@ -24,7 +24,7 @@ internal class ReversedHandler(context: CommonBackendContext, private val visito
         // TODO: Handle reversed String, Progression.withIndex(), etc.
         val callee = expression.symbol.owner
         return callee.parameters.none { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context } &&
-                callee.extensionReceiverParameter?.type in progressionClassesTypes &&
+                callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type in progressionClassesTypes &&
                 callee.kotlinFqName == FqName("kotlin.ranges.reversed")
     }
 
