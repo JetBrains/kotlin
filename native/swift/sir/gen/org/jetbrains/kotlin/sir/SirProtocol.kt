@@ -19,4 +19,6 @@ abstract class SirProtocol : SirDeclarationContainer(), SirNamedDeclaration {
     abstract override val attributes: List<SirAttribute>
     abstract override val name: String
     abstract override val declarations: List<SirDeclaration>
+    abstract val superClass: SirType?
+    abstract val protocols: List<SirProtocol>
 }

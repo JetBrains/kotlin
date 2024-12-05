@@ -11,6 +11,9 @@ public fun SirDeclarationContainer.allCallables(): Sequence<SirCallable> =
 public fun SirDeclarationContainer.allVariables(): Sequence<SirVariable> =
     declarations.asSequence().filterIsInstance<SirVariable>()
 
+public fun SirDeclarationContainer.allProtocols(): Sequence<SirProtocol> =
+    declarations.asSequence().filterIsInstance<SirProtocol>()
+
 public fun SirDeclarationContainer.allClasses(): Sequence<SirClass> =
     declarations.asSequence().filterIsInstance<SirClass>()
 

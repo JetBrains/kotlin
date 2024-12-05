@@ -3,7 +3,7 @@
 import KotlinRuntime
 
 public extension ExportedKotlinPackages.weird {
-    open class A : KotlinRuntime.KotlinBase {
+    open class A: KotlinRuntime.KotlinBase {
         open var bar: Swift.Int32 {
             get {
                 return weird_A_bar_get(self.__externalRCRef())
@@ -35,7 +35,7 @@ public extension ExportedKotlinPackages.weird {
             return _result
         }
     }
-    public final class B : ExportedKotlinPackages.weird.A {
+    public final class B: ExportedKotlinPackages.weird.A {
         @_nonoverride
         public var bar: Swift.Never {
             get {

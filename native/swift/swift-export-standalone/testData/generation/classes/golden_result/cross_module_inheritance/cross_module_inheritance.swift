@@ -1,7 +1,7 @@
 @_implementationOnly import KotlinBridges_cross_module_inheritance
 import inheritance
 
-public final class CLASS_ACROSS_MODULES : inheritance.OPEN_CLASS {
+public final class CLASS_ACROSS_MODULES: inheritance.OPEN_CLASS {
     public var value: Swift.Int32 {
         get {
             return CLASS_ACROSS_MODULES_value_get(self.__externalRCRef())

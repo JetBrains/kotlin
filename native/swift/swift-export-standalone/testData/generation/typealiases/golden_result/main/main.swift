@@ -17,7 +17,7 @@ public typealias nullable_primitive = Swift.Int32?
 public typealias objectWithClassInheritance = main.OBJECT_WITH_CLASS_INHERITANCE
 public typealias openClass = main.OPEN_CLASS
 public typealias sealedClass = main.SEALED
-open class ABSTRACT_CLASS : KotlinRuntime.KotlinBase {
+open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     package override init() {
         fatalError()
     }
@@ -27,7 +27,7 @@ open class ABSTRACT_CLASS : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class DATA_CLASS : KotlinRuntime.KotlinBase {
+public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     public var a: Swift.Int32 {
         get {
             return DATA_CLASS_a_get(self.__externalRCRef())
@@ -57,7 +57,7 @@ public final class DATA_CLASS : KotlinRuntime.KotlinBase {
         return DATA_CLASS_toString(self.__externalRCRef())
     }
 }
-public final class DATA_CLASS_WITH_REF : KotlinRuntime.KotlinBase {
+public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     public var o: KotlinRuntime.KotlinBase {
         get {
             return KotlinRuntime.KotlinBase(__externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
@@ -87,7 +87,7 @@ public final class DATA_CLASS_WITH_REF : KotlinRuntime.KotlinBase {
         return DATA_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
-public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
+public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
     public static var shared: main.DATA_OBJECT_WITH_PACKAGE {
         get {
             return main.DATA_OBJECT_WITH_PACKAGE(__externalRCRef: __root___DATA_OBJECT_WITH_PACKAGE_get())
@@ -124,8 +124,8 @@ public final class DATA_OBJECT_WITH_PACKAGE : KotlinRuntime.KotlinBase {
         return DATA_OBJECT_WITH_PACKAGE_toString(self.__externalRCRef())
     }
 }
-public final class ENUM : KotlinRuntime.KotlinBase, Swift.CaseIterable {
-    public final class INSIDE_ENUM : KotlinRuntime.KotlinBase {
+public final class ENUM: KotlinRuntime.KotlinBase, Swift.CaseIterable {
+    public final class INSIDE_ENUM: KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = ENUM_INSIDE_ENUM_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -168,7 +168,7 @@ public final class ENUM : KotlinRuntime.KotlinBase, Swift.CaseIterable {
         return main.ENUM(__externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public final class INHERITANCE_SINGLE_CLASS : main.OPEN_CLASS {
+public final class INHERITANCE_SINGLE_CLASS: main.OPEN_CLASS {
     public override init() {
         let __kt = __root___INHERITANCE_SINGLE_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
@@ -180,7 +180,7 @@ public final class INHERITANCE_SINGLE_CLASS : main.OPEN_CLASS {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-public final class OBJECT_WITH_CLASS_INHERITANCE : main.OPEN_CLASS {
+public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
     public static var shared: main.OBJECT_WITH_CLASS_INHERITANCE {
         get {
             return main.OBJECT_WITH_CLASS_INHERITANCE(__externalRCRef: __root___OBJECT_WITH_CLASS_INHERITANCE_get())
@@ -195,7 +195,7 @@ public final class OBJECT_WITH_CLASS_INHERITANCE : main.OPEN_CLASS {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-open class OPEN_CLASS : KotlinRuntime.KotlinBase {
+open class OPEN_CLASS: KotlinRuntime.KotlinBase {
     public override init() {
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRef: __kt)
@@ -207,8 +207,8 @@ open class OPEN_CLASS : KotlinRuntime.KotlinBase {
         super.init(__externalRCRef: __externalRCRef)
     }
 }
-open class SEALED : KotlinRuntime.KotlinBase {
-    public final class O : main.SEALED {
+open class SEALED: KotlinRuntime.KotlinBase {
+    public final class O: main.SEALED {
         public static var shared: main.SEALED.O {
             get {
                 return main.SEALED.O(__externalRCRef: SEALED_O_get())
@@ -240,7 +240,7 @@ public func increment(
 public extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo
     public typealias LargeInteger = Swift.Int64
-    public final class Bar : KotlinRuntime.KotlinBase {
+    public final class Bar: KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = typealiases_inner_Bar_init_allocate()
             super.init(__externalRCRef: __kt)
@@ -256,7 +256,7 @@ public extension ExportedKotlinPackages.typealiases.inner {
 public extension ExportedKotlinPackages.typealiases {
     public typealias Bar = ExportedKotlinPackages.typealiases.inner.Bar
     public typealias SmallInteger = Swift.Int16
-    public final class Foo : KotlinRuntime.KotlinBase {
+    public final class Foo: KotlinRuntime.KotlinBase {
         public override init() {
             let __kt = typealiases_Foo_init_allocate()
             super.init(__externalRCRef: __kt)

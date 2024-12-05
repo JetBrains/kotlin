@@ -22,6 +22,8 @@ class SirProtocolBuilder {
     val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
+    var superClass: SirType? = null
+    val protocols: MutableList<SirProtocol> = mutableListOf()
 
     fun build(): SirProtocol {
         return SirProtocolImpl(
@@ -31,6 +33,8 @@ class SirProtocolBuilder {
             attributes,
             name,
             declarations,
+            superClass,
+            protocols,
         )
     }
 
@@ -56,5 +60,7 @@ inline fun buildProtocolCopy(original: SirProtocol, init: SirProtocolBuilder.() 
     copyBuilder.attributes.addAll(original.attributes)
     copyBuilder.name = original.name
     copyBuilder.declarations.addAll(original.declarations)
+    copyBuilder.superClass = original.superClass
+    copyBuilder.protocols.addAll(original.protocols)
     return copyBuilder.apply(init).build()
 }

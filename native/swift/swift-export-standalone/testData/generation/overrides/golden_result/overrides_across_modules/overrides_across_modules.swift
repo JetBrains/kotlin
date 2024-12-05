@@ -1,7 +1,7 @@
 @_implementationOnly import KotlinBridges_overrides_across_modules
 import overrides
 
-open class Cousin : overrides.Parent {
+open class Cousin: overrides.Parent {
     open override var primitiveTypeVar: Swift.Int32 {
         get {
             return Cousin_primitiveTypeVar_get(self.__externalRCRef())
@@ -28,7 +28,7 @@ open class Cousin : overrides.Parent {
         return Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
     }
 }
-public final class FinalDerived3 : overrides.AbstractDerived2 {
+public final class FinalDerived3: overrides.AbstractDerived2 {
     public override init() {
         let __kt = __root___FinalDerived3_init_allocate()
         super.init(__externalRCRef: __kt)

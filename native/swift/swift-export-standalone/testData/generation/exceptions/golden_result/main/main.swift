@@ -1,7 +1,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 
-public final class Object : KotlinRuntime.KotlinBase {
+public final class Object: KotlinRuntime.KotlinBase {
     package override init(
         __externalRCRef: Swift.UInt
     ) {
