@@ -76,7 +76,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     // scripts have no package directive, all other files must have package directives
     val packageDirective: KtPackageDirective?
         get() {
-            val stub = stub
+            val stub = greenStub
             if (stub != null) {
                 val packageDirectiveStub = stub.findChildStubByType(KtStubElementTypes.PACKAGE_DIRECTIVE)
                 return packageDirectiveStub?.psi
@@ -91,7 +91,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         }
 
     var packageFqName: FqName
-        get() = stub?.getPackageFqName() ?: packageFqNameByTree
+        get() = greenStub?.getPackageFqName() ?: packageFqNameByTree
         set(value) {
             val packageDirective = packageDirective
             if (packageDirective != null) {
@@ -108,7 +108,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     val script: KtScript?
         get() {
             isScript?.let { if (!it) return null }
-            stub?.let { if (!it.isScript()) return null }
+            greenStub?.let { if (!it.isScript()) return null }
 
             val result = getChildOfType<KtScript>()
             if (isScript == null) {
@@ -134,13 +134,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
      * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
      */
     val danglingModifierLists: Array<out KtModifierList>
-        get() {
-            val stub = stub
-            return stub?.getChildrenByType(
-                KtStubElementTypes.MODIFIER_LIST,
-                KtStubElementTypes.MODIFIER_LIST.arrayFactory
-            ) ?: findChildrenByClass(KtModifierList::class.java)
-        }
+        get() = greenStub?.getChildrenByType(
+            KtStubElementTypes.MODIFIER_LIST,
+            KtStubElementTypes.MODIFIER_LIST.arrayFactory
+        ) ?: findChildrenByClass(KtModifierList::class.java)
 
     /**
      * @return annotations that do not belong to any declaration due to incomplete code or syntax errors
@@ -153,8 +150,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     override fun toString(): String = "KtFile: $name"
 
     override fun getDeclarations(): List<KtDeclaration> {
-        val stub = stub
-        return stub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
+        return greenStub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
             ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
     }
 
@@ -162,7 +158,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         elementType: KtPlaceHolderStubElementType<T>,
         elementClass: Class<T>
     ): T? {
-        val stub = stub
+        val stub = greenStub
         if (stub != null) {
             val importListStub = stub.findChildStubByType(elementType)
             return importListStub?.psi
@@ -174,7 +170,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         elementType: KtPlaceHolderStubElementType<T>,
         elementClass: Class<T>
     ): Array<out T> {
-        val stub = stub
+        val stub = greenStub
         if (stub != null) {
             val arrayFactory: ArrayFactory<T> = elementType.arrayFactory
             return stub.getChildrenByType(elementType, arrayFactory)
@@ -203,14 +199,20 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         return importDirectives.find { it.importedName == name }?.importedFqName?.pathSegments()?.last()
     }
 
-    override fun getStub(): KotlinFileStub? {
+    override fun getStub(): KotlinFileStub? = getFileStub {
+        super.getStub()
+    }
+
+    protected open val greenStub: KotlinFileStub? get() = getFileStub(this::getGreenStub)
+
+    private fun getFileStub(getter: () -> StubElement<*>?): KotlinFileStub? {
         if (virtualFile !is VirtualFileWithId) return null
-        val stub = super.getStub()
+        val stub = getter()
         if (stub is KotlinFileStub?) {
             return stub
         }
 
-        error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub?.javaClass} name=$name")
+        error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub.javaClass} name=$name")
     }
 
     override fun clearCaches() {
@@ -222,7 +224,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         hasImportAlias = null
     }
 
-    fun isScript(): Boolean = isScript ?: stub?.isScript() ?: isScriptByTree
+    fun isScript(): Boolean = isScript ?: greenStub?.isScript() ?: isScriptByTree
 
     fun hasTopLevelCallables(): Boolean {
         hasTopLevelCallables?.let { return it }

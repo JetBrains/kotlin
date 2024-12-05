@@ -58,8 +58,11 @@ abstract class AbstractRawFirBuilderLazyBodiesByStubTest : AbstractRawFirBuilder
         updatedProvider.manager.setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, testRootDisposable)
 
         val fileWithStub = object : KtFile(updatedProvider, false) {
+            private val fakeStub get() = stubTree?.root as? KotlinFileStub
+
             // We have to override this method as well as the base implementation will skip
-            override fun getStub(): KotlinFileStub? = stubTree?.root as? KotlinFileStub
+            override fun getStub(): KotlinFileStub? = fakeStub
+            override val greenStub: KotlinFileStub? get() = fakeStub
         }
 
         /**
