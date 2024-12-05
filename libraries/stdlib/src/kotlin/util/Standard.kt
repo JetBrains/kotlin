@@ -143,7 +143,9 @@ public inline fun <T> T.takeUnless(predicate: (T) -> Boolean): T? {
 /**
  * Executes the given function [action] specified number of [times].
  *
- * A zero-based index of current iteration is passed as a parameter to [action].
+ * A zero-based index of current iteration is passed as a parameter to the [action] function.
+ *
+ * If the [times] parameter is negative or equal to zero, the [action] function is not invoked.
  *
  * @sample samples.misc.ControlFlow.repeat
  */
