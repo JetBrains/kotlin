@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.descriptors.konan
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
-import org.jetbrains.kotlin.name.Name
 
 fun ClassDescriptor.getForwardDeclarationKindOrNull(): NativeForwardDeclarationKind? =
     NativeForwardDeclarationKind.packageFqNameToKind[(containingDeclaration as? PackageFragmentDescriptor)?.fqName]

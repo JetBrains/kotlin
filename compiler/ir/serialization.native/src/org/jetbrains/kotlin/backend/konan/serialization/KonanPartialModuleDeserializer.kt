@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAndType
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.konan.util.cacheFileId
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.ClassId
@@ -39,7 +39,7 @@ class KonanPartialModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         override val klib: KotlinLibrary,
         private val stubGenerator: DeclarationStubGenerator,
-        private val cachedLibraries: CachedLibraries,
+        private val cachedLibraries: CachedLibrariesBase,
         private val inlineFunctionFiles: MutableMap<IrExternalPackageFragment, IrFile>,
         strategyResolver: (String) -> DeserializationStrategy,
         private val cacheDeserializationStrategy: CacheDeserializationStrategy,
@@ -171,7 +171,7 @@ class KonanPartialModuleDeserializer(
         )
     }
 
-    fun buildClassFields(irClass: IrClass, fields: List<ClassLayoutBuilder.FieldInfo>): SerializedClassFields {
+    fun buildClassFields(irClass: IrClass, fields: List<FieldInfo>): SerializedClassFields {
         val signature = irClass.symbol.signature
                 ?: error("No signature for ${irClass.render()}")
         val topLevelSignature = signature.topLevelSignature()
@@ -409,7 +409,7 @@ class KonanPartialModuleDeserializer(
 
     private val lock = Any()
 
-    fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: ClassLayoutBuilder.FieldInfo?): List<ClassLayoutBuilder.FieldInfo> = synchronized(lock) {
+    fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: FieldInfo?): List<FieldInfo> = synchronized(lock) {
         val signature = irClass.symbol.signature
                 ?: error("No signature for ${irClass.render()}")
         val serializedClassFields = classesFields[signature]
@@ -466,7 +466,7 @@ class KonanPartialModuleDeserializer(
                         else -> error("Bad binary type of field $name of ${irClass.render()}")
                     }
                 }
-                ClassLayoutBuilder.FieldInfo(
+                FieldInfo(
                         name, type,
                         isConst = (field.flags and SerializedClassFieldInfo.FLAG_IS_CONST) != 0,
                         irFieldSymbol = IrFieldSymbolImpl(),
@@ -497,6 +497,6 @@ class KonanPartialModuleDeserializer(
     val sortedFileIds by lazy {
         fileDeserializationStates
                 .sortedBy { it.file.fileEntry.name }
-                .map { CacheSupport.cacheFileId(it.file.packageFqName.asString(), it.file.fileEntry.name) }
+                .map { cacheFileId(it.file.packageFqName.asString(), it.file.fileEntry.name) }
     }
 }

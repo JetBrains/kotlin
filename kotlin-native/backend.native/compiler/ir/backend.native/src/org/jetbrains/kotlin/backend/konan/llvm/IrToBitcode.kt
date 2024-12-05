@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
 import org.jetbrains.kotlin.backend.konan.lower.*
+import org.jetbrains.kotlin.backend.konan.serialization.NativeDependencyKind
+import org.jetbrains.kotlin.backend.konan.serialization.konanLibrary
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.*
@@ -2733,16 +2735,17 @@ internal class CodeGeneratorVisitor(
                         ?: error("Library ${library.libraryFile} is expected to be cached")
 
                 when (cache) {
-                    is CachedLibraries.Cache.Monolithic -> listOf(ctorProto(ctorName))
-                    is CachedLibraries.Cache.PerFile -> {
-                        val files = when (dependency.kind) {
-                            is DependenciesTracker.DependencyKind.WholeModule ->
+                    is CachedLibraries.Monolithic -> listOf(ctorProto(ctorName))
+                    is CachedLibraries.PerFile -> {
+                        val files = when (val kind = dependency.kind) {
+                            is NativeDependencyKind.WholeModule ->
                                 context.irLinker.klibToModuleDeserializerMap[library]!!.sortedFileIds
-                            is DependenciesTracker.DependencyKind.CertainFiles ->
-                                dependency.kind.files
+                            is NativeDependencyKind.CertainFiles ->
+                                kind.files
                         }
                         files.map { ctorProto(fileCtorName(library.uniqueName, it)) }
                     }
+                    else -> error("Unsupported cache kind: $cache")
                 }.map {
                     codegen.addFunction(it)
                 }

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.serialization.CachedLibrariesBase
+import org.jetbrains.kotlin.backend.konan.serialization.NativeDependencyKind
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 
 /**
@@ -45,13 +47,14 @@ internal fun resolveCacheBinaries(
                 ?: error("Library $library is expected to be cached")
 
         val list = when (cache.kind) {
-            CachedLibraries.Kind.DYNAMIC -> dynamicCaches
-            CachedLibraries.Kind.STATIC -> staticCaches
-            CachedLibraries.Kind.HEADER -> error("Header cache ${cache.path} cannot be used for linking")
+            CachedLibrariesBase.Kind.DYNAMIC -> dynamicCaches
+            CachedLibrariesBase.Kind.STATIC -> staticCaches
+            CachedLibrariesBase.Kind.HEADER -> error("Header cache ${cache.path} cannot be used for linking")
         }
 
-        list += if (dependency.kind is DependenciesTracker.DependencyKind.CertainFiles && cache is CachedLibraries.Cache.PerFile)
-            dependency.kind.files.map { cache.getFileBinaryPath(it) }
+        val kind = dependency.kind
+        list += if (kind is NativeDependencyKind.CertainFiles && cache is CachedLibraries.PerFile)
+            kind.files.map { cache.getFileBinaryPath(it) }
         else cache.binariesPaths
     }
     return ResolvedCacheBinaries(static = staticCaches, dynamic = dynamicCaches)

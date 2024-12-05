@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.serialization.getSuperClassNotAny
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
@@ -41,12 +41,13 @@ fun IrClass.isUsedAsBoxClass(): Boolean = IrTypeInlineClassesSupport.isUsedAsBox
 
 fun IrType.binaryTypeIsReference(): Boolean = this.computePrimitiveBinaryTypeOrNull() == null
 
-internal inline fun <R> IrType.unwrapToPrimitiveOrReference(
-        eachInlinedClass: (inlinedClass: IrClass, nullable: Boolean) -> Unit,
-        ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
-        ifReference: (type: IrType) -> R
+inline fun <R> IrType.unwrapToPrimitiveOrReference(
+    eachInlinedClass: (inlinedClass: IrClass, nullable: Boolean) -> Unit,
+    ifPrimitive: (primitiveType: KonanPrimitiveType, nullable: Boolean) -> R,
+    ifReference: (type: IrType) -> R
 ): R = IrTypeInlineClassesSupport.unwrapToPrimitiveOrReference(this, eachInlinedClass, ifPrimitive, ifReference)
 
+@OptIn(InternalKotlinNativeApi::class)
 internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType>() {
 
     override fun isNullable(type: IrType): Boolean = type.isNullable()

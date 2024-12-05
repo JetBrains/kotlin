@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.util.cacheFileId
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
@@ -132,7 +133,7 @@ class CacheSupport(
         val libraryToAddToCacheFile = File(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
         val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache)
-        if (libraryCache is CachedLibraries.Cache.Monolithic)
+        if (libraryCache is CachedLibraries.Monolithic)
             null
         else {
             val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE)
@@ -147,11 +148,6 @@ class CacheSupport(
 
     internal val preLinkCaches: Boolean =
             configuration.get(KonanConfigKeys.PRE_LINK_CACHES, false)
-
-    companion object {
-        fun cacheFileId(fqName: String, filePath: String) =
-                "${if (fqName == "") "ROOT" else fqName}.${filePath.hashCode().toString(Character.MAX_RADIX)}"
-    }
 
     fun checkConsistency() {
         // Ensure dependencies of every cached library are cached too:
@@ -181,7 +177,7 @@ class CacheSupport(
         // Ensure not making cache for libraries that are already cached:
         libraryToCache?.klib?.let {
             val cache = cachedLibraries.getLibraryCache(it)
-            if (cache is CachedLibraries.Cache.Monolithic) {
+            if (cache is CachedLibraries.Monolithic) {
                 configuration.reportCompilationError("can't cache library '${it.libraryName}' " +
                         "that is already cached in '${cache.path}'")
             }

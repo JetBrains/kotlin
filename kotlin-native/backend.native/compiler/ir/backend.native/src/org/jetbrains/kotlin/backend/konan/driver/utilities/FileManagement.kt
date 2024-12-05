@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.utilities
 
-import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
-import org.jetbrains.kotlin.backend.konan.CacheSupport
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.util.cacheFileId
 import java.io.File
 
 internal fun createTempFiles(config: KonanConfig, cacheDeserializationStrategy: CacheDeserializationStrategy?): TempFiles {
@@ -17,7 +17,7 @@ internal fun createTempFiles(config: KonanConfig, cacheDeserializationStrategy: 
         val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
         if (singleFileStrategy == null)
             it
-        else org.jetbrains.kotlin.konan.file.File(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).path
+        else org.jetbrains.kotlin.konan.file.File(it, cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).path
     }
     return TempFiles(pathToTempDir)
 }

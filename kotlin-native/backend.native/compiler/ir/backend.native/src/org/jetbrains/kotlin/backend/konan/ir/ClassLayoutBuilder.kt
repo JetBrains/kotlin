@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.serialization.FieldInfo
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -435,14 +436,6 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             return InterfaceTablePlace(classId, interfaceVTable.size, index)
         val superFunction = function.overriddenSymbols.first().owner
         return context.getLayoutBuilder(superFunction.parentAsClass).itablePlace(superFunction)
-    }
-
-    class FieldInfo(val name: String, val type: IrType, val isConst: Boolean, val irFieldSymbol: IrFieldSymbol, val alignment: Int) {
-        val irField: IrField?
-            get() = if (irFieldSymbol.isBound) irFieldSymbol.owner else null
-        init {
-            require(alignment.countOneBits() == 1) { "Alignment should be power of 2" }
-        }
     }
 
     /**

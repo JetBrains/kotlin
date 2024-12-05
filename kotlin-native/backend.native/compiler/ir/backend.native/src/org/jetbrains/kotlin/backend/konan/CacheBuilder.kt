@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
+import org.jetbrains.kotlin.backend.konan.serialization.Cache
+import org.jetbrains.kotlin.backend.konan.serialization.NativeDependencyKind
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.konan.util.cacheFileId
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
@@ -61,7 +64,7 @@ class CacheBuilder(
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
-    private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
+    private val caches = mutableMapOf<KotlinLibrary, Cache>()
     private val cacheRootDirectories = mutableMapOf<KotlinLibrary, String>()
 
     // If libA depends on libB, then dependableLibraries[libB] contains libA.
@@ -127,7 +130,7 @@ class CacheBuilder(
         for (library in icedLibraries) {
             if (library in needFullRebuild) continue
             val cache = caches[library] ?: continue
-            if (cache !is CachedLibraries.Cache.PerFile) {
+            if (cache !is CachedLibraries.PerFile) {
                 require(library.isCInteropLibrary())
                 continue
             }
@@ -138,7 +141,7 @@ class CacheBuilder(
             val actualFilesWithFqNames = library.getFilesWithFqNames()
             libraryFilesWithFqNames[library] = actualFilesWithFqNames
             val actualFiles = actualFilesWithFqNames.withIndex()
-                    .associate { CacheSupport.cacheFileId(it.value.fqName, it.value.filePath) to it.index }
+                    .associate { cacheFileId(it.value.fqName, it.value.filePath) to it.index }
                     .toMutableMap()
 
             for (cachedFile in cachedFiles) {
@@ -158,9 +161,9 @@ class CacheBuilder(
                         val dependentLibrary = uniqueNameToLibrary[dependency.libName]
                                 ?: error("Unknown dependent library ${dependency.libName}")
                         when (val kind = dependency.kind) {
-                            is DependenciesTracker.DependencyKind.WholeModule ->
+                            is NativeDependencyKind.WholeModule ->
                                 reversedWholeLibraryDependencies.getOrPut(dependentLibrary) { mutableListOf() }.add(libraryFile)
-                            is DependenciesTracker.DependencyKind.CertainFiles ->
+                            is NativeDependencyKind.CertainFiles ->
                                 kind.files.forEach {
                                     reversedPerFileDependencies.getOrPut(LibraryFile(dependentLibrary, it)) { mutableListOf() }.add(libraryFile)
                                 }
@@ -217,7 +220,7 @@ class CacheBuilder(
         for (library in icedLibraries) {
             val filesToCache = groupedDirtyFiles[library]?.let { libraryFiles ->
                 val filesWithFqNames = libraryFilesWithFqNames[library]!!.associateBy {
-                    CacheSupport.cacheFileId(it.fqName, it.filePath)
+                    cacheFileId(it.fqName, it.filePath)
                 }
                 libraryFiles.map { filesWithFqNames[it.file]!!.filePath }
             }.orEmpty()

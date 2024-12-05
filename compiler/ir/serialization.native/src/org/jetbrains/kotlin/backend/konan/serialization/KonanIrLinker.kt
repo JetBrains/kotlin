@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSu
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -263,7 +262,7 @@ class KonanIrLinker(
         private val cenumsProvider: IrProviderForCEnumAndCStructStubsBase,
         exportedDependencies: List<ModuleDescriptor>,
         override val partialLinkageSupport: PartialLinkageSupportForLinker,
-        private val cachedLibraries: CachedLibraries,
+        private val cachedLibraries: CachedLibrariesBase,
         private val lazyIrForCaches: Boolean,
         private val libraryBeingCached: PartialCacheInfo?,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport,

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
@@ -24,11 +25,17 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.IdSignatureValues
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.utils.atMostOne
 
 const val KONAN_STDLIB_NAME = "stdlib"
 val NATIVE_STDLIB_MODULE_NAME: Name = Name.special("<$KONAN_STDLIB_NAME>")
@@ -135,3 +142,14 @@ fun DeclarationDescriptor.isFromInteropLibrary(): Boolean = isFromCInteropLibrar
 
 val ModuleDescriptor.isForwardDeclarationModule: Boolean
     get() = name == FORWARD_DECLARATIONS_MODULE_NAME
+
+// TODO find better place for next 4 functions
+val IrClass.superClasses get() = this.superTypes.map { it.classifierOrFail as IrClassSymbol }
+
+fun IrClass.getSuperClassNotAny() = this.superClasses.map { it.owner }.atMostOne { !it.isInterface && !it.isAny() }
+
+fun IrClass.isAny() = this.isClassTypeWithSignature(IdSignatureValues.any)
+
+private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature): Boolean {
+    return signature == symbol.signature
+}

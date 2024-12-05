@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForClass
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
+import org.jetbrains.kotlin.backend.konan.serialization.FieldInfo
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -90,7 +92,7 @@ internal data class ClassBodyAndAlignmentInfo(
         val fieldsIndices: Map<IrFieldSymbol, Int>
 )
 
-private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): ClassBodyAndAlignmentInfo {
+private fun ContextUtils.createClassBody(name: String, fields: List<FieldInfo>): ClassBodyAndAlignmentInfo {
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
     val packed = context.config.packFields ||
         fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
@@ -195,7 +197,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         super.visitClass(declaration)
     }
 
-    private fun packFields(declaration: IrClass): List<ClassLayoutBuilder.FieldInfo> {
+    private fun packFields(declaration: IrClass): List<FieldInfo> {
         val fields = context.getLayoutBuilder(declaration).getFields(llvm)
         // The NoReorderFields annotation is internal, and only occurs on final classes with no inherited fields.
         if (declaration.hasAnnotation(KonanFqNames.noReorderFields)) {
@@ -235,7 +237,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             else -> offset8.also { offset8 += alignTo(size, 8) }
         }
 
-        class IndexedField(val offset: Long, val field: ClassLayoutBuilder.FieldInfo)
+        class IndexedField(val offset: Long, val field: FieldInfo)
 
         val packedFields = mutableListOf<IndexedField>()
         for (field in fields) {

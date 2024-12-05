@@ -8,6 +8,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testImplementation(project(":compiler:ir.serialization.native"))
+    testImplementation(project(":compiler:ir.objcinterop"))
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(projectTests(":native:native.tests"))
     testImplementation(projectTests(":kotlin-util-klib-abi"))
