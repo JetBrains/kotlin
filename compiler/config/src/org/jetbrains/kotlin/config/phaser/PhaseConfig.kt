@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.config.phaser
  */
 class PhaseConfig(
     disabledPhases: Set<String> = emptySet(),
-    val verbose: Set<String> = emptySet(),
+    val verbose: PhaseSet = PhaseSet.Enum(emptySet()),
     val toDumpStateBefore: PhaseSet = PhaseSet.Enum(emptySet()),
     val toDumpStateAfter: PhaseSet = PhaseSet.Enum(emptySet()),
     private val toValidateStateBefore: PhaseSet = PhaseSet.Enum(emptySet()),
@@ -28,7 +28,7 @@ class PhaseConfig(
         phase.name !in disabledMut
 
     override fun isVerbose(phase: AnyNamedPhase): Boolean =
-        phase.name in verbose
+        phase in verbose
 
     override fun disable(phase: AnyNamedPhase) {
         disabledMut += phase.name

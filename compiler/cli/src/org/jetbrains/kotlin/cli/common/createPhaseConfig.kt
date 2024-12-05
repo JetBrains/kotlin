@@ -17,7 +17,7 @@ fun createPhaseConfig(
 
     return PhaseConfig(
         arguments.disablePhases.orEmpty().toSet(),
-        arguments.verbosePhases.orEmpty().toSet(),
+        createPhaseSetFromArguments(arguments.verbosePhases),
         createPhaseSetFromArguments(arguments.phasesToDumpBefore) + toDumpBoth,
         createPhaseSetFromArguments(arguments.phasesToDumpAfter) + toDumpBoth,
         createPhaseSetFromArguments(arguments.phasesToValidateBefore) + toValidateBoth,
