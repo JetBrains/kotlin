@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 open class UpgradeCallableReferences(
     val context: LoweringContext,
-    val upgradeFunctionReferences: Boolean = true,
+    val upgradeFunctionReferencesAndLambdas: Boolean = true,
     val upgradePropertyReferences: Boolean = true,
     val upgradeLocalDelegatedPropertyReferences: Boolean = true,
     val upgradeSamConversions: Boolean = true,
@@ -74,17 +74,15 @@ open class UpgradeCallableReferences(
         }
 
         private fun IrFunction.flattenParameters() {
-            // need to reset the list to trigger old index recalculation, can be removed after all indices are dropped.
-            parameters = parameters.map {
-                require(it.kind != IrParameterKind.DispatchReceiver) { "No dispatch receiver allowed in wrappers" }
-                it.kind = IrParameterKind.Regular
-                it
+            for (parameter in parameters) {
+                require(parameter.kind != IrParameterKind.DispatchReceiver) { "No dispatch receiver allowed in wrappers" }
+                parameter.kind = IrParameterKind.Regular
             }
         }
 
         override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrDeclarationParent): IrElement {
             expression.transformChildren(this, data)
-            if (!upgradeFunctionReferences) return expression
+            if (!upgradeFunctionReferencesAndLambdas) return expression
             val isRestrictedSuspension = expression.function.isRestrictedSuspensionFunction()
             expression.function.flattenParameters()
             return IrRichFunctionReferenceImpl(
@@ -148,19 +146,16 @@ open class UpgradeCallableReferences(
             return when (reference) {
                 is IrFunctionReference -> AdaptedBlock(function, reference, reference.type)
                 is IrTypeOperatorCall -> {
-                    if (reference.operator == IrTypeOperator.SAM_CONVERSION) {
-                        val argument = reference.argument as? IrFunctionReference ?: return null
-                        AdaptedBlock(function, argument, reference.typeOperand)
-                    } else {
-                        null
-                    }
+                    if (reference.operator != IrTypeOperator.SAM_CONVERSION) return null
+                    val argument = reference.argument as? IrFunctionReference ?: return null
+                    AdaptedBlock(function, argument, reference.typeOperand)
                 }
                 else -> null
             }
         }
 
         override fun visitBlock(expression: IrBlock, data: IrDeclarationParent): IrExpression {
-            if (!upgradeFunctionReferences) return super.visitBlock(expression, data)
+            if (!upgradeFunctionReferencesAndLambdas) return super.visitBlock(expression, data)
             val (function, reference, samType) = expression.parseAdaptedBlock() ?: return super.visitBlock(expression, data)
             function.transformChildren(this, function)
             reference.transformChildren(this, data)
@@ -191,13 +186,10 @@ open class UpgradeCallableReferences(
             if (upgradeSamConversions && expression.operator == IrTypeOperator.SAM_CONVERSION) {
                 expression.transformChildren(this, data)
                 val argument = expression.argument
-                return if (argument is IrRichFunctionReference) {
-                    argument.apply {
-                        type = expression.typeOperand
-                        overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.typeOperand)
-                    }
-                } else {
-                    expression
+                if (argument !is IrRichFunctionReference) return expression
+                return argument.apply {
+                    type = expression.typeOperand
+                    overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.typeOperand)
                 }
             }
             return super.visitTypeOperator(expression, data)
@@ -205,7 +197,7 @@ open class UpgradeCallableReferences(
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
-            if (!upgradeFunctionReferences) return expression
+            if (!upgradeFunctionReferencesAndLambdas) return expression
             val arguments = expression.getArgumentsWithIr()
             return IrRichFunctionReferenceImpl(
                 startOffset = expression.startOffset,
