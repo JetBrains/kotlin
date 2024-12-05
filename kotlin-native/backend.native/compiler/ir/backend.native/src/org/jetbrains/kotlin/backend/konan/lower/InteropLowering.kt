@@ -730,12 +730,11 @@ private class InteropTransformerPart1(
         val callee = expression.symbol.owner
 
         callee.getObjCFactoryInitMethodInfo()?.let { initMethodInfo ->
-            val arguments = (0 until expression.valueArgumentsCount)
-                    .map { index -> expression.getValueArgument(index) }
+            val arguments = expression.arguments
 
             return builder.at(expression).run {
-                val classPtr = getRawPtr(expression.extensionReceiver!!)
-                callAllocAndInit(classPtr, initMethodInfo, arguments, expression, callee)
+                val classPtr = getRawPtr(arguments[0]!!)
+                callAllocAndInit(classPtr, initMethodInfo, arguments.drop(1), expression, callee)
             }
         }
 
@@ -750,8 +749,12 @@ private class InteropTransformerPart1(
                             ?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
 
             if (!useKotlinDispatch) {
-                val arguments = callee.valueParameters.map { expression.getValueArgument(it.indexInOldValueParameters) }
-                require(expression.dispatchReceiver == null || expression.extensionReceiver == null) { renderCompilerError(expression) }
+                val arguments = expression.arguments
+                require(callee.parameters.count {
+                    it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver
+                } == 1) {
+                    renderCompilerError(expression)
+                }
                 require(expression.superQualifierSymbol?.owner?.isObjCMetaClass() != true) { renderCompilerError(expression) }
                 require(expression.superQualifierSymbol?.owner?.isInterface != true) { renderCompilerError(expression) }
 
@@ -760,8 +763,8 @@ private class InteropTransformerPart1(
                 return builder.genLoweredObjCMethodCall(
                         methodInfo,
                         superQualifier = expression.superQualifierSymbol,
-                        receiver = expression.dispatchReceiver ?: expression.extensionReceiver!!,
-                        arguments = arguments,
+                        receiver = arguments[0]!!,
+                        arguments = arguments.drop(1),
                         call = expression,
                         method = callee
                 )
