@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.common.checkers.declaration
 
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 
 internal interface IrDeclarationChecker<in D : IrDeclaration> {
     fun check(declaration: D, context: CheckerContext)
@@ -22,3 +20,4 @@ internal fun <D : IrDeclaration> List<IrDeclarationChecker<D>>.check(declaration
 
 internal typealias IrValueParameterChecker = IrDeclarationChecker<IrValueParameter>
 internal typealias IrFieldChecker = IrDeclarationChecker<IrField>
+internal typealias IrFunctionChecker = IrDeclarationChecker<IrFunction>
