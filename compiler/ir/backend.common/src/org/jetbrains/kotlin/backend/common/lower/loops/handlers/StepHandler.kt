@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -31,8 +32,11 @@ internal class StepHandler(
 ) : HeaderInfoHandler<IrCall, ProgressionType> {
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type?.let { it.isInt() || it.isLong() } == true &&
-                callee.extensionReceiverParameter?.type?.classOrNull in context.ir.symbols.progressionClasses &&
+        return callee.parameters
+            .singleOrNull { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }?.type
+            ?.let { it.isInt() || it.isLong() } == true &&
+                callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type
+                    ?.classOrNull in context.ir.symbols.progressionClasses &&
                 callee.kotlinFqName == FqName("kotlin.ranges.step")
     }
 
