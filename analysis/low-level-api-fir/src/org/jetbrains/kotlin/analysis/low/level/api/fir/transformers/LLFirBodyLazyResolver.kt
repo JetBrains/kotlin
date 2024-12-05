@@ -224,7 +224,8 @@ private class FirPartialBodyExpressionResolveTransformer(
                         analysisStateSnapshot = LLPartialBodyResolveSnapshot(
                             towerDataContext = context.towerDataContext.createSnapshot(keepMutable = true),
                             dataFlowAnalyzerContext = context.dataFlowAnalyzerContext.createSnapshot()
-                        )
+                        ),
+                        previousState = declaration.partialBodyResolveState?.copy(analysisStateSnapshot = null)
                     )
                     shouldStop = true
                     throw PartialBodyAnalysisSuspendedException()
@@ -251,8 +252,9 @@ private class FirPartialBodyExpressionResolveTransformer(
             totalPsiStatementCount = request.totalPsiStatementCount,
             analyzedPsiStatementCount = request.totalPsiStatementCount,
             analyzedFirStatementCount = index,
-            performedAnalysesCount = 1,
-            analysisStateSnapshot = null
+            performedAnalysesCount = performedAnalysesCount + 1,
+            analysisStateSnapshot = null,
+            previousState = declaration.partialBodyResolveState?.copy(analysisStateSnapshot = null)
         )
 
         return true

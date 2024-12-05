@@ -59,7 +59,8 @@ internal class PartialBodyDeclarationFirElementProvider(
                 analyzedPsiStatementCount = 0,
                 analyzedFirStatementCount = 0,
                 performedAnalysesCount = 0,
-                analysisStateSnapshot = null
+                analysisStateSnapshot = null,
+                previousState = null
             )
         }
     }
