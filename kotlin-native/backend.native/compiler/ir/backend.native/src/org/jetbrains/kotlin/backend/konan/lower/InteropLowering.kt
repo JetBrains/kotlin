@@ -1383,18 +1383,18 @@ private class InteropTransformerPart2(
         val newFunction = cppCompanion.declarations
                 .filterIsInstance<IrSimpleFunction>()
                 .filter { it.name == function.name }
-                .filter { it.valueParameters.size == function.valueParameters.size }
+                .filter { it.parameters.size == function.parameters.size }
                 .filter {
-                    it.valueParameters.mapIndexed() { index, parameter ->
-                        managedTypeMatch(function.valueParameters[index].type, parameter.type)
-                    }.all { it }
+                    it.parameters.withIndex().all { (index, parameter) ->
+                        managedTypeMatch(function.parameters[index].type, parameter.type)
+                    }
                 }.single()
 
         val newFunctionType = newFunction.returnType
 
-        val newCall = with (builder.at(expression)) {
+        val newCall = with(builder.at(expression)) {
             irCall(newFunction).apply {
-                dispatchReceiver = irGetObject(cppCompanion.symbol)
+                arguments[0] = irGetObject(cppCompanion.symbol)
                 transformManagedArguments(1, 1, expression, function, this, newFunction)
             }
         }
@@ -1410,17 +1410,11 @@ private class InteropTransformerPart2(
                         pointed.isSkiaRefCnt() -> true
                         else -> error("Unexpected pointer argument for ManagedType")
                     }.toIrConst(context.irBuiltIns.booleanType)
-                    putValueArgument(0,
-                            irCall(symbols.interopInterpretNullablePointed).apply {
-                                putValueArgument(0,
-                                        irCall(symbols.interopCPointerGetRawValue).apply {
-                                            extensionReceiver = ccall
-                                        }
-                                )
-                                putTypeArgument(0, pointed)
-                            }
-                    )
-                    putValueArgument(1, managed)
+                    arguments[0] = irCall(symbols.interopInterpretNullablePointed).apply {
+                        arguments[0] = irCall(symbols.interopCPointerGetRawValue).apply { arguments[0] = ccall }
+                        putTypeArgument(0, pointed)
+                    }
+                    arguments[1] = managed
                 }
             }
         } else {
