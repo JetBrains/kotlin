@@ -1145,7 +1145,7 @@ private class InteropTransformerPart2(
         if (intrinsicType != null) {
             return when (intrinsicType) {
                 IntrinsicType.INTEROP_BITS_TO_FLOAT -> {
-                    val argument = expression.getValueArgument(0)
+                    val argument = expression.arguments[0]
                     if (argument is IrConst && argument.kind == IrConstKind.Int) {
                         val floatValue = kotlinx.cinterop.bitsToFloat(argument.value as Int)
                         builder.irFloat(floatValue)
@@ -1154,7 +1154,7 @@ private class InteropTransformerPart2(
                     }
                 }
                 IntrinsicType.INTEROP_BITS_TO_DOUBLE -> {
-                    val argument = expression.getValueArgument(0)
+                    val argument = expression.arguments[0]
                     if (argument is IrConst && argument.kind == IrConstKind.Long) {
                         val doubleValue = kotlinx.cinterop.bitsToDouble(argument.value as Long)
                         builder.irDouble(doubleValue)
@@ -1163,7 +1163,7 @@ private class InteropTransformerPart2(
                     }
                 }
                 IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
-                    val staticFunctionArgument = unwrapStaticFunctionArgument(expression.getValueArgument(0)!!)
+                    val staticFunctionArgument = unwrapStaticFunctionArgument(expression.arguments[0]!!)
                     require(staticFunctionArgument != null && staticFunctionArgument.function is IrSimpleFunction) { renderCompilerError(expression) }
                     val targetSymbol = staticFunctionArgument.function.symbol
                     val target = targetSymbol.owner
@@ -1195,7 +1195,7 @@ private class InteropTransformerPart2(
                             IrType::isByte, IrType::isShort, IrType::isInt, IrType::isLong
                     )
 
-                    val receiver = expression.extensionReceiver!!
+                    val receiver = expression.arguments[0]!!
                     val typeOperand = expression.getSingleTypeArgument()
 
                     val receiverTypeIndex = integerTypePredicates.indexOfFirst { it(receiver.type) }
@@ -1230,7 +1230,7 @@ private class InteropTransformerPart2(
                 IntrinsicType.INTEROP_CONVERT -> {
                     val integerClasses = symbols.allIntegerClasses
                     val typeOperand = expression.getTypeArgument(0)!!
-                    val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
+                    val receiverType = expression.symbol.owner.parameters[0].type
                     val source = receiverType.classifierOrFail as IrClassSymbol
                     require(source in integerClasses) { renderCompilerError(expression) }
                     require(typeOperand is IrSimpleType && !typeOperand.isNullable() && typeOperand.classifier in integerClasses) {
@@ -1238,7 +1238,7 @@ private class InteropTransformerPart2(
                     }
 
                     val target = typeOperand.classifier as IrClassSymbol
-                    val valueToConvert = expression.extensionReceiver!!
+                    val valueToConvert = expression.arguments[0]!!
 
                     if (source in symbols.signedIntegerClasses && target in symbols.unsignedIntegerClasses) {
                         // Default Kotlin signed-to-unsigned widening integer conversions don't follow C rules.
