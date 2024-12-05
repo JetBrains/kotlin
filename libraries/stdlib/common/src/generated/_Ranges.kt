@@ -764,170 +764,204 @@ public inline operator fun LongRange.contains(value: Short): Boolean {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Int.downTo(to: Byte): IntProgression {
     return IntProgression.fromClosedRange(this, to.toInt(), -1)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Long.downTo(to: Byte): LongProgression {
     return LongProgression.fromClosedRange(this, to.toLong(), -1L)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Byte.downTo(to: Byte): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Short.downTo(to: Byte): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Char.downTo(to: Char): CharProgression {
     return CharProgression.fromClosedRange(this, to, -1)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Int.downTo(to: Int): IntProgression {
     return IntProgression.fromClosedRange(this, to, -1)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Long.downTo(to: Int): LongProgression {
     return LongProgression.fromClosedRange(this, to.toLong(), -1L)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Byte.downTo(to: Int): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to, -1)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Short.downTo(to: Int): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to, -1)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Int.downTo(to: Long): LongProgression {
     return LongProgression.fromClosedRange(this.toLong(), to, -1L)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Long.downTo(to: Long): LongProgression {
     return LongProgression.fromClosedRange(this, to, -1L)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Byte.downTo(to: Long): LongProgression {
     return LongProgression.fromClosedRange(this.toLong(), to, -1L)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Short.downTo(to: Long): LongProgression {
     return LongProgression.fromClosedRange(this.toLong(), to, -1L)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Int.downTo(to: Short): IntProgression {
     return IntProgression.fromClosedRange(this, to.toInt(), -1)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Long.downTo(to: Short): LongProgression {
     return LongProgression.fromClosedRange(this, to.toLong(), -1L)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Byte.downTo(to: Short): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the step -1.
+ * Returns a progression from this value down to and including the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
  * If the [to] value is greater than `this` value the returned progression is empty.
+ * 
+ * @sample samples.ranges.Ranges.downTo
  */
 public infix fun Short.downTo(to: Short): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
