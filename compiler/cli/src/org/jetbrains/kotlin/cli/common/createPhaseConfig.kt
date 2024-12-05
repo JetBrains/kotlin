@@ -30,7 +30,7 @@ fun createPhaseConfig(
     )
 }
 
-public fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
+fun PhaseConfig.list(compoundPhase: CompilerPhase<*, *, *>) {
     for ((depth, phase) in compoundPhase.getNamedSubphases()) {
         println(buildString {
             append("    ".repeat(depth))
