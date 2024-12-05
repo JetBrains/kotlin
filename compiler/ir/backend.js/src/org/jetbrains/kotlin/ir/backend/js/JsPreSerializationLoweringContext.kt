@@ -19,7 +19,7 @@ class JsPreSerializationLoweringContext(
     configuration: CompilerConfiguration,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration) {
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
-    val intrinsics by lazy { JsIntrinsics(irBuiltIns) }
+    val intrinsics: JsIntrinsics by lazy { JsIntrinsics(irBuiltIns) }
 
     override val ir: Ir by lazy {
         object : Ir() {
