@@ -1,0 +1,210 @@
+KT element: KtForExpression
+KT element text:
+for (child in rootFile.children) {
+        val n = child.name
+        if ((n.startsWith(prefix) || n == parentName) && child.isValid) {
+            val variation = child.findChild(name)
+            if (variation != null) {
+                if (!includeSelf && file == variation) {
+                    continue
+                }
+                result.add(variation)
+            }
+        }
+    }
+FIR element: FirWhileLoopImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+    [ResolvedTo(RAW_FIR)] lval child: R|Foo| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|Foo|>|()
+     {
+        [ResolvedTo(RAW_FIR)] lval n: R|kotlin/String| = R|<local>/child|.R|/Foo.name|
+        when () {
+            R|<local>/n|.<Unresolved name: startsWith>#(R|<local>/prefix|) || ==(R|<local>/n|, R|<local>/parentName|) && R|<local>/child|.R|/Foo.isValid| ->  {
+                [ResolvedTo(RAW_FIR)] lval variation: R|Foo?| = R|<local>/child|.R|/Foo.findChild|(R|<local>/name|)
+                when () {
+                    !=(R|<local>/variation|, Null(null)) ->  {
+                        when () {
+                            R|<local>/includeSelf|.R|kotlin/Boolean.not|() && ==(R|<local>/file|, R|<local>/variation|) ->  {
+                                continue@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
+                            }
+                        }
+
+                        R|<local>/result|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(R|<local>/variation|)
+                    }
+                }
+
+            }
+        }
+
+    }
+
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] conditions2.kt
+    public final [ResolvedTo(CONTRACTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.name] name: R|kotlin/String|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.parent] parent: R|Foo?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.children] children: R|kotlin/collections/List<Foo>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.isValid] isValid: R|kotlin/Boolean|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val parent: R|Foo?| = R|<local>/parent|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|Foo?|
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val children: R|kotlin/collections/List<Foo>| = R|<local>/children|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/collections/List<Foo>|
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val isValid: R|kotlin/Boolean| = R|<local>/isValid|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(CONTRACTS)] fun findChild([ResolvedTo(CONTRACTS)] name: R|kotlin/String|): R|Foo?| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=9(9/10) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] file: R|Foo?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] includeSelf: R|kotlin/Boolean|): R|kotlin/collections/List<Foo>| {
+        when () {
+            ==(R|<local>/file|, Null(null)) ->  {
+                ^test <Unresolved name: emptyList>#()
+            }
+        }
+
+        [ResolvedTo(RAW_FIR)] lval result: R|{kotlin/collections/ArrayList<Foo>=} java/util/ArrayList<Foo>| = R|java/util/ArrayList.ArrayList|<R|Foo|>()
+        [ResolvedTo(RAW_FIR)] lval name: R|kotlin/String| = R|<local>/file|.R|/Foo.name|
+        [ResolvedTo(RAW_FIR)] lval rootFile: R|Foo| = R|<local>/file|.R|/Foo.parent|?.{ $subj$.R|/Foo.parent| } ?: ^test R|<local>/result|
+        [ResolvedTo(RAW_FIR)] lvar parentName: R|kotlin/String| = R|<local>/file|.R|/Foo.parent|.R|/Foo.name|
+        [ResolvedTo(RAW_FIR)] lvar prefix: R|kotlin/String| = R|<local>/parentName|
+        [ResolvedTo(RAW_FIR)] lval qualifiers: <ERROR TYPE REF: Unresolved name: indexOf> = R|<local>/prefix|.<Unresolved name: indexOf>#(Char(-))
+        when () {
+            !=(R|<local>/qualifiers|, Int(-1)) ->  {
+                R|<local>/parentName| = R|<local>/prefix|.<Unresolved name: substring>#(Int(0), R|<local>/qualifiers|)
+                R|<local>/prefix| = R|<local>/prefix|.<Unresolved name: substring>#(Int(0), R|<local>/qualifiers|.R|kotlin/plus|(Int(1)))
+            }
+            else ->  {
+                R|<local>/prefix| = R|<local>/prefix|.R|kotlin/String.plus|(Char(-))
+            }
+        }
+
+         {
+            [ResolvedTo(RAW_FIR)] lval <iterator>: R|kotlin/collections/Iterator<Foo>| = R|<local>/rootFile|.R|/Foo.children|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<Foo>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                [ResolvedTo(RAW_FIR)] lval child: R|Foo| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|Foo|>|()
+                 {
+                    [ResolvedTo(RAW_FIR)] lval n: R|kotlin/String| = R|<local>/child|.R|/Foo.name|
+                    when () {
+                        R|<local>/n|.<Unresolved name: startsWith>#(R|<local>/prefix|) || ==(R|<local>/n|, R|<local>/parentName|) && R|<local>/child|.R|/Foo.isValid| ->  {
+                            [ResolvedTo(RAW_FIR)] lval variation: R|Foo?| = R|<local>/child|.R|/Foo.findChild|(R|<local>/name|)
+                            when () {
+                                !=(R|<local>/variation|, Null(null)) ->  {
+                                    when () {
+                                        R|<local>/includeSelf|.R|kotlin/Boolean.not|() && ==(R|<local>/file|, R|<local>/variation|) ->  {
+                                            continue@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
+                                        }
+                                    }
+
+                                    R|<local>/result|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(R|<local>/variation|)
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        ^test result#
+    }
+
+=====
+
+KT element: KtReturnExpression
+KT element text:
+return result
+FIR element: FirReturnExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+^test R|<local>/result|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] conditions2.kt
+    public final [ResolvedTo(CONTRACTS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.name] name: R|kotlin/String|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.parent] parent: R|Foo?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.children] children: R|kotlin/collections/List<Foo>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.isValid] isValid: R|kotlin/Boolean|): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val parent: R|Foo?| = R|<local>/parent|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|Foo?|
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val children: R|kotlin/collections/List<Foo>| = R|<local>/children|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/collections/List<Foo>|
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val isValid: R|kotlin/Boolean| = R|<local>/isValid|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
+
+        public final [ResolvedTo(CONTRACTS)] fun findChild([ResolvedTo(CONTRACTS)] name: R|kotlin/String|): R|Foo?| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyResolveStateKey=10(10/10) #2] fun test([ResolvedTo(BODY_RESOLVE)] file: R|Foo?|, [ResolvedTo(BODY_RESOLVE)] includeSelf: R|kotlin/Boolean|): R|kotlin/collections/List<Foo>| {
+        when () {
+            ==(R|<local>/file|, Null(null)) ->  {
+                ^test <Unresolved name: emptyList>#()
+            }
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lval result: R|{kotlin/collections/ArrayList<Foo>=} java/util/ArrayList<Foo>| = R|java/util/ArrayList.ArrayList|<R|Foo|>()
+        [ResolvedTo(BODY_RESOLVE)] lval name: R|kotlin/String| = R|<local>/file|.R|/Foo.name|
+        [ResolvedTo(BODY_RESOLVE)] lval rootFile: R|Foo| = R|<local>/file|.R|/Foo.parent|?.{ $subj$.R|/Foo.parent| } ?: ^test R|<local>/result|
+        [ResolvedTo(BODY_RESOLVE)] lvar parentName: R|kotlin/String| = R|<local>/file|.R|/Foo.parent|.R|/Foo.name|
+        [ResolvedTo(BODY_RESOLVE)] lvar prefix: R|kotlin/String| = R|<local>/parentName|
+        [ResolvedTo(BODY_RESOLVE)] lval qualifiers: <ERROR TYPE REF: Unresolved name: indexOf> = R|<local>/prefix|.<Unresolved name: indexOf>#(Char(-))
+        when () {
+            !=(R|<local>/qualifiers|, Int(-1)) ->  {
+                R|<local>/parentName| = R|<local>/prefix|.<Unresolved name: substring>#(Int(0), R|<local>/qualifiers|)
+                R|<local>/prefix| = R|<local>/prefix|.<Unresolved name: substring>#(Int(0), R|<local>/qualifiers|.R|kotlin/plus|(Int(1)))
+            }
+            else ->  {
+                R|<local>/prefix| = R|<local>/prefix|.R|kotlin/String.plus|(Char(-))
+            }
+        }
+
+         {
+            [ResolvedTo(BODY_RESOLVE)] lval <iterator>: R|kotlin/collections/Iterator<Foo>| = R|<local>/rootFile|.R|/Foo.children|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<Foo>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                [ResolvedTo(BODY_RESOLVE)] lval child: R|Foo| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|Foo|>|()
+                 {
+                    [ResolvedTo(BODY_RESOLVE)] lval n: R|kotlin/String| = R|<local>/child|.R|/Foo.name|
+                    when () {
+                        R|<local>/n|.<Unresolved name: startsWith>#(R|<local>/prefix|) || ==(R|<local>/n|, R|<local>/parentName|) && R|<local>/child|.R|/Foo.isValid| ->  {
+                            [ResolvedTo(BODY_RESOLVE)] lval variation: R|Foo?| = R|<local>/child|.R|/Foo.findChild|(R|<local>/name|)
+                            when () {
+                                !=(R|<local>/variation|, Null(null)) ->  {
+                                    when () {
+                                        R|<local>/includeSelf|.R|kotlin/Boolean.not|() && ==(R|<local>/file|, R|<local>/variation|) ->  {
+                                            continue@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
+                                        }
+                                    }
+
+                                    R|<local>/result|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(R|<local>/variation|)
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        ^test R|<local>/result|
+    }

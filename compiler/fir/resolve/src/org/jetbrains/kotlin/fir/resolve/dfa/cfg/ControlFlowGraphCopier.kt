@@ -11,24 +11,17 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
     private val cachedGraphs = HashMap<ControlFlowGraph, ControlFlowGraph>()
     private val cachedNodes = HashMap<CFGNode<*>, CFGNode<*>>()
 
+    private val unprocessedNodes = ArrayDeque<CFGNode<*>>()
+
     operator fun get(graph: ControlFlowGraph): ControlFlowGraph {
         if (graph.isComplete) {
             // Do not copy the already complete graph – it's effectively immutable anyway
             return graph
         }
 
-        val cachedGraph = cachedGraphs.get(graph)
-        if (cachedGraph != null) {
-            return cachedGraph
+        return cachedGraphs.computeIfAbsent(graph) { graph ->
+            ControlFlowGraph(graph.declaration, graph.name, graph.kind)
         }
-
-        val newGraph = ControlFlowGraph(graph.declaration, graph.name, graph.kind)
-        cachedGraphs.put(graph, newGraph)
-
-        @OptIn(CfgInternals::class)
-        newGraph.copyData(graph, ::get)
-
-        return newGraph
     }
 
     operator fun <E : FirElement, N : CFGNode<E>> get(node: N): N {
@@ -36,20 +29,26 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
             return node
         }
 
-        val cachedNode = cachedNodes.get(node)
-        if (cachedNode != null) {
-            @Suppress("UNCHECKED_CAST")
-            return cachedNode as N
+        val result = cachedNodes.computeIfAbsent(node) { node ->
+            unprocessedNodes.addLast(node)
+            node.accept(this, Unit)
         }
 
-        val newNode = node.accept(this, Unit)
-        cachedNodes.put(node, newNode)
-
-        @OptIn(CfgInternals::class)
-        newNode.copyData(node, ::get)
-
         @Suppress("UNCHECKED_CAST")
-        return newNode as N
+        return result as N
+    }
+
+    @OptIn(CfgInternals::class)
+    fun copyData() {
+        for ((oldGraph, newGraph) in cachedGraphs) {
+            newGraph.copyData(from = oldGraph, ::get)
+        }
+
+        while (unprocessedNodes.isNotEmpty()) {
+            val oldNode = unprocessedNodes.removeFirst()
+            val newNode = cachedNodes[oldNode] ?: error("Unprocessed node must be cached")
+            newNode.copyData(from = oldNode, ::get)
+        }
     }
 
     override fun visitNode(node: CFGNode<*>, data: Unit): CFGNode<*> {
