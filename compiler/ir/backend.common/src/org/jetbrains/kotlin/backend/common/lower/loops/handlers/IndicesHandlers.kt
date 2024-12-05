@@ -98,8 +98,8 @@ internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandl
 internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.isCharSequence() == true &&
+        return callee.parameters.none { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context } &&
+                callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.isCharSequence() == true &&
                 callee.kotlinFqName == FqName("kotlin.text.<get-indices>")
     }
 
