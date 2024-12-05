@@ -1,0 +1,84 @@
+FILE: contextParametersFunctions.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final fun implicit1(): R|A| {
+        ^implicit1 R|kotlin/implicit|<R|A|>()
+    }
+    context(b: R|B|)
+    public final fun implicit2(): R|A| {
+        ^implicit2 R|kotlin/implicit|<R|A|>()
+    }
+    public final fun R|A|.implicit3(): R|A| {
+        ^implicit3 R|kotlin/implicit|<R|A|>()
+    }
+    context(a: R|A|)
+    public final fun R|A|.implicit4(): R|A| {
+        ^implicit4 R|kotlin/implicit|<R|A|>()
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun implicit5(): R|A| {
+        ^implicit5 R|kotlin/implicit<Inapplicable(INAPPLICABLE): kotlin/implicit>#|<R|A|>()
+    }
+    context(a: R|A|)
+    public final fun implicit6(): R|A| {
+        ^implicit6 R|kotlin/implicit|<R|A|>()
+    }
+    context(a: R|A|, c: R|C|)
+    public final fun implicit7(): R|A| {
+        ^implicit7 R|kotlin/implicit<Inapplicable(INAPPLICABLE): kotlin/implicit>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+    }
+    context(a: R|A|)
+    public final fun implicit8(): R|A| {
+        ^implicit8 R|kotlin/implicit|<R|A|>()
+    }
+    context(a: R|A|, c: R|C|)
+    public final fun implicit9(): <ERROR TYPE REF: Cannot infer argument for type parameter A> {
+        ^implicit9 R|kotlin/implicit<Inapplicable(INAPPLICABLE): kotlin/implicit>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+    }
+    public final fun context1(): R|A| {
+        ^context1 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/implicit1|()
+        }
+        )
+    }
+    public final fun context2(): R|A| {
+        ^context2 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/implicit2|()
+        }
+        )
+    }
+    public final fun context3(): R|A| {
+        ^context3 R|kotlin/context<Inapplicable(INAPPLICABLE): kotlin/context>#|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ <Unresolved name: implicit3>#()
+        }
+        )
+    }
+    public final fun context4(): R|A| {
+        ^context4 R|kotlin/context<Inapplicable(INAPPLICABLE): kotlin/context>#|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ <Unresolved name: implicit4>#()
+        }
+        )
+    }
+    public final fun context5(): R|A| {
+        ^context5 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/implicit5|()
+        }
+        )
+    }

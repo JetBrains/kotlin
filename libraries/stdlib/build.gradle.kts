@@ -52,6 +52,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     apiVersion = KotlinVersion.KOTLIN_2_1
     freeCompilerArgs.add("-Xstdlib-compilation")
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
+    freeCompilerArgs.add("-Xcontext-parameters")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 }
 
