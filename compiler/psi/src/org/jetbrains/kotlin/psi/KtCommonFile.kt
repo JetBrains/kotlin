@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi
 
 import com.intellij.extapi.psi.PsiFileBase
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.psi.*
@@ -14,12 +15,12 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ArrayFactory
 import com.intellij.util.FileContentUtilCore
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
@@ -68,27 +69,13 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         get() = findChildrenByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java).asList()
 
     val fileAnnotationList: KtFileAnnotationList?
-        get() = findChildByTypeOrClass(KtStubElementTypes.FILE_ANNOTATION_LIST, KtFileAnnotationList::class.java)
+        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubElementTypes.FILE_ANNOTATION_LIST)
 
     open val importDirectives: List<KtImportDirective>
         get() = importLists.flatMap { it.imports }
 
-    // scripts have no package directive, all other files must have package directives
     val packageDirective: KtPackageDirective?
-        get() {
-            val stub = greenStub
-            if (stub != null) {
-                val packageDirectiveStub = stub.findChildStubByType(KtStubElementTypes.PACKAGE_DIRECTIVE)
-                return packageDirectiveStub?.psi
-            }
-            return packageDirectiveByTree
-        }
-
-    private val packageDirectiveByTree: KtPackageDirective?
-        get() {
-            val ast = node.findChildByType(KtNodeTypes.PACKAGE_DIRECTIVE)
-            return if (ast != null) ast.psi as KtPackageDirective else null
-        }
+        get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubElementTypes.PACKAGE_DIRECTIVE)
 
     var packageFqName: FqName
         get() = greenStub?.getPackageFqName() ?: packageFqNameByTree
@@ -103,7 +90,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         }
 
     val packageFqNameByTree: FqName
-        get() = packageDirectiveByTree?.fqName ?: FqName.ROOT
+        get() = packageDirective?.fqName ?: FqName.ROOT
 
     val script: KtScript?
         get() {
@@ -152,6 +139,59 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     override fun getDeclarations(): List<KtDeclaration> {
         return greenStub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
             ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
+    }
+
+    /**
+     * This is an optimized way to find a file child element in the header.
+     *
+     * Regular [findChildByTypeOrClass] will iterate through all childen that is especially quite expensive in the
+     * case of [findChildByClass].
+     * It will trigger psi calculation for all children even if the wanted element in the first child.
+     *
+     * So this function will iterate as a maximum only through all non-declarations in the beginning plus one declaration.
+     * This one declaration processing is required to support the optimization for [KtScript] as well as it can be only in the beginning.
+     */
+    private fun <T : KtElementImplStub<out StubElement<*>>> findChildBeforeFirstDeclarationInclusiveByType(
+        elementType: KtPlaceHolderStubElementType<T>,
+    ): T? {
+        val stub = greenStub
+        if (stub != null) {
+            for (stubElement in stub.childrenStubs) {
+                val stubType = stubElement.stubType
+                when (stubType) {
+                    // Required element found
+                    elementType -> {
+                        @Suppress("UNCHECKED_CAST")
+                        return stubElement.psi as T
+                    }
+
+                    // Elements from the header can be declared only before declarations
+                    in KtFile.FILE_DECLARATION_TYPES -> return null
+                    else -> {}
+                }
+            }
+
+            // No element found, there is no sense to search further via ast
+            return null
+        }
+
+        val children: Sequence<ASTNode> = node.children()
+        for (child in children) {
+            val childType = child.elementType
+            when (childType) {
+                // Required element found
+                elementType -> {
+                    @Suppress("UNCHECKED_CAST")
+                    return child.psi as T
+                }
+
+                // Elements from the header can be declared only before declarations
+                in KtFile.FILE_DECLARATION_TYPES -> return null
+                else -> {}
+            }
+        }
+
+        return null
     }
 
     fun <T : KtElementImplStub<out StubElement<*>>> findChildByTypeOrClass(
