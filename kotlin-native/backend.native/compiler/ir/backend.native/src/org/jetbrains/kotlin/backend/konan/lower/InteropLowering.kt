@@ -925,18 +925,18 @@ private class InteropTransformerPart2(
             // and then back to Runnable.
             // TODO: consider calling specialized versions of allocWithZoneImp and releaseImp directly.
             val rawPtr = irTemporary(irCall(symbols.interopAllocObjCObject.owner).apply {
-                putValueArgument(0, getObjCClass(symbols, constructedClass.symbol))
+                arguments[0] = getObjCClass(symbols, constructedClass.symbol)
             })
             val instance = irTemporary(irCall(symbols.interopInterpretObjCPointer.owner).apply {
-                putValueArgument(0, irGet(rawPtr))
+                arguments[0] = irGet(rawPtr)
             })
             // Balance pointer retained by alloc:
             +irCall(symbols.interopObjCRelease.owner).apply {
-                putValueArgument(0, irGet(rawPtr))
+                arguments[0] = irGet(rawPtr)
             }
             +irCall(symbols.initInstance).apply {
-                putValueArgument(0, irGet(instance))
-                putValueArgument(1, expression)
+                arguments[0] = irGet(instance)
+                arguments[1] = expression
             }
             +irGet(instance)
         }
