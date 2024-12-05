@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
+import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
@@ -63,6 +64,21 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
 
             val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
                 get() = ::RecompileModuleJsIrBackendFacade
+        }
+
+        /**
+         * The backend part that consists of a separated KLIB deserializer facade wrapped by [preSerializationHandler] and
+         * [postDeserializationHandler] handlers. Used for testing IR deserialization.
+         */
+        object WithSeparatedDeserialization : JsBackendFacades {
+            val preSerializationHandler: Constructor<AbstractIrHandler>
+                get() = { SerializedIrDumpHandler(it, isAfterDeserialization = false) }
+
+            val deserializerFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, IrBackendInput>>
+                get() = ::JsIrDeserializerFacade
+
+            val postDeserializationHandler: Constructor<AbstractIrHandler>
+                get() = { SerializedIrDumpHandler(it, isAfterDeserialization = true) }
         }
     }
 
@@ -125,6 +141,12 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             is JsBackendFacades.WithRecompilation -> {
                 facadeStep(backendFacades.deserializerAndLoweringFacade)
                 facadeStep(backendFacades.recompileFacade)
+            }
+
+            is JsBackendFacades.WithSeparatedDeserialization -> {
+                configureIrHandlersStep { useHandlers(backendFacades.preSerializationHandler) }
+                facadeStep(backendFacades.deserializerFacade)
+                configureDeserializedIrHandlersStep { useHandlers(backendFacades.postDeserializationHandler) }
             }
         }
 
