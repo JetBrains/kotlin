@@ -39,9 +39,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
     override fun visitReturnableBlock(expression: IrReturnableBlock, context: JsGenerationContext): JsStatement {
         val inlinedBlock = expression.statements.singleOrNull() as? IrInlinedFunctionBlock
-        val newContext = inlinedBlock?.inlineFunctionSymbol?.owner?.let {
-            context.newInlineFunction(inlinedBlock.fileEntry, it)
-        } ?: context
+        val newContext = if (inlinedBlock != null) {
+            context.newInlineFunction(inlinedBlock.fileEntry, inlinedBlock.inlineFunctionSymbol?.owner)
+        } else {
+            context
+        }
 
         val container = inlinedBlock?.statements ?: expression.statements
         val statements = container.map { it.accept(this, newContext) }.toSmartList()

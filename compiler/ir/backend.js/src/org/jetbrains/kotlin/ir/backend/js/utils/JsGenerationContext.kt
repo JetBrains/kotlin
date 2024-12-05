@@ -42,7 +42,7 @@ class JsGenerationContext(
 
     fun newInlineFunction(
         fileEntry: IrFileEntry,
-        inlineFun: IrFunction,
+        inlineFun: IrFunction?,
     ): JsGenerationContext {
         return JsGenerationContext(
             currentFileEntry = fileEntry,
