@@ -21,11 +21,11 @@ sealed class PhaseSet {
             is Enum -> Enum(phases + phaseSet.phases)
         }
     }
+
     object ALL : PhaseSet() {
         override fun contains(phase: AnyNamedPhase): Boolean =
             true
 
         override fun plus(phaseSet: PhaseSet): PhaseSet = ALL
     }
-
 }

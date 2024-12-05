@@ -13,14 +13,12 @@ fun createPhaseConfig(
     compoundPhase: CompilerPhase<*, *, *>,
     arguments: CommonCompilerArguments
 ): PhaseConfig {
-    fun Array<String>?.asNonNullSet(): Set<String> = this?.toSet() ?: emptySet()
-
     val toDumpBoth = createPhaseSetFromArguments(arguments.phasesToDump)
     val toValidateBoth = createPhaseSetFromArguments(arguments.phasesToValidate)
 
     return PhaseConfig(
-        arguments.disablePhases.asNonNullSet(),
-        arguments.verbosePhases.asNonNullSet(),
+        arguments.disablePhases.orEmpty().toSet(),
+        arguments.verbosePhases.orEmpty().toSet(),
         createPhaseSetFromArguments(arguments.phasesToDumpBefore) + toDumpBoth,
         createPhaseSetFromArguments(arguments.phasesToDumpAfter) + toDumpBoth,
         createPhaseSetFromArguments(arguments.phasesToValidateBefore) + toValidateBoth,
