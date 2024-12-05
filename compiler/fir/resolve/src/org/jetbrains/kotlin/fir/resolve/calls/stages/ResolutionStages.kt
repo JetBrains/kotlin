@@ -385,11 +385,15 @@ object CheckDslScopeViolation : ResolutionStage() {
         // Values are sorted in a quite reversed order, so the first element is the furthest in the scope tower
         val implicitValues = context.bodyResolveContext.implicitValueStorage.implicitValues
 
+        val memberOwnerOfReceiverToCheck = boundSymbolOfReceiverToCheck.containingDeclarationIfParameter()
+
         // Drop all the receivers/values that in the scope tower stay after ones introduced with `boundSymbolOfReceiverToCheck`.
         // So from "[irrelevantValue1, .., irrelevantValue2, firstValueBoundToSymbol, ...]" we would leave a sub-list
         // starting from `firstValueBoundToSymbol`
         val closerOrOnTheSameLevelImplicitValues =
-            implicitValues.dropWhile { it.boundSymbol != boundSymbolOfReceiverToCheck }.ifEmpty { return }
+            implicitValues.dropWhile {
+                memberOwnerOfReceiverToCheck != it.boundSymbol.containingDeclarationIfParameter()
+            }.ifEmpty { return }
 
         if (closerOrOnTheSameLevelImplicitValues.any {
                 !it.isSameImplicitReceiverInstance(receiverValueToCheck.expression)
