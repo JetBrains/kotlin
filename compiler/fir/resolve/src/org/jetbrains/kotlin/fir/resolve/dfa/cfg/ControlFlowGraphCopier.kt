@@ -29,13 +29,19 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
             return node
         }
 
-        val result = cachedNodes.computeIfAbsent(node) { node ->
-            unprocessedNodes.addLast(node)
-            node.accept(this, Unit)
+        // Avoiding 'ConcurrentModificationException' with manual get/set
+        val cachedNode = cachedNodes[node]
+        if (cachedNode != null) {
+            @Suppress("UNCHECKED_CAST")
+            return cachedNode as N
         }
 
+        val newNode = node.accept(this, Unit)
+        cachedNodes[node] = newNode
+        unprocessedNodes.addLast(node)
+
         @Suppress("UNCHECKED_CAST")
-        return result as N
+        return newNode as N
     }
 
     @OptIn(CfgInternals::class)
