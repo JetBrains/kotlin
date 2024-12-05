@@ -84,8 +84,8 @@ internal class ArrayIndicesHandler(context: CommonBackendContext) : IndicesHandl
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.let {
+        return callee.parameters.none { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context } &&
+                callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.let {
                     it.isArray() || it.isPrimitiveArray() || (supportsUnsignedArrays && it.isUnsignedArray())
                 } == true &&
                 callee.kotlinFqName == FqName("kotlin.collections.<get-indices>")
