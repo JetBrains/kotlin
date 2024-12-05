@@ -179,12 +179,12 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
             functionSymbol.owner.hasShape(
                 dispatchReceiver = true,
                 regularParameters = 1,
-                parameterTypes = listOf(irBuiltIns.stringType, irBuiltIns.stringType)
+                parameterTypes = listOf(irBuiltIns.stringType, null)
             ) -> memberStringPlus
             functionSymbol.owner.hasShape(
                 extensionReceiver = true,
                 regularParameters = 1,
-                parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), irBuiltIns.stringType)
+                parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), null)
             ) -> extensionStringPlus
             else -> return false
         }
