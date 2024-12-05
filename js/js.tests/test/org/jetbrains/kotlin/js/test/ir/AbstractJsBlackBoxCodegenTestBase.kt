@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
-import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
@@ -59,7 +59,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
          */
         object WithRecompilation : JsBackendFacades {
             val deserializerAndLoweringFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>
-                get() = ::JsIrBackendFacade
+                get() = ::JsUnifiedIrDeserializerAndLoweringFacade
 
             val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
                 get() = ::RecompileModuleJsIrBackendFacade

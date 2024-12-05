@@ -5,13 +5,20 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-class JsIrBackendFacade(
+/**
+ * The unified facade that runs internally [JsIrDeserializerFacade] and then [JsIrLoweringFacade].
+ *
+ * The goal of this facade is to avoid re-registering [IrBackendInput] artifact that otherwise
+ * would be produced as a result of [JsIrDeserializerFacade] execution.
+ */
+class JsUnifiedIrDeserializerAndLoweringFacade(
     testServices: TestServices,
     firstTimeCompilation: Boolean
 ) : AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>() {
