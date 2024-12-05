@@ -100,6 +100,7 @@ kotlin {
                                 "-Xdont-warn-on-error-suppression",
                                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                                 "-opt-in=kotlin.ExperimentalMultiplatform",
+                                "-Xcontext-parameters",
                             )
                         )
                     }
