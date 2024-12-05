@@ -52,7 +52,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     private var pathCached: String? = null
 
     val importList: KtImportList?
-        get() = importLists.firstOrNull()
+        get() = firstImportList
+
+    protected open val firstImportList: KtImportList?
+        get() = findChildByTypeOrClass(KtStubElementTypes.IMPORT_LIST, KtImportList::class.java)
 
     @Volatile
     private var hasImportAlias: Boolean? = null
