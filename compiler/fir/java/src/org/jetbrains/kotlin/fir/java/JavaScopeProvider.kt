@@ -117,7 +117,7 @@ object JavaScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession
     ): FirContainingNamesAwareScope? {
         val scope = getStaticMemberScopeForCallables(klass, useSiteSession, scopeSession, hashSetOf()) ?: return null
-        return FirNameAwareOnlyCallablesScope(FirStaticScope(scope))
+        return FirNameAwareOnlyCallablesScope(scope)
     }
 
     override fun getStaticCallableMemberScopeForBackend(
