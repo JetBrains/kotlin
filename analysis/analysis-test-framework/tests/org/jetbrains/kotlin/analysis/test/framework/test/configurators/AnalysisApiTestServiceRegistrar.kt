@@ -11,12 +11,13 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
 
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") // Use `testServices` name instead of `data`
 abstract class AnalysisApiTestServiceRegistrar : AnalysisApiServiceRegistrar<TestServices> {
-    override fun registerApplicationServices(application: MockApplication, data: TestServices) {}
+    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {}
 
-    override fun registerProjectExtensionPoints(project: MockProject, data: TestServices) {}
+    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
 
-    override fun registerProjectServices(project: MockProject, data: TestServices) {}
+    override fun registerProjectServices(project: MockProject, testServices: TestServices) {}
 
-    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: TestServices) {}
+    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {}
 }

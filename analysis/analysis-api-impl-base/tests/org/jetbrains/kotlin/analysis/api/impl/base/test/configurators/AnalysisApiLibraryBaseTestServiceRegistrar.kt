@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerApplicationServices(application: MockApplication, data: TestServices) {
+    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         FileTypeFileViewProviders.INSTANCE.addExplicitExtension(JavaClassFileType.INSTANCE, ClassFileViewProviderFactory())
         FileTypeFileViewProviders.INSTANCE.addExplicitExtension(KotlinBuiltInFileType, ClassFileViewProviderFactory())
         FileTypeFileViewProviders.INSTANCE.addExplicitExtension(
@@ -36,14 +36,14 @@ object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegist
         BinaryFileStubBuilders.INSTANCE.addExplicitExtension(KlibMetaFileType, ClassFileStubBuilder())
 
         ClassFileDecompilers.getInstance().EP_NAME.point.apply {
-            registerExtension(KotlinClassFileDecompiler(), LoadingOrder.FIRST, data.disposableProvider.getApplicationDisposable())
-            registerExtension(KotlinBuiltInDecompiler(), LoadingOrder.FIRST, data.disposableProvider.getApplicationDisposable())
+            registerExtension(KotlinClassFileDecompiler(), LoadingOrder.FIRST, testServices.disposableProvider.getApplicationDisposable())
+            registerExtension(KotlinBuiltInDecompiler(), LoadingOrder.FIRST, testServices.disposableProvider.getApplicationDisposable())
             registerExtension(
                 K2KotlinNativeMetadataDecompiler(),
                 LoadingOrder.FIRST,
-                data.disposableProvider.getApplicationDisposable()
+                testServices.disposableProvider.getApplicationDisposable()
             )
-            registerExtension(ClsDecompilerImpl(), LoadingOrder.FIRST, data.disposableProvider.getApplicationDisposable())
+            registerExtension(ClsDecompilerImpl(), LoadingOrder.FIRST, testServices.disposableProvider.getApplicationDisposable())
         }
     }
 }

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.test.services.TestServices
  * exceptions.
  */
 object AnalysisApiModifiablePsiTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerApplicationServices(application: MockApplication, data: TestServices) {
+    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         application.apply {
             registerFileDocumentManager()
 
@@ -67,7 +67,7 @@ object AnalysisApiModifiablePsiTestServiceRegistrar : AnalysisApiTestServiceRegi
         )
     }
 
-    override fun registerProjectExtensionPoints(project: MockProject, data: TestServices) {
+    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         CoreApplicationEnvironment.registerExtensionPoint(
             project.extensionArea,
             PsiTreeChangeListener.EP.name,
@@ -75,7 +75,7 @@ object AnalysisApiModifiablePsiTestServiceRegistrar : AnalysisApiTestServiceRegi
         )
     }
 
-    override fun registerProjectServices(project: MockProject, data: TestServices) {
+    override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(TreeAspect::class.java)
             registerService(PomModel::class.java, PomModelImpl::class.java)

@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.test.services.TestServices
  * See `StandaloneSessionServiceRegistrar` for the Standalone counterpart to this service registrar.
  */
 object AnalysisApiIdeModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerProjectServices(project: MockProject, data: TestServices) {
+    override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KotlinLifetimeTokenFactory::class.java, KotlinReadActionConfinementLifetimeTokenFactory::class.java)
         }
     }
 
-    override fun registerApplicationServices(application: MockApplication, data: TestServices) {
+    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         application.apply {
             registerService(KotlinAnalysisPermissionOptions::class.java, KotlinDefaultAnalysisPermissionOptions::class.java)
         }

@@ -67,7 +67,7 @@ private object ErrorResistanceConfigurator : AnalysisApiFirSourceTestConfigurato
 
 private object ErrorResistanceServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     @OptIn(TestInfrastructureInternals::class)
-    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, data: TestServices) {
+    override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         with(PsiElementFinder.EP.getPoint(project)) {
             registerExtension(BrokenLibraryElementFinder(project), disposable)
         }
