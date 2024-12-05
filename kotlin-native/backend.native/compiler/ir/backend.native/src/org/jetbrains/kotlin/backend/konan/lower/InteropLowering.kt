@@ -1091,12 +1091,12 @@ private class InteropTransformerPart2(
             // Need to do this separately as otherwise [expression.transformChildrenVoid(this)] would be called
             // and the [IrConstructorCall] would be transformed which is not what we want.
 
-            val argument = expression.getValueArgument(0)!!
+            val argument = expression.arguments[1]!!
             require(argument is IrConstructorCall) { renderCompilerError(argument) }
 
             val constructedClass = argument.symbol.owner.constructedClass
 
-            val extensionReceiver = expression.extensionReceiver!!
+            val extensionReceiver = expression.arguments[0]
             require(extensionReceiver is IrGetValue &&
                     extensionReceiver.symbol.owner.isDispatchReceiverFor(constructedClass)) { renderCompilerError(extensionReceiver) }
 
@@ -1105,8 +1105,8 @@ private class InteropTransformerPart2(
             return builder.at(expression).irBlock {
                 val instance = extensionReceiver.symbol.owner
                 +irCall(symbols.initInstance).apply {
-                    putValueArgument(0, irGet(instance))
-                    putValueArgument(1, argument)
+                    arguments[0] = irGet(instance)
+                    arguments[1] = argument
                 }
                 +irGet(instance)
             }
