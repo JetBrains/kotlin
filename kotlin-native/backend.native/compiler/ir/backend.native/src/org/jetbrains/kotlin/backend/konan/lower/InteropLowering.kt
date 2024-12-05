@@ -1029,16 +1029,16 @@ private class InteropTransformerPart2(
         val irClass = irConstructor.constructedClass
         val primaryConstructor = irClass.primaryConstructor!!.symbol
 
-        val correspondingCppClass = primaryConstructor.owner.valueParameters.first().type.classOrNull?.owner!!
+        val correspondingCppClass = primaryConstructor.owner.parameters.first().type.classOrNull?.owner!!
 
         val correspondingCppConstructor = correspondingCppClass
                 .declarations
                 .filterIsInstance<IrConstructor>()
-                .filter { it.valueParameters.size == irConstructor.valueParameters.size}
+                .filter { it.parameters.size == irConstructor.parameters.size }
                 .singleOrNull {
-                    it.valueParameters.mapIndexed() { index, initParameter ->
-                         managedTypeMatch(irConstructor.valueParameters[index].type, initParameter.type)
-                    }.all{ it }
+                    it.parameters.withIndex().all { (index, initParameter) ->
+                        managedTypeMatch(irConstructor.parameters[index].type, initParameter.type)
+                    }
                 } ?: error("Could not find a match for ${irConstructor.render()}")
 
         val irBlock = builder.at(expression)
@@ -1047,8 +1047,8 @@ private class InteropTransformerPart2(
                         transformManagedArguments(0, 0, expression, irConstructor, this, correspondingCppConstructor)
                     }
                     val call = irCall(primaryConstructor).also {
-                        it.putValueArgument(0, transformCppConstructorCall(cppConstructorCall))
-                        it.putValueArgument(1, true.toIrConst(context.irBuiltIns.booleanType))
+                        it.arguments[0] = transformCppConstructorCall(cppConstructorCall)
+                        it.arguments[1] = true.toIrConst(context.irBuiltIns.booleanType)
                     }
                     +call
                 }
