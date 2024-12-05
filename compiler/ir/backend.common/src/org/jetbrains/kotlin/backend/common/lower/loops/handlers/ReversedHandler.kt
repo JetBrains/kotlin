@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -22,7 +23,7 @@ internal class ReversedHandler(context: CommonBackendContext, private val visito
     override fun matchIterable(expression: IrCall): Boolean {
         // TODO: Handle reversed String, Progression.withIndex(), etc.
         val callee = expression.symbol.owner
-        return callee.valueParameters.isEmpty() &&
+        return callee.parameters.none { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context } &&
                 callee.extensionReceiverParameter?.type in progressionClassesTypes &&
                 callee.kotlinFqName == FqName("kotlin.ranges.reversed")
     }
