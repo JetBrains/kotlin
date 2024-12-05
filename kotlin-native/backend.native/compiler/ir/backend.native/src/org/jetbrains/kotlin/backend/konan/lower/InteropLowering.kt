@@ -824,7 +824,7 @@ private class InteropTransformerPart1(
 
     private fun IrBuilderWithScope.getRawPtr(receiver: IrExpression) =
             irCall(symbols.interopObjCObjectRawValueGetter).apply {
-                extensionReceiver = receiver
+                arguments[0] = receiver
             }
 }
 
