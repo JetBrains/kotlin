@@ -2038,7 +2038,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES,
-            "Names ''{0}'' and ''{1}'' of the parameter #{2} conflict in the following members of supertypes: {3}. " +
+            "Names ''{0}'' and ''{1}'' of parameter #{2} conflict in the following members of supertypes: {3}. " +
                     "This may cause problems when calling this function with named arguments.",
             DECLARATION_NAME,
             DECLARATION_NAME,
