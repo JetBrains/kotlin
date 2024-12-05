@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -79,8 +80,8 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         if (expression.type.isArrayType()) return true
 
         val callee = (expression as? IrCall)?.symbol?.owner ?: return false
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.let { it.isArray() || it.isPrimitiveArray() } == true &&
+        return callee.parameters.none { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context } &&
+                callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.let { it.isArray() || it.isPrimitiveArray() } == true &&
                 callee.kotlinFqName == FqName("kotlin.collections.reversed")
     }
 
