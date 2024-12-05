@@ -1280,7 +1280,7 @@ private class InteropTransformerPart2(
             symbols.interopCPointerRawValue.owner.getter ->
                 // Replace by the intrinsic call to be handled by code generator:
                 builder.irCall(symbols.interopCPointerGetRawValue).apply {
-                    extensionReceiver = expression.dispatchReceiver
+                    arguments[0] = expression.arguments[0]
                 }
             else -> expression
         }
