@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfo
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -29,6 +30,6 @@ internal class ReversedHandler(context: CommonBackendContext, private val visito
     }
 
     // Reverse the HeaderInfo from the underlying progression or array (if any).
-    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
-        expression.extensionReceiver!!.accept(visitor, null)?.asReversed()
+    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo? =
+        expression.arguments[0]!!.accept(visitor, null)?.asReversed()
 }
