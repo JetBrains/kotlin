@@ -22,6 +22,9 @@ class C
 context(_: C)
 fun contextFun() {}
 
+context(_: Other)
+fun otherContextFun() {}
+
 fun annotatedFunctionTypeReceiver(f: (@Dsl C).() -> Unit) {}
 fun annotatedFunctionType(f: @Dsl (C.() -> Unit)) {}
 fun annotatedFunctionTypeWithContext(f: @Dsl (context(C) Other.() -> Unit)) {}
@@ -75,6 +78,7 @@ fun test() {
 
     context(DslReceiver(), Other()) {
         <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+        otherContextFun()
     }
 }
 

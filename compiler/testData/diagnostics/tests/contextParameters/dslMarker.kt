@@ -22,6 +22,9 @@ class C
 <!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>C<!>)<!>
 fun contextFun()<!> {}
 
+<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>Other<!>)<!>
+fun otherContextFun() {}
+
 fun annotatedFunctionTypeReceiver(f: (@Dsl C).() -> Unit) {}
 fun annotatedFunctionType(f: @Dsl (C.() -> Unit)) {}
 fun annotatedFunctionTypeWithContext(f: @Dsl (context(C) Other.() -> Unit)) {}
@@ -75,6 +78,7 @@ fun test() {
 
     context(DslReceiver(), Other()) {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
+        otherContextFun()
     }
 }
 
