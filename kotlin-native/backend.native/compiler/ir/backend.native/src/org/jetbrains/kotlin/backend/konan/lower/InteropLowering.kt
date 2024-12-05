@@ -1250,19 +1250,19 @@ private class InteropTransformerPart2(
                     }
                 }
                 IntrinsicType.WORKER_EXECUTE -> {
-                    val staticFunctionArgument = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
+                    val staticFunctionArgument = unwrapStaticFunctionArgument(expression.arguments[3]!!)
                     require(staticFunctionArgument != null) { renderCompilerError(expression) }
                     val targetSymbol = staticFunctionArgument.function.symbol
                     val jobPointer = IrRawFunctionReferenceImpl(
                             builder.startOffset, builder.endOffset,
-                            symbols.executeImpl.owner.valueParameters[3].type,
+                            symbols.executeImpl.owner.parameters[3].type,
                             targetSymbol)
 
                     val executeImplCall = builder.irCall(symbols.executeImpl).apply {
-                        putValueArgument(0, expression.dispatchReceiver)
-                        putValueArgument(1, expression.getValueArgument(0))
-                        putValueArgument(2, expression.getValueArgument(1))
-                        putValueArgument(3, jobPointer)
+                        arguments[0] = expression.arguments[0]
+                        arguments[1] = expression.arguments[1]
+                        arguments[2] = expression.arguments[2]
+                        arguments[3] = jobPointer
                     }
                     executeImplCall.transformChildrenVoid()
                     if (staticFunctionArgument.defined)
