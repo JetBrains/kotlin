@@ -33,7 +33,7 @@ abstract class AbstractKotlinSirBridgeTest {
                     }
                     is SirFunctionalType -> {
                         // todo: KT-72993
-                        (listOf("function") + type.parameterTypes.map { it.swiftName }).joinToString("_")
+                        (listOf("function") + type.parameterTypes.map { swiftFqName(it) }).joinToString("_")
                     }
                     else -> error("Unsupported type: $type")
                 }
@@ -47,7 +47,7 @@ abstract class AbstractKotlinSirBridgeTest {
                     }
                     is SirFunctionalType -> {
                         // todo: KT-72993
-                        (listOf("function") + type.parameterTypes.map { it.swiftName }).joinToString("_")
+                        (listOf("function") + type.parameterTypes.map { kotlinFqName(it) }).joinToString("_")
                     }
                     else -> error("Unsupported type: $type")
                 }
@@ -98,6 +98,18 @@ private fun parseType(typeName: String): SirType {
                         parameterTypes = emptyList(),
                     ),
                     parameterTypes = emptyList(),
+                )
+            }
+            "closure_with_parameter" -> {
+                SirFunctionalType(
+                    returnType = SirNominalType(buildClass {
+                        name = "MyClass"
+                        origin = SirOrigin.ExternallyDefined(name = "MyClass")
+                    }),
+                    parameterTypes = listOf(SirNominalType(buildClass {
+                        name = "MyAnotherClass"
+                        origin = SirOrigin.ExternallyDefined(name = "MyAnotherClass")
+                    })),
                 )
             }
             else -> error("unknown tag for predefined closure")
