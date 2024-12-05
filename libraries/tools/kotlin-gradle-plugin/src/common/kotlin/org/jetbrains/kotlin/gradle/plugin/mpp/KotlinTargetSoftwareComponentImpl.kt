@@ -25,7 +25,7 @@ internal fun KotlinTargetSoftwareComponent(
     kotlinComponent: KotlinTargetComponent,
 ): KotlinTargetSoftwareComponent {
     val softwareComponentFactory = (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java)
-    val adhocVariant = softwareComponentFactory.adhoc(kotlinComponent.name)
+    val adhocComponent = softwareComponentFactory.adhoc(kotlinComponent.name)
 
     /* Launch configuration */
     target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
@@ -47,7 +47,7 @@ internal fun KotlinTargetSoftwareComponent(
                 )
             }
 
-            adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
+            adhocComponent.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
                 val mavenScope = kotlinUsageContext.mavenScope
                 if (mavenScope != null) {
                     val mavenScopeString = when (mavenScope) {
@@ -61,7 +61,7 @@ internal fun KotlinTargetSoftwareComponent(
     }
 
     @OptIn(UnsafeApi::class)
-    return KotlinTargetSoftwareComponentImpl(adhocVariant, kotlinComponent)
+    return KotlinTargetSoftwareComponentImpl(adhocComponent, kotlinComponent)
 }
 
 

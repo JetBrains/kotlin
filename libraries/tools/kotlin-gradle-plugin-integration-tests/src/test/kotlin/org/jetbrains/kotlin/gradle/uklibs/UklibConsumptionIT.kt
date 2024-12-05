@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.gradle.api.file.Directory
 import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.api.internal.GradleInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
-import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.internal.project.*
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.artifacts.UklibResolutionStrategy
@@ -19,20 +17,24 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
+import org.jetbrains.kotlin.library.impl.buffer
 import org.junit.jupiter.api.DisplayName
+import java.io.BufferedReader
 import java.io.File
 import java.io.FileOutputStream
 import java.io.Serializable
 import java.net.URLClassLoader
 import kotlin.test.assertEquals
 import java.io.PrintStream
+import java.nio.channels.Pipe
+import kotlin.concurrent.thread
 
 @MppGradlePluginTests
 @DisplayName("Smoke test uklib consumption")
 class UklibConsumptionIT : KGPBaseTest() {
 
-    @GradleTestVersions
     @GradleTest
     fun `uklib consumption smoke - in kotlin compilations of a symmetric consumer and producer projects - with all metadata compilations`(
         version: GradleVersion
@@ -127,23 +129,18 @@ class UklibConsumptionIT : KGPBaseTest() {
                 gradleRepositoriesMode = RepositoriesMode.PREFER_PROJECT,
             )
         ) {
-            transferDependencyResolutionRepositoriesIntoProjectRepositories()
-            buildScriptInjection {
-                project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY, UklibResolutionStrategy.AllowResolvingUklibs.propertyName)
-
-                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
-
-                project.repositories.maven {
-                    it.setUrl(publisher.repository)
-
-                    // Prevent Gradle from reading Gradle metadata
-                    it.metadataSources {
-                        it.mavenPom()
-                        it.ignoreGradleMetadataRedirection()
-                    }
+            addPublishedProjectToRepositories(publisher) @JvmSerializableLambda {
+                metadataSources {
+                    it.mavenPom()
+                    it.ignoreGradleMetadataRedirection()
                 }
-
-                with(kotlinMultiplatform) {
+            }
+            buildScriptInjection {
+                project.propertiesExtension.set(
+                    PropertiesProvider.PropertyNames.KOTLIN_MPP_UKLIB_RESOLUTION_STRATEGY,
+                    UklibResolutionStrategy.AllowResolvingUklibs.propertyName
+                )
+                project.applyMultiplatform {
                     symmetricTargets()
 
                     sourceSets.all {
@@ -185,8 +182,8 @@ class UklibConsumptionIT : KGPBaseTest() {
                 "ios_arm64",
             )
 
-            // FIXME: Test metadata compilations
-            build("build")
+            // FIXME: Run test compilations
+            build("assemble")
 
             data class KlibsToCheck(
                 val iosArm64Klib: File,
@@ -263,58 +260,22 @@ class UklibConsumptionIT : KGPBaseTest() {
         return outputFile.readText()
     }
 
-    data class PublisherProject(
-        val repository: File,
-        val group: String,
-        val name: String,
-        val version: String,
-    ) : Serializable
-
     private fun publishUklib(
         gradleVersion: GradleVersion,
         publisherConfiguration: KotlinMultiplatformExtension.() -> Unit,
-    ): PublisherProject {
-        val publisherGroup = "foo"
-        val publisherVersion = "1.0"
-        val publisherName = "producer"
-        var publicationRepoPath: File? = null
-        project(
+    ): PublishedProject {
+        return project<PublishedProject>(
             "buildScriptInjectionGroovy",
             gradleVersion,
-            projectPathAdditionalSuffix = publisherName,
         ) {
-            val publicationRepo: Project.() -> Directory = @JvmSerializableLambda { project.layout.projectDirectory.dir("repo") }
             buildScriptInjection {
                 project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, true.toString())
-
-                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
-                project.plugins.apply("maven-publish")
-
-                project.group = publisherGroup
-                project.version = publisherVersion
-
-                with(kotlinMultiplatform) {
+                project.applyMultiplatform {
                     publisherConfiguration()
                 }
-
-                val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
-                publishingExtension.repositories.maven {
-                    it.url = project.uri(project.publicationRepo())
-                }
             }
-
-            build("publishAllPublicationsToMavenRepository")
-
-            publicationRepoPath = buildScriptReturn {
-                project.publicationRepo().asFile
-            }.buildAndReturn()
-        }
-        return PublisherProject(
-            publicationRepoPath!!,
-            publisherGroup,
-            publisherName,
-            publisherVersion,
-        )
+            publish(PublisherConfiguration())
+        }.result
     }
 }
 

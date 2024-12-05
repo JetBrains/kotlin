@@ -37,7 +37,7 @@ internal val MultiplatformPublishingSetupAction = KotlinProjectSetupCoroutine {
             project.extensions.configure(PublishingExtension::class.java) { publishing ->
                 createRootPublication(project, publishing).also(kotlinMultiplatformRootPublicationImpl::complete)
                 createTargetPublications(project, publishing)
-                createUklibSpecificMavenPublications(project, publishing)
+                // createUklibSpecificMavenPublications(project, publishing)
             }
         } else {
             kotlinMultiplatformRootPublicationImpl.complete(null)
@@ -60,7 +60,7 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
 
         addKotlinToolingMetadataArtifactIfNeeded(project)
         if (project.kotlinPropertiesProvider.publishUklib) {
-            addUklibArtifactAndChangePackaging(project)
+            addUklibArtifactAndChangePackagingAndPatchPom(project)
         }
     }
 }
@@ -74,9 +74,12 @@ private fun MavenPublication.addKotlinToolingMetadataArtifactIfNeeded(project: P
     }
 }
 
-private fun MavenPublication.addUklibArtifactAndChangePackaging(project: Project) {
+private fun MavenPublication.addUklibArtifactAndChangePackagingAndPatchPom(project: Project) {
     // FIXME: This will break coroutines !!!
     pom.packaging = Uklib.UKLIB_PACKAGING
+    pom.withXml {
+        RootComponentPomDependenciesRewriter().makeAllDependenciesCompile(it)
+    }
     project.launch {
         artifact(project.archiveUklibTask()) { artifact ->
             artifact.extension = Uklib.UKLIB_EXTENSION

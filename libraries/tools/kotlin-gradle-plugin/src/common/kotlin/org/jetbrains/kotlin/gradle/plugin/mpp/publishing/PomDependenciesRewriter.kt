@@ -107,3 +107,21 @@ internal fun Project.addTaskDependenciesToPomGenerator(publication: MavenPublica
         }
     }
 }
+
+// FIXME: Project dependencies? Actually look into scopes to determine dependencies
+internal class RootComponentPomDependenciesRewriter {
+
+    fun makeAllDependenciesCompile(
+        pomXml: XmlProvider,
+    ) {
+        val dependenciesNode = (pomXml.asNode().get("dependencies") as NodeList).filterIsInstance<Node>().singleOrNull() ?: return
+        val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()
+
+        dependencyNodes.forEach { dependencyNode ->
+//            fun Node.getSingleChildValueOrNull(childName: String): String? =
+//                ((get(childName) as NodeList?)?.singleOrNull() as Node?)?.text()
+
+            ((dependencyNode.get("scope") as NodeList).singleOrNull() as Node?)?.setValue("compile")
+        }
+    }
+}

@@ -139,11 +139,7 @@ internal class GranularMetadataTransformation(
             kotlinKmpProjectIsolationEnabled = project.kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled,
             sourceSetMetadataLocationsOfProjectDependencies = project.kotlinSecondaryVariantsDataSharing
                 .consumeCommonSourceSetMetadataLocations(kotlinSourceSet.internal.resolvableMetadataConfiguration),
-            uklibFragmentAttributes = kotlinSourceSet.internal.compilations
-                .map { it.target }
-                .filter { it !is KotlinMetadataTarget }
-                .map { it.uklibFragmentPlatformAttribute.unwrap() }
-                .toSet()
+            uklibFragmentAttributes = kotlinSourceSet.uklibFragmentPlatformAttributes,
         )
     }
 
@@ -240,13 +236,9 @@ internal class GranularMetadataTransformation(
      * * based on the project structure metadata, determine which of the module's dependencies are requested by the
      *   source sets in *S*, then consider only these transitive dependencies, ignore the others;
      */
-    // По идее эта логика исполняется на зависимость, на каждый потребляющий SS
+    // По идее эта логика исполняется на зависимость, на каждый потребляющий SS. [sourceSetsVisibleInParents] это SS для этой зависимости
     private fun processDependency(
         dependency: ResolvedDependencyResult,
-        // Я не понимаю откуда приходят эти SS
-        /**
-         * 24.11.2024 - Наверное для iosMain они приходят из commonMain. Это точно так, они приходят из parent тасок которые делают GMT
-         */
         sourceSetsVisibleInParents: Set<String>,
     ): MetadataDependencyResolution {
         val module = dependency.selected
@@ -284,7 +276,6 @@ internal class GranularMetadataTransformation(
                 moduleId,
                 sourceSetsVisibleInParents,
 
-                //sourceSetName = params.sourceSetName,
                 uklibFragmentAttributes = params.uklibFragmentAttributes,
             )
         } else {
@@ -302,7 +293,7 @@ internal class GranularMetadataTransformation(
         sourceSetsVisibleInParents: Set<String>,
         uklibFragmentAttributes: Set<String>,
     ): MetadataDependencyResolution {
-        // Validate that
+        // FIXME: Validate that ???
 
         val uklibDependency = Uklib.deserializeFromDirectory(
             compositeMetadataArtifact.file,
@@ -336,10 +327,7 @@ internal class GranularMetadataTransformation(
             projectStructureMetadata = null,
             // FIXME: Don't filter this
             allVisibleSourceSetNames = visibleFragments.map { it.identifier }.toHashSet(),
-            // FIXME: Only filter this, but for some reason this doesn't work???
             visibleSourceSetNamesExcludingDependsOn = visibleFragments.map { it.identifier }.toHashSet(),
-
-            // 26.11.2024 - This is likely only used to walk further dependencies, so we want all of them
             visibleTransitiveDependencies = dependency.selected.dependencies.filterIsInstance<ResolvedDependencyResult>().toHashSet(),
             metadataProvider = ArtifactMetadataProvider(
                 object : CompositeMetadataArtifact {
@@ -369,12 +357,12 @@ internal class GranularMetadataTransformation(
                                                 override val archiveExtension: String
                                                     get() = ""
                                                 // This needs to be unique per fragment
+                                                // FIXME: Do we need a checksum here?
                                                 override val relativeFile: File
                                                     get() = File("uklib-${moduleVersion.group}-${moduleVersion.name}-${moduleVersion.version}-${fragment.identifier}")
                                                 override val checksum: String
-                                                    // FIXME: Why does this even exist?
+                                                    // FIXME: Why does this even exist separately?
                                                     get() = ""
-
                                                 override fun copyTo(file: File): Boolean {
                                                     return fragment.file().copyRecursively(
                                                         file,
@@ -590,10 +578,18 @@ internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): P
 }
 
 private val KotlinMultiplatformExtension.platformCompilationSourceSets: Set<String>
-    get() = targets.filterNot { it is KotlinMetadataTarget }
+    get() = targets
+        .filterNot { it is KotlinMetadataTarget }
         .flatMap { target -> target.compilations }
         .flatMap { it.kotlinSourceSets }
         .map { it.name }
+        .toSet()
+
+private val KotlinSourceSet.uklibFragmentPlatformAttributes: Set<String>
+    get() = internal.compilations
+        .map { it.target }
+        .filterNot { it is KotlinMetadataTarget }
+        .map { it.uklibFragmentPlatformAttribute.unwrap() }
         .toSet()
 
 internal val GranularMetadataTransformation?.metadataDependencyResolutionsOrEmpty get() = this?.metadataDependencyResolutions ?: emptyList()

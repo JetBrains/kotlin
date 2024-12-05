@@ -17,6 +17,7 @@ import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.SetProperty
+import org.gradle.api.publish.internal.component.MavenPublishingAwareVariant
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
@@ -86,6 +87,7 @@ abstract class KotlinSoftwareComponent(
                 // overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
 
+            // FIXME: Remove this
             if (project.kotlinPropertiesProvider.publishUklib) {
                 this += DefaultKotlinUsageContext(
                     compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
@@ -176,7 +178,10 @@ class DefaultKotlinUsageContext(
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true,
     internal val publishOnlyIf: PublishOnlyIf = PublishOnlyIf { true },
-) : KotlinUsageContext {
+) : KotlinUsageContext
+    // FIXME: This is public API!!! and this is only available in Gradle 8.0+ and was MavenPublishingAwareContext before
+    // MavenPublishingAwareVariant
+{
     fun interface PublishOnlyIf {
         fun predicate(): Boolean
     }
@@ -235,6 +240,15 @@ class DefaultKotlinUsageContext(
     override fun getCapabilities(): Set<Capability> = emptySet()
 
     override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
+
+//    override fun getScopeMapping(): MavenPublishingAwareVariant.ScopeMapping {
+//        return when (mavenScope) {
+//            KotlinUsageContext.MavenScope.COMPILE -> MavenPublishingAwareVariant.ScopeMapping.compile
+//            KotlinUsageContext.MavenScope.RUNTIME -> MavenPublishingAwareVariant.ScopeMapping.runtime
+//            // FIXME: Copypaste logic from MavenPublishingAwareVariant.scopeForVariant?
+//            null -> MavenPublishingAwareVariant.ScopeMapping.compile
+//        }
+//    }
 
     private val publishJvmEnvironmentAttribute get() = project.kotlinPropertiesProvider.publishJvmEnvironmentAttribute
 

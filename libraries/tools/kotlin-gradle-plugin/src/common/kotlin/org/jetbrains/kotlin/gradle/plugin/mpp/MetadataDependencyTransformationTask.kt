@@ -89,8 +89,9 @@ abstract class MetadataDependencyTransformationTask
                         "Probably it is accessed it during Task Execution with state loaded from Configuration Cache"
             )
 
+    // FIXME: Is this ok to move to internal?
     @get:OutputFile
-    protected val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
+    internal val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
         .fileProperty()
         .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.json")) }
 

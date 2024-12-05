@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.publish.PublishingExtension
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.mpp.resources.unzip
@@ -17,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import java.io.File
 import java.io.FileInputStream
 import java.io.Serializable
 import java.nio.file.Path
@@ -27,6 +23,7 @@ import kotlin.io.path.name
 import kotlin.test.assertEquals
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
@@ -34,6 +31,12 @@ import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
+import org.junit.jupiter.api.assertThrows
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import java.io.File
+import java.lang.Exception
+import kotlin.test.assertContains
 
 @OptIn(ExternalKotlinTargetApi::class)
 @MppGradlePluginTests
@@ -190,18 +193,10 @@ class UklibPublicationIT : KGPBaseTest() {
             "buildScriptInjectionGroovy",
             gradleVersion,
         ) {
-            val publicationRepo: Project.() -> Directory = @JvmSerializableLambda{ project.layout.projectDirectory.dir("repo") }
             buildScriptInjection {
                 // FIXME: Enable cross compilation
                 project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, true.toString())
-
-                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
-                project.plugins.apply("maven-publish")
-
-                project.group = "foo"
-                project.version = "1.0"
-
-                with(kotlinMultiplatform) {
+                project.applyMultiplatform {
                     class FakeCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(delegate) {
                         @Suppress("UNCHECKED_CAST", "DEPRECATION")
                         override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions>
@@ -245,17 +240,124 @@ class UklibPublicationIT : KGPBaseTest() {
                         it.addIdentifierClass(SourceSetIdentifier(it.name))
                     }
                 }
-
-                val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
-                publishingExtension.repositories.maven {
-                    it.url = project.uri(project.publicationRepo())
-                }
             }
 
-            buildAndFail("publishAllPublicationsToMavenRepository") {
-                assertOutputContains("FIXME: This is explicitly unsupported")
+            assertContains(
+                assertThrows<Exception> {
+                    publish(PublisherConfiguration())
+                }.message!!,
+                "FIXME: This is explicitly unsupported",
+            )
+        }
+    }
+
+    fun parsePom(file: File): Document = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        .parse(file)
+    fun Document.mavenDependencies(): List<MavenDependency> = documentElement
+        .elements("dependencies").single()
+        .elements("dependency")
+        .map {
+            MavenDependency(
+                it.elements("groupId").single().textContent,
+                it.elements("artifactId").single().textContent,
+                it.elements("version").single().textContent,
+                it.elements("scope").singleOrNull()?.textContent
+            )
+        }
+    fun Element.elements(name: String): List<Element> {
+        val elements = getElementsByTagName(name)
+        return (0..<elements.length).map { elements.item(it) as Element }
+    }
+    data class MavenDependency(
+        val groupId: String,
+        val artifactId: String,
+        val version: String,
+        val scope: String?
+    )
+
+    @GradleTest
+    fun `uklib POM - publication with dependencies in different scopes`(
+        gradleVersion: GradleVersion
+    ) {
+        val producerImplementation = publishUklib(
+            gradleVersion = gradleVersion,
+            publisherConfig = PublisherConfiguration(name = "implementation")
+        ) {
+            jvm()
+            js()
+        }.publishedProject
+
+        val producerApi = publishUklib(
+            gradleVersion = gradleVersion,
+            publisherConfig = PublisherConfiguration(name = "api")
+        ) {
+            jvm()
+            js()
+        }.publishedProject
+
+        val project = publishUklib(
+            gradleVersion = gradleVersion,
+            dependencyRepositories = listOf(producerImplementation, producerApi),
+        ) {
+            // FIXME: Allow consuming Uklibs
+            jvm()
+            js()
+            sourceSets.commonMain.dependencies {
+                implementation(
+                    producerImplementation.coordinate
+                )
+                api(
+                    producerApi.coordinate
+                )
             }
         }
+
+        val publisher = project.publishedProject
+        assertEquals(
+            listOf(
+                MavenDependency(groupId = "foo", artifactId = "api", version = "1.0", scope = "compile"),
+                // FIXME: This should be runtime
+                MavenDependency(groupId = "foo", artifactId = "implementation", version = "1.0", scope = "compile"),
+            ),
+            parsePom(publisher.pom).mavenDependencies().filterNot {
+                it.artifactId == "kotlin-stdlib"
+            },
+        )
+    }
+
+    @GradleTest
+    fun `uklib POM - publication with dependencies in native targets - all dependencies are compile`(
+        gradleVersion: GradleVersion
+    ) {
+        val producer = publishUklib(
+            gradleVersion = gradleVersion,
+            publisherConfig = PublisherConfiguration(name = "dependency")
+        ) {
+            iosArm64()
+            iosX64()
+        }.publishedProject
+
+        val project = publishUklib(
+            gradleVersion = gradleVersion,
+            dependencyRepositories = listOf(producer),
+        ) {
+            // FIXME: Enable uklib consumption?
+            iosArm64()
+            iosX64()
+            sourceSets.commonMain.dependencies {
+                implementation(producer.coordinate)
+            }
+        }
+
+        val publisher = project.publishedProject
+        assertEquals(
+            listOf(
+                MavenDependency(groupId = "foo", artifactId = "dependency", version = "1.0", scope = "compile"),
+            ),
+            parsePom(publisher.pom).mavenDependencies().filterNot {
+                it.artifactId == "kotlin-stdlib"
+            },
+        )
     }
 
     @kotlinx.serialization.Serializable
@@ -266,73 +368,55 @@ class UklibPublicationIT : KGPBaseTest() {
     @kotlinx.serialization.Serializable
     data class Umanifest(
         val fragments: List<Fragment>,
+        val manifestVersion: String = Uklib.CURRENT_UMANIFEST_VERSION,
     )
 
     data class UklibProducer(
         val uklibContents: Path,
         val umanifest: Umanifest,
+        val publishedProject: PublishedProject
     ) : Serializable
 
     private fun publishUklib(
         template: String = "buildScriptInjectionGroovy",
         gradleVersion: GradleVersion,
         agpVersion: String? = null,
-        publisherConfiguration: KotlinMultiplatformExtension.() -> Unit,
+        dependencyRepositories: List<PublishedProject> = emptyList(),
+        publisherConfig: PublisherConfiguration = PublisherConfiguration(),
+        configuration: KotlinMultiplatformExtension.() -> Unit,
     ): UklibProducer {
-        val publisherGroup = "foo"
-        val publisherVersion = "1.0"
-        val publisherName = "producer"
-        var repository: File? = null
-        project(
+        val publisher = project<PublishedProject>(
             template,
             gradleVersion,
-            projectPathAdditionalSuffix = publisherName,
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(
+                gradleRepositoriesMode = RepositoriesMode.PREFER_PROJECT,
+            ),
+            // FIXME: Otherwise klib resolver explodes
+            projectPathAdditionalSuffix = publisherConfig.name,
         ) {
-            val publicationRepo: Project.() -> Directory = @JvmSerializableLambda{ project.layout.projectDirectory.dir("repo") }
+            dependencyRepositories.forEach(::addPublishedProjectToRepositories)
             buildScriptInjection {
                 // FIXME: Enable cross compilation
                 project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_PUBLISH_UKLIB, true.toString())
-
-                project.plugins.apply("org.jetbrains.kotlin.multiplatform")
-                project.plugins.apply("maven-publish")
-
-                project.group = publisherGroup
-                project.version = publisherVersion
-
-                with(kotlinMultiplatform) {
-                    // Add a source to all source sets
-                    publisherConfiguration()
-
+                project.applyMultiplatform {
+                    configuration()
                     sourceSets.all {
                         it.addIdentifierClass(SourceSetIdentifier(it.name))
                     }
                 }
-
-                val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
-                publishingExtension.repositories.maven {
-                    it.url = project.uri(project.publicationRepo())
-                }
             }
 
-            build(
-                "publishAllPublicationsToMavenRepository",
-                buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
-            )
-
-            repository = buildScriptReturn {
-                project.publicationRepo().asFile
-            }.buildAndReturn(
+            publish(
+                publisherConfig,
                 deriveBuildOptions = { defaultBuildOptions.copy(androidVersion = agpVersion) }
             )
-        }
+        }.result
 
-        val uklibPath = repository!!
-            .resolve(publisherGroup).resolve(publisherName).resolve(publisherVersion)
-            .resolve("${publisherName}-${publisherVersion}.uklib").toPath()
+        val uklibPath = publisher.uklib.toPath()
 
         assertFileExists(uklibPath)
 
-        val uklibContents = repository!!.resolve("uklibContents").toPath()
+        val uklibContents = publisher.repository.resolve("uklibContents").toPath()
         uklibContents.createDirectory()
         unzip(
             uklibPath,
@@ -344,7 +428,8 @@ class UklibPublicationIT : KGPBaseTest() {
             uklibContents = uklibContents,
             umanifest = Json.decodeFromStream<Umanifest>(
                 FileInputStream(uklibContents.resolve("umanifest").toFile())
-            )
+            ),
+            publishedProject = publisher
         )
     }
 

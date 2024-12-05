@@ -21,6 +21,10 @@ kotlin {
             "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             "kotlin.io.path.ExperimentalPathApi",
         )
+        freeCompilerArgs.add(
+            // Avoid having to JvmSerializableLambda in build script injections
+            "-Xlambdas=class"
+        )
     }
 }
 
