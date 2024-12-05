@@ -35848,6 +35848,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("callableReferenceAsCallArgument.kt")
+        public void testCallableReferenceAsCallArgument() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/callableReferenceAsCallArgument.kt");
+        }
+
+        @Test
         @TestMetadata("callableReferences.kt")
         public void testCallableReferences() {
           runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/callableReferences.kt");
