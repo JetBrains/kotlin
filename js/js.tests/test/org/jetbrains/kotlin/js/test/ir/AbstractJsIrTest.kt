@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
-import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsKlibSerializerFacade
-import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
 import org.jetbrains.kotlin.js.test.utils.configureLineNumberTests
@@ -45,11 +43,8 @@ abstract class AbstractJsIrTest(
     override val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::JsKlibSerializerFacade
 
-    override val backendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
-        get() = ::JsIrBackendFacade
-
-    override val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
-        get() = { RecompileModuleJsIrBackendFacade(it) }
+    override val backendFacades: JsBackendFacades
+        get() = JsBackendFacades.WithRecompilation
 
     private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { parseBoolean(it) } ?: default
 

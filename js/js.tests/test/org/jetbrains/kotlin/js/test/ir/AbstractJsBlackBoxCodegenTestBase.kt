@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
+import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrInliningFacade
+import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -40,11 +42,34 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
     private val pathToTestDir: String,
     private val testGroupOutputDirPrefix: String,
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
+    /**
+     * There can be several configurations of JS codegen/box tests, which differ in a way how backend part
+     * of the test pipeline is executed.
+     *
+     * [JsBackendFacades] helps to configure the backend part of the test pipeline.
+     */
+    sealed interface JsBackendFacades {
+        /**
+         * The backend part of the pipeline consists of the unified KLIB deserializer+lowerings facade [deserializerAndLoweringFacade]
+         * and a recompilation facade [recompileFacade].
+         *
+         * The output artifact of [deserializerAndLoweringFacade] is [BinaryArtifacts.Js], which helps to avoid re-registering
+         * [IrBackendInput] for the module from [IrBackendInput.JsIrAfterFrontendBackendInput] to
+         * [IrBackendInput.JsIrDeserializedFromKlibBackendInput], which is essential for [recompileFacade].
+         */
+        object WithRecompilation : JsBackendFacades {
+            val deserializerAndLoweringFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>
+                get() = ::JsIrBackendFacade
+
+            val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
+                get() = ::RecompileModuleJsIrBackendFacade
+        }
+    }
+
     abstract val frontendFacade: Constructor<FrontendFacade<FO>>
     abstract val frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>
     abstract val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-    abstract val backendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
-    abstract val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
+    abstract val backendFacades: JsBackendFacades
 
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest()
@@ -96,8 +121,13 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             useHandlers(::IrMangledNameAndSignatureDumpHandler)
         }
 
-        backendFacade?.let { facadeStep(it) }
-        facadeStep(recompileFacade)
+        when (val backendFacades = backendFacades) {
+            is JsBackendFacades.WithRecompilation -> {
+                facadeStep(backendFacades.deserializerAndLoweringFacade)
+                facadeStep(backendFacades.recompileFacade)
+            }
+        }
+
         jsArtifactsHandlersStep {
             useHandlers(
                 ::JsSourceMapPathRewriter,

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.js.test.fir
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.FirJsKlibSerializerFacade
-import org.jetbrains.kotlin.js.test.converters.JsIrBackendFacade
-import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.js.test.handlers.JsWrongModuleHandler
 import org.jetbrains.kotlin.js.test.handlers.createFirJsLineNumberHandler
@@ -56,11 +54,8 @@ open class AbstractFirJsTest(
     override val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirJsKlibSerializerFacade
 
-    override val backendFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>?
-        get() = ::JsIrBackendFacade
-
-    override val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
-        get() = { RecompileModuleJsIrBackendFacade(it) }
+    override val backendFacades: JsBackendFacades
+        get() = JsBackendFacades.WithRecompilation
 
     private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { parseBoolean(it) } ?: default
 
