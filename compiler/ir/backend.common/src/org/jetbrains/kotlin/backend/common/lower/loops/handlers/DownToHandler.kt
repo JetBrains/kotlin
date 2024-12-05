@@ -34,8 +34,8 @@ internal class DownToHandler(private val context: CommonBackendContext) : Header
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
-            val first = expression.extensionReceiver!!
-            val last = expression.getValueArgument(0)!!
+            val first = expression.arguments[0]!!
+            val last = expression.arguments[1]!!
             val step = irInt(-1)
             val direction = ProgressionDirection.DECREASING
 
