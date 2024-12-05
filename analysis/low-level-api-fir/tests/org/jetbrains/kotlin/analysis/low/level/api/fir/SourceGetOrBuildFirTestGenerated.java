@@ -1238,6 +1238,18 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("conditions.kt")
+    public void testConditions() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/conditions.kt");
+    }
+
+    @Test
+    @TestMetadata("conditions2.kt")
+    public void testConditions2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/conditions2.kt");
+    }
+
+    @Test
     @TestMetadata("contract.kt")
     public void testContract() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/contract.kt");

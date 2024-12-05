@@ -17,7 +17,8 @@ internal data class LLPartialBodyResolveState(
     val analyzedPsiStatementCount: Int,
     val analyzedFirStatementCount: Int,
     val performedAnalysesCount: Int,
-    val analysisStateSnapshot: LLPartialBodyResolveSnapshot?
+    val analysisStateSnapshot: LLPartialBodyResolveSnapshot?,
+    val previousState: LLPartialBodyResolveState?
 ) {
     val isFullyAnalyzed: Boolean
         get() = totalPsiStatementCount == analyzedPsiStatementCount

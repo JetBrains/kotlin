@@ -40,3 +40,4 @@ class KaBaseAnalysisScopeProviderImpl(
         return useSiteScope.isFromGeneratedModule(virtualFile)
     }
 }
+
