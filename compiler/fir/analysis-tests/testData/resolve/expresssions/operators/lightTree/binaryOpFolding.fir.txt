@@ -1,0 +1,15 @@
+FILE: binaryOpFolding.kt
+    public final fun cornerCases(): R|kotlin/Unit| {
+        lval a: R|kotlin/String| = <strcat>(String(a), String(b), String(c))
+        lval b: R|kotlin/String| = <strcat>(String(a), String(b), String(c))
+        lval c: R|kotlin/String| = <strcat>(String(a), String(b), String(c))
+        lval d: R|kotlin/String| = R|/dummy|(<strcat>(String(a), String(b), String(c)))
+        lval e: R|kotlin/String| = R|/dummy|(<strcat>(String(a), String(b), String(c))).R|kotlin/String.plus|(String(d))
+        lval f: R|kotlin/String| = String(a).R|kotlin/String.plus|(R|/dummy|(<strcat>(String(b), String(c), String(d))))
+        lval g: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(2)).R|kotlin/Int.plus|(Int(3))
+        lval h: R|kotlin/String| = <strcat>(String(a
+b), String(c), <strcat>(R|<local>/d|))
+    }
+    public final fun dummy(str: R|kotlin/String|): R|kotlin/String| {
+        ^dummy R|<local>/str|
+    }

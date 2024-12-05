@@ -64,32 +64,28 @@ FILE fqName:<root> fileName:/box.kt
           then: BLOCK type=kotlin.Unit origin=null
             THROW type=kotlin.Nothing
               CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
-                p0: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
-                  $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
-                    $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
-                      $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
-                        $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
-                          $this: STRING_CONCATENATION type=kotlin.String
-                            CONST String type=kotlin.String value="expected: "
-                            GET_VAR 'expected: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
-                            CONST String type=kotlin.String value="\n"
-                          other: STRING_CONCATENATION type=kotlin.String
-                            CONST String type=kotlin.String value="modCountAtJava: "
-                            GET_VAR 'val modCountAtJava: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
-                            CONST String type=kotlin.String value="\n"
-                        other: STRING_CONCATENATION type=kotlin.String
-                          CONST String type=kotlin.String value="modCountAtAbstractMyMutableList: "
-                          GET_VAR 'val modCountAtAbstractMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
-                          CONST String type=kotlin.String value="\n"
-                      other: STRING_CONCATENATION type=kotlin.String
-                        CONST String type=kotlin.String value="modCountAtMyMutableList: "
-                        GET_VAR 'val modCountAtMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
-                        CONST String type=kotlin.String value="\n"
-                    other: STRING_CONCATENATION type=kotlin.String
-                      CONST String type=kotlin.String value="modCountViaReferenceAtAbstractMyMutableList: "
-                      GET_VAR 'val modCountViaReferenceAtAbstractMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
-                      CONST String type=kotlin.String value="\n"
-                  other: STRING_CONCATENATION type=kotlin.String
+                p0: STRING_CONCATENATION type=kotlin.String
+                  STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value="expected: "
+                    GET_VAR 'expected: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                    CONST String type=kotlin.String value="\n"
+                  STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value="modCountAtJava: "
+                    GET_VAR 'val modCountAtJava: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                    CONST String type=kotlin.String value="\n"
+                  STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value="modCountAtAbstractMyMutableList: "
+                    GET_VAR 'val modCountAtAbstractMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                    CONST String type=kotlin.String value="\n"
+                  STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value="modCountAtMyMutableList: "
+                    GET_VAR 'val modCountAtMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                    CONST String type=kotlin.String value="\n"
+                  STRING_CONCATENATION type=kotlin.String
+                    CONST String type=kotlin.String value="modCountViaReferenceAtAbstractMyMutableList: "
+                    GET_VAR 'val modCountViaReferenceAtAbstractMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
+                    CONST String type=kotlin.String value="\n"
+                  STRING_CONCATENATION type=kotlin.String
                     CONST String type=kotlin.String value="modCountViaReferenceAtMyMutableList: "
                     GET_VAR 'val modCountViaReferenceAtMyMutableList: kotlin.Int declared in <root>.assertModCount' type=kotlin.Int origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
