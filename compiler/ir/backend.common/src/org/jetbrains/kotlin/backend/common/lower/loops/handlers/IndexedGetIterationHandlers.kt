@@ -126,8 +126,8 @@ internal open class CharSequenceIterationHandler(
     // extension function, and the behavior of those custom iterators is unknown.
     override fun matchIteratorCall(call: IrCall): Boolean {
         val callee = call.symbol.owner
-        return callee.valueParameters.isEmpty() &&
-                callee.extensionReceiverParameter?.type?.isCharSequence() == true &&
+        return callee.parameters.none { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context } &&
+                callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.isCharSequence() == true &&
                 callee.kotlinFqName == FqName("kotlin.text.${OperatorNameConventions.ITERATOR}")
     }
 
