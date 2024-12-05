@@ -1,0 +1,5 @@
+public final class home/MainKt {
+    // source: 'main.kt'
+    private final static method test$lambda$0(p0: androidx.compose.runtime.State): java.lang.String-> invoke methods: getValue
+    public final static method test(p0: home.HomeViewModel, p1: androidx.compose.runtime.Composer, p2: int): java.lang.String-> invoke methods: checkNotNullParameter, delegate, endReplaceGroup, getUiState$testMain, isTraceInProgress, sourceInformation, startReplaceGroup, test$lambda$0, traceEventEnd, traceEventStart
+}

@@ -78,6 +78,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("localDelegatedProperty.kt")
+  public void testLocalDelegatedProperty() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/localDelegatedProperty.kt");
+  }
+
+  @Test
   @TestMetadata("multiModulesWithComposableFunction.kt")
   public void testMultiModulesWithComposableFunction() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/multiModulesWithComposableFunction.kt");

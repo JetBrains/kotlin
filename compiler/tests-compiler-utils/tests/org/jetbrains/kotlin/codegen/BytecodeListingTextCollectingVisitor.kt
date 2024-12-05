@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.test.KtAssert
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
@@ -15,6 +16,7 @@ class BytecodeListingTextCollectingVisitor(
     val withSignatures: Boolean,
     val withAnnotations: Boolean = true,
     val sortDeclarations: Boolean = true,
+    val withInvokedMethods: Boolean = false,
 ) : ClassVisitor(Opcodes.API_VERSION) {
     companion object {
         @JvmOverloads
@@ -201,6 +203,7 @@ class BytecodeListingTextCollectingVisitor(
         val parameterTypes = Type.getArgumentTypes(desc).map { it.className }
         val methodAnnotations = arrayListOf<String>()
         val parameterAnnotations = hashMapOf<Int, MutableList<String>>()
+        val invokedMethods = mutableSetOf<String>()
 
         handleModifiers(ModifierTarget.METHOD, access, methodAnnotations)
         val methodParamCount = Type.getArgumentTypes(desc).size
@@ -227,8 +230,16 @@ class BytecodeListingTextCollectingVisitor(
                     "${annotations}p$index: $parameter"
                 }.joinToString()
                 val signatureIfRequired = if (withSignatures) "<$signature> " else ""
+                val invokedMethodsIfRequired = if (withInvokedMethods && invokedMethods.isNotEmpty()) {
+                    "-> invoke methods: ${invokedMethods.toList().sorted().joinToString()}"
+                } else {
+                    ""
+                }
                 declarationsInsideClass.add(
-                    Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations)
+                    Declaration(
+                        "${signatureIfRequired}method $name($parameterWithAnnotations): $returnType" + invokedMethodsIfRequired,
+                        methodAnnotations
+                    )
                 )
                 super.visitEnd()
             }
@@ -240,6 +251,21 @@ class BytecodeListingTextCollectingVisitor(
                 else {
                     invisibleAnnotableParameterCount = parameterCount
                 }
+            }
+
+            override fun visitMethodInsn(opcode: Int, owner: String?, methodName: String?, descriptor: String?, isInterface: Boolean) {
+                invokedMethods.addIfNotNull(methodName)
+                super.visitMethodInsn(opcode, owner, methodName, descriptor, isInterface)
+            }
+
+            override fun visitInvokeDynamicInsn(
+                methodName: String?,
+                descriptor: String?,
+                bootstrapMethodHandle: Handle?,
+                vararg bootstrapMethodArguments: Any?
+            ) {
+                invokedMethods.addIfNotNull(methodName)
+                super.visitInvokeDynamicInsn(methodName, descriptor, bootstrapMethodHandle, *bootstrapMethodArguments)
             }
         }
     }

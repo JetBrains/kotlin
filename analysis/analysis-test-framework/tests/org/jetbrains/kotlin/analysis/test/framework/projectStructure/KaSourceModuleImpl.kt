@@ -28,6 +28,9 @@ class KaSourceModuleImpl(
     override fun toString(): String = name
 
     @KaExperimentalApi
+    override val stableModuleName: String? get() = name
+
+    @KaExperimentalApi
     override val psiRoots: List<PsiFileSystemItem>
         get() = listOf()
 }

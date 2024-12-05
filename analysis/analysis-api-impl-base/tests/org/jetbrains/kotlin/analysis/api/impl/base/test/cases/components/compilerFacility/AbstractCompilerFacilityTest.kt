@@ -142,7 +142,9 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
 
             val actualText = when (result) {
                 is KaCompilationResult.Failure -> result.errors.joinToString("\n") { dumpDiagnostic(it) }
-                is KaCompilationResult.Success -> dumpClassFiles(result.output)
+                is KaCompilationResult.Success -> dumpClassFiles(
+                    result.output, mainModule.testModule.directives.contains(Directives.DUMP_INVOKED_METHODS)
+                )
             }
 
             testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
@@ -194,11 +196,11 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun dumpClassFiles(outputFiles: List<KaCompiledFile>): String {
+    private fun dumpClassFiles(outputFiles: List<KaCompiledFile>, dumpMethodInvocation: Boolean): String {
         val classReaders =
             outputFiles.filter { it.path.endsWith(".class", ignoreCase = true) }.also { check(it.isNotEmpty()) }.sortedBy { it.path }
                 .map { ClassReader(it.content) }
-        return dumpClassFromClassReaders(classReaders)
+        return dumpClassFromClassReaders(classReaders, dumpMethodInvocation)
     }
 
     private fun dumpClassesFromJar(jar: File): String {
@@ -220,9 +222,9 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         return result
     }
 
-    private fun dumpClassFromClassReaders(classReaders: List<ClassReader>): String {
+    private fun dumpClassFromClassReaders(classReaders: List<ClassReader>, dumpMethodInvocation: Boolean = false): String {
         val classes = classReaders.map { classReader ->
-            ClassNode(Opcodes.API_VERSION).also { classReader.accept(it, ClassReader.SKIP_CODE) }
+            ClassNode(Opcodes.API_VERSION).also { classReader.accept(it, ClassReader.SKIP_FRAMES) }
         }
 
         val allClasses = classes.associateBy { Type.getObjectType(it.name) }
@@ -233,7 +235,8 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 allClasses,
                 withSignatures = false,
                 withAnnotations = false,
-                sortDeclarations = true
+                sortDeclarations = true,
+                withInvokedMethods = dumpMethodInvocation,
             )
 
             node.accept(visitor)
@@ -262,6 +265,10 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
 
         val CODE_COMPILATION_EXCEPTION by directive(
             "An exception caused by CodeGen API i.e., ${KaCodeCompilationException::class.jvmName} is expected"
+        )
+
+        val DUMP_INVOKED_METHODS by directive(
+            "Dump .class file with method invocation information from method bodies"
         )
     }
 }

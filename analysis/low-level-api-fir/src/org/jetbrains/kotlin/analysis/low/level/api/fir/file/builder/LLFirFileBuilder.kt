@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
@@ -38,7 +39,8 @@ internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponen
         PsiRawFirBuilder(
             moduleComponents.session,
             moduleComponents.scopeProvider,
-            bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
+            bodyBuildingMode = BodyBuildingMode.LAZY_BODIES,
+            (moduleComponents.session.ktModule as? KaSourceModule)?.stableModuleName?.removeSurrounding("<", ">"),
         ).buildFirFile(ktFile)
     }
 }

@@ -57,6 +57,7 @@ open class PsiRawFirBuilder(
     session: FirSession,
     val baseScopeProvider: FirScopeProvider,
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL,
+    private val stableModuleName: String? = null,
 ) : AbstractRawFirBuilder<PsiElement>(session) {
     /**
      * @see generateAccessorsByDelegate
@@ -1817,6 +1818,7 @@ open class PsiRawFirBuilder(
                             contextParameters.addContextReceivers(classOrObject.contextReceiverList, classSymbol)
                         }.also {
                             it.delegateFieldsMap = delegatedFieldsMap
+                            it.moduleName = stableModuleName
                         }
                     }.also {
                         classOrObject.fillDanglingConstraintsTo(it)

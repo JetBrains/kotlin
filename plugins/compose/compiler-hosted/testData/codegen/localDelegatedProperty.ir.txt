@@ -1,0 +1,53 @@
+MODULE_FRAGMENT
+  FILE fqName:home fileName:main.kt
+    FUN name:test visibility:internal modality:FINAL <> (homeViewModel:home.HomeViewModel, $composer:androidx.compose.runtime.Composer?, $changed:kotlin.Int) returnType:kotlin.String
+      annotations:
+        Composable
+      VALUE_PARAMETER name:homeViewModel index:0 type:home.HomeViewModel
+      VALUE_PARAMETER name:$composer index:1 type:androidx.compose.runtime.Composer? [assignable]
+      VALUE_PARAMETER name:$changed index:2 type:kotlin.Int
+      BLOCK_BODY
+        BLOCK type=kotlin.Unit origin=null
+          CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+            $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.test' type=androidx.compose.runtime.Composer? origin=null
+            key: CONST Int type=kotlin.Int value=-277179382
+          CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+            composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.test' type=androidx.compose.runtime.Composer? origin=null
+            sourceInformation: CONST String type=kotlin.String value="C(test)41@299L13:main.kt#1wrmn"
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+            then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+              key: CONST Int type=kotlin.Int value=-277179382
+              dirty1: GET_VAR '$changed: kotlin.Int declared in home.test' type=kotlin.Int origin=null
+              dirty2: CONST Int type=kotlin.Int value=-1
+              info: CONST String type=kotlin.String value="home.test (main.kt:40)"
+        LOCAL_DELEGATED_PROPERTY name:bar type:kotlin.String flags:val
+          VAR PROPERTY_DELEGATE name:bar$delegate type:androidx.compose.runtime.State<kotlin.String> [val]
+            CALL 'public final fun delegate <T> (initialValue: T of p2.delegate, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): androidx.compose.runtime.State<T of p2.delegate> declared in p2' type=androidx.compose.runtime.State<kotlin.String> origin=null
+              <T>: kotlin.String
+              $receiver: CALL 'internal final fun <get-uiState> (): p2.P declared in home.HomeViewModel' type=p2.P origin=GET_PROPERTY
+                $this: GET_VAR 'homeViewModel: home.HomeViewModel declared in home.test' type=home.HomeViewModel origin=null
+              initialValue: CONST String type=kotlin.String value="a"
+              $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.test' type=androidx.compose.runtime.Composer? origin=null
+              $changed: CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                $this: CONST Int type=kotlin.Int value=48
+                other: GET_FIELD 'FIELD name:$stable type:kotlin.Int visibility:public [final,static] declared in p2.P' type=kotlin.Int origin=null
+          FUN DELEGATED_PROPERTY_ACCESSOR name:<get-bar> visibility:local modality:FINAL <> () returnType:kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun <get-bar> (): kotlin.String declared in home.test'
+                CALL 'public final fun getValue <T> (thisObj: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of androidx.compose.runtime.getValue [inline,operator] declared in androidx.compose.runtime' type=kotlin.String origin=null
+                  <T>: kotlin.String
+                  $receiver: GET_VAR 'val bar$delegate: androidx.compose.runtime.State<kotlin.String> [val] declared in home.test' type=androidx.compose.runtime.State<kotlin.String> origin=null
+                  thisObj: CONST Null type=kotlin.Nothing? value=null
+                  property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val bar: kotlin.String by (...)' delegate='val bar$delegate: androidx.compose.runtime.State<kotlin.String> [val] declared in home.test' getter='local final fun <get-bar> (): kotlin.String declared in home.test' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String [val]
+          CALL 'local final fun <get-bar> (): kotlin.String declared in home.test' type=kotlin.String origin=GET_LOCAL_PROPERTY
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+            then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+        CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+          $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.test' type=androidx.compose.runtime.Composer? origin=null
+        RETURN type=kotlin.String from='internal final fun test (homeViewModel: home.HomeViewModel, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.String declared in home'
+          GET_VAR 'val tmp_0: kotlin.String [val] declared in home.test' type=kotlin.String origin=null

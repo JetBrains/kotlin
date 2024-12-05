@@ -26,9 +26,11 @@ class ComposePluginAnnotationsProvider(testServices: TestServices) : Environment
         val platform = module.targetPlatform
         when {
             platform.isJvm() -> {
-                defaultClassPath.filter { it.absolutePath.contains("androidx.compose") }.forEach {
-                    configuration.addJvmClasspathRoot(it)
-                }
+                // kotlinx.coroutines.CoroutineScope is used by compose runtime.
+                defaultClassPath.filter { it.absolutePath.contains("androidx.compose") || it.absolutePath.contains("kotlinx-coroutines") }
+                    .forEach {
+                        configuration.addJvmClasspathRoot(it)
+                    }
             }
             else -> error("CodeGen API and compiler tests with Compose compiler plugin are currently supporting only JVM")
         }
