@@ -26,6 +26,13 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     val subGraphs: List<ControlFlowGraph>
         get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
+    /**
+     * `true` if the graph is in its final state.
+     * Completed graphs are not supposed to be changed afterward.
+     */
+    val isComplete: Boolean
+        get() = ::nodes.isInitialized
+
     @CfgInternals
     fun copyData(from: ControlFlowGraph, nodeMapper: (CFGNode<*>) -> CFGNode<*>) {
         /** Sic! [nodeCount] is intentionally ignored as it's incremented on node creation. See [CFGNode.id]. */
