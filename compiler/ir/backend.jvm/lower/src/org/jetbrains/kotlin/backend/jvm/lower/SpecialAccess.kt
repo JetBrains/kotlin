@@ -101,17 +101,12 @@ internal class SpecialAccessLowering(
             return expression
         }
 
-        val isAccessToProperty = expression.symbol.owner.correspondingPropertySymbol != null
-        return if (isAccessToProperty && expression.origin == IrStatementOrigin.GET_PROPERTY) {
-            generateReflectiveAccessForGetter(expression)
-        } else if (isAccessToProperty && expression.origin?.isAssignmentOperator() == true) {
-            generateReflectiveAccessForSetter(expression)
-        } else if (expression.dispatchReceiver == null && expression.extensionReceiver == null) {
-            generateReflectiveStaticCall(expression)
-        } else if (superQualifier != null) {
-            generateInvokeSpecialForCall(expression, superQualifier)
-        } else {
-            generateReflectiveMethodInvocation(expression)
+        return when {
+            expression.symbol.owner.isGetter -> generateReflectiveAccessForGetter(expression)
+            expression.symbol.owner.isSetter -> generateReflectiveAccessForSetter(expression)
+            expression.dispatchReceiver == null && expression.extensionReceiver == null -> generateReflectiveStaticCall(expression)
+            superQualifier != null -> generateInvokeSpecialForCall(expression, superQualifier)
+            else -> generateReflectiveMethodInvocation(expression)
         }
     }
 
