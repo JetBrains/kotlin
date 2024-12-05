@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: ANY
 // MODULE: lib
 const val A = "Hello"
 const val B = ", World"

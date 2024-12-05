@@ -39905,12 +39905,6 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
     @TestDataPath("$PROJECT_ROOT")
     public class K2 {
       @Test
-      @TestMetadata("AbstractMutableList_modCount.kt")
-      public void testAbstractMutableList_modCount() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/AbstractMutableList_modCount.kt");
-      }
-
-      @Test
       @TestMetadata("AbstractMutableList_modCount_deprecated.kt")
       public void testAbstractMutableList_modCount_deprecated() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/AbstractMutableList_modCount_deprecated.kt");
@@ -40948,6 +40942,22 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/simple.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/lightTree")
+      @TestDataPath("$PROJECT_ROOT")
+      public class LightTree {
+        @Test
+        @TestMetadata("AbstractMutableList_modCount.kt")
+        public void testAbstractMutableList_modCount() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/lightTree/AbstractMutableList_modCount.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInLightTree() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/lightTree"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
       }
 

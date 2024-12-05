@@ -29083,12 +29083,6 @@ public class TieredFrontendJvmLightTreeTestGenerated extends AbstractTieredFront
         }
 
         @Test
-        @TestMetadata("binaryOpStackOverflow.kt")
-        public void testBinaryOpStackOverflow() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpStackOverflow.kt");
-        }
-
-        @Test
         @TestMetadata("plusAndPlusAssign.kt")
         public void testPlusAndPlusAssign() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/plusAndPlusAssign.kt");

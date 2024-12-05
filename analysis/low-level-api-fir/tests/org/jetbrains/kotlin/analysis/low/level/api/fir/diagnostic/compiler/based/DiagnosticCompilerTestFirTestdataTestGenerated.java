@@ -495,12 +495,6 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     }
 
     @Test
-    @TestMetadata("nestedAnnotationConstExprArguments.kt")
-    public void testNestedAnnotationConstExprArguments() {
-      runTest("compiler/fir/analysis-tests/testData/resolve/nestedAnnotationConstExprArguments.kt");
-    }
-
-    @Test
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/nestedClass.kt");
@@ -2986,12 +2980,6 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
         @TestMetadata("binaryOpIntStackOverflow.kt")
         public void testBinaryOpIntStackOverflow() {
           runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpIntStackOverflow.kt");
-        }
-
-        @Test
-        @TestMetadata("binaryOpStackOverflow.kt")
-        public void testBinaryOpStackOverflow() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/expresssions/operators/binaryOpStackOverflow.kt");
         }
 
         @Test
@@ -6036,12 +6024,6 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
     @TestMetadata("toSortedMapWithComparator.kt")
     public void testToSortedMapWithComparator() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/toSortedMapWithComparator.kt");
-    }
-
-    @Test
-    @TestMetadata("topLevelResolve.kt")
-    public void testTopLevelResolve() {
-      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/topLevelResolve.kt");
     }
 
     @Test
