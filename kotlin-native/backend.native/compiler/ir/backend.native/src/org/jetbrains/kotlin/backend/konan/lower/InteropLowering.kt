@@ -1293,7 +1293,7 @@ private class InteropTransformerPart2(
     private fun transformManagedCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
 
-        val irClass = function.dispatchReceiverParameter!!.type.classOrNull!!.owner
+        val irClass = function.parameters[0].type.classOrNull!!.owner
         val cppProperty = irClass.declarations
                 .filterIsInstance<IrProperty>()
                 .filter { it.name.toString() == "cpp" }
@@ -1306,7 +1306,7 @@ private class InteropTransformerPart2(
 
         if (function == cppProperty.getter || function == managedProperty.getter) return expression
 
-        val cppParam = irClass.primaryConstructor!!.valueParameters.first().also {
+        val cppParam = irClass.primaryConstructor!!.parameters.first().also {
             assert(it.name.toString() == "cpp")
         }
 
@@ -1316,20 +1316,18 @@ private class InteropTransformerPart2(
         val newFunction = cppClass.declarations
                 .filterIsInstance<IrSimpleFunction>()
                 .filter { it.name == function.name }
-                .filter { it.valueParameters.size == function.valueParameters.size }
+                .filter { it.parameters.size == function.parameters.size }
                 .filter {
-                    it.valueParameters.mapIndexed() { index, parameter ->
-                        managedTypeMatch(function.valueParameters[index].type, parameter.type)
-                    }.all { it }
+                    it.parameters.withIndex().all { (index, parameter) ->
+                        managedTypeMatch(function.parameters[index].type, parameter.type)
+                    }
                 }.singleOrNull() ?: error("Could not find ${function.name} in ${cppClass}")
 
         val newFunctionType = newFunction.returnType
 
-        val newCall = with (builder.at(expression)) {
+        val newCall = with(builder.at(expression)) {
             irCall(newFunction).apply {
-                dispatchReceiver = irCall(cppProperty.getter!!).apply {
-                    dispatchReceiver = expression.dispatchReceiver
-                }
+                arguments[0] = irCall(cppProperty.getter!!).apply { arguments[0] = expression.arguments[0] }
                 transformManagedArguments(1, 0, expression, function, this, newFunction)
             }
         }
@@ -1337,24 +1335,18 @@ private class InteropTransformerPart2(
         return if (function.returnType.isManagedType()) {
             assert(newFunctionType.isCPointer(symbols))
             val pointed = (newFunctionType as IrSimpleType).arguments.single().typeOrNull!!
-            with (builder.at(ccall)) {
+            with(builder.at(ccall)) {
                 irCall(function.returnType.classOrNull!!.owner.primaryConstructor!!.symbol).apply {
                     val managed = when {
                         pointed.isSkiaRefCnt() -> true
                         pointed.isCPlusPlusClass() -> false
                         else -> error("Unexpected pointer argument for ManagedType")
                     }.toIrConst(context.irBuiltIns.booleanType)
-                    putValueArgument(0,
-                        irCall(symbols.interopInterpretNullablePointed).apply {
-                            putValueArgument(0,
-                                    irCall(symbols.interopCPointerGetRawValue).apply {
-                                        extensionReceiver = ccall
-                                    }
-                            )
-                            putTypeArgument(0, pointed)
-                        }
-                    )
-                    putValueArgument(1, managed)
+                    arguments[0] = irCall(symbols.interopInterpretNullablePointed).apply {
+                        arguments[0] = irCall(symbols.interopCPointerGetRawValue).apply { arguments[0] = ccall }
+                        putTypeArgument(0, pointed)
+                    }
+                    arguments[1] = managed
                 }
             }
         } else {
