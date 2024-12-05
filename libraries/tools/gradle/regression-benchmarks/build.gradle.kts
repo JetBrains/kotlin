@@ -95,11 +95,11 @@ addBenchmarkTask(
 addBenchmarkTask(
     taskName = "benchmarkRegressionGraphql",
     script = "graphql-kotlin.benchmark.kts",
-    JavaLanguageVersion.of(11)
+    JavaLanguageVersion.of(17)
 )
 
 addBenchmarkTask(
     taskName = "benchmarkRegressionKvision",
     script = "kvision.benchmark.kts",
-    JavaLanguageVersion.of(11)
+    JavaLanguageVersion.of(17)
 )
