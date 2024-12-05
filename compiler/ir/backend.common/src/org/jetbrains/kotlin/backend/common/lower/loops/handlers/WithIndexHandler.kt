@@ -30,7 +30,9 @@ internal class WithIndexHandler(
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        if (callee.valueParameters.isNotEmpty() || callee.name.asString() != "withIndex") return false
+        val hasRegularOrContextParameter =
+            callee.parameters.any { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
+        if (hasRegularOrContextParameter || callee.name.asString() != "withIndex") return false
 
         val extensionReceiverParameter = callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
         return when (callee.kotlinFqName.asString()) {
