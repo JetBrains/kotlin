@@ -55407,6 +55407,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("contextParametersFunctions.kt")
+    public void testContextParametersFunctions() {
+      runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contextParametersFunctions.kt");
+    }
+
+    @Test
     @TestMetadata("emptyArray.kt")
     public void testEmptyArray() {
       runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/emptyArray.kt");
