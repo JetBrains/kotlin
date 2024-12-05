@@ -871,25 +871,22 @@ class Collections {
         }
 
         @Sample
-        fun maxByOrNull() {
-            val nameToAge = listOf("Alice" to 42, "Bob" to 28, "Carol" to 51)
-            val oldestPerson = nameToAge.maxByOrNull { it.second }
-            assertPrints(oldestPerson, "(Carol, 51)")
+        fun minMaxByOrNull() {
+            val strings = listOf("abcd", "abc", "ab", "de", "abcde")
 
-            val emptyList = emptyList<Pair<String, Int>>()
-            val emptyMax = emptyList.maxByOrNull { it.second }
-            assertPrints(emptyMax, "null")
-        }
+            val longestString = strings.maxBy { it.length }
+            assertPrints(longestString, "abcde")
 
-        @Sample
-        fun minByOrNull() {
-            val list = listOf("abcd", "abc", "ab", "abcde")
-            val shortestString = list.minByOrNull { it.length }
+            val shortestString = strings.minBy { it.length }
             assertPrints(shortestString, "ab")
 
             val emptyList = emptyList<String>()
-            val emptyMin = emptyList.minByOrNull { it.length }
-            assertPrints(emptyMin, "null")
+            // maxBy() and minBy() throw if the collection is empty
+            assertFailsWith<NoSuchElementException> { emptyList.maxBy { it.length } }
+            assertFailsWith<NoSuchElementException> { emptyList.minBy { it.length } }
+            // maxByOrNull() and minByOrNull() return null if the collection is empty
+            assertPrints(emptyList.maxByOrNull { it.length }, "null")
+            assertPrints(emptyList.minByOrNull { it.length }, "null")
         }
 
         @Sample

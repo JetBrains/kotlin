@@ -217,11 +217,18 @@ public inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit
 }
 
 /**
- * Returns the first entry yielding the largest value of the given function.
+ * Returns the first entry yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of entries corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the map contains zero or one entries
+ * because in these cases it is clear which entry to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each entry.
  * 
  * @throws NoSuchElementException if the map is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -232,9 +239,16 @@ public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.E
 }
 
 /**
- * Returns the first entry yielding the largest value of the given function or `null` if there are no entries.
+ * Returns the first entry yielding the largest value of the given [selector] function or `null` if there are no entries.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of entries corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the map contains zero or one entries
+ * because in these cases it is clear which entry to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each entry.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
@@ -401,11 +415,18 @@ public inline fun <K, V> Map<out K, V>.maxWithOrNull(comparator: Comparator<in M
 }
 
 /**
- * Returns the first entry yielding the smallest value of the given function.
+ * Returns the first entry yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of entries corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the map contains zero or one entries
+ * because in these cases it is clear which entry to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each entry.
  * 
  * @throws NoSuchElementException if the map is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -416,9 +437,16 @@ public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.E
 }
 
 /**
- * Returns the first entry yielding the smallest value of the given function or `null` if there are no entries.
+ * Returns the first entry yielding the smallest value of the given [selector] function or `null` if there are no entries.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of entries corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the map contains zero or one entries
+ * because in these cases it is clear which entry to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each entry.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly

@@ -1949,11 +1949,18 @@ public fun <T : Comparable<T>> Iterable<T>.max(): T {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the collection is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow")
@@ -1976,9 +1983,16 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.maxByOrNull(selector: (T) -> R): T? {
@@ -2359,11 +2373,18 @@ public fun <T : Comparable<T>> Iterable<T>.min(): T {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the collection is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow")
@@ -2386,9 +2407,16 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the collection contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.minByOrNull(selector: (T) -> R): T? {

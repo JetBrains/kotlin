@@ -5952,11 +5952,18 @@ public fun UShortArray.max(): UShort {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow-U")
@@ -5981,11 +5988,18 @@ public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UI
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow-U")
@@ -6010,11 +6024,18 @@ public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow-U")
@@ -6039,11 +6060,18 @@ public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function.
+ * Returns the first element yielding the largest value of the given [selector] function.
+ * 
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.maxBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("maxByOrThrow-U")
@@ -6068,9 +6096,16 @@ public inline fun <R : Comparable<R>> UShortArray.maxBy(selector: (UShort) -> R)
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -6093,9 +6128,16 @@ public inline fun <R : Comparable<R>> UIntArray.maxByOrNull(selector: (UInt) -> 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -6118,9 +6160,16 @@ public inline fun <R : Comparable<R>> ULongArray.maxByOrNull(selector: (ULong) -
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -6143,9 +6192,16 @@ public inline fun <R : Comparable<R>> UByteArray.maxByOrNull(selector: (UByte) -
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the largest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.maxByOrNull
+ * If there are multiple equal maximal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -7256,11 +7312,18 @@ public fun UShortArray.min(): UShort {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow-U")
@@ -7285,11 +7348,18 @@ public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UI
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow-U")
@@ -7314,11 +7384,18 @@ public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow-U")
@@ -7343,11 +7420,18 @@ public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function.
+ * Returns the first element yielding the smallest value of the given [selector] function.
+ * 
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
  * 
  * @throws NoSuchElementException if the array is empty.
  * 
- * @sample samples.collections.Collections.Aggregates.minBy
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.7")
 @kotlin.jvm.JvmName("minByOrThrow-U")
@@ -7372,9 +7456,16 @@ public inline fun <R : Comparable<R>> UShortArray.minBy(selector: (UShort) -> R)
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -7397,9 +7488,16 @@ public inline fun <R : Comparable<R>> UIntArray.minByOrNull(selector: (UInt) -> 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -7422,9 +7520,16 @@ public inline fun <R : Comparable<R>> ULongArray.minByOrNull(selector: (ULong) -
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -7447,9 +7552,16 @@ public inline fun <R : Comparable<R>> UByteArray.minByOrNull(selector: (UByte) -
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first element yielding the smallest value of the given [selector] function or `null` if there are no elements.
  * 
- * @sample samples.collections.Collections.Aggregates.minByOrNull
+ * If there are multiple equal minimal values returned by the [selector] function,
+ * this function returns the first of elements corresponding to these values.
+ * 
+ * Note that the function [selector] is not invoked when the array contains zero or one elements
+ * because in these cases it is clear which element to return without invoking the [selector].
+ * Therefore it's recommended to avoid relying on side effects being performed by the [selector] function on each element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minMaxByOrNull
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
