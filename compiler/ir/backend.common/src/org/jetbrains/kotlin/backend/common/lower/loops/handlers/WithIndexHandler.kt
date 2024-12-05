@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfo
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
 import org.jetbrains.kotlin.backend.common.lower.loops.NestedHeaderInfoBuilderForWithIndex
 import org.jetbrains.kotlin.backend.common.lower.loops.WithIndexHeaderInfo
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.isArray
@@ -31,16 +32,17 @@ internal class WithIndexHandler(
         val callee = expression.symbol.owner
         if (callee.valueParameters.isNotEmpty() || callee.name.asString() != "withIndex") return false
 
+        val extensionReceiverParameter = callee.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }
         return when (callee.kotlinFqName.asString()) {
             "kotlin.collections.withIndex" ->
-                callee.extensionReceiverParameter?.type?.run {
+                extensionReceiverParameter?.type?.run {
                     isArray() || isPrimitiveArray() || isIterable() ||
                             (supportsUnsignedArrays && isUnsignedArray())
                 } == true
             "kotlin.text.withIndex" ->
-                callee.extensionReceiverParameter?.type?.isSubtypeOfClass(context.ir.symbols.charSequence) == true
+                extensionReceiverParameter?.type?.isSubtypeOfClass(context.ir.symbols.charSequence) == true
             "kotlin.sequences.withIndex" ->
-                callee.extensionReceiverParameter?.type?.isSequence() == true
+                extensionReceiverParameter?.type?.isSequence() == true
             else -> false
         }
     }
