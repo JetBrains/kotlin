@@ -42,8 +42,11 @@ internal class StepHandler(
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
+            val extensionReceiver = expression.arguments.zip(expression.symbol.owner.parameters).first { (_, parameter) ->
+                parameter.kind == IrParameterKind.ExtensionReceiver
+            }.first
             // Retrieve the HeaderInfo from the underlying progression (if any).
-            var nestedInfo = expression.extensionReceiver!!.accept(visitor, null) as? ProgressionHeaderInfo
+            var nestedInfo = extensionReceiver!!.accept(visitor, null) as? ProgressionHeaderInfo
                 ?: return null
 
             if (!nestedInfo.isLastInclusive) {
