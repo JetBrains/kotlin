@@ -1,0 +1,84 @@
+FILE: contextParametersFunctions.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final fun of1(): R|A| {
+        ^of1 R|kotlin/contextOf|<R|A|>()
+    }
+    context(b: R|B|)
+    public final fun of2(): R|A| {
+        ^of2 R|kotlin/contextOf|<R|A|>()
+    }
+    public final fun R|A|.of3(): R|A| {
+        ^of3 R|kotlin/contextOf|<R|A|>()
+    }
+    context(a: R|A|)
+    public final fun R|A|.of4(): R|A| {
+        ^of4 R|kotlin/contextOf<Inapplicable(INAPPLICABLE): kotlin/contextOf>#|<R|A|>()
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun of5(): R|A| {
+        ^of5 R|kotlin/contextOf<Inapplicable(INAPPLICABLE): kotlin/contextOf>#|<R|A|>()
+    }
+    context(a: R|A|)
+    public final fun of6(): R|A| {
+        ^of6 R|kotlin/contextOf|<R|A|>()
+    }
+    context(a: R|A|, c: R|C|)
+    public final fun of7(): R|A| {
+        ^of7 R|kotlin/contextOf<Inapplicable(INAPPLICABLE): kotlin/contextOf>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+    }
+    context(a: R|A|)
+    public final fun of8(): R|A| {
+        ^of8 R|kotlin/contextOf|<R|A|>()
+    }
+    context(a: R|A|, c: R|C|)
+    public final fun of9(): <ERROR TYPE REF: Cannot infer argument for type parameter A> {
+        ^of9 R|kotlin/contextOf<Inapplicable(INAPPLICABLE): kotlin/contextOf>#|<<ERROR TYPE REF: Cannot infer argument for type parameter A>>()
+    }
+    public final fun context1(): R|A| {
+        ^context1 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/of1|()
+        }
+        )
+    }
+    public final fun context2(): R|A| {
+        ^context2 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/of2|()
+        }
+        )
+    }
+    public final fun context3(): R|A| {
+        ^context3 R|kotlin/context<Inapplicable(INAPPLICABLE): kotlin/context>#|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ <Unresolved name: of3>#()
+        }
+        )
+    }
+    public final fun context4(): R|A| {
+        ^context4 R|kotlin/context<Inapplicable(INAPPLICABLE): kotlin/context>#|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ <Unresolved name: of4>#()
+        }
+        )
+    }
+    public final fun context5(): R|A| {
+        ^context5 R|kotlin/context|<R|B|, R|A|>(R|/B.B|(), <L> = context(<unused var>: R|B|) context@fun <anonymous>(): R|A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/of5|()
+        }
+        )
+    }
