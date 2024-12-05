@@ -31,8 +31,8 @@ internal class UntilHandler(private val context: CommonBackendContext) : HeaderI
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             ProgressionHeaderInfo(
                 data,
-                first = expression.extensionReceiver!!,
-                last = expression.getValueArgument(0)!!,
+                first = expression.arguments[0]!!,
+                last = expression.arguments[1]!!,
                 step = irInt(1),
                 canOverflow = false,
                 isLastInclusive = false,
