@@ -78,7 +78,7 @@ fun test() {
 
     context(DslReceiver(), Other()) {
         <!DSL_SCOPE_VIOLATION!>contextFun<!>()
-        otherContextFun()
+        <!DSL_SCOPE_VIOLATION!>otherContextFun<!>()
     }
 }
 

@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -86,7 +86,7 @@ sealed class ImplicitValue(
     }
 
     fun isSameImplicitReceiverInstance(other: FirExpression): Boolean {
-        val otherOriginal = (other as? FirSmartCastExpression)?.originalExpression ?: other
+        val otherOriginal = other.unwrapSmartcastExpression()
 
         val otherBoundSymbol = when (otherOriginal) {
             is FirThisReceiverExpression -> otherOriginal.calleeReference.boundSymbol
