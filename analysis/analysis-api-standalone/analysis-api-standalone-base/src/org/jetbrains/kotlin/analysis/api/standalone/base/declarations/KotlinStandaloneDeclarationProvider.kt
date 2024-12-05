@@ -215,6 +215,7 @@ class KotlinStandaloneDeclarationProviderFactory(
         val fileViewProvider = KtClassFileViewProvider(psiManager, virtualFile)
         val fakeFile = object : KtFile(fileViewProvider, isCompiled = true), SmartPointerIncompatiblePsiFile {
             override fun getStub(): KotlinFileStub? = resultStub
+            override val greenStub: KotlinFileStub? get() = resultStub
             override fun isPhysical() = false
         }
 
