@@ -41,7 +41,7 @@ public annotation class KaNonPublicApi
  * have any compatibility guarantees.
  *
  * The motivation behind [KaIdeApi] is the following: in a few cases, implementing functionality in the Analysis API is more efficient or
- * more straight-forward than implementing it in the Kotlin IntelliJ plugin. The resulting API is normally too specific to be considered a
+ * more straightforward than implementing it in the Kotlin IntelliJ plugin. The resulting API is normally too specific to be considered a
  * general, public part of the Analysis API.
  */
 @Target(
