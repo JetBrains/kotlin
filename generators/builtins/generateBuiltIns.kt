@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.builtins.generateBuiltIns
 
 import org.jetbrains.kotlin.generators.builtins.arrayIterators.GenerateArrayIterators
 import org.jetbrains.kotlin.generators.builtins.arrays.*
+import org.jetbrains.kotlin.generators.builtins.contextParameters.GenerateContextFunctions
 import org.jetbrains.kotlin.generators.builtins.functions.GenerateFunctions
 import org.jetbrains.kotlin.generators.builtins.iterators.GenerateIterators
 import org.jetbrains.kotlin.generators.builtins.numbers.GenerateFloorDivMod
@@ -107,6 +108,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Uni
     generate(File(STDLIB_DIR, "kotlin/ranges/Progressions.kt")) { GenerateProgressions(it) }
     generate(File(STDLIB_DIR, "kotlin/ranges/PrimitiveRanges.kt")) { GenerateRanges(it) }
     generate(File(STDLIB_DIR, "kotlin/util/FloorDivMod.kt")) { GenerateFloorDivMod(it) }
+    generate(File(STDLIB_DIR, "kotlin/contextParameters/Context.kt")) { GenerateContextFunctions(it) }
 
     generateUnsignedTypes(UNSIGNED_TYPES_DIR, generate)
 }
