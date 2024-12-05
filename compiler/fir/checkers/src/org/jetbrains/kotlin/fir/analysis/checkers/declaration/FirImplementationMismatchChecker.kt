@@ -217,23 +217,31 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         reporter.reportOn(containingClass.source, FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, symbol, overriddenVar, context)
     }
 
-    private fun FirTypeScope.collectFunctionsNamed(
+    private fun FirTypeScope.collectCallablesNamed(
         name: Name,
         containingClass: FirClass,
         context: CheckerContext,
-    ): List<FirNamedFunctionSymbol> {
-        val allFunctions = mutableListOf<FirNamedFunctionSymbol>()
+    ): List<FirCallableSymbol<*>> {
+        val allCallables = mutableListOf<FirCallableSymbol<*>>()
 
         processFunctionsByName(name) { sym ->
             when (sym) {
                 is FirIntersectionOverrideFunctionSymbol -> sym
                     .getNonSubsumedOverriddenSymbols(context.session, context.scopeSession)
-                    .mapNotNullTo(allFunctions) { it as? FirNamedFunctionSymbol }
-                else -> allFunctions.add(sym)
+                    .mapNotNullTo(allCallables) { it as? FirNamedFunctionSymbol }
+                else -> allCallables.add(sym)
+            }
+        }
+        processPropertiesByName(name) { sym ->
+            when (sym) {
+                is FirIntersectionOverridePropertySymbol -> sym
+                    .getNonSubsumedOverriddenSymbols(context.session, context.scopeSession)
+                    .mapNotNullTo(allCallables) { it as? FirNamedFunctionSymbol }
+                else -> allCallables.add(sym)
             }
         }
 
-        return allFunctions.filter {
+        return allCallables.filter {
             it.isVisibleInClass(containingClass.symbol)
         }
     }
@@ -245,12 +253,14 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         scope: FirTypeScope,
         name: Name
     ) {
-        val allFunctions = scope.collectFunctionsNamed(name, containingClass, context)
+        val allCallables = scope.collectCallablesNamed(name, containingClass, context)
 
-        val sameArgumentGroups = allFunctions.groupBy { function ->
+        val sameArgumentGroups = allCallables.groupBy { callable ->
             buildList {
-                addIfNotNull(function.resolvedReceiverTypeRef?.coneType)
-                function.valueParameterSymbols.mapTo(this) { it.resolvedReturnTypeRef.coneType }
+                addIfNotNull(callable.resolvedReceiverTypeRef?.coneType)
+                if (callable is FirNamedFunctionSymbol) {
+                    callable.valueParameterSymbols.mapTo(this) { it.resolvedReturnTypeRef.coneType }
+                }
             }
         }.values
 
