@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.ir.builders.irInt
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
@@ -18,8 +19,9 @@ internal class RangeUntilHandler(private val context: CommonBackendContext) : He
 
     override fun matchIterable(expression: IrCall): Boolean {
         val callee = expression.symbol.owner
-        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
-                callee.extensionReceiverParameter == null &&
+        return callee.parameters
+            .singleOrNull { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }?.type in progressionElementTypes &&
+                callee.parameters.none { it.kind == IrParameterKind.ExtensionReceiver } &&
                 callee.dispatchReceiverParameter?.type in progressionElementTypes &&
                 callee.name.asString() == "rangeUntil"
     }
