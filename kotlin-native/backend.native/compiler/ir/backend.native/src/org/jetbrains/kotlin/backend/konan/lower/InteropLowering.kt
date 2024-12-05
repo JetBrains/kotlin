@@ -957,39 +957,35 @@ private class InteropTransformerPart2(
         val correspondingInit = irClass.companionObject()!!
                 .declarations
                 .filterIsInstance<IrSimpleFunction>()
-                .filter { it.name.toString() == "__init__"}
-                .filter { it.valueParameters.size == irConstructor.valueParameters.size + 1}
+                .filter { it.name.toString() == "__init__" }
+                .filter { it.parameters.size == irConstructor.parameters.size + 1 }
                 .single {
-                    it.valueParameters.drop(1).mapIndexed() { index, initParameter ->
-                        initParameter.type == irConstructor.valueParameters[index].type
-                    }.all{ it }
+                    it.parameters.drop(1).withIndex().all { (index, initParameter) ->
+                        initParameter.type == irConstructor.parameters[index].type
+                    }
                 }
 
         val irBlock = builder.at(expression)
                 .irBlock {
                     val call = irCall(primaryConstructor).also {
                         val nativePointed = irCall(alloc).apply {
-                            extensionReceiver = irGetObject(nativeHeap)
-                            putValueArgument(0, irGetObject(irClass.companionObject()!!.symbol))
+                            arguments[0] = irGetObject(nativeHeap)
+                            arguments[1] = irGetObject(irClass.companionObject()!!.symbol)
                         }
                         val nativePtr = irCall(symbols.interopNativePointedGetRawPointer).apply {
-                            extensionReceiver = nativePointed
+                            arguments[0] = nativePointed
                         }
-                        it.putValueArgument(0, nativePtr)
+                        it.arguments[0] = nativePtr
                     }
                     val tmp = irTemporary(call)
                     val initCall = irCall(correspondingInit.symbol).apply {
-                        putValueArgument(0,
-                                irCall(interopGetPtr).apply {
-                                    extensionReceiver = irGet(tmp)
-                                    putTypeArgument(0,
-                                            (correspondingInit.valueParameters.first().type as IrSimpleType).arguments.single().typeOrNull!!
-                                    )
-                                }
-                        )
-                        for (index in 0 until expression.valueArgumentsCount) {
-                            putValueArgument(index+1, expression.getValueArgument(index)!!)
+                        this.arguments[0] = irCall(interopGetPtr).apply {
+                            arguments[0] = irGet(tmp)
+                            putTypeArgument(0,
+                                    (correspondingInit.parameters.first().type as IrSimpleType).arguments.single().typeOrNull!!
+                            )
                         }
+                        expression.arguments.forEachIndexed { index, argument -> this.arguments[index + 1] = argument }
                     }
                     val initCCall = generateCCall(initCall)
                     +initCCall
