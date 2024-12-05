@@ -93,7 +93,9 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
         fun IrCall.dispatchReceiverName() = (dispatchReceiver as? IrCall)?.symbol?.owner?.fqNameWhenAvailable.toString()
 
         return if (irCall.origin == IrStatementOrigin.MINUS
-            && (irCall.getValueArgument(0) as? IrConst)?.value == 1
+            && (irCall.arguments.zip(irCall.symbol.owner.parameters).firstOrNull { (_, parameter) ->
+                parameter.kind == IrParameterKind.Regular || parameter.kind == IrParameterKind.Context
+            }?.first as? IrConst)?.value == 1
             && irCall.dispatchReceiverName() in allowedMethods // to avoid possible underflow
         ) irCall.dispatchReceiver
         else null
