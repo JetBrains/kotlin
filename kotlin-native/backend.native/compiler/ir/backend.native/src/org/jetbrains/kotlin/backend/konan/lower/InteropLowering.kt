@@ -1120,7 +1120,7 @@ private class InteropTransformerPart2(
         if (function.resolveFakeOverrideMaybeAbstract()?.symbol == symbols.interopNativePointedRawPtrGetter) {
             // Replace by the intrinsic call to be handled by code generator:
             return builder.irCall(symbols.interopNativePointedGetRawPointer).apply {
-                extensionReceiver = expression.dispatchReceiver
+                arguments[0] = expression.arguments[0]
             }
         }
 
