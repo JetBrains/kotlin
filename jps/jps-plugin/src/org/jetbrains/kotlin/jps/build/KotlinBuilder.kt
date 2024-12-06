@@ -487,6 +487,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val start = System.nanoTime()
 
 
+        // TODO: 1) get rid of aether and maybe publish fat-jar? or use resolving logic on IJ side?
+        // TODO: 2) is js compilation supported in bta?
+        // TODO: 3) Should we get output reporter from BTA?
         if (System.getProperty("kotlin.jps.build.bta") == "true") {
             val groupId = "org.jetbrains.kotlin"
             val version = "2.1.255-SNAPSHOT"
@@ -497,7 +500,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             if (!jarFile.exists()) throw IllegalStateException("kotlin-build-tools-impl.jar is not found in $m2Repo. File: ${jarFile.absolutePath}")
 
             val urls = AetherResolver().resolveArtifact("$groupId:$artifactId:$version")
-//kotlinbuildtoolsapiclasspath
+//kotlinbuildtoolsapiclasspath - task to resolve transitive dependencies
 //            withCompilerClassloader(environment) { classloader ->
 ////            val classpath = resolve("kotlin-build-tools-impl"), kotlinVersion) // => list of jar files
 ////                val classpath = arrayOf(jarFile.toURI().toURL())
