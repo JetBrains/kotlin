@@ -63,6 +63,16 @@ class AbstractCollectionsTest {
     }
 
     @Test
+    fun chainedSubList() {
+        val list = object : AbstractList<Int>() {
+            override val size = 5
+            override fun get(index: Int) = if (index in 0 until size) index else -1
+        }
+        val subList = list.subList(0, 5).subList(1, 4)
+        assertEquals(listOf(1, 2, 3), subList)
+    }
+
+    @Test
     fun abstractMap() {
         val map = ReadOnlyMap()
         assertEquals(1, map.size)
