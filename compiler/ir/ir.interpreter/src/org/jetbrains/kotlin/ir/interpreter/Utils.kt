@@ -253,10 +253,7 @@ internal fun IrValueParameter.getDefaultWithActualParameters(
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             val parameter = expression.symbol.owner as? IrValueParameter ?: return super.visitGetValue(expression)
             if (parameter.parent != parameterOwner) return super.visitGetValue(expression)
-            val newParameter = when (parameter.indexInOldValueParameters) {
-                -1 -> newParent.dispatchReceiverParameter ?: newParent.extensionReceiverParameter
-                else -> actualParameters[parameter.indexInOldValueParameters]
-            }
+            val newParameter = actualParameters[parameter.indexInParameters]
             return IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, newParameter!!.symbol)
         }
     }
