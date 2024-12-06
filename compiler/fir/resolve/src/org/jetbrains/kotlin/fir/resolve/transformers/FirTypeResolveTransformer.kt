@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -575,16 +576,15 @@ open class FirTypeResolveTransformer(
                         this is FirValueParameter -> {
                             CONSTRUCTOR_PARAMETER in allowedTargets
                         }
-                        this is FirProperty && this.source?.kind == KtFakeSourceElementKind.PropertyFromParameter &&
-                                CONSTRUCTOR_PARAMETER in allowedTargets -> {
+                        this is FirProperty && this.fromPrimaryConstructor == true && CONSTRUCTOR_PARAMETER in allowedTargets -> {
                             when {
-                                !session.languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultingMode) -> {
+                                !session.languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode) -> {
                                     false
                                 }
                                 // In the property-param mode,
                                 // we should apply annotation also to the property (or to the field) if it's allowed
                                 PROPERTY in allowedTargets -> true
-                                backingField != null && annotationShouldBeMovedToField(allowedTargets) -> {
+                                backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
                                     backingFieldAnnotations += annotation
                                     replaceBackingFieldAnnotations = true
                                     false
@@ -594,7 +594,7 @@ open class FirTypeResolveTransformer(
                         }
                         // Otherwise (for a regular property or for a constructor property if annotation isn't applicable to parameter),
                         // we simply choose between a property and a field
-                        this is FirProperty && backingField != null && annotationShouldBeMovedToField(allowedTargets) -> {
+                        this is FirProperty && backingField != null && propertyAnnotationShouldBeMovedToField(allowedTargets) -> {
                             backingFieldAnnotations += annotation
                             replaceBackingFieldAnnotations = true
                             false
@@ -614,6 +614,11 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    private fun annotationShouldBeMovedToField(allowedTargets: Set<AnnotationUseSiteTarget>): Boolean =
+    /**
+     * @param allowedTargets allowed use-site targets of a given property annotation
+     * @return true if the given annotation on a property (initially placed there during raw FIR building)
+     * is in fact inapplicable to properties, but applicable to fields.
+     */
+    private fun propertyAnnotationShouldBeMovedToField(allowedTargets: Set<AnnotationUseSiteTarget>): Boolean =
         (FIELD in allowedTargets || PROPERTY_DELEGATE_FIELD in allowedTargets) && PROPERTY !in allowedTargets
 }

@@ -6072,15 +6072,15 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
       }
 
       @Test
-      @TestMetadata("annotationTargetingFirstOnly.kt")
-      public void testAnnotationTargetingFirstOnly() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationTargetingFirstOnly.kt");
+      @TestMetadata("annotationDefaultTargetFirstOnly.kt")
+      public void testAnnotationDefaultTargetFirstOnly() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetFirstOnly.kt");
       }
 
       @Test
-      @TestMetadata("annotationTargetingParamProperty.kt")
-      public void testAnnotationTargetingParamProperty() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationTargetingParamProperty.kt");
+      @TestMetadata("annotationDefaultTargetParamProperty.kt")
+      public void testAnnotationDefaultTargetParamProperty() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetParamProperty.kt");
       }
 
       @Test

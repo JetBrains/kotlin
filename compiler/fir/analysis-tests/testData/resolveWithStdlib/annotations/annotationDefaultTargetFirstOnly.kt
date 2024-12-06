@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -AnnotationDefaultingMigrationWarning
-// LANGUAGE: -PropertyParamAnnotationDefaultingMode
+// LANGUAGE: -AnnotationDefaultTargetMigrationWarning
+// LANGUAGE: -PropertyParamAnnotationDefaultTargetMode
 // ISSUE: KT-73255
 
 @Target(AnnotationTarget.VALUE_PARAMETER)

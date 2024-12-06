@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +PropertyParamAnnotationDefaultingMode
+// LANGUAGE: +PropertyParamAnnotationDefaultTargetMode
 // ISSUE: KT-73255
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
