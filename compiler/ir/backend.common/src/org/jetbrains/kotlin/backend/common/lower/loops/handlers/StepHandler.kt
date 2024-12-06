@@ -93,8 +93,8 @@ internal class StepHandler(
                 stepArgValueAsLong == null -> {
                     // Step argument is not a constant. In this case, we check if step <= 0.
                     val stepNonPositiveCheck = irCall(stepCompFun).apply {
-                        putValueArgument(0, stepArgExpression.shallowCopy())
-                        putValueArgument(1, data.run { zeroStepExpression() })
+                        arguments[0] = stepArgExpression.shallowCopy()
+                        arguments[1] = data.run { zeroStepExpression() }
                     }
                     irIfThen(
                         context.irBuiltIns.unitType,
