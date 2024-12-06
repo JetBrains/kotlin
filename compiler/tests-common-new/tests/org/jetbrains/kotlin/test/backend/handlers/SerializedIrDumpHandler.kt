@@ -50,6 +50,7 @@ class SerializedIrDumpHandler(
         if (module.isSkipped) return
 
         val dumpOptions = defaultDumpIrTreeOptions(module, info.irPluginContext.irBuiltIns).copy(
+            stableOrderOfFakeOverrides = true,
             printFlagsInDeclarationReferences = true,
             printSourceRetentionAnnotations = false, // KT-69965: Don't dump annotations having source retention
         )
