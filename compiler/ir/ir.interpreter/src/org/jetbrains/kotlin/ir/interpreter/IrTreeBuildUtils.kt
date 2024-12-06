@@ -156,19 +156,19 @@ internal fun IrBuiltIns.emptyArrayConstructor(arrayType: IrType): IrConstructorC
     val constructor = arrayClass.constructors.firstOrNull { it.hasShape(regularParameters = 1) } ?: arrayClass.constructors.first()
     val constructorCall = constructor.createConstructorCall(arrayType)
 
-    constructorCall.putValueArgument(0, 0.toIrConst(this.intType))
-    if (constructor.valueParameters.size == 2) {
+    constructorCall.arguments[0] = 0.toIrConst(this.intType)
+    if (constructor.parameters.size == 2) {
         // TODO find a way to avoid creation of empty lambda
         val tempFunction = createTempFunction(Name.identifier("TempForVararg"), this.anyType)
         tempFunction.parent = arrayClass // can be anything, will not be used in any case
         val initLambda = IrFunctionExpressionImpl(
             SYNTHETIC_OFFSET,
             SYNTHETIC_OFFSET,
-            constructor.valueParameters[1].type,
+            constructor.parameters[1].type,
             tempFunction,
             IrStatementOrigin.LAMBDA
         )
-        constructorCall.putValueArgument(1, initLambda)
+        constructorCall.arguments[1] = initLambda
         constructorCall.typeArguments[0] = (arrayType as IrSimpleType).arguments.singleOrNull()?.typeOrNull
     }
     return constructorCall
