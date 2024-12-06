@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.backend.common.extensions.ExperimentalAPIForScriptingPlugin
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -20,6 +22,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
@@ -38,6 +42,8 @@ class Fir2IrPluginContext(
     override val irBuiltIns: IrBuiltIns,
     @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor,
     @property:ObsoleteDescriptorBasedAPI override val symbolTable: ReferenceSymbolTable,
+    override val messageCollector: MessageCollector,
+    diagnosticReporter: DiagnosticReporter,
 ) : IrPluginContext {
     companion object {
         private const val ERROR_MESSAGE = "This API is not supported for K2"
@@ -124,10 +130,14 @@ class Fir2IrPluginContext(
         return callables.mapNotNull { c.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
     }
 
+    @Deprecated("Use messageCollector or diagnosticReporter properties instead", level = DeprecationLevel.ERROR)
     override fun createDiagnosticReporter(pluginId: String): MessageCollector {
         error(ERROR_MESSAGE)
     }
 
+    @ExperimentalAPIForScriptingPlugin
+    override val diagnosticReporter: IrDiagnosticReporter =
+        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
     @FirIncompatiblePluginAPI
     override fun referenceClass(fqName: FqName): IrClassSymbol? {

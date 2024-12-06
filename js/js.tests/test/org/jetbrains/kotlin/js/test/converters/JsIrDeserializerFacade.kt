@@ -90,7 +90,7 @@ class JsIrDeserializerFacade(
             typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor),
             irBuiltIns = moduleInfo.bultins,
             linker = moduleInfo.deserializer,
-            diagnosticReporter = messageCollector,
+            messageCollector = messageCollector,
         )
 
         return moduleInfo to pluginContext
