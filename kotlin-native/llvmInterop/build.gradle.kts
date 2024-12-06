@@ -15,7 +15,7 @@ dependencies {
 
 nativeInteropPlugin {
     defFileName.set("llvm.def")
-    usePrebuiltSources.set(false)
+    usePrebuiltSources.set(true)
     commonCompilerArgs.set(buildList {
         addAll(listOf("-Wall", "-W", "-Wno-unused-parameter", "-Wwrite-strings", "-Wmissing-field-initializers"))
         addAll(listOf("-pedantic", "-Wno-long-long", "-Wcovered-switch-default", "-Wdelete-non-virtual-dtor"))
