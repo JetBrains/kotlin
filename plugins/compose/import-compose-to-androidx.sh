@@ -32,4 +32,4 @@ androidxVersionsPath="$androidxPath/gradle/libs.versions.toml"
   :kotlin-parcelize-compiler:install
 
 # Substitute compose compiler snapshot version in libs.versions.toml
-sed -i '' -E 's/composeCompilerPlugin = "[^"]+"/composeCompilerPlugin = "2.1.255-SNAPSHOT"/g' "$androidxVersionsPath"
+sed -i '' -E 's/composeCompilerPlugin = "[^"]+"/composeCompilerPlugin = "2.2.255-SNAPSHOT"/g' "$androidxVersionsPath"

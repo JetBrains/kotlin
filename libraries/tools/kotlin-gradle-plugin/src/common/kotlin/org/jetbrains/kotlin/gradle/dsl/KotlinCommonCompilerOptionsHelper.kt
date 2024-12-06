@@ -16,7 +16,6 @@ internal object KotlinCommonCompilerOptionsHelper {
         args.languageVersion = from.languageVersion.orNull?.version
         args.optIn = from.optIn.get().toTypedArray()
         args.progressiveMode = from.progressiveMode.get()
-        args.useK2 = from.useK2.get()
     }
 
     internal fun syncOptionsAsConvention(
@@ -28,6 +27,5 @@ internal object KotlinCommonCompilerOptionsHelper {
         into.languageVersion.convention(from.languageVersion)
         into.optIn.addAll(from.optIn)
         into.progressiveMode.convention(from.progressiveMode)
-        into.useK2.convention(from.useK2)
     }
 }
