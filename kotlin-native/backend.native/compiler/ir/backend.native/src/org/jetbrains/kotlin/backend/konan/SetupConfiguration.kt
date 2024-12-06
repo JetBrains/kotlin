@@ -229,7 +229,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         null -> null
         "noop" -> GC.NOOP
         "stms" -> GC.STOP_THE_WORLD_MARK_AND_SWEEP
-        "cms" -> GC.PARALLEL_MARK_CONCURRENT_SWEEP
+        "pmcs" -> GC.PARALLEL_MARK_CONCURRENT_SWEEP
+        "cms" -> GC.CONCURRENT_MARK_AND_SWEEP
         else -> {
             val validValues = enumValues<GC>().map {
                 val fullName = "$it".lowercase()
