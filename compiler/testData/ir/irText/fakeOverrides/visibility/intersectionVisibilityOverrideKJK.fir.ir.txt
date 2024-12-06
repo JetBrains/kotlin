@@ -147,8 +147,8 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.D) returnType:kotlin.Unit
       overridden:
-        protected open fun foo (): kotlin.Unit declared in <root>.KotlinProtected
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaDefault
+        protected open fun foo (): kotlin.Unit declared in <root>.KotlinProtected
       $this: VALUE_PARAMETER name:<this> type:<root>.D
       BLOCK_BODY
     FUN name:test visibility:public modality:FINAL <> ($this:<root>.D) returnType:kotlin.Unit
@@ -241,8 +241,8 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.F) returnType:kotlin.Unit
       overridden:
-        internal open fun foo (): kotlin.Unit declared in <root>.KotlinInternal
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaDefault
+        internal open fun foo (): kotlin.Unit declared in <root>.KotlinInternal
       $this: VALUE_PARAMETER name:<this> type:<root>.F
       BLOCK_BODY
     FUN name:test visibility:public modality:FINAL <> ($this:<root>.F) returnType:kotlin.Unit
@@ -827,8 +827,8 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.R) returnType:kotlin.Unit
       overridden:
-        protected open fun foo (): kotlin.Unit declared in <root>.KotlinProtected
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaPublic
+        protected open fun foo (): kotlin.Unit declared in <root>.KotlinProtected
       $this: VALUE_PARAMETER name:<this> type:<root>.R
       BLOCK_BODY
     FUN name:test visibility:public modality:FINAL <> ($this:<root>.R) returnType:kotlin.Unit
@@ -921,8 +921,8 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.T) returnType:kotlin.Unit
       overridden:
-        internal open fun foo (): kotlin.Unit declared in <root>.KotlinInternal
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaPublic
+        internal open fun foo (): kotlin.Unit declared in <root>.KotlinInternal
       $this: VALUE_PARAMETER name:<this> type:<root>.T
       BLOCK_BODY
     FUN name:test visibility:public modality:FINAL <> ($this:<root>.T) returnType:kotlin.Unit

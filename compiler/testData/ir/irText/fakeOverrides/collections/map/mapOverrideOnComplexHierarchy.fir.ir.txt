@@ -55,9 +55,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:value index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SortedMap
         public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashMap
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:firstKey visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:@[FlexibleNullability] kotlin.Boolean? [fake_override]
@@ -85,9 +85,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p1 index:1 type:@[EnhancedNullability] kotlin.Boolean
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.Java1
-        public open fun hashCode (): kotlin.Int declared in java.util.HashMap
         public open fun hashCode (): kotlin.Int declared in java.util.SortedMap
+        public open fun hashCode (): kotlin.Int declared in java.util.HashMap
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:headMap visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>, p0:@[FlexibleNullability] kotlin.Boolean?) returnType:@[FlexibleNullability] java.util.SortedMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>? [fake_override]
       overridden:
@@ -186,9 +186,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
+        public open fun toString (): kotlin.String declared in java.util.SortedMap
         public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.HashMap
         public open fun toString (): kotlin.String declared in <root>.Java1
-        public open fun toString (): kotlin.String declared in java.util.SortedMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
       overridden:
@@ -286,9 +286,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:value index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SortedMap
         public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashMap
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:firstKey visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:@[FlexibleNullability] kotlin.Boolean? [fake_override]
@@ -316,9 +316,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p1 index:1 type:@[EnhancedNullability] kotlin.Boolean
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.Java1
-        public open fun hashCode (): kotlin.Int declared in java.util.HashMap
         public open fun hashCode (): kotlin.Int declared in java.util.SortedMap
+        public open fun hashCode (): kotlin.Int declared in java.util.HashMap
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:headMap visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>, p0:@[FlexibleNullability] kotlin.Boolean?) returnType:@[FlexibleNullability] java.util.SortedMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>? [fake_override]
       overridden:
@@ -411,9 +411,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
+        public open fun toString (): kotlin.String declared in java.util.SortedMap
         public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.HashMap
         public open fun toString (): kotlin.String declared in <root>.Java1
-        public open fun toString (): kotlin.String declared in java.util.SortedMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:remove visibility:public modality:OPEN <> ($this:<root>.B, key:kotlin.Boolean) returnType:kotlin.Boolean?
       overridden:
@@ -520,9 +520,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:value index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SortedMap
         public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashMap
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:firstKey visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:@[FlexibleNullability] kotlin.Boolean? [fake_override]
@@ -550,9 +550,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p1 index:1 type:@[EnhancedNullability] kotlin.Boolean
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
-        public open fun hashCode (): kotlin.Int declared in java.util.HashMap
         public open fun hashCode (): kotlin.Int declared in java.util.SortedMap
+        public open fun hashCode (): kotlin.Int declared in java.util.HashMap
+        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:headMap visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>, p0:@[FlexibleNullability] kotlin.Boolean?) returnType:@[FlexibleNullability] java.util.SortedMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>? [fake_override]
       overridden:
@@ -651,9 +651,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
+        public open fun toString (): kotlin.String declared in java.util.SortedMap
         public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.HashMap
         public open fun toString (): kotlin.String declared in <root>.KotlinInterface
-        public open fun toString (): kotlin.String declared in java.util.SortedMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]
       overridden:
@@ -751,9 +751,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:value index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SortedMap
         public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashMap
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:firstKey visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:@[FlexibleNullability] kotlin.Boolean? [fake_override]
@@ -781,9 +781,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p1 index:1 type:@[EnhancedNullability] kotlin.Boolean
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
-        public open fun hashCode (): kotlin.Int declared in java.util.HashMap
         public open fun hashCode (): kotlin.Int declared in java.util.SortedMap
+        public open fun hashCode (): kotlin.Int declared in java.util.HashMap
+        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:headMap visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>, p0:@[FlexibleNullability] kotlin.Boolean?) returnType:@[FlexibleNullability] java.util.SortedMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>? [fake_override]
       overridden:
@@ -876,9 +876,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
+        public open fun toString (): kotlin.String declared in java.util.SortedMap
         public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.HashMap
         public open fun toString (): kotlin.String declared in <root>.KotlinInterface
-        public open fun toString (): kotlin.String declared in java.util.SortedMap
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:remove visibility:public modality:OPEN <> ($this:<root>.D, key:kotlin.Boolean) returnType:kotlin.Boolean
       overridden:
@@ -979,9 +979,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:value index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SortedMap
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.MutableMap
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:firstKey visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:@[FlexibleNullability] kotlin.Boolean? [fake_override]
@@ -1012,9 +1012,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:defaultValue index:1 type:kotlin.Boolean
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
         public open fun hashCode (): kotlin.Int declared in java.util.SortedMap
         public open fun hashCode (): kotlin.Int declared in kotlin.collections.MutableMap
+        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:headMap visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>, p0:@[FlexibleNullability] kotlin.Boolean?) returnType:@[FlexibleNullability] java.util.SortedMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>? [fake_override]
       overridden:
@@ -1113,9 +1113,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.KotlinInterface
         public open fun toString (): kotlin.String declared in java.util.SortedMap
         public open fun toString (): kotlin.String declared in kotlin.collections.MutableMap
+        public open fun toString (): kotlin.String declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
       overridden:
@@ -1207,9 +1207,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:value index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SortedMap
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.MutableMap
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:firstKey visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>) returnType:@[FlexibleNullability] kotlin.Boolean? [fake_override]
@@ -1240,9 +1240,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:defaultValue index:1 type:kotlin.Boolean
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
         public open fun hashCode (): kotlin.Int declared in java.util.SortedMap
         public open fun hashCode (): kotlin.Int declared in kotlin.collections.MutableMap
+        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:headMap visibility:public modality:ABSTRACT <> ($this:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>, p0:@[FlexibleNullability] kotlin.Boolean?) returnType:@[FlexibleNullability] java.util.SortedMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>? [fake_override]
       overridden:
@@ -1336,9 +1336,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Boolean?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.KotlinInterface
         public open fun toString (): kotlin.String declared in java.util.SortedMap
         public open fun toString (): kotlin.String declared in kotlin.collections.MutableMap
+        public open fun toString (): kotlin.String declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:remove visibility:public modality:OPEN <> ($this:<root>.F, key:kotlin.Any) returnType:kotlin.Boolean
       overridden:

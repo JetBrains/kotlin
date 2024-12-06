@@ -7,24 +7,24 @@ FILE fqName:<root> fileName:/test.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[<root>.JavaPublic; <root>.JavaDefault]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPublic
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.JavaPublic) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo (): kotlin.Unit declared in <root>.JavaDefault
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaPublic
+        public abstract fun foo (): kotlin.Unit declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:<root>.JavaPublic
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
         public open fun hashCode (): kotlin.Int declared in <root>.JavaPublic
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.JavaDefault
         public open fun toString (): kotlin.String declared in <root>.JavaPublic
+        public open fun toString (): kotlin.String declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.JavaPublic; <root>.JavaDefault]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
@@ -45,24 +45,24 @@ FILE fqName:<root> fileName:/test.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.JavaPublic; <root>.JavaDefault]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPublic
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
         public open fun hashCode (): kotlin.Int declared in <root>.JavaPublic
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.JavaDefault
         public open fun toString (): kotlin.String declared in <root>.JavaPublic
+        public open fun toString (): kotlin.String declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Unit
       overridden:
-        public abstract fun foo (): kotlin.Unit declared in <root>.JavaDefault
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaPublic
+        public abstract fun foo (): kotlin.Unit declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.JavaPublic; <root>.JavaProtected]
@@ -84,24 +84,24 @@ FILE fqName:<root> fileName:/test.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.JavaPublic; <root>.JavaProtected]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaProtected
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPublic
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaProtected
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.JavaProtected
         public open fun hashCode (): kotlin.Int declared in <root>.JavaPublic
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaProtected
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.JavaProtected
         public open fun toString (): kotlin.String declared in <root>.JavaPublic
+        public open fun toString (): kotlin.String declared in <root>.JavaProtected
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Unit
       overridden:
-        protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.JavaProtected
         public abstract fun foo (): kotlin.Unit declared in <root>.JavaPublic
+        protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.JavaProtected
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
@@ -115,8 +115,8 @@ FILE fqName:<root> fileName:/test.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.JavaPublic; <root>.JavaPrivate]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPrivate
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPublic
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPrivate
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.JavaPublic) returnType:kotlin.Unit [fake_override]
@@ -125,13 +125,13 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.JavaPublic
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.JavaPrivate
         public open fun hashCode (): kotlin.Int declared in <root>.JavaPublic
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaPrivate
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.JavaPrivate
         public open fun toString (): kotlin.String declared in <root>.JavaPublic
+        public open fun toString (): kotlin.String declared in <root>.JavaPrivate
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.JavaPublic; <root>.JavaPrivate]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
@@ -152,19 +152,19 @@ FILE fqName:<root> fileName:/test.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.JavaPublic; <root>.JavaPrivate]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPrivate
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPublic
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPrivate
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.JavaPrivate
         public open fun hashCode (): kotlin.Int declared in <root>.JavaPublic
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaPrivate
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.JavaPrivate
         public open fun toString (): kotlin.String declared in <root>.JavaPublic
+        public open fun toString (): kotlin.String declared in <root>.JavaPrivate
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.E) returnType:kotlin.Unit
       overridden:
@@ -190,19 +190,19 @@ FILE fqName:<root> fileName:/test.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.JavaProtected; <root>.JavaDefault]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaProtected
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
         public open fun hashCode (): kotlin.Int declared in <root>.JavaProtected
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.JavaDefault
         public open fun toString (): kotlin.String declared in <root>.JavaProtected
+        public open fun toString (): kotlin.String declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.F) returnType:kotlin.Unit
       overridden:
@@ -221,8 +221,8 @@ FILE fqName:<root> fileName:/test.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.JavaPrivate; <root>.JavaDefault]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPrivate
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.JavaDefault) returnType:kotlin.Unit [fake_override]
@@ -231,13 +231,13 @@ FILE fqName:<root> fileName:/test.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.JavaDefault
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
         public open fun hashCode (): kotlin.Int declared in <root>.JavaPrivate
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.JavaDefault
         public open fun toString (): kotlin.String declared in <root>.JavaPrivate
+        public open fun toString (): kotlin.String declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.JavaPrivate; <root>.JavaDefault]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
@@ -258,19 +258,19 @@ FILE fqName:<root> fileName:/test.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.JavaPrivate; <root>.JavaDefault]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaPrivate
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
         public open fun hashCode (): kotlin.Int declared in <root>.JavaPrivate
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.JavaDefault
         public open fun toString (): kotlin.String declared in <root>.JavaPrivate
+        public open fun toString (): kotlin.String declared in <root>.JavaDefault
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.H) returnType:kotlin.Unit
       overridden:

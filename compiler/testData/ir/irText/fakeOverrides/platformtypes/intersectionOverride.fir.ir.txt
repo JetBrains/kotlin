@@ -170,8 +170,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int [fake_override]
       overridden:
         public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
-        public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.SeparateModuleJava1
         public abstract fun foo (): kotlin.Int declared in <root>.KotlinInterface
+        public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.SeparateModuleJava1
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
@@ -222,8 +222,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface) returnType:kotlin.Int [fake_override]
       overridden:
         public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
-        public abstract fun foo (): kotlin.Any declared in <root>.KotlinInterface2
         public abstract fun foo (): kotlin.Int declared in <root>.KotlinInterface
+        public abstract fun foo (): kotlin.Any declared in <root>.KotlinInterface2
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
@@ -281,8 +281,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.Java2) returnType:kotlin.Int [fake_override]
       overridden:
         public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
-        public abstract fun foo (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java3
         public abstract fun foo (): kotlin.Int declared in <root>.Java2
+        public abstract fun foo (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:

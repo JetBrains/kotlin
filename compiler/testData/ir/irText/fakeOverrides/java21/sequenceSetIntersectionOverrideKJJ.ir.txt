@@ -8,14 +8,14 @@ FILE fqName:<root> fileName:/1.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.HashSet<kotlin.Int>; java.util.SequencedSet<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
         public open fun add (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun addAll (elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:addFirst visibility:public modality:OPEN <> ($this:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Unit [fake_override]
@@ -30,8 +30,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Int?
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun clear (): kotlin.Unit declared in java.util.SequencedSet
         public open fun clear (): kotlin.Unit declared in java.util.HashSet
+        public abstract fun clear (): kotlin.Unit declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
     FUN FAKE_OVERRIDE name:clone visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
       overridden:
@@ -39,14 +39,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
     FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
         public open fun contains (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>, other:@[EnhancedNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -76,13 +76,13 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun isEmpty (): kotlin.Boolean declared in java.util.SequencedSet
         public open fun isEmpty (): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun isEmpty (): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
     FUN FAKE_OVERRIDE name:iterator visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:@[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] kotlin.Int> [fake_override,operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
         public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
     FUN FAKE_OVERRIDE name:newHashSet visibility:public modality:OPEN <T> (p0:kotlin.Int) returnType:@[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of <root>.A.newHashSet?>? [fake_override]
       overridden:
@@ -91,19 +91,19 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
         public open fun remove (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN <> ($this:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun removeAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:removeFirst visibility:public modality:OPEN <> ($this:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
@@ -112,8 +112,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN <> ($this:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
@@ -122,8 +122,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun retainAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:reversed visibility:public modality:ABSTRACT <> ($this:java.util.SequencedSet<kotlin.Int>) returnType:@[FlexibleNullability] java.util.SequencedSet<@[FlexibleNullability] kotlin.Int?>? [fake_override]
@@ -132,8 +132,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.SequencedSet<kotlin.Int>
     FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       overridden:
@@ -171,13 +171,13 @@ FILE fqName:<root> fileName:/1.kt
             arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int declared in java.util.SequencedSet
         public open size: kotlin.Int declared in java.util.HashSet
+        public abstract size: kotlin.Int declared in java.util.SequencedSet
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-size> (): kotlin.Int declared in java.util.SequencedSet
           public open fun <get-size> (): kotlin.Int declared in java.util.HashSet
+          public abstract fun <get-size> (): kotlin.Int declared in java.util.SequencedSet
         $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[java.util.HashSet<kotlin.Int>; java.util.SequencedSet<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
@@ -188,14 +188,14 @@ FILE fqName:<root> fileName:/1.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[java.util.HashSet<kotlin.Int>; java.util.SequencedSet<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
         public open fun add (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun addAll (elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:addFirst visibility:public modality:OPEN <> ($this:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>, p0:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Unit [fake_override]
@@ -210,8 +210,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Int?
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun clear (): kotlin.Unit declared in java.util.SequencedSet
         public open fun clear (): kotlin.Unit declared in java.util.HashSet
+        public abstract fun clear (): kotlin.Unit declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
     FUN FAKE_OVERRIDE name:clone visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
       overridden:
@@ -219,14 +219,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
     FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
         public open fun contains (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>, other:@[EnhancedNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -256,13 +256,13 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun isEmpty (): kotlin.Boolean declared in java.util.SequencedSet
         public open fun isEmpty (): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun isEmpty (): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
     FUN FAKE_OVERRIDE name:iterator visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:@[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] kotlin.Int> [fake_override,operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
         public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
     FUN FAKE_OVERRIDE name:newHashSet visibility:public modality:OPEN <T> (p0:kotlin.Int) returnType:@[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of <root>.B.newHashSet?>? [fake_override]
       overridden:
@@ -271,19 +271,19 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
         public open fun remove (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN <> ($this:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun removeAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:removeFirst visibility:public modality:OPEN <> ($this:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
@@ -292,8 +292,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN <> ($this:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
@@ -302,14 +302,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
         public open fun retainAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       overridden:
@@ -356,13 +356,13 @@ FILE fqName:<root> fileName:/1.kt
             arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int declared in java.util.SequencedSet
         public open size: kotlin.Int declared in java.util.HashSet
+        public abstract size: kotlin.Int declared in java.util.SequencedSet
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.HashSet<kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-size> (): kotlin.Int declared in java.util.SequencedSet
           public open fun <get-size> (): kotlin.Int declared in java.util.HashSet
+          public abstract fun <get-size> (): kotlin.Int declared in java.util.SequencedSet
         $this: VALUE_PARAMETER name:<this> type:java.util.HashSet<kotlin.Int>
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A

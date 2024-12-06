@@ -172,19 +172,19 @@ FILE fqName:<root> fileName:/1.kt
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [lateinit,fake_override,var]
       overridden:
-        public abstract b: kotlin.Number declared in <root>.Java3
         public final b: kotlin.Number declared in <root>.A
+        public abstract b: kotlin.Number declared in <root>.Java3
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Number [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [lateinit,fake_override,var]
         overridden:
-          public abstract fun <get-b> (): kotlin.Number declared in <root>.Java3
           public final fun <get-b> (): kotlin.Number declared in <root>.A
+          public abstract fun <get-b> (): kotlin.Number declared in <root>.Java3
         $this: VALUE_PARAMETER name:<this> type:<root>.A
       FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.Number) returnType:kotlin.Unit [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [lateinit,fake_override,var]
         overridden:
-          public abstract fun <set-b> (<set-?>: kotlin.Number): kotlin.Unit declared in <root>.Java3
           public final fun <set-b> (<set-?>: kotlin.Number): kotlin.Unit declared in <root>.A
+          public abstract fun <set-b> (<set-?>: kotlin.Number): kotlin.Unit declared in <root>.Java3
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Number
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]

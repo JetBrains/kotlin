@@ -9,8 +9,8 @@ FILE fqName:<root> fileName:/1.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[<root>.Java1<R of <root>.C>; <root>.KotlinInterface<R of <root>.C>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.KotlinInterface<R of <root>.C>) returnType:java.util.ArrayList<kotlin.Int> [fake_override]
       overridden:
-        public abstract fun bar (): java.util.ArrayList<kotlin.Int> declared in <root>.KotlinInterface
         public open fun bar (): @[FlexibleNullability] java.util.ArrayList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java1
+        public abstract fun bar (): java.util.ArrayList<kotlin.Int> declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface<R of <root>.C>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -20,8 +20,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.KotlinInterface<R of <root>.C>) returnType:R of <root>.C [fake_override]
       overridden:
-        public abstract fun foo (): T of <root>.KotlinInterface declared in <root>.KotlinInterface
         public open fun foo (): @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
+        public abstract fun foo (): T of <root>.KotlinInterface declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface<R of <root>.C>
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:

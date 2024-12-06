@@ -19,8 +19,8 @@ FILE fqName:<root> fileName:/SignatureClash.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DataClass modality:FINAL visibility:public [data] superTypes:[<root>.Derived; <root>.Delegate]' type=kotlin.Unit
     FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.Unit
       overridden:
-        public abstract fun bar (): kotlin.Unit declared in <root>.Delegate
         public abstract fun bar (): kotlin.Unit declared in <root>.Derived
+        public abstract fun bar (): kotlin.Unit declared in <root>.Delegate
       $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       BLOCK_BODY
         CALL 'public abstract fun bar (): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=null
@@ -44,8 +44,8 @@ FILE fqName:<root> fileName:/SignatureClash.kt
             delegate: GET_VAR 'delegate: <root>.Delegate declared in <root>.DataClass.copy' type=<root>.Delegate origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.DataClass, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Delegate
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Derived
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Delegate
       $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
@@ -79,8 +79,8 @@ FILE fqName:<root> fileName:/SignatureClash.kt
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.Int
       overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.Delegate
         public open fun hashCode (): kotlin.Int declared in <root>.Derived
+        public open fun hashCode (): kotlin.Int declared in <root>.Delegate
       $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.DataClass'
@@ -89,8 +89,8 @@ FILE fqName:<root> fileName:/SignatureClash.kt
               receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.hashCode' type=<root>.DataClass origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.String
       overridden:
-        public open fun toString (): kotlin.String declared in <root>.Delegate
         public open fun toString (): kotlin.String declared in <root>.Derived
+        public open fun toString (): kotlin.String declared in <root>.Delegate
       $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.DataClass'

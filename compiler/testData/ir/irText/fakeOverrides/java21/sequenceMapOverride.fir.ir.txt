@@ -597,8 +597,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:putFirst visibility:public modality:OPEN <> ($this:<root>.C, k:kotlin.Any?, v:kotlin.Any?) returnType:kotlin.Any
       overridden:
-        public abstract fun putFirst (k: @[FlexibleNullability] kotlin.Any?, v: @[FlexibleNullability] kotlin.Any?): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
         public open fun putFirst (p0: @[FlexibleNullability] kotlin.Any?, p1: @[FlexibleNullability] kotlin.Any?): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
+        public abstract fun putFirst (k: @[FlexibleNullability] kotlin.Any?, v: @[FlexibleNullability] kotlin.Any?): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       VALUE_PARAMETER name:k index:0 type:kotlin.Any?
       VALUE_PARAMETER name:v index:1 type:kotlin.Any?

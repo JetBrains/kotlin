@@ -8,8 +8,8 @@ FILE fqName:<root> fileName:/1.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[java.util.LinkedList<kotlin.Int>; java.util.SequencedCollection<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun add (element: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, index:kotlin.Int, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Unit [fake_override]
@@ -20,8 +20,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:element index:1 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, elements:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun addAll (elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:elements index:0 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, index:kotlin.Int, elements:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
@@ -44,8 +44,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Int?
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun clear (): kotlin.Unit declared in java.util.SequencedCollection
         public open fun clear (): kotlin.Unit declared in java.util.LinkedList
+        public abstract fun clear (): kotlin.Unit declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:clone visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
       overridden:
@@ -53,14 +53,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun contains (element: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:descendingIterator visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.Int?>? [fake_override]
@@ -110,13 +110,13 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun isEmpty (): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun isEmpty (): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun isEmpty (): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:iterator visibility:public modality:OPEN <> ($this:java.util.AbstractSequentialList<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] kotlin.Int> [fake_override,operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
         public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
+        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractSequentialList<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:lastIndexOf visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Int [fake_override]
       overridden:
@@ -149,8 +149,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Int?
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:peek visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       overridden:
@@ -191,14 +191,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun remove (element: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun removeAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override]
@@ -218,8 +218,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Any?
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
@@ -245,14 +245,14 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.UnaryOperator<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun retainAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:reversed visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[FlexibleNullability] java.util.LinkedList<@[FlexibleNullability] kotlin.Int?>? [fake_override]
       overridden:
-        public abstract fun reversed (): @[FlexibleNullability] java.util.SequencedCollection<@[FlexibleNullability] E of java.util.SequencedCollection?>? declared in java.util.SequencedCollection
         public open fun reversed (): @[FlexibleNullability] java.util.LinkedList<@[FlexibleNullability] E of java.util.LinkedList?>? declared in java.util.LinkedList
+        public abstract fun reversed (): @[FlexibleNullability] java.util.SequencedCollection<@[FlexibleNullability] E of java.util.SequencedCollection?>? declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:set visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, index:kotlin.Int, element:@[EnhancedNullability] kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override,operator]
       overridden:
@@ -272,8 +272,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN <> ($this:java.util.AbstractList<@[FlexibleNullability] kotlin.Int?>, fromIndex:kotlin.Int, toIndex:kotlin.Int) returnType:@[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
@@ -310,13 +310,13 @@ FILE fqName:<root> fileName:/1.kt
         protected/*protected and package*/ final modCount: kotlin.Int declared in java.util.LinkedList
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int declared in java.util.SequencedCollection
         public open size: kotlin.Int declared in java.util.LinkedList
+        public abstract size: kotlin.Int declared in java.util.SequencedCollection
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-size> (): kotlin.Int declared in java.util.SequencedCollection
           public open fun <get-size> (): kotlin.Int declared in java.util.LinkedList
+          public abstract fun <get-size> (): kotlin.Int declared in java.util.SequencedCollection
         $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[java.util.LinkedList<kotlin.Int>; java.util.SequencedCollection<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
@@ -327,8 +327,8 @@ FILE fqName:<root> fileName:/1.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[java.util.LinkedList<kotlin.Int>; java.util.SequencedCollection<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun add (element: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, index:kotlin.Int, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Unit [fake_override]
@@ -339,8 +339,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:element index:1 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, elements:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun addAll (elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:elements index:0 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, index:kotlin.Int, elements:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
@@ -357,8 +357,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Int?
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun clear (): kotlin.Unit declared in java.util.SequencedCollection
         public open fun clear (): kotlin.Unit declared in java.util.LinkedList
+        public abstract fun clear (): kotlin.Unit declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:clone visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
       overridden:
@@ -366,14 +366,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun contains (element: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:descendingIterator visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.Int?>? [fake_override]
@@ -423,13 +423,13 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun isEmpty (): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun isEmpty (): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun isEmpty (): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:iterator visibility:public modality:OPEN <> ($this:java.util.AbstractSequentialList<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] kotlin.Int> [fake_override,operator]
       overridden:
-        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
         public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
+        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractSequentialList<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:lastIndexOf visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Int [fake_override]
       overridden:
@@ -462,8 +462,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Int?
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:peek visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       overridden:
@@ -504,14 +504,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, element:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun remove (element: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedCollection?): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:element index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun removeAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override]
@@ -531,8 +531,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Any?
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
@@ -558,8 +558,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.UnaryOperator<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>, elements:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
         public open fun retainAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
+        public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedCollection?>): kotlin.Boolean declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
     FUN FAKE_OVERRIDE name:set visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, index:kotlin.Int, element:@[EnhancedNullability] kotlin.Int) returnType:@[EnhancedNullability] kotlin.Int [fake_override,operator]
@@ -580,8 +580,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedCollection?> declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN <> ($this:java.util.AbstractList<@[FlexibleNullability] kotlin.Int?>, fromIndex:kotlin.Int, toIndex:kotlin.Int) returnType:@[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Int> [fake_override]
       overridden:
@@ -622,8 +622,8 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     FUN name:reversed visibility:public modality:OPEN <> ($this:<root>.B) returnType:java.util.LinkedList<kotlin.Int>
       overridden:
-        public abstract fun reversed (): @[FlexibleNullability] java.util.SequencedCollection<@[FlexibleNullability] E of java.util.SequencedCollection?>? declared in java.util.SequencedCollection
         public open fun reversed (): @[FlexibleNullability] java.util.LinkedList<@[FlexibleNullability] E of java.util.LinkedList?>? declared in java.util.LinkedList
+        public abstract fun reversed (): @[FlexibleNullability] java.util.SequencedCollection<@[FlexibleNullability] E of java.util.SequencedCollection?>? declared in java.util.SequencedCollection
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun reversed (): java.util.LinkedList<kotlin.Int> declared in <root>.B'
@@ -635,13 +635,13 @@ FILE fqName:<root> fileName:/1.kt
         protected/*protected and package*/ final modCount: kotlin.Int declared in java.util.LinkedList
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
       overridden:
-        public abstract size: kotlin.Int declared in java.util.SequencedCollection
         public open size: kotlin.Int declared in java.util.LinkedList
+        public abstract size: kotlin.Int declared in java.util.SequencedCollection
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
-          public abstract fun <get-size> (): kotlin.Int declared in java.util.SequencedCollection
           public open fun <get-size> (): kotlin.Int declared in java.util.LinkedList
+          public abstract fun <get-size> (): kotlin.Int declared in java.util.SequencedCollection
         $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
   FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
