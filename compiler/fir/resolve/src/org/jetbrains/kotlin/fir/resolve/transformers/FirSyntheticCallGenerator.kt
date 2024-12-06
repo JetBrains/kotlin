@@ -221,6 +221,7 @@ class FirSyntheticCallGenerator(
                     FirResolvePhase.BODY_RESOLVE
                 )
                 val name = Name.identifier("of")
+                // todo drop?
                 val ofFunction = scope?.getFunctions(name)?.singleOrNull { it.valueParameterSymbols.singleOrNull()?.isVararg == true }
                 if (ofFunction == null) {
                     if (listOfNothingConeType.isSubtypeOf(expectedTypeConeType, session)) {
