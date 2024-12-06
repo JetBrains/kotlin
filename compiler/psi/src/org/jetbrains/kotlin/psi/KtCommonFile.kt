@@ -141,6 +141,16 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
     }
 
+    /**
+     * This is an optimized way to find a file child element in the header.
+     *
+     * Regular [findChildByTypeOrClass] will iterate through all childen that is especially quite expensive in the
+     * case of [findChildByClass].
+     * It will trigger psi calculation for all children even if the wanted element in the first child.
+     *
+     * So this function will iterate as a maximum only through all non-declarations in the beginning plus one declaration.
+     * This one declaration processing is required to support the optimization for [KtScript] as well as it can be only in the beginning.
+     */
     private fun <T : KtElementImplStub<out StubElement<*>>> findChildBeforeFirstDeclarationInclusiveByType(
         elementType: KtPlaceHolderStubElementType<T>,
     ): T? {
