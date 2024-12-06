@@ -32,6 +32,9 @@ enum class TestJdkKind(val requiresSeparateProcess: Boolean = false) {
     // JDK found at $JDK_21_0
     FULL_JDK_21(requiresSeparateProcess = true),
 
+    // JDK found at $JDK_23_0
+    FULL_JDK_23(requiresSeparateProcess = true),
+
     // JDK found at java.home
     FULL_JDK,
 }

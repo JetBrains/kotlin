@@ -171,6 +171,11 @@ public class KtTestUtil {
     }
 
     @NotNull
+    public static File getJdk23Home() {
+        return getJdkHome("JDK_23_0", "JDK_23");
+    }
+
+    @NotNull
     public static String getTestDataPathBase() {
         return getHomeDirectory() + "/compiler/testData";
     }

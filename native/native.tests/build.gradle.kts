@@ -69,6 +69,7 @@ val test by nativeTest(
         JdkMajorVersion.JDK_11_0, // required in CompilerOutputTest via AbstractCliTest.getNormalizedCompilerOutput
         JdkMajorVersion.JDK_17_0, // required in CompilerOutputTest via AbstractCliTest.getNormalizedCompilerOutput
         JdkMajorVersion.JDK_21_0,
+        JdkMajorVersion.JDK_23_0,
     )
 ) {
     options {
