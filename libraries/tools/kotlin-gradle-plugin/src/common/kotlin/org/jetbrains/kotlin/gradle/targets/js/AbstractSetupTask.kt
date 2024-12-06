@@ -63,6 +63,11 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         it.downloadBaseUrl
     }
 
+    @get:Input
+    val allowInsecureProtocol: Provider<Boolean> = env.map {
+        it.allowInsecureProtocol
+    }
+
     @Deprecated("Use downloadBaseUrlProvider instead. It uses Gradle Provider API.")
     val downloadBaseUrl: String?
         @Internal
@@ -143,6 +148,8 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             project.repositories.ivy { repo ->
                 repo.name = "Distributions at ${it}"
                 repo.url = URI(it)
+
+                repo.isAllowInsecureProtocol = allowInsecureProtocol.get()
 
                 repo.patternLayout {
                     it.artifact(artifactPattern)

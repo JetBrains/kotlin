@@ -7,6 +7,7 @@ import java.io.File
 data class BinaryenEnv(
     override val download: Boolean,
     override val downloadBaseUrl: String?,
+    override val allowInsecureProtocol: Boolean,
     override val ivyDependency: String,
     override val executable: String,
     override val dir: File,

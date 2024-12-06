@@ -12,6 +12,7 @@ import java.io.File
 data class YarnEnv(
     override val download: Boolean,
     override val downloadBaseUrl: String?,
+    override val allowInsecureProtocol: Boolean,
     override val cleanableStore: CleanableStore,
     override val dir: File,
     override val executable: String,

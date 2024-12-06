@@ -9,6 +9,8 @@ interface AbstractEnv {
 
     val downloadBaseUrl: String?
 
+    val allowInsecureProtocol: Boolean
+
     val ivyDependency: String
 
     val dir: File
