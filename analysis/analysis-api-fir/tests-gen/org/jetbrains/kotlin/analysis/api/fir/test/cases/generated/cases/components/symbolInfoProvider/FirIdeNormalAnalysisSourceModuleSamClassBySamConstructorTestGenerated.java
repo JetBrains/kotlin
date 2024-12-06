@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractSamClassBySamConstructor;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractSamClassBySamConstructorTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -26,14 +26,14 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor")
 @TestDataPath("$PROJECT_ROOT")
-public class FirIdeNormalAnalysisScriptSourceModuleSamClassBySamConstructorGenerated extends AbstractSamClassBySamConstructor {
+public class FirIdeNormalAnalysisSourceModuleSamClassBySamConstructorTestGenerated extends AbstractSamClassBySamConstructorTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
     return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
         FrontendKind.Fir,
-        TestModuleKind.ScriptSource,
+        TestModuleKind.Source,
         AnalysisSessionMode.Normal,
         AnalysisApiMode.Ide
       )
@@ -42,12 +42,18 @@ public class FirIdeNormalAnalysisScriptSourceModuleSamClassBySamConstructorGener
 
   @Test
   public void testAllFilesPresentInSamClassBySamConstructor() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
-  @TestMetadata("samClassInScript.kts")
-  public void testSamClassInScript() {
-    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor/samClassInScript.kts");
+  @TestMetadata("samClass.kt")
+  public void testSamClass() {
+    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor/samClass.kt");
+  }
+
+  @Test
+  @TestMetadata("samClassWithTypeArguments.kt")
+  public void testSamClassWithTypeArguments() {
+    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor/samClassWithTypeArguments.kt");
   }
 }

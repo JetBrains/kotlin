@@ -3,19 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fe10.test.cases.generated.cases.components.symbolInfoProvider;
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.generated.cases.components.symbolInfoProvider;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.api.fe10.test.configurator.AnalysisApiFe10TestConfiguratorFactory;
+import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractSamClassBySamConstructor;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractSamClassBySamConstructorTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -26,15 +26,15 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor")
 @TestDataPath("$PROJECT_ROOT")
-public class Fe10IdeNormalAnalysisSourceModuleSamClassBySamConstructorGenerated extends AbstractSamClassBySamConstructor {
+public class FirIdeDependentAnalysisScriptSourceModuleSamClassBySamConstructorTestGenerated extends AbstractSamClassBySamConstructorTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
-    return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
-        FrontendKind.Fe10,
-        TestModuleKind.Source,
-        AnalysisSessionMode.Normal,
+        FrontendKind.Fir,
+        TestModuleKind.ScriptSource,
+        AnalysisSessionMode.Dependent,
         AnalysisApiMode.Ide
       )
     );
@@ -42,18 +42,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSamClassBySamConstructorGenerated 
 
   @Test
   public void testAllFilesPresentInSamClassBySamConstructor() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor"), Pattern.compile("^(.+)\\.kts$"), null, true);
   }
 
   @Test
-  @TestMetadata("samClass.kt")
-  public void testSamClass() {
-    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor/samClass.kt");
-  }
-
-  @Test
-  @TestMetadata("samClassWithTypeArguments.kt")
-  public void testSamClassWithTypeArguments() {
-    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor/samClassWithTypeArguments.kt");
+  @TestMetadata("samClassInScript.kts")
+  public void testSamClassInScript() {
+    runTest("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor/samClassInScript.kts");
   }
 }

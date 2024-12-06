@@ -3,19 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.generated.cases.components.symbolInfoProvider;
+package org.jetbrains.kotlin.analysis.api.fe10.test.cases.generated.cases.components.symbolInfoProvider;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.AnalysisApiFirStandaloneModeTestConfiguratorFactory;
+import org.jetbrains.kotlin.analysis.api.fe10.test.configurator.AnalysisApiFe10TestConfiguratorFactory;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractSamClassBySamConstructor;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractSamClassBySamConstructorTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Test;
 
@@ -26,16 +26,16 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/symbolInfoProvider/samClassBySamConstructor")
 @TestDataPath("$PROJECT_ROOT")
-public class FirStandaloneNormalAnalysisSourceModuleSamClassBySamConstructorGenerated extends AbstractSamClassBySamConstructor {
+public class Fe10IdeNormalAnalysisSourceModuleSamClassBySamConstructorTestGenerated extends AbstractSamClassBySamConstructorTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
-    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+    return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
-        FrontendKind.Fir,
+        FrontendKind.Fe10,
         TestModuleKind.Source,
         AnalysisSessionMode.Normal,
-        AnalysisApiMode.Standalone
+        AnalysisApiMode.Ide
       )
     );
   }
