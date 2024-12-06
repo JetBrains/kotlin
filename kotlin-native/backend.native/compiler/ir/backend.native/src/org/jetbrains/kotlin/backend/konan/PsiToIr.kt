@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.backend.konan.serialization.NativeCacheSupport
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -142,9 +143,7 @@ internal fun PsiToIrContext.psiToIr(
                         builtIns = generatorContext.irBuiltIns,
                         messageCollector = messageCollector
                 ),
-                cachedLibraries = config.cachedLibraries,
-                lazyIrForCaches = config.lazyIrForCaches,
-                libraryBeingCached = config.libraryToCache,
+                nativeCacheSupport = NativeCacheSupport(config.cachedLibraries, config.lazyIrForCaches, config.libraryToCache),
                 userVisibleIrModulesSupport = config.userVisibleIrModulesSupport,
                 externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
         ).also { linker ->

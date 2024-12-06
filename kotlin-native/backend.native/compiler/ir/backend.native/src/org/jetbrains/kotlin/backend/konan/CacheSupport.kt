@@ -76,7 +76,7 @@ sealed class CacheDeserializationStrategy {
     }
 }
 
-class PartialCacheInfo(val klib: KotlinLibrary, val strategy: CacheDeserializationStrategy)
+class PartialCacheInfo(override val klib: KotlinLibrary, val strategy: CacheDeserializationStrategy): PartialCacheInfoBase
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
