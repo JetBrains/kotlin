@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.config
 
-enum class AnnotationDefaultingMode(val description: String) {
+enum class AnnotationDefaultTargetMode(val description: String) {
     FIRST_ONLY("first-only"),
     FIRST_ONLY_WARN("first-only-warn"),
     PARAM_PROPERTY("param-property");
 
     companion object {
         @JvmStatic
-        fun fromStringOrNull(string: String?) = AnnotationDefaultingMode.entries.find { it.description == string }
+        fun fromStringOrNull(string: String?) = AnnotationDefaultTargetMode.entries.find { it.description == string }
 
         @JvmStatic
         fun fromString(string: String?, languageVersionSettings: LanguageVersionSettings) =
             fromStringOrNull(string) ?: when {
-                languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultingMode) -> PARAM_PROPERTY
-                languageVersionSettings.supportsFeature(LanguageFeature.AnnotationDefaultingMigrationWarning) -> FIRST_ONLY_WARN
+                languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode) -> PARAM_PROPERTY
+                languageVersionSettings.supportsFeature(LanguageFeature.AnnotationDefaultTargetMigrationWarning) -> FIRST_ONLY_WARN
                 else -> FIRST_ONLY
             }
     }
