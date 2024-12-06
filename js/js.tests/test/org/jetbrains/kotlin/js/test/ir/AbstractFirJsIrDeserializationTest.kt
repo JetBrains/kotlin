@@ -12,25 +12,26 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_IR_DESERIALIZATION_TEST
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.BackendFacade
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 /**
  * Base class for IR deserialization tests, configured with FIR frontend.
  */
-open class AbstractFirJsIrDeserializationTest(
-    pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
+abstract class AbstractFirJsIrDeserializationTest(
+    pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact>(
-    FrontendKinds.FIR, TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix
-) {
+) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact>(FrontendKinds.FIR, TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
 
@@ -41,12 +42,22 @@ open class AbstractFirJsIrDeserializationTest(
         get() = ::FirJsKlibSerializerFacade
 
     override val backendFacades: JsBackendFacades
-        get() = JsBackendFacades.WithRecompilation
+        get() = JsBackendFacades.WithSeparatedDeserialization
 
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.defaultDirectives {
+    override fun TestConfigurationBuilder.configuration() {
+        defaultDirectives {
+            +JsEnvironmentConfigurationDirectives.PER_MODULE
+            +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
         }
+        useAfterAnalysisCheckers(
+            ::FirMetaInfoDiffSuppressor
+        )
+        commonConfigurationForJsBlackBoxCodegenTest(IGNORE_IR_DESERIALIZATION_TEST)
     }
 }
+
+open class AbstractFirJsIrDeserializationCodegenBoxTest : AbstractFirJsIrDeserializationTest(
+    pathToTestDir = "compiler/testData/codegen/box/",
+    testGroupOutputDirPrefix = "irDeserialization/codegenBox/"
+)
