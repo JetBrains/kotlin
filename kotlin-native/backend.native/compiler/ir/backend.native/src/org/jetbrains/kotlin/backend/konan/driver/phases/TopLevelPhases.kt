@@ -278,7 +278,7 @@ private fun isReferencedByNativeRuntime(declarations: List<IrDeclaration>): Bool
 
 private data class BackendJobFragment(
         val irModule: IrModuleFragment,
-        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val cacheDeserializationStrategy: CacheDeserializationStrategyBase?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
         val performanceManager: CommonCompilerPerformanceManager?,

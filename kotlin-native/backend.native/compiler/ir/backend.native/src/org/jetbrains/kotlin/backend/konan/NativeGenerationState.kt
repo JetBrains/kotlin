@@ -53,7 +53,7 @@ internal class NativeGenerationState(
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: Context,
-        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val cacheDeserializationStrategy: CacheDeserializationStrategyBase?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
         val outputFiles: OutputFiles,

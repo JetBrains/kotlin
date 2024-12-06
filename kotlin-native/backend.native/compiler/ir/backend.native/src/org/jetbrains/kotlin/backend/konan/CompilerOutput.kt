@@ -38,7 +38,7 @@ val KonanConfig.produceCInterface: Boolean
 val CompilerOutputKind.involvesBitcodeGeneration: Boolean
     get() = this != CompilerOutputKind.LIBRARY
 
-internal val CacheDeserializationStrategy?.containsKFunctionImpl: Boolean
+internal val CacheDeserializationStrategyBase?.containsKFunctionImpl: Boolean
     get() = this?.contains(KonanFqNames.internalPackageName, "KFunctionImpl.kt") != false
 
 internal val NativeGenerationState.shouldDefineFunctionClasses: Boolean
@@ -48,7 +48,7 @@ internal val NativeGenerationState.shouldDefineCachedBoxes: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             cacheDeserializationStrategy?.contains(KonanFqNames.internalPackageName, "Boxing.kt") != false
 
-internal val CacheDeserializationStrategy?.containsRuntime: Boolean
+internal val CacheDeserializationStrategyBase?.containsRuntime: Boolean
     get() = this?.contains(KonanFqNames.internalPackageName, "Runtime.kt") != false
 
 internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
