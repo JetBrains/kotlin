@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
@@ -72,6 +73,9 @@ interface IrPluginContext : IrGeneratorContext {
      * @return         the logger associated with specified ID
      */
     fun createDiagnosticReporter(pluginId: String): MessageCollector
+
+    // TODO: find out how not to confuse it with `createDiagnosticReporter`
+    val irDiagnosticReporter: IrDiagnosticReporter
 
     // The following API is experimental
     @FirIncompatiblePluginAPI("Use classId overload instead")

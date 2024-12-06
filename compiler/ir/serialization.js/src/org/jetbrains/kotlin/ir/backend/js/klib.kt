@@ -395,7 +395,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         typeTranslator,
         irBuiltIns,
         linker = irLinker,
-        messageCollector
+        messageCollector = messageCollector,
     )
     if (extensions.isNotEmpty()) {
         for (extension in extensions) {
