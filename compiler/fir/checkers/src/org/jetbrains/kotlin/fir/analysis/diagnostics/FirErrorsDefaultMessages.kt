@@ -1196,8 +1196,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD,
-            "This annotation is currently applied to the value parameter only, but in future it will be also applicable to ''{0}''. " +
-                    "See https://youtrack.jetbrains.com/issue/KT-73255. To remove this warning, use @param: use-site target.",
+            "This annotation is currently applied to the value parameter only, but in the future it will also be applied to ''{0}''. " +
+                    "See https://youtrack.jetbrains.com/issue/KT-73255 for more details. " +
+                    "To remove this warning, use the ''@param:'' annotation target.",
             TO_STRING,
         )
 

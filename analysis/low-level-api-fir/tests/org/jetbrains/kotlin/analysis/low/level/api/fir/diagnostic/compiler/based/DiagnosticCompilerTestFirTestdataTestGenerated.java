@@ -6078,9 +6078,9 @@ public class DiagnosticCompilerTestFirTestdataTestGenerated extends AbstractDiag
       }
 
       @Test
-      @TestMetadata("annotationTargetingFirstOnlyWarn.kt")
-      public void testAnnotationTargetingFirstOnlyWarn() {
-        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationTargetingFirstOnlyWarn.kt");
+      @TestMetadata("annotationDefaultTargetFirstOnlyWarn.kt")
+      public void testAnnotationDefaultTargetFirstOnlyWarn() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/annotations/annotationDefaultTargetFirstOnlyWarn.kt");
       }
 
       @Test

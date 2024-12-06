@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
@@ -30,9 +30,6 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
-import org.jetbrains.kotlin.fir.scopes.getProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -418,14 +415,11 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         reporter: DiagnosticReporter
     ) {
         val session = context.session
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationDefaultingMigrationWarning) ||
+        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationDefaultTargetMigrationWarning) ||
             // With this feature ON, the migration warning isn't needed
-            session.languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultingMode)
+            session.languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode)
         ) return
-        val containingDeclarationSymbol = parameter.containingDeclarationSymbol
-        if (containingDeclarationSymbol !is FirConstructorSymbol || !containingDeclarationSymbol.isPrimary) return
-        if (containingDeclarationSymbol.getContainingClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS) return
-        val klass = context.findClosestClassOrObject()!!
+        val correspondingProperty = parameter.correspondingProperty ?: return
 
         for (annotation in parameter.annotations) {
             if (annotation.useSiteTarget != null) continue
@@ -434,13 +428,11 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             val propertyAllowed = PROPERTY in allowedTargets
             val fieldAllowed = FIELD in allowedTargets
             if (propertyAllowed || fieldAllowed) {
-                val correspondingPropertySymbol =
-                    klass.symbol.declaredMemberScope(context).getProperties(parameter.name).firstOrNull() as? FirPropertySymbol ?: return
                 if (propertyAllowed) {
                     reporter.reportOn(
                         annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, PROPERTY.renderName, context
                     )
-                } else if (correspondingPropertySymbol.backingFieldSymbol != null) {
+                } else if (correspondingProperty.backingField != null) {
                     reporter.reportOn(
                         annotation.source, FirErrors.ANNOTATION_WILL_BE_APPLIED_ALSO_TO_PROPERTY_OR_FIELD, FIELD.renderName, context
                     )
