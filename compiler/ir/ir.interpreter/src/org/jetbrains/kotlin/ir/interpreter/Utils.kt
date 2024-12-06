@@ -229,15 +229,17 @@ internal fun IrClass.getOriginalPropertyByName(name: String): IrProperty {
 internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFunction {
     val irFunction = this.symbol.owner
     fun IrValueParameter.lookup(): IrFunction? {
-        return defaultValue?.let { this.parent as IrFunction }
-            ?: (this.parent as? IrSimpleFunction)?.overriddenSymbols
-                ?.map { it.owner.valueParameters[this.indexInOldValueParameters] }
+        return defaultValue
+            ?.let { this.parent as IrFunction }
+            ?: (this.parent as? IrSimpleFunction)
+                ?.overriddenSymbols
+                ?.map { it.owner.parameters[this.indexInParameters] }
                 ?.firstNotNullOfOrNull { it.lookup() }
     }
 
-    return (0 until this.valueArgumentsCount)
-        .first { this.getValueArgument(it) == null }
-        .let { irFunction.valueParameters[it].lookup() ?: irFunction }
+    return (arguments zip irFunction.parameters)
+        .first { (arg, _) -> arg == null }
+        .let { (_, param) -> param.lookup() ?: irFunction }
 }
 
 internal fun IrValueParameter.getDefaultWithActualParameters(
