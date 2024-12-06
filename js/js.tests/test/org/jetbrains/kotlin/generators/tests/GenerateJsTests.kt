@@ -24,6 +24,7 @@ fun main(args: Array<String>) {
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
     val k1BoxTestDir = "multiplatform/k1"
     val k2BoxTestDir = "multiplatform/k2"
+    val irInterpreterTests = "involvesIrInterpreter"
     val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
 
     // TODO: repair these tests
@@ -253,6 +254,11 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirJsES6CodegenWasmJsInteropTest>(annotations = listOf(*es6())) {
                 model("boxWasmJsInterop")
+            }
+
+            testClass<AbstractFirJsIrDeserializationCodegenBoxTest> {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
+                model("boxInline")
             }
         }
 
