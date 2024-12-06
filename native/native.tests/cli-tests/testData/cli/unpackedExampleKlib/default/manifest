@@ -1,6 +1,6 @@
 abi_version=1.201.0
 builtins_platform=NATIVE
-compiler_version=2.1.255-SNAPSHOT
+compiler_version=2.2.255-SNAPSHOT
 depends=stdlib
 ir_signature_versions=1,2
 metadata_version=1.4.1

@@ -212,7 +212,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonComp
 	public abstract fun getLanguageVersion ()Lorg/gradle/api/provider/Property;
 	public abstract fun getOptIn ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getProgressiveMode ()Lorg/gradle/api/provider/Property;
-	public abstract fun getUseK2 ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions {
@@ -227,10 +226,8 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonOpti
 	public abstract fun getApiVersion ()Ljava/lang/String;
 	public abstract fun getLanguageVersion ()Ljava/lang/String;
 	public abstract fun getOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
-	public abstract fun getUseK2 ()Z
 	public abstract fun setApiVersion (Ljava/lang/String;)V
 	public abstract fun setLanguageVersion (Ljava/lang/String;)V
-	public abstract fun setUseK2 (Z)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions$DefaultImpls {
@@ -239,14 +236,12 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions$DefaultIm
 	public static fun getFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;)Ljava/util/List;
 	public static fun getLanguageVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;)Ljava/lang/String;
 	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;)Z
-	public static fun getUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;)Z
 	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;)Z
 	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;Z)V
 	public static fun setApiVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;Ljava/lang/String;)V
 	public static fun setFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;Ljava/util/List;)V
 	public static fun setLanguageVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;Ljava/lang/String;)V
 	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;Z)V
-	public static fun setUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;Z)V
 	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;Z)V
 }
 
@@ -381,7 +376,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun getTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/String;
 	public static fun getTypedArrays (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Ljava/lang/Boolean;
-	public static fun getUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;)Z
 	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setApiVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
@@ -401,7 +395,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsOptions$DefaultImpls 
 	public static fun setTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/String;)V
 	public static fun setTypedArrays (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setUseEsClasses (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Ljava/lang/Boolean;)V
-	public static fun setUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;Z)V
 }
 
@@ -445,7 +438,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions$DefaultImpls
 	public static fun getModuleName (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;)Ljava/lang/String;
 	public static fun getNoJdk (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;)Z
 	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;)Z
-	public static fun getUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;)Z
 	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;)Z
 	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Z)V
 	public static fun setApiVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Ljava/lang/String;)V
@@ -456,7 +448,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions$DefaultImpls
 	public static fun setModuleName (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Ljava/lang/String;)V
 	public static fun setNoJdk (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Z)V
 	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Z)V
-	public static fun setUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Z)V
 	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;Z)V
 }
 
@@ -473,14 +464,12 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOpti
 	public static fun getFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;)Ljava/util/List;
 	public static fun getLanguageVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;)Ljava/lang/String;
 	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;)Z
-	public static fun getUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;)Z
 	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;)Z
 	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;Z)V
 	public static fun setApiVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;Ljava/lang/String;)V
 	public static fun setFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;Ljava/util/List;)V
 	public static fun setLanguageVersion (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;Ljava/lang/String;)V
 	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;Z)V
-	public static fun setUseK2 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;Z)V
 	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;Z)V
 }
 

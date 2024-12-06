@@ -55,7 +55,7 @@ class MetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean) : 
 
     companion object {
         @JvmField
-        val INSTANCE = MetadataVersion(2, 1, 0)
+        val INSTANCE = MetadataVersion(2, 2, 0)
 
         @JvmField
         val INSTANCE_NEXT = INSTANCE.next()

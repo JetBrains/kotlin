@@ -13,7 +13,7 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     /**
      * Allow using declarations from only the specified version of bundled libraries.
      *
-     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2 (experimental)", "2.3 (experimental)"
+     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2", "2.3 (experimental)"
      *
      * Default value: null
      */
@@ -24,7 +24,7 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     /**
      * Provide source compatibility with the specified version of Kotlin.
      *
-     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2 (experimental)", "2.3 (experimental)"
+     * Possible values: "1.6 (deprecated)", "1.7 (deprecated)", "1.8", "1.9", "2.0", "2.1", "2.2", "2.3 (experimental)"
      *
      * Default value: null
      */
@@ -47,13 +47,4 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
      */
     @get:org.gradle.api.tasks.Input
     val progressiveMode: org.gradle.api.provider.Property<kotlin.Boolean>
-
-    /**
-     * Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
-     *
-     * Default value: false
-     */
-    @Deprecated(message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead", level = DeprecationLevel.ERROR)
-    @get:org.gradle.api.tasks.Input
-    val useK2: org.gradle.api.provider.Property<kotlin.Boolean>
 }
