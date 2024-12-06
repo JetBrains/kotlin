@@ -1200,7 +1200,15 @@ class FirCallCompletionResultsWriterTransformer(
             resolutionContext,
             resolutionMode = ResolutionMode.ContextIndependent
         )
-        val s = call.transform<FirExpression, ExpectedArgumentType>(this, data)
+        // val resolveTransformer = FirBodyResolveTransformer(
+        //     session,
+        //     phase = FirResolvePhase.BODY_RESOLVE,
+        //     implicitTypeOnly = false,
+        //     scopeSession = scopeSession
+        // ).expressionsTransformer
+        val s = call
+            // .transform<FirExpression, _>(resolveTransformer, ResolutionMode.WithExpectedType(expectedArrayType.toFirResolvedTypeRef()))
+            .transform<FirExpression, _>(this, data)
         s.resultType = expectedArrayType
         return s
     }
