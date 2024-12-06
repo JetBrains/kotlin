@@ -79,7 +79,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         get() = findChildBeforeFirstDeclarationInclusiveByType(KtStubElementTypes.PACKAGE_DIRECTIVE)
 
     var packageFqName: FqName
-        get() = greenStub?.getPackageFqName() ?: packageFqNameByTree
+        get() = greenStub?.getPackageFqName() ?: packageDirective?.fqName ?: FqName.ROOT
         set(value) {
             val packageDirective = packageDirective
             if (packageDirective != null) {
@@ -90,8 +90,9 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             }
         }
 
+    @Deprecated("Use 'packageFqName' property instead", ReplaceWith("packageFqName"))
     val packageFqNameByTree: FqName
-        get() = packageDirective?.fqName ?: FqName.ROOT
+        get() = packageFqName
 
     val script: KtScript?
         get() {
