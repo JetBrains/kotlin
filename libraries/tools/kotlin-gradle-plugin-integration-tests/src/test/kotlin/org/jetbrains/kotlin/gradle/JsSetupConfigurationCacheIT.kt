@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProblems
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.nio.file.Files
 
 // This test is a JS test
 // but, as it is the only one to required to run on MacOS
@@ -39,6 +40,12 @@ class JsSetupConfigurationCacheIT : KGPBaseTest() {
             )
         ) {
             checkNodeJsSetup("kotlinUpgradePackageLock")
+
+            // On Windows call to Files.delete(workingDir) could cause java.nio.file.DirectoryNotEmptyException
+            // So first manually clean up the folder
+            if (OS.WINDOWS.isCurrentOs) {
+                Files.walk(workingDir).map { it.toFile() }.forEach { it.delete() }
+            }
         }
     }
 
