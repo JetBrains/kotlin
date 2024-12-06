@@ -192,16 +192,14 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
         }
 
         private fun IrFunction.getMethodType(): MethodType {
-            val argsClasses = this.valueParameters.map { it.type.getClass(this.isValueParameterPrimitiveAsObject(it.indexInOldValueParameters)) }
+            val parameterClasses = this.nonDispatchParameters.map { it.type.getClass(this.isValueParameterPrimitiveAsObject(it.indexInParameters)) }
             return when (this) {
                 is IrSimpleFunction -> {
                     val returnClass = this.returnType.getClass(this.isReturnTypePrimitiveAsObject())
-                    val extensionClass = this.extensionReceiverParameter?.type?.getClass(this.isExtensionReceiverPrimitive())
-
-                    MethodType.methodType(returnClass, listOfNotNull(extensionClass) + argsClasses)
+                    MethodType.methodType(returnClass, parameterClasses)
                 }
                 is IrConstructor -> {
-                    MethodType.methodType(Void::class.javaPrimitiveType, argsClasses)
+                    MethodType.methodType(Void::class.javaPrimitiveType, parameterClasses)
                 }
             }
         }
@@ -282,10 +280,6 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             return overriddenSymbols
         }
 
-        private fun IrFunction.isExtensionReceiverPrimitive(): Boolean {
-            return this.extensionReceiverParameter?.type?.isPrimitiveType() == false
-        }
-
         private fun IrFunction.isReturnTypePrimitiveAsObject(): Boolean {
             for (symbol in getOriginalOverriddenSymbols()) {
                 if (!symbol.owner.returnType.isTypeParameter() && !symbol.owner.returnType.isNullable()) {
@@ -297,7 +291,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
 
         private fun IrFunction.isValueParameterPrimitiveAsObject(index: Int): Boolean {
             for (symbol in getOriginalOverriddenSymbols()) {
-                if (!symbol.owner.valueParameters[index].type.isTypeParameter() && !symbol.owner.valueParameters[index].type.isNullable()) {
+                if (!symbol.owner.parameters[index].type.isTypeParameter() && !symbol.owner.parameters[index].type.isNullable()) {
                     return false
                 }
             }
