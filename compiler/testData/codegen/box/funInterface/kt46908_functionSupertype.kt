@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 fun interface Foo : () -> Int
 

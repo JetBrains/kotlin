@@ -2,6 +2,8 @@
 // WITH_STDLIB
 // ISSUE: KT-61250
 // IGNORE_BACKEND_K2: ANY
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference

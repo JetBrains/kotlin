@@ -2,6 +2,8 @@
 
 // IGNORE_BACKEND_K2: ANY
 // REASON: red code (see corresponding diagnostic test)
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 fun box(): String {
     build {

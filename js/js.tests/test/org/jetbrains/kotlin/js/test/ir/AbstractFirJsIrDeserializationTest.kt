@@ -44,19 +44,15 @@ abstract class AbstractFirJsIrDeserializationTest(
     override val backendFacades: JsBackendFacades
         get() = JsBackendFacades.WithSeparatedDeserialization
 
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.defaultDirectives {
+    override fun TestConfigurationBuilder.configuration() {
+        defaultDirectives {
             +JsEnvironmentConfigurationDirectives.PER_MODULE
             +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
         }
-        builder.useAfterAnalysisCheckers(
+        useAfterAnalysisCheckers(
             ::FirMetaInfoDiffSuppressor
         )
-    }
-
-    override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForJsBlackBoxCodegenTest(IGNORE_IR_DESERIALIZATION_TEST)
     }
 }
