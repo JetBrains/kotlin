@@ -61,6 +61,26 @@ internal class FirElementFinder {
             expectedDeclarationAcceptor = { it.psi == nonLocalDeclaration },
         )
 
+        inline fun <reified E : FirElement> findElementIn(
+            container: FirElement,
+            crossinline canGoInside: (E) -> Boolean = { true },
+            crossinline predicate: (E) -> Boolean,
+        ): E? {
+            var result: E? = null
+            container.accept(object : FirVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    when {
+                        result != null -> return
+                        element !is E || element is FirFile -> element.acceptChildren(this)
+                        predicate(element) -> result = element
+                        canGoInside(element) -> element.acceptChildren(this)
+                    }
+                }
+            })
+
+            return result
+        }
+
         /**
          * @see collectDesignationPath
          */
@@ -155,26 +175,6 @@ internal class FirElementFinder {
                 path = patchDesignationPathIfNeeded(result!!, path).ifEmpty { emptyList() },
                 target = result!!,
             )
-        }
-
-        inline fun <reified E : FirElement> findElementIn(
-            container: FirElement,
-            crossinline canGoInside: (E) -> Boolean = { true },
-            crossinline predicate: (E) -> Boolean,
-        ): E? {
-            var result: E? = null
-            container.accept(object : FirVisitorVoid() {
-                override fun visitElement(element: FirElement) {
-                    when {
-                        result != null -> return
-                        element !is E || element is FirFile -> element.acceptChildren(this)
-                        predicate(element) -> result = element
-                        canGoInside(element) -> element.acceptChildren(this)
-                    }
-                }
-            })
-
-            return result
         }
     }
 }
