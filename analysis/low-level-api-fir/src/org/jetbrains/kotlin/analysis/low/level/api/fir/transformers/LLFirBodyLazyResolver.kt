@@ -174,10 +174,12 @@ private class FirPartialBodyExpressionResolveTransformer(
             withEntry("state", state) { it.toString() }
         }
 
-        // Run analysis with the tower data context restored from the snapshot
+        // Run analysis with the previous tower data context
         context.withTowerDataContext(resolveSnapshot.towerDataContext) {
-            // Also, restore the previous state of the data flow graph from the snapshot
-            context.dataFlowAnalyzerContext.resetFrom(resolveSnapshot.dataFlowAnalyzerContext)
+            // Also, restore the previous data flow analyzer state.
+            // Here we create a snapshot right before the analysis, so if an exception occurs during this partial analysis,
+            // we can still safely use the original 'dataFlowAnalyzerContext' from the 'analysisStateSnapshot' the next time.
+            context.dataFlowAnalyzerContext.resetFrom(resolveSnapshot.dataFlowAnalyzerContext.createSnapshot())
 
             val isAnalyzedEntirely = transformStatementsPartially(
                 request, block, data,
@@ -213,6 +215,7 @@ private class FirPartialBodyExpressionResolveTransformer(
 
             if (index >= startIndex) {
                 if (stopElement != null && !shouldTransform(statement, stopElement, stopElements)) {
+
                     // Here we reached a stop element.
                     // It means all statements up to the target one are now analyzed.
                     // So now we save the current context and suspend further analysis.
@@ -223,7 +226,7 @@ private class FirPartialBodyExpressionResolveTransformer(
                         performedAnalysesCount = performedAnalysesCount + 1,
                         analysisStateSnapshot = LLPartialBodyResolveSnapshot(
                             towerDataContext = context.towerDataContext.createSnapshot(keepMutable = true),
-                            dataFlowAnalyzerContext = context.dataFlowAnalyzerContext.createSnapshot()
+                            dataFlowAnalyzerContext = context.dataFlowAnalyzerContext
                         ),
                         previousState = declaration.partialBodyResolveState?.copy(analysisStateSnapshot = null)
                     )
