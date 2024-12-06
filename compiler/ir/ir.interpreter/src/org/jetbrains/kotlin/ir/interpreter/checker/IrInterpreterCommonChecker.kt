@@ -217,13 +217,12 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         if (!data.mode.canEvaluateCallableReference(expression)) return false
 
         val owner = expression.symbol.owner
-        val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, data) ?: true
-        val extensionReceiverComputable = expression.extensionReceiver?.accept(this, data) ?: true
+        val boundValuesComputable = expression.arguments.none { it?.accept(this, data) == false }
 
         if (!data.mode.canEvaluateFunction(owner)) return false
 
         val bodyComputable = visitBodyIfNeeded(owner, data)
-        return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
+        return boundValuesComputable && bodyComputable
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrInterpreterCheckerData): Boolean {
