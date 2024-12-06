@@ -329,15 +329,15 @@ public class FirLightTreeBytecodeListingTestGenerated extends AbstractFirLightTr
     }
 
     @Test
-    @TestMetadata("annotationDefaultingFirstOnly.kt")
-    public void testAnnotationDefaultingFirstOnly() {
-      runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationDefaultingFirstOnly.kt");
+    @TestMetadata("annotationDefaultTargetFirstOnly.kt")
+    public void testAnnotationDefaultTargetFirstOnly() {
+      runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationDefaultTargetFirstOnly.kt");
     }
 
     @Test
-    @TestMetadata("annotationDefaultingParamProperty.kt")
-    public void testAnnotationDefaultingParamProperty() {
-      runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationDefaultingParamProperty.kt");
+    @TestMetadata("annotationDefaultTargetParamProperty.kt")
+    public void testAnnotationDefaultTargetParamProperty() {
+      runTest("compiler/testData/codegen/bytecodeListing/annotations/annotationDefaultTargetParamProperty.kt");
     }
 
     @Test
