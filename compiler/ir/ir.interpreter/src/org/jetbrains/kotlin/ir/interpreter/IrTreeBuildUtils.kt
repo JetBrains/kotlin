@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal val TEMP_CLASS_FOR_INTERPRETER = IrDeclarationOriginImpl("TEMP_CLASS_FOR_INTERPRETER")
@@ -131,14 +132,8 @@ internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean =
     }
 }
 
-internal fun IrBuiltIns.copyArgs(from: IrFunctionAccessExpression, into: IrFunctionAccessExpression) {
-    into.dispatchReceiver = from.dispatchReceiver
-    into.extensionReceiver = from.extensionReceiver
-    (0 until from.valueArgumentsCount)
-        .map { from.getValueArgument(it) }
-        .forEachIndexed { i, arg ->
-            into.putValueArgument(i, arg ?: IrConstImpl.constNull(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.anyNType))
-        }
+internal fun IrBuiltIns.copyArgumentsPassingNullOnDefault(from: IrFunctionAccessExpression, into: IrFunctionAccessExpression) {
+    into.arguments.assignFrom(from.arguments) { it ?: IrConstImpl.constNull(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.anyNType) }
 }
 
 internal fun IrBuiltIns.irEquals(arg1: IrExpression, arg2: IrExpression): IrCall {

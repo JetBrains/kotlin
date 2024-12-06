@@ -128,7 +128,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
     val hasDefaults = expression.arguments.any { it == null }
     if (hasDefaults) {
         environment.getCachedFunction(expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall)?.let {
-            val callToDefault = it.owner.createCall().apply { environment.irBuiltIns.copyArgs(expression, this) }
+            val callToDefault = it.owner.createCall().apply { environment.irBuiltIns.copyArgumentsPassingNullOnDefault(expression, this) }
             callStack.pushCompoundInstruction(callToDefault)
             return
         }
@@ -171,7 +171,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
 
         val callToDefault = environment.setCachedFunction(
             expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall, newFunction = defaultFun.symbol
-        ).owner.createCall().apply { environment.irBuiltIns.copyArgs(expression, this) }
+        ).owner.createCall().apply { environment.irBuiltIns.copyArgumentsPassingNullOnDefault(expression, this) }
         callStack.pushCompoundInstruction(callToDefault)
     } else {
         callStack.pushSimpleInstruction(expression)
