@@ -830,4 +830,30 @@ public class LLFirBlackBoxModernJdkCodegenBasedTestGenerated extends AbstractLLF
       runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/EnumsWithNonNullaryConstructors.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava23")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TestsWithJava23 {
+    @Test
+    public void testAllFilesPresentInTestsWithJava23() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava23"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ValhallaValueClasses {
+      @Test
+      public void testAllFilesPresentInValhallaValueClasses() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("basicSyntax.kt")
+      public void testBasicSyntax() {
+        runTest("compiler/testData/codegen/boxModernJdk/testsWithJava23/valhallaValueClasses/basicSyntax.kt");
+      }
+    }
+  }
 }

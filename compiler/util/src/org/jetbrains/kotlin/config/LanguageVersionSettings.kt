@@ -433,6 +433,7 @@ enum class LanguageFeature(
     ContextReceivers(sinceVersion = null),
     ContextParameters(sinceVersion = null), // KT-72222
     ValueClasses(sinceVersion = null, kind = UNSTABLE_FEATURE),
+    ValhallaValueClasses(sinceVersion = null, kind = UNSTABLE_FEATURE),
     JavaSamConversionEqualsHashCode(sinceVersion = null, kind = UNSTABLE_FEATURE),
     PropertyParamAnnotationDefaultTargetMode(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-73255
     AnnotationAllUseSiteTarget(sinceVersion = null, kind = OTHER), // KT-73256

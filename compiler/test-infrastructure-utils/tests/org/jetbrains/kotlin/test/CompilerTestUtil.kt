@@ -80,6 +80,7 @@ object CompilerTestUtil {
             .replace(KtTestUtil.getJdk11Home().absolutePath.replace("\\", "/"), "\$JDK_11")
             .replace(KtTestUtil.getJdk17Home().absolutePath.replace("\\", "/"), "\$JDK_17")
             .replace(KtTestUtil.getJdk21Home().absolutePath.replace("\\", "/"), "\$JDK_21")
+            .replace(KtTestUtil.getJdk23Home().absolutePath.replace("\\", "/"), "\$JDK_23")
             .replace("info: executable production duration: \\d+ms".toRegex(), "info: executable production duration: [time]")
             .replace(System.getProperty("java.runtime.version"), "\$JVM_VERSION$")
             .replace((" " + MetadataVersion.INSTANCE.toString().replace(".", "\\.") + "(?!\\-)").toRegex(), " \\\$ABI_VERSION\\\$")

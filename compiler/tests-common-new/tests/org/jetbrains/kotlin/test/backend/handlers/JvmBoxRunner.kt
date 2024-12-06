@@ -191,6 +191,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
+            TestJdkKind.FULL_JDK_23 -> KtTestUtil.getJdk23Home()
             else -> error("Unsupported JDK kind: $jdkKind")
         }
 

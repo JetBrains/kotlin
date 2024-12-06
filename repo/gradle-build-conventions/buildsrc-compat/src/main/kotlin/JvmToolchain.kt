@@ -18,7 +18,8 @@ enum class JdkMajorVersion(
     JDK_9_0(9),
     JDK_11_0(11),
     JDK_17_0(17),
-    JDK_21_0(21);
+    JDK_21_0(21),
+    JDK_23_0(23);
 
     val envName = name
 }
