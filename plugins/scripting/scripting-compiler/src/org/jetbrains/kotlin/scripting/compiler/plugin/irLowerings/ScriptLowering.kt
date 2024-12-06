@@ -3,18 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+@file:OptIn(UnsafeDuringIrConstructionAPI::class)
+
+package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
 
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.lower.scripting.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -40,12 +43,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.topologicalSort
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 
 @PhaseDescription(name = "ScriptsToClasses")
-internal class ScriptsToClassesLowering(val context: JvmBackendContext) : ModuleLoweringPass {
+internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbolsForScripting: JvmSymbolsForScripting) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
         val scripts = mutableListOf<IrScript>()
         val scriptDependencies = mutableMapOf<IrScript, List<IrScript>>()
@@ -189,7 +194,7 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
                 irScript.explicitCallParameters.size + explicitParamsStartIndex
             )
             constructor.body =
-                context.createIrBuilder(constructor.symbol)
+                context.irBuiltIns.createIrBuilder(constructor.symbol)
                     .makeScriptClassConstructorBody(
                         irScript,
                         irScriptClass,
@@ -222,7 +227,7 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
                     val transformedStatement = scriptStatement.patchTopLevelStatementForClass() as IrStatement
                     irScriptClass.addAnonymousInitializer().also { irInitializer ->
                         irInitializer.body =
-                            context.createIrBuilder(irInitializer.symbol).irBlockBody {
+                            context.irBuiltIns.createIrBuilder(irInitializer.symbol).irBlockBody {
                                 if (transformedStatement is IrComposite) {
                                     for (statement in transformedStatement.statements)
                                         +statement
@@ -241,8 +246,13 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
         irScriptClass.annotations += (irScriptClass.parent as IrFile).annotations
 
         irScript.resultProperty?.owner?.let { irResultProperty ->
-            context.state.scriptSpecific.resultFieldName = irResultProperty.name.identifier
-            context.state.scriptSpecific.resultType = irResultProperty.backingField?.type?.toIrBasedKotlinType()
+            val fieldType = irResultProperty.backingField?.type?.toIrBasedKotlinType() ?: return@let
+            irScriptClass.scriptResultFieldDataAttr =
+                ScriptResultFieldData(
+                    irScriptClass.kotlinFqName,
+                    irResultProperty.name,
+                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(fieldType)
+                )
         }
     }
 
@@ -299,13 +309,14 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
             irConstructor.parent = irScript
         }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private val scriptingJvmPackage by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        createEmptyExternalPackageFragment(context.state.module, FqName("kotlin.script.experimental.jvm"))
+        createEmptyExternalPackageFragment(context.moduleDescriptor, FqName("kotlin.script.experimental.jvm"))
     }
 
     private fun IrClass.addScriptMainFun() {
-        val javaLangClass = context.ir.symbols.javaLangClass
-        val kClassJavaPropertyGetter = context.ir.symbols.kClassJavaPropertyGetter
+        val javaLangClass = symbolsForScripting.javaLangClass
+        val kClassJavaPropertyGetter = symbolsForScripting.kotlinKClassJavaPropertyGetter
 
         val scriptRunnerPackageClass: IrClassSymbol = context.irFactory.buildClass {
             name = Name.identifier("RunnerKt")
@@ -342,7 +353,7 @@ internal class ScriptsToClassesLowering(val context: JvmBackendContext) : Module
                 name = Name.identifier("args")
                 type = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.stringType)
             }
-            mainFun.body = context.createIrBuilder(mainFun.symbol).run {
+            mainFun.body = context.irBuiltIns.createIrBuilder(mainFun.symbol).run {
                 irExprBody(
                     irCall(scriptRunHelper).apply {
                         putValueArgument(
@@ -483,7 +494,7 @@ private fun makeImplicitReceiversFieldsWithParameters(irScriptClass: IrClass, ty
     }
 
 private class ScriptAccessCallsGenerator(
-    context: JvmBackendContext,
+    context: IrPluginContext,
     targetClassReceiver: IrValueParameter,
     implicitReceiversFieldsWithParameters: ArrayList<Pair<IrField, IrValueParameter>>,
     val irScript: IrScript,
@@ -520,7 +531,7 @@ private class ScriptAccessCallsGenerator(
         if (earlierScriptIndex >= 0) {
             val objArray = context.irBuiltIns.arrayClass
             val objArrayGet = objArray.functions.single { it.owner.name == OperatorNameConventions.GET }
-            val builder = context.createIrBuilder(expression.symbol)
+            val builder = context.irBuiltIns.createIrBuilder(expression.symbol)
 
             val irGetEarlierScripts =
                 if (data.isInScriptConstructor) {
@@ -549,7 +560,7 @@ private class ScriptAccessCallsGenerator(
 }
 
 private class ScriptToClassTransformer(
-    context: JvmBackendContext,
+    context: IrPluginContext,
     val irScript: IrScript,
     irScriptClass: IrClass,
     targetClassReceiver: IrValueParameter,
@@ -569,7 +580,7 @@ private class ScriptToClassTransformer(
     override fun visitGetValue(expression: IrGetValue, data: ScriptLikeToClassTransformerContext): IrExpression {
         val correspondingVariable = expression.symbol.owner as? IrVariable
         return if (correspondingVariable != null && irScript.explicitCallParameters.contains(correspondingVariable)) {
-            val builder = context.createIrBuilder(expression.symbol)
+            val builder = context.irBuiltIns.createIrBuilder(expression.symbol)
             val newExpression =
                 if (data.isInScriptConstructor) {
                     val correspondingCtorParam = irTargetClass.constructors.single().valueParameters.find {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -44,6 +45,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptCompilationConfigurationAttr
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -62,9 +65,14 @@ class FirScriptConfiguratorExtensionImpl(
     override fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
     }
 
+    // TODO: find out some way to differentiate detection form REPL snippets, to allow reporting conflicts on FIR building
+    override fun accepts(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean =
+        sourceFile != null && // this implementation requires a file to find definition (this could be relaxed eventually)
+                (scriptSource is KtPsiSourceElement && scriptSource.psi is KtScript) // workd only with PSI so far
+
     @OptIn(SymbolInternals::class)
-    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile, context: Context<PsiElement>) {
-        val configuration = getOrLoadConfiguration(sourceFile) ?: run {
+    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>) {
+        val configuration = getOrLoadConfiguration(sourceFile!!) ?: run {
             log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
             return
         }
@@ -178,6 +186,14 @@ class FirScriptConfiguratorExtensionImpl(
                 )
             }
         }
+    }
+
+    override fun FirScript.configure(sourceFile: KtSourceFile?, context: Context<PsiElement>) {
+        val configuration = getOrLoadConfiguration(sourceFile!!) ?: run {
+            log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScript wasn't configured.")
+            return
+        }
+        scriptCompilationConfigurationAttr = configuration
     }
 
     private fun KtSourceFile.asString() = path ?: name

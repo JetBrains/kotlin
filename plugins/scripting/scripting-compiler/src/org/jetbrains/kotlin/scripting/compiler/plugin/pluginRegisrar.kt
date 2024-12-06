@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefin
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptReportSink
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.JvmStandardReplFactoryExtension
+import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
@@ -70,6 +72,8 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             project.registerService(ScriptConfigurationsProvider::class.java, CliScriptConfigurationsProvider(project))
             SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
             ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
+
+            IrGenerationExtension.registerExtension(project, ScriptLoweringExtension())
 
             if (messageCollector != null) {
                 project.registerService(ScriptReportSink::class.java, CliScriptReportSink(messageCollector))

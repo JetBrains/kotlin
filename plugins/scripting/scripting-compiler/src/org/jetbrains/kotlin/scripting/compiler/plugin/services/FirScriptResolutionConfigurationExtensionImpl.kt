@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.extensions.FirScriptResolutionConfigurationExtension
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptCompilationConfigurationAttr
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.defaultImports
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -23,14 +23,11 @@ class FirScriptResolutionConfigurationExtensionImpl(
     session: FirSession,
     @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration
 ) : FirScriptResolutionConfigurationExtension(session) {
-    override fun getScriptDefaultImports(script: FirScript): List<FirImport> {
-        val scriptSession = script.moduleData.session
-        val scriptFile = scriptSession.firProvider.getFirScriptContainerFile(script.symbol) ?: return emptyList()
-        val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return emptyList()
-        val compilationConfiguration = session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return emptyList()
 
-        return compilationConfiguration.firImportsFromDefaultImports(script.source?.fakeElement(KtFakeSourceElementKind.ImplicitImport))
-    }
+    override fun getScriptDefaultImports(script: FirScript): List<FirImport> =
+        script.scriptCompilationConfigurationAttr?.firImportsFromDefaultImports(
+            script.source?.fakeElement(KtFakeSourceElementKind.ImplicitImport)
+        ) ?: emptyList()
 
     companion object {
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {

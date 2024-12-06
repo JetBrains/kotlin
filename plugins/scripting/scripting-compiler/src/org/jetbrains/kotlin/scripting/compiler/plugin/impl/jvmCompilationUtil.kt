@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.ScriptResultFieldData
 import org.jetbrains.kotlin.scripting.resolve.ScriptLightVirtualFile
 import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -104,7 +106,8 @@ internal fun makeCompiledScript(
     script: SourceCode,
     ktFile: KtFile,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
-    getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
+    getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration,
+    resultFields: Map<FqName, ScriptResultFieldData>
 ): ResultWithDiagnostics<KJvmCompiledScript> {
     val scriptDependenciesStack = ArrayDeque<KtScript>()
     val ktScript = ktFile.declarations.firstIsInstanceOrNull<KtScript>()
@@ -147,16 +150,17 @@ internal fun makeCompiledScript(
 
     val module = makeCompiledModule(generationState)
 
-    val resultField = with(generationState.scriptSpecific) {
-        if (resultFieldName == null) null
-        else resultFieldName!! to KotlinType(DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(resultType!!))
+    val scriptClassFqName = ktScript.fqName
+
+    val resultField = resultFields[scriptClassFqName]?.let {
+        it.fieldName.asString() to KotlinType(it.fieldTypeName)
     }
 
     return makeOtherScripts(ktScript).onSuccess { otherScripts ->
         KJvmCompiledScript(
             script.locationId,
             getScriptConfiguration(ktScript.containingKtFile),
-            ktScript.fqName.asString(),
+            scriptClassFqName.asString(),
             resultField,
             otherScripts,
             module
