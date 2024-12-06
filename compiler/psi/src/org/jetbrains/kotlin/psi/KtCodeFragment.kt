@@ -188,7 +188,7 @@ abstract class KtCodeFragment(
         return null
     }
 
-    override val firstImportList: KtImportList?
+    override val importList: KtImportList?
         get() = importsAsImportList()
 
     override val importLists: List<KtImportList>
