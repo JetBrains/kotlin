@@ -67,7 +67,7 @@ abstract class AbstractFirUseSiteMemberScope(
         }
     }
 
-    protected open fun collectFunctions(
+    protected open fun collectFunctions( // collectFunctions name = "of"
         name: Name
     ): Collection<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
         collectDeclaredFunctions(name, this)

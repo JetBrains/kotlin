@@ -1859,6 +1859,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     callCompleter.completeCall(call, data)
                     // transform back to literal to avoid ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
                     arrayOfCallTransformer.transformFunctionCall(call, session)
+                    // todo transform directly to FirArrayLiteral with resolvedType. No need for back and forth transformation. Or maybe it's needed to report errors on earlier phases?
                 }
                 // is ResolutionMode.ContextDependent -> {
                 //     TODO()

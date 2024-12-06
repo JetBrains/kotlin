@@ -74,7 +74,7 @@ import kotlin.collections.component2
 
 class FirCallCompletionResultsWriterTransformer(
     override val session: FirSession,
-    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
+    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents, // todo try to drop
     private val scopeSession: ScopeSession,
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator,
