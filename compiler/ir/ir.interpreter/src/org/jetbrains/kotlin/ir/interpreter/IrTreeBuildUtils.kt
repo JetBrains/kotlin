@@ -153,7 +153,7 @@ internal fun IrBuiltIns.irIfNullThenElse(nullableArg: IrExpression, ifTrue: IrEx
 
 internal fun IrBuiltIns.emptyArrayConstructor(arrayType: IrType): IrConstructorCall {
     val arrayClass = arrayType.classOrNull!!.owner
-    val constructor = arrayClass.constructors.firstOrNull { it.valueParameters.size == 1 } ?: arrayClass.constructors.first()
+    val constructor = arrayClass.constructors.firstOrNull { it.hasShape(regularParameters = 1) } ?: arrayClass.constructors.first()
     val constructorCall = constructor.createConstructorCall(arrayType)
 
     constructorCall.putValueArgument(0, 0.toIrConst(this.intType))
