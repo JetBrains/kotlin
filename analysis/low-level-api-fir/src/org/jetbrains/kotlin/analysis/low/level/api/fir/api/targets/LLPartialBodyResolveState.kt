@@ -20,6 +20,12 @@ internal data class LLPartialBodyResolveState(
     val analysisStateSnapshot: LLPartialBodyResolveSnapshot?,
     val previousState: LLPartialBodyResolveState?
 ) {
+    init {
+        if (previousState != null) {
+            require(previousState.analyzedFirStatementCount < analyzedFirStatementCount && previousState.analyzedPsiStatementCount < analyzedPsiStatementCount)
+        }
+    }
+
     val isFullyAnalyzed: Boolean
         get() = totalPsiStatementCount == analyzedPsiStatementCount
 
