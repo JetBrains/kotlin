@@ -125,6 +125,7 @@ private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
     "kotlin.wasm.internal.ClosureBoxDouble",
     "kotlin.wasm.internal.ClosureBoxAny",
     "kotlin.wasm.internal.wasmTypeId",
+    "kotlin.coroutines.CoroutineImpl",
     "kotlin.native.internal.KClassImpl",
     "kotlin.native.internal.KTypeImpl",
     "kotlin.native.internal.KTypeProjectionList",
