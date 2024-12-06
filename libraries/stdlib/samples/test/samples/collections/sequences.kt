@@ -252,6 +252,20 @@ class Sequences {
         }
 
         @Sample
+        fun partitionIndexed() {
+            fun fibonacci(): Sequence<Int> {
+                // fibonacci terms
+                // 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, ...
+                return generateSequence(Pair(0, 1)) { Pair(it.second, it.first + it.second) }.map { it.first }
+            }
+
+            val (everyEvenThElms, everyOddThElms) = fibonacci().take(10).partitionIndexed { idx, _ -> idx % 2 == 0 }
+
+            assertPrints(everyEvenThElms, "[0, 1, 3, 8, 21]")
+            assertPrints(everyOddThElms, "[1, 2, 5, 13, 34]")
+        }
+
+        @Sample
         fun flattenSequenceOfSequences() {
             val sequence: Sequence<Int> = generateSequence(1) { it + 1 }
             val sequenceOfSequences: Sequence<Sequence<Int>> = sequence.map { number ->
