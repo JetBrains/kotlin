@@ -316,9 +316,9 @@ internal class StepHandler(
                 irCall(getProgressionLastElementFun).apply {
                     // Step type is used for casting because it works for all signed progressions. In particular,
                     // getProgressionLastElement(Int, Int, Int) is called for CharProgression, which uses an Int step.
-                    putValueArgument(0, first.shallowCopy().asStepType())
-                    putValueArgument(1, last.shallowCopy().asStepType())
-                    putValueArgument(2, step.shallowCopy().asStepType())
+                    arguments[0] = first.shallowCopy().asStepType()
+                    arguments[1] = last.shallowCopy().asStepType()
+                    arguments[2] = step.shallowCopy().asStepType()
                 }
             }
         }
