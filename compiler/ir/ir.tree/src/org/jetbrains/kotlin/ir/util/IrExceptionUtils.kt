@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class IrExceptionBuilder(val message: String) {
     private val attachmentBuilder = ExceptionAttachmentBuilder()
 
-    fun withIrEntry(name: String, ir: IrElement) = attachmentBuilder.withEntry(name, ir) {
-        ir.render()
+    fun withIrEntry(name: String, ir: IrElement?) = attachmentBuilder.withEntry(name, ir) {
+        ir?.render() ?: "null"
     }
 
     fun buildString(): String = buildString {
@@ -27,4 +29,12 @@ inline fun irError(
 ): Nothing {
     val builder = IrExceptionBuilder(message).apply { buildAttachment() }
     error(builder.buildString())
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun check(value: Boolean, message: String, buildAttachment: IrExceptionBuilder.() -> Unit = {}) {
+    contract {
+        returns() implies value
+    }
+    check(value) { IrExceptionBuilder(message).apply(buildAttachment).buildString() }
 }
