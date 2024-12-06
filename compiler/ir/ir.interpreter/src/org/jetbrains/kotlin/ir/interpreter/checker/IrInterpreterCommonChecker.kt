@@ -293,11 +293,10 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     override fun visitPropertyReference(expression: IrPropertyReference, data: IrInterpreterCheckerData): Boolean {
         if (!data.mode.canEvaluateCallableReference(expression)) return false
 
-        val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, data) ?: true
-        val extensionReceiverComputable = expression.extensionReceiver?.accept(this, data) ?: true
+        val boundValuesComputable = expression.arguments.none { it?.accept(this, data) == false }
 
         val getterIsComputable = expression.getter?.let { data.mode.canEvaluateFunction(it.owner) } ?: true
-        return dispatchReceiverComputable && extensionReceiverComputable && getterIsComputable
+        return boundValuesComputable && getterIsComputable
     }
 
     override fun visitClassReference(expression: IrClassReference, data: IrInterpreterCheckerData): Boolean {
