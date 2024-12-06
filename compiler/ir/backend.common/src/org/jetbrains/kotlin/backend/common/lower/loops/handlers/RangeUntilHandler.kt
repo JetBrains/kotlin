@@ -31,7 +31,7 @@ internal class RangeUntilHandler(private val context: CommonBackendContext) : He
             ProgressionHeaderInfo(
                 data,
                 first = expression.dispatchReceiver!!,
-                last = expression.getValueArgument(0)!!,
+                last = expression.arguments[1]!!,
                 step = irInt(1),
                 canOverflow = false,
                 isLastInclusive = false,
