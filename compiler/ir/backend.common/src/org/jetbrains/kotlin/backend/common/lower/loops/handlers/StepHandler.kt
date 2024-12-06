@@ -85,7 +85,7 @@ internal class StepHandler(
                     exceptionMessage.addArgument(irString("Step must be positive, was: "))
                     exceptionMessage.addArgument(stepArgExpression.shallowCopy())
                     exceptionMessage.addArgument(irString("."))
-                    putValueArgument(0, exceptionMessage)
+                    arguments[0] = exceptionMessage
                 }
             }
             val stepArgValueAsLong = stepArgExpression.constLongValue
