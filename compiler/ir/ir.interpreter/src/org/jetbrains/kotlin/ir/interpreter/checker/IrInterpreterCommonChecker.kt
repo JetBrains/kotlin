@@ -42,7 +42,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
         val constructor = expression.symbol.owner
 
         if (!data.mode.canEvaluateFunction(constructor)) return false
-        if (!visitValueArguments(expression, data)) return false
+        if (expression.arguments.any { it?.accept(this, data) == false }) return false
         return visitBodyIfNeeded(constructor, data) &&
                 constructor.parentAsClass.declarations.filterIsInstance<IrAnonymousInitializer>().all { it.accept(this, data) }
     }
@@ -63,11 +63,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
             !data.mode.canEvaluateExpression(expression) || !data.mode.canEvaluateFunction(owner) -> false
             expression.isKCallableNameCall(data.irBuiltIns) || expression.isEnumName() -> true
             else -> {
-                val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, data) ?: true
-                val extensionReceiverComputable = expression.extensionReceiver?.accept(this, data) ?: true
-                dispatchReceiverComputable &&
-                        extensionReceiverComputable &&
-                        visitValueArguments(expression, data) &&
+                expression.arguments.none { it?.accept(this, data) == false } &&
                         visitBodyIfNeeded(owner, data)
             }
         }
@@ -75,12 +71,6 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
 
     override fun visitVariable(declaration: IrVariable, data: IrInterpreterCheckerData): Boolean {
         return declaration.initializer?.accept(this, data) ?: true
-    }
-
-    private fun visitValueArguments(expression: IrFunctionAccessExpression, data: IrInterpreterCheckerData): Boolean {
-        return (0 until expression.valueArgumentsCount)
-            .map { expression.getValueArgument(it) }
-            .none { it?.accept(this, data) == false }
     }
 
     override fun visitBody(body: IrBody, data: IrInterpreterCheckerData): Boolean {
