@@ -121,8 +121,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:i index:0 type:@[FlexibleNullability] kotlin.Int?
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.B) returnType:kotlin.Int [operator]
       overridden:
-        public abstract fun component1 (): @[FlexibleNullability] kotlin.Int? declared in <root>.Java2
         public open fun component1 (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
+        public abstract fun component1 (): @[FlexibleNullability] kotlin.Int? declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.B'
@@ -227,8 +227,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:i index:0 type:@[FlexibleNullability] kotlin.Int?
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int [operator]
       overridden:
-        public abstract fun component1 (): kotlin.Int declared in <root>.KotlinInterface
         public open fun component1 (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
+        public abstract fun component1 (): kotlin.Int declared in <root>.KotlinInterface
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.C'

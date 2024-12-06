@@ -55,14 +55,14 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.SortedSet<kotlin.Any>
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>, p0:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?) returnType:kotlin.Unit [fake_override]
       overridden:
-        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.HashSet?>?): kotlin.Unit declared in java.util.HashSet
         public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.SortedSet?>?): kotlin.Unit declared in java.util.SortedSet
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.HashSet?>?): kotlin.Unit declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in java.util.HashSet
         public open fun hashCode (): kotlin.Int declared in java.util.SortedSet
+        public open fun hashCode (): kotlin.Int declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:headSet visibility:public modality:ABSTRACT <> ($this:java.util.SortedSet<kotlin.Any>, p0:@[FlexibleNullability] kotlin.Any?) returnType:@[FlexibleNullability] java.util.SortedSet<@[FlexibleNullability] kotlin.Any?>? [fake_override]
       overridden:
@@ -85,8 +85,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.SortedSet<kotlin.Any>
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, element:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
@@ -102,8 +102,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?>): kotlin.Boolean declared in java.util.HashSet
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?>): kotlin.Boolean declared in java.util.SortedSet
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?>): kotlin.Boolean declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
@@ -114,8 +114,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:subSet visibility:public modality:ABSTRACT <> ($this:java.util.SortedSet<kotlin.Any>, p0:@[FlexibleNullability] kotlin.Any?, p1:@[FlexibleNullability] kotlin.Any?) returnType:@[FlexibleNullability] java.util.SortedSet<@[FlexibleNullability] kotlin.Any?>? [fake_override]
       overridden:
@@ -140,13 +140,13 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.HashSet
         public open fun toString (): kotlin.String declared in java.util.SortedSet
+        public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:spliterator visibility:public modality:OPEN <> ($this:<root>.A) returnType:java.util.Spliterator<kotlin.Any>
       overridden:
-        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
+        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun spliterator (): java.util.Spliterator<kotlin.Any> declared in <root>.A'
@@ -215,14 +215,14 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>, p0:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?) returnType:kotlin.Unit [fake_override]
       overridden:
-        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.HashSet?>?): kotlin.Unit declared in java.util.HashSet
         public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.SortedSet?>?): kotlin.Unit declared in java.util.SortedSet
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.HashSet?>?): kotlin.Unit declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in java.util.HashSet
         public open fun hashCode (): kotlin.Int declared in java.util.SortedSet
+        public open fun hashCode (): kotlin.Int declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:headSet visibility:public modality:ABSTRACT <> ($this:java.util.SortedSet<kotlin.Any>, p0:@[FlexibleNullability] kotlin.Any?) returnType:@[FlexibleNullability] java.util.SortedSet<@[FlexibleNullability] kotlin.Any?>? [fake_override]
       overridden:
@@ -245,8 +245,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.SortedSet<kotlin.Any>
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
       overridden:
@@ -256,8 +256,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?>): kotlin.Boolean declared in java.util.HashSet
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?>): kotlin.Boolean declared in java.util.SortedSet
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?>): kotlin.Boolean declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
@@ -268,8 +268,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:subSet visibility:public modality:ABSTRACT <> ($this:java.util.SortedSet<kotlin.Any>, p0:@[FlexibleNullability] kotlin.Any?, p1:@[FlexibleNullability] kotlin.Any?) returnType:@[FlexibleNullability] java.util.SortedSet<@[FlexibleNullability] kotlin.Any?>? [fake_override]
       overridden:
@@ -294,8 +294,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.HashSet
         public open fun toString (): kotlin.String declared in java.util.SortedSet
+        public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:first visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Any
       overridden:
@@ -315,8 +315,8 @@ FILE fqName:<root> fileName:/1.kt
           CONST Boolean type=kotlin.Boolean value=true
     FUN name:spliterator visibility:public modality:OPEN <> ($this:<root>.B) returnType:java.util.Spliterator<kotlin.Any>
       overridden:
-        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
+        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun spliterator (): java.util.Spliterator<kotlin.Any> declared in <root>.B'
@@ -406,8 +406,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.SortedSet<kotlin.Any>
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>, p0:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?) returnType:kotlin.Unit [fake_override]
       overridden:
-        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.ArrayList?>?): kotlin.Unit declared in java.util.ArrayList
         public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.SortedSet?>?): kotlin.Unit declared in java.util.SortedSet
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.ArrayList?>?): kotlin.Unit declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?
     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.Any>, p0:kotlin.Int) returnType:@[EnhancedNullability] kotlin.Any [fake_override,operator]
@@ -417,8 +417,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in java.util.ArrayList
         public open fun hashCode (): kotlin.Int declared in java.util.SortedSet
+        public open fun hashCode (): kotlin.Int declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:headSet visibility:public modality:ABSTRACT <> ($this:java.util.SortedSet<kotlin.Any>, p0:@[FlexibleNullability] kotlin.Any?) returnType:@[FlexibleNullability] java.util.SortedSet<@[FlexibleNullability] kotlin.Any?>? [fake_override]
       overridden:
@@ -460,8 +460,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, element:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
@@ -516,8 +516,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.Comparator<in @[FlexibleNullability] kotlin.Any?>?
     FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.Any>, p0:kotlin.Int, p1:kotlin.Int) returnType:@[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Any> [fake_override]
       overridden:
@@ -548,8 +548,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.C.toArray?>?
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.ArrayList
         public open fun toString (): kotlin.String declared in java.util.SortedSet
+        public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:trimToSize visibility:public modality:OPEN <> ($this:java.util.ArrayList<kotlin.Any>) returnType:kotlin.Unit [fake_override]
       overridden:
@@ -557,8 +557,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.ArrayList<kotlin.Any>
     FUN name:spliterator visibility:public modality:OPEN <> ($this:<root>.C) returnType:java.util.Spliterator<kotlin.Any>
       overridden:
-        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
+        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
         CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null

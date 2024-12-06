@@ -23,16 +23,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.String
       overridden:
-        public abstract fun bar (): @[EnhancedNullability] kotlin.String declared in <root>.Java2
         public open fun bar (): @[FlexibleNullability] kotlin.String? declared in <root>.Java1
+        public abstract fun bar (): @[EnhancedNullability] kotlin.String declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.String declared in <root>.A'
           CONST String type=kotlin.String value=""
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.A, s:kotlin.String) returnType:kotlin.Unit
       overridden:
-        public abstract fun foo (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.Java2
         public open fun foo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java1
+        public abstract fun foo (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       VALUE_PARAMETER name:s index:0 type:kotlin.String
       BLOCK_BODY
@@ -49,8 +49,8 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         NotNull(value = <null>)
       overridden:
-        public abstract fun bar (): @[EnhancedNullability] kotlin.String declared in <root>.Java2
         public open fun bar (): @[FlexibleNullability] kotlin.String? declared in <root>.Java1
+        public abstract fun bar (): @[EnhancedNullability] kotlin.String declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -60,8 +60,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1, s:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.Java2
         public open fun foo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java1
+        public abstract fun foo (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
       VALUE_PARAMETER name:s index:0 type:@[FlexibleNullability] kotlin.String?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -87,8 +87,8 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public abstract fun bar (): @[EnhancedNullability] kotlin.String? declared in <root>.Java3
         public open fun bar (): @[FlexibleNullability] kotlin.String? declared in <root>.Java1
+        public abstract fun bar (): @[EnhancedNullability] kotlin.String? declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java3
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -98,8 +98,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1, s:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo (s: @[EnhancedNullability] kotlin.String?): kotlin.Unit declared in <root>.Java3
         public open fun foo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java1
+        public abstract fun foo (s: @[EnhancedNullability] kotlin.String?): kotlin.Unit declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
       VALUE_PARAMETER name:s index:0 type:@[FlexibleNullability] kotlin.String?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -141,8 +141,8 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         Nullable(value = <null>)
       overridden:
-        public abstract fun bar (): @[EnhancedNullability] kotlin.String? declared in <root>.Java3
         public open fun bar (): @[FlexibleNullability] kotlin.String? declared in <root>.Java1
+        public abstract fun bar (): @[EnhancedNullability] kotlin.String? declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.D
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.String declared in <root>.D'
@@ -153,8 +153,8 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         NotNull(value = <null>)
       overridden:
-        public abstract fun foo (s: @[EnhancedNullability] kotlin.String?): kotlin.Unit declared in <root>.Java3
         public open fun foo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java1
+        public abstract fun foo (s: @[EnhancedNullability] kotlin.String?): kotlin.Unit declared in <root>.Java3
       $this: VALUE_PARAMETER name:<this> type:<root>.D
       VALUE_PARAMETER name:s index:0 type:kotlin.String?
         annotations:
@@ -266,8 +266,8 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         NotNull(value = <null>)
       overridden:
-        public abstract fun bar (): kotlin.String declared in <root>.KotlinInterface2
         public open fun bar (): @[FlexibleNullability] kotlin.String? declared in <root>.Java1
+        public abstract fun bar (): kotlin.String declared in <root>.KotlinInterface2
       $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -277,8 +277,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1, s:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit [fake_override]
       overridden:
-        public abstract fun foo (s: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface2
         public open fun foo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java1
+        public abstract fun foo (s: kotlin.String): kotlin.Unit declared in <root>.KotlinInterface2
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
       VALUE_PARAMETER name:s index:0 type:@[FlexibleNullability] kotlin.String?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -314,9 +314,9 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         NotNull(value = <null>)
       overridden:
+        public open fun bar (): @[FlexibleNullability] kotlin.String? declared in <root>.Java1
         public abstract fun bar (): @[EnhancedNullability] kotlin.String declared in <root>.Java2
         public abstract fun bar (): @[EnhancedNullability] kotlin.String? declared in <root>.Java3
-        public open fun bar (): @[FlexibleNullability] kotlin.String? declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:<root>.Java2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -327,9 +327,9 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1, s:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit [fake_override]
       overridden:
+        public open fun foo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java1
         public abstract fun foo (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.Java2
         public abstract fun foo (s: @[EnhancedNullability] kotlin.String?): kotlin.Unit declared in <root>.Java3
-        public open fun foo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java1
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
       VALUE_PARAMETER name:s index:0 type:@[FlexibleNullability] kotlin.String?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]

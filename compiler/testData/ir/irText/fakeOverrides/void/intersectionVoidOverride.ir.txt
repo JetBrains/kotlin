@@ -13,8 +13,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:@[FlexibleNullability] java.lang.Void? [fake_override]
       overridden:
-        public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
         public open fun foo (): @[FlexibleNullability] java.lang.Void? declared in <root>.Java1
+        public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.Java1
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
@@ -50,8 +50,8 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN name:foo visibility:public modality:OPEN <> ($this:<root>.D) returnType:java.lang.Void
       overridden:
-        public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
         public open fun foo (): @[FlexibleNullability] java.lang.Void? declared in <root>.Java1
+        public abstract fun foo (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java2
       $this: VALUE_PARAMETER name:<this> type:<root>.D
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): java.lang.Void declared in <root>.D'
