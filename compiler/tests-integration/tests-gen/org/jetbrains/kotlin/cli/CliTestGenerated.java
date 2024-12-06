@@ -258,39 +258,39 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
-    @TestMetadata("annotationDefaultingFirstOnly.args")
-    public void testAnnotationDefaultingFirstOnly() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultingFirstOnly.args");
+    @TestMetadata("annotationDefaultTargetFirstOnly.args")
+    public void testAnnotationDefaultTargetFirstOnly() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetFirstOnly.args");
     }
 
-    @TestMetadata("annotationDefaultingFirstOnlyWarn.args")
-    public void testAnnotationDefaultingFirstOnlyWarn() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultingFirstOnlyWarn.args");
+    @TestMetadata("annotationDefaultTargetFirstOnlyWarn.args")
+    public void testAnnotationDefaultTargetFirstOnlyWarn() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetFirstOnlyWarn.args");
     }
 
-    @TestMetadata("annotationDefaultingOptInFirstOnly.args")
-    public void testAnnotationDefaultingOptInFirstOnly() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultingOptInFirstOnly.args");
+    @TestMetadata("annotationDefaultTargetParamProperty.args")
+    public void testAnnotationDefaultTargetParamProperty() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetParamProperty.args");
     }
 
-    @TestMetadata("annotationDefaultingOptInParamProperty.args")
-    public void testAnnotationDefaultingOptInParamProperty() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultingOptInParamProperty.args");
+    @TestMetadata("annotationDefaultTargetWithOptInFirstOnly.args")
+    public void testAnnotationDefaultTargetWithOptInFirstOnly() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithOptInFirstOnly.args");
     }
 
-    @TestMetadata("annotationDefaultingOptInSuppressFirstOnly.args")
-    public void testAnnotationDefaultingOptInSuppressFirstOnly() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultingOptInSuppressFirstOnly.args");
+    @TestMetadata("annotationDefaultTargetWithOptInParamProperty.args")
+    public void testAnnotationDefaultTargetWithOptInParamProperty() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithOptInParamProperty.args");
     }
 
-    @TestMetadata("annotationDefaultingOptInSuppressParamProperty.args")
-    public void testAnnotationDefaultingOptInSuppressParamProperty() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultingOptInSuppressParamProperty.args");
+    @TestMetadata("annotationDefaultTargetWithSuppressedOptInFirstOnly.args")
+    public void testAnnotationDefaultTargetWithSuppressedOptInFirstOnly() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptInFirstOnly.args");
     }
 
-    @TestMetadata("annotationDefaultingParamProperty.args")
-    public void testAnnotationDefaultingParamProperty() {
-      runTest("compiler/testData/cli/jvm/annotationDefaultingParamProperty.args");
+    @TestMetadata("annotationDefaultTargetWithSuppressedOptInParamProperty.args")
+    public void testAnnotationDefaultTargetWithSuppressedOptInParamProperty() {
+      runTest("compiler/testData/cli/jvm/annotationDefaultTargetWithSuppressedOptInParamProperty.args");
     }
 
     @TestMetadata("apiAndLanguageVersionsUnsupported.args")

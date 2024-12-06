@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/annotationDefaultTarget.kt:7:8: warning: 'val x: String' is deprecated. Please don't use this bad callable.
+    my.x
+       ^
+OK
