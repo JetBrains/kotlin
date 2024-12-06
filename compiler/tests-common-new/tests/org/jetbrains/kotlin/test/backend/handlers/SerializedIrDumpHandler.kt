@@ -51,6 +51,7 @@ class SerializedIrDumpHandler(
 
         val dumpOptions = defaultDumpIrTreeOptions(module, info.irPluginContext.irBuiltIns).copy(
             printFlagsInDeclarationReferences = true,
+            printSourceRetentionAnnotations = false, // KT-69965: Don't dump annotations having source retention
         )
         val builder = dumper.builderForModule(module.name)
 

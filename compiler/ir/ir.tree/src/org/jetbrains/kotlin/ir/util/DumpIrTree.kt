@@ -70,6 +70,7 @@ data class DumpIrTreeOptions(
     val printModuleName: Boolean = true,
     val printFilePath: Boolean = true,
     val printExpectDeclarations: Boolean = true,
+    val printSourceRetentionAnnotations: Boolean = true,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
 )
 
@@ -205,7 +206,7 @@ class DumpIrTreeVisitor(
     }
 
     private fun dumpAnnotations(element: IrAnnotationContainer) {
-        element.annotations.dumpItems("annotations") { irAnnotation: IrConstructorCall ->
+        element.annotations.filterOutSourceRetentions(options).dumpItems("annotations") { irAnnotation: IrConstructorCall ->
             printer.println(elementRenderer.renderAsAnnotation(irAnnotation))
         }
     }
