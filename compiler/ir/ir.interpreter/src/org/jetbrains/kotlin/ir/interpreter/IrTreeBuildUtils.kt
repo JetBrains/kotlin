@@ -138,8 +138,8 @@ internal fun IrBuiltIns.copyArgumentsPassingNullOnDefault(from: IrFunctionAccess
 
 internal fun IrBuiltIns.irEquals(arg1: IrExpression, arg2: IrExpression): IrCall {
     val equalsCall = this.eqeqSymbol.owner.createCall(IrStatementOrigin.EQEQ)
-    equalsCall.putValueArgument(0, arg1)
-    equalsCall.putValueArgument(1, arg2)
+    equalsCall.arguments[0] = arg1
+    equalsCall.arguments[1] = arg2
     return equalsCall
 }
 
