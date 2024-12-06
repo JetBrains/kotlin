@@ -221,6 +221,8 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 return KtTestUtil.getJdk11Home().getAbsolutePath();
             case "$JDK_21":
                 return KtTestUtil.getJdk21Home().getAbsolutePath();
+            case "$JDK_23":
+                return KtTestUtil.getJdk23Home().getAbsolutePath();
         }
 
         String argWithColonsReplaced = arg

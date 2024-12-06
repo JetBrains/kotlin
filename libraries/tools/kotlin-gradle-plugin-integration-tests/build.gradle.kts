@@ -441,6 +441,7 @@ tasks.withType<Test>().configureEach {
     val jdk11Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_11_0)
     val jdk17Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
     val jdk21Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_21_0)
+    val jdk23Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_23_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
     val compileTestDestination = kotlin.target
@@ -460,6 +461,7 @@ tasks.withType<Test>().configureEach {
         systemProperty("jdk11Home", jdk11Provider.get())
         systemProperty("jdk17Home", jdk17Provider.get())
         systemProperty("jdk21Home", jdk21Provider.get())
+        systemProperty("jdk23Home", jdk23Provider.get())
         if (mavenLocalRepo != null) {
             systemProperty("maven.repo.local", mavenLocalRepo)
         }

@@ -70,6 +70,7 @@ class JavaCompilerFacade(private val testServices: TestServices) {
                 TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
                 TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
                 TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
+                TestJdkKind.FULL_JDK_23 -> KtTestUtil.getJdk23Home()
                 null -> JvmEnvironmentConfigurator.getJdkHomeFromProperty { null }
                 else -> error("JDK $jdkKind does not support compilation")
             }
