@@ -308,9 +308,9 @@ internal class StepHandler(
                 // Bounds are signed for unsigned progressions but `getProgressionLastElement` expects unsigned.
                 // The return value is finally converted back to signed since it will be assigned back to `last`.
                 irCall(getProgressionLastElementFun).apply {
-                    putValueArgument(0, first.shallowCopy().asElementType().asUnsigned())
-                    putValueArgument(1, last.shallowCopy().asElementType().asUnsigned())
-                    putValueArgument(2, step.shallowCopy().asStepType())
+                    arguments[0] = first.shallowCopy().asElementType().asUnsigned()
+                    arguments[1] = last.shallowCopy().asElementType().asUnsigned()
+                    arguments[2] = step.shallowCopy().asStepType()
                 }.asSigned()
             } else {
                 irCall(getProgressionLastElementFun).apply {
