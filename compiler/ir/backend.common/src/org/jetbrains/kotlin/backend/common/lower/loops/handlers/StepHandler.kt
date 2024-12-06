@@ -58,7 +58,7 @@ internal class StepHandler(
                     ?: return null
             }
 
-            val stepArg = expression.getValueArgument(0)!!
+            val stepArg = expression.arguments[1]!!
             // We can return the nested info if its step is constant and its absolute value is the same as the step argument. Examples:
             //
             //   1..10 step 1               // Nested step is 1, argument is 1. Equivalent to `1..10`.
