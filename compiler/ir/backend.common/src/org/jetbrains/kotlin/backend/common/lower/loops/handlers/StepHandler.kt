@@ -137,8 +137,8 @@ internal class StepHandler(
                     val (tmpNestedStepVar, nestedStepExpression) = createLoopTemporaryVariableIfNecessary(nestedStep, "nestedStep")
                     nestedStepVar = tmpNestedStepVar
                     val nestedStepNonPositiveCheck = irCall(stepCompFun).apply {
-                        putValueArgument(0, nestedStepExpression.shallowCopy())
-                        putValueArgument(1, data.run { zeroStepExpression() })
+                        arguments[0] = nestedStepExpression.shallowCopy()
+                        arguments[1] = data.run { zeroStepExpression() }
                     }
                     if (stepArgVar == null) {
                         // Create a temporary variable for the possibly-negated step, so we don't have to re-check every time step is used.
