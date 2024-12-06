@@ -116,8 +116,9 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             }
         }
 
+    @Deprecated("Use 'isScript()' instead", ReplaceWith("isScript()"))
     val isScriptByTree: Boolean
-        get() = script != null
+        get() = isScript()
 
     /**
      * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
@@ -266,7 +267,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         hasImportAlias = null
     }
 
-    fun isScript(): Boolean = isScript ?: greenStub?.isScript() ?: isScriptByTree
+    fun isScript(): Boolean = isScript ?: greenStub?.isScript() ?: (script != null)
 
     fun hasTopLevelCallables(): Boolean {
         hasTopLevelCallables?.let { return it }

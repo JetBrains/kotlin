@@ -43,7 +43,7 @@ open class StubIndexService protected constructor() {
     }
 
     open fun createFileStub(file: KtFile): KotlinFileStub {
-        return KotlinFileStubImpl(file, file.packageFqName.asString(), file.isScriptByTree)
+        return KotlinFileStubImpl(file, file.packageFqName.asString(), file.isScript())
     }
 
     @Throws(IOException::class)
