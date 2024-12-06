@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import java.io.File
@@ -60,7 +62,7 @@ open class GenericReplCompiler(
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = checker.check(state, codeLine)
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, UnsafeDuringIrConstructionAPI::class)
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
         state.lock.write {
             val compilerState = state.asState(GenericReplCompilerState::class.java)
@@ -112,29 +114,30 @@ open class GenericReplCompiler(
                 compilerState.mangler, compilerState.symbolTable, generatorExtensions
             )
 
-            codegenFactory.generateModule(
-                generationState,
-                codegenFactory.convertToIr(
-                    CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
-                        generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
-                    )
-                ),
+            val irBackendInput = codegenFactory.convertToIr(
+                CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
+                    generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
+                )
             )
+
+            codegenFactory.generateModule(generationState, irBackendInput)
 
             compilerState.history.push(LineId(codeLine.no, 0, codeLine.hashCode()), scriptDescriptor)
 
             val classes = generationState.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) }
+
+            val resultType = irBackendInput.irModuleFragment.files.singleOrNull()?.declarations?.singleOrNull()?.let {
+                (it as? IrClass)?.scriptResultFieldDataAttr?.fieldTypeName
+            }
 
             return ReplCompileResult.CompiledClasses(
                 LineId(codeLine.no, 0, codeLine.hashCode()),
                 compilerState.history.map { it.id },
                 scriptDescriptor.name.identifier,
                 classes,
-                generationState.scriptSpecific.resultFieldName != null,
+                resultType != null,
                 classpathAddendum ?: emptyList(),
-                generationState.scriptSpecific.resultType?.let {
-                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it)
-                },
+                resultType,
                 null
             )
         }

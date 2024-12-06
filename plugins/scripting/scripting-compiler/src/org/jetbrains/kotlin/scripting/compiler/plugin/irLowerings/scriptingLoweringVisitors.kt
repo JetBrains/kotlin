@@ -3,11 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower.scripting
+@file:OptIn(UnsafeDuringIrConstructionAPI::class)
 
+package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
+
+import org.jetbrains.kotlin.backend.common.extensions.ExperimentalAPIForScriptingPlugin
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmInnerClassesSupport
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.ir.IrElement
@@ -21,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -61,7 +66,7 @@ internal data class ScriptFixLambdasTransformerContext(
 )
 
 internal open class ScriptLikeAccessCallsGenerator(
-    val context: JvmBackendContext,
+    val context: IrPluginContext,
     val targetClassReceiver: IrValueParameter,
     val implicitReceiversFieldsWithParameters: Collection<Pair<IrField, IrValueParameter>>,
 ) {
@@ -130,7 +135,7 @@ internal open class ScriptLikeAccessCallsGenerator(
             if (originalReceiverParameter != null) it.second == originalReceiverParameter
             else it.second.type == receiverType
         }?.let { (field, param) ->
-            val builder = context.createIrBuilder(expression.symbol)
+            val builder = context.irBuiltIns.createIrBuilder(expression.symbol)
             return if (data.isInScriptConstructor) {
                 builder.irGet(param.type, param.symbol)
             } else {
@@ -144,7 +149,7 @@ internal open class ScriptLikeAccessCallsGenerator(
 }
 
 internal abstract class ScriptLikeToClassTransformer(
-    val context: JvmBackendContext,
+    val context: IrPluginContext,
     val irScriptLike: IrDeclaration,
     val irTargetClass: IrClass,
     val targetClassReceiver: IrValueParameter,
@@ -153,6 +158,8 @@ internal abstract class ScriptLikeToClassTransformer(
     val capturingClasses: Set<IrClassImpl>,
     val needsReceiverProcessing: Boolean,
 ) : IrTransformer<ScriptLikeToClassTransformerContext>() {
+
+    private val innerClassesSupport = JvmInnerClassesSupport(context.irFactory)
 
     private fun IrType.remapType() = typeRemapper.remapType(this)
 
@@ -254,7 +261,7 @@ internal abstract class ScriptLikeToClassTransformer(
                 it.isInner = true
                 dataForChildren =
                     ScriptLikeToClassTransformerContext(
-                        null, context.innerClassesSupport.getOuterThisField(it).symbol, it.thisReceiver?.symbol, false
+                        null, innerClassesSupport.getOuterThisField(it).symbol, it.thisReceiver?.symbol, false
                     )
             }
         }
@@ -482,7 +489,7 @@ internal class ScriptFixLambdasTransformer(val irScriptClass: IrClass) : IrTrans
 
 
 internal fun IrDeclarationParent.createThisReceiverParameter(
-    context: JvmBackendContext,
+    context: IrPluginContext,
     origin: IrDeclarationOrigin,
     type: IrType
 ): IrValueParameter =
@@ -503,7 +510,7 @@ internal fun IrDeclarationParent.createThisReceiverParameter(
         it.parent = this
     }
 
-internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, context: JvmBackendContext, scriptClassReceiverType: IrType) {
+internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, context: IrPluginContext, scriptClassReceiverType: IrType) {
 
     fun IrFunction.addScriptDispatchReceiverIfNeeded() {
         if (dispatchReceiverParameter == null) {
@@ -523,8 +530,9 @@ internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, co
     }
 }
 
+@OptIn(ExperimentalAPIForScriptingPlugin::class)
 internal fun Collection<IrClass>.collectCapturersByReceivers(
-    context: JvmBackendContext,
+    context: IrPluginContext,
     parentDeclaration: IrDeclaration,
     externalReceivers: Set<IrType>,
 ): Set<IrClassImpl> {
@@ -541,7 +549,7 @@ internal fun Collection<IrClass>.collectCapturersByReceivers(
                 val closure = annotator.getClassClosure(declaration)
                 if (closure.capturedValues.any { it.owner.type in externalReceivers }) {
                     fun reportError(factory: KtDiagnosticFactory1<String>, name: Name? = null) {
-                        context.ktDiagnosticReporter.at(declaration).report(factory, (name ?: declaration.name).asString())
+                        context.diagnosticReporter.at(declaration).report(factory, (name ?: declaration.name).asString())
                     }
                     when {
                         declaration.isInterface -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE)
@@ -556,7 +564,7 @@ internal fun Collection<IrClass>.collectCapturersByReceivers(
                         declaration.isClass ->
                             if (declaration.parent != parentDeclaration) {
                                 if ((declaration.parent as? IrClass)?.isInner == false) {
-                                    context.ktDiagnosticReporter.at(declaration).report(
+                                    context.diagnosticReporter.at(declaration).report(
                                         JvmBackendErrors.SCRIPT_CAPTURING_NESTED_CLASS,
                                         declaration.name.asString(),
                                         ((declaration.parent as? IrDeclarationWithName)?.name

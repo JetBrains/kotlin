@@ -1291,9 +1291,15 @@ open class PsiRawFirBuilder(
                     }
                 }
             } else {
-                convertScript(declaration, scriptSource, fileBuilder.name, fileBuilder.sourceFile) {
-                    for (configurator in baseSession.extensionService.scriptConfigurators) {
-                        with(configurator) { configureContainingFile(fileBuilder) }
+                val scriptConfigurator =
+                    baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(fileBuilder.sourceFile, scriptSource) }
+
+                convertScript(declaration, scriptSource, fileBuilder.name) {
+                    if (scriptConfigurator != null) {
+                        with(scriptConfigurator) {
+                            configureContainingFile(fileBuilder)
+                            configure(fileBuilder.sourceFile, context)
+                        }
                     }
                 }
             }
@@ -1341,11 +1347,11 @@ open class PsiRawFirBuilder(
             script: KtScript,
             scriptSource: KtPsiSourceElement,
             fileName: String,
-            sourceFile: KtSourceFile?,
-            setup: FirScriptBuilder.() -> Unit = {},
+            setup: FirScriptBuilder.() -> Unit,
         ): FirScript {
             val scriptName = Name.special("<script-$fileName>")
             val scriptSymbol = FirScriptSymbol(context.packageFqName.child(scriptName))
+
 
             return buildScript {
                 source = scriptSource
@@ -1401,11 +1407,6 @@ open class PsiRawFirBuilder(
                         }
                     }
                     setup()
-                    if (sourceFile != null) {
-                        for (configurator in baseSession.extensionService.scriptConfigurators) {
-                            with(configurator) { configure(sourceFile, context) }
-                        }
-                    }
                 }
             }
         }
@@ -1546,8 +1547,17 @@ open class PsiRawFirBuilder(
         override fun visitScript(script: KtScript, data: FirElement?): FirElement {
             val ktFile = script.containingKtFile
             val fileName = ktFile.name
-            val fileForSource = (data as? FirScript)?.psi?.containingFile as? KtFile ?: ktFile
-            return convertScript(script, script.toFirSourceElement(), fileName, KtPsiSourceFile(fileForSource))
+            val sourceFile = KtPsiSourceFile((data as? FirScript)?.psi?.containingFile as? KtFile ?: ktFile)
+            val scriptSource = script.toFirSourceElement()
+            val scriptConfigurator =
+                baseSession.extensionService.scriptConfigurators.firstOrNull { it.accepts(sourceFile, scriptSource) }
+            return convertScript(script, scriptSource, fileName) {
+                scriptConfigurator?.run {
+                    // TODO: looks like we may loose the implicit imports here, find out whether and how the file could be configured too (KT-73847)
+//                    configureContainingFile(fileBuilder)
+                    configure(sourceFile, context)
+                }
+            }
         }
 
         protected fun KtEnumEntry.toFirEnumEntry(
