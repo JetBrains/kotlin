@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder.findElementIn
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
@@ -264,7 +264,7 @@ internal operator fun List<FirFile>.contains(element: FirElementWithResolveState
     element in this
 } else {
     any { file ->
-        findElementIn<FirElementWithResolveState>(file) {
+        FirElementFinder.findElementIn<FirElementWithResolveState>(file) {
             it == element
         } != null
     }
