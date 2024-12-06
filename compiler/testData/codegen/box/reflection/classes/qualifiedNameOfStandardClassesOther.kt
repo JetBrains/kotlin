@@ -3,6 +3,8 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // DONT_TARGET_EXACT_BACKEND: JVM
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 import kotlin.test.assertEquals
 

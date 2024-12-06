@@ -1,6 +1,8 @@
 // IGNORE_BACKEND: JS_IR, WASM
 // IGNORE_BACKEND: JS_IR_ES6
 // WITH_REFLECT
+// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
+// ^^^ Source code is not compiled in JS.
 
 package test
 
