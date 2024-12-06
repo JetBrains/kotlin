@@ -12,16 +12,13 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompile
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdePredicateBasedProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModulePrivateVisibilityChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLSealedInheritorsProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.createLookupDefaultStarImportsInSourcesSettingHolder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirNonEmptyResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirExceptionHandler
@@ -45,6 +42,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project, languageVersio
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
     register(CodeFragmentScopeProvider::class, CodeFragmentScopeProvider(this))
+    register(FirElementFinder::class, FirElementFinder())
     register(FirModulePrivateVisibilityChecker::class, LLFirModulePrivateVisibilityChecker(this))
     register(
         FirLookupDefaultStarImportsInSourcesSettingHolder::class,
