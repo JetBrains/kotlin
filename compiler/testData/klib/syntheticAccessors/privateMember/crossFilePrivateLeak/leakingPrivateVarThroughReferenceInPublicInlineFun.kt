@@ -1,4 +1,5 @@
-// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: ANY
+// IDENTICAL_KLIB_SYNTHETIC_ACCESSOR_DUMPS
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
 // ^^^ Muted because accessor for function/constructor/property references are not generated. To be fixed in KT-69797.
 
 // FILE: A.kt
