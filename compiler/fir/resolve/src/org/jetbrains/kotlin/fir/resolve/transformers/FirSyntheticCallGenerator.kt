@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.references.isError
@@ -57,12 +58,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -232,8 +231,8 @@ class FirSyntheticCallGenerator(
                 }
 
                 buildFunctionCall {
-                    argumentList = arrayLiteral.argumentList
                     source = arrayLiteral.source
+                    argumentList = arrayLiteral.argumentList
 
                     val receiver = buildResolvedQualifier {
                         source = arrayLiteral.source
@@ -241,21 +240,27 @@ class FirSyntheticCallGenerator(
                         packageFqName = classId.packageFqName
                         relativeClassFqName = classId.relativeClassName
                         coneTypeOrNull = companionObjectSymbol.defaultType()
+                        canBeValue = true
                     }
 
                     explicitReceiver = receiver
-                    dispatchReceiver = receiver
+                    dispatchReceiver = receiver // todo not needed?
 
-                    calleeReference = generateCalleeReferenceWithCandidate(
-                        arrayLiteral,
-                        ofFunction.fir.symbol,
-                        argumentList,
-                        name,
-                        callKind = CallKind.Function,
-                        context,
-                        resolutionMode,
-                        dispatchReceiver = receiver
-                    )
+                    calleeReference = buildSimpleNamedReference {
+                        source = arrayLiteral.source
+                        this.name = name
+                    }
+
+                    // calleeReference = generateCalleeReferenceWithCandidate(
+                    //     arrayLiteral,
+                    //     ofFunction.fir.symbol,
+                    //     argumentList,
+                    //     name,
+                    //     callKind = CallKind.Function,
+                    //     context,
+                    //     resolutionMode,
+                    //     dispatchReceiver = receiver
+                    // )
 
                     origin = FirFunctionCallOrigin.Operator
                 }

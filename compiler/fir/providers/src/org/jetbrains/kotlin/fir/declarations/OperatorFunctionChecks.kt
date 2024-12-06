@@ -44,6 +44,7 @@ object OperatorFunctionChecks {
     //reimplementation of org.jetbrains.kotlin.util.OperatorChecks for FIR
     private val checksByName: Map<Name, List<Check>> = buildMap {
         checkFor(OperatorNameConventions.GET, Checks.memberOrExtension, Checks.ValueParametersCount.atLeast(1))
+        checkFor(OperatorNameConventions.OF, Checks.member) // todo
         checkFor(
             OperatorNameConventions.SET,
             Checks.memberOrExtension, Checks.ValueParametersCount.atLeast(2),

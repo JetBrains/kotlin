@@ -1850,12 +1850,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                             ?: ResolutionMode.ContextDependent,
                     )
 
-                    val call = components.syntheticCallGenerator.generateCollectionCall(
+                    val call: FirFunctionCall = components.syntheticCallGenerator.generateCollectionCall(
                         arrayLiteral,
                         data.expectedType,
                         resolutionContext,
                         data,
-                    )
+                    ).transform(this, data)
                     callCompleter.completeCall(call, data)
                     // transform back to literal to avoid ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
                     arrayOfCallTransformer.transformFunctionCall(call, session)
