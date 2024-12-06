@@ -39,7 +39,7 @@ internal class KonanPartialModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         override val klib: KotlinLibrary,
         private val stubGenerator: DeclarationStubGenerator,
-        private val cachedLibraries: CachedLibraries,
+        private val cachedLibraries: CachedLibrariesBase,
         private val inlineFunctionFiles: MutableMap<IrExternalPackageFragment, IrFile>,
         strategyResolver: (String) -> DeserializationStrategy,
         private val cacheDeserializationStrategy: CacheDeserializationStrategy,
@@ -307,8 +307,7 @@ internal class KonanPartialModuleDeserializer(
     }
 
     private val inlineFunctionReferences by lazy {
-        val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
-        cache.serializedInlineFunctionBodies.associateBy {
+        cachedLibraries.inlineFunctionReferences(klib) {
             it.file.deserializationState.declarationDeserializer.symbolDeserializer.deserializeIdSignature(it.functionSignature)
         }
     }
@@ -401,10 +400,7 @@ internal class KonanPartialModuleDeserializer(
     }
 
     private val classesFields by lazy {
-        val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
-        cache.serializedClassFields.associateBy {
-            it.classSignature
-        }
+        cachedLibraries.classesFields(klib)
     }
 
     private val lock = Any()
@@ -488,10 +484,9 @@ internal class KonanPartialModuleDeserializer(
     }
 
     val eagerInitializedFiles by lazy {
-        val cache = cachedLibraries.getLibraryCache(klib)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
-        cache.serializedEagerInitializedFiles
-                .map { it.file.deserializationState.file }
-                .distinct()
+        cachedLibraries.eagerInitializedFiles(klib) {
+            it.file.deserializationState.file
+        }
     }
 
     val sortedFileIds by lazy {

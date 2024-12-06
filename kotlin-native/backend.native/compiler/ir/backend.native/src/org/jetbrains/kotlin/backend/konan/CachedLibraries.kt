@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerpri
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -41,7 +43,26 @@ class CachedLibraries(
         implicitCacheDirectories: List<File>,
         autoCacheDirectory: File,
         autoCacheableFrom: List<File>
-) {
+): CachedLibrariesBase() {
+    override fun classesFields(library: KotlinLibrary): Map<IdSignature, SerializedClassFields> {
+        val cache = getLibraryCache(library)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
+        return cache.serializedClassFields.associateBy {
+            it.classSignature
+        }
+    }
+
+    override fun inlineFunctionReferences(library: KotlinLibrary, deserializeSignature: (SerializedInlineFunctionReference)->IdSignature): Map<IdSignature, SerializedInlineFunctionReference> {
+        val cache = getLibraryCache(library)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
+        return cache.serializedInlineFunctionBodies.associateBy(deserializeSignature)
+    }
+
+    override fun eagerInitializedFiles(library: KotlinLibrary, getFile: (SerializedEagerInitializedFile) -> IrFile): List<IrFile> {
+        val cache = getLibraryCache(library)!! // ?: error("No cache for ${klib.libraryName}") // KT-54668
+        return cache.serializedEagerInitializedFiles
+                .map(getFile)
+                .distinct()
+    }
+
     enum class Kind { DYNAMIC, STATIC, HEADER }
 
     sealed class Cache(protected val target: KonanTarget, val kind: Kind, val path: String, val rootDirectory: String) {
@@ -206,7 +227,7 @@ class CachedLibraries(
         cache?.let { library to it }
     }.toMap()
 
-    fun isLibraryCached(library: KotlinLibrary): Boolean =
+    override fun isLibraryCached(library: KotlinLibrary): Boolean =
             getLibraryCache(library) != null
 
     fun getLibraryCache(library: KotlinLibrary, allowIncomplete: Boolean = false): Cache? =
