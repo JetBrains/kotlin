@@ -11,8 +11,6 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     @set:CfgInternals
     var nodeCount: Int = 0
 
-    val registeredNodes: ArrayList<CFGNode<*>> = ArrayList<CFGNode<*>>()
-
     lateinit var nodes: List<CFGNode<*>>
         private set
 
