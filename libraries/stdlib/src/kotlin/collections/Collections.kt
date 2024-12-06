@@ -66,7 +66,7 @@ private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Bool
 }
 
 /**
- * Returns an empty read-only list.  The returned list is serializable (JVM).
+ * Returns a singleton empty read-only list.  The returned list is serializable (JVM).
  * @sample samples.collections.Collections.Lists.emptyReadOnlyList
  */
 public fun <T> emptyList(): List<T> = EmptyList
@@ -88,7 +88,7 @@ public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elem
 public expect fun <T> listOf(element: T): List<T>
 
 /**
- * Returns an empty read-only list.  The returned list is serializable (JVM).
+ * Returns a singleton empty read-only list.  The returned list is serializable (JVM).
  * @sample samples.collections.Collections.Lists.emptyReadOnlyList
  */
 @kotlin.internal.InlineOnly
