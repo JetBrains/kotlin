@@ -316,6 +316,16 @@ private fun bridgeFunctionalType(type: SirFunctionalType): Bridge = Bridge.AsBlo
 )
 
 private fun bridgeNominalType(type: SirNominalType): Bridge {
+    fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val bridge = bridgeType(type)) {
+        is Bridge.AsIs -> Bridge.AsNSNumber(bridge.swiftType)
+        is Bridge.AsOptionalWrapper -> Bridge.AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
+        is Bridge.AsOptionalNothing -> Bridge.AsObjCBridgedOptional(bridge.swiftType)
+        is Bridge.AsObject,
+        is Bridge.AsOpaqueObject,
+            -> Bridge.AsObjCBridged(bridge.swiftType, CType.id)
+        else -> bridge
+    }
+
     return when (val subtype = type.typeDeclaration) {
         SirSwiftModule.void -> Bridge.AsIs(type, KotlinType.Unit, CType.Void)
 
@@ -365,9 +375,16 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
             else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
         }
 
-        SirSwiftModule.array -> Bridge.AsNSArray(type)
-        SirSwiftModule.set -> Bridge.AsNSSet(type)
-        SirSwiftModule.dictionary -> Bridge.AsNSDictionary(type)
+        SirSwiftModule.array -> Bridge.AsNSArray(type, bridgeAsNSCollectionElement(type.typeArguments.single()))
+        SirSwiftModule.set -> Bridge.AsNSSet(type, bridgeAsNSCollectionElement(type.typeArguments.single()))
+        SirSwiftModule.dictionary -> {
+            val (key, value) = type.typeArguments
+            Bridge.AsNSDictionary(
+                type,
+                bridgeAsNSCollectionElement(key),
+                bridgeAsNSCollectionElement(value)
+            )
+        }
 
         is SirTypealias -> bridgeType(subtype.type)
 
@@ -418,11 +435,18 @@ private sealed class CType {
     data object Double : Predefined("double %s")
     data object Object : Predefined("uintptr_t %s")
     data object OutObject : Predefined("uintptr_t * %s")
+    data object id : Predefined("id %s")
     data object NSString : Predefined("NSString * %s")
     data object NSNumber : Predefined("NSNumber * %s")
-    data object NSArray : Predefined("NSArray * %s")
-    data object NSSet : Predefined("NSSet * %s")
-    data object NSDictionary : Predefined("NSDictionary * %s")
+
+    sealed class Generic(val base: String, vararg val args: CType) : CType() {
+        override val repr: String
+            get() = "$base<${args.joinToString(", ") { it.repr.format("").trim() }}> * %s"
+    }
+
+    class NSArray(elem: CType) : Generic("NSArray", elem)
+    class NSSet(elem: CType) : Generic("NSSet", elem)
+    class NSDictionary(key: CType, value: CType) : Generic("NSDictionary", key, value)
 
     class BlockPointer(val parameters: List<Bridge>, val returnType: Bridge) : CType() {
         override val repr: String
@@ -487,6 +511,11 @@ private interface NilableIdentityValueConversion : Bridge.InSwiftSourcesConversi
     override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
 }
 
+private fun String.mapSwift(temporalName: String = "it", transform: (String) -> String): String {
+    val adapter = transform(temporalName).takeIf { it != temporalName }
+    return this + (adapter?.let { ".map { $temporalName in $it }" } ?: "")
+}
+
 private sealed class Bridge(
     val swiftType: SirType,
     val kotlinType: KotlinType,
@@ -544,13 +573,30 @@ private sealed class Bridge(
                 "$valueExpression.objcPtr()"
         }
 
+        override val inSwiftSources: InSwiftSourcesConversion = object : NilableIdentityValueConversion {
+            override fun renderNil(): String = "nil"
+        }
+    }
+
+    /** To be used inside NS* collections. `null`s are wrapped as `NSNull`.  */
+    open class AsObjCBridgedOptional(
+        swiftType: SirType
+    ) : AsObjCBridged(swiftType, CType.id) {
+
         override val inSwiftSources = object : NilableIdentityValueConversion {
-            override fun renderNil(): String = ".none" // FIXME try NSNull?
+            override fun renderNil(): String = "NSNull()"
+
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                return "$valueExpression as NSObject? ?? ${renderNil()}"
+                //return "($valueExpression).map { it in it as NSObject } ?? ${renderNil()}"
+            }
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
         }
     }
 
     open class AsNSNumber(
-        swiftType: SirType,
+        swiftType: SirType
     ) : AsObjCBridged(swiftType, CType.NSNumber) {
         override val inSwiftSources = object : NilableIdentityValueConversion {
             override fun renderNil(): String = super@AsNSNumber.inSwiftSources.renderNil()
@@ -598,20 +644,52 @@ private sealed class Bridge(
         swiftType: SirNominalType,
         cType: CType
     ) : AsObjCBridged(swiftType, cType) {
-        override val inSwiftSources = object : NilableIdentityValueConversion {
+        protected abstract inner class InSwiftSources : InSwiftSourcesConversion {
             override fun renderNil(): String = super@AsNSCollection.inSwiftSources.renderNil()
 
-            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                valueExpression
+            abstract override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String
 
-            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "$valueExpression as! ${typeNamer.swiftFqName(swiftType)}"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                return "$valueExpression as! ${typeNamer.swiftFqName(swiftType)}"
+            }
         }
     }
 
-    class AsNSArray(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSArray)
-    class AsNSSet(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSSet)
-    class AsNSDictionary(swiftType: SirNominalType) : AsNSCollection(swiftType, CType.NSDictionary)
+    class AsNSArray(swiftType: SirNominalType, elementBridge: Bridge) : AsNSCollection(swiftType, CType.NSArray(elementBridge.cType)) {
+        override val inSwiftSources = object : InSwiftSources() {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                return valueExpression.mapSwift { elementBridge.inSwiftSources.swiftToKotlin(typeNamer, it) }
+            }
+        }
+    }
+
+    class AsNSSet(swiftType: SirNominalType, elementBridge: Bridge) : AsNSCollection(swiftType, CType.NSSet(elementBridge.cType)) {
+        override val inSwiftSources = object : InSwiftSources() {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val transformedElements = valueExpression.mapSwift { elementBridge.inSwiftSources.swiftToKotlin(typeNamer, it) }
+                return if (transformedElements == valueExpression) valueExpression else "Set($transformedElements)"
+            }
+        }
+    }
+
+    class AsNSDictionary(swiftType: SirNominalType, val keyBridge: Bridge, val valueBridge: Bridge) :
+        AsNSCollection(swiftType, CType.NSDictionary(keyBridge.cType, valueBridge.cType)) {
+
+        override val inSwiftSources = object : InSwiftSources() {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val keyAdapter = keyBridge.inSwiftSources.swiftToKotlin(typeNamer, "key")
+                val valueAdapter = valueBridge.inSwiftSources.swiftToKotlin(typeNamer, "value")
+                return if (keyAdapter == "key" && valueAdapter == "value") {
+                    valueExpression
+                } else {
+                    "Dictionary(uniqueKeysWithValues: $valueExpression.map { key, value in (" +
+                            "${keyBridge.inSwiftSources.swiftToKotlin(typeNamer, "key")}, " +
+                            "${valueBridge.inSwiftSources.swiftToKotlin(typeNamer, "value")} " +
+                            ")})"
+                }
+            }
+        }
+    }
 
     class AsBlock(swiftType: SirType, cType: CType) : AsObjCBridged(swiftType, cType)
 
@@ -655,16 +733,14 @@ private sealed class Bridge(
         override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 require(wrappedObject is AsObjCBridged || wrappedObject is AsObject)
-                val adapter = wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, "it").takeIf { it != "it" }
-                return "$valueExpression${adapter?.let { ".map { it in $it }" } ?: ""} ?? ${wrappedObject.inSwiftSources.renderNil()}"
+                return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
+                        " ?? ${wrappedObject.inSwiftSources.renderNil()}"
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
                 return when (wrappedObject) {
-                    is AsObjCBridged -> {
-                        val adapter = wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "it").takeIf { it != "it" }
-                        valueExpression + (adapter?.let { ".map { it in $it }" } ?: "")
-                    }
+                    is AsObjCBridged ->
+                        valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
                     is AsObject -> "switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
                         wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                     }; }"

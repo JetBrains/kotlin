@@ -18,6 +18,11 @@ func testArrayOfShort() throws {
     try assertReversed(reversed: reverseListShort(l: original), original: original)
 }
 
+func testArrayOfChar() throws {
+    let original = Array("AB0-Ыß☺🙂系".utf16)
+    try assertReversed(reversed: reverseListChar(l: original), original: original)
+}
+
 func testArrayOfString() throws {
     let original = array.map { String($0) }
     try assertReversed(reversed: reverseListString(l: original), original: original)
@@ -82,6 +87,7 @@ class ListTests : TestProvider {
         tests = [
             TestCase(name: "testArrayOfInt", method: withAutorelease(testArrayOfInt)),
             TestCase(name: "testArrayOfShort", method: withAutorelease(testArrayOfShort)),
+            TestCase(name: "testArrayOfChar", method: withAutorelease(testArrayOfChar)),
             TestCase(name: "testArrayOfString", method: withAutorelease(testArrayOfString)),
             TestCase(name: "testArrayOfBox", method: withAutorelease(testArrayOfBox)),
 

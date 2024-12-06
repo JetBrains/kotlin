@@ -13,7 +13,7 @@ void Child_actuallyOverride__TypesOfArguments__Swift_Int32_opt__overrides_Parent
 
 void Child_finalOverrideFunc(uintptr_t self);
 
-NSArray * Child_genericReturnTypeFunc(uintptr_t self);
+NSArray<id> * Child_genericReturnTypeFunc(uintptr_t self);
 
 uintptr_t Child_nonoverride(uintptr_t self) __attribute((noreturn));
 
@@ -61,7 +61,7 @@ void Parent_finalOverrideFunc(uintptr_t self);
 
 void Parent_finalOverrideHopFunc(uintptr_t self);
 
-NSArray * Parent_genericReturnTypeFunc(uintptr_t self);
+NSArray<id> * Parent_genericReturnTypeFunc(uintptr_t self);
 
 void Parent_hopFunc(uintptr_t self);
 

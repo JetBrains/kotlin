@@ -260,7 +260,7 @@ public var nullablePrim: Swift.Int32? {
         return __root___nullablePrim_get().map { it in it.int32Value }
     }
     set {
-        return __root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___(newValue.map { it in NSNumber(value: it) } ?? .none)
+        return __root___nullablePrim_set__TypesOfArguments__Swift_Int32_opt___(newValue.map { it in NSNumber(value: it) } ?? nil)
     }
 }
 public var nullableRef: main.Class_without_package? {
@@ -339,12 +339,12 @@ public func extensionOnNullabeRef(
 public func extensionOnNullablePrimitive(
     receiver: Swift.Int32?
 ) -> Swift.Void {
-    return __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? .none)
+    return __root___extensionOnNullablePrimitive__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func nullable_input_prim(
     i: Swift.Int32?
 ) -> Swift.Void {
-    return __root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___(i.map { it in NSNumber(value: it) } ?? .none)
+    return __root___nullable_input_prim__TypesOfArguments__Swift_Int32_opt___(i.map { it in NSNumber(value: it) } ?? nil)
 }
 public func nullable_input_ref(
     i: main.Class_without_package?

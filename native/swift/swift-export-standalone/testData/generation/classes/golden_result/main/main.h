@@ -47,7 +47,7 @@ uintptr_t ENUM_INSIDE_ENUM_init_allocate();
 
 void ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
-NSArray * ENUM_entries_get();
+NSArray<id> * ENUM_entries_get();
 
 uintptr_t ENUM_valueOf__TypesOfArguments__Swift_String__(NSString * value);
 

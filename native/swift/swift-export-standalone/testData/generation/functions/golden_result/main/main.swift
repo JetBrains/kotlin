@@ -27,7 +27,7 @@ public func foo(
 public func foo(
     receiver: Swift.Int32?
 ) -> Swift.Void {
-    return __root___foo__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? .none)
+    return __root___foo__TypesOfArguments__Swift_Int32_opt___(receiver.map { it in NSNumber(value: it) } ?? nil)
 }
 public func foo(
     receiver: main.Foo
