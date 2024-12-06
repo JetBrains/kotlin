@@ -191,7 +191,7 @@ internal fun IrFunction.getArgsForMethodInvocation(
 
     // TODO if vararg isn't last parameter
     // must convert vararg array into separated elements for correct invoke
-    if (this.valueParameters.lastOrNull()?.varargElementType != null) {
+    if (this.parameters.lastOrNull()?.varargElementType != null) {
         val varargValue = argsValues.last()
         argsValues.removeAt(argsValues.size - 1)
         argsValues.addAll(varargValue as Array<out Any?>)
