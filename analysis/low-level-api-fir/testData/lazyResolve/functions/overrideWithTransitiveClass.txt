@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] top.kt
     public final [ResolvedTo(RAW_FIR)] typealias CompletionHandler = ( (cause: Throwable?) -> Unit )
-    public abstract [ResolvedTo(RAW_FIR)] class JobNode : CompletionHandlerBase {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=top-common] class JobNode : CompletionHandlerBase {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<CompletionHandlerBase>
         }
@@ -10,7 +10,7 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
     }
 
 FILE: [ResolvedTo(RAW_FIR)] middle.kt
-    public abstract actual [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : CompletionHandler {
+    public abstract actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=middle-common] class CompletionHandlerBase : CompletionHandler {
         public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(RAW_FIR)] middle.kt
     }
 
 FILE: [ResolvedTo(RAW_FIR)] bottom.kt
-    public final? [ResolvedTo(RAW_FIR)] class CancelFutureOnCompletion : JobNode {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : JobNode {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<JobNode>
         }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(RAW_FIR)] bottom.kt
 IMPORTS:
 FILE: [ResolvedTo(RAW_FIR)] top.kt
     public final [ResolvedTo(RAW_FIR)] typealias CompletionHandler = ( (cause: Throwable?) -> Unit )
-    public abstract [ResolvedTo(RAW_FIR)] class JobNode : CompletionHandlerBase {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=top-common] class JobNode : CompletionHandlerBase {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<CompletionHandlerBase>
         }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
     }
 
 FILE: [ResolvedTo(RAW_FIR)] middle.kt
-    public abstract actual [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : CompletionHandler {
+    public abstract actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=middle-common] class CompletionHandlerBase : CompletionHandler {
         public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(RAW_FIR)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final? [ResolvedTo(RAW_FIR)] class CancelFutureOnCompletion : JobNode {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : JobNode {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<JobNode>
         }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(RAW_FIR)] top.kt
     public final [ResolvedTo(RAW_FIR)] typealias CompletionHandler = ( (cause: Throwable?) -> Unit )
-    public abstract [ResolvedTo(RAW_FIR)] class JobNode : CompletionHandlerBase {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=top-common] class JobNode : CompletionHandlerBase {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<CompletionHandlerBase>
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
     }
 
 FILE: [ResolvedTo(RAW_FIR)] middle.kt
-    public abstract actual [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : CompletionHandler {
+    public abstract actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=middle-common] class CompletionHandlerBase : CompletionHandler {
         public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(RAW_FIR)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final? [ResolvedTo(RAW_FIR)] class CancelFutureOnCompletion : JobNode {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : JobNode {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<JobNode>
         }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(RAW_FIR)] top.kt
     public final [ResolvedTo(RAW_FIR)] typealias CompletionHandler = ( (cause: Throwable?) -> Unit )
-    public abstract [ResolvedTo(RAW_FIR)] class JobNode : CompletionHandlerBase {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=top-common] class JobNode : CompletionHandlerBase {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<CompletionHandlerBase>
         }
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(RAW_FIR)] top.kt
     }
 
 FILE: [ResolvedTo(RAW_FIR)] middle.kt
-    public abstract actual [ResolvedTo(RAW_FIR)] class CompletionHandlerBase : CompletionHandler {
+    public abstract actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=middle-common] class CompletionHandlerBase : CompletionHandler {
         public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(RAW_FIR)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final? [ResolvedTo(RAW_FIR)] class CancelFutureOnCompletion : JobNode {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : JobNode {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<JobNode>
         }
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] top.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
-    public abstract [ResolvedTo(SUPER_TYPES)] class JobNode : R|CompletionHandlerBase| {
+    public abstract [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=top-common] class JobNode : R|CompletionHandlerBase| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<CompletionHandlerBase>
         }
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
+    public abstract actual [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=middle-common] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class CancelFutureOnCompletion : R|JobNode| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<JobNode>
         }
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] top.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
-    public abstract [ResolvedTo(SUPER_TYPES)] class JobNode : R|CompletionHandlerBase| {
+    public abstract [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=top-common] class JobNode : R|CompletionHandlerBase| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<CompletionHandlerBase>
         }
@@ -205,7 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public? abstract expect [ResolvedTo(RAW_FIR)] fun invoke([ResolvedTo(RAW_FIR)] cause: Throwable?): R|kotlin/Unit|
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(SUPER_TYPES)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
+    public abstract actual [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=middle-common] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public? actual [ResolvedTo(RAW_FIR)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -223,7 +223,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final? [ResolvedTo(TYPES)] class CancelFutureOnCompletion : R|JobNode| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<JobNode>
         }
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] top.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
-    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
         }
@@ -244,7 +244,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
+    public abstract actual [ResolvedTo(STATUS)] [ModuleNameKey=middle-common] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<R|JobNode|>
         }
@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] top.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
-    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
         }
@@ -283,7 +283,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
+    public abstract actual [ResolvedTo(STATUS)] [ModuleNameKey=middle-common] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<R|JobNode|>
         }
@@ -313,7 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] top.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
-    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
         }
@@ -322,7 +322,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
@@ -330,7 +330,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
+    public abstract actual [ResolvedTo(STATUS)] [ModuleNameKey=middle-common] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -340,7 +340,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<R|JobNode|>
         }
@@ -352,7 +352,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] top.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
-    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
         }
@@ -361,7 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
@@ -369,7 +369,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
+    public abstract actual [ResolvedTo(STATUS)] [ModuleNameKey=middle-common] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -379,7 +379,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<R|JobNode|>
         }
@@ -391,7 +391,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] top.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
-    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
         }
@@ -400,7 +400,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
@@ -408,7 +408,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
+    public abstract actual [ResolvedTo(STATUS)] [ModuleNameKey=middle-common] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -418,7 +418,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<R|JobNode|>
         }
@@ -430,7 +430,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] top.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
-    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
         }
@@ -439,7 +439,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
@@ -447,7 +447,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
+    public abstract actual [ResolvedTo(STATUS)] [ModuleNameKey=middle-common] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -457,7 +457,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<R|JobNode|>
         }
@@ -469,7 +469,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] top.kt
     public final [ResolvedTo(SUPER_TYPES)] typealias CompletionHandler = R|(@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit|
-    public abstract [ResolvedTo(STATUS)] class JobNode : R|CompletionHandlerBase| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class JobNode : R|CompletionHandlerBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] constructor(): R|JobNode| {
             LAZY_super<R|CompletionHandlerBase|>
         }
@@ -478,7 +478,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=JobNode] get(): <implicit>
 
     }
-    public abstract expect [ResolvedTo(STATUS)] class CompletionHandlerBase : R|kotlin/Any| {
+    public abstract expect [ResolvedTo(STATUS)] [ModuleNameKey=top-common] class CompletionHandlerBase : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase|
 
         public abstract expect [ResolvedTo(STATUS)] fun invoke([ResolvedTo(STATUS)] cause: R|kotlin/Throwable?|): R|kotlin/Unit|
@@ -486,7 +486,7 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract actual [ResolvedTo(STATUS)] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
+    public abstract actual [ResolvedTo(STATUS)] [ModuleNameKey=middle-common] class CompletionHandlerBase : R|{CompletionHandler=} (@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?) -> kotlin/Unit| {
         public actual [ResolvedTo(STATUS)] [ContainingClassKey=CompletionHandlerBase] constructor(): R|CompletionHandlerBase| {
             LAZY_super<<implicit>>
         }
@@ -496,7 +496,7 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public final [ResolvedTo(STATUS)] class CancelFutureOnCompletion : R|JobNode| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             LAZY_super<R|JobNode|>
         }
@@ -508,7 +508,7 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] bottom.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class CancelFutureOnCompletion : R|JobNode| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main-jvm] class CancelFutureOnCompletion : R|JobNode| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CancelFutureOnCompletion] constructor(): R|CancelFutureOnCompletion| {
             super<R|JobNode|>()
         }

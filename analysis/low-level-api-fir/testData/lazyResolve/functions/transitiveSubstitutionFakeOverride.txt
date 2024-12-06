@@ -1,18 +1,18 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] common.kt
-    public open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
 
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(RAW_FIR)] class Transitive : Base<String> {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Transitive : Base<String> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<Base<String>>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(RAW_FIR)] common.kt
     }
 
 FILE: [ResolvedTo(RAW_FIR)] jvm.kt
-    public open actual [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(RAW_FIR)] jvm.kt
         public? open [ResolvedTo(RAW_FIR)] fun injected([ResolvedTo(RAW_FIR)] param: T): Any { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=m2-jvm] class Foo : Transitive {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<Transitive>
         }
@@ -47,19 +47,19 @@ FILE: [ResolvedTo(RAW_FIR)] jvm.kt
 
 IMPORTS:
 FILE: [ResolvedTo(RAW_FIR)] common.kt
-    public open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
 
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(RAW_FIR)] class Transitive : Base<String> {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Transitive : Base<String> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<Base<String>>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -68,7 +68,7 @@ FILE: [ResolvedTo(RAW_FIR)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public? open [ResolvedTo(RAW_FIR)] fun injected([ResolvedTo(RAW_FIR)] param: T): Any { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=m2-jvm] class Foo : Transitive {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<Transitive>
         }
@@ -94,19 +94,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(RAW_FIR)] common.kt
-    public open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
 
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(RAW_FIR)] class Transitive : Base<String> {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Transitive : Base<String> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<Base<String>>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(RAW_FIR)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public? open [ResolvedTo(RAW_FIR)] fun injected([ResolvedTo(RAW_FIR)] param: T): Any { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=m2-jvm] class Foo : Transitive {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<Transitive>
         }
@@ -141,19 +141,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(RAW_FIR)] common.kt
-    public open expect [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>|
 
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(RAW_FIR)] class Transitive : Base<String> {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Transitive : Base<String> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<Base<String>>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(RAW_FIR)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public? open [ResolvedTo(RAW_FIR)] fun injected([ResolvedTo(RAW_FIR)] param: T): Any { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open actual [ResolvedTo(RAW_FIR)] [ModuleNameKey=m2-jvm] class Foo : Transitive {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<Transitive>
         }
@@ -188,19 +188,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
 
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Transitive : R|Base<kotlin/String>| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=m1-common] class Transitive : R|Base<kotlin/String>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<Base<R|kotlin/String|>>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -219,7 +219,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public? open [ResolvedTo(RAW_FIR)] fun injected([ResolvedTo(RAW_FIR)] param: T): Any { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(SUPER_TYPES)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<Transitive>
         }
@@ -235,19 +235,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public open expect [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>|
 
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethodInBase([ResolvedTo(RAW_FIR)] param: T): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Transitive : R|Base<kotlin/String>| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=m1-common] class Transitive : R|Base<kotlin/String>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<Base<R|kotlin/String|>>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -266,7 +266,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public? open [ResolvedTo(RAW_FIR)] fun injected([ResolvedTo(RAW_FIR)] param: T): Any { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(TYPES)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(TYPES)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<Transitive>
         }
@@ -282,19 +282,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
         public final expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Transitive : R|Base<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<R|Base<kotlin/String>|>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -303,7 +303,7 @@ FILE: [ResolvedTo(IMPORTS)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -313,7 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public open [ResolvedTo(STATUS)] fun injected([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Any| { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(STATUS)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|Transitive|>
         }
@@ -329,19 +329,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
         public final expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Transitive : R|Base<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<R|Base<kotlin/String>|>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -360,7 +360,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public open [ResolvedTo(STATUS)] fun injected([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Any| { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(STATUS)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|Transitive|>
         }
@@ -376,19 +376,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
         public final expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Transitive : R|Base<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<R|Base<kotlin/String>|>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -397,7 +397,7 @@ FILE: [ResolvedTo(IMPORTS)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -407,7 +407,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public open [ResolvedTo(STATUS)] fun injected([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Any| { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(STATUS)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|Transitive|>
         }
@@ -423,19 +423,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
         public final expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Transitive : R|Base<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<R|Base<kotlin/String>|>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -444,7 +444,7 @@ FILE: [ResolvedTo(IMPORTS)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -454,7 +454,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public open [ResolvedTo(STATUS)] fun injected([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Any| { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(STATUS)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|Transitive|>
         }
@@ -470,19 +470,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
         public final expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Transitive : R|Base<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<R|Base<kotlin/String>|>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -491,7 +491,7 @@ FILE: [ResolvedTo(IMPORTS)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -501,7 +501,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public open [ResolvedTo(STATUS)] fun injected([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Any| { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(STATUS)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|Transitive|>
         }
@@ -517,19 +517,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
         public final expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Transitive : R|Base<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<R|Base<kotlin/String>|>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -538,7 +538,7 @@ FILE: [ResolvedTo(IMPORTS)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -548,7 +548,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public open [ResolvedTo(STATUS)] fun injected([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Any| { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(STATUS)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|Transitive|>
         }
@@ -564,19 +564,19 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] common.kt
-    public open expect [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open expect [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public expect [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>|
 
         public final expect [ResolvedTo(STATUS)] fun existingMethodInBase([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Unit|
 
     }
-    public open [ResolvedTo(STATUS)] class Transitive : R|Base<kotlin/String>| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=m1-common] class Transitive : R|Base<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Transitive] constructor(): R|Transitive| {
             LAZY_super<R|Base<kotlin/String>|>
         }
 
     }
-    public open expect [ResolvedTo(RAW_FIR)] class Foo : Transitive {
+    public open expect [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1-common] class Foo : Transitive {
         public? final? expect [ResolvedTo(RAW_FIR)] fun existingMethod(): R|kotlin/Unit|
 
         public? final? expect [ResolvedTo(RAW_FIR)] val existingParam: Int
@@ -585,7 +585,7 @@ FILE: [ResolvedTo(IMPORTS)] common.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] jvm.kt
-    public open actual [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -595,7 +595,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
         public open [ResolvedTo(STATUS)] fun injected([ResolvedTo(STATUS)] param: R|T|): R|kotlin/Any| { LAZY_BLOCK }
 
     }
-    public open actual [ResolvedTo(STATUS)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(STATUS)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|Transitive|>
         }
@@ -613,7 +613,7 @@ FILE: [ResolvedTo(IMPORTS)] jvm.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] jvm.kt
-    public open actual [ResolvedTo(BODY_RESOLVE)] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public open actual [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=m2-jvm] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|Base<T>| {
             super<R|kotlin/Any|>()
         }
@@ -626,7 +626,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] jvm.kt
         }
 
     }
-    public open actual [ResolvedTo(BODY_RESOLVE)] class Foo : R|Transitive| {
+    public open actual [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=m2-jvm] class Foo : R|Transitive| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             super<R|Transitive|>()
         }

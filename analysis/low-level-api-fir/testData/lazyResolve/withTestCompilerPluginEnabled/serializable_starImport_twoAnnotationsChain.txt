@@ -1,17 +1,17 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -30,18 +30,18 @@ FILE: [ResolvedTo(RAW_FIR)] serializable_starImport_twoAnnotationsChain.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -60,18 +60,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,18 +90,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,18 +120,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -150,18 +150,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -180,18 +180,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -199,7 +199,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -210,18 +210,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -229,7 +229,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -240,18 +240,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class FirstTarget : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.MySerializable[Unresolved]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -259,7 +259,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] class Serializer : R|kotlin/Any| {
+    @org.jetbrains.kotlin.plugin.sandbox.CoreSerializer[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -270,18 +270,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -289,7 +289,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] class Serializer : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -300,18 +300,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] class Serializer : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -330,18 +330,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -349,7 +349,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] class Serializer : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -360,18 +360,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
-    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @NestedAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[CompilerRequiredAnnotations]() @OuterAnnotation[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -379,7 +379,7 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] class Serializer : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -390,18 +390,18 @@ FILE: [ResolvedTo(IMPORTS)] serializable_starImport_twoAnnotationsChain.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] serializable_starImport_twoAnnotationsChain.kt
-    @R|test/FirstTarget.NestedAnnotation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class OuterAnnotation : R|kotlin/Annotation| {
+    @R|test/FirstTarget.NestedAnnotation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class OuterAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OuterAnnotation] constructor(): R|test/OuterAnnotation| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() @R|test/OuterAnnotation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class FirstTarget : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/MySerializable|[Types]() @R|test/OuterAnnotation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class FirstTarget : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstTarget] constructor(): R|test/FirstTarget| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] annotation class NestedAnnotation : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class NestedAnnotation : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedAnnotation] constructor(): R|test/FirstTarget.NestedAnnotation| {
                 super<R|kotlin/Any|>()
             }
@@ -409,7 +409,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] serializable_starImport_twoAnnotationsChain.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(BODY_RESOLVE)] class Serializer : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/CoreSerializer|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Serializer : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Serializer] constructor(): R|test/Serializer| {
             super<R|kotlin/Any|>()
         }

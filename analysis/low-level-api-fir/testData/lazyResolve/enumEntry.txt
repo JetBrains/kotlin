@@ -1,12 +1,12 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -25,13 +25,13 @@ FILE: [ResolvedTo(RAW_FIR)] enumEntry.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -50,13 +50,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -75,13 +75,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -100,13 +100,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -125,13 +125,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(TYPES)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -150,13 +150,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -175,13 +175,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -200,13 +200,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -225,13 +225,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -250,13 +250,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -275,13 +275,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -300,13 +300,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
@@ -331,13 +331,13 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] enumEntry.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] enum class Foo : R|kotlin/Enum<Foo>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] enum class Foo : R|kotlin/Enum<Foo>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             super<R|kotlin/Enum<Foo>|>()
         }

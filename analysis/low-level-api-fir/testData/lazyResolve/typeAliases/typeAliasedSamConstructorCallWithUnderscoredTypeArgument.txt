@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public final? fun [ResolvedTo(RAW_FIR)] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? fun [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun provide(): T
 
     }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public abstract fun [ResolvedTo(STATUS)] interface Box<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public abstract fun [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Box<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun provide(): R|T|
 
     }
@@ -122,7 +122,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasedSamConstructorCallWithUnderscoredTypeArgument.kt
-    public abstract fun [ResolvedTo(BODY_RESOLVE)] interface Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public abstract fun [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun provide(): R|T|
 
     }

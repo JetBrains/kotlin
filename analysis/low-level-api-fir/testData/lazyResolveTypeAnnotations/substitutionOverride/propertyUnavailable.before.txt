@@ -111,7 +111,7 @@ TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public abstract overrid
     @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|second/Anno|(LAZY_EXPRESSION)  @R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>>>>|
     @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|second/Anno|(LAZY_EXPRESSION)  @R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>>>>|): R|kotlin/Unit|
 FILE: [ResolvedTo(IMPORTS)] propertyUnavailable.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,19 +120,19 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>>>| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class SubClass : R|second/AbstractClass<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
             LAZY_super<R|second/AbstractClass<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>>>|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B>(): R|second/Pair<A, B>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyUnavailable.kt
             @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|second/Anno|(LAZY_EXPRESSION)  T>>|
             @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|second/Anno|(LAZY_EXPRESSION)  T>>|): R|kotlin/Unit|
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }

@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(RAW_FIR)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @Anno[Unresolved](LAZY_EXPRESSION) public final? data [ResolvedTo(RAW_FIR)] class MyData : R|kotlin/Any| {
+    @Anno[Unresolved](LAZY_EXPRESSION) public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) p2: Int): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(RAW_FIR)] dataClassCopy.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @Anno[Unresolved](LAZY_EXPRESSION) public final? data [ResolvedTo(RAW_FIR)] class MyData : R|kotlin/Any| {
+    @Anno[Unresolved](LAZY_EXPRESSION) public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyData] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](LAZY_EXPRESSION) @PropertyAnno[Unresolved](LAZY_EXPRESSION) p1: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) p2: Int): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @Anno[Unresolved](IntegerLiteral(0)) public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyData : R|kotlin/Any| {
+    @Anno[Unresolved](IntegerLiteral(0)) public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @Anno[Unresolved](IntegerLiteral(3)) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyData] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](IntegerLiteral(1)) @PropertyAnno[Unresolved](String(str)) p1: String, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](IntegerLiteral(2)) p2: Int): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @Anno[Unresolved](IntegerLiteral(0)) public final? data [ResolvedTo(COMPANION_GENERATION)] class MyData : R|kotlin/Any| {
+    @Anno[Unresolved](IntegerLiteral(0)) public final? data [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @Anno[Unresolved](IntegerLiteral(3)) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyData] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](IntegerLiteral(1)) @PropertyAnno[Unresolved](String(str)) p1: String, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](IntegerLiteral(2)) p2: Int): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @Anno[Unresolved](IntegerLiteral(0)) public final? data [ResolvedTo(SUPER_TYPES)] class MyData : R|kotlin/Any| {
+    @Anno[Unresolved](IntegerLiteral(0)) public final? data [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @Anno[Unresolved](IntegerLiteral(3)) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyData] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=pack/MyData.p1] @Anno[Unresolved](IntegerLiteral(1)) @PropertyAnno[Unresolved](String(str)) p1: String, [ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:Anno[Unresolved](IntegerLiteral(2)) p2: Int): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -213,7 +213,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @R|pack/Anno|[Types](IntegerLiteral(0)) public final? data [ResolvedTo(TYPES)] class MyData : R|kotlin/Any| {
+    @R|pack/Anno|[Types](IntegerLiteral(0)) public final? data [ResolvedTo(TYPES)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @R|pack/Anno|[Types](IntegerLiteral(3)) public? [ResolvedTo(TYPES)] [ContainingClassKey=MyData] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](IntegerLiteral(1)) p1: R|kotlin/String|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](IntegerLiteral(2)) p2: R|kotlin/Int|): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(STATUS)] class MyData : R|kotlin/Any| {
+    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @R|pack/Anno|[Types](IntegerLiteral(3)) public [ResolvedTo(STATUS)] [ContainingClassKey=MyData] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](IntegerLiteral(1)) p1: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](IntegerLiteral(2)) p2: R|kotlin/Int|): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -282,7 +282,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyData : R|kotlin/Any| {
+    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @R|pack/Anno|[Types](IntegerLiteral(3)) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyData] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](IntegerLiteral(1)) p1: R|kotlin/String|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](IntegerLiteral(2)) p2: R|kotlin/Int|): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -321,7 +321,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -330,7 +330,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(CONTRACTS)] class MyData : R|kotlin/Any| {
+    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @R|pack/Anno|[Types](IntegerLiteral(3)) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyData] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](IntegerLiteral(1)) p1: R|kotlin/String|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](IntegerLiteral(2)) p2: R|kotlin/Int|): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -351,7 +351,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -360,7 +360,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -369,7 +369,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyData : R|kotlin/Any| {
+    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @R|pack/Anno|[Types](IntegerLiteral(3)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyData] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](IntegerLiteral(1)) p1: R|kotlin/String|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](IntegerLiteral(2)) p2: R|kotlin/Int|): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -390,7 +390,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Anno.value] value: Int): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -399,7 +399,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/PropertyAnno.s] s: String): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -408,7 +408,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(CONSTANT_EVALUATION)] class MyData : R|kotlin/Any| {
+    @R|pack/Anno|[Types](IntegerLiteral(0)) public final data [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @R|pack/Anno|[Types](IntegerLiteral(3)) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyData] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](IntegerLiteral(1)) p1: R|kotlin/String|, [ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](IntegerLiteral(2)) p2: R|kotlin/Int|): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -429,7 +429,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Anno.value] value: R|kotlin/Int|): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -438,7 +438,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final [ResolvedTo(STATUS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/PropertyAnno.s] s: R|kotlin/String|): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -447,7 +447,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAnno] get(): R|kotlin/String|
 
     }
-    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyData : R|kotlin/Any| {
+    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @R|pack/Anno|[Types](value = Int(3)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int|): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -468,7 +468,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Anno.value] value: R|kotlin/Int|): R|pack/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -477,7 +477,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final [ResolvedTo(STATUS)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/PropertyAnno.s] s: R|kotlin/String|): R|pack/PropertyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -486,7 +486,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAnno] get(): R|kotlin/String|
 
     }
-    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyData : R|kotlin/Any| {
+    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @R|pack/Anno|[Types](value = Int(3)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int|): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -507,7 +507,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] dataClassCopy.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Anno.value] value: R|kotlin/Int|): R|pack/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -516,7 +516,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataClassCopy.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class PropertyAnno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/PropertyAnno.s] s: R|kotlin/String|): R|pack/PropertyAnno| {
             super<R|kotlin/Any|>()
         }
@@ -525,7 +525,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataClassCopy.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyAnno] get(): R|kotlin/String|
 
     }
-    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(BODY_RESOLVE)] class MyData : R|kotlin/Any| {
+    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class MyData : R|kotlin/Any| {
         @R|pack/Anno|[Types](value = Int(3)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int|): R|pack/MyData| {
             super<R|kotlin/Any|>()
         }

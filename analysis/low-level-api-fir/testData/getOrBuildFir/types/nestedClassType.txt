@@ -7,12 +7,12 @@ R|Foo.Nested|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassType.kt
-    public open [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Foo.Nested| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassType.kt
         }
 
     }
-    public final [ResolvedTo(STATUS)] class Bar : R|Foo| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Bar : R|Foo| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<R|Foo|>
         }

@@ -3,7 +3,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegateWithAnnotationOnAccessor.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var foo: <implicit>by LAZY_EXPRESSION
         @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
         @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -12,7 +12,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var foo: <implicit>by LAZY_EXPRESSION
         @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
         @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var foo: <implicit>by LAZY_EXPRESSION
         @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
         @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] var foo: <implicit>by LAZY_EXPRESSION
         @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
         @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -103,7 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] var foo: <implicit>by LAZY_EXPRESSION
         @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
         @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -128,7 +128,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] var foo: <implicit>by LAZY_EXPRESSION
         @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
         @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var foo: <implicit>by LAZY_EXPRESSION
         @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
         @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var foo: <implicit>by LAZY_EXPRESSION
         @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
         @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -187,7 +187,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] var foo: <implicit>by LAZY_EXPRESSION
         @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
         @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyDelegate : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
         @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             ^ D|/foo|.R|/MyDelegate.setValue|(Null(null), ::R|/foo|, R|<local>/foo|)
         }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] class MyDelegate : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
         @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             ^ D|/foo|.R|/MyDelegate.setValue|(Null(null), ::R|/foo|, R|<local>/foo|)
         }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] class MyDelegate : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
         @PROPERTY_SETTER:R|Anno|[Types](s = String(setter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter)) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             ^ D|/foo|.R|/MyDelegate.setValue|(Null(null), ::R|/foo|, R|<local>/foo|)
         }
-    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -303,7 +303,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(STATUS)] class MyDelegate : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -325,7 +325,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
         @PROPERTY_SETTER:R|Anno|[Types](s = String(setter)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter)) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             ^ D|/foo|.R|/MyDelegate.setValue|(Null(null), ::R|/foo|, R|<local>/foo|)
         }
-    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessor.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(STATUS)] class MyDelegate : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -356,7 +356,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithAnnotationOnAccessor.kt
         @PROPERTY_SETTER:R|Anno|[Types](s = String(setter)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter)) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             ^ D|/foo|.R|/MyDelegate.setValue|(Null(null), ::R|/foo|, R|<local>/foo|)
         }
-    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -365,7 +365,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithAnnotationOnAccessor.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class MyDelegate : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class MyDelegate : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDelegate] constructor(): R|MyDelegate| {
             super<R|kotlin/Any|>()
         }

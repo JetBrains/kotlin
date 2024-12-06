@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] constructorParameter.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(RAW_FIR)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(RAW_FIR)] constructorParameter.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Sub : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Sub] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -123,7 +123,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(COMPANION_GENERATION)] class Sub : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Sub] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -140,7 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -149,7 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] class Sub : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Sub] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(TYPES)] class Sub : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=Sub] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -219,7 +219,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -228,7 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -254,7 +254,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Sub] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -289,7 +289,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -324,7 +324,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -333,7 +333,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -359,7 +359,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @Repeatable[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -368,7 +368,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Sub] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -385,7 +385,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -394,7 +394,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -403,7 +403,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = <strcat>(String(param), R|/stringConstant|)) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -420,7 +420,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -429,7 +429,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
 
     }
-    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -438,7 +438,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = <strcat>(String(param), R|/stringConstant|)) prop: R|kotlin/Int|): R|Sub| {
             super<R|kotlin/Any|>()
         }
@@ -455,7 +455,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorParameter.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] constructorParameter.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class FieldAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/FieldAnnotation.i] i: R|kotlin/Int|): R|FieldAnnotation| {
             super<R|kotlin/Any|>()
         }
@@ -464,7 +464,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorParameter.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FieldAnnotation] get(): R|kotlin/Int|
 
     }
-    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -473,7 +473,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorParameter.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class Sub : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Sub : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = <strcat>(String(param), R|/stringConstant|)) prop: R|kotlin/Int|): R|Sub| {
             super<R|kotlin/Any|>()
         }

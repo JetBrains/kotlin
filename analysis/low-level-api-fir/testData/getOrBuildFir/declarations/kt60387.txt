@@ -10,7 +10,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] KotlinFile.kt
     package one.three
 
-    public final [ResolvedTo(STATUS)] class KotlinFile : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class KotlinFile : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinFile] constructor(): R|one/three/KotlinFile| {
             LAZY_super<R|kotlin/Any|>
         }

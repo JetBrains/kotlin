@@ -127,7 +127,7 @@
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 FILE: [ResolvedTo(IMPORTS)] multiDeclaration.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -138,7 +138,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclaration.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final data [ResolvedTo(CONTRACTS)] class Pair : R|kotlin/Any| {
+    public final data [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Pair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?|): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }

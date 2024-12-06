@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -140,7 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Box<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Box] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=test/Box.value] value: T): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final [ResolvedTo(STATUS)] class Box<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Box<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Box] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] [CorrespondingProperty=test/Box.value] value: R|T|): R|test/Box<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedConstructorCallWithUnderscoredTypeArgumen
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasedConstructorCallWithUnderscoredTypeArgument.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Box<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Box] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=test/Box.value] value: R|T|): R|test/Box<T>| {
             super<R|kotlin/Any|>()
         }

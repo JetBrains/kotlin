@@ -1,10 +1,10 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationOnDelegatedInterface.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -15,7 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -35,11 +35,11 @@ FILE: [ResolvedTo(RAW_FIR)] annotationOnDelegatedInterface.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -70,11 +70,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -105,11 +105,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -140,11 +140,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -175,11 +175,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -199,7 +199,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Derived] constructor([ResolvedTo(RAW_FIR)] b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -210,11 +210,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -245,11 +245,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -260,7 +260,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -269,7 +269,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -280,11 +280,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -295,7 +295,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -304,7 +304,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -315,11 +315,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -330,7 +330,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -339,7 +339,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -350,11 +350,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -365,7 +365,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -374,7 +374,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -385,11 +385,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -400,7 +400,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Some : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -409,7 +409,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): String
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -420,11 +420,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun print(): R|kotlin/Unit|
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class BaseImpl : Base {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class BaseImpl : Base {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
@@ -435,7 +435,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) public final [ResolvedTo(STATUS)] annotation class Some : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Some.s] s: R|kotlin/String|): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -444,7 +444,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor([ResolvedTo(STATUS)] b: R|Base|): R|Derived| {
             LAZY_super<<implicit>>
         }
@@ -455,11 +455,11 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnDelegatedInterface.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnDelegatedInterface.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun print(): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class BaseImpl : R|Base| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class BaseImpl : R|Base| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BaseImpl] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/BaseImpl.x] x: R|kotlin/Int|): R|BaseImpl| {
             super<R|kotlin/Any|>()
         }
@@ -471,7 +471,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnDelegatedInterface.kt
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Some : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Some : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Some.s] s: R|kotlin/String|): R|Some| {
             super<R|kotlin/Any|>()
         }
@@ -480,7 +480,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnDelegatedInterface.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : R|Base| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}, ModuleNameKey=main] class Derived : R|Base| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor([ResolvedTo(BODY_RESOLVE)] b: R|Base|): R|Derived| {
             super<R|kotlin/Any|>()
         }

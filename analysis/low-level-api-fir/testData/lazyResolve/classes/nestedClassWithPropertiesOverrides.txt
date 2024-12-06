@@ -1,10 +1,10 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverrides.kt
-    public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-        public final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class ResolveMe : OV {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -15,7 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -24,11 +24,11 @@ FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverrides.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-        public final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class ResolveMe : OV {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -48,11 +48,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ResolveMe : OV {
+        public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class ResolveMe : OV {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,11 +72,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-        public final? [ResolvedTo(COMPANION_GENERATION)] class ResolveMe : OV {
+        public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class ResolveMe : OV {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -96,11 +96,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface OV : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-        public final? [ResolvedTo(SUPER_TYPES)] class ResolveMe : R|OV| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -111,7 +111,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,11 +120,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public final? [ResolvedTo(TYPES)] interface OV : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-        public final? [ResolvedTo(TYPES)] class ResolveMe : R|OV| {
+        public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,11 +144,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-        public final [ResolvedTo(STATUS)] class ResolveMe : R|OV| {
+        public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -159,7 +159,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -168,11 +168,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ResolveMe : R|OV| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -192,11 +192,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-        public final [ResolvedTo(CONTRACTS)] class ResolveMe : R|OV| {
+        public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -216,11 +216,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ResolveMe : R|OV| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -231,7 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -240,11 +240,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] class ResolveMe : R|OV| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -255,7 +255,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -264,11 +264,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ResolveMe : R|OV| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
@@ -279,7 +279,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -288,11 +288,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class ResolveMe : R|OV| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 super<R|kotlin/Any|>()
             }
@@ -303,7 +303,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -312,11 +312,11 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] nestedClassWithPropertiesOverrides.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface OV : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface OV : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] val originalExpressions: R|A|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OV] get(): R|A|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class ResolveMe : R|OV| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class ResolveMe : R|OV| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 super<R|kotlin/Any|>()
             }
@@ -327,7 +327,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }

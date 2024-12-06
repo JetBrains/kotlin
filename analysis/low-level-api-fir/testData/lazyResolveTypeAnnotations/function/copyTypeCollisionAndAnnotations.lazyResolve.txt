@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] copyTypeCollisionAndAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -11,13 +11,13 @@ FILE: [ResolvedTo(RAW_FIR)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class MyDataClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -28,14 +28,14 @@ FILE: [ResolvedTo(RAW_FIR)] copyTypeCollisionAndAnnotations.kt
         public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/prop2|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(RAW_FIR)] copyTypeCollisionAndAnnotations.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -66,13 +66,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class MyDataClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -83,14 +83,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/prop2|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyDataClass] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -121,13 +121,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyDataClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -138,14 +138,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/prop2|
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyDataClass] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -176,13 +176,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? data [ResolvedTo(COMPANION_GENERATION)] class MyDataClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -193,14 +193,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public? final? [ResolvedTo(COMPANION_GENERATION)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/prop2|
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyDataClass] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -231,13 +231,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? data [ResolvedTo(SUPER_TYPES)] class MyDataClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, [ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -248,14 +248,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public? final? [ResolvedTo(SUPER_TYPES)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = R|<local>/prop2|
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyDataClass] get(): @Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) MyClass<@Anno[Unresolved](LAZY_EXPRESSION) Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -275,7 +275,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -286,13 +286,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? data [ResolvedTo(TYPES)] class MyDataClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(TYPES)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -303,14 +303,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/prop2|
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -330,7 +330,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -341,13 +341,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final data [ResolvedTo(STATUS)] class MyDataClass : R|kotlin/Any| {
+    public final data [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -358,14 +358,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/prop2|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -385,7 +385,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -396,13 +396,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyDataClass : R|kotlin/Any| {
+    public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -413,14 +413,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/prop2|
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -440,7 +440,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -451,13 +451,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final data [ResolvedTo(CONTRACTS)] class MyDataClass : R|kotlin/Any| {
+    public final data [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -468,14 +468,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/prop2|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -495,7 +495,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -506,13 +506,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyDataClass : R|kotlin/Any| {
+    public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -523,14 +523,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/prop2|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -550,7 +550,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -561,13 +561,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final data [ResolvedTo(CONSTANT_EVALUATION)] class MyDataClass : R|kotlin/Any| {
+    public final data [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -578,14 +578,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/prop2|
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -605,7 +605,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/Anno.i] i: R|kotlin/Int|): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -616,13 +616,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyDataClass : R|kotlin/Any| {
+    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -633,14 +633,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = R|<local>/prop2|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -660,7 +660,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/Anno.i] i: R|kotlin/Int|): R|one/two/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -671,13 +671,13 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyDataClass : R|kotlin/Any| {
+    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|): R|one/two/MyDataClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -688,14 +688,14 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = R|<local>/prop2|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -715,7 +715,7 @@ FILE: [ResolvedTo(IMPORTS)] copyTypeCollisionAndAnnotations.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] copyTypeCollisionAndAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/two/Anno.i] i: R|kotlin/Int|): R|one/two/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -726,13 +726,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] copyTypeCollisionAndAnnotations.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String()] val constant: R|kotlin/String| = String()
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] A> : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class MyClass<[ResolvedTo(BODY_RESOLVE)] A> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] A>(): R|one/two/MyClass<A>| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final data [ResolvedTo(BODY_RESOLVE)] class MyDataClass : R|kotlin/Any| {
+    public final data [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class MyDataClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop1] prop1: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/two/MyDataClass.prop2] prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|): R|one/two/MyDataClass| {
             super<R|kotlin/Any|>()
         }
@@ -743,14 +743,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] copyTypeCollisionAndAnnotations.kt
         public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/two/MyDataClass.component2, IsFromPrimaryConstructor=true] val prop2: R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = R|<local>/prop2|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDataClass] get(): R|@R|one/two/Anno|(i = Int(3).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(4).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(5).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] B> : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class MyClass<[ResolvedTo(BODY_RESOLVE)] B> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] B>(): R|one/two/MyDataClass.MyClass<B>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|one/two/MyDataClass.Companion| {
                 super<R|kotlin/Any|>()
             }

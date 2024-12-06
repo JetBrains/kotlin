@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -222,7 +222,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -270,7 +270,7 @@ FILE: [ResolvedTo(RAW_FIR)] declaration.kt
         internal [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val regularConstant: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] declaration.kt
         internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val regularConstant: R|kotlin/String| = String(2)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=m1] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }

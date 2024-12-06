@@ -7,7 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] duplicatedClassesFunctionParameter.kt
-    public final [ResolvedTo(STATUS)] class SomeClass : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class SomeClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] duplicatedClassesFunctionParameter.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] get(): <implicit>
 
     }
-    public final [ResolvedTo(STATUS)] class SomeClass : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class SomeClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -7,7 +7,7 @@ String(y)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgument.kt
-    public final [ResolvedTo(STATUS)] annotation class Annotation : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Annotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Annotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Annotation.name] name: R|kotlin/String|): R|Annotation| {
             LAZY_super<R|kotlin/Any|>
         }

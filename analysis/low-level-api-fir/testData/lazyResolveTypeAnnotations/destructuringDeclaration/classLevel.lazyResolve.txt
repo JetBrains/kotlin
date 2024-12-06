@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,12 +9,12 @@ FILE: [ResolvedTo(RAW_FIR)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(RAW_FIR)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(RAW_FIR)] classLevel.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -58,12 +58,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -107,12 +107,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -156,12 +156,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -205,12 +205,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -231,7 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -254,12 +254,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -303,12 +303,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -329,7 +329,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -343,7 +343,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -352,12 +352,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -378,7 +378,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -392,7 +392,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -401,12 +401,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -427,7 +427,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -441,7 +441,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -450,12 +450,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -476,7 +476,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -490,7 +490,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -499,12 +499,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -525,7 +525,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -539,7 +539,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -548,12 +548,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -574,7 +574,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -588,7 +588,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -597,12 +597,12 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -623,7 +623,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -637,7 +637,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevel.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] classLevel.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -646,12 +646,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] classLevel.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
             super<R|kotlin/Any|>()
         }
 
-        public final data [ResolvedTo(BODY_RESOLVE)] class Pair : R|kotlin/Any| {
+        public final data [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Foo.Pair.a] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Foo.Pair.b] b: R|kotlin/Int|): R|util/Foo.Pair| {
                 super<R|kotlin/Any|>()
             }
@@ -672,7 +672,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] classLevel.kt
 
         <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
 
-        public final [ResolvedTo(BODY_RESOLVE)] object <no name provided> : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] object <no name provided> : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
                 super<R|kotlin/Any|>()
             }

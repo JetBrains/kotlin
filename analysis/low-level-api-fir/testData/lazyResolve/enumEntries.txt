@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] enumEntries.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] enumEntries.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final? [ResolvedTo(SUPER_TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final? [ResolvedTo(TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -228,7 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             LAZY_super<R|kotlin/Enum<one/MyEnum>|>
         }
@@ -247,7 +247,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] enumEntries.kt
-    public final [ResolvedTo(BODY_RESOLVE)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             super<R|kotlin/Enum<one/MyEnum>|>()
         }

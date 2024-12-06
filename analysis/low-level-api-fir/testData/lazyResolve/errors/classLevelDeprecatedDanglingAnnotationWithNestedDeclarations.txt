@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -47,7 +47,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -170,7 +170,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(TYPES)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -202,7 +202,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -284,7 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -293,7 +293,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -325,7 +325,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -366,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -375,7 +375,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -407,7 +407,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -416,7 +416,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -448,7 +448,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -457,7 +457,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -489,7 +489,7 @@ FILE: [ResolvedTo(IMPORTS)] classLevelDeprecatedDanglingAnnotationWithNestedDecl
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] classLevelDeprecatedDanglingAnnotationWithNestedDeclarations.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -498,7 +498,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] classLevelDeprecatedDanglingAnnotationWithNeste
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             super<R|kotlin/Any|>()
         }

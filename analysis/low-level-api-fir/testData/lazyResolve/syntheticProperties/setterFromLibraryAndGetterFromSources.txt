@@ -4,7 +4,7 @@ TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|BaseKotlin| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|BaseKotlin|>
         }
@@ -19,7 +19,7 @@ TARGET: public open override [<synthetic> EXPECT_ACTUAL_MATCHING] var something:
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|BaseKotlin| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|BaseKotlin|>
         }
@@ -34,7 +34,7 @@ TARGET: public open override [<synthetic> CONTRACTS] var something: R|kotlin/Str
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|BaseKotlin| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|BaseKotlin|>
         }
@@ -49,7 +49,7 @@ TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] var somet
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|BaseKotlin| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|BaseKotlin|>
         }
@@ -64,7 +64,7 @@ TARGET: public open override [<synthetic> CONSTANT_EVALUATION] var something: R|
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|BaseKotlin| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|BaseKotlin|>
         }
@@ -79,7 +79,7 @@ TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] var something: R
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|BaseKotlin| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|BaseKotlin|>
         }
@@ -96,7 +96,7 @@ TARGET: public open override [<synthetic> BODY_RESOLVE] var something: R|kotlin/
     public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|BaseKotlin| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|BaseKotlin| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|BaseKotlin|>
         }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class Derived : R|BaseKotlin| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Derived : R|BaseKotlin| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             super<R|BaseKotlin|>()
         }

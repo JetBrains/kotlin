@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverride.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Foo2 : Foo1 {
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
-    public abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Usage : Foo2 {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverride.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Foo2 : Foo1 {
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -47,7 +47,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
-    public abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Usage : Foo2 {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Foo2 : Foo1 {
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
-    public abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Usage : Foo2 {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Foo2 : Foo1 {
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
-    public abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Usage : Foo2 {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
-    public abstract [ResolvedTo(SUPER_TYPES)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -163,7 +163,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
-    public abstract [ResolvedTo(TYPES)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(TYPES)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -250,7 +250,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -261,7 +261,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -270,7 +270,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -279,7 +279,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -299,7 +299,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -328,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -337,7 +337,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -348,7 +348,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -357,7 +357,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -366,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
@@ -378,7 +378,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverride.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Unit|
@@ -387,7 +387,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverride.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo2 : R|Foo1| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface Foo2 : R|Foo1| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] fun bar([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -396,7 +396,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverride.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Usage : R|Foo2| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             super<R|kotlin/Any|>()
         }

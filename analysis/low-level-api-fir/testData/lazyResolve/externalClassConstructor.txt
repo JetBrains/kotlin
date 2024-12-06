@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] externalClassConstructor.kt
-    public final? external [ResolvedTo(RAW_FIR)] class Date : R|kotlin/Any| {
+    public final? external [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -11,7 +11,7 @@ FILE: [ResolvedTo(RAW_FIR)] externalClassConstructor.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final? external [ResolvedTo(RAW_FIR)] class Date : R|kotlin/Any| {
+    public final? external [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final? external [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Date : R|kotlin/Any| {
+    public final? external [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final? external [ResolvedTo(COMPANION_GENERATION)] class Date : R|kotlin/Any| {
+    public final? external [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final? external [ResolvedTo(SUPER_TYPES)] class Date : R|kotlin/Any| {
+    public final? external [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final? external [ResolvedTo(TYPES)] class Date : R|kotlin/Any| {
+    public final? external [ResolvedTo(TYPES)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final external [ResolvedTo(STATUS)] class Date : R|kotlin/Any| {
+    public final external [ResolvedTo(STATUS)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final external [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Date : R|kotlin/Any| {
+    public final external [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final external [ResolvedTo(CONTRACTS)] class Date : R|kotlin/Any| {
+    public final external [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final external [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Date : R|kotlin/Any| {
+    public final external [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final external [ResolvedTo(CONSTANT_EVALUATION)] class Date : R|kotlin/Any| {
+    public final external [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final external [ResolvedTo(ANNOTATION_ARGUMENTS)] class Date : R|kotlin/Any| {
+    public final external [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
-    public final external [ResolvedTo(ANNOTATION_ARGUMENTS)] class Date : R|kotlin/Any| {
+    public final external [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] externalClassConstructor.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] externalClassConstructor.kt
-    public final external [ResolvedTo(BODY_RESOLVE)] class Date : R|kotlin/Any| {
+    public final external [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Date : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Date] constructor(): R|one/Date| {
             super<R|kotlin/Any|>()
         }

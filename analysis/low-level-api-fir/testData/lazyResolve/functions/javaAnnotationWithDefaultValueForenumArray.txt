@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(RAW_FIR)] ArrayAnnUsage.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -212,7 +212,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final [ResolvedTo(STATUS)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -258,7 +258,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
-    public final [ResolvedTo(STATUS)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
         }
@@ -281,7 +281,7 @@ FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] ArrayAnnUsage.kt
-    public final [ResolvedTo(BODY_RESOLVE)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
             super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>()
         }

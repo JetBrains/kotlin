@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(RAW_FIR)] localPropertyWithPropagatedTypeUnavailable.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -177,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -249,7 +249,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] object Obj : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=foo/Anno.position] position: R|kotlin/String|): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -297,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(STATUS)] object Obj : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -314,7 +314,7 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedTypeUnavailable.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localPropertyWithPropagatedTypeUnavailable.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=foo/Anno.position] position: R|kotlin/String|): R|foo/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -323,7 +323,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localPropertyWithPropagatedTypeUnavailable.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] object Obj : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
             super<R|kotlin/Any|>()
         }

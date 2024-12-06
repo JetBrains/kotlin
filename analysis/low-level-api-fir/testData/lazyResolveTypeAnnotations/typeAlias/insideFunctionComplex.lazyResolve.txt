@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] insideFunctionComplex.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(RAW_FIR)] insideFunctionComplex.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -128,7 +128,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: String): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|pack/TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] insideFunctionComplex.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] insideFunctionComplex.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|pack/TypeAnnWithArg| {
             super<R|kotlin/Any|>()
         }

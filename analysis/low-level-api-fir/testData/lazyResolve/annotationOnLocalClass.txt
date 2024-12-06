@@ -1,12 +1,12 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -19,13 +19,13 @@ FILE: [ResolvedTo(RAW_FIR)] annotationOnLocalClass.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -38,13 +38,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -57,13 +57,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -76,13 +76,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -95,13 +95,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -114,13 +114,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -133,13 +133,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -152,13 +152,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -171,13 +171,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -190,13 +190,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -209,13 +209,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: AnotherAnnotation): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -228,13 +228,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -255,13 +255,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnLocalClass.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
             super<R|kotlin/Any|>()
         }

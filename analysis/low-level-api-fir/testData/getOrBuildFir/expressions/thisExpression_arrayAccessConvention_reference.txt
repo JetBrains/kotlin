@@ -19,7 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] thisExpression_arrayAccessConvention_reference.kt
         }
         )
     }
-    public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
         public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
 
         public abstract operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] k: R|K|, [ResolvedTo(CONTRACTS)] v: R|V|): R|kotlin/Unit|

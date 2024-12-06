@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,11 +9,11 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface OriginalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) Number> explicitType: @Anno[Unresolved](LAZY_EXPRESSION) Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalInterface] get(): @Anno[Unresolved](LAZY_EXPRESSION) Int { LAZY_BLOCK }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterAnnotations.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,11 +36,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface OriginalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](LAZY_EXPRESSION) Number> explicitType: @Anno[Unresolved](LAZY_EXPRESSION) Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalInterface] get(): @Anno[Unresolved](LAZY_EXPRESSION) Int { LAZY_BLOCK }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,11 +63,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface OriginalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] F : @Anno[Unresolved](LAZY_EXPRESSION) Number> explicitType: @Anno[Unresolved](LAZY_EXPRESSION) Int
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=OriginalInterface] get(): @Anno[Unresolved](LAZY_EXPRESSION) Int { LAZY_BLOCK }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,11 +90,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface OriginalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(COMPANION_GENERATION)] val <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] F : @Anno[Unresolved](LAZY_EXPRESSION) Number> explicitType: @Anno[Unresolved](LAZY_EXPRESSION) Int
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=OriginalInterface] get(): @Anno[Unresolved](LAZY_EXPRESSION) Int { LAZY_BLOCK }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -117,11 +117,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface OriginalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(SUPER_TYPES)] val <@Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] F : @Anno[Unresolved](LAZY_EXPRESSION) Number> explicitType: @Anno[Unresolved](LAZY_EXPRESSION) Int
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=OriginalInterface] get(): @Anno[Unresolved](LAZY_EXPRESSION) Int { LAZY_BLOCK }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,11 +144,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? [ResolvedTo(TYPES)] interface OriginalInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(TYPES)] val <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] F : R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Number|> explicitType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
             public? [ResolvedTo(TYPES)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int| { LAZY_BLOCK }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -171,11 +171,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public open [ResolvedTo(STATUS)] val <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] F : R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Number|> explicitType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int| { LAZY_BLOCK }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -198,11 +198,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] F : R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Number|> explicitType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int| { LAZY_BLOCK }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -225,11 +225,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public open [ResolvedTo(CONTRACTS)] val <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] F : R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Number|> explicitType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int| { LAZY_BLOCK }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -252,11 +252,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Number|> explicitType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int| { LAZY_BLOCK }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -270,7 +270,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -279,11 +279,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public open [ResolvedTo(CONSTANT_EVALUATION)] val <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] F : R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Number|> explicitType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int| { LAZY_BLOCK }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -297,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -306,11 +306,11 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public open [ResolvedTo(ANNOTATION_ARGUMENTS)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int| { LAZY_BLOCK }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -324,7 +324,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -333,13 +333,13 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int| {
                 ^ Int(1)
             }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -353,7 +353,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -362,13 +362,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotations.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface OriginalInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface OriginalInterface : R|kotlin/Any| {
         public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int| {
                 ^ Int(1)
             }
 
-        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
                 super<R|kotlin/Any|>()
             }

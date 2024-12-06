@@ -1,10 +1,10 @@
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] class Top : R|org/example/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
             LAZY_super<<implicit>>
         }
@@ -12,11 +12,11 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] class Middle : R|org/example/Top| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
@@ -26,11 +26,11 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=bottom] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=bottom] class Bottom : R|org/example/Middle| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
             LAZY_super<R|org/example/Middle|>
         }
@@ -42,11 +42,11 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] class Top : R|org/example/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
             LAZY_super<<implicit>>
         }
@@ -54,11 +54,11 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] class Middle : R|org/example/Top| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
@@ -68,11 +68,11 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=bottom] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=bottom] class Bottom : R|org/example/Middle| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
             LAZY_super<R|org/example/Middle|>
         }
@@ -84,11 +84,11 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] class Top : R|org/example/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
             LAZY_super<<implicit>>
         }
@@ -96,11 +96,11 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] class Middle : R|org/example/Top| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
@@ -110,11 +110,11 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=bottom] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=bottom] class Bottom : R|org/example/Middle| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
             LAZY_super<R|org/example/Middle|>
         }
@@ -126,11 +126,11 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] class Top : R|org/example/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
             LAZY_super<<implicit>>
         }
@@ -138,11 +138,11 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] class Middle : R|org/example/Top| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
@@ -152,11 +152,11 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=bottom] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=bottom] class Bottom : R|org/example/Middle| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
             LAZY_super<R|org/example/Middle|>
         }
@@ -168,11 +168,11 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] class Top : R|org/example/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
             LAZY_super<<implicit>>
         }
@@ -180,11 +180,11 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] class Middle : R|org/example/Top| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
@@ -194,11 +194,11 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=bottom] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=bottom] class Bottom : R|org/example/Middle| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
             LAZY_super<R|org/example/Middle|>
         }
@@ -210,11 +210,11 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] class Top : R|org/example/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
             LAZY_super<<implicit>>
         }
@@ -222,11 +222,11 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] class Middle : R|org/example/Top| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
@@ -236,11 +236,11 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=bottom] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=bottom] class Bottom : R|org/example/Middle| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
             LAZY_super<R|org/example/Middle|>
         }
@@ -252,11 +252,11 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] top.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=top] class Top : R|org/example/Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
             LAZY_super<<implicit>>
         }
@@ -264,11 +264,11 @@ FILE: [ResolvedTo(IMPORTS)] top.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] middle.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=middle] class Middle : R|org/example/Top| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             LAZY_super<R|org/example/Top|>
         }
@@ -279,11 +279,11 @@ FILE: [ResolvedTo(IMPORTS)] middle.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] bottom.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=bottom] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
 
     }
-    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=bottom] class Bottom : R|org/example/Middle| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
             LAZY_super<R|org/example/Middle|>
         }
@@ -295,11 +295,11 @@ FILE: [ResolvedTo(IMPORTS)] bottom.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] middle.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=middle] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun middle(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] class Middle : R|org/example/Top| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=middle] class Middle : R|org/example/Top| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
             super<R|org/example/Top|>()
         }

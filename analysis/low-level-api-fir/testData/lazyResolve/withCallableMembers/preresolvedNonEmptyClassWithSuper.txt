@@ -1,6 +1,6 @@
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
-    public final [ResolvedTo(STATUS)] class EmptyClass : R|InterfaceWithMembers| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class EmptyClass : R|InterfaceWithMembers| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=EmptyClass] constructor(): R|EmptyClass| {
             LAZY_super<<implicit>>
         }
@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public abstract [ResolvedTo(STATUS)] val property: R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class EmptyClass : R|InterfaceWithMembers| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class EmptyClass : R|InterfaceWithMembers| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=EmptyClass] constructor(): R|EmptyClass| {
             LAZY_super<<implicit>>
         }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public abstract [ResolvedTo(STATUS)] val property: R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
-    public final [ResolvedTo(CONTRACTS)] class EmptyClass : R|InterfaceWithMembers| {
+    public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class EmptyClass : R|InterfaceWithMembers| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=EmptyClass] constructor(): R|EmptyClass| {
             LAZY_super<<implicit>>
         }
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(CONTRACTS)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public abstract [ResolvedTo(STATUS)] val property: R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
@@ -93,7 +93,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class EmptyClass : R|InterfaceWithMembers| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class EmptyClass : R|InterfaceWithMembers| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=EmptyClass] constructor(): R|EmptyClass| {
             LAZY_super<<implicit>>
         }
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public abstract [ResolvedTo(STATUS)] val property: R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
@@ -124,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class EmptyClass : R|InterfaceWithMembers| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class EmptyClass : R|InterfaceWithMembers| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=EmptyClass] constructor(): R|EmptyClass| {
             LAZY_super<<implicit>>
         }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(CONSTANT_EVALUATION)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public abstract [ResolvedTo(STATUS)] val property: R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class EmptyClass : R|InterfaceWithMembers| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class EmptyClass : R|InterfaceWithMembers| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=EmptyClass] constructor(): R|EmptyClass| {
             LAZY_super<<implicit>>
         }
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public abstract [ResolvedTo(STATUS)] val property: R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
@@ -177,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class EmptyClass : R|InterfaceWithMembers| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class EmptyClass : R|InterfaceWithMembers| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EmptyClass] constructor(): R|EmptyClass| {
             super<R|kotlin/Any|>()
         }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public abstract [ResolvedTo(STATUS)] val property: R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
         public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] preresolvedNonEmptyClassWithSuper.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] preresolvedNonEmptyClassWithSuper.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class EmptyClass : R|InterfaceWithMembers| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class EmptyClass : R|InterfaceWithMembers| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EmptyClass] constructor(): R|EmptyClass| {
             super<R|kotlin/Any|>()
         }
@@ -230,7 +230,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] preresolvedNonEmptyClassWithSuper.kt
         }
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public abstract [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
@@ -244,7 +244,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] preresolvedNonEmptyClassWithSuper.kt
         }
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit|

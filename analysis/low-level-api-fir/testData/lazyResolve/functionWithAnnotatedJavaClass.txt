@@ -1,13 +1,13 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] main.kt
     public? final? [ResolvedTo(RAW_FIR)] fun usage([ResolvedTo(RAW_FIR)] pomTarget: JavaClass.NestedJavaClass): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -17,13 +17,13 @@ FILE: [ResolvedTo(RAW_FIR)] main.kt
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public? final? [ResolvedTo(RAW_FIR)] fun usage([ResolvedTo(RAW_FIR)] pomTarget: JavaClass.NestedJavaClass): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,13 +33,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun usage([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] pomTarget: JavaClass.NestedJavaClass): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -49,13 +49,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public? final? [ResolvedTo(COMPANION_GENERATION)] fun usage([ResolvedTo(COMPANION_GENERATION)] pomTarget: JavaClass.NestedJavaClass): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -65,13 +65,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public? final? [ResolvedTo(SUPER_TYPES)] fun usage([ResolvedTo(SUPER_TYPES)] pomTarget: JavaClass.NestedJavaClass): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,13 +81,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public? final? [ResolvedTo(TYPES)] fun usage([ResolvedTo(TYPES)] pomTarget: R|JavaClass.NestedJavaClass|): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -97,13 +97,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(STATUS)] fun usage([ResolvedTo(STATUS)] pomTarget: R|JavaClass.NestedJavaClass|): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -113,13 +113,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun usage([ResolvedTo(EXPECT_ACTUAL_MATCHING)] pomTarget: R|JavaClass.NestedJavaClass|): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -129,13 +129,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(CONTRACTS)] fun usage([ResolvedTo(CONTRACTS)] pomTarget: R|JavaClass.NestedJavaClass|): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -145,13 +145,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] pomTarget: R|JavaClass.NestedJavaClass|): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -161,13 +161,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage([ResolvedTo(CONSTANT_EVALUATION)] pomTarget: R|JavaClass.NestedJavaClass|): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -177,13 +177,13 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage([ResolvedTo(ANNOTATION_ARGUMENTS)] pomTarget: R|JavaClass.NestedJavaClass|): R|kotlin/Unit| { LAZY_BLOCK }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -194,13 +194,13 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun usage([ResolvedTo(BODY_RESOLVE)] pomTarget: R|JavaClass.NestedJavaClass|): R|kotlin/Unit| {
     }
-    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class KotlinClass : R|kotlin/Any| {
+    @KotlinAnnotation[Unresolved]() public open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -211,13 +211,13 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun usage([ResolvedTo(BODY_RESOLVE)] pomTarget: R|JavaClass.NestedJavaClass|): R|kotlin/Unit| {
     }
-    @R|KotlinAnnotation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] class KotlinClass : R|kotlin/Any| {
+    @R|KotlinAnnotation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class KotlinClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinClass] constructor(): R|KotlinClass| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class KotlinAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinAnnotation] constructor(): R|KotlinAnnotation| {
             super<R|kotlin/Any|>()
         }

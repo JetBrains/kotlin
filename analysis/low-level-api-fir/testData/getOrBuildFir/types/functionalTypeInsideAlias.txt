@@ -7,7 +7,7 @@ R|A|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] functionalTypeInsideAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }

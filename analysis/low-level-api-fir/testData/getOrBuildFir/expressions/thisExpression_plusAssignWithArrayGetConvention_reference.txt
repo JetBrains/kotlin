@@ -14,11 +14,11 @@ FILE: [ResolvedTo(IMPORTS)] thisExpression_plusAssignWithArrayGetConvention_refe
         }
         )
     }
-    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface A : R|kotlin/Any| {
         public abstract operator [ResolvedTo(CONTRACTS)] fun plusAssign([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
         public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
 
     }

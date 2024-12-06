@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] class Test : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(RAW_FIR)] lazyProperty.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] class Test : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] class Test : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] class Test : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final? [ResolvedTo(SUPER_TYPES)] class Test : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final? [ResolvedTo(TYPES)] class Test : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -170,7 +170,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class Test : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class Test : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -222,7 +222,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class Test : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -248,7 +248,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class Test : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -260,7 +260,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class Test : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -286,7 +286,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -300,7 +300,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class Test : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
-    public final [ResolvedTo(STATUS)] class LazyDelegate<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] [CorrespondingProperty=/LazyDelegate.value] value: R|T|): R|LazyDelegate<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -326,7 +326,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lazy([ResolvedTo(CONTRACTS)] block: R|() -> T|): R|LazyDelegate<T>| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? { LAZY_BLOCK }
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] Q> materialize(): R|Q| { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class Test : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Test] constructor(): R|Test| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -343,7 +343,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] lazyProperty.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class LazyDelegate<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class LazyDelegate<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/LazyDelegate.value] value: R|T|): R|LazyDelegate<T>| {
             super<R|kotlin/Any|>()
         }
@@ -365,7 +365,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lazyProperty.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] Q> materialize(): R|Q| {
         ^materialize Null(null)!!
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class Test : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Test : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] constructor(): R|Test| {
             super<R|kotlin/Any|>()
         }

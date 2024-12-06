@@ -7,11 +7,11 @@ R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] incWithArrayAccessConvention.kt
-    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface A : R|kotlin/Any| {
         public abstract operator [ResolvedTo(CONTRACTS)] fun inc(): R|A|
 
     }
-    public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
         public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
 
         public abstract operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] k: R|K|, [ResolvedTo(CONTRACTS)] v: R|V|): R|kotlin/Unit|

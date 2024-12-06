@@ -1,10 +1,10 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] usage.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=usage] class FooImpl : Foo {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<Foo>
         }
@@ -15,11 +15,11 @@ FILE: [ResolvedTo(RAW_FIR)] usage.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=usage] class FooImpl : Foo {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<Foo>
         }
@@ -30,11 +30,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=usage] class FooImpl : Foo {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<Foo>
         }
@@ -45,11 +45,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(RAW_FIR)] class FooImpl : Foo {
+    public abstract [ResolvedTo(RAW_FIR)] [ModuleNameKey=usage] class FooImpl : Foo {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<Foo>
         }
@@ -60,11 +60,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(SUPER_TYPES)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<Foo>
         }
@@ -75,11 +75,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(TYPES)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(TYPES)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<Foo>
         }
@@ -90,11 +90,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<R|org/example/Foo|>
         }
@@ -105,11 +105,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<R|org/example/Foo|>
         }
@@ -120,11 +120,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<R|org/example/Foo|>
         }
@@ -135,11 +135,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<R|org/example/Foo|>
         }
@@ -150,11 +150,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<R|org/example/Foo|>
         }
@@ -165,11 +165,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<R|org/example/Foo|>
         }
@@ -180,11 +180,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(STATUS)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             LAZY_super<R|org/example/Foo|>
         }
@@ -196,11 +196,11 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] usage.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=usage] interface Base : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Unit|
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] class FooImpl : R|org/example/Foo| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=usage] class FooImpl : R|org/example/Foo| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FooImpl] constructor(): R|org/example/FooImpl| {
             super<R|org/example/Foo|>()
         }

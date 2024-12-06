@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] parameterOfNonLocalSetter.kt
-    public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] parameterOfNonLocalSetter.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }

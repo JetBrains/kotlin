@@ -127,7 +127,7 @@
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 FILE: [ResolvedTo(IMPORTS)] multiDeclaration.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -138,7 +138,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclaration.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(s)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class Pair : R|kotlin/Any| {
+    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Pair] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(position = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(position = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(position = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(position = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }

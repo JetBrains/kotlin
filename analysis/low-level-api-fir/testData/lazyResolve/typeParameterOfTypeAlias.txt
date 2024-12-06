@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -10,7 +10,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTypeAlias.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfTypeAlias.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class X<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class X<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|X<T>| {
             super<R|kotlin/Any|>()
         }

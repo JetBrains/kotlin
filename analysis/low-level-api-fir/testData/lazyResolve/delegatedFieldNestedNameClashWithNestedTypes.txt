@@ -1,10 +1,10 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base<Base<Int>> {
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : Base<Base<Int>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base<second.Base<Int>>): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -14,18 +14,18 @@ FILE: [ResolvedTo(RAW_FIR)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base<second.Base<Int>> = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base<second.Base<Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base<Base<Int>> {
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : Base<Base<Int>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base<second.Base<Int>>): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -35,18 +35,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base<second.Base<Int>> = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base<second.Base<Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base<Base<Int>> {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : Base<Base<Int>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base<second.Base<Int>>): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -56,18 +56,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base<second.Base<Int>> = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base<second.Base<Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : Base<Base<Int>> {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : Base<Base<Int>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base<second.Base<Int>>): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -77,18 +77,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base<second.Base<Int>> = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base<second.Base<Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface Base<[ResolvedTo(SUPER_TYPES)] A> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base<second.Base<Int>>): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -98,18 +98,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base<second.Base<Int>> = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base<second.Base<Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] A> : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface Base<[ResolvedTo(SUPER_TYPES)] A> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: second.Base<second.Base<Int>>): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -119,18 +119,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: second.Base<second.Base<Int>> = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): second.Base<second.Base<Int>>
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base<second/Base<kotlin/Int>>|): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -140,18 +140,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base<second/Base<kotlin/Int>>|): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -161,18 +161,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base<second/Base<kotlin/Int>>|): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -182,18 +182,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base<second/Base<kotlin/Int>>|): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -203,18 +203,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base<second/Base<kotlin/Int>>|): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -224,18 +224,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base<second/Base<kotlin/Int>>|): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -245,18 +245,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base<second/Base<kotlin/Int>>|): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -266,19 +266,19 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface Base<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         }
 
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashWithNestedTypes.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base<[ResolvedTo(BODY_RESOLVE)] A> : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface Base<[ResolvedTo(BODY_RESOLVE)] A> : R|kotlin/Any| {
         public open [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}, ModuleNameKey=main] class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|second/Base<second/Base<kotlin/Int>>|): R|second/MyClass| {
             super<R|kotlin/Any|>()
         }
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashWithNestedTypes.kt
         public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|second/Base<second/Base<kotlin/Int>>|
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] interface Base<[ResolvedTo(BODY_RESOLVE)] B> : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface Base<[ResolvedTo(BODY_RESOLVE)] B> : R|kotlin/Any| {
         }
 
     }

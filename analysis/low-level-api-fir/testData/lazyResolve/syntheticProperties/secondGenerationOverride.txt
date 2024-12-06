@@ -4,7 +4,7 @@ TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|KotlinBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|KotlinBase|>
         }
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
     }
-    public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=main] class KotlinBase : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinBase] constructor(): R|KotlinBase| {
             LAZY_super<R|Base|>
         }
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -48,7 +48,7 @@ TARGET: public open override [<synthetic> EXPECT_ACTUAL_MATCHING] var something:
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|KotlinBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|KotlinBase|>
         }
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun setSomething([ResolvedTo(EXPECT_ACTUAL_MATCHING)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
     }
-    public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=main] class KotlinBase : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinBase] constructor(): R|KotlinBase| {
             LAZY_super<R|Base|>
         }
@@ -68,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -92,7 +92,7 @@ TARGET: public open override [<synthetic> CONTRACTS] var something: R|kotlin/Str
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|KotlinBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|KotlinBase|>
         }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONTRACTS)] fun setSomething([ResolvedTo(CONTRACTS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): <implicit> { LAZY_BLOCK }
 
     }
-    public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=main] class KotlinBase : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinBase] constructor(): R|KotlinBase| {
             LAZY_super<R|Base|>
         }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -138,7 +138,7 @@ TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] var somet
     }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|KotlinBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|KotlinBase|>
         }
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         }
 
     }
-    public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=main] class KotlinBase : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinBase] constructor(): R|KotlinBase| {
             LAZY_super<R|Base|>
         }
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -186,7 +186,7 @@ TARGET: public open override [<synthetic> CONSTANT_EVALUATION] var something: R|
     }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|KotlinBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|KotlinBase|>
         }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         }
 
     }
-    public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=main] class KotlinBase : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinBase] constructor(): R|KotlinBase| {
             LAZY_super<R|Base|>
         }
@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -234,7 +234,7 @@ TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] var something: R
     }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|KotlinBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|KotlinBase|>
         }
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         }
 
     }
-    public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=main] class KotlinBase : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinBase] constructor(): R|KotlinBase| {
             LAZY_super<R|Base|>
         }
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -290,7 +290,7 @@ TARGET: public open override [<synthetic> BODY_RESOLVE] var something: R|kotlin/
     }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|KotlinBase| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Derived : R|KotlinBase| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             LAZY_super<R|KotlinBase|>
         }
@@ -304,7 +304,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         }
 
     }
-    public open [ResolvedTo(STATUS)] class KotlinBase : R|Base| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=main] class KotlinBase : R|Base| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinBase] constructor(): R|KotlinBase| {
             LAZY_super<R|Base|>
         }
@@ -314,7 +314,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -340,7 +340,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class Derived : R|KotlinBase| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Derived : R|KotlinBase| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor(): R|Derived| {
             super<R|KotlinBase|>()
         }
@@ -354,7 +354,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
         }
 
     }
-    public open [ResolvedTo(BODY_RESOLVE)] class KotlinBase : R|Base| {
+    public open [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class KotlinBase : R|Base| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinBase] constructor(): R|KotlinBase| {
             super<R|Base|>()
         }
@@ -368,7 +368,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }

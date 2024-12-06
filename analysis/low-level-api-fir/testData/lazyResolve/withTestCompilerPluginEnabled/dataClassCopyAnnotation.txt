@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](LAZY_EXPRESSION) disabled: Boolean): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(RAW_FIR)] main.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](LAZY_EXPRESSION) disabled: Boolean): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](IntegerLiteral(1)) disabled: Boolean): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final? data [ResolvedTo(COMPANION_GENERATION)] class MyClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](IntegerLiteral(1)) disabled: Boolean): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final? data [ResolvedTo(SUPER_TYPES)] class MyClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=pack/MyClass.disabled] @MyAnno[Unresolved](IntegerLiteral(1)) disabled: Boolean): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final? data [ResolvedTo(TYPES)] class MyClass : R|kotlin/Any| {
+    public final? data [ResolvedTo(TYPES)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -159,7 +159,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final data [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+    public final data [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|kotlin/Any| {
+    public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final data [ResolvedTo(CONTRACTS)] class MyClass : R|kotlin/Any| {
+    public final data [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+    public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -250,7 +250,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/MyAnno.value] value: Int): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -259,7 +259,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyAnno] get(): Int
 
     }
-    public final data [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|kotlin/Any| {
+    public final data [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](IntegerLiteral(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -275,7 +275,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyAnno.value] value: R|kotlin/Int|): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -284,7 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyAnno] get(): R|kotlin/Int|
 
     }
-    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
+    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -300,7 +300,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(STATUS)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/MyAnno.value] value: R|kotlin/Int|): R|pack/MyAnno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -309,7 +309,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyAnno] get(): R|kotlin/Int|
 
     }
-    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|kotlin/Any| {
+    public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -325,7 +325,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class MyAnno : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class MyAnno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyAnno.value] value: R|kotlin/Int|): R|pack/MyAnno| {
             super<R|kotlin/Any|>()
         }
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyAnno] get(): R|kotlin/Int|
 
     }
-    public final data [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+    public final data [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyClass.disabled] @R|pack/MyAnno|[Types](value = Int(1)) disabled: R|kotlin/Boolean|): R|pack/MyClass| {
             super<R|kotlin/Any|>()
         }

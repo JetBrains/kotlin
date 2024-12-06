@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] refPartOfQualifiedTypeCall.kt
     package test
 
-    public final [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T>(): R|test/Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }

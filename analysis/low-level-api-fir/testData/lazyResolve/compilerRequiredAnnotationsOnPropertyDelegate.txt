@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -183,7 +183,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -202,7 +202,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnPropertyDelegate.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }

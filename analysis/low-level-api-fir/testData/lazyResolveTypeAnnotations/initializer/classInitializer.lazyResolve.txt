@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -12,7 +12,7 @@ FILE: [ResolvedTo(RAW_FIR)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] classInitializer.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -138,7 +138,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -173,7 +173,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -219,7 +219,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -230,7 +230,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -242,7 +242,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -276,7 +276,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -338,7 +338,7 @@ FILE: [ResolvedTo(IMPORTS)] classInitializer.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] classInitializer.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -352,7 +352,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] classInitializer.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
         ^bar Null(null)
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|util/A| {
             super<R|kotlin/Any|>()
         }

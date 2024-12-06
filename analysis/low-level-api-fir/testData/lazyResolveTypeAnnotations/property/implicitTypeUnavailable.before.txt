@@ -47,7 +47,7 @@
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] implicitTypeUnavailable.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeUnavailable.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] object Obj : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object Obj : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Obj] constructor(): R|lowlevel/Obj| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationWithCycleInDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -12,7 +12,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithCycleInDefaults.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final? [ResolvedTo(COMPANION_GENERATION)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final? [ResolvedTo(SUPER_TYPES)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/WithCycle.param] param: WithCycle = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final? [ResolvedTo(TYPES)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final [ResolvedTo(STATUS)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final [ResolvedTo(CONTRACTS)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = LAZY_EXPRESSION): R|WithCycle| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = R|/WithCycle.WithCycle|()): R|WithCycle| {
             super<R|kotlin/Any|>()
         }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithCycleInDefaults.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithCycleInDefaults.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class WithCycle : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class WithCycle : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithCycle] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithCycle.param] param: R|WithCycle| = R|/WithCycle.WithCycle|()): R|WithCycle| {
             super<R|kotlin/Any|>()
         }

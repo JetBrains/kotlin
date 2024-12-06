@@ -11,7 +11,7 @@
   anchor -> [FirTypeAliasSymbol MyTypeAlias]
 
 FILE: [ResolvedTo(IMPORTS)] simple.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class TypeAnnWithArg : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnnWithArg] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/TypeAnnWithArg.arg] arg: R|kotlin/String|): R|TypeAnnWithArg| {
             LAZY_super<R|kotlin/Any|>
         }

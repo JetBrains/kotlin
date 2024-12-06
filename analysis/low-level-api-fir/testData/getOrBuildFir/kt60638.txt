@@ -9,13 +9,13 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] kt60638.kt
     package usage
 
-    public final [ResolvedTo(STATUS)] class MyType : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyType : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyType] constructor(): R|usage/MyType| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|usage/MyClass| {
             LAZY_super<R|kotlin/Any|>
         }

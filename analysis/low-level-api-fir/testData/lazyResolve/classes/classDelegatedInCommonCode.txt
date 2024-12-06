@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] classDelegatedInCommonCode.kt
-    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : Map<String, Int> {
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : Map<String, Int> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(RAW_FIR)] classDelegatedInCommonCode.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : Map<String, Int> {
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : Map<String, Int> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : Map<String, Int> {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : Map<String, Int> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : Map<String, Int> {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : Map<String, Int> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -128,7 +128,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
             LAZY_super<<implicit>>
         }
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AA] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AA.content] content: R|kotlin/collections/Map<kotlin/String, kotlin/Int>|): R|AA| {
             super<R|kotlin/Any|>()
         }
@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] classDelegatedInCommonCode.kt
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}, ModuleNameKey=main] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AA] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AA.content] content: R|kotlin/collections/Map<kotlin/String, kotlin/Int>|): R|AA| {
             super<R|kotlin/Any|>()
         }

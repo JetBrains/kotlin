@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -228,7 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -247,7 +247,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
     [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectAccessorsPropagation.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=low/Anno.position] position: R|kotlin/String|): R|low/Anno| {
             super<R|kotlin/Any|>()
         }

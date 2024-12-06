@@ -1,11 +1,11 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationConflict2.kt
-    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -19,12 +19,12 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationConflict2.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -38,12 +38,12 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -57,12 +57,12 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -76,12 +76,12 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final? [ResolvedTo(SUPER_TYPES)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -95,12 +95,12 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final? [ResolvedTo(TYPES)] object Some : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(TYPES)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -114,12 +114,12 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -133,12 +133,12 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -152,12 +152,12 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(CONTRACTS)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -171,12 +171,12 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -190,12 +190,12 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Ann : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
               - compiler arguments stage: FirPropertySymbol /Some.FIELD
-        >#)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
+        >#)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
-    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
               - compiler arguments stage: FirPropertySymbol /Some.FIELD
-        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        >#)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 super<R|kotlin/Any|>()
             }
@@ -255,7 +255,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationConflict2.kt
-    public final [ResolvedTo(BODY_RESOLVE)] object Some : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] object Some : R|kotlin/Any| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor(): R|Some| {
             super<R|kotlin/Any|>()
         }
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationConflict2.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
               - compiler arguments stage: FirPropertySymbol /Some.FIELD
-        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        >#)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 super<R|kotlin/Any|>()
             }

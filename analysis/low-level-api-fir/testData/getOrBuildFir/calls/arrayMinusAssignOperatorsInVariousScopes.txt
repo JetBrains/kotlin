@@ -7,12 +7,12 @@ R|<local>/<array>|.R|/set|(R|<local>/<index_0>|, R|<local>/<array>|.R|/Foo.Compa
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] arrayMinusAssignOperatorsInVariousScopes.kt
-    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Foo : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Foo.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }

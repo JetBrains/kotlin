@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithTypeArgument.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -170,7 +170,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithTypeArgument.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Number|>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
             super<R|kotlin/Any|>()
         }

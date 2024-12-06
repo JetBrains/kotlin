@@ -7,7 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnConstructorProperty.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Abc : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class Abc : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Abc] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Abc.i] @<ERROR TYPE REF: Symbol not found for Anno>[Types]() i: R|kotlin/Int|): R|Abc| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -111,7 +111,7 @@ TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R
     @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|
     @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|): R|kotlin/Unit|
 FILE: [ResolvedTo(IMPORTS)] property.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -122,19 +122,19 @@ FILE: [ResolvedTo(IMPORTS)] property.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>| {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
             LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor<[ResolvedTo(RAW_FIR)] A, [ResolvedTo(RAW_FIR)] B>(): R|second/Pair<A, B>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
             LAZY_super<R|kotlin/Any|>
         }

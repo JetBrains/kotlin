@@ -7,12 +7,12 @@ Q|Foo|<R|kotlin/String|>
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typedQualifiedPartOfQualifiedCall.kt
-    public final [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Foo.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }

@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] reference.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -11,9 +11,9 @@ FILE: [ResolvedTo(RAW_FIR)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) I>> {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) I>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(RAW_FIR)] reference.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,9 +33,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) I>> {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) I>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -55,9 +55,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) I>> {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) I>> {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -77,9 +77,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) I>> {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) I>> {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -99,9 +99,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(SUPER_TYPES)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
         public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -121,9 +121,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(SUPER_TYPES)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(TYPES)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -143,9 +143,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(SUPER_TYPES)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(STATUS)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -165,9 +165,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(SUPER_TYPES)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -187,9 +187,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(SUPER_TYPES)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+    public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -209,9 +209,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(SUPER_TYPES)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -231,9 +231,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(SUPER_TYPES)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -242,7 +242,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -253,9 +253,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final? [ResolvedTo(SUPER_TYPES)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  util/I>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  util/I>>| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             LAZY_super<<implicit>>
         }
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] reference.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -275,9 +275,9 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final? [ResolvedTo(SUPER_TYPES)] interface I : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  util/I>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  util/I>>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             super<R|kotlin/Any|>()
         }
@@ -286,7 +286,7 @@ FILE: [ResolvedTo(IMPORTS)] reference.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] reference.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -297,9 +297,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] reference.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface I : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  util/I>>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class MyClass : R|@R|util/Anno|(position = <strcat>(String(super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(nested nested super type ref ), R|util/prop|))  util/I>>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
             super<R|kotlin/Any|>()
         }

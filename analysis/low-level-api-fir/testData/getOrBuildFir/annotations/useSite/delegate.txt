@@ -7,13 +7,13 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] delegate.kt
-    public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Ann : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }

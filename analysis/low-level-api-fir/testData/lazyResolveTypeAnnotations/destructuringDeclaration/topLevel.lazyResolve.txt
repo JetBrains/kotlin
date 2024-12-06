@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(RAW_FIR)] topLevel.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -231,7 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -264,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -297,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -306,7 +306,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -330,7 +330,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -339,7 +339,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -363,7 +363,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -372,7 +372,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -396,7 +396,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] topLevel.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -405,7 +405,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+    public final? data [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -429,7 +429,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] topLevel.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -438,7 +438,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] topLevel.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final data [ResolvedTo(BODY_RESOLVE)] class Pair : R|kotlin/Any| {
+    public final data [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Pair : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Pair.a] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Pair.b] b: R|kotlin/Int|): R|util/Pair| {
             super<R|kotlin/Any|>()
         }

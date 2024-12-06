@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] sinceKotlin.kt
-    @SinceKotlin[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class ClassCur : R|kotlin/Any| {
+    @SinceKotlin[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] sinceKotlin.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @SinceKotlin[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class ClassCur : R|kotlin/Any| {
+    @SinceKotlin[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) public final? [ResolvedTo(COMPANION_GENERATION)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) public final? [ResolvedTo(SUPER_TYPES)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[CompilerRequiredAnnotations](String(1.2)) public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final? [ResolvedTo(TYPES)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(STATUS)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(CONTRACTS)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,7 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(CONSTANT_EVALUATION)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](String(1.2)) public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[Types](version = String(1.2)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](version = String(1.2)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[Types](version = String(1.2)) public final [ResolvedTo(BODY_RESOLVE)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](version = String(1.2)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             super<R|kotlin/Any|>()
         }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] sinceKotlin.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] sinceKotlin.kt
-    @R|kotlin/SinceKotlin|[Types](version = String(1.2)) public final [ResolvedTo(BODY_RESOLVE)] class ClassCur : R|kotlin/Any| {
+    @R|kotlin/SinceKotlin|[Types](version = String(1.2)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class ClassCur : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassCur] constructor(): R|kotlin/ClassCur| {
             super<R|kotlin/Any|>()
         }

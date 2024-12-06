@@ -7,7 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuringDeclarationParameterInLambda.kt
-    public final data [ResolvedTo(CONTRACTS)] class X : R|kotlin/Any| {
+    public final data [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class X : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=X] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.a] a: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/X.b] b: R|kotlin/Int|): R|X| {
             LAZY_super<R|kotlin/Any|>
         }

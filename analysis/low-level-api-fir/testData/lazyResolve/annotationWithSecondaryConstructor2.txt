@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationWithSecondaryConstructor2.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: Int): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -16,7 +16,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithSecondaryConstructor2.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: Int): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: Int): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final? [ResolvedTo(COMPANION_GENERATION)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: Int): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final? [ResolvedTo(SUPER_TYPES)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: Int): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final? [ResolvedTo(TYPES)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: Int): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final [ResolvedTo(STATUS)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: R|kotlin/Int|): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: R|kotlin/Int|): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -128,7 +128,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final [ResolvedTo(CONTRACTS)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: R|kotlin/Int|): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: R|kotlin/Int|): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: R|kotlin/Int|): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: R|kotlin/Int|): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: R|kotlin/Int|): R|WithErrorSecondaryConstructor| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithSecondaryConstructor2.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithSecondaryConstructor2.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class WithErrorSecondaryConstructor : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithErrorSecondaryConstructor] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithErrorSecondaryConstructor.a] a: R|kotlin/Int|): R|WithErrorSecondaryConstructor| {
             super<R|kotlin/Any|>()
         }

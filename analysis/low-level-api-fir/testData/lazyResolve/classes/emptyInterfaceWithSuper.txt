@@ -1,8 +1,8 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] emptyInterfaceWithSuper.kt
-    public final? [ResolvedTo(RAW_FIR)] interface EmptyInterface : InterfaceWithMembers {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface EmptyInterface : InterfaceWithMembers {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers : AnotherSuperInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface InterfaceWithMembers : AnotherSuperInterface {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -22,9 +22,9 @@ FILE: [ResolvedTo(RAW_FIR)] emptyInterfaceWithSuper.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public final? [ResolvedTo(RAW_FIR)] interface EmptyInterface : InterfaceWithMembers {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface EmptyInterface : InterfaceWithMembers {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers : AnotherSuperInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface InterfaceWithMembers : AnotherSuperInterface {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -44,9 +44,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] interface EmptyInterface : InterfaceWithMembers {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] interface EmptyInterface : InterfaceWithMembers {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers : AnotherSuperInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface InterfaceWithMembers : AnotherSuperInterface {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -66,9 +66,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public final? [ResolvedTo(COMPANION_GENERATION)] interface EmptyInterface : InterfaceWithMembers {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] interface EmptyInterface : InterfaceWithMembers {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers : AnotherSuperInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface InterfaceWithMembers : AnotherSuperInterface {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -88,9 +88,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public final? [ResolvedTo(SUPER_TYPES)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -110,9 +110,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public final? [ResolvedTo(TYPES)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -123,7 +123,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -132,9 +132,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public abstract [ResolvedTo(STATUS)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -154,9 +154,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -167,7 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -176,9 +176,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public abstract [ResolvedTo(CONTRACTS)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public abstract [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -198,9 +198,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -220,9 +220,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public abstract [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -233,7 +233,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -242,9 +242,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -255,7 +255,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -264,9 +264,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public? final? [ResolvedTo(RAW_FIR)] val property: Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers] get(): Int
 
@@ -277,7 +277,7 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
         public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
 
         public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
@@ -286,9 +286,9 @@ FILE: [ResolvedTo(IMPORTS)] emptyInterfaceWithSuper.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] emptyInterfaceWithSuper.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface EmptyInterface : R|InterfaceWithMembers| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface EmptyInterface : R|InterfaceWithMembers| {
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface InterfaceWithMembers : R|AnotherSuperInterface| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface InterfaceWithMembers : R|AnotherSuperInterface| {
         public abstract [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InterfaceWithMembers] get(): R|kotlin/Int|
 
@@ -302,7 +302,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] emptyInterfaceWithSuper.kt
         }
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface AnotherSuperInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface AnotherSuperInterface : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit|

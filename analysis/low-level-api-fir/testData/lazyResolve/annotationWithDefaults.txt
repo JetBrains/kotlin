@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithDeault.a] a: Int = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithDefaults.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final? [ResolvedTo(RAW_FIR)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/WithDeault.a] a: Int = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -42,7 +42,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/WithDeault.a] a: Int = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -63,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final? [ResolvedTo(COMPANION_GENERATION)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/WithDeault.a] a: Int = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -93,7 +93,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/WithDeault.a] a: Int = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final? [ResolvedTo(TYPES)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final [ResolvedTo(STATUS)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -177,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final [ResolvedTo(CONTRACTS)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -219,7 +219,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -231,7 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = LAZY_EXPRESSION): R|WithDeault| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -252,7 +252,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -261,7 +261,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = Int(1)): R|WithDeault| {
             super<R|kotlin/Any|>()
         }
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithDefaults.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithDefaults.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Simple : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Simple : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
             super<R|kotlin/Any|>()
         }
@@ -282,7 +282,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithDefaults.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class WithDeault : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class WithDeault : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithDeault] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/WithDeault.a] a: R|kotlin/Int| = Int(1)): R|WithDeault| {
             super<R|kotlin/Any|>()
         }

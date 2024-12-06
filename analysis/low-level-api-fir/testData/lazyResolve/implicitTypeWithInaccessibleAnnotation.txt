@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] implicitTypeWithInaccessibleAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -10,7 +10,7 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeWithInaccessibleAnnotation.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun implicitType1(): <implicit> { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] object TopLevelObject : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeWithInaccessibleAnnotation.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun implicitType1(): <implicit> { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] object TopLevelObject : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
     }
     public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun implicitType1(): <implicit> { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] object TopLevelObject : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
     }
     public? final? [ResolvedTo(COMPANION_GENERATION)] fun implicitType1(): <implicit> { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] object TopLevelObject : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -108,7 +108,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
     }
     public? final? [ResolvedTo(SUPER_TYPES)] fun implicitType1(): <implicit> { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] object TopLevelObject : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
     }
     public? final? [ResolvedTo(TYPES)] fun implicitType1(): <implicit> { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] object TopLevelObject : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
     }
     public final [ResolvedTo(STATUS)] fun implicitType1(): <implicit> { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] object TopLevelObject : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -199,7 +199,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
     }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun implicitType1(): <implicit> { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] object TopLevelObject : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
     }
     public final [ResolvedTo(CONTRACTS)] fun implicitType1(): <implicit> { LAZY_BLOCK }
-    public final? [ResolvedTo(RAW_FIR)] object TopLevelObject : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -255,7 +255,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol usage/TopLevelObject.expectedType]] fun implicitType1(): R|@R|usage/Anno|(LAZY_EXPRESSION)  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
-    public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=usage/Anno.s] s: String): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -284,7 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
     public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol usage/TopLevelObject.expectedType]] fun implicitType1(): R|@R|usage/Anno|(LAZY_EXPRESSION)  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
-    public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=usage/Anno.s] s: R|kotlin/String|): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -313,7 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType1(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
-    public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -330,7 +330,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=usage/Anno.s] s: R|kotlin/String|): R|usage/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -342,7 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun implicitType1(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
-    public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -359,7 +359,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeWithInaccessibleAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=usage/Anno.s] s: R|kotlin/String|): R|usage/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -371,7 +371,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeWithInaccessibleAnnotation.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun implicitType1(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
-    public final [ResolvedTo(BODY_RESOLVE)] object TopLevelObject : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] object TopLevelObject : R|kotlin/Any| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelObject] constructor(): R|usage/TopLevelObject| {
             super<R|kotlin/Any|>()
         }

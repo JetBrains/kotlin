@@ -2,7 +2,7 @@ RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] anonymousObjectInInvalidPosition.kt
     private final? [ResolvedTo(RAW_FIR)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(RAW_FIR)] get(): A
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -11,7 +11,7 @@ IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final? [ResolvedTo(RAW_FIR)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(RAW_FIR)] get(): A
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -20,7 +20,7 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): A
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -29,7 +29,7 @@ COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final? [ResolvedTo(COMPANION_GENERATION)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(COMPANION_GENERATION)] get(): A
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -38,7 +38,7 @@ SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final? [ResolvedTo(SUPER_TYPES)] val resolveMe: A = LAZY_EXPRESSION
         private [ResolvedTo(SUPER_TYPES)] get(): A
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -47,7 +47,7 @@ TYPES:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final? [ResolvedTo(TYPES)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(TYPES)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -56,7 +56,7 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final [ResolvedTo(STATUS)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(STATUS)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -65,7 +65,7 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -74,7 +74,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final [ResolvedTo(CONTRACTS)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(CONTRACTS)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -83,7 +83,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -92,7 +92,7 @@ CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final [ResolvedTo(CONSTANT_EVALUATION)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(CONSTANT_EVALUATION)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -101,7 +101,7 @@ ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final [ResolvedTo(ANNOTATION_ARGUMENTS)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
 
     }
@@ -119,7 +119,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     }
 
         private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] [ModuleNameKey=main] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun x(): R|kotlin/Unit|
 
     }
@@ -137,7 +137,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] anonymousObjectInInvalidPosition.kt
     }
 
         private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface A<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface A<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit|
 
     }

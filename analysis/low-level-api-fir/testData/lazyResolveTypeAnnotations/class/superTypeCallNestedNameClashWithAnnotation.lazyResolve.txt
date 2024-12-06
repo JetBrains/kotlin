@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] superTypeCallNestedNameClashWithAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,7 +9,7 @@ FILE: [ResolvedTo(RAW_FIR)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -19,19 +19,19 @@ FILE: [ResolvedTo(RAW_FIR)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(RAW_FIR)] superTypeCallNestedNameClashWithAnnotation.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -67,19 +67,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -115,19 +115,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -153,7 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -163,19 +163,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -192,7 +192,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -211,19 +211,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -249,7 +249,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -259,19 +259,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final? [ResolvedTo(TYPES)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -288,7 +288,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -297,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -307,19 +307,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(STATUS)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -336,7 +336,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -345,7 +345,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -355,19 +355,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -384,7 +384,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -393,7 +393,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -403,19 +403,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+    public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -432,7 +432,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -441,7 +441,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -451,19 +451,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -480,7 +480,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -489,7 +489,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -499,19 +499,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>|>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -528,7 +528,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -537,7 +537,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public open [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -547,19 +547,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             LAZY_super<@R|second/Anno|[Types](i = Int(1).R|kotlin/Int.plus|(R|second/outer|)) Base<R|@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>|>>
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -576,7 +576,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -585,7 +585,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public open [ResolvedTo(STATUS)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(STATUS)] [ModuleNameKey=main] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|second/Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -595,19 +595,19 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             super<R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>|>()
         }
 
-        public open [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|second/MyClass.Base<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -624,7 +624,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNestedNameClashWithAnnotation.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNestedNameClashWithAnnotation.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
             super<R|kotlin/Any|>()
         }
@@ -633,7 +633,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNestedNameClashWithAnnotation.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public open [ResolvedTo(BODY_RESOLVE)] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public open [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|second/Base<T>| {
             super<R|kotlin/Any|>()
         }
@@ -643,19 +643,19 @@ FILE: [ResolvedTo(BODY_RESOLVE)] superTypeCallNestedNameClashWithAnnotation.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String()] val inner: R|kotlin/String| = String()
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
             super<R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(3).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>|>()
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|second/MyClass.Base<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
                 super<R|kotlin/Any|>()
             }

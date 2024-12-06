@@ -3,7 +3,7 @@
   anchor -> [FirRegularClassSymbol Outer.Nested]
 
 FILE: [ResolvedTo(IMPORTS)] qualifiedNestedClassAsAnnotationArgument.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Special : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Special : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Special] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Special.why] why: R|kotlin/reflect/KClass<*>|): R|Special| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -12,14 +12,14 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedNestedClassAsAnnotationArgument.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Special] get(): R|kotlin/reflect/KClass<*>|
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] interface Interface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] interface Interface : R|kotlin/Any| {
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested<@R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|@R|Special|(why = <getClass>(Q|Outer.Nested|))  Interface| {
+        @R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class Nested<@R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|@R|Special|(why = <getClass>(Q|Outer.Nested|))  Interface| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor<@R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T>(): R|Outer.Nested<T>| {
                 LAZY_super<<implicit>>
             }

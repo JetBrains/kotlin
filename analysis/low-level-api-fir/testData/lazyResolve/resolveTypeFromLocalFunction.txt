@@ -1,14 +1,14 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -18,15 +18,15 @@ FILE: [ResolvedTo(RAW_FIR)] resolveTypeFromLocalFunction.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -36,15 +36,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -54,15 +54,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -72,15 +72,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -90,15 +90,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -108,15 +108,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -126,15 +126,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -144,15 +144,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -162,15 +162,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -180,15 +180,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -198,15 +198,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -216,15 +216,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
-    public final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class UsedClass : UsedInterface {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             LAZY_super<<implicit>>
         }
@@ -245,15 +245,15 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] resolveTypeFromLocalFunction.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class UnusedClass : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class UnusedClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface UsedInterface : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] interface UsedInterface : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class UsedClass : R|one/two/UsedInterface| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class UsedClass : R|one/two/UsedInterface| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
             super<R|kotlin/Any|>()
         }

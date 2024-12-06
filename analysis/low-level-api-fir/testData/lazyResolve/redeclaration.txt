@@ -1,12 +1,12 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] redeclaration.kt
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -15,13 +15,13 @@ FILE: [ResolvedTo(RAW_FIR)] redeclaration.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -30,13 +30,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,13 +45,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(COMPANION_GENERATION)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -60,13 +60,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -75,13 +75,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -90,13 +90,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -105,13 +105,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -120,13 +120,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -135,13 +135,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -150,13 +150,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -165,13 +165,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -180,13 +180,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
@@ -195,13 +195,13 @@ FILE: [ResolvedTo(IMPORTS)] redeclaration.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] redeclaration.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }

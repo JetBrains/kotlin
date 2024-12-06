@@ -7,7 +7,7 @@ public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] enum entry
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
-    public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Enum<X>|>
         }

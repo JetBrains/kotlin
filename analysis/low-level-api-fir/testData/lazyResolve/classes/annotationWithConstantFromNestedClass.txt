@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -9,12 +9,12 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithConstantFromNestedClass.kt
             public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithConstantFromNestedClass.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -44,12 +44,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -79,12 +79,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Nested : R|kotlin/Any| {
+            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -114,12 +114,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPANION_GENERATION)] class Nested : R|kotlin/Any| {
+            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(COMPANION_GENERATION)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -140,7 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -149,12 +149,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final? [ResolvedTo(SUPER_TYPES)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? companion [ResolvedTo(SUPER_TYPES)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(SUPER_TYPES)] class Nested : R|kotlin/Any| {
+            @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(SUPER_TYPES)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -184,12 +184,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final? [ResolvedTo(TYPES)] class Outer : R|kotlin/Any| {
+    public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final? companion [ResolvedTo(TYPES)] object Companion : R|kotlin/Any| {
+        public final? companion [ResolvedTo(TYPES)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @R|Anno|[Types](LAZY_EXPRESSION) public final? [ResolvedTo(TYPES)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](LAZY_EXPRESSION) public final? [ResolvedTo(TYPES)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -219,12 +219,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -254,12 +254,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -267,7 +267,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? final? const [ResolvedTo(RAW_FIR)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -289,12 +289,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -302,7 +302,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public final const [ResolvedTo(STATUS)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -324,12 +324,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -337,7 +337,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public final const [ResolvedTo(STATUS)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -359,12 +359,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -372,7 +372,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public final const [ResolvedTo(STATUS)] val CONSTANT_FROM_COMPANION: <implicit> = LAZY_EXPRESSION
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
 
-            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -385,7 +385,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -394,12 +394,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -407,7 +407,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
@@ -420,7 +420,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -429,12 +429,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(STATUS)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(STATUS)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -442,7 +442,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
             public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION|) public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION|) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     super<R|kotlin/Any|>()
                 }
@@ -455,7 +455,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithConstantFromNestedClass.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithConstantFromNestedClass.kt
-    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -464,12 +464,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithConstantFromNestedClass.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class Outer : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Outer : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Outer] constructor(): R|Outer| {
             super<R|kotlin/Any|>()
         }
 
-        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+        public final companion [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] object Companion : R|kotlin/Any| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|Outer.Companion| {
                 super<R|kotlin/Any|>()
             }
@@ -477,7 +477,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithConstantFromNestedClass.kt
             public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val CONSTANT_FROM_COMPANION: R|kotlin/Int| = Int(42)
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
-            @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION|) public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+            @R|Anno|[Types](number = this@R|/Outer.Companion|.R|/Outer.Companion.CONSTANT_FROM_COMPANION|) public final [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Nested : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|Outer.Companion.Nested| {
                     super<R|kotlin/Any|>()
                 }

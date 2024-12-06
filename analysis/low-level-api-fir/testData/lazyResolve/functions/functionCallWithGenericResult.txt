@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -11,7 +11,7 @@ FILE: [ResolvedTo(RAW_FIR)] functionCallWithGenericResult.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+    public open [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] functionCallWithGenericResult.kt
-    public open [ResolvedTo(BODY_RESOLVE)] class Foo<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+    public open [ResolvedTo(BODY_RESOLVE)] [ModuleNameKey=main] class Foo<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
             super<R|kotlin/Any|>()
         }

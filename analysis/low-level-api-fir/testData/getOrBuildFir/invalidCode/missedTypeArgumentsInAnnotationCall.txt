@@ -9,13 +9,13 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] missedTypeArgumentsInAnnotationCall.kt
     package usage
 
-    public final? [ResolvedTo(RAW_FIR)] annotation class B<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+    public final? [ResolvedTo(RAW_FIR)] [ModuleNameKey=main] annotation class B<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor<[ResolvedTo(RAW_FIR)] T>(): R|usage/B<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @<ERROR TYPE REF: Wrong number of type arguments>[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+    @<ERROR TYPE REF: Wrong number of type arguments>[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ModuleNameKey=main] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|usage/A| {
             LAZY_super<R|kotlin/Any|>
         }
