@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.CacheDeserializationStrategy
-import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
@@ -43,16 +42,6 @@ import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsF
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
-
-data class SerializedFileReference(val fqName: String, val path: String) {
-    constructor(irFile: IrFile) : this(irFile.packageFqName.asString(), irFile.path)
-}
-
-class SerializedInlineFunctionReference(val file: SerializedFileReference, val functionSignature: Int, val body: Int,
-                                        val startOffset: Int, val endOffset: Int,
-                                        val extensionReceiverSig: Int, val dispatchReceiverSig: Int, val outerReceiverSigs: IntArray,
-                                        val valueParameterSigs: IntArray, val typeParameterSigs: IntArray,
-                                        val defaultValues: IntArray)
 
 internal object InlineFunctionBodyReferenceSerializer {
     fun serialize(bodies: List<SerializedInlineFunctionReference>): ByteArray {
@@ -108,16 +97,6 @@ internal object InlineFunctionBodyReferenceSerializer {
         }
     }
 }
-// [binaryType] is needed in case a field is of a primitive type. Otherwise we know it's an object type and
-// that is enough information for the backend.
-class SerializedClassFieldInfo(val name: String, val binaryType: Int, val flags: Int, val alignment: Int) {
-    companion object {
-        const val FLAG_IS_CONST = 1
-    }
-}
-
-class SerializedClassFields(val file: SerializedFileReference, val classSignature: IdSignature, val typeParameterSigs: IntArray,
-                            val outerThisIndex: Int, val fields: Array<SerializedClassFieldInfo>)
 
 internal object ClassFieldsSerializer {
 
@@ -223,8 +202,6 @@ internal object ClassFieldsSerializer {
     }
 }
 
-class SerializedEagerInitializedFile(val file: SerializedFileReference)
-
 internal object EagerInitializedPropertySerializer {
     fun serialize(properties: List<SerializedEagerInitializedFile>): ByteArray {
         val stringTable = buildStringTable {
@@ -266,7 +243,7 @@ internal class KonanIrLinker(
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         exportedDependencies: List<ModuleDescriptor>,
         override val partialLinkageSupport: PartialLinkageSupportForLinker,
-        private val cachedLibraries: CachedLibraries,
+        private val cachedLibraries: CachedLibrariesBase,
         private val lazyIrForCaches: Boolean,
         private val libraryBeingCached: PartialCacheInfo?,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport,
