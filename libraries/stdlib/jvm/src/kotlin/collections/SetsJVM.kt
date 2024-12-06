@@ -9,6 +9,7 @@
 package kotlin.collections
 
 import kotlin.collections.builders.SetBuilder
+import java.util.EnumSet
 
 /**
  * Returns a new read-only set containing only the specified object [element].
@@ -62,3 +63,10 @@ public fun <T> sortedSetOf(vararg elements: T): java.util.TreeSet<T> = elements.
  */
 public fun <T> sortedSetOf(comparator: Comparator<in T>, vararg elements: T): java.util.TreeSet<T> = elements.toCollection(java.util.TreeSet<T>(comparator))
 
+/**
+ * Returns a new [EnumSet] with the given elements
+ *
+ * @sample samples.collections.Collections.Sets.enumSet
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified T : Enum<T>> enumSetOf(vararg elements: T): EnumSet<T> = elements.toCollection(EnumSet.noneOf(T::class.java))
