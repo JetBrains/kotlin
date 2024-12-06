@@ -118,8 +118,10 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
         private val ranges = setOf("kotlin.ranges.CharRange", "kotlin.ranges.IntRange", "kotlin.ranges.LongRange")
 
         private fun IrFunction.getSignature(fqName: String = this.fqName): String {
-            val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
-            return this.valueParameters.joinToString(prefix = "$receiver$fqName(", postfix = ")") { it.type.getOnlyName() }
+            val (receiverParameters, otherParameters) = parameters
+                .partition { it.kind == IrParameterKind.DispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver }
+            val receiver = receiverParameters.firstOrNull()?.type?.getOnlyName()?.let { "$it." } ?: ""
+            return otherParameters.joinToString(prefix = "$receiver$fqName(", postfix = ")") { it.type.getOnlyName() }
         }
 
         private fun IrFunction.getJvmClassName(): String? {
