@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -41,11 +44,32 @@ private object TypeAliasConstructorSubstitutorKey : FirDeclarationDataKey()
 
 var FirConstructor.typeAliasConstructorSubstitutor: ConeSubstitutor? by FirDeclarationDataRegistry.data(TypeAliasConstructorSubstitutorKey)
 
-class TypeAliasConstructorsSubstitutingScope(
+class TypeAliasConstructorsSubstitutingScope private constructor(
     private val typeAliasSymbol: FirTypeAliasSymbol,
     private val delegatingScope: FirScope,
     private val session: FirSession,
 ) : FirScope() {
+    companion object {
+        fun initialize(
+            typeAliasSymbol: FirTypeAliasSymbol,
+            session: FirSession,
+            scopeSession: ScopeSession,
+        ): TypeAliasConstructorsSubstitutingScope? {
+            val expandedType = typeAliasSymbol.resolvedExpandedTypeRef.coneType.fullyExpandedType(session)
+            val expandedTypeScope = expandedType.scope(
+                session, scopeSession,
+                CallableCopyTypeCalculator.DoNothing,
+                // Must be `STATUS`; otherwise we can't create substitution overrides for constructor symbols,
+                // which we need to map typealias arguments to the expanded type arguments, which happens when
+                // we request declared constructor symbols from the scope returned below.
+                // See: `LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated.testTypealiasAnnotationWithFixedTypeArgument`
+                requiredMembersPhase = FirResolvePhase.STATUS,
+            ) ?: return null
+
+            return TypeAliasConstructorsSubstitutingScope(typeAliasSymbol, expandedTypeScope, session)
+        }
+    }
+
     private val aliasedTypeExpansionGloballyEnabled: Boolean = session
         .languageVersionSettings
         .getFlag(AnalysisFlags.expandTypeAliasesInTypeResolution)
