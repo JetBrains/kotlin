@@ -6,7 +6,9 @@ import com.intellij.util.Processor
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.ID
 
-fun <K, V> ID<K, V>.indexValueDescriptor(): ValueDescriptor<Map<K, V>> =
+private data class Box<T>(val value: T)
+
+private fun <K, V> ID<K, V>.indexValueDescriptor(): ValueDescriptor<Map<K, Box<V>>> =
     ValueDescriptor("indexValue${name}", Serializer.dummy())
 
 fun interface FileLocator {
@@ -31,7 +33,7 @@ fun Index.fileBased(fileLocator: FileLocator): FileBasedIndex = let { index ->
                         .value(documentId, valueDescriptor)
                         ?.get(dataKey)
                 }
-                .all(processor::process)
+                .all { (v) -> processor.process(v) }
         }
 
         override fun <K, V> processAllKeys(
@@ -55,9 +57,9 @@ fun Index.fileBased(fileLocator: FileLocator): FileBasedIndex = let { index ->
 fun fileBasedIndexesUpdates(fileContent: FileContent, extensions: List<FileBasedIndexExtension<*, *>>): List<IndexUpdate<*>> =
     extensions.map { extension ->
         @Suppress("UNCHECKED_CAST")
-        extension as FileBasedIndexExtension<Any, Any>
+        extension as FileBasedIndexExtension<Any, Any?>
         val indexId = extension.name
-        val map = extension.indexer.map(fileContent)
+        val map = extension.indexer.map(fileContent).mapValues { (_, v) -> Box(v) }
         val keyDescriptor = indexId.asKeyDescriptor()
         IndexUpdate(
             documentId = DocumentId(VirtualFileDocumentIdDescriptor, fileContent.file),

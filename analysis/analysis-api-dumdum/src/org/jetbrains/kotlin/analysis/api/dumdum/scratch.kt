@@ -163,8 +163,8 @@ fun main() {
 
             val files = mapOf(
                 "foo.kt" to """
-//                package foo
-//                import bar.Bar
+                package foo
+                import bar.Bar
                 class Foo {
                     fun foo() { Bar().bar() }
                 }
@@ -172,8 +172,8 @@ fun main() {
                 """.trimIndent(),
 
                 "bar.kt" to """
-//                package bar
-//                import foo.Foo
+                package bar
+                import foo.Foo
                 class Bar {
                     fun bar() { Foo().foo() }
                 }
