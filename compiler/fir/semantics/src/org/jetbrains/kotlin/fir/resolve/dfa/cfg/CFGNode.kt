@@ -28,10 +28,7 @@ annotation class CfgInternals
 
 sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int) {
     @OptIn(CfgInternals::class)
-    val id: Int = run {
-        owner.registeredNodes += this
-        owner.nodeCount++
-    }
+    val id: Int = owner.nodeCount++
 
     //   a ---> b ---> d
     //      \-> c -/
