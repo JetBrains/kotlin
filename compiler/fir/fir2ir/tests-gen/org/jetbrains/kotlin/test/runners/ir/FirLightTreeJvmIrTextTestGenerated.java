@@ -3896,6 +3896,36 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
       }
 
       @Test
+      @TestMetadata("lateinitPropertiesFakeOverrideJKK.kt")
+      public void testLateinitPropertiesFakeOverrideJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesFakeOverrideJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesJJK.kt")
+      public void testLateinitPropertiesJJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesJJK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesJK.kt")
+      public void testLateinitPropertiesJK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesJK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesJKK.kt")
+      public void testLateinitPropertiesJKK() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesJKK.kt");
+      }
+
+      @Test
+      @TestMetadata("lateinitPropertiesSeparateModule.kt")
+      public void testLateinitPropertiesSeparateModule() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/visibility/lateinitPropertiesSeparateModule.kt");
+      }
+
+      @Test
       @TestMetadata("overrideKotlinMethodsKJKK.kt")
       public void testOverrideKotlinMethodsKJKK() {
         runTest("compiler/testData/ir/irText/fakeOverrides/visibility/overrideKotlinMethodsKJKK.kt");
