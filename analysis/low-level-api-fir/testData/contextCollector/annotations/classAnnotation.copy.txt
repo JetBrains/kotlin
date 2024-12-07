@@ -28,7 +28,7 @@ Tower Data Context:
         Scope: FirNestedClassifierScopeImpl
             Classifiers:
                 FirRegularClassSymbol public final? companion object Companion : R|kotlin/Any|
-                FirRegularClassSymbol public final class NestedClass : R|kotlin/Any|
+                FirRegularClassSymbol public final? class NestedClass : R|kotlin/Any|
 
 FILE: [ResolvedTo(RAW_FIR)] classAnnotation.kt
     public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {

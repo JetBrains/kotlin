@@ -22,12 +22,12 @@ Tower Data Context:
         Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
     Element 8
         Implicit receiver:
-            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+            FirRegularClassSymbol public final? companion object Companion : R|kotlin/Any|
                 Type: pack.MyEnumClass.Companion
     Element 9
         Scope: FirNestedClassifierScopeImpl
             Classifiers:
-                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                FirRegularClassSymbol public final? companion object Companion : R|kotlin/Any|
         Scope: FirNameAwareOnlyCallablesScope
             Functions
                 FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|pack/MyEnumClass|
