@@ -1092,4 +1092,14 @@ extern "C" ALWAYS_INLINE const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForObjCCl
   return nullptr;
 }
 
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForProtocol(Protocol* protocol) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
+}
+
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForClass(Class clazz) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
+}
+
 #endif // KONAN_OBJC_INTEROP
