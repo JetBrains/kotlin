@@ -4,6 +4,9 @@ fun test(a: Any) {
     }
 
     <expr>check</expr>(a.process())
+
+    // Force partial body resolution
+    check(true)
 }
 
 fun check(condition: Boolean) {}

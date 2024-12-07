@@ -21,9 +21,9 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] localFunction.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyResolveStateKey=1(1/2) #1] fun test(): R|kotlin/Unit| {
+        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Unit| {
         }
 
-        R|<local>/local|()
+        local#()
     }

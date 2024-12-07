@@ -187,6 +187,7 @@ private class FirTowerDataContextProvider private constructor(
                 firFile,
                 designation,
                 preferBodyContext = false, // we only query SELF context
+                shouldTriggerBodyAnalysis = true,
                 filter = { ContextCollector.FilterResponse.CONTINUE }
             )
 

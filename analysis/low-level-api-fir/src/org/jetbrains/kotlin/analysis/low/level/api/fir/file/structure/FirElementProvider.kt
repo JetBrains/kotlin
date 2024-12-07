@@ -64,6 +64,15 @@ internal class PartialBodyDeclarationFirElementProvider(
             )
         }
 
+        fun isPartiallyResolvable(element: KtElement, declaration: KtDeclaration): Boolean {
+            val block = declaration.bodyBlock ?: return false
+            val container = findContainer(element, declaration, block, block.statements)
+            return when (container) {
+                is ElementContainer.Body, ElementContainer.SignatureBody -> true
+                else -> false
+            }
+        }
+
         private fun findContainer(
             psiElement: KtElement,
             psiDeclaration: KtDeclaration,
