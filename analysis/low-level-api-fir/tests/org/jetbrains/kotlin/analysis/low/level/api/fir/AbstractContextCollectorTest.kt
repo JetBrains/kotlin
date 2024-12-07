@@ -61,15 +61,11 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
         useBodyElement: Boolean
     ) {
         val resolutionFacade = mainModule.ktModule.getResolutionFacade(mainFile.project)
-        val session = resolutionFacade.useSiteFirSession
-        val sessionHolder = SessionHolderImpl(session, session.getScopeSession())
-
         val firFile = mainFile.getOrBuildFirFile(resolutionFacade)
-
         val targetElement = testServices.expressionMarkerProvider
             .getBottommostSelectedElementOfType(mainFile, KtElement::class)
 
-        val elementContext = ContextCollector.process(firFile, sessionHolder, targetElement, useBodyElement)
+        val elementContext = ContextCollector.process(firFile, targetElement, useBodyElement)
             ?: error("Context not found for element $targetElement")
 
         val firRenderer = FirRenderer.withResolvePhase()

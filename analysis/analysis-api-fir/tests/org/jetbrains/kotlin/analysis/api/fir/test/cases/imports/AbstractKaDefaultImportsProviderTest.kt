@@ -88,11 +88,8 @@ abstract class AbstractKaDefaultImportsProviderTest : AbstractAnalysisApiBasedTe
 
     private fun getDefaultImportsUsedInResolve(kaModule: KaModule, ktFile: KtFile): List<KaDefaultImport> {
         val resolutionFacade = kaModule.getResolutionFacade(kaModule.project)
-        val context = ContextCollector.process(
-            ktFile.getOrBuildFirFile(resolutionFacade),
-            SessionHolderImpl.Companion.createWithEmptyScopeSession(resolutionFacade.useSiteFirSession),
-            ktFile,
-        )!!
+        val firFile = ktFile.getOrBuildFirFile(resolutionFacade)
+        val context = ContextCollector.process(firFile, ktFile)!!
 
         return context.towerDataContext.towerDataElements
             .flatMap { it.getAvailableScopes() }
