@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.calls.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -293,11 +292,8 @@ internal class KaFirScopeProvider(
         val parentKDoc = position.parentOfType<KDoc>()
         val correctedPosition = parentKDoc?.owner ?: position
 
-        val context = ContextCollector.process(
-            fakeFile.getOrBuildFirFile(resolutionFacade),
-            SessionHolderImpl(analysisSession.firSession, getScopeSession()),
-            correctedPosition,
-        )
+        val firFakeFile = fakeFile.getOrBuildFirFile(resolutionFacade)
+        val context = ContextCollector.process(firFakeFile, correctedPosition)
 
         val towerDataContext =
             context?.towerDataContext
