@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
 /**
  * Represents the incomplete body resolve state.
@@ -37,4 +40,14 @@ internal data class LLPartialBodyResolveState(
 internal class LLPartialBodyResolveSnapshot(
     val towerDataContext: FirTowerDataContext,
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext
-)
+) {
+    @OptIn(CfgInternals::class)
+    val controlFlowGraphNodes: List<CFGNode<*>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        /**
+         * Here we cannot use [ControlFlowGraph.nodes] directly, as the graph is incomplete.
+         * Still, partial body resolution only covers the topmost block statements, and there should be no jumps between them.
+         * So CFG for the analyzed part is complete and can be used for getting smartcast information.
+         * */
+        dataFlowAnalyzerContext.currentGraph.orderNodes(isComplete = false)
+    }
+}

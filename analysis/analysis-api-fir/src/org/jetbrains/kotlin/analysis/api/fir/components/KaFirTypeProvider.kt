@@ -244,7 +244,7 @@ internal class KaFirTypeProvider(
         val ktFile = position.containingKtFile
         val firFile = ktFile.getOrBuildFirFile(firResolveSession)
 
-        val context = ContextCollector.process(firFile, position)
+        val context = ContextCollector.process(firResolveSession, firFile, position)
             ?: errorWithAttachment("Cannot find context for ${position::class}") {
                 withPsiEntry("position", position)
             }

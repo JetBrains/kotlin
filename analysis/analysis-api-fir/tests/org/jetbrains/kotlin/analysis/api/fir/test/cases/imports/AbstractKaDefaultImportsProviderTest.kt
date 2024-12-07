@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.scopes.impl.DefaultImportPriority
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
@@ -89,7 +88,7 @@ abstract class AbstractKaDefaultImportsProviderTest : AbstractAnalysisApiBasedTe
     private fun getDefaultImportsUsedInResolve(kaModule: KaModule, ktFile: KtFile): List<KaDefaultImport> {
         val firResolveSession = kaModule.getFirResolveSession(kaModule.project)
         val firFile = ktFile.getOrBuildFirFile(firResolveSession)
-        val context = ContextCollector.process(firFile, ktFile)!!
+        val context = ContextCollector.process(firResolveSession, firFile, ktFile)!!
 
         return context.towerDataContext.towerDataElements
             .flatMap { it.getAvailableScopes() }
