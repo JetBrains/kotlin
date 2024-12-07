@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.test.backend.handlers.NoLightTreeParsingErrorsHandle
 import org.jetbrains.kotlin.test.backend.handlers.NoPsiParsingErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.testTierExceptionInverter
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
-import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
@@ -334,6 +337,14 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
     forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava21/*") {
         defaultDirectives {
             JDK_KIND with TestJdkKind.FULL_JDK_21
+            +WITH_STDLIB
+            +WITH_REFLECT
+        }
+    }
+
+    forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava23/*") {
+        defaultDirectives {
+            JDK_KIND with TestJdkKind.FULL_JDK_23
             +WITH_STDLIB
             +WITH_REFLECT
         }
