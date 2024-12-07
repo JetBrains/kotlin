@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.createValueClassRepresentation
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -36,6 +39,8 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
 }
 
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
+    val isValhallaSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.ValhallaValueClasses)
+    if (isValhallaSupported && !klass.hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, session) && klass.hasValueModifier()) return null
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
     val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
     fields.singleOrNull()?.let { (name, type) ->
@@ -45,6 +50,23 @@ fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession)
     }
 
     return createValueClassRepresentation(session.typeContext, fields)
+}
+
+// todo replace with a proper way of understanding if we have value modifier, not inline.
+//   the problem is that
+//   FirElement.hasModifier(token: KtModifierKeywordToken): Boolean cannot be copied/accessed/reimplemented here
+//   because of the lacking dependencies.
+private fun FirRegularClass.hasValueModifier(): Boolean {
+    val sourceText = source?.text ?: return false
+    for (word in sourceText.splitToSequence(' ')) {
+        return when (word) {
+            "value" -> true
+            "class" -> false
+            "interface" -> false
+            else -> continue
+        }
+    }
+    return false
 }
 
 private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSession): List<FirValueParameter>? {

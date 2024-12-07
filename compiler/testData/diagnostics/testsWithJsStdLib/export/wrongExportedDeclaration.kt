@@ -49,10 +49,10 @@ value class <!WRONG_EXPORTED_DECLARATION("value class")!>A(val a: Int)<!>
 inline class <!WRONG_EXPORTED_DECLARATION("inline class")!>B(val b: Int)<!>
 
 @JsExport
-inline value class <!WRONG_EXPORTED_DECLARATION("inline value class")!>C(val c: Int)<!>
+<!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>value<!> class <!WRONG_EXPORTED_DECLARATION("inline value class")!>C(val c: Int)<!>
 
 @JsExport
-value inline class <!WRONG_EXPORTED_DECLARATION("inline value class")!>D(val d: Int)<!>
+<!INCOMPATIBLE_MODIFIERS!>value<!> <!INCOMPATIBLE_MODIFIERS!>inline<!> class <!WRONG_EXPORTED_DECLARATION("inline value class")!>D(val d: Int)<!>
 
 @JsExport
 external interface ExternalInterface

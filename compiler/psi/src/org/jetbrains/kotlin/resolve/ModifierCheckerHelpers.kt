@@ -63,6 +63,7 @@ private fun buildCompatibilityMap(): Map<Pair<KtKeywordToken, KtKeywordToken>, C
     result += incompatibilityRegister(DATA_KEYWORD, SEALED_KEYWORD)
     result += incompatibilityRegister(DATA_KEYWORD, INLINE_KEYWORD)
     result += incompatibilityRegister(DATA_KEYWORD, VALUE_KEYWORD)
+    result += incompatibilityRegister(INLINE_KEYWORD, VALUE_KEYWORD)
     result += incompatibilityRegister(DATA_KEYWORD, OBJECT_KEYWORD, EXPECT_KEYWORD)
     // open is redundant to abstract & override
     result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
