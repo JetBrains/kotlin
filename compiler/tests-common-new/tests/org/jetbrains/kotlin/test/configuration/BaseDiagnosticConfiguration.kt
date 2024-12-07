@@ -245,6 +245,14 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
         }
     }
 
+    forTestsMatching("compiler/testData/diagnostics/tests/testsWithJava23/*") {
+        defaultDirectives {
+            JDK_KIND with TestJdkKind.FULL_JDK_23
+            +WITH_STDLIB
+            +WITH_REFLECT
+        }
+    }
+
     forTestsMatching("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/*") {
         defaultDirectives {
             LANGUAGE + "+ExplicitBackingFields"

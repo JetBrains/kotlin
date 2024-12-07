@@ -59,6 +59,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             return
         }
 
+        val isValhallaValueClass = declaration.isValhallaValueClass(context)
+
         if (declaration.isInner || declaration.isLocal) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL, context)
         }
@@ -109,7 +111,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 }
 
                 is FirRegularClass -> {
-                    if (innerDeclaration.isInner) {
+                    if (innerDeclaration.isInner && !isValhallaValueClass) {
                         reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_VALUE_CLASS, context)
                     }
                 }
@@ -158,7 +160,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
 
-        val reservedNames = boxAndUnboxNames + if (isCustomEqualsSupported) emptySet() else equalsAndHashCodeNames
+        val reservedNames = when {
+            isValhallaValueClass -> emptySet()
+            isCustomEqualsSupported -> boxAndUnboxNames
+            else -> boxAndUnboxNames + equalsAndHashCodeNames
+        }
         val classScope = declaration.unsubstitutedScope(context)
         for (reservedName in reservedNames) {
             classScope.processFunctionsByName(Name.identifier(reservedName)) {
@@ -191,7 +197,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
+        val arePreValhallaMultiFieldValueClassesSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
+        if (arePreValhallaMultiFieldValueClassesSupported || isValhallaValueClass) {
             if (primaryConstructorParametersByName.isEmpty()) {
                 reporter.reportOn(primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR, context)
                 return
@@ -202,40 +209,32 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
 
         for ((name, primaryConstructorParameter) in primaryConstructorParametersByName) {
+            val parameterTypeRef = primaryConstructorParameter.returnTypeRef
+            val parameterType = parameterTypeRef.coneType
             when {
                 primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
                     reporter.reportOn(
-                        primaryConstructorParameter.source,
-                        FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-                        context
+                        primaryConstructorParameter.source, FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, context
                     )
 
                 !context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
-                        primaryConstructorParameter.returnTypeRef.coneType.let {
-                            it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter()
-                        } -> {
+                        parameterType.let { it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter() } -> {
                     reporter.reportOn(
-                        primaryConstructorParameter.returnTypeRef.source,
+                        parameterTypeRef.source,
                         FirErrors.UNSUPPORTED_FEATURE,
                         LanguageFeature.GenericInlineClassParameter to context.languageVersionSettings,
                         context
                     )
                 }
 
-                primaryConstructorParameter.returnTypeRef.isInapplicableParameterType(context.session) -> {
+                !isValhallaValueClass && parameterTypeRef.isInapplicableParameterType(context.session) -> {
                     reporter.reportOn(
-                        primaryConstructorParameter.returnTypeRef.source,
-                        FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                        primaryConstructorParameter.returnTypeRef.coneType,
-                        context
+                        parameterTypeRef.source, FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, parameterType, context
                     )
                 }
 
-                primaryConstructorParameter.returnTypeRef.coneType.isRecursiveValueClassType(context.session) -> {
-                    reporter.reportOn(
-                        primaryConstructorParameter.returnTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
-                        context
-                    )
+                !isValhallaValueClass && parameterType.isRecursiveValueClassType(context.session) -> {
+                    reporter.reportOn(parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE, context)
                 }
 
                 declaration.multiFieldValueClassRepresentation != null && primaryConstructorParameter.defaultValue != null -> {
@@ -286,6 +285,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
     }
+
+    private fun FirRegularClass.isValhallaValueClass(context: CheckerContext): Boolean =
+        context.languageVersionSettings.supportsFeature(LanguageFeature.ValhallaValueClasses) &&
+                hasModifier(KtTokens.VALUE_KEYWORD) &&
+                !hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, context.session)
 
     private fun FirProperty.isRelatedToParameter(parameter: FirValueParameter?) =
         name == parameter?.name && source?.kind is KtFakeSourceElementKind

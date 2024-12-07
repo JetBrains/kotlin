@@ -4784,6 +4784,12 @@ internal class ValueClassWithoutJvmInlineAnnotationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassWithoutJvmInlineAnnotation
 
+internal class ValhallaValueClassOnOldJvmTargetImpl(
+    override val currentTargetJvmVersion: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ValhallaValueClassOnOldJvmTarget
+
 internal class JvmInlineWithoutValueClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

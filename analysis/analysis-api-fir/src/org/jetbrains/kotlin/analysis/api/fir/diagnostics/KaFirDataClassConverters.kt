@@ -5702,6 +5702,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.VALHALLA_VALUE_CLASS_ON_OLD_JVM_TARGET) { firDiagnostic ->
+        ValhallaValueClassOnOldJvmTargetImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS) { firDiagnostic ->
         JvmInlineWithoutValueClassImpl(
             firDiagnostic as KtPsiDiagnostic,

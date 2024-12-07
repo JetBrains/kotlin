@@ -40206,6 +40206,40 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava23")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TestsWithJava23 {
+      @Test
+      public void testAllFilesPresentInTestsWithJava23() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithJava23"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+      }
+
+      @Test
+      @TestMetadata("basicSyntax.kt")
+      public void testBasicSyntax() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava23/basicSyntax.kt");
+      }
+
+      @Test
+      @TestMetadata("oldJDKs.kt")
+      public void testOldJDKs() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava23/oldJDKs.kt");
+      }
+
+      @Test
+      @TestMetadata("recursive.kt")
+      public void testRecursive() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava23/recursive.kt");
+      }
+
+      @Test
+      @TestMetadata("reservedNames.kt")
+      public void testReservedNames() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava23/reservedNames.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
     @TestDataPath("$PROJECT_ROOT")
     public class ThisAndSuper {

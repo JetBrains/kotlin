@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
 
@@ -77,6 +79,9 @@ fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
 
     return isInlineOrValue
 }
+
+val JVM_INLINE_ANNOTATION_FQ_NAME: FqName = FqName("kotlin.jvm.JvmInline")
+val JVM_INLINE_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_NAME)
 
 @PrivateForInline
 inline val FirDeclarationOrigin.isJavaOrEnhancement: Boolean

@@ -41385,6 +41385,35 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/testsWithJava23")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TestsWithJava23 {
+      @Test
+      @TestMetadata("basicSyntax.kt")
+      public void testBasicSyntax() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava23/basicSyntax.kt");
+      }
+
+      @Test
+      @TestMetadata("oldJDKs.kt")
+      public void testOldJDKs() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava23/oldJDKs.kt");
+      }
+
+      @Test
+      @TestMetadata("recursive.kt")
+      public void testRecursive() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava23/recursive.kt");
+      }
+
+      @Test
+      @TestMetadata("reservedNames.kt")
+      public void testReservedNames() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava23/reservedNames.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
     @TestDataPath("$PROJECT_ROOT")
     public class ThisAndSuper {

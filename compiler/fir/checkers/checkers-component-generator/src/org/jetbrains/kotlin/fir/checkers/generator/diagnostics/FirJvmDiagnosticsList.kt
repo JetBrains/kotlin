@@ -40,6 +40,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val FUNCTION_DELEGATE_MEMBER_NAME_CLASH by error<PsiElement>(PositioningStrategy.DECLARATION_NAME)
 
         val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
+        val VALHALLA_VALUE_CLASS_ON_OLD_JVM_TARGET by error<PsiElement> {
+            parameter<String>("currentTargetJvmVersion")
+        }
         val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
 
         val WRONG_NULLABILITY_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {

@@ -63,6 +63,7 @@ object FirJvmErrors {
     val ILLEGAL_JVM_NAME: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_JVM_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val FUNCTION_DELEGATE_MEMBER_NAME_CLASH: KtDiagnosticFactory0 = KtDiagnosticFactory0("FUNCTION_DELEGATE_MEMBER_NAME_CLASH", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, PsiElement::class)
     val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
+    val VALHALLA_VALUE_CLASS_ON_OLD_JVM_TARGET: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("VALHALLA_VALUE_CLASS_ON_OLD_JVM_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val JVM_INLINE_WITHOUT_VALUE_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_INLINE_WITHOUT_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val WRONG_NULLABILITY_FOR_JAVA_OVERRIDE: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("WRONG_NULLABILITY_FOR_JAVA_OVERRIDE", WARNING, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, PsiElement::class)
     val ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE: KtDiagnosticFactory3<FirNamedFunctionSymbol, String, FirNamedFunctionSymbol> = KtDiagnosticFactory3("ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedFunction::class)
