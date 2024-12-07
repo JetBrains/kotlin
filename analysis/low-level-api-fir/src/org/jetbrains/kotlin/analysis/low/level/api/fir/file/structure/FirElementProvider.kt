@@ -50,7 +50,7 @@ internal class PartialBodyDeclarationFirElementProvider(
     private val psiStatements: List<KtExpression>,
     private val session: LLFirResolvableModuleSession
 ) : DeclarationFirElementProvider {
-    private companion object {
+    companion object {
         private val LOG = logger<PartialBodyDeclarationFirElementProvider>()
 
         private fun createEmptyState(psiStatementCount: Int): LLPartialBodyResolveState {
@@ -62,6 +62,70 @@ internal class PartialBodyDeclarationFirElementProvider(
                 analysisStateSnapshot = null,
                 previousState = null
             )
+        }
+
+        private fun findContainer(
+            psiElement: KtElement,
+            psiDeclaration: KtDeclaration,
+            psiBlock: KtBlockExpression,
+            psiStatements: List<KtExpression>,
+        ): ElementContainer {
+            var previous: PsiElement? = null
+
+            for (current in psiElement.parentsWithSelf) {
+                when (current) {
+                    psiBlock -> {
+                        when (previous) {
+                            null -> {
+                                // The body block itself is requested.
+                                // Here we treat it as a last statement of that block.
+                                return ElementContainer.Body(psiStatements.lastIndex)
+                            }
+                            is KtElement -> {
+                                val psiStatementIndex = psiStatements.indexOf(previous)
+                                checkWithAttachment(psiStatementIndex >= 0, { "The topmost statement was not found" }) {
+                                    withPsiEntry("statement", previous)
+                                    withPsiEntry("declaration", psiDeclaration)
+                                }
+                                return ElementContainer.Body(psiStatementIndex)
+                            }
+                            else -> break
+                        }
+                    }
+                    is KtParameter -> {
+                        val parentParameterList = current.parent as? KtParameterList
+                        val parentDeclaration = parentParameterList?.parent
+
+                        // There can be local declarations, destructuring declarations, etc.
+                        if (parentDeclaration == psiDeclaration) {
+                            return if (previous is KtExpression && current.defaultValue == previous) {
+                                ElementContainer.SignatureBody
+                            } else {
+                                ElementContainer.Signature
+                            }
+                        }
+                    }
+                    is KtConstructorDelegationCall -> {
+                        if (current.parent == psiDeclaration) {
+                            return ElementContainer.SignatureBody
+                        }
+                    }
+                    psiDeclaration -> {
+                        return ElementContainer.Signature
+                    }
+                }
+
+                previous = current
+            }
+
+            val error = buildErrorWithAttachment("Cannot find the element container") {
+                withPsiEntry("element", psiElement)
+                withPsiEntry("declaration", psiDeclaration)
+            }
+
+            LOG.error(error)
+
+            return ElementContainer.Unknown
         }
     }
 
@@ -97,7 +161,7 @@ internal class PartialBodyDeclarationFirElementProvider(
         get() = session.moduleComponents.globalResolveComponents.lockProvider
 
     override fun invoke(psiElement: KtElement): FirElement? {
-        val container = findContainer(psiElement)
+        val container = findContainer(psiElement, psiDeclaration, psiBlock, psiStatements)
 
         val hasBodyFullyResolved = when (container) {
             ElementContainer.Unknown -> return null
@@ -251,7 +315,7 @@ internal class PartialBodyDeclarationFirElementProvider(
     /**
      * Represents the location of a [PsiElement] for which the FIR mapping was requested.
      */
-    private sealed class ElementContainer {
+    sealed class ElementContainer {
         /**
          * The element resides in a declaration signature analysis of which is already complete.
          * [FirResolvePhase.BODY_RESOLVE] is not required to get its mapping.
@@ -274,65 +338,6 @@ internal class PartialBodyDeclarationFirElementProvider(
          * Some unexpected element.
          */
         data object Unknown : ElementContainer()
-    }
-
-    private fun findContainer(psiElement: KtElement): ElementContainer {
-        var previous: PsiElement? = null
-
-        for (current in psiElement.parentsWithSelf) {
-            when (current) {
-                psiBlock -> {
-                    when (previous) {
-                        null -> {
-                            // The body block itself is requested.
-                            // Here we treat it as a last statement of that block.
-                            return ElementContainer.Body(psiStatements.lastIndex)
-                        }
-                        is KtElement -> {
-                            val psiStatementIndex = psiStatements.indexOf(previous)
-                            checkWithAttachment(psiStatementIndex >= 0, { "The topmost statement was not found" }) {
-                                withPsiEntry("statement", previous)
-                                withPsiEntry("declaration", psiDeclaration)
-                            }
-                            return ElementContainer.Body(psiStatementIndex)
-                        }
-                        else -> break
-                    }
-                }
-                is KtParameter -> {
-                    val parentParameterList = current.parent as? KtParameterList
-                    val parentDeclaration = parentParameterList?.parent
-
-                    // There can be local declarations, destructuring declarations, etc.
-                    if (parentDeclaration == psiDeclaration) {
-                        return if (previous is KtExpression && current.defaultValue == previous) {
-                            ElementContainer.SignatureBody
-                        } else {
-                            ElementContainer.Signature
-                        }
-                    }
-                }
-                is KtConstructorDelegationCall -> {
-                    if (current.parent == psiDeclaration) {
-                        return ElementContainer.SignatureBody
-                    }
-                }
-                psiDeclaration -> {
-                    return ElementContainer.Signature
-                }
-            }
-
-            previous = current
-        }
-
-        val error = buildErrorWithAttachment("Cannot find the element container") {
-            withPsiEntry("element", psiElement)
-            withPsiEntry("declaration", psiDeclaration)
-        }
-
-        LOG.error(error)
-
-        return ElementContainer.Unknown
     }
 
     /**
@@ -364,3 +369,10 @@ internal class PartialBodyDeclarationFirElementProvider(
         return true
     }
 }
+
+internal val KtDeclaration.bodyBlock: KtBlockExpression?
+    get() = when (this) {
+        is KtAnonymousInitializer -> body as? KtBlockExpression
+        is KtDeclarationWithBody -> bodyBlockExpression
+        else -> null
+    }

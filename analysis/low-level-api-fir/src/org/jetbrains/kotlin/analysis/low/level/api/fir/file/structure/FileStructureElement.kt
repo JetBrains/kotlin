@@ -261,13 +261,6 @@ internal class DeclarationStructureElement(
             declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return EagerDeclarationFirElementProvider(declaration)
         }
-
-        private val KtDeclaration.bodyBlock: KtBlockExpression?
-            get() = when (this) {
-                is KtAnonymousInitializer -> body as? KtBlockExpression
-                is KtDeclarationWithBody -> bodyBlockExpression
-                else -> null
-            }
     }
 
     object Recorder : AbstractRecorder()
