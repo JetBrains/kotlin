@@ -82,6 +82,10 @@ class DataFlowAnalyzerContext private constructor(
         variableStorage = VariableStorage(session)
     }
 
+    @CfgInternals
+    val currentGraph: ControlFlowGraph
+        get() = graphBuilder.currentGraph
+
     internal var graphBuilder: ControlFlowGraphBuilder = graphBuilder
         private set
 
