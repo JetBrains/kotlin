@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -120,15 +119,8 @@ private class KaFirCompletionExtensionCandidateChecker(
     }
 
     private fun computeImplicitReceivers(firFakeFile: FirFile): List<ImplicitReceiverValue<*>> {
-        val sessionHolder = run {
-            val firSession = firFakeFile.llFirSession
-            val scopeSession = firResolveSession.getScopeSessionFor(firSession)
-            SessionHolderImpl(firSession, scopeSession)
-        }
-
         val elementContext = ContextCollector.process(
             file = firFakeFile,
-            holder = sessionHolder,
             targetElement = nameExpression,
             preferBodyContext = false
         )

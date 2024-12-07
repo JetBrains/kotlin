@@ -529,12 +529,8 @@ private class LLFirBodyTargetResolver(private val target: LLFirResolveTarget) : 
         val contextKtFile = contextPsiElement?.containingFile as? KtFile
 
         return if (contextKtFile != null) {
-            val contextModule = resolveSession.getModule(contextKtFile)
-            val contextSession = resolveSession.sessionProvider.getResolvableSession(contextModule)
             val contextFirFile = resolveSession.getOrBuildFirFile(contextKtFile)
-
-            val sessionHolder = SessionHolderImpl(contextSession, contextSession.getScopeSession())
-            val elementContext = ContextCollector.process(contextFirFile, sessionHolder, contextPsiElement)
+            val elementContext = ContextCollector.process(contextFirFile, contextPsiElement)
                 ?: errorWithAttachment("Cannot find enclosing context for ${contextPsiElement::class}") {
                     withPsiEntry("contextPsiElement", contextPsiElement)
                 }
