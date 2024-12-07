@@ -838,7 +838,7 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private class Processor(private val delegate: FirVisitorVoid) {
+    private inner class Processor(private val delegate: FirVisitorVoid) {
         private val elementsToSkip = HashSet<FirElement>()
 
         @ContextCollectorDsl
@@ -864,9 +864,9 @@ private class ContextCollectorVisitor(
         }
     }
 
-    private class FilteringVisitor(val delegate: FirVisitorVoid, val elementsToSkip: Set<FirElement>) : FirVisitorVoid() {
+    private inner class FilteringVisitor(val delegate: FirVisitorVoid, val elementsToSkip: Set<FirElement>) : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
-            if (element !in elementsToSkip) {
+            if (isActive && element !in elementsToSkip) {
                 element.accept(delegate)
             }
         }
