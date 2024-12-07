@@ -90,16 +90,16 @@ object ContextCollector {
      * @param file The file to process.
      * @param holder The [SessionHolder] for the session that owns a [file].
      * @param targetElement The most precise element for which the context is required.
-     * @param bodyElement An element for which the [ContextKind.BODY] context is preferred.
+     * @param preferBodyContext Whether a [ContextKind.BODY] context is preferred for the [targetElement].
+     * For parents of [targetElement], [ContextKind.BODY] is *never* returned.
      *
-     * Returns the context of the [targetElement] if available, or of one of its tree parents.
+     * @return The context of the [targetElement] if available, or of one of its tree parents.
      * Returns `null` if the context was not collected.
      */
-    fun process(file: FirFile, holder: SessionHolder, targetElement: PsiElement, bodyElement: PsiElement? = targetElement): Context? {
-        val isBodyContextCollected = bodyElement != null
+    fun process(file: FirFile, holder: SessionHolder, targetElement: PsiElement, preferBodyContext: Boolean = true): Context? {
         val acceptedElements = targetElement.parentsWithSelf.toSet()
 
-        val contextProvider = process(file, holder, computeDesignation(file, targetElement), isBodyContextCollected) { candidate ->
+        val contextProvider = process(file, holder, computeDesignation(file, targetElement), preferBodyContext) { candidate ->
             when (candidate) {
                 targetElement -> FilterResponse.STOP
                 in acceptedElements -> FilterResponse.CONTINUE
@@ -108,7 +108,7 @@ object ContextCollector {
         }
 
         for (acceptedElement in acceptedElements) {
-            if (acceptedElement === bodyElement) {
+            if (preferBodyContext && acceptedElement === targetElement) {
                 val bodyContext = contextProvider[acceptedElement, ContextKind.BODY]
                 if (bodyContext != null) {
                     return bodyContext
@@ -156,18 +156,18 @@ object ContextCollector {
      * @param file The file to process.
      * @param holder The [SessionHolder] for the session that owns a [file].
      * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
-     * @param shouldCollectBodyContext If `true`, [ContextKind.BODY] is collected where available.
+     * @param preferBodyContext If `true`, [ContextKind.BODY] is collected where available.
      * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns `true`.
      */
     fun process(
         file: FirFile,
         holder: SessionHolder,
         designation: FirDesignation?,
-        shouldCollectBodyContext: Boolean,
+        preferBodyContext: Boolean,
         filter: (PsiElement) -> FilterResponse,
     ): ContextProvider {
         val interceptor = designation?.let(::DesignationInterceptor)
-        val visitor = ContextCollectorVisitor(holder, shouldCollectBodyContext, filter, interceptor)
+        val visitor = ContextCollectorVisitor(holder, preferBodyContext, filter, interceptor)
         visitor.collect(file)
 
         return ContextProvider { element, kind -> visitor[element, kind] }
