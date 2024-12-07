@@ -14,7 +14,7 @@ import org.junit.Assume
 import kotlin.test.Test
 import kotlin.test.assertNull
 
-class KT71398KotlinNativeBundleConfigurationOnUnsupportedPlatform {
+class KT71398KotlinNativeBundleConfigurationOnFailOnPublicationAndIgnoreForConsumptionPlatform {
 
     @Test
     fun `KT-71398 - project with multiplatform plugin should not add kotlinNativeBundleConfiguration`() {

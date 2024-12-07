@@ -1,0 +1,4 @@
+plugins {
+    id("org.jetbrains.kotlin.multiplatform") apply false
+    id("com.android.library") apply false
+}

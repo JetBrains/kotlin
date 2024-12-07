@@ -7,11 +7,17 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.publishing
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.attributes.*
+import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.jetbrains.kotlin.gradle.artifacts.uklibsModel.Uklib
+import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.UklibPomDependenciesRewriter
+import org.jetbrains.kotlin.gradle.artifacts.uklibsPublication.archiveUklibTask
+import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -34,6 +40,7 @@ internal val MultiplatformPublishingSetupAction = KotlinProjectSetupCoroutine {
             project.extensions.configure(PublishingExtension::class.java) { publishing ->
                 createRootPublication(project, publishing).also(kotlinMultiplatformRootPublicationImpl::complete)
                 createTargetPublications(project, publishing)
+                // createUklibSpecificMavenPublications(project, publishing)
             }
         } else {
             kotlinMultiplatformRootPublicationImpl.complete(null)
@@ -55,6 +62,12 @@ private fun createRootPublication(project: Project, publishing: PublishingExtens
         (this as MavenPublicationInternal).publishWithOriginalFileName()
 
         addKotlinToolingMetadataArtifactIfNeeded(project)
+        if (project.kotlinPropertiesProvider.publishUklib) {
+            addUklibArtifactAndChangePackagingAndPatchPom(
+                project,
+                kotlinSoftwareComponent,
+            )
+        }
     }
 }
 
@@ -64,6 +77,58 @@ private fun MavenPublication.addKotlinToolingMetadataArtifactIfNeeded(project: P
     artifact(buildKotlinToolingMetadataTask.map { it.outputFile }) { artifact ->
         artifact.classifier = "kotlin-tooling-metadata"
         artifact.builtBy(buildKotlinToolingMetadataTask)
+    }
+}
+
+private fun MavenPublication.addUklibArtifactAndChangePackagingAndPatchPom(
+    project: Project,
+    rootComponent: KotlinSoftwareComponent,
+) {
+    data class ScopedConfigurationDependencies(
+        val dependencySet: DependencySet,
+        val scope: KotlinUsageContext.MavenScope?,
+    )
+
+    val map = project.provider {
+        val dependencyRemapping = mutableMapOf<UklibPomDependenciesRewriter.DependencyGA, KotlinUsageContext.MavenScope>()
+        rootComponent.targetsWithDedicatedComponents.flatMap {
+            it.internal.kotlinComponents.filterIsInstance<KotlinVariant>().filter {
+                it.publishable
+            }.flatMap { publishedComponent ->
+                publishedComponent.internal.usages
+                    .filterIsInstance<DefaultKotlinUsageContext>()
+                    .filter { it.publishOnlyIf.predicate() }
+                    .map { publishedVariant ->
+                        // FIXME: Project dependencies with PI
+                        ScopedConfigurationDependencies(
+                            project.configurations.getByName(publishedVariant.dependencyConfigurationName)
+                                .allDependencies,
+                            publishedVariant.mavenScope,
+                        )
+                    }
+            }
+        }.forEach { set ->
+            set.dependencySet.forEach { dependency ->
+                val dep = UklibPomDependenciesRewriter.DependencyGA(dependency.group, dependency.name)
+                val exScope = dependencyRemapping[dep]
+                when (exScope) {
+                    KotlinUsageContext.MavenScope.COMPILE -> {}
+                    KotlinUsageContext.MavenScope.RUNTIME -> dependencyRemapping[dep] = set.scope ?: KotlinUsageContext.MavenScope.COMPILE
+                    null -> dependencyRemapping[dep] = set.scope ?: KotlinUsageContext.MavenScope.COMPILE
+                }
+            }
+        }
+        dependencyRemapping
+    }
+    // FIXME: This will break coroutines !!!
+    pom.packaging = Uklib.UKLIB_PACKAGING
+    pom.withXml {
+        UklibPomDependenciesRewriter().makeAllDependenciesCompile(it, map.get())
+    }
+    project.launch {
+        artifact(project.archiveUklibTask()) { artifact ->
+            artifact.extension = Uklib.UKLIB_EXTENSION
+        }
     }
 }
 
@@ -82,6 +147,22 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
             else
                 kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
         }
+}
+
+private fun createUklibSpecificMavenPublications(project: Project, publishing: PublishingExtension) {
+    val publications = publishing.publications
+    project.launch {
+        val metadataTarget = project.multiplatformExtension.awaitMetadataTarget()
+        val componentPublication = publications.create("uklib", MavenPublication::class.java).apply {
+            artifactId = "${artifactId}-uklib"
+
+            // FIXME: jvm + uklib
+//            artifact(
+//
+//            )
+        }
+        metadataTarget.onPublicationCreated(componentPublication)
+    }
 }
 
 private fun InternalKotlinTarget.createTargetSpecificMavenPublications(publications: PublicationContainer) {

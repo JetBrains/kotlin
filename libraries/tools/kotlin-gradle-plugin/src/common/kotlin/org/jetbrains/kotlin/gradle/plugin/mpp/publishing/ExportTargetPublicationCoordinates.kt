@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvid
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.originalVariantNameFromPublished
 
@@ -29,7 +30,9 @@ internal class TargetPublicationCoordinates(
     @get:Nested
     val rootPublicationCoordinates: GAV,
     @get:Nested
-    val targetPublicationCoordinates: GAV
+    val targetPublicationCoordinates: GAV,
+    @get:Input
+    val mavenScope: MavenScope,
 ): KotlinShareableDataAsSecondaryVariant {
     internal class GAV(
         @get:Input
@@ -75,14 +78,16 @@ private suspend fun Project.exportForPomDependenciesRewriter(target: KotlinTarge
     for (targetComponent in target.internal.kotlinComponents) {
         if (targetComponent !is ComponentWithCoordinates) continue
         for (usage in targetComponent.internal.usages) {
-            if (usage.mavenScope == null) continue
+            // FIXME: Why?
+            val mavenScope = usage.mavenScope ?: continue
 
             val configurationName = originalVariantNameFromPublished(usage.dependencyConfigurationName) ?: usage.dependencyConfigurationName
             val configuration = configurations.getByName(configurationName)
             projectDataSharingService.shareDataFromProvider(PROJECT_DATA_SHARING_KEY, configuration, provider {
                 TargetPublicationCoordinates(
                     rootPublicationCoordinates = rootComponent.gavCoordinates,
-                    targetPublicationCoordinates = targetComponent.gavCoordinates
+                    targetPublicationCoordinates = targetComponent.gavCoordinates,
+                    mavenScope = mavenScope,
                 )
             })
         }

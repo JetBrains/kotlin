@@ -113,6 +113,7 @@ dependencies {
 
     // AGP classes for buildScriptInjection's
     testImplementation(libs.android.gradle.plugin.gradle.api) { isTransitive = false }
+    testImplementation(libs.android.gradle.plugin.gradle) { isTransitive = false }
 
     testImplementation(project(path = ":examples:annotation-processor-example"))
     testImplementation(kotlinStdlib("jdk8"))

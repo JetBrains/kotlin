@@ -86,7 +86,7 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
         projectName: String,
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions = defaultBuildOptions,
-        forceOutput: Boolean = false,
+        forceOutput: EnableGradleDebug = EnableGradleDebug.AUTO,
         enableBuildScan: Boolean = false,
         addHeapDumpOptions: Boolean = true,
         enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,

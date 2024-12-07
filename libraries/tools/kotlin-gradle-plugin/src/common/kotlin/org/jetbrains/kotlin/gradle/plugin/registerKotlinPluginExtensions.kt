@@ -103,6 +103,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             }
 
             register(project, NativeToolchainProjectSetupAction)
+            register(project, KotlinUklibConsumptionSetupAction)
         }
 
     }
@@ -136,6 +137,8 @@ internal fun Project.registerKotlinPluginExtensions() {
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
+        // FIXME: This isn't mpp only
+        // FIXME: Disabling this breaks KotlinTargetSoftwareComponentImpl
         register(project, KotlinMetadataArtifact)
         register(project, KotlinLegacyCompatibilityMetadataArtifact)
         register(project, KotlinLegacyMetadataArtifact)

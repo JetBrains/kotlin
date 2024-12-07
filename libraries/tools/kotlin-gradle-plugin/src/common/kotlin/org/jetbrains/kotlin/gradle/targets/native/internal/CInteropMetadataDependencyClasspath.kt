@@ -65,6 +65,9 @@ private fun Project.createCInteropMetadataDependencyClasspathFromAssociatedCompi
  */
 internal val ChooseVisibleSourceSets.visibleSourceSetProvidingCInterops: String?
     get() {
+        // FIXME: ???
+        if (projectStructureMetadata == null) return null
+
         val dependsOnSourceSets = allVisibleSourceSetNames
             .flatMap { projectStructureMetadata.sourceSetsDependsOnRelation[it].orEmpty() }
             .toSet()
