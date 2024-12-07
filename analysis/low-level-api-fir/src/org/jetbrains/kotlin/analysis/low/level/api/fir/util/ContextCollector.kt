@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonomousElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
@@ -84,7 +85,6 @@ object ContextCollector {
      * Get the most precise context available for the [targetElement] in the [file].
      *
      * @param file The file to process.
-     * @param holder The [SessionHolder] for the session that owns a [file].
      * @param targetElement The most precise element for which the context is required.
      * @param preferBodyContext Whether a [ContextKind.BODY] context is preferred for the [targetElement].
      * For parents of [targetElement], [ContextKind.BODY] is *never* returned.
@@ -92,10 +92,10 @@ object ContextCollector {
      * @return The context of the [targetElement] if available, or of one of its tree parents.
      * Returns `null` if the context was not collected.
      */
-    fun process(file: FirFile, holder: SessionHolder, targetElement: PsiElement, preferBodyContext: Boolean = true): Context? {
+    fun process(file: FirFile, targetElement: PsiElement, preferBodyContext: Boolean = true): Context? {
         val acceptedElements = targetElement.parentsWithSelf.toSet()
 
-        val contextProvider = process(file, holder, computeDesignation(file, targetElement), preferBodyContext) { candidate ->
+        val contextProvider = process(file, computeDesignation(file, targetElement), preferBodyContext) { candidate ->
             when (candidate) {
                 targetElement -> FilterResponse.STOP
                 in acceptedElements -> FilterResponse.CONTINUE
@@ -144,19 +144,22 @@ object ContextCollector {
      * Processes the [FirFile], collecting contexts for elements matching the [filter].
      *
      * @param file The file to process.
-     * @param holder The [SessionHolder] for the session that owns a [file].
      * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
      * @param preferBodyContext If `true`, [ContextKind.BODY] is collected where available.
-     * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns `true`.
+     * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns
+     *     [FilterResponse.CONTINUE] or [FilterResponse.STOP].
      */
     fun process(
         file: FirFile,
-        holder: SessionHolder,
         designation: FirDesignation?,
         preferBodyContext: Boolean,
         filter: (PsiElement) -> FilterResponse,
     ): ContextProvider {
+        val fileSession = file.llFirSession
+        val holder = SessionHolderImpl(fileSession, fileSession.getScopeSession())
+
         val interceptor = designation?.let(::DesignationInterceptor)
+
         val visitor = ContextCollectorVisitor(holder, preferBodyContext, filter, interceptor)
         visitor.collect(file)
 
