@@ -126,7 +126,12 @@ private class KaFirCompletionExtensionCandidateChecker(
             SessionHolderImpl(firSession, scopeSession)
         }
 
-        val elementContext = ContextCollector.process(firFakeFile, sessionHolder, nameExpression, bodyElement = null)
+        val elementContext = ContextCollector.process(
+            file = firFakeFile,
+            holder = sessionHolder,
+            targetElement = nameExpression,
+            preferBodyContext = false
+        )
 
         val towerDataContext = elementContext?.towerDataContext
             ?: errorWithAttachment("Cannot find enclosing declaration for ${nameExpression::class}") {

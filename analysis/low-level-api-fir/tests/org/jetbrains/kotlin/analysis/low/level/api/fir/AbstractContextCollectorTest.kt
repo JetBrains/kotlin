@@ -68,9 +68,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
         val targetElement = testServices.expressionMarkerProvider
             .getBottommostSelectedElementOfType(mainFile, KtElement::class)
 
-        val bodyElement = if (useBodyElement) targetElement else null
-
-        val elementContext = ContextCollector.process(firFile, sessionHolder, targetElement, bodyElement)
+        val elementContext = ContextCollector.process(firFile, sessionHolder, targetElement, useBodyElement)
             ?: error("Context not found for element $targetElement")
 
         val firRenderer = FirRenderer.withResolvePhase()
